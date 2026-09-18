@@ -22,8 +22,36 @@ difficulty curve instead of an MMO grind curve.
 | [docs/06-data-model-and-formulas.md](docs/06-data-model-and-formulas.md) | Stats, damage math, XP curve, item/mob/skill/quest schemas, save format |
 | [docs/07-what-i-need-from-you.md](docs/07-what-i-need-from-you.md) | Consolidated checklist of your decisions, installs, accounts and assets |
 
+## Running it
+
+Double-click **`play.bat`** (builds the C#, then launches the game), or **`edit.bat`**
+to open the Godot editor and press F5.
+
+Both resolve the real Godot executable. Do **not** launch through the winget shim at
+`%LOCALAPPDATA%\Microsoft\WinGet\Links\godot.exe` — Godot looks for its C# API assemblies
+next to the executable and that folder has none, so it fails with
+".NET: Assemblies not found" and crashes. If Godot lives somewhere else, set `GODOT_EXE`.
+
+### Controls (Phase 1)
+
+| Input | Action |
+|---|---|
+| Left click | Move (hold for continuous movement) |
+| Mouse wheel | Zoom |
+| Z / C, or middle-drag | Rotate camera |
+| F3 | Debug overlay |
+| F4 | Toggle WASD (alternative scheme) |
+
+Skills, flask and the defensive ability are bound but not implemented until Phases 2–3.
+
+### Checks
+
+`scripts/verify.sh` runs everything CI runs: build, content validation, generated-id check,
+tests, Godot build and headless import.
+
 ## Status
 
-Pre-production. Nothing implemented yet. Start at
+Phase 0 (foundations) and Phase 1 (click-to-move, camera, greybox arena) are implemented.
+Phase 1 is awaiting the MOV-08 feel review. Start at
 [docs/07-what-i-need-from-you.md](docs/07-what-i-need-from-you.md) — it lists the
 handful of things that unblock Phase 0.
