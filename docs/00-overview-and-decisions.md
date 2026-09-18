@@ -31,6 +31,27 @@ This matters and it's simple to stay clean:
 All game code is written originally. Every third-party asset gets an entry in
 `ASSET-LICENSES.md` with source + license the moment it enters the repo.
 
+### 2.1 Naming — what is ruled out, and why the codename is `Kiln`
+
+The code, assemblies and namespaces use the internal codename **`Kiln`**. It is a
+placeholder chosen to be obviously non-final, not a title candidate. Two names were
+considered and rejected:
+
+| Name | Status | Reason |
+|---|---|---|
+| `Sohan` | ❌ rejected | Mount Sohan is a Metin2 map name — exactly the borrowed naming §2 rules out. |
+| `Shardfall` | ❌ rejected | **Live trademark** (WIPO IR 1680837, USPTO serial 79348710, Quell Tech Ltd, classes 09 + 42, protected US/EU/UK/AU/CA/CN to 2032) **and a shipping game** of that name on Meta Quest. Direct collision in the same product category. |
+
+Briefly used before the conflict was caught, so the GitHub repo is still named
+`andreabraho/shardfall` — worth renaming, and the public title must not be Shardfall.
+
+**Clearing process for the eventual title:** check USPTO tmsearch (class 9), WIPO Madrid
+Monitor, the Steam store, and domain availability. Unscreened shortlist carried forward:
+Metanoia, Second Meridian, Meteon, Nine Shards, Seokhwa.
+
+The in-game mechanic terms `Shard` / `ShardMonolith` / "Shard Essence" are unaffected — a
+trademark covers a product title, not generic internal identifiers.
+
 ## 3. Scope tiers
 
 Scope is the number-one risk on a project like this, so it is explicit.
@@ -123,7 +144,7 @@ Every task in [05-roadmap.md](05-roadmap.md) carries one of these:
 
 | # | Question | Default if you have no preference |
 |---|---|---|
-| ~~Q5~~ | ~~Final project name~~ | **Answered 2026-09-18: Shardfall.** Matches the repo, and drops the `Sohan` codename which was a Metin2 map name (IP hygiene, §2). Applied across solution, assemblies, namespaces and the Godot project. |
+| Q5 | **Final public title** — still open | **Internal codename is `Kiln`** (decided 2026-09-18), applied across the solution, assemblies, namespaces and the Godot project. `Kiln` is deliberately *not* a candidate title — it is a neutral placeholder so work can proceed. The public title is a pre-launch decision. See §2.1 below for names already ruled out. |
 | Q6 | Commercial release, or portfolio/learning project? | Affects asset licensing only — assume commercial |
 | Q7 | Launch languages | EN + IT |
 | Q8 | Controller support in v1.0 scope? | Yes — but note click-to-move makes controller support *harder*, so this is a Tier B decision |

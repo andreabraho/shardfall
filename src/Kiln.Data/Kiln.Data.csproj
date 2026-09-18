@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>$(GameTfm)</TargetFramework>
+    <RootNamespace>Kiln.Data</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Kiln.Core\Kiln.Core.csproj" />
+  </ItemGroup>
+</Project>

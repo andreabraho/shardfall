@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <!--
-      Shardfall.Core and Shardfall.Data are pinned to net8.0 because the Godot .NET runtime
+      Kiln.Core and Kiln.Data are pinned to net8.0 because the Godot .NET runtime
       targets net8.0 and the game project references them directly.
-      Shardfall.Tests and Shardfall.Tools float to the latest installed SDK: a newer TFM may
+      Kiln.Tests and Kiln.Tools float to the latest installed SDK: a newer TFM may
       reference an older one, and this lets the test suite run before the .NET 8 SDK
       is installed. Keep $(GameTfm) in sync with whatever Godot.NET.Sdk requires.
     -->
@@ -21,7 +21,7 @@
   </PropertyGroup>
 
   <!-- The simulation core must stay clean: warnings are errors there. -->
-  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Shardfall.Core' Or '$(MSBuildProjectName)' == 'Shardfall.Data'">
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Kiln.Core' Or '$(MSBuildProjectName)' == 'Kiln.Data'">
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 

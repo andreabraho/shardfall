@@ -1,7 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>$(GameTfm)</TargetFramework>
-    <RootNamespace>Shardfall.Core</RootNamespace>
-    <!-- HARD RULE (NFR-M.1): this assembly must never reference Godot. -->
-  </PropertyGroup>
-</Project>

@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Shardfall.Game.Visual;
+namespace Kiln.Game.Visual;
 
 /// <summary>
 /// Every entity gets exactly one VisualRoot child, and all of its appearance hangs off it.

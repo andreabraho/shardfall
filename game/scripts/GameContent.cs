@@ -1,8 +1,8 @@
 using Godot;
-using Shardfall.Data.Loading;
-using Shardfall.Data.Validation;
+using Kiln.Data.Loading;
+using Kiln.Data.Validation;
 
-namespace Shardfall.Game;
+namespace Kiln.Game;
 
 /// <summary>
 /// Loads the content database once at startup and holds it for the session.

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Godot;
-using Shardfall.Data.Definitions;
+using Kiln.Data.Definitions;
 
-namespace Shardfall.Game.Visual;
+namespace Kiln.Game.Visual;
 
 /// <summary>
 /// The art-swap boundary (ENG-07, NFR-M.4).

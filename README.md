@@ -1,4 +1,4 @@
-# Project Shardfall — a single-player action RPG in the spirit of Metin2
+# Project Kiln — a single-player action RPG in the spirit of Metin2
 
 A stylized oriental-fantasy action RPG for PC, built solo (you + Claude) in **Godot 4 / C#**.
 It takes the parts of Metin2 that were actually fun — metin stone hunting, chunky
@@ -6,7 +6,7 @@ skill combat, the upgrade/socket item chase, oriental art direction — and rebu
 them as a **complete, offline, 15–25 hour single-player campaign** with a real
 difficulty curve instead of an MMO grind curve.
 
-> **Codename:** `Shardfall` (placeholder, rename freely — Mount Shardfall is a Metin2 map name,
+> **Codename:** `Kiln` (placeholder, rename freely — Mount Kiln is a Metin2 map name,
 > so pick something original before any public release; see the IP section in the overview).
 
 ## Documentation map
