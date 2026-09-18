@@ -454,14 +454,32 @@ public partial class EnemyBrain : CharacterBody3D
         }
     }
 
+    /// <summary>
+    /// True while a wind-up or recovery is in progress. Trees must let a committed attack
+    /// finish rather than abandoning it — commitment is what makes the wind-up a real
+    /// opening for the player (FR-3.3).
+    /// </summary>
+    public bool IsCommitted => _phase != Phase.Idle;
+
     public void CancelAbility()
     {
         if (_phase == Phase.Idle) return;
+
+        // An abandoned wind-up still locks the ability out briefly. Without this, a branch
+        // that keeps starting and dropping an attack re-places its telegraph every frame,
+        // which reads as the warning circle chasing the player around.
+        if (_activeAbility is not null)
+        {
+            _abilityCooldowns[_activeAbility.Id] =
+                System.Math.Min(_activeAbility.Cooldown, CancelLockoutSeconds);
+        }
 
         _telegraph?.Cancel();
         _phase = Phase.Idle;
         _activeAbility = null;
     }
+
+    private const double CancelLockoutSeconds = 2.0;
 
     private void BeginWindup(AbilityDef ability)
     {

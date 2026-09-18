@@ -44,6 +44,20 @@ public static class RoleTrees
             new BtAction<EnemyBrain>((b, d) => b.UseAbility(b.SpecialAbility, d), b => b.CancelAbility()),
             new BtAction<EnemyBrain>((b, d) => b.UseAbility(b.BasicAbility, d), b => b.CancelAbility()));
 
+    /// <summary>
+    /// Finish an attack already under way, before anything else gets a say.
+    /// <para>
+    /// Without this, a repositioning branch keeps interrupting its own wind-up: the enemy
+    /// starts an attack, the player steps closer, the retreat branch takes over and cancels
+    /// it, the player steps back, and it begins again — re-placing its telegraph on the
+    /// player each time. It also defeats the commitment the whole telegraph design rests on.
+    /// </para>
+    /// </summary>
+    private static BtNode<EnemyBrain> FinishCommitted() =>
+        new BtSequence<EnemyBrain>(
+            new BtCondition<EnemyBrain>(b => b.IsCommitted),
+            Attack());
+
     /// <summary>Straight damage. The baseline the other roles are read against.</summary>
     private static BtNode<EnemyBrain> Bruiser() =>
         new BtSelector<EnemyBrain>(
@@ -58,8 +72,10 @@ public static class RoleTrees
     private static BtNode<EnemyBrain> Archer() =>
         new BtSelector<EnemyBrain>(
             Disengage(),
+            FinishCommitted(),
 
-            // Backing off takes priority over shooting, so an archer never settles into melee.
+            // Backing off takes priority over starting a new shot, so an archer never
+            // settles into melee — but never mid-attack, which is handled above.
             new BtSequence<EnemyBrain>(
                 new BtCondition<EnemyBrain>(b => b.DistanceToTarget < TooCloseRange),
                 new BtAction<EnemyBrain>((b, d) => b.Retreat(d))),
@@ -90,6 +106,7 @@ public static class RoleTrees
     private static BtNode<EnemyBrain> Mender() =>
         new BtSelector<EnemyBrain>(
             Disengage(),
+            FinishCommitted(),
 
             new BtCooldown<EnemyBrain>(
                 6.0,

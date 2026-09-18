@@ -77,8 +77,8 @@
     "stagger_pool": 45,
     "abilities": [
       { "id": "abl_mend_ally",  "cooldown": 8.0, "windup": 1.40, "damage_coef": 0.00 },
-      { "id": "abl_rot_bolt",   "cooldown": 3.0, "windup": 0.85, "damage_coef": 0.90, "range": 10.0,
-        "applies": { "kind": "weaken", "magnitude": 0.20, "duration": 4.0, "chance": 0.5 } }
+      { "id": "abl_rot_bolt",   "cooldown": 5.5, "windup": 0.85, "damage_coef": 0.55, "range": 10.0,
+        "applies": { "kind": "weaken", "magnitude": 0.15, "duration": 2.5, "chance": 0.30 } }
     ],
     "ai": "bt_support_healer",
     "aggro_radius": 14,
