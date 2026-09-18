@@ -17,10 +17,10 @@ If winget's package id has drifted, download "Godot Engine – .NET" from godote
 unzip it to `C:\tools\godot\`. Godot is a portable executable; there is no installer.
 
 **Installed version: Godot 4.7.2 stable mono.** Three places pin it and must stay in step:
-`game/Sohan.Game.csproj` (`Godot.NET.Sdk/4.7.2`), `game/project.godot` (`config/features`),
+`game/Shardfall.Game.csproj` (`Godot.NET.Sdk/4.7.2`), `game/project.godot` (`config/features`),
 and `.github/workflows/ci.yml` (the `godot-ci` image tag).
 
-**.NET note:** Godot 4.7's `GodotSharp` targets `net8.0`, so `Sohan.Core` and `Sohan.Data`
+**.NET note:** Godot 4.7's `GodotSharp` targets `net8.0`, so `Shardfall.Core` and `Shardfall.Data`
 target net8.0 too. The .NET 8 SDK is required alongside 10:
 
 ```bash
@@ -147,8 +147,8 @@ NFR-P.1 — it is very easy to build something that only runs on your dev machin
 The one decision that shapes everything (D8): **game logic is engine-free C#.**
 
 ```
-Sohan.sln
-├─ src/Sohan.Core/          # pure C#, ZERO Godot references
+Shardfall.sln
+├─ src/Shardfall.Core/          # pure C#, ZERO Godot references
 │   ├─ Combat/              # damage pipeline, status effects, threat
 │   ├─ Progression/         # XP, levels, attributes, skill mastery
 │   ├─ Items/               # generation, bonus rolls, upgrade, sockets
@@ -156,9 +156,9 @@ Sohan.sln
 │   ├─ Quests/              # quest state machine, objectives
 │   ├─ Economy/             # yang sinks, vendor stock seeding
 │   └─ Save/                # versioned save model + migrations
-├─ src/Sohan.Data/          # JSON loading, schema validation, content registries
-├─ src/Sohan.Tests/         # GdUnit4 + xUnit, runs headless in CI
-├─ src/Sohan.Tools/         # console apps: balance simulator, data validator, codegen
+├─ src/Shardfall.Data/          # JSON loading, schema validation, content registries
+├─ src/Shardfall.Tests/         # GdUnit4 + xUnit, runs headless in CI
+├─ src/Shardfall.Tools/         # console apps: balance simulator, data validator, codegen
 └─ game/                    # the Godot project
     ├─ project.godot
     ├─ scenes/              # .tscn — I author these directly
@@ -173,7 +173,7 @@ Sohan.sln
 
 - The damage formula, XP curve and item generation are unit-testable in milliseconds with no
   engine boot — so balance changes are verified, not guessed (NFR-R.2, NFR-M.1).
-- The **balance simulator** (`Sohan.Tools`) can run 10,000 simulated encounters or walk the
+- The **balance simulator** (`Shardfall.Tools`) can run 10,000 simulated encounters or walk the
   whole campaign XP table in seconds, because it links `Core` directly. This is how we
   enforce "no grinding required" as a measurable property instead of a hope.
 - Co-op stays architecturally possible for Tier C without a rewrite.

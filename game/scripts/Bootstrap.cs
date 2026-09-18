@@ -1,7 +1,7 @@
 using Godot;
-using Sohan.Game.Debug;
+using Shardfall.Game.Debug;
 
-namespace Sohan.Game;
+namespace Shardfall.Game;
 
 /// <summary>
 /// First thing the game runs. Loads content, installs the debug overlay, and fails loudly
@@ -12,7 +12,7 @@ public partial class Bootstrap : Node
 {
     public override void _Ready()
     {
-        GD.Print($"Sohan — {(OS.IsDebugBuild() ? "debug" : "release")} build, Godot {Engine.GetVersionInfo()["string"]}");
+        GD.Print($"Shardfall — {(OS.IsDebugBuild() ? "debug" : "release")} build, Godot {Engine.GetVersionInfo()["string"]}");
 
         if (!GameContent.Load())
         {
@@ -20,7 +20,7 @@ public partial class Bootstrap : Node
 
             if (!OS.IsDebugBuild())
             {
-                OS.Alert("Game data is missing or corrupt. Please reinstall.", "Sohan");
+                OS.Alert("Game data is missing or corrupt. Please reinstall.", "Shardfall");
                 GetTree().Quit(1);
             }
 

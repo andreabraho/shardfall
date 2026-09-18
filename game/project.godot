@@ -1,4 +1,4 @@
-; Sohan — Godot project configuration
+; Shardfall — Godot project configuration
 ;
 ; Deliberately minimal and hand-authored. Godot rewrites this file when you change
 ; settings in the editor, which produces clean diffs because it is plain text.
@@ -7,14 +7,14 @@ config_version=5
 
 [application]
 
-config/name="Sohan"
+config/name="Shardfall"
 config/description="A single-player action RPG in the spirit of Metin2."
 run/main_scene="res://scenes/main.tscn"
 config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 
 [dotnet]
 
-project/assembly_name="Sohan.Game"
+project/assembly_name="Shardfall.Game"
 
 [display]
 

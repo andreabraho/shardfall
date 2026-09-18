@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Sohan.Game.Visual;
+namespace Shardfall.Game.Visual;
 
 /// <summary>
 /// Every entity gets exactly one VisualRoot child, and all of its appearance hangs off it.

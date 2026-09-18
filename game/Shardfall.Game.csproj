@@ -1,0 +1,28 @@
+<Project Sdk="Godot.NET.Sdk/4.7.2">
+
+  <!--
+    The Godot.NET.Sdk version must match the installed editor, or the build fails with a
+    version-mismatch error. Pinned to 4.7.2 to match the dev environment
+    (godot 4.7.2.stable.mono.official). Check the editor version after any upgrade, and
+    bump this together with config/features in project.godot and the godot-ci image tag
+    in .github/workflows/ci.yml — those three must stay in step.
+
+    This project is intentionally NOT part of Shardfall.sln: Godot manages its own solution.
+    It references the engine-free logic assemblies, which is the whole point of the
+    architecture in docs/04-tech-stack-and-infrastructure.md §4.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <RootNamespace>Shardfall.Game</RootNamespace>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\src\Shardfall.Core\Shardfall.Core.csproj" />
+    <ProjectReference Include="..\src\Shardfall.Data\Shardfall.Data.csproj" />
+  </ItemGroup>
+
+</Project>

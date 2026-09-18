@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using Godot;
-using Sohan.Data.Loading;
+using Shardfall.Data.Loading;
 
 // Godot.FileAccess and System.IO.FileAccess collide under implicit usings.
 using FileAccess = Godot.FileAccess;
 
-namespace Sohan.Game;
+namespace Shardfall.Game;
 
 /// <summary>
 /// Reads content JSON through Godot's FileAccess so it works identically in the editor and

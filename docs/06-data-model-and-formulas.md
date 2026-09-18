@@ -2,7 +2,7 @@
 
 Every number here is a **starting point to be tuned by simulation** (roadmap PRG-09, ITM-12,
 BAL-01), not a final value. What matters is that the *shape* of each curve is right and that
-all of it lives in `Sohan.Core` as pure, deterministic, unit-tested C# (NFR-R.2).
+all of it lives in `Shardfall.Core` as pure, deterministic, unit-tested C# (NFR-R.2).
 
 ---
 
@@ -86,7 +86,7 @@ The campaign must reach level 60 **without any farming**. Budget:
 | Shard breaks | **35%** |
 | Trash kills along the way | **20%** |
 
-`Sohan.Tools.BalanceSim` walks the quest list, zone shard counts and expected kill counts and
+`Shardfall.Tools.BalanceSim` walks the quest list, zone shard counts and expected kill counts and
 asserts the player enters every zone within its level band. **A failing balance sim fails
 CI** — this is how "no grinding required" stops being a wish.
 

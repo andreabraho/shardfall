@@ -18,28 +18,31 @@ where marked.
 
 ---
 
-## Phase 0 — Foundations (week 1) — ⏳ mostly done
+## Phase 0 — Foundations (week 1) — ✅ done
 
 **Goal:** an empty but correct project that builds, tests and ships from day one.
 **Exit:** `dotnet test` green in CI, Godot opens the project, a grey cube renders, a tagged
 build artifact downloads from GitHub Actions.
 
-**Status 2026-09-18:** all my tasks are complete and verified locally — build clean (0
-warnings), 59 tests passing, content validator green over 40 definitions. Remaining: the
-three tasks that need your machine or your account.
+**Status 2026-09-18: complete.** Godot 4.7.2 installed, repo pushed to
+https://github.com/andreabraho/shardfall, and the whole chain verified end to end via
+`scripts/verify.sh`: build clean (0 warnings), 59 tests passing, 40 content definitions
+validating, Godot project building, headless import clean, content loading in-engine in
+164 ms. One editor task remains (ENG-11).
 
 | ID | Task | Owner | Status |
 |---|---|---|---|
-| ENG-01 | Install Godot .NET, VS Code + extensions | **[You]** | ⬜ Git LFS 3.7.1 already present; Godot still missing |
+| ENG-01 | Install Godot .NET, .NET 8 SDK, Git LFS | **[You]** | ✅ Godot 4.7.2 mono, .NET SDK 8.0.425, Git LFS 3.7.1 |
 | ENG-02 | `git init`, `.gitignore`, `.gitattributes` (LFS routing), branch conventions | **[C]** | ✅ |
-| ENG-03 | Create GitHub private repo, push, confirm LFS works | **[You]** | ⬜ blocked on your remote URL |
-| ENG-04 | Solution + project skeleton (`Sohan.Core`, `.Data`, `.Tests`, `.Tools`, `game/`) | **[C]** | ✅ |
-| ENG-05 | Godot project config: rendering (Forward+), input map, physics layers, smoke scene | **[C]** | ✅ (SDK version needs one line confirmed after you install Godot) |
+| ENG-03 | Create GitHub repo, push | **[You]** | ✅ andreabraho/shardfall, `main` pushed |
+| ENG-04 | Solution + project skeleton (`Shardfall.Core`, `.Data`, `.Tests`, `.Tools`, `game/`) | **[C]** | ✅ |
+| ENG-05 | Godot project config: rendering (Forward+), input map, physics layers, smoke scene | **[C]** | ✅ pinned to 4.7.2 |
 | ENG-06 | CI: GitHub Actions — build, `dotnet test`, content validation, codegen check, headless Godot import, Windows export | **[C]** | ✅ (Godot export job auto-enables once `export_presets.cfg` exists) |
 | ENG-07 | **Art-swap boundary**: `VisualRoot` node + visual registry keyed by id (NFR-M.4) | **[C]** | ✅ |
 | ENG-08 | Data pipeline: JSON loader, validator (9 rules), id-constant codegen, cross-reference checker | **[C]** | ✅ |
 | ENG-09 | Logging, debug overlay (FPS, frame time, draw calls, pluggable providers) | **[C]** | ✅ |
-| ENG-10 | Verify the CI artifact runs on your machine | **[You]** | ⬜ after ENG-01/03 |
+| ENG-10 | Verify the CI artifact runs on your machine | **[You]** | ⬜ after ENG-11 |
+| ENG-11 | **Create the Windows export preset** in the Godot editor (Project → Export → Add → Windows Desktop). Set `export_path` to `../export/windows/Shardfall.exe` and add `*.json` to the non-resource include filter, or game data will not ship in the build. This also auto-enables the CI export job. | **[You]** | ⬜ editor GUI, ~2 min (also downloads export templates) |
 
 ---
 
@@ -186,7 +189,7 @@ click-to-move lives or dies on responsiveness.
 | QST-07 | 6 NPCs with dialogue and vendor/trainer roles | **[C]** | |
 | QST-08 | Codex/bestiary filling on kills | **[C]** | |
 | QST-09 | **Story and tone review** — names, writing, whether it lands | **[You]** | Taste call |
-| QST-10 | **Final naming pass** — replace `Sohan` and any placeholder names (IP hygiene) | **[Provide]** | Your call on the name |
+| QST-10 | **Final naming pass** — replace `Shardfall` and any placeholder names (IP hygiene) | **[Provide]** | Your call on the name |
 
 ---
 

@@ -27,7 +27,7 @@ Once A1–A5 are done, say so and I'll execute all of Phase 0 (ENG-02, 04–09) 
 
 | # | Question | Default if you don't answer |
 |---|---|---|
-| B1 | **Final project name** (needed before any public build — IP hygiene) | Keep codename `Sohan` through MVP |
+| B1 | **Final project name** (needed before any public build — IP hygiene) | Keep codename `Shardfall` through MVP |
 | B2 | **Commercial release or portfolio project?** | Assume commercial → stricter asset licensing |
 | B3 | **Languages at launch** | EN + IT (you'd correct my Italian) |
 | B4 | **Controller support in v1.0?** | Deferred — click-to-move makes it genuinely awkward, decide at Tier B |

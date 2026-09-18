@@ -123,7 +123,7 @@ Every task in [05-roadmap.md](05-roadmap.md) carries one of these:
 
 | # | Question | Default if you have no preference |
 |---|---|---|
-| Q5 | Final project name | Keep the `Sohan` codename through MVP |
+| ~~Q5~~ | ~~Final project name~~ | **Answered 2026-09-18: Shardfall.** Matches the repo, and drops the `Sohan` codename which was a Metin2 map name (IP hygiene, §2). Applied across solution, assemblies, namespaces and the Godot project. |
 | Q6 | Commercial release, or portfolio/learning project? | Affects asset licensing only — assume commercial |
 | Q7 | Launch languages | EN + IT |
 | Q8 | Controller support in v1.0 scope? | Yes — but note click-to-move makes controller support *harder*, so this is a Tier B decision |

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Godot;
 
-namespace Sohan.Game.Debug;
+namespace Shardfall.Game.Debug;
 
 /// <summary>
 /// F3 overlay: FPS, frame time, entity counts and whatever systems register.

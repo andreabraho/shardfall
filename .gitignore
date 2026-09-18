@@ -19,7 +19,7 @@ obj/
 /artifacts/
 *.pdb
 
-# NOTE: generated ids (src/Sohan.Data/Generated/Ids.g.cs) ARE committed on purpose.
+# NOTE: generated ids (src/Shardfall.Data/Generated/Ids.g.cs) ARE committed on purpose.
 # CI runs `codegen --check` to verify they are current, so the build never depends
 # on a generation step having been run first.
 

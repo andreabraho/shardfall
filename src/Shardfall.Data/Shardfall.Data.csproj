@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>$(GameTfm)</TargetFramework>
+    <RootNamespace>Shardfall.Data</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Shardfall.Core\Shardfall.Core.csproj" />
+  </ItemGroup>
+</Project>

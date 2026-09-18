@@ -1,9 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>$(GameTfm)</TargetFramework>
-    <RootNamespace>Sohan.Data</RootNamespace>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Sohan.Core\Sohan.Core.csproj" />
-  </ItemGroup>
-</Project>
