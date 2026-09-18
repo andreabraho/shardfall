@@ -35,10 +35,27 @@ public partial class DefensiveAbility : Node
 
     [Signal] public delegate void GuardChangedEventHandler(bool guarding);
 
+    private GuardVisual _visual = null!;
+
     public override void _Ready()
     {
         _motor = GetParent<PlayerMotor>();
         _self = GetParent().GetNode<Combatant>("Combatant");
+
+        // Created in code rather than placed in the scene: it belongs to this ability and
+        // has no meaning without it.
+        _visual = new GuardVisual { Name = "GuardVisual" };
+
+        // Deferred: the parent is still building its own children during _Ready, and a
+        // direct AddChild there fails outright.
+        _motor.CallDeferred(Node.MethodName.AddChild, _visual);
+
+        // Flash on every absorbed hit — otherwise a successful guard looks like nothing
+        // happened, which is the worst possible feedback for a defensive cooldown.
+        _self.Damaged += (_, _, evaded) =>
+        {
+            if (IsGuarding && !evaded) _visual.Flash();
+        };
 
         Debug.DebugOverlay.Register("guard", () =>
             IsGuarding ? $"GUARDING {_active:F1}s" : _cooldown > 0 ? $"cd {_cooldown:F1}s" : "ready");
@@ -68,6 +85,7 @@ public partial class DefensiveAbility : Node
         _self.IncomingDamageMultiplier = 1.0 - DamageReduction;
         _motor.MovementLocked = true;
         _motor.Stop();
+        _visual.SetGuarding(true);
 
         EmitSignal(SignalName.GuardChanged, true);
     }
@@ -91,6 +109,7 @@ public partial class DefensiveAbility : Node
         _active = 0;
         _self.IncomingDamageMultiplier = 1.0;
         _motor.MovementLocked = false;
+        _visual.SetGuarding(false);
 
         EmitSignal(SignalName.GuardChanged, false);
     }
