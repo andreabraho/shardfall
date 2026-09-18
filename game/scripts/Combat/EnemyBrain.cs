@@ -3,6 +3,7 @@ using Godot;
 using Kiln.Core.Ai;
 using Kiln.Core.Combat;
 using Kiln.Core.Foundation;
+using Kiln.Core.Progression;
 using Kiln.Data.Definitions;
 using Kiln.Game.Foundation;
 using Kiln.Game.Visual;
@@ -287,8 +288,14 @@ public partial class EnemyBrain : CharacterBody3D
 
         if (!force && GlobalPosition.DistanceTo(player.GlobalPosition) > AggroRadius) return;
 
+        var combatant = player.GetNodeOrNull<Combatant>("Combatant");
+
+        // Trivially low-level enemies ignore the player entirely, so a cleared zone is quiet
+        // to walk back through rather than a chore (FR-2.7).
+        if (combatant is not null && ExperienceTable.IsTrivial(combatant.Stats.Level, Self.Stats.Level)) return;
+
         Target = player;
-        TargetCombatant = player.GetNodeOrNull<Combatant>("Combatant");
+        TargetCombatant = combatant;
     }
 
     // -- Conditions the trees read -----------------------------------------

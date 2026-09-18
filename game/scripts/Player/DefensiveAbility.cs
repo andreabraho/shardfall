@@ -20,13 +20,17 @@ public partial class DefensiveAbility : Node
     private double _active;
     private double _cooldown;
 
-    /// <summary>Fraction of damage blocked while guarding.</summary>
+    /// <summary>
+    /// The skill this ability is. All of its numbers come from that definition, so Guard
+    /// Stance tunes and ranks up exactly like every other skill instead of having a second,
+    /// silently diverging copy of its values in code.
+    /// </summary>
+    [Export] public string SkillId { get; set; } = "skl_guard_stance";
+
+    // Fallbacks, used only if the definition is missing.
     [Export] public double DamageReduction { get; set; } = 0.70;
-
     [Export] public double Duration { get; set; } = 2.0;
-
     [Export] public double CooldownSeconds { get; set; } = 10.0;
-
     [Export] public double ManaCost { get; set; } = 10;
 
     public bool IsGuarding => _active > 0;
@@ -69,20 +73,41 @@ public partial class DefensiveAbility : Node
         GetViewport().SetInputAsHandled();
     }
 
+    /// <summary>Current values, including whatever mastery has changed.</summary>
+    private (double Reduction, double Duration, double Cooldown, double Mana) Values()
+    {
+        var book = GetParent().GetNodeOrNull<PlayerCharacter>("PlayerCharacter")?.Skills;
+
+        if (book is null
+            || !book.IsUnlocked(SkillId)
+            || !GameContent.IsLoaded
+            || !GameContent.Database.Skills.TryGetValue(SkillId, out var def))
+        {
+            return (DamageReduction, Duration, CooldownSeconds, ManaCost);
+        }
+
+        var skill = Kiln.Data.Definitions.ResolvedSkill.For(def, book.RankOf(SkillId));
+        return (skill.Magnitude, skill.Duration, skill.Cooldown, skill.ManaCost);
+    }
+
     private void TryGuard()
     {
         if (IsGuarding || _cooldown > 0 || !_self.IsAlive || _self.Statuses.IsStunned) return;
 
-        if (!_self.Mana.TrySpend(ManaCost))
+        var values = Values();
+
+        if (!_self.Mana.TrySpend(values.Mana))
         {
             GD.Print($"[guard] not enough mana ({_self.Mana})");
             return;
         }
 
-        _active = Duration;
-        _cooldown = CooldownSeconds;
+        _active = values.Duration;
+        _cooldown = values.Cooldown;
 
-        _self.IncomingDamageMultiplier = 1.0 - DamageReduction;
+        GetParent().GetNodeOrNull<PlayerCharacter>("PlayerCharacter")?.Skills.RecordUse(SkillId);
+
+        _self.IncomingDamageMultiplier = 1.0 - values.Reduction;
         _motor.MovementLocked = true;
         _motor.Stop();
         _visual.SetGuarding(true);

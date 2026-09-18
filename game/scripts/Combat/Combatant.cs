@@ -1,6 +1,7 @@
 using Godot;
 using Kiln.Core.Combat;
 using Kiln.Core.Foundation;
+using Kiln.Core.Progression;
 using Kiln.Data.Definitions;
 
 namespace Kiln.Game.Combat;
@@ -97,6 +98,15 @@ public partial class Combatant : Node
         };
 
         attacker._sinceCombat = 0;
+
+        // Enemies far below the player stop being a fight: one hit kills them (FR-2.7). Running
+        // back through a cleared zone should cost patience, not time.
+        if (attacker.IsPlayer && ExperienceTable.IsTrivial(attacker.Stats.Level, Stats.Level))
+        {
+            var overkill = (int)Math.Ceiling(Health.Current);
+            ApplyDamage(overkill, critical: true);
+            return new DamageResult(overkill, false, true, false, 0);
+        }
 
         var result = DamagePipeline.Resolve(request, GameSession.CombatRng);
 

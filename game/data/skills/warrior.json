@@ -6,7 +6,13 @@
       "perfect":      { "cooldown": 3.0, "damage_coef": 2.40, "note": "$skill.skl_heavy_strike.p" }
     } },
 
-  { "id": "skl_guard_stance",  "name": "$skill.skl_guard_stance.name",  "class": "warrior", "tree": "mental", "unlock_level": 3,  "mana_cost": 10, "cooldown": 10.0, "cast_type": "channel", "targeting": "self",          "radius": 0,   "damage_coef": 0.00, "hits": 0, "stagger": 0 },
+  { "id": "skl_guard_stance",  "name": "$skill.skl_guard_stance.name",  "class": "warrior", "tree": "mental", "unlock_level": 3,  "mana_cost": 10, "cooldown": 10.0, "cast_type": "channel", "targeting": "self",          "radius": 0,   "damage_coef": 0.00, "hits": 0, "stagger": 0,
+    "duration": 2.0, "magnitude": 0.70,
+    "mastery": {
+      "master":       { "magnitude": 0.78, "note": "$skill.skl_guard_stance.m" },
+      "grand_master": { "duration": 2.6,  "note": "$skill.skl_guard_stance.g" },
+      "perfect":      { "cooldown": 8.0, "magnitude": 0.85, "note": "$skill.skl_guard_stance.p" }
+    } },
 
   { "id": "skl_cleave",        "name": "$skill.skl_cleave.name",        "class": "warrior", "tree": "body",   "unlock_level": 6,  "mana_cost": 20, "cooldown": 6.0,  "cast_type": "instant", "targeting": "cone",          "radius": 3.5, "damage_coef": 1.45, "hits": 1, "stagger": 40,
     "mastery": {

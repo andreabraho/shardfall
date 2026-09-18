@@ -107,7 +107,7 @@ click-to-move lives or dies on responsiveness.
 | PRG-04 | 8 Warrior skills across the two trees | **[C]** | ✅ data + level gating; 3 are passive/self and land with their effects |
 | PRG-05 | Skill mastery accrual + rank-up mechanical changes | **[C]** | ✅ ranks change behaviour, not just numbers |
 | PRG-06 | Free respec at shrines | **[C]** | |
-| PRG-07 | Catch-up XP curve + low-level enemy floor (FR-2.7) | **[C]** | ✅ curve done; enemy floor pending |
+| PRG-07 | Catch-up XP curve + low-level enemy floor (FR-2.7) | **[C]** | ✅ |
 | PRG-08 | Skill VFX with primitives + Godot particles | **[C→You]** | You call readability |
 | PRG-09 | **Balance simulator v1** — walks the XP table, reports level-vs-zone-band deltas | **[C]** | ✅ runs in CI; found the first draft gave quests 88% of all XP |
 

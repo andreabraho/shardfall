@@ -21,6 +21,8 @@ public readonly record struct ResolvedSkill(
     double DamageCoef,
     int Hits,
     double Stagger,
+    double Duration,
+    double Magnitude,
     MasteryRank Rank)
 {
     public static ResolvedSkill For(SkillDef def, MasteryRank rank)
@@ -31,6 +33,8 @@ public readonly record struct ResolvedSkill(
         var damage = def.DamageCoef;
         var hits = Math.Max(1, def.Hits);
         var stagger = def.Stagger;
+        var duration = def.Duration;
+        var magnitude = def.Magnitude;
 
         void Apply(SkillRankDef? tier)
         {
@@ -42,6 +46,8 @@ public readonly record struct ResolvedSkill(
             damage = tier.DamageCoef ?? damage;
             hits = tier.Hits ?? hits;
             stagger = tier.Stagger ?? stagger;
+            duration = tier.Duration ?? duration;
+            magnitude = tier.Magnitude ?? magnitude;
         }
 
         if (def.Mastery is { } mastery)
@@ -51,6 +57,6 @@ public readonly record struct ResolvedSkill(
             if (rank >= MasteryRank.Perfect) Apply(mastery.Perfect);
         }
 
-        return new ResolvedSkill(def.Id, def.Targeting, radius, cooldown, mana, damage, hits, stagger, rank);
+        return new ResolvedSkill(def.Id, def.Targeting, radius, cooldown, mana, damage, hits, stagger, duration, magnitude, rank);
     }
 }

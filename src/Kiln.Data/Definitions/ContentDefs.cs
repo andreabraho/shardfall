@@ -189,6 +189,12 @@ public sealed class SkillDef : ContentDefBase
     public int Hits { get; init; } = 1;
     public double Stagger { get; init; }
 
+    /// <summary>Seconds a buff or channel lasts. Zero for instant effects.</summary>
+    public double Duration { get; init; }
+
+    /// <summary>Strength of a non-damage effect: a damage reduction, a heal fraction, a shield size.</summary>
+    public double Magnitude { get; init; }
+
     /// <summary>What each mastery rank changes, if anything.</summary>
     public SkillMasteryDef? Mastery { get; init; }
 }
@@ -217,6 +223,8 @@ public sealed class SkillRankDef
     public double? DamageCoef { get; init; }
     public int? Hits { get; init; }
     public double? Stagger { get; init; }
+    public double? Duration { get; init; }
+    public double? Magnitude { get; init; }
 
     /// <summary>Localisation key describing the change, for the skill tooltip.</summary>
     public string? Note { get; init; }
