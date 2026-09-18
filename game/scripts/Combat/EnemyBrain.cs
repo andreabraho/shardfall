@@ -51,6 +51,8 @@ public partial class EnemyBrain : CharacterBody3D
     private Vector3 _home;
     private bool _dead;
     private bool _basicChosen;
+    private bool _retreating;
+    private double _retreatBudget;
 
     [Export] public string EnemyId { get; set; } = "mob_corrupted_wolf";
 
@@ -61,6 +63,15 @@ public partial class EnemyBrain : CharacterBody3D
     [Export] public double RecoverSeconds { get; set; } = 0.8;
     [Export] public float MeleeArc { get; set; } = 110f;
     [Export] public float Gravity { get; set; } = 24f;
+
+    /// <summary>Seconds of continuous backing-off allowed before a ranged role must stand and fight.</summary>
+    [Export] public double RetreatSeconds { get; set; } = 1.2;
+
+    /// <summary>How far from its spawn a ranged role will back off. Far tighter than the aggro leash.</summary>
+    [Export] public float RetreatTether { get; set; } = 10f;
+
+    /// <summary>Seconds of budget regained per second while not retreating.</summary>
+    [Export] public double RetreatRefillRate { get; set; } = 0.5;
 
     public Combatant Self { get; private set; } = null!;
     public EnemyRole Role { get; private set; } = EnemyRole.Bruiser;
@@ -93,6 +104,7 @@ public partial class EnemyBrain : CharacterBody3D
 
         LoadDefinition();
         _tree = RoleTrees.Build(Role);
+        _retreatBudget = RetreatSeconds;
 
         Self.Damaged += OnDamaged;
         Self.Died += OnDied;
@@ -184,7 +196,16 @@ public partial class EnemyBrain : CharacterBody3D
         }
 
         RefreshTarget();
+
+        _retreating = false;
         _tree?.Tick(this, delta);
+
+        // The budget only refills while standing its ground, so an archer that keeps being
+        // chased keeps fighting instead of edging away a little more every second.
+        if (!_retreating)
+        {
+            _retreatBudget = System.Math.Min(_retreatBudget + (delta * RetreatRefillRate), RetreatSeconds);
+        }
 
         ApplyGravity(delta);
         MoveAndSlide();
@@ -272,22 +293,33 @@ public partial class EnemyBrain : CharacterBody3D
     }
 
     /// <summary>
-    /// Backs away from the target. How ranged roles keep their distance instead of walking
-    /// into melee, which is what makes them a distinct threat rather than a slower bruiser.
+    /// Backs away from the target, but only so far.
+    /// <para>
+    /// Ranged roles are slower than the player, so "retreat while too close" never resolves
+    /// while being chased — the enemy simply walks backwards to the edge of the map. Two
+    /// limits stop that: a time budget per attempt, and a tether to where it started. When
+    /// either runs out this fails and the tree falls through to attacking, so closing the
+    /// distance is rewarded with the archer forced to stand and fight.
+    /// </para>
     /// </summary>
     public BtStatus Retreat(double delta)
     {
         if (Target is null) return BtStatus.Failure;
 
-        var away = (GlobalPosition - Target.GlobalPosition) with { Y = 0 };
-        if (away.LengthSquared() < 0.0001f) return BtStatus.Failure;
+        if (_retreatBudget <= 0) return BtStatus.Failure;
 
-        // Stop backing up at the leash, or a kiter walks itself out of the encounter.
-        if (!WithinLeash)
+        if (GlobalPosition.DistanceTo(_home) > RetreatTether)
         {
+            _retreatBudget = 0;
             Brake(delta);
             return BtStatus.Failure;
         }
+
+        var away = (GlobalPosition - Target.GlobalPosition) with { Y = 0 };
+        if (away.LengthSquared() < 0.0001f) return BtStatus.Failure;
+
+        _retreating = true;
+        _retreatBudget -= delta;
 
         Steer(away, delta);
         return BtStatus.Running;
