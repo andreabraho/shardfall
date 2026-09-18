@@ -30,8 +30,9 @@
     "stats": { "hp": 420, "attack_power": 66, "defense": 28, "move_speed": 4.8 },
     "stagger_pool": 60,
     "abilities": [
-      { "id": "abl_arrow_shot",  "cooldown": 2.0, "windup": 0.80, "damage_coef": 1.10 },
-      { "id": "abl_arrow_volley","cooldown": 9.0, "windup": 1.60, "damage_coef": 1.40,
+      { "id": "abl_arrow_shot",  "cooldown": 2.0, "windup": 0.80, "damage_coef": 1.10, "range": 12.0 },
+      { "id": "abl_arrow_volley","cooldown": 9.0, "windup": 1.60, "damage_coef": 1.40, "range": 11.0,
+        "placement": "target",
         "telegraph": { "shape": "circle", "radius": 2.8 } }
     ],
     "ai": "bt_ranged_kiter",
@@ -74,7 +75,7 @@
     "stagger_pool": 45,
     "abilities": [
       { "id": "abl_mend_ally",  "cooldown": 8.0, "windup": 1.40, "damage_coef": 0.00 },
-      { "id": "abl_rot_bolt",   "cooldown": 3.0, "windup": 0.85, "damage_coef": 0.90 }
+      { "id": "abl_rot_bolt",   "cooldown": 3.0, "windup": 0.85, "damage_coef": 0.90, "range": 10.0 }
     ],
     "ai": "bt_support_healer",
     "aggro_radius": 14,

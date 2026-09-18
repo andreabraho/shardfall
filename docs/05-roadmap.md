@@ -81,8 +81,8 @@ click-to-move lives or dies on responsiveness.
 | CBT-03 | Click-to-attack: target acquisition, approach, auto-attack chain, retarget rules | **[C]** | |
 | CBT-04 | Attack timing model: wind-up / active / recovery, commit windows (FR-3.3) | **[C]** | |
 | CBT-05 | Threat/aggro system with leash and de-aggro | **[C]** | |
-| CBT-06 | Behaviour-tree AI framework + idle/patrol/chase/attack/reposition/flee | **[C]** | |
-| CBT-07 | The 5 enemy roles (Bruiser, Archer, Shielder, Mender, Bomber) as data + behaviours | **[C]** | The tactical layer from redesign §2.4 |
+| CBT-06 | Behaviour-tree AI framework + idle/patrol/chase/attack/reposition/flee | **[C]** | ✅ framework in Core, unit-tested; patrol pending |
+| CBT-07 | The 5 enemy roles (Bruiser, Archer, Shielder, Mender, Bomber) as data + behaviours | **[C]** | ✅ The tactical layer from redesign §2.4 |
 | CBT-08 | Telegraph system: ground decals with fill animation, shape library (circle/cone/line), colourblind-safe shapes | **[C]** | ✅ circle + cone; line and colourblind shapes pending |
 | CBT-09 | Status effects: poison, bleed, stun, slow, weaken, vulnerability + stacking rules | **[C]** | |
 | CBT-10 | Per-class defensive ability framework + Warrior Guard Stance | **[C]** | ✅ |

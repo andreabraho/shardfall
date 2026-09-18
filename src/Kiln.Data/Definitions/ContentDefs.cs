@@ -120,6 +120,20 @@ public sealed class AbilityDef
     public TelegraphDef? Telegraph { get; init; }
 
     public double DamageCoef { get; init; }
+
+    /// <summary>
+    /// Distance at which the ability can be used. Zero falls back to the enemy's melee
+    /// reach, or the telegraph radius when it has one.
+    /// <para>
+    /// Kept separate from the telegraph radius because for a ranged placed attack the two
+    /// are different things: an archer's volley is thrown eleven metres and explodes across
+    /// three. Conflating them makes ranged roles unable to attack at all.
+    /// </para>
+    /// </summary>
+    public double Range { get; init; }
+
+    /// <summary>"self" centres the telegraph on the caster; "target" places it on the victim.</summary>
+    public string Placement { get; init; } = "self";
 }
 
 /// <summary>

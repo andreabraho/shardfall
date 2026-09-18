@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Godot;
+using Kiln.Core.Ai;
 using Kiln.Core.Foundation;
 using Kiln.Data.Definitions;
 using Kiln.Game.Foundation;
@@ -8,27 +9,23 @@ using Kiln.Game.Visual;
 namespace Kiln.Game.Combat;
 
 /// <summary>
-/// Enemy AI for the Phase 2 combat slice: idle → chase → wind-up → strike → recover, with
-/// aggro, a leash, and per-ability cooldowns (CBT-04/05/08).
+/// An enemy. Movement, attacking and perception live here as primitives; what to do with
+/// them is decided by a behaviour tree chosen from the definition's role (CBT-06/07).
 /// </summary>
 /// <remarks>
-/// A readable state machine on purpose. The behaviour-tree framework arrives with CBT-06/07
-/// when five roles need to share behaviour; building it for one melee chaser would be
-/// scaffolding with nothing to hold up. The attack timing model here — commit on wind-up,
-/// resolve against the telegraphed shape — is the real content, and it carries over.
+/// The split matters: five roles share chase, leash and attack, and differ in a handful of
+/// branches. Composing trees from shared primitives is what stops ~55 enemies at v1.0 from
+/// becoming fifty-five near-identical state machines.
 /// </remarks>
 public partial class EnemyBrain : CharacterBody3D
 {
-    private enum State
+    private enum Phase
     {
         Idle,
-        Chase,
         Windup,
         Recover,
-        Dead,
     }
 
-    /// <summary>Fallback when a definition has no abilities at all.</summary>
     private static readonly AbilityDef DefaultMelee = new()
     {
         Id = "abl_default_melee",
@@ -38,49 +35,56 @@ public partial class EnemyBrain : CharacterBody3D
     };
 
     private NavigationAgent3D _agent = null!;
-    private Combatant _combatant = null!;
     private Node3D? _visual;
     private HealthBar3D? _bar;
     private TelegraphVisual? _telegraph;
 
     private readonly Dictionary<string, double> _abilityCooldowns = new(System.StringComparer.Ordinal);
-    private AbilityDef[] _abilities = [DefaultMelee];
+    private readonly List<Combatant> _shielded = [];
 
-    private Node3D? _target;
-    private Combatant? _targetCombatant;
-    private State _state = State.Idle;
-    private Vector3 _home;
-    private double _timer;
+    private BtNode<EnemyBrain>? _tree;
+    private Phase _phase = Phase.Idle;
+    private double _phaseTimer;
+    private AbilityDef? _activeAbility;
     private Vector3 _committedFacing;
-    private AbilityDef? _current;
+    private Vector3 _telegraphCenter;
+    private Vector3 _home;
+    private bool _dead;
+    private bool _basicChosen;
 
     [Export] public string EnemyId { get; set; } = "mob_corrupted_wolf";
 
     [Export] public float AggroRadius { get; set; } = 12f;
     [Export] public float LeashRadius { get; set; } = 35f;
-
-    /// <summary>Reach of an untelegraphed melee swing.</summary>
     [Export] public float AttackRange { get; set; } = 2.2f;
-
     [Export] public float MoveSpeed { get; set; } = 4.5f;
-
-    /// <summary>Recovery after striking — the player's window to punish.</summary>
     [Export] public double RecoverSeconds { get; set; } = 0.8;
-
-    /// <summary>Spread of an untelegraphed melee swing, in degrees.</summary>
     [Export] public float MeleeArc { get; set; } = 110f;
-
     [Export] public float Gravity { get; set; } = 24f;
+
+    public Combatant Self { get; private set; } = null!;
+    public EnemyRole Role { get; private set; } = EnemyRole.Bruiser;
+    public Node3D? Target { get; private set; }
+    public Combatant? TargetCombatant { get; private set; }
+    public AbilityDef[] Abilities { get; private set; } = [DefaultMelee];
+
+    /// <summary>First ability with a telegraph — the interesting one.</summary>
+    public AbilityDef? SpecialAbility { get; private set; }
+
+    /// <summary>First untelegraphed ability, used as the filler swing.</summary>
+    public AbilityDef BasicAbility { get; private set; } = DefaultMelee;
+
+    public bool IsDead => _dead;
 
     public override void _Ready()
     {
         _agent = GetNode<NavigationAgent3D>("NavigationAgent3D");
-        _combatant = GetNode<Combatant>("Combatant");
+        Self = GetNode<Combatant>("Combatant");
         _visual = GetNodeOrNull<Node3D>("VisualRoot");
         _bar = GetNodeOrNull<HealthBar3D>("HealthBar3D");
 
         _telegraph = new TelegraphVisual { Name = "Telegraph" };
-        AddChild(_telegraph);
+        CallDeferred(Node.MethodName.AddChild, _telegraph);
 
         _home = GlobalPosition;
         _agent.PathDesiredDistance = 0.5f;
@@ -88,10 +92,11 @@ public partial class EnemyBrain : CharacterBody3D
         _agent.AvoidanceEnabled = false;
 
         LoadDefinition();
+        _tree = RoleTrees.Build(Role);
 
-        _combatant.Damaged += OnDamaged;
-        _combatant.Died += OnDied;
-        _combatant.HealthChanged += f => _bar?.SetFraction(f);
+        Self.Damaged += OnDamaged;
+        Self.Died += OnDied;
+        Self.HealthChanged += f => _bar?.SetFraction(f);
     }
 
     private void LoadDefinition()
@@ -102,13 +107,31 @@ public partial class EnemyBrain : CharacterBody3D
             return;
         }
 
-        _combatant.ConfigureFromEnemy(def);
+        Self.ConfigureFromEnemy(def);
 
+        Role = def.Role;
         AggroRadius = (float)def.AggroRadius;
         LeashRadius = (float)def.LeashRadius;
         MoveSpeed = (float)def.Stats.MoveSpeed;
 
-        if (def.Abilities.Length > 0) _abilities = def.Abilities;
+        if (def.Abilities.Length > 0) Abilities = def.Abilities;
+
+        foreach (var ability in Abilities)
+        {
+            if (ability.Telegraph is not null)
+            {
+                SpecialAbility ??= ability;
+                continue;
+            }
+
+            // Skip zero-damage utility abilities: a support caster whose "basic attack"
+            // is its buff would stand there dealing nothing.
+            if (ability.DamageCoef > 0 && !_basicChosen)
+            {
+                BasicAbility = ability;
+                _basicChosen = true;
+            }
+        }
 
         if (_visual is VisualRoot root && !string.IsNullOrEmpty(def.Visual))
         {
@@ -116,21 +139,24 @@ public partial class EnemyBrain : CharacterBody3D
         }
     }
 
+    // -- Signals ------------------------------------------------------------
+
     private void OnDamaged(int amount, bool critical, bool evaded)
     {
-        var at = GlobalPosition + (Vector3.Up * 1.6f);
-        CombatFeedback.Number(at, amount, critical, evaded);
+        CombatFeedback.Number(GlobalPosition + (Vector3.Up * 1.6f), amount, critical, evaded);
 
         if (!evaded) CombatFeedback.HitStop(critical ? 0.075 : 0.04);
 
-        if (_state == State.Idle) AcquireTarget(force: true);
+        // Being hit pulls an enemy into the fight from outside aggro range.
+        if (Target is null) AcquireTarget(force: true);
     }
 
     private void OnDied()
     {
-        _state = State.Dead;
+        _dead = true;
         Velocity = Vector3.Zero;
         _telegraph?.Cancel();
+        ReleaseShields();
 
         if (_bar is not null) _bar.Visible = false;
 
@@ -139,52 +165,26 @@ public partial class EnemyBrain : CharacterBody3D
         tween.TweenCallback(Callable.From(QueueFree));
     }
 
+    // -- Main loop ----------------------------------------------------------
+
     public override void _PhysicsProcess(double delta)
     {
-        if (_state == State.Dead) return;
+        if (_dead) return;
 
         TickCooldowns(delta);
 
-        if (_combatant.Statuses.IsStunned)
+        if (Self.Statuses.IsStunned)
         {
-            // A stun interrupts a wind-up: the telegraph must go, or the player is warned
-            // of an attack that will never arrive.
-            if (_state == State.Windup)
-            {
-                _telegraph?.Cancel();
-                _state = State.Chase;
-            }
-
-            Velocity = Velocity with { X = 0, Z = 0 };
+            // A stun cancels a wind-up, or the player is warned of an attack that never lands.
+            CancelAbility();
+            Brake(delta);
+            ApplyGravity(delta);
             MoveAndSlide();
             return;
         }
 
-        switch (_state)
-        {
-            case State.Idle:
-                AcquireTarget(force: false);
-                Brake(delta);
-                break;
-
-            case State.Chase:
-                Chase(delta);
-                break;
-
-            case State.Windup:
-                // Committed: no rotation, no movement (FR-3.3). This is what makes the
-                // wind-up a real opening rather than a tracking laser.
-                Brake(delta);
-                _timer -= delta;
-                if (_timer <= 0) Strike();
-                break;
-
-            case State.Recover:
-                Brake(delta);
-                _timer -= delta;
-                if (_timer <= 0) _state = State.Chase;
-                break;
-        }
+        RefreshTarget();
+        _tree?.Tick(this, delta);
 
         ApplyGravity(delta);
         MoveAndSlide();
@@ -200,104 +200,185 @@ public partial class EnemyBrain : CharacterBody3D
         }
     }
 
-    private bool Ready(AbilityDef ability) =>
-        !_abilityCooldowns.TryGetValue(ability.Id, out var cd) || cd <= 0;
-
-    /// <summary>Effective reach: a telegraphed ability reaches as far as its shape.</summary>
-    private float RangeOf(AbilityDef ability) =>
-        ability.Telegraph is { } tel ? (float)tel.Radius : AttackRange;
-
-    /// <summary>
-    /// Picks what to cast. Telegraphed abilities are preferred when available, because they
-    /// are the interesting ones — the basic swing is the filler between them.
-    /// </summary>
-    private AbilityDef? ChooseAbility(float distance)
+    private void RefreshTarget()
     {
-        AbilityDef? fallback = null;
+        if (TargetCombatant is { IsAlive: true }) return;
 
-        foreach (var ability in _abilities)
-        {
-            if (!Ready(ability) || distance > RangeOf(ability)) continue;
-
-            if (ability.Telegraph is not null) return ability;
-            fallback ??= ability;
-        }
-
-        return fallback;
+        Target = null;
+        TargetCombatant = null;
+        AcquireTarget(force: false);
     }
 
     private void AcquireTarget(bool force)
     {
         if (GetTree().GetFirstNodeInGroup("player") is not Node3D player) return;
 
-        var distance = GlobalPosition.DistanceTo(player.GlobalPosition);
-        if (!force && distance > AggroRadius) return;
+        if (!force && GlobalPosition.DistanceTo(player.GlobalPosition) > AggroRadius) return;
 
-        _target = player;
-        _targetCombatant = player.GetNodeOrNull<Combatant>("Combatant");
-        _state = State.Chase;
+        Target = player;
+        TargetCombatant = player.GetNodeOrNull<Combatant>("Combatant");
     }
 
-    private void Chase(double delta)
+    // -- Conditions the trees read -----------------------------------------
+
+    public bool HasLivingTarget => TargetCombatant is { IsAlive: true };
+
+    public float DistanceToTarget =>
+        Target is null ? float.MaxValue : GlobalPosition.DistanceTo(Target.GlobalPosition);
+
+    public bool WithinLeash => GlobalPosition.DistanceTo(_home) <= LeashRadius;
+
+    public bool AbilityReady(AbilityDef? ability) =>
+        ability is not null && (!_abilityCooldowns.TryGetValue(ability.Id, out var cd) || cd <= 0);
+
+    public float RangeOf(AbilityDef ability)
     {
-        if (_target is null || _targetCombatant is null || !_targetCombatant.IsAlive)
-        {
-            _state = State.Idle;
-            _target = null;
-            return;
-        }
+        if (ability.Range > 0) return (float)ability.Range;
 
-        // Leash on distance from home, not from the player, so an enemy cannot be dragged
-        // across the map indefinitely.
-        if (GlobalPosition.DistanceTo(_home) > LeashRadius)
-        {
-            _target = null;
-            _state = State.Idle;
-            _agent.TargetPosition = _home;
-            return;
-        }
+        return ability.Telegraph is { } tel ? (float)tel.Radius : AttackRange;
+    }
 
-        var distance = GlobalPosition.DistanceTo(_target.GlobalPosition);
-        var ability = ChooseAbility(distance);
+    /// <summary>True when the ability is used from beyond melee, so it needs a projectile.</summary>
+    private bool IsRanged(AbilityDef ability) => RangeOf(ability) > AttackRange + 0.5f;
 
-        if (ability is not null)
-        {
-            BeginWindup(ability);
-            return;
-        }
+    public bool InRangeOf(AbilityDef? ability) =>
+        ability is not null && DistanceToTarget <= RangeOf(ability);
 
-        _agent.TargetPosition = _target.GlobalPosition;
+    /// <summary>Living allies within the radius, excluding this one.</summary>
+    public List<Combatant> Allies(float radius)
+    {
+        var found = AreaQuery.Sphere(this, GlobalPosition, radius, Layers.Enemy);
+        found.Remove(Self);
+        return found;
+    }
+
+    // -- Actions the trees call --------------------------------------------
+
+    /// <summary>Walks toward the target. Always Running: chasing has no natural end.</summary>
+    public BtStatus Chase(double delta)
+    {
+        if (Target is null) return BtStatus.Failure;
+
+        _agent.TargetPosition = Target.GlobalPosition;
 
         if (_agent.IsNavigationFinished())
         {
             Brake(delta);
-            return;
+            return BtStatus.Running;
         }
 
-        var next = _agent.GetNextPathPosition();
-        var direction = (next - GlobalPosition) with { Y = 0 };
+        Steer((_agent.GetNextPathPosition() - GlobalPosition) with { Y = 0 }, delta);
+        return BtStatus.Running;
+    }
 
-        if (direction.LengthSquared() > 0.0001f)
+    /// <summary>
+    /// Backs away from the target. How ranged roles keep their distance instead of walking
+    /// into melee, which is what makes them a distinct threat rather than a slower bruiser.
+    /// </summary>
+    public BtStatus Retreat(double delta)
+    {
+        if (Target is null) return BtStatus.Failure;
+
+        var away = (GlobalPosition - Target.GlobalPosition) with { Y = 0 };
+        if (away.LengthSquared() < 0.0001f) return BtStatus.Failure;
+
+        // Stop backing up at the leash, or a kiter walks itself out of the encounter.
+        if (!WithinLeash)
         {
-            direction = direction.Normalized();
-            var speed = (float)(MoveSpeed * _combatant.Statuses.MoveSpeedMultiplier);
-            Velocity = Velocity with { X = direction.X * speed, Z = direction.Z * speed };
-            Face(direction, delta);
+            Brake(delta);
+            return BtStatus.Failure;
         }
+
+        Steer(away, delta);
+        return BtStatus.Running;
+    }
+
+    public BtStatus Idle(double delta)
+    {
+        Brake(delta);
+        return BtStatus.Running;
+    }
+
+    /// <summary>Walks home after losing the target.</summary>
+    public BtStatus ReturnHome(double delta)
+    {
+        if (GlobalPosition.DistanceTo(_home) < 1.0f)
+        {
+            Brake(delta);
+            return BtStatus.Success;
+        }
+
+        _agent.TargetPosition = _home;
+
+        if (_agent.IsNavigationFinished())
+        {
+            Brake(delta);
+            return BtStatus.Success;
+        }
+
+        Steer((_agent.GetNextPathPosition() - GlobalPosition) with { Y = 0 }, delta);
+        return BtStatus.Running;
+    }
+
+    /// <summary>
+    /// Runs an ability through wind-up, strike and recovery. Running until finished, so a
+    /// tree branch owns the enemy for the whole commitment.
+    /// </summary>
+    public BtStatus UseAbility(AbilityDef? ability, double delta)
+    {
+        if (ability is null || !HasLivingTarget) return BtStatus.Failure;
+
+        switch (_phase)
+        {
+            case Phase.Idle:
+                if (!AbilityReady(ability) || !InRangeOf(ability)) return BtStatus.Failure;
+                BeginWindup(ability);
+                return BtStatus.Running;
+
+            case Phase.Windup:
+                Brake(delta);
+                _phaseTimer -= delta;
+
+                if (_phaseTimer > 0) return BtStatus.Running;
+
+                Strike();
+                return BtStatus.Running;
+
+            case Phase.Recover:
+                Brake(delta);
+                _phaseTimer -= delta;
+
+                if (_phaseTimer > 0) return BtStatus.Running;
+
+                _phase = Phase.Idle;
+                return BtStatus.Success;
+
+            default:
+                return BtStatus.Failure;
+        }
+    }
+
+    public void CancelAbility()
+    {
+        if (_phase == Phase.Idle) return;
+
+        _telegraph?.Cancel();
+        _phase = Phase.Idle;
+        _activeAbility = null;
     }
 
     private void BeginWindup(AbilityDef ability)
     {
-        _current = ability;
-        _state = State.Windup;
+        _activeAbility = ability;
+        _phase = Phase.Windup;
 
-        // Difficulty stretches or compresses the reaction window (doc 02 §1). The content
-        // validator guarantees this stays long enough to walk out of at every tier.
-        _timer = ability.Windup * GameSession.Difficulty.TelegraphScale;
+        // Difficulty stretches the reaction window (doc 02 §1); the content validator
+        // guarantees it stays escapable at every tier.
+        _phaseTimer = ability.Windup * GameSession.Difficulty.TelegraphScale;
 
-        if (_target is not null)
+        if (Target is not null)
         {
-            _committedFacing = (_target.GlobalPosition - GlobalPosition) with { Y = 0 };
+            _committedFacing = (Target.GlobalPosition - GlobalPosition) with { Y = 0 };
 
             if (_committedFacing.LengthSquared() > 0.0001f)
             {
@@ -306,42 +387,61 @@ public partial class EnemyBrain : CharacterBody3D
             }
         }
 
+        // A placed attack is committed to where the player stood at wind-up, not where they
+        // end up. That is what makes walking out of it work.
+        _telegraphCenter = ability.Placement == "target" && Target is not null
+            ? Target.GlobalPosition
+            : GlobalPosition;
+
         if (ability.Telegraph is { } tel && _telegraph is not null)
         {
             _telegraph.Begin(
                 tel.Shape,
-                GlobalPosition,
+                _telegraphCenter,
                 _committedFacing,
                 (float)tel.Radius,
                 (float)(tel.Angle > 0 ? tel.Angle : 90),
-                _timer);
+                _phaseTimer);
         }
     }
 
     private void Strike()
     {
-        var ability = _current ?? DefaultMelee;
+        var ability = _activeAbility ?? DefaultMelee;
 
-        _state = State.Recover;
-        _timer = RecoverSeconds;
+        _phase = Phase.Recover;
+        _phaseTimer = RecoverSeconds;
         _abilityCooldowns[ability.Id] = ability.Cooldown;
         _telegraph?.Cancel();
-        _current = null;
+        _activeAbility = null;
 
-        if (_targetCombatant is null || !_targetCombatant.IsAlive) return;
+        if (TargetCombatant is null || !TargetCombatant.IsAlive) return;
 
-        // Resolve against the telegraphed shape, evaluated now. Walking out has to work —
-        // that is the entire skill expression the design rests on (doc 02 §2.1).
+        // An untelegraphed attack from beyond melee launches a shot instead of resolving
+        // instantly, so the player can still break line of sight or step aside.
+        if (ability.Telegraph is null && IsRanged(ability))
+        {
+            Projectile.Spawn(
+                GetParent(),
+                Self,
+                GlobalPosition + (Vector3.Up * 1.2f),
+                TargetCombatant.Body.GlobalPosition + (Vector3.Up * 1.0f),
+                ability.DamageCoef,
+                Layers.Player);
+
+            return;
+        }
+
         List<Combatant> hits;
 
         if (ability.Telegraph is { } tel)
         {
             hits = tel.Shape == TelegraphShape.Cone
-                ? AreaQuery.Cone(this, GlobalPosition, _committedFacing, (float)tel.Radius,
+                ? AreaQuery.Cone(this, _telegraphCenter, _committedFacing, (float)tel.Radius,
                     (float)(tel.Angle > 0 ? tel.Angle : 90), Layers.Player)
-                : AreaQuery.Sphere(this, GlobalPosition, (float)tel.Radius, Layers.Player);
+                : AreaQuery.Sphere(this, _telegraphCenter, (float)tel.Radius, Layers.Player);
 
-            AoeVisual.Circle(GlobalPosition, (float)tel.Radius, hostile: true);
+            AoeVisual.Circle(_telegraphCenter, (float)tel.Radius, hostile: true);
         }
         else
         {
@@ -350,14 +450,117 @@ public partial class EnemyBrain : CharacterBody3D
 
         foreach (var victim in hits)
         {
-            victim.TakeAttack(_combatant, skillCoef: ability.DamageCoef);
+            victim.TakeAttack(Self, skillCoef: ability.DamageCoef);
         }
+    }
+
+    // -- Role-specific actions ---------------------------------------------
+
+    /// <summary>
+    /// Shielder aura: allies nearby take reduced damage while this one lives.
+    /// <para>
+    /// An aura rather than a timed buff on purpose — it makes the counterplay legible.
+    /// Kill the shielder and the protection ends immediately, which is exactly the
+    /// kill-priority decision the role exists to create (doc 02 §2.4).
+    /// </para>
+    /// </summary>
+    public BtStatus MaintainShield(float radius, double delta)
+    {
+        var nearby = Allies(radius);
+
+        for (var i = _shielded.Count - 1; i >= 0; i--)
+        {
+            var ally = _shielded[i];
+
+            if (!IsInstanceValid(ally) || !nearby.Contains(ally))
+            {
+                if (IsInstanceValid(ally)) ally.IncomingDamageMultiplier = 1.0;
+                _shielded.RemoveAt(i);
+            }
+        }
+
+        foreach (var ally in nearby)
+        {
+            ally.IncomingDamageMultiplier = ShieldMultiplier;
+
+            if (!_shielded.Contains(ally)) _shielded.Add(ally);
+        }
+
+        return nearby.Count > 0 ? BtStatus.Success : BtStatus.Failure;
+    }
+
+    public const double ShieldMultiplier = 0.55;
+
+    private void ReleaseShields()
+    {
+        foreach (var ally in _shielded)
+        {
+            if (IsInstanceValid(ally)) ally.IncomingDamageMultiplier = 1.0;
+        }
+
+        _shielded.Clear();
+    }
+
+    /// <summary>Mender: heals the most wounded ally in radius.</summary>
+    public BtStatus HealLowestAlly(float radius, double fraction)
+    {
+        Combatant? worst = null;
+
+        foreach (var ally in Allies(radius))
+        {
+            if (ally.Health.IsFull) continue;
+            if (worst is null || ally.Health.Fraction < worst.Health.Fraction) worst = ally;
+        }
+
+        if (worst is null) return BtStatus.Failure;
+
+        var amount = (int)System.Math.Round(worst.Stats.MaxHp * fraction);
+        worst.Heal(amount);
+
+        // Shown in the friendly colour so the player can see the heal land and learn to
+        // kill the mender first.
+        AoeVisual.Circle(worst.Body.GlobalPosition, 1.4f);
+        CombatFeedback.Number(worst.Body.GlobalPosition + (Vector3.Up * 1.8f), amount, false, false);
+
+        return BtStatus.Success;
+    }
+
+    /// <summary>Bomber: detonate and die. A one-shot threat that must be pulled away from the pack.</summary>
+    public BtStatus Detonate(double delta)
+    {
+        var ability = SpecialAbility;
+        if (ability is null) return BtStatus.Failure;
+
+        var status = UseAbility(ability, delta);
+
+        if (status == BtStatus.Success)
+        {
+            Self.ApplyDamage((int)System.Math.Ceiling(Self.Health.Current));
+        }
+
+        return status;
+    }
+
+    // -- Movement helpers ---------------------------------------------------
+
+    private void Steer(Vector3 direction, double delta)
+    {
+        if (direction.LengthSquared() < 0.0001f)
+        {
+            Brake(delta);
+            return;
+        }
+
+        direction = direction.Normalized();
+        var speed = (float)(MoveSpeed * Self.Statuses.MoveSpeedMultiplier);
+
+        Velocity = Velocity with { X = direction.X * speed, Z = direction.Z * speed };
+        Face(direction, delta);
     }
 
     private void Brake(double delta)
     {
-        var horizontal = Velocity with { Y = 0 };
-        horizontal = horizontal.MoveToward(Vector3.Zero, 40f * (float)delta);
+        var horizontal = (Velocity with { Y = 0 }).MoveToward(Vector3.Zero, 40f * (float)delta);
         Velocity = Velocity with { X = horizontal.X, Z = horizontal.Z };
     }
 
