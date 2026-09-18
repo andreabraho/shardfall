@@ -21,7 +21,29 @@ public partial class CombatFeedback : Node3D
     private double _hitStopRemaining;
 
     /// <summary>How long a number lives.</summary>
-    [Export] public double Lifetime { get; set; } = 0.75;
+    [Export] public double Lifetime { get; set; } = 0.6;
+
+    /// <summary>
+    /// World size per font pixel. This is the knob that actually controls how big numbers
+    /// look — font size alone does not, because Label3D multiplies the two.
+    /// </summary>
+    [Export] public float PixelSize { get; set; } = 0.0075f;
+
+    [Export] public int NormalFontSize { get; set; } = 32;
+    [Export] public int CritFontSize { get; set; } = 42;
+    [Export] public int OutlineSize { get; set; } = 5;
+
+    /// <summary>How far a number drifts upward before expiring.</summary>
+    [Export] public float RiseHeight { get; set; } = 1.1f;
+
+    /// <summary>Sideways scatter, so a fast chain does not stack into an unreadable column.</summary>
+    [Export] public float Scatter { get; set; } = 0.45f;
+
+    /// <summary>
+    /// Hard cap on numbers on screen at once. Beyond this the oldest is recycled: past a
+    /// dozen the numbers stop being information and become an obstacle.
+    /// </summary>
+    [Export] public int MaxActive { get; set; } = 14;
 
     [Export] public Color NormalColor { get; set; } = new(1f, 0.95f, 0.85f);
     [Export] public Color CritColor { get; set; } = new(1f, 0.72f, 0.25f);
@@ -60,6 +82,15 @@ public partial class CombatFeedback : Node3D
 
     private void Spawn(Vector3 worldPosition, int amount, bool critical, bool evaded, bool onPlayer)
     {
+        // Recycle the oldest rather than letting numbers pile up over the fight.
+        while (_active.Count >= MaxActive)
+        {
+            var (oldest, _, _, _) = _active[0];
+            oldest.Visible = false;
+            _pool.Add(oldest);
+            _active.RemoveAt(0);
+        }
+
         var label = Rent();
 
         label.Text = evaded ? "miss" : amount.ToString(System.Globalization.CultureInfo.InvariantCulture);
@@ -67,15 +98,16 @@ public partial class CombatFeedback : Node3D
             ? new Color(0.75f, 0.78f, 0.82f)
             : onPlayer ? PlayerHurtColor : critical ? CritColor : NormalColor;
 
-        label.FontSize = critical ? 84 : 56;
+        label.PixelSize = PixelSize;
+        label.OutlineSize = OutlineSize;
+        label.FontSize = critical ? CritFontSize : NormalFontSize;
         label.GlobalPosition = worldPosition;
         label.Visible = true;
 
-        // Scatter sideways so a rapid chain does not stack into an unreadable column.
         var drift = new Vector3(
-            (float)GD.RandRange(-0.7, 0.7),
-            (float)GD.RandRange(1.6, 2.2),
-            (float)GD.RandRange(-0.7, 0.7));
+            (float)GD.RandRange(-Scatter, Scatter),
+            RiseHeight * (float)GD.RandRange(0.85, 1.15),
+            (float)GD.RandRange(-Scatter, Scatter));
 
         _active.Add((label, 0, worldPosition, drift));
     }
@@ -93,8 +125,10 @@ public partial class CombatFeedback : Node3D
         {
             Billboard = BaseMaterial3D.BillboardModeEnum.Enabled,
             NoDepthTest = true,
-            FixedSize = true,
-            OutlineSize = 12,
+            // FixedSize would hold the same screen size at every zoom, so numbers grow
+            // relatively larger the further you pull the camera out and swamp the view.
+            // Scaling with distance keeps them part of the scene.
+            FixedSize = false,
             OutlineModulate = new Color(0, 0, 0, 0.85f),
             RenderPriority = 10,
         };
