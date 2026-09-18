@@ -35,7 +35,7 @@ public static class RoleTrees
     /// <summary>Shared preamble: no target, or dragged too far, means go home.</summary>
     private static BtNode<EnemyBrain> Disengage() =>
         new BtSequence<EnemyBrain>(
-            new BtCondition<EnemyBrain>(b => !b.HasLivingTarget || !b.WithinLeash),
+            new BtCondition<EnemyBrain>(b => b.ShouldDisengage),
             new BtAction<EnemyBrain>((b, d) => b.ReturnHome(d)));
 
     /// <summary>Attack with the special if it is ready, otherwise the basic swing.</summary>

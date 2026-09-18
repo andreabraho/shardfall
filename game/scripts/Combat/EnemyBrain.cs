@@ -53,6 +53,7 @@ public partial class EnemyBrain : CharacterBody3D
     private bool _basicChosen;
     private bool _retreating;
     private double _retreatBudget;
+    private bool _returning;
 
     [Export] public string EnemyId { get; set; } = "mob_corrupted_wolf";
 
@@ -159,7 +160,8 @@ public partial class EnemyBrain : CharacterBody3D
 
         if (!evaded) CombatFeedback.HitStop(critical ? 0.075 : 0.04);
 
-        // Being hit pulls an enemy into the fight from outside aggro range.
+        // Being hit pulls an enemy into the fight from outside aggro range — but not while
+        // it is walking home, or chasing and poking a leashing enemy restarts the fight.
         if (Target is null) AcquireTarget(force: true);
     }
 
@@ -223,15 +225,37 @@ public partial class EnemyBrain : CharacterBody3D
 
     private void RefreshTarget()
     {
-        if (TargetCombatant is { IsAlive: true }) return;
+        // Crossing the leash gives up for good, rather than being re-evaluated each frame.
+        // Without the latch the enemy oscillates on the boundary: step out, turn for home,
+        // step back inside, charge again.
+        if (!_returning && Target is not null && !WithinLeash)
+        {
+            BeginReturn();
+            return;
+        }
+
+        if (_returning || TargetCombatant is { IsAlive: true }) return;
 
         Target = null;
         TargetCombatant = null;
         AcquireTarget(force: false);
     }
 
+    private void BeginReturn()
+    {
+        _returning = true;
+        Target = null;
+        TargetCombatant = null;
+        CancelAbility();
+        ReleaseShields();
+    }
+
     private void AcquireTarget(bool force)
     {
+        // Deaf while walking home. Otherwise chasing a leashing enemy re-aggros it a metre
+        // outside its tether and it simply turns round again.
+        if (_returning) return;
+
         if (GetTree().GetFirstNodeInGroup("player") is not Node3D player) return;
 
         if (!force && GlobalPosition.DistanceTo(player.GlobalPosition) > AggroRadius) return;
@@ -243,6 +267,12 @@ public partial class EnemyBrain : CharacterBody3D
     // -- Conditions the trees read -----------------------------------------
 
     public bool HasLivingTarget => TargetCombatant is { IsAlive: true };
+
+    /// <summary>True while walking back to spawn. The trees must not fight during this.</summary>
+    public bool IsReturning => _returning;
+
+    /// <summary>Nothing to fight, or the leash has been crossed.</summary>
+    public bool ShouldDisengage => _returning || !HasLivingTarget;
 
     public float DistanceToTarget =>
         Target is null ? float.MaxValue : GlobalPosition.DistanceTo(Target.GlobalPosition);
@@ -331,12 +361,13 @@ public partial class EnemyBrain : CharacterBody3D
         return BtStatus.Running;
     }
 
-    /// <summary>Walks home after losing the target.</summary>
+    /// <summary>Walks back to where it started, and resets on arrival.</summary>
     public BtStatus ReturnHome(double delta)
     {
-        if (GlobalPosition.DistanceTo(_home) < 1.0f)
+        if (GlobalPosition.DistanceTo(_home) < 1.0f || (_returning && _agent.IsNavigationFinished()))
         {
             Brake(delta);
+            ArriveHome();
             return BtStatus.Success;
         }
 
@@ -345,11 +376,31 @@ public partial class EnemyBrain : CharacterBody3D
         if (_agent.IsNavigationFinished())
         {
             Brake(delta);
+            ArriveHome();
             return BtStatus.Success;
         }
 
         Steer((_agent.GetNextPathPosition() - GlobalPosition) with { Y = 0 }, delta);
         return BtStatus.Running;
+    }
+
+    /// <summary>
+    /// Back at the spawn point: drop the leash and restore.
+    /// <para>
+    /// Healing to full is not generosity — without it, pulling an enemy past its tether and
+    /// walking away is free damage, and the whole encounter can be whittled down by
+    /// repeating it. Resetting makes leashing a failed pull rather than a tactic.
+    /// </para>
+    /// </summary>
+    private void ArriveHome()
+    {
+        if (!_returning) return;
+
+        _returning = false;
+        _retreatBudget = RetreatSeconds;
+
+        Self.Statuses.Clear();
+        Self.Heal((int)System.Math.Ceiling(Self.Stats.MaxHp));
     }
 
     /// <summary>
