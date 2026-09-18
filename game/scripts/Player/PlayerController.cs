@@ -28,6 +28,7 @@ public partial class PlayerController : Node
     private double _holdTimer;
     private Vector3 _lastOrderPoint;
     private bool _wasapHeld;
+    private PlayerCombat? _combat;
 
     [Export] public NodePath MotorPath { get; set; } = "..";
     [Export] public NodePath MarkerPath { get; set; } = "";
@@ -39,6 +40,7 @@ public partial class PlayerController : Node
     {
         _motor = GetNode<PlayerMotor>(MotorPath);
         _camera = GetViewport().GetCamera3D();
+        _combat = GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat");
 
         if (!MarkerPath.IsEmpty)
         {
@@ -115,7 +117,7 @@ public partial class PlayerController : Node
 
         if (!justPressed && _holdTimer > 0) return;
 
-        if (!TryPickGroundPoint(out var point, out var hitLayer)) return;
+        if (!TryPickGroundPoint(out var point, out var hitLayer, out var hitBody)) return;
 
         // Hold-to-continue: skip redundant orders unless the cursor has actually moved.
         if (!justPressed && point.DistanceTo(_lastOrderPoint) < HoldRepeatDistance)
@@ -123,6 +125,22 @@ public partial class PlayerController : Node
             _holdTimer = HoldRepeatInterval;
             return;
         }
+
+        // Clicking an enemy is an attack order; clicking the ground abandons the target.
+        if (justPressed && (hitLayer & Layers.Enemy) != 0 && hitBody is not null)
+        {
+            var enemy = hitBody.GetNodeOrNull<Combat.Combatant>("Combatant");
+            if (enemy is { IsAlive: true })
+            {
+                _combat?.CommandAttack(enemy);
+                _marker?.Flash(point);
+                _lastOrderPoint = point;
+                _holdTimer = HoldRepeatInterval;
+                return;
+            }
+        }
+
+        if (justPressed) _combat?.ClearTarget();
 
         _motor.CommandMoveTo(point);
         _lastOrderPoint = point;
@@ -133,19 +151,14 @@ public partial class PlayerController : Node
         {
             _marker?.Flash(point);
         }
-
-        if (justPressed && (hitLayer & Layers.Enemy) != 0)
-        {
-            // Phase 2 (CBT-03) turns this into an attack order.
-            GD.Print("[input] clicked an enemy — attack orders land in Phase 2.");
-        }
     }
 
     /// <summary>Raycasts from the cursor into the world. False when the cursor is over the sky.</summary>
-    private bool TryPickGroundPoint(out Vector3 point, out uint hitLayer)
+    private bool TryPickGroundPoint(out Vector3 point, out uint hitLayer, out CollisionObject3D? hitBody)
     {
         point = Vector3.Zero;
         hitLayer = 0;
+        hitBody = null;
 
         var mouse = GetViewport().GetMousePosition();
         var from = _camera.ProjectRayOrigin(mouse);
@@ -162,6 +175,7 @@ public partial class PlayerController : Node
         if (hit["collider"].AsGodotObject() is CollisionObject3D body)
         {
             hitLayer = body.CollisionLayer;
+            hitBody = body;
         }
 
         return true;
