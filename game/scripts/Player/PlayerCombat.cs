@@ -22,6 +22,28 @@ public partial class PlayerCombat : Node
     /// <summary>Melee reach. Slightly generous so chasing a moving target is not fiddly.</summary>
     [Export] public float AttackRange { get; set; } = 2.4f;
 
+    /// <summary>
+    /// Basic attacks cleave into every enemy in an arc, not just the target.
+    /// <para>
+    /// This is why two-handed weapons are worth using against a pack, and it is what makes
+    /// pulling groups — and therefore shard encounters — work at all. Without it the whole
+    /// game becomes single-target whack-a-mole.
+    /// </para>
+    /// </summary>
+    [Export] public bool CleaveEnabled { get; set; } = true;
+
+    /// <summary>Total arc of the cleave, centred on the target direction.</summary>
+    [Export] public float CleaveAngle { get; set; } = 120f;
+
+    /// <summary>Reach of the cleave, slightly beyond single-target range.</summary>
+    [Export] public float CleaveRange { get; set; } = 3.0f;
+
+    /// <summary>
+    /// Damage secondary targets take, relative to the primary. Below 1.0 so that focusing a
+    /// single enemy stays the stronger choice against one target, while crowds still melt.
+    /// </summary>
+    [Export] public float CleaveFalloff { get; set; } = 0.6f;
+
     public Combatant? Target => _target;
 
     [Signal] public delegate void TargetChangedEventHandler();
@@ -114,13 +136,41 @@ public partial class PlayerCombat : Node
         if (_swingCooldown > 0) return;
 
         _swingCooldown = 1.0 / Math.Max(0.1, _self.Stats.AttacksPerSecond);
+        Swing(targetBody.GlobalPosition);
+    }
 
-        var result = _target.TakeAttack(_self);
+    private void Swing(Vector3 targetPosition)
+    {
+        if (_target is null) return;
 
-        if (!result.Evaded && _target.IsAlive)
+        // The primary target always takes a full hit, even if the arc maths would miss it —
+        // the player explicitly selected it and a whiff would read as a bug.
+        _target.TakeAttack(_self);
+
+        if (!CleaveEnabled) return;
+
+        var origin = _motor.GlobalPosition;
+        var forward = (targetPosition - origin) with { Y = 0 };
+        if (forward.LengthSquared() < 0.0001f) return;
+
+        forward = forward.Normalized();
+
+        var swept = AreaQuery.Cone(_motor, origin, forward, CleaveRange, CleaveAngle);
+        var secondaries = 0;
+
+        foreach (var other in swept)
         {
-            // Nudge the target's bar visible even on a graze.
-            _target.EmitSignal(Combatant.SignalName.HealthChanged, (float)_target.Health.Fraction);
+            if (other == _target || !other.IsAlive) continue;
+
+            other.TakeAttack(_self, weaponCoef: CleaveFalloff);
+            secondaries++;
+        }
+
+        // Only draw the arc when it actually caught someone else, so single-target fighting
+        // is not covered in flashes.
+        if (secondaries > 0)
+        {
+            AoeVisual.Cone(origin, forward, CleaveRange, CleaveAngle);
         }
     }
 }

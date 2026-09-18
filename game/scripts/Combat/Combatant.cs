@@ -22,9 +22,14 @@ public partial class Combatant : Node
     [Signal] public delegate void HealthChangedEventHandler(float fraction);
 
     private double _statusAccumulator;
+    private double _sinceCombat = 999;
+
+    /// <summary>Seconds without taking or dealing damage before regeneration goes back to full rate.</summary>
+    private const double OutOfCombatSeconds = 5.0;
 
     public StatBlock Stats { get; private set; } = new();
     public Pool Health { get; private set; } = new(100);
+    public Pool Mana { get; private set; } = new(100);
     public StatusEffectSet Statuses { get; } = new();
 
     public bool IsAlive => !Health.IsEmpty;
@@ -44,6 +49,7 @@ public partial class Combatant : Node
         Stats = stats;
         DisplayName = displayName;
         Health = new Pool(stats.MaxHp);
+        Mana = new Pool(stats.MaxMana);
         EmitSignal(SignalName.HealthChanged, (float)Health.Fraction);
     }
 
@@ -83,6 +89,8 @@ public partial class Combatant : Node
             DifficultyDamageMultiplier = attacker.IsPlayer ? 1.0 : GameSession.Difficulty.EnemyDamageMultiplier,
         };
 
+        attacker._sinceCombat = 0;
+
         var result = DamagePipeline.Resolve(request, GameSession.CombatRng);
 
         if (result.Evaded)
@@ -103,6 +111,7 @@ public partial class Combatant : Node
     {
         if (!IsAlive || amount <= 0) return;
 
+        _sinceCombat = 0;
         Health.Remove(amount);
 
         EmitSignal(SignalName.Damaged, amount, critical, false);
@@ -125,6 +134,7 @@ public partial class Combatant : Node
     public void Revive()
     {
         Health.Fill();
+        Mana.Fill();
         Statuses.Clear();
         EmitSignal(SignalName.HealthChanged, (float)Health.Fraction);
     }
@@ -146,5 +156,15 @@ public partial class Combatant : Node
         {
             ApplyDamage((int)Math.Round(tick.Damage));
         }
+
+        _sinceCombat += step;
+
+        // In-combat regeneration is deliberately throttled so resources pace a fight
+        // (doc 06 §2). Out of combat it returns to the full rate, otherwise recovering
+        // after a pull would mean standing still for minutes.
+        var inCombat = _sinceCombat < OutOfCombatSeconds;
+
+        Mana.Add((inCombat ? Stats.ManaRegenInCombat : Stats.ManaRegenPerSecond) * step);
+        Health.Add((inCombat ? Stats.HpRegenInCombat : Stats.HpRegenPerSecond) * step);
     }
 }

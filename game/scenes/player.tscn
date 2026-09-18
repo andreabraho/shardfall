@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 ; Player: gameplay nodes are siblings of VisualRoot, never children of it, so swapping
 ; placeholder primitives for real models cannot disturb collision or navigation (ENG-07).
@@ -9,6 +9,7 @@
 [ext_resource type="Script" path="res://scripts/Combat/Combatant.cs" id="4_combatant"]
 [ext_resource type="Script" path="res://scripts/Player/PlayerCombat.cs" id="5_pcombat"]
 [ext_resource type="Script" path="res://scripts/Player/PlayerCharacter.cs" id="6_pchar"]
+[ext_resource type="Script" path="res://scripts/Player/SkillCaster.cs" id="7_skills"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 radius = 0.4
@@ -39,6 +40,9 @@ script = ExtResource("4_combatant")
 
 [node name="PlayerCombat" type="Node" parent="."]
 script = ExtResource("5_pcombat")
+
+[node name="SkillCaster" type="Node" parent="."]
+script = ExtResource("7_skills")
 
 [node name="PlayerCharacter" type="Node" parent="."]
 script = ExtResource("6_pchar")

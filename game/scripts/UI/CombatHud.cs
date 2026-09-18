@@ -15,6 +15,7 @@ namespace Kiln.Game.UI;
 public partial class CombatHud : CanvasLayer
 {
     private ProgressBar _playerBar = null!;
+    private ProgressBar _manaBar = null!;
     private Label _playerLabel = null!;
     private PanelContainer _targetPanel = null!;
     private ProgressBar _targetBar = null!;
@@ -55,9 +56,11 @@ public partial class CombatHud : CanvasLayer
 
         _playerLabel = new Label { Text = "Health" };
         _playerBar = new ProgressBar { MinValue = 0, MaxValue = 1, Value = 1, ShowPercentage = false, CustomMinimumSize = new Vector2(320, 22) };
+        _manaBar = new ProgressBar { MinValue = 0, MaxValue = 1, Value = 1, ShowPercentage = false, CustomMinimumSize = new Vector2(320, 12) };
 
         box.AddChild(_playerLabel);
         box.AddChild(_playerBar);
+        box.AddChild(_manaBar);
         root.AddChild(box);
         AddChild(root);
     }
@@ -89,6 +92,7 @@ public partial class CombatHud : CanvasLayer
         if (_player is null) return;
 
         _playerBar.Value = _player.Health.Fraction;
+        _manaBar.Value = _player.Mana.Fraction;
         _playerLabel.Text = _player.IsAlive
             ? $"Health  {_player.Health}"
             : "Dead — respawning";
@@ -96,6 +100,9 @@ public partial class CombatHud : CanvasLayer
 
     public override void _Process(double _)
     {
+        // Mana drains and regenerates continuously, so it cannot be signal-driven.
+        if (_player is not null) _manaBar.Value = _player.Mana.Fraction;
+
         if (_combat is null) return;
 
         var target = _combat.Target;

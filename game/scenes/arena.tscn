@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3]
+[gd_scene load_steps=20 format=3]
 
 ; MOV-01 greybox test arena.
 ;
@@ -15,6 +15,7 @@
 [ext_resource type="Script" path="res://scripts/Combat/CombatFeedback.cs" id="8_feedback"]
 [ext_resource type="Script" path="res://scripts/UI/CombatHud.cs" id="9_hud"]
 [ext_resource type="Script" path="res://scripts/Combat/TargetRing.cs" id="10_ring"]
+[ext_resource type="Script" path="res://scripts/Combat/AoeVisual.cs" id="11_aoe"]
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="5_player"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_arena"]
@@ -186,6 +187,9 @@ script = ExtResource("4_cursor")
 [node name="CombatFeedback" type="Node3D" parent="."]
 script = ExtResource("8_feedback")
 
+[node name="AoeVisual" type="Node3D" parent="."]
+script = ExtResource("11_aoe")
+
 [node name="TargetRing" type="Node3D" parent="."]
 script = ExtResource("10_ring")
 
@@ -207,3 +211,21 @@ EnemyId = "mob_shard_archer"
 [node name="Warden" parent="Enemies" instance=ExtResource("7_enemy")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0.1, -8)
 EnemyId = "mob_grave_warden"
+
+; A pack, so the cleave and the area skills have something to prove themselves on.
+[node name="Pack1" parent="Enemies" instance=ExtResource("7_enemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0.1, 9)
+
+[node name="Pack2" parent="Enemies" instance=ExtResource("7_enemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0.1, 11)
+
+[node name="Pack3" parent="Enemies" instance=ExtResource("7_enemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.1, 11)
+
+[node name="Pack4" parent="Enemies" instance=ExtResource("7_enemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0.1, 13)
+EnemyId = "mob_rot_mender"
+
+[node name="Pack5" parent="Enemies" instance=ExtResource("7_enemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.1, 8)
+EnemyId = "mob_blight_bomber"
