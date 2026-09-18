@@ -39,6 +39,7 @@ public static class GameActions
 
     // Meta
     public const string ToggleDebugOverlay = "toggle_debug_overlay";
+    public const string ToggleFullscreen = "toggle_fullscreen";
     public const string ToggleControlScheme = "toggle_control_scheme";
     public const string Cancel = "cancel";
 
@@ -66,6 +67,7 @@ public static class GameActions
         [CameraZoomOut] = [Mouse(MouseButton.WheelDown)],
 
         [ToggleDebugOverlay] = [Key(Godot.Key.F3)],
+        [ToggleFullscreen] = [Key(Godot.Key.F11)],
         [ToggleControlScheme] = [Key(Godot.Key.F4)],
         [Cancel] = [Key(Godot.Key.Escape)],
     };

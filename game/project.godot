@@ -18,8 +18,20 @@ project/assembly_name="Kiln.Game"
 
 [display]
 
+; Design resolution. The window itself is sized separately below.
 window/size/viewport_width=1920
 window/size/viewport_height=1080
+
+; Borderless fullscreen (3), not a 1920x1080 window. A window exactly the size of the
+; screen sits *under* the Windows taskbar, which is why the bar stayed visible along the
+; bottom and the game only looked full screen. Toggle with F11 or Alt+Enter.
+window/size/mode=3
+
+; Size used when the player toggles back to windowed — deliberately smaller than any
+; common screen so the window is obviously a window.
+window/size/window_width_override=1600
+window/size/window_height_override=900
+
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 

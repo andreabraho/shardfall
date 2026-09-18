@@ -26,6 +26,9 @@ public partial class PlayerCharacter : Node
     /// <summary>Level, experience and unspent points (PRG-01/02).</summary>
     public CharacterProgression Progression { get; } = new();
 
+    /// <summary>Which skills are learned, and their mastery (PRG-03/05).</summary>
+    public SkillBook Skills { get; } = new();
+
     [Signal] public delegate void LeveledUpEventHandler(int level);
 
     [Signal] public delegate void ExperienceChangedEventHandler();
@@ -52,6 +55,9 @@ public partial class PlayerCharacter : Node
         Debug.DebugOverlay.Register("hp", () => $"{_combatant.Health} ({_combatant.Health.Fraction:P0})");
         Debug.DebugOverlay.Register("level", () =>
             $"{Progression.Level} — {Progression.Experience}/{Progression.ExperienceForNextLevel} xp");
+
+        // Skills the starting level already allows.
+        CallDeferred(nameof(LearnSkills));
     }
 
     private void OnDamaged(int amount, bool critical, bool evaded)
@@ -137,6 +143,7 @@ public partial class PlayerCharacter : Node
         ApplyStats();
         _combatant.Health.Fill();
         _combatant.Mana.Fill();
+        LearnSkills();
 
         foreach (var level in levels)
         {
@@ -148,6 +155,10 @@ public partial class PlayerCharacter : Node
         Combat.CombatFeedback.Number(
             _motor.GlobalPosition + (Vector3.Up * 2.6f), Progression.Level, critical: true, evaded: false);
     }
+
+    /// <summary>Learns whatever the current level unlocks.</summary>
+    private void LearnSkills() =>
+        GetParent().GetNodeOrNull<SkillCaster>("SkillCaster")?.LearnAvailable(Progression.Level);
 
     /// <summary>
     /// Direction away from the nearest living enemy, as a stand-in for the true hit

@@ -1,10 +1,42 @@
 [
-  { "id": "skl_heavy_strike",  "name": "$skill.skl_heavy_strike.name",  "class": "warrior", "tree": "body",   "unlock_level": 1,  "mana_cost": 14, "cooldown": 4.0,  "cast_type": "instant", "targeting": "single_target", "radius": 0,   "damage_coef": 1.80, "hits": 1, "stagger": 35 },
+  { "id": "skl_heavy_strike",  "name": "$skill.skl_heavy_strike.name",  "class": "warrior", "tree": "body",   "unlock_level": 1,  "mana_cost": 14, "cooldown": 4.0,  "cast_type": "instant", "targeting": "single_target", "radius": 0,   "damage_coef": 1.80, "hits": 1, "stagger": 35,
+    "mastery": {
+      "master":       { "damage_coef": 2.05, "note": "$skill.skl_heavy_strike.m" },
+      "grand_master": { "stagger": 60, "note": "$skill.skl_heavy_strike.g" },
+      "perfect":      { "cooldown": 3.0, "damage_coef": 2.40, "note": "$skill.skl_heavy_strike.p" }
+    } },
+
   { "id": "skl_guard_stance",  "name": "$skill.skl_guard_stance.name",  "class": "warrior", "tree": "mental", "unlock_level": 3,  "mana_cost": 10, "cooldown": 10.0, "cast_type": "channel", "targeting": "self",          "radius": 0,   "damage_coef": 0.00, "hits": 0, "stagger": 0 },
-  { "id": "skl_whirlwind",     "name": "$skill.skl_whirlwind.name",     "class": "warrior", "tree": "body",   "unlock_level": 14, "mana_cost": 32, "cooldown": 9.0,  "cast_type": "instant", "targeting": "self_aoe",      "radius": 4.5, "damage_coef": 1.35, "hits": 3, "stagger": 25 },
-  { "id": "skl_shield_bash",   "name": "$skill.skl_shield_bash.name",   "class": "warrior", "tree": "mental", "unlock_level": 8,  "mana_cost": 18, "cooldown": 7.0,  "cast_type": "instant", "targeting": "single_target", "radius": 0,   "damage_coef": 0.90, "hits": 1, "stagger": 70 },
-  { "id": "skl_ground_slam",   "name": "$skill.skl_ground_slam.name",   "class": "warrior", "tree": "body",   "unlock_level": 20, "mana_cost": 40, "cooldown": 14.0, "cast_type": "instant", "targeting": "ground_aoe",    "radius": 5.0, "damage_coef": 2.10, "hits": 1, "stagger": 90 },
-  { "id": "skl_rally_cry",     "name": "$skill.skl_rally_cry.name",     "class": "warrior", "tree": "mental", "unlock_level": 24, "mana_cost": 28, "cooldown": 30.0, "cast_type": "instant", "targeting": "self",          "radius": 0,   "damage_coef": 0.00, "hits": 0, "stagger": 0 },
-  { "id": "skl_cleave",        "name": "$skill.skl_cleave.name",        "class": "warrior", "tree": "body",   "unlock_level": 6,  "mana_cost": 20, "cooldown": 6.0,  "cast_type": "instant", "targeting": "cone",          "radius": 3.5, "damage_coef": 1.45, "hits": 1, "stagger": 40 },
-  { "id": "skl_iron_skin",     "name": "$skill.skl_iron_skin.name",     "class": "warrior", "tree": "mental", "unlock_level": 12, "mana_cost": 24, "cooldown": 22.0, "cast_type": "instant", "targeting": "self",          "radius": 0,   "damage_coef": 0.00, "hits": 0, "stagger": 0 }
+
+  { "id": "skl_cleave",        "name": "$skill.skl_cleave.name",        "class": "warrior", "tree": "body",   "unlock_level": 6,  "mana_cost": 20, "cooldown": 6.0,  "cast_type": "instant", "targeting": "cone",          "radius": 3.5, "damage_coef": 1.45, "hits": 1, "stagger": 40,
+    "mastery": {
+      "master":       { "radius": 4.2, "note": "$skill.skl_cleave.m" },
+      "grand_master": { "hits": 2, "note": "$skill.skl_cleave.g" },
+      "perfect":      { "cooldown": 4.5, "radius": 5.0, "note": "$skill.skl_cleave.p" }
+    } },
+
+  { "id": "skl_shield_bash",   "name": "$skill.skl_shield_bash.name",   "class": "warrior", "tree": "mental", "unlock_level": 8,  "mana_cost": 18, "cooldown": 7.0,  "cast_type": "instant", "targeting": "single_target", "radius": 0,   "damage_coef": 0.90, "hits": 1, "stagger": 70,
+    "mastery": {
+      "master":       { "stagger": 95, "note": "$skill.skl_shield_bash.m" },
+      "grand_master": { "cooldown": 5.5, "note": "$skill.skl_shield_bash.g" },
+      "perfect":      { "damage_coef": 1.30, "stagger": 130, "note": "$skill.skl_shield_bash.p" }
+    } },
+
+  { "id": "skl_iron_skin",     "name": "$skill.skl_iron_skin.name",     "class": "warrior", "tree": "mental", "unlock_level": 12, "mana_cost": 24, "cooldown": 22.0, "cast_type": "instant", "targeting": "self",          "radius": 0,   "damage_coef": 0.00, "hits": 0, "stagger": 0 },
+
+  { "id": "skl_whirlwind",     "name": "$skill.skl_whirlwind.name",     "class": "warrior", "tree": "body",   "unlock_level": 14, "mana_cost": 32, "cooldown": 9.0,  "cast_type": "instant", "targeting": "self_aoe",      "radius": 4.5, "damage_coef": 1.35, "hits": 3, "stagger": 25,
+    "mastery": {
+      "master":       { "hits": 4, "note": "$skill.skl_whirlwind.m" },
+      "grand_master": { "radius": 5.4, "note": "$skill.skl_whirlwind.g" },
+      "perfect":      { "radius": 6.0, "cooldown": 7.0, "note": "$skill.skl_whirlwind.p" }
+    } },
+
+  { "id": "skl_ground_slam",   "name": "$skill.skl_ground_slam.name",   "class": "warrior", "tree": "body",   "unlock_level": 20, "mana_cost": 40, "cooldown": 14.0, "cast_type": "instant", "targeting": "ground_aoe",    "radius": 5.0, "damage_coef": 2.10, "hits": 1, "stagger": 90,
+    "mastery": {
+      "master":       { "damage_coef": 2.40, "note": "$skill.skl_ground_slam.m" },
+      "grand_master": { "radius": 6.0, "note": "$skill.skl_ground_slam.g" },
+      "perfect":      { "cooldown": 11.0, "damage_coef": 2.80, "note": "$skill.skl_ground_slam.p" }
+    } },
+
+  { "id": "skl_rally_cry",     "name": "$skill.skl_rally_cry.name",     "class": "warrior", "tree": "mental", "unlock_level": 24, "mana_cost": 28, "cooldown": 30.0, "cast_type": "instant", "targeting": "self",          "radius": 0,   "damage_coef": 0.00, "hits": 0, "stagger": 0 }
 ]

@@ -188,6 +188,38 @@ public sealed class SkillDef : ContentDefBase
     public double DamageCoef { get; init; }
     public int Hits { get; init; } = 1;
     public double Stagger { get; init; }
+
+    /// <summary>What each mastery rank changes, if anything.</summary>
+    public SkillMasteryDef? Mastery { get; init; }
+}
+
+/// <summary>
+/// Per-rank overrides for a skill.
+/// <para>
+/// Ranks are meant to change <em>how a skill behaves</em>, not just multiply its numbers
+/// (doc 02 §5). A Whirlwind that gains a fourth rotation and then pulls enemies in is
+/// growth the player can feel; one that quietly does 8% more is a spreadsheet entry.
+/// </para>
+/// </summary>
+public sealed class SkillMasteryDef
+{
+    public SkillRankDef? Master { get; init; }
+    public SkillRankDef? GrandMaster { get; init; }
+    public SkillRankDef? Perfect { get; init; }
+}
+
+/// <summary>Values that replace the skill's defaults at a given rank. Null means unchanged.</summary>
+public sealed class SkillRankDef
+{
+    public double? Radius { get; init; }
+    public double? Cooldown { get; init; }
+    public double? ManaCost { get; init; }
+    public double? DamageCoef { get; init; }
+    public int? Hits { get; init; }
+    public double? Stagger { get; init; }
+
+    /// <summary>Localisation key describing the change, for the skill tooltip.</summary>
+    public string? Note { get; init; }
 }
 
 // ---------------------------------------------------------------------------

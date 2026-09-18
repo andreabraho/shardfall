@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Godot;
 using Kiln.Core.Foundation;
+using Kiln.Core.Progression;
 using Kiln.Data.Definitions;
 using Kiln.Game.Combat;
 using Kiln.Game.Foundation;
@@ -14,8 +15,9 @@ namespace Kiln.Game.Player;
 /// from data, so tuning a skill never touches code.
 /// </summary>
 /// <remarks>
-/// Unlock levels are not enforced yet — every bound skill is castable in this slice so area
-/// attacks can be tested. Gating arrives with the skill trees in Phase 3 (PRG-03/04).
+/// Skills must be learned before they can be cast, and learning is gated on level. Mastery
+/// accrues by casting and resolves through <see cref="ResolvedSkill"/>, so nothing ever uses
+/// a skill.s base numbers once it has ranked up.
 /// </remarks>
 public partial class SkillCaster : Node
 {
@@ -27,16 +29,22 @@ public partial class SkillCaster : Node
     private PlayerMotor _motor = null!;
     private Combatant _self = null!;
     private Camera3D? _camera;
+    private SkillBook? _book;
+    private CharacterProgression? _progression;
 
     /// <summary>Hotbar slots 1-6, by skill id.</summary>
     [Export]
+    /// <remarks>
+    /// Ordered so the early slots are usable at the starting level and the later ones light
+    /// up as the player levels — the hotbar itself shows progression.
+    /// </remarks>
     public string[] Hotbar { get; set; } =
     [
+        "skl_heavy_strike",
         "skl_cleave",
+        "skl_shield_bash",
         "skl_whirlwind",
         "skl_ground_slam",
-        "skl_heavy_strike",
-        "",
         "",
     ];
 
@@ -51,6 +59,10 @@ public partial class SkillCaster : Node
         _motor = GetParent<PlayerMotor>();
         _self = GetParent().GetNode<Combatant>("Combatant");
 
+        var character = GetParent().GetNodeOrNull<PlayerCharacter>("PlayerCharacter");
+        _book = character?.Skills;
+        _progression = character?.Progression;
+
         Debug.DebugOverlay.Register("skills", () =>
         {
             var parts = new List<string>();
@@ -58,8 +70,19 @@ public partial class SkillCaster : Node
             {
                 if (string.IsNullOrEmpty(Hotbar[i])) continue;
 
-                var cd = CooldownRemaining(Hotbar[i]);
-                parts.Add(cd > 0 ? $"{i + 1}:{cd:F1}s" : $"{i + 1}:ready");
+                var id = Hotbar[i];
+
+                if (_book is null || !_book.IsUnlocked(id))
+                {
+                    parts.Add($"{i + 1}:locked");
+                    continue;
+                }
+
+                var cd = CooldownRemaining(id);
+                var rank = _book.RankOf(id);
+                var suffix = rank == MasteryRank.Normal ? "" : $" [{rank}]";
+
+                parts.Add(cd > 0 ? $"{i + 1}:{cd:F1}s{suffix}" : $"{i + 1}:ready{suffix}");
             }
 
             return string.Join("  ", parts);
@@ -155,11 +178,19 @@ public partial class SkillCaster : Node
     {
         if (string.IsNullOrEmpty(skillId) || !_self.IsAlive) return;
 
-        if (!GameContent.IsLoaded || !GameContent.Database.Skills.TryGetValue(skillId, out var skill))
+        if (!GameContent.IsLoaded || !GameContent.Database.Skills.TryGetValue(skillId, out var def))
         {
             GD.PushWarning($"SkillCaster: unknown skill '{skillId}'.");
             return;
         }
+
+        if (_book is null || !_book.IsUnlocked(skillId))
+        {
+            GD.Print($"[skill] {skillId} not learned (unlocks at level {def.UnlockLevel})");
+            return;
+        }
+
+        var skill = ResolvedSkill.For(def, _book.RankOf(skillId));
 
         if (CooldownRemaining(skillId) > 0) return;
 
@@ -174,13 +205,45 @@ public partial class SkillCaster : Node
         _self.Mana.TrySpend(skill.ManaCost);
         _cooldowns[skillId] = skill.Cooldown;
 
+        // Mastery is earned by casting, so it is recorded on the cast rather than on a hit —
+        // otherwise a skill used to reposition or to break a shard would never improve.
+        if (_book.RecordUse(skillId) is { } promoted)
+        {
+            GD.Print($"[skill] {skillId} reached {promoted}");
+            Combat.CombatFeedback.Number(
+                _motor.GlobalPosition + (Vector3.Up * 2.4f), (int)promoted, critical: true, evaded: false);
+        }
+
         Execute(skill);
+    }
+
+    /// <summary>
+    /// Learns every skill the current level allows, spending skill points.
+    /// <para>
+    /// Automatic for now. The real choice — which tree to invest in — needs the skill
+    /// screen that arrives in Phase 8; until then, gating on level is what matters, so the
+    /// player is not casting Ground Slam at level 10.
+    /// </para>
+    /// </summary>
+    public void LearnAvailable(int level)
+    {
+        if (_book is null || _progression is null || !GameContent.IsLoaded) return;
+
+        foreach (var def in GameContent.Database.Skills.Values)
+        {
+            if (def.Class != CharacterClass.Warrior) continue;
+            if (def.UnlockLevel > level || _book.IsUnlocked(def.Id)) continue;
+            if (!_progression.SpendSkillPoint()) return;
+
+            _book.Unlock(def.Id);
+            GD.Print($"[skill] learned {def.Id}");
+        }
     }
 
     /// <summary>A multi-hit skill still owing pulses.</summary>
     private sealed class Pulse
     {
-        public required SkillDef Skill { get; init; }
+        public required ResolvedSkill Skill { get; init; }
         public required Vector3 Center { get; init; }
         public required Vector3 Aim { get; init; }
         public required bool FollowsCaster { get; init; }
@@ -201,7 +264,7 @@ public partial class SkillCaster : Node
 
     private readonly List<Pulse> _pulses = [];
 
-    private void Execute(SkillDef skill)
+    private void Execute(ResolvedSkill skill)
     {
         var origin = _motor.GlobalPosition;
         var aim = AimDirection(origin);

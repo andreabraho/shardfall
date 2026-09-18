@@ -33,6 +33,7 @@ public partial class Bootstrap : Node
         }
 
         AddChild(new DebugOverlay { Name = "DebugOverlay" });
+        AddChild(new DisplaySettings { Name = "DisplaySettings" });
 
         DebugOverlay.Register("content", () =>
             GameContent.IsLoaded ? $"{GameContent.Database.TotalDefinitions} defs" : "not loaded");
