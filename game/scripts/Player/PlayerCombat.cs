@@ -39,10 +39,16 @@ public partial class PlayerCombat : Node
     [Export] public float CleaveRange { get; set; } = 3.0f;
 
     /// <summary>
-    /// Damage secondary targets take, relative to the primary. Below 1.0 so that focusing a
-    /// single enemy stays the stronger choice against one target, while crowds still melt.
+    /// Damage secondary targets take, relative to the primary.
+    /// <para>
+    /// 1.0 — full damage to everything in the arc, as in the original. This is a deliberate
+    /// call: falloff made two-handed crowd clearing feel weak, and full cleave is a large
+    /// part of why the source game's pulls are satisfying. It does mean area damage scales
+    /// hard with pack size, which is a balance lever to watch in the shard encounters rather
+    /// than a reason to tax the basic attack.
+    /// </para>
     /// </summary>
-    [Export] public float CleaveFalloff { get; set; } = 0.6f;
+    [Export] public float CleaveFalloff { get; set; } = 1.0f;
 
     public Combatant? Target => _target;
 

@@ -32,11 +32,64 @@ public partial class AoeVisual : Node3D
     [Export] public Color FriendlyColor { get; set; } = new(0.55f, 0.85f, 1f);
     [Export] public Color HostileColor { get; set; } = new(1f, 0.4f, 0.3f);
 
+    private MeshInstance3D? _preview;
+    private StandardMaterial3D? _previewMaterial;
+    private double _previewPulse;
+
     public override void _Ready() => _instance = this;
 
     public override void _ExitTree()
     {
         if (_instance == this) _instance = null;
+    }
+
+    /// <summary>
+    /// Shows a persistent aiming circle while a ground-targeted skill is being aimed.
+    /// <para>
+    /// Without this the player casts and only then learns where it landed, which is exactly
+    /// the confusion that prompted it — "does it go around me?". The area has to be visible
+    /// before committing, not after.
+    /// </para>
+    /// </summary>
+    public static void ShowPreview(Vector3 center, float radius) => _instance?.UpdatePreview(center, radius);
+
+    public static void HidePreview()
+    {
+        if (_instance?._preview is not null) _instance._preview.Visible = false;
+    }
+
+    private void UpdatePreview(Vector3 center, float radius)
+    {
+        if (_preview is null)
+        {
+            _previewMaterial = new StandardMaterial3D
+            {
+                ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
+                Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
+                CullMode = BaseMaterial3D.CullModeEnum.Disabled,
+                NoDepthTest = true,
+                RenderPriority = 2,
+            };
+
+            _preview = new MeshInstance3D
+            {
+                MaterialOverride = _previewMaterial,
+                CastShadow = GeometryInstance3D.ShadowCastingSetting.Off,
+                TopLevel = true,
+            };
+
+            AddChild(_preview);
+        }
+
+        _preview.Mesh = BuildFan(radius, 360f);
+        _preview.GlobalPosition = center + (Vector3.Up * 0.06f);
+        _preview.Visible = true;
+
+        _previewPulse += GetProcessDeltaTime() * 4.0;
+        _previewMaterial!.AlbedoColor = FriendlyColor with
+        {
+            A = 0.20f + (0.10f * (float)Mathf.Sin(_previewPulse)),
+        };
     }
 
     /// <summary>A filled circle centred on a point.</summary>

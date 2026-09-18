@@ -69,25 +69,87 @@ public partial class SkillCaster : Node
     public double CooldownRemaining(string skillId) =>
         _cooldowns.TryGetValue(skillId, out var remaining) ? System.Math.Max(0, remaining) : 0;
 
+    /// <summary>Skill currently being aimed, if any. Ground areas aim before they commit.</summary>
+    private string? _aiming;
+
     public override void _Process(double delta)
     {
         foreach (var id in new List<string>(_cooldowns.Keys))
         {
             if (_cooldowns[id] > 0) _cooldowns[id] -= delta;
         }
+
+        ProcessPulses(delta);
+        UpdateAiming();
+    }
+
+    private void UpdateAiming()
+    {
+        if (_aiming is null)
+        {
+            AoeVisual.HidePreview();
+            return;
+        }
+
+        if (!GameContent.IsLoaded || !GameContent.Database.Skills.TryGetValue(_aiming, out var skill))
+        {
+            _aiming = null;
+            return;
+        }
+
+        var origin = _motor.GlobalPosition;
+        var point = GroundPoint(origin, AimDirection(origin), (float)skill.Radius);
+
+        AoeVisual.ShowPreview(point, (float)skill.Radius);
     }
 
     public override void _UnhandledInput(InputEvent @event)
     {
         for (var slot = 0; slot < SlotActions.Length && slot < Hotbar.Length; slot++)
         {
-            if (!@event.IsActionPressed(SlotActions[slot])) continue;
+            var id = Hotbar[slot];
+            if (string.IsNullOrEmpty(id)) continue;
 
-            TryCast(Hotbar[slot]);
-            GetViewport().SetInputAsHandled();
-            return;
+            if (@event.IsActionPressed(SlotActions[slot]))
+            {
+                // Ground-targeted skills aim while held and fire on release, so the area is
+                // visible before committing. Everything else fires immediately.
+                if (IsGroundTargeted(id) && CanCast(id))
+                {
+                    _aiming = id;
+                }
+                else
+                {
+                    TryCast(id);
+                }
+
+                GetViewport().SetInputAsHandled();
+                return;
+            }
+
+            if (@event.IsActionReleased(SlotActions[slot]) && _aiming == id)
+            {
+                _aiming = null;
+                AoeVisual.HidePreview();
+                TryCast(id);
+                GetViewport().SetInputAsHandled();
+                return;
+            }
         }
     }
+
+    private bool IsGroundTargeted(string skillId) =>
+        GameContent.IsLoaded
+        && GameContent.Database.Skills.TryGetValue(skillId, out var skill)
+        && skill.Targeting == SkillTargeting.GroundAoe;
+
+    private bool CanCast(string skillId) =>
+        _self.IsAlive
+        && !_self.Statuses.IsStunned
+        && CooldownRemaining(skillId) <= 0
+        && GameContent.IsLoaded
+        && GameContent.Database.Skills.TryGetValue(skillId, out var skill)
+        && _self.Mana.CanAfford(skill.ManaCost);
 
     private void TryCast(string skillId)
     {
@@ -115,29 +177,84 @@ public partial class SkillCaster : Node
         Execute(skill);
     }
 
+    /// <summary>A multi-hit skill still owing pulses.</summary>
+    private sealed class Pulse
+    {
+        public required SkillDef Skill { get; init; }
+        public required Vector3 Center { get; init; }
+        public required Vector3 Aim { get; init; }
+        public required bool FollowsCaster { get; init; }
+        public int Remaining { get; set; }
+        public double Timer { get; set; }
+    }
+
+    /// <summary>
+    /// Gap between hits of a multi-hit skill.
+    /// <para>
+    /// Applying every hit on one frame made Whirlwind's three hits land on top of each
+    /// other — identical numbers at the same spot in the same instant, so it read as a
+    /// single hit. Spreading them out is what makes a multi-hit skill legible, and it is
+    /// also what a spin should look like.
+    /// </para>
+    /// </summary>
+    private const double PulseInterval = 0.17;
+
+    private readonly List<Pulse> _pulses = [];
+
     private void Execute(SkillDef skill)
     {
         var origin = _motor.GlobalPosition;
         var aim = AimDirection(origin);
+
+        // Ground areas are placed once, at cast. Self-centred areas follow the caster, so a
+        // spin keeps hitting what is around you as you drift.
+        var center = skill.Targeting == SkillTargeting.GroundAoe
+            ? GroundPoint(origin, aim, (float)skill.Radius)
+            : origin;
+
+        var pulse = new Pulse
+        {
+            Skill = skill,
+            Center = center,
+            Aim = aim,
+            FollowsCaster = skill.Targeting is SkillTargeting.SelfAoe or SkillTargeting.Cone,
+            Remaining = System.Math.Max(1, skill.Hits),
+            Timer = 0,
+        };
+
+        FirePulse(pulse);
+
+        if (pulse.Remaining > 0)
+        {
+            pulse.Timer = PulseInterval;
+            _pulses.Add(pulse);
+        }
+    }
+
+    private void FirePulse(Pulse pulse)
+    {
+        pulse.Remaining--;
+
+        var skill = pulse.Skill;
+        var center = pulse.FollowsCaster ? _motor.GlobalPosition : pulse.Center;
 
         List<Combatant> targets;
 
         switch (skill.Targeting)
         {
             case SkillTargeting.SelfAoe:
-                targets = AreaQuery.Sphere(_motor, origin, (float)skill.Radius);
-                AoeVisual.Circle(origin, (float)skill.Radius);
+                targets = AreaQuery.Sphere(_motor, center, (float)skill.Radius);
+                AoeVisual.Circle(center, (float)skill.Radius);
                 break;
 
             case SkillTargeting.Cone:
-                targets = AreaQuery.Cone(_motor, origin, aim, (float)skill.Radius, ConeAngleDegrees);
-                AoeVisual.Cone(origin, aim, (float)skill.Radius, ConeAngleDegrees);
+                targets = AreaQuery.Cone(_motor, center, pulse.Aim, (float)skill.Radius, ConeAngleDegrees);
+                AoeVisual.Cone(center, pulse.Aim, (float)skill.Radius, ConeAngleDegrees);
                 break;
 
             case SkillTargeting.GroundAoe:
-                var point = GroundPoint(origin, aim, (float)skill.Radius);
-                targets = AreaQuery.Sphere(_motor, point, (float)skill.Radius);
-                AoeVisual.Circle(point, (float)skill.Radius);
+                targets = AreaQuery.Sphere(_motor, center, (float)skill.Radius);
+                AoeVisual.Circle(center, (float)skill.Radius);
                 break;
 
             case SkillTargeting.SingleTarget:
@@ -150,26 +267,39 @@ public partial class SkillCaster : Node
                 break;
         }
 
-        if (targets.Count == 0)
-        {
-            GD.Print($"[skill] {skill.Id} hit nothing");
-            return;
-        }
-
-        var hits = System.Math.Max(1, skill.Hits);
+        if (targets.Count == 0) return;
 
         foreach (var target in targets)
         {
-            for (var h = 0; h < hits; h++)
-            {
-                if (!target.IsAlive) break;
-                target.TakeAttack(_self, skillCoef: skill.DamageCoef);
-            }
+            if (!target.IsAlive) continue;
+            target.TakeAttack(_self, skillCoef: skill.DamageCoef);
         }
 
-        // One hit-stop for the whole swing, not one per target — otherwise an area attack
-        // into a pack freezes the game solid.
-        CombatFeedback.HitStop(0.06);
+        // One hit-stop per pulse, not per target — otherwise an area attack into a pack
+        // freezes the game solid.
+        CombatFeedback.HitStop(0.05);
+    }
+
+    private void ProcessPulses(double delta)
+    {
+        for (var i = _pulses.Count - 1; i >= 0; i--)
+        {
+            var pulse = _pulses[i];
+            pulse.Timer -= delta;
+
+            if (pulse.Timer > 0) continue;
+
+            FirePulse(pulse);
+
+            if (pulse.Remaining <= 0)
+            {
+                _pulses.RemoveAt(i);
+            }
+            else
+            {
+                pulse.Timer += PulseInterval;
+            }
+        }
     }
 
     /// <summary>Aim comes from the cursor, so cones and ground areas are placed deliberately.</summary>
