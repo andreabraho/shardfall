@@ -1,0 +1,36 @@
+[gd_scene load_steps=4 format=3]
+
+; Player: gameplay nodes are siblings of VisualRoot, never children of it, so swapping
+; placeholder primitives for real models cannot disturb collision or navigation (ENG-07).
+
+[ext_resource type="Script" path="res://scripts/Player/PlayerMotor.cs" id="1_motor"]
+[ext_resource type="Script" path="res://scripts/Player/PlayerController.cs" id="2_controller"]
+[ext_resource type="Script" path="res://scripts/Visual/VisualRoot.cs" id="3_visual"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
+radius = 0.4
+height = 1.8
+
+[node name="Player" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 1
+script = ExtResource("1_motor")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("CapsuleShape3D_body")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+path_desired_distance = 0.5
+target_desired_distance = 0.4
+radius = 0.4
+height = 1.8
+
+[node name="VisualRoot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+script = ExtResource("3_visual")
+VisualId = "mesh_placeholder_player"
+
+[node name="PlayerController" type="Node" parent="."]
+script = ExtResource("2_controller")
+MotorPath = NodePath("..")

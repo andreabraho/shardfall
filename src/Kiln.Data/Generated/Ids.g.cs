@@ -90,10 +90,11 @@ public static class Ids
         public const string MeshPlaceholderHeavy = "mesh_placeholder_heavy";
         public const string MeshPlaceholderHumanoid = "mesh_placeholder_humanoid";
         public const string MeshPlaceholderMonolith = "mesh_placeholder_monolith";
+        public const string MeshPlaceholderPlayer = "mesh_placeholder_player";
         public const string MeshPlaceholderQuadruped = "mesh_placeholder_quadruped";
         public const string MeshSwordA = "mesh_sword_a";
 
-        public static readonly string[] All = ["mesh_armor_a", "mesh_placeholder_heavy", "mesh_placeholder_humanoid", "mesh_placeholder_monolith", "mesh_placeholder_quadruped", "mesh_sword_a"];
+        public static readonly string[] All = ["mesh_armor_a", "mesh_placeholder_heavy", "mesh_placeholder_humanoid", "mesh_placeholder_monolith", "mesh_placeholder_player", "mesh_placeholder_quadruped", "mesh_sword_a"];
     }
 
 }

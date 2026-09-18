@@ -1,18 +1,23 @@
 using Godot;
 using Kiln.Game.Debug;
+using Kiln.Game.Input;
 
 namespace Kiln.Game;
 
 /// <summary>
-/// First thing the game runs. Loads content, installs the debug overlay, and fails loudly
-/// rather than starting in a broken state — a game that boots with missing content produces
-/// bug reports that waste hours.
+/// First thing the game runs, registered as an autoload so it completes before any scene
+/// loads. Installs input bindings, loads content, installs the debug overlay, and fails
+/// loudly rather than starting in a broken state — a game that boots with missing content
+/// produces bug reports that waste hours.
 /// </summary>
 public partial class Bootstrap : Node
 {
     public override void _Ready()
     {
         GD.Print($"Kiln — {(OS.IsDebugBuild() ? "debug" : "release")} build, Godot {Engine.GetVersionInfo()["string"]}");
+
+        // Before anything can query an action. Scenes assume these exist.
+        GameActions.Install();
 
         if (!GameContent.Load())
         {

@@ -1,0 +1,174 @@
+[gd_scene load_steps=14 format=3]
+
+; MOV-01 greybox test arena.
+;
+; Deliberately awkward: pillars that force corner-cutting, a narrow gap that tests whether
+; the agent radius is right, and a wall to path around. A flat empty plane would make any
+; movement code feel fine and prove nothing.
+
+[ext_resource type="Script" path="res://scripts/World/NavBaker.cs" id="1_navbaker"]
+[ext_resource type="Script" path="res://scripts/Camera/CameraRig.cs" id="2_camera"]
+[ext_resource type="Script" path="res://scripts/World/ClickMarker.cs" id="3_marker"]
+[ext_resource type="Script" path="res://scripts/World/CursorManager.cs" id="4_cursor"]
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="5_player"]
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_arena"]
+vertices = PackedVector3Array()
+cell_size = 0.15
+cell_height = 0.15
+agent_height = 1.8
+agent_radius = 0.45
+agent_max_climb = 0.3
+agent_max_slope = 45.0
+geometry_parsed_geometry_type = 1
+geometry_collision_mask = 1
+geometry_source_geometry_mode = 1
+geometry_source_group_name = "navsource"
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+size = Vector2(60, 60)
+
+[sub_resource type="StandardMaterial3D" id="Material_ground"]
+albedo_color = Color(0.24, 0.26, 0.24, 1)
+roughness = 0.95
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
+size = Vector3(60, 1, 60)
+
+[sub_resource type="BoxMesh" id="BoxMesh_block"]
+size = Vector3(1, 1, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_block"]
+albedo_color = Color(0.42, 0.44, 0.48, 1)
+roughness = 0.8
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_unit"]
+size = Vector3(1, 1, 1)
+
+[sub_resource type="Environment" id="Environment_arena"]
+background_mode = 1
+background_color = Color(0.09, 0.11, 0.14, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.45, 0.5, 0.6, 1)
+ambient_light_energy = 0.4
+
+[node name="Arena" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_arena")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.8660254, -0.25, 0.4330127, 0, 0.8660254, 0.5, -0.5, -0.4330127, 0.75, 0, 12, 0)
+shadow_enabled = true
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("NavigationMesh_arena")
+script = ExtResource("1_navbaker")
+
+[node name="Ground" type="StaticBody3D" parent="NavigationRegion3D" groups=["navsource"]]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Ground"]
+mesh = SubResource("PlaneMesh_ground")
+surface_material_override/0 = SubResource("Material_ground")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Ground"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = SubResource("BoxShape3D_ground")
+
+[node name="PillarA" type="StaticBody3D" parent="NavigationRegion3D" groups=["navsource"]]
+transform = Transform3D(1.4, 0, 0, 0, 3, 0, 0, 0, 1.4, 5, 1.5, 2)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/PillarA"]
+mesh = SubResource("BoxMesh_block")
+surface_material_override/0 = SubResource("Material_block")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/PillarA"]
+shape = SubResource("BoxShape3D_unit")
+
+[node name="PillarB" type="StaticBody3D" parent="NavigationRegion3D" groups=["navsource"]]
+transform = Transform3D(1.4, 0, 0, 0, 3, 0, 0, 0, 1.4, 8.5, 1.5, -1.5)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/PillarB"]
+mesh = SubResource("BoxMesh_block")
+surface_material_override/0 = SubResource("Material_block")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/PillarB"]
+shape = SubResource("BoxShape3D_unit")
+
+[node name="PillarC" type="StaticBody3D" parent="NavigationRegion3D" groups=["navsource"]]
+transform = Transform3D(1.4, 0, 0, 0, 3, 0, 0, 0, 1.4, 2, 1.5, -5)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/PillarC"]
+mesh = SubResource("BoxMesh_block")
+surface_material_override/0 = SubResource("Material_block")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/PillarC"]
+shape = SubResource("BoxShape3D_unit")
+
+[node name="LongWall" type="StaticBody3D" parent="NavigationRegion3D" groups=["navsource"]]
+transform = Transform3D(16, 0, 0, 0, 3, 0, 0, 0, 1, -8, 1.5, 7)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/LongWall"]
+mesh = SubResource("BoxMesh_block")
+surface_material_override/0 = SubResource("Material_block")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/LongWall"]
+shape = SubResource("BoxShape3D_unit")
+
+[node name="GapLeft" type="StaticBody3D" parent="NavigationRegion3D" groups=["navsource"]]
+transform = Transform3D(6, 0, 0, 0, 3, 0, 0, 0, 1, -12, 1.5, -6)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/GapLeft"]
+mesh = SubResource("BoxMesh_block")
+surface_material_override/0 = SubResource("Material_block")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/GapLeft"]
+shape = SubResource("BoxShape3D_unit")
+
+[node name="GapRight" type="StaticBody3D" parent="NavigationRegion3D" groups=["navsource"]]
+transform = Transform3D(6, 0, 0, 0, 3, 0, 0, 0, 1, -3, 1.5, -6)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/GapRight"]
+mesh = SubResource("BoxMesh_block")
+surface_material_override/0 = SubResource("Material_block")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/GapRight"]
+shape = SubResource("BoxShape3D_unit")
+
+[node name="Player" parent="." instance=ExtResource("5_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="CameraRig" type="Node3D" parent="."]
+script = ExtResource("2_camera")
+TargetPath = NodePath("../Player")
+
+[node name="Yaw" type="Node3D" parent="CameraRig"]
+
+[node name="SpringArm3D" type="SpringArm3D" parent="CameraRig/Yaw"]
+transform = Transform3D(1, 0, 0, 0, 0.6427876, -0.76604444, 0, 0.76604444, 0.6427876, 0, 0, 0)
+collision_mask = 1
+spring_length = 12.0
+margin = 0.5
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig/Yaw/SpringArm3D"]
+fov = 50.0
+
+[node name="ClickMarker" type="Node3D" parent="."]
+script = ExtResource("3_marker")
+
+[node name="CursorManager" type="Node" parent="."]
+script = ExtResource("4_cursor")

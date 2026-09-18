@@ -46,7 +46,11 @@ validating, Godot project building, headless import clean, content loading in-en
 
 ---
 
-## Phase 1 — Movement, camera, click-to-move core (week 2)
+## Phase 1 — Movement, camera, click-to-move core (week 2) — ⏳ built, awaiting your feel review
+
+**Status 2026-09-18:** MOV-01/02/04/05/06/07 implemented and running. Launch the project
+and you are in the greybox arena. MOV-03 (responsiveness tuning) is deliberately left until
+after MOV-08, because I should tune against your notes rather than my guesses.
 
 **Goal:** the control scheme feels right. This phase is disproportionately important —
 click-to-move lives or dies on responsiveness.
@@ -61,7 +65,7 @@ click-to-move lives or dies on responsiveness.
 | MOV-05 | Camera rig: fixed-pitch follow, zoom range, rotate, collision, dead-zone, smoothing | **[C]** | |
 | MOV-06 | Alternative WASD scheme feeding the same destination core (FR-1.7) | **[C]** | Cheap now, expensive later |
 | MOV-07 | Input map + rebinding infrastructure | **[C]** | |
-| MOV-08 | **Feel review** — 20 min of play, written notes | **[You]** | The one thing I genuinely cannot do |
+| MOV-08 | **Feel review** — 20 min of play, written notes | **[You]** | ⬅ **TESTABLE NOW.** The one thing I genuinely cannot do |
 
 ---
 
