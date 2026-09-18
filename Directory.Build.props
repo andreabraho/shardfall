@@ -1,0 +1,28 @@
+<Project>
+
+  <PropertyGroup>
+    <!--
+      Sohan.Core and Sohan.Data are pinned to net8.0 because the Godot .NET runtime
+      targets net8.0 and the game project references them directly.
+      Sohan.Tests and Sohan.Tools float to the latest installed SDK: a newer TFM may
+      reference an older one, and this lets the test suite run before the .NET 8 SDK
+      is installed. Keep $(GameTfm) in sync with whatever Godot.NET.Sdk requires.
+    -->
+    <GameTfm>net8.0</GameTfm>
+    <ToolsTfm>net10.0</ToolsTfm>
+
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+  </PropertyGroup>
+
+  <!-- The simulation core must stay clean: warnings are errors there. -->
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Sohan.Core' Or '$(MSBuildProjectName)' == 'Sohan.Data'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+</Project>

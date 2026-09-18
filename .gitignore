@@ -1,0 +1,33 @@
+# Godot
+.godot/
+/game/android/
+/game/.mono/
+/game/data/generated/
+
+# .NET
+bin/
+obj/
+*.user
+*.userosscache
+*.suo
+.vs/
+.idea/
+*.swp
+
+# Build output
+/export/
+/artifacts/
+*.pdb
+
+# NOTE: generated ids (src/Sohan.Data/Generated/Ids.g.cs) ARE committed on purpose.
+# CI runs `codegen --check` to verify they are current, so the build never depends
+# on a generation step having been run first.
+
+# OS
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Logs & local scratch
+*.log
+/scratch/

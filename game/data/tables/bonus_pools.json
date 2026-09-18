@@ -1,0 +1,23 @@
+[
+  {
+    "id": "bonus_weapon_melee",
+    "lines": [
+      { "id": "bon_avg_dmg",     "stat": "damage_pct",       "range": [3, 12],   "weight": 100 },
+      { "id": "bon_skill_dmg",   "stat": "skill_damage_pct", "range": [3, 10],   "weight": 70 },
+      { "id": "bon_crit",        "stat": "crit_chance",      "range": [1, 6],    "weight": 45 },
+      { "id": "bon_pierce",      "stat": "pierce_chance",    "range": [1, 5],    "weight": 30 },
+      { "id": "bon_vs_animal",   "stat": "vs_family.animal", "range": [5, 25],   "weight": 40 },
+      { "id": "bon_vs_undead",   "stat": "vs_family.undead", "range": [5, 25],   "weight": 40 },
+      { "id": "bon_vs_devil",    "stat": "vs_family.devil",  "range": [5, 25],   "weight": 40 }
+    ]
+  },
+  {
+    "id": "bonus_armor",
+    "lines": [
+      { "id": "bon_hp",          "stat": "max_hp_flat",      "range": [40, 260], "weight": 100 },
+      { "id": "bon_defense",     "stat": "defense_flat",     "range": [4, 22],   "weight": 80 },
+      { "id": "bon_resist_all",  "stat": "resist_all",       "range": [1, 6],    "weight": 35 },
+      { "id": "bon_hp_regen",    "stat": "hp_regen",         "range": [1, 5],    "weight": 30 }
+    ]
+  }
+]

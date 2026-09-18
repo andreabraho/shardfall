@@ -1,0 +1,34 @@
+[
+  {
+    "id": "wpn_iron_sword",
+    "name": "$item.wpn_iron_sword.name",
+    "slot": "weapon",
+    "class_restriction": ["warrior"],
+    "level_req": 8,
+    "rarity": "fine",
+    "grid_size": [1, 3],
+    "base_stats": { "weapon_damage_min": 24, "weapon_damage_max": 38 },
+    "sockets": 1,
+    "bonus_line_count": [2, 2],
+    "bonus_pool": "bonus_weapon_melee",
+    "upgrade_path": "upg_standard_weapon",
+    "sell_value": 1200,
+    "visual": "mesh_sword_a"
+  },
+  {
+    "id": "wpn_steel_sword",
+    "name": "$item.wpn_steel_sword.name",
+    "slot": "weapon",
+    "class_restriction": ["warrior"],
+    "level_req": 16,
+    "rarity": "rare",
+    "grid_size": [1, 3],
+    "base_stats": { "weapon_damage_min": 41, "weapon_damage_max": 62 },
+    "sockets": 2,
+    "bonus_line_count": [3, 3],
+    "bonus_pool": "bonus_weapon_melee",
+    "upgrade_path": "upg_standard_weapon",
+    "sell_value": 4100,
+    "visual": "mesh_sword_a"
+  }
+]

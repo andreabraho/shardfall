@@ -1,0 +1,8 @@
+[
+  { "id": "mesh_placeholder_humanoid",  "primitive": "capsule",  "height": 1.80, "radius": 0.35, "color": "#b8b8c0" },
+  { "id": "mesh_placeholder_quadruped", "primitive": "capsule",  "height": 0.90, "radius": 0.40, "color": "#8a6b4f" },
+  { "id": "mesh_placeholder_heavy",     "primitive": "box",      "height": 2.10, "radius": 0.55, "color": "#6d7a86" },
+  { "id": "mesh_placeholder_monolith",  "primitive": "monolith", "height": 3.20, "radius": 0.80, "color": "#7a4fd0" },
+  { "id": "mesh_sword_a",               "primitive": "box",      "height": 1.10, "radius": 0.06, "color": "#d9dde2" },
+  { "id": "mesh_armor_a",               "primitive": "box",      "height": 0.80, "radius": 0.30, "color": "#8b5a2b" }
+]

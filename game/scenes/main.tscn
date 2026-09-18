@@ -1,0 +1,55 @@
+[gd_scene format=3]
+
+; Phase 0 smoke scene: proves the project opens, renders and exports.
+; Replaced by the real greybox arena in Phase 1 (MOV-01).
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+size = Vector2(60, 60)
+
+[sub_resource type="StandardMaterial3D" id="Material_ground"]
+albedo_color = Color(0.22, 0.24, 0.22, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="BoxMesh_cube"]
+size = Vector3(1, 1, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_cube"]
+albedo_color = Color(0.62, 0.62, 0.66, 1)
+roughness = 0.6
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_monolith"]
+top_radius = 0.35
+bottom_radius = 0.8
+height = 3.2
+
+[sub_resource type="StandardMaterial3D" id="Material_monolith"]
+albedo_color = Color(0.48, 0.31, 0.82, 1)
+emission_enabled = true
+emission = Color(0.48, 0.31, 0.82, 1)
+emission_energy_multiplier = 0.6
+
+[node name="Main" type="Node3D"]
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_ground")
+surface_material_override/0 = SubResource("Material_ground")
+
+[node name="Cube" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+mesh = SubResource("BoxMesh_cube")
+surface_material_override/0 = SubResource("Material_cube")
+
+[node name="ShardPlaceholder" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1.6, -4)
+mesh = SubResource("CylinderMesh_monolith")
+surface_material_override/0 = SubResource("Material_monolith")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.7071068, 0.7071068, 0, -0.7071068, 0.7071068, 0, 12, 12)
+fov = 50.0
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.8660254, -0.25, 0.4330127, 0, 0.8660254, 0.5, -0.5, -0.4330127, 0.75, 0, 10, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]

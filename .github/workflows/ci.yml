@@ -1,0 +1,86 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
+jobs:
+  build-and-test:
+    name: Build, validate and test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          # net8.0 for Sohan.Core/Sohan.Data (Godot's runtime),
+          # net10.0 for Sohan.Tests/Sohan.Tools — see Directory.Build.props.
+          dotnet-version: |
+            8.0.x
+            10.0.x
+
+      - name: Restore
+        run: dotnet restore Sohan.sln
+
+      - name: Build
+        run: dotnet build Sohan.sln --no-restore --configuration Release
+
+      - name: Validate game content
+        # Fails the build on a broken cross-reference, a literal player-facing string,
+        # a destructive upgrade path, an unreachable quest, or a telegraph the player
+        # cannot escape (BAL-03). See docs/06-data-model-and-formulas.md §10.
+        run: dotnet run --project src/Sohan.Tools --no-build --configuration Release -- validate
+
+      - name: Check generated ids are current
+        run: dotnet run --project src/Sohan.Tools --no-build --configuration Release -- codegen --check
+
+      - name: Test
+        run: dotnet test Sohan.sln --no-build --configuration Release --verbosity normal
+
+  godot-export:
+    name: Godot import and Windows export
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    # Enabled once the Godot project exists (ENG-05 completes when Godot is installed
+    # locally and the export preset is created). Until then this job is skipped rather
+    # than failing every push.
+    if: hashFiles('game/project.godot') != '' && hashFiles('game/export_presets.cfg') != ''
+
+    container:
+      image: barichello/godot-ci:4.3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Set up export templates
+        run: |
+          mkdir -v -p ~/.local/share/godot/export_templates
+          mv /root/.local/share/godot/export_templates/* ~/.local/share/godot/export_templates/
+
+      - name: Headless import check
+        # Catches broken .tscn/.tres references before anyone opens the editor.
+        run: godot --headless --path game --import --quit-after 200
+
+      - name: Export Windows build
+        run: |
+          mkdir -p export/windows
+          godot --headless --path game --export-release "Windows Desktop" ../export/windows/Sohan.exe
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sohan-windows
+          path: export/windows/
+          retention-days: 14

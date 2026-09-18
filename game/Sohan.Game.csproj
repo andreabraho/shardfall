@@ -1,0 +1,27 @@
+<Project Sdk="Godot.NET.Sdk/4.3.0">
+
+  <!--
+    IMPORTANT: the Godot.NET.Sdk version above must match your installed Godot version.
+    After installing Godot, run:  godot --version
+    If it is not 4.3.x, change the version in the Sdk attribute to match (e.g. 4.5.0).
+    Godot will otherwise refuse to build with a version-mismatch error.
+
+    This project is intentionally NOT part of Sohan.sln: Godot manages its own solution.
+    It references the engine-free logic assemblies, which is the whole point of the
+    architecture in docs/04-tech-stack-and-infrastructure.md §4.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <RootNamespace>Sohan.Game</RootNamespace>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\src\Sohan.Core\Sohan.Core.csproj" />
+    <ProjectReference Include="..\src\Sohan.Data\Sohan.Data.csproj" />
+  </ItemGroup>
+
+</Project>

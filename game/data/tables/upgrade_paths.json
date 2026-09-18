@@ -1,0 +1,32 @@
+[
+  {
+    "id": "upg_standard_weapon",
+    "on_failure": "consume_materials_only",
+    "steps": [
+      { "to": 1, "yang":    400, "mats": { "mat_iron_scrap": 2 },                        "chance": 1.00, "pity": 0 },
+      { "to": 2, "yang":    700, "mats": { "mat_iron_scrap": 3 },                        "chance": 1.00, "pity": 0 },
+      { "to": 3, "yang":   1200, "mats": { "mat_iron_scrap": 5 },                        "chance": 1.00, "pity": 0 },
+      { "to": 4, "yang":   3000, "mats": { "mat_iron_scrap": 8, "mat_tempering_oil": 1 },"chance": 0.75, "pity": 2 },
+      { "to": 5, "yang":   5000, "mats": { "mat_iron_scrap": 12,"mat_tempering_oil": 2 },"chance": 0.65, "pity": 2 },
+      { "to": 6, "yang":   9000, "mats": { "mat_steel_core": 2, "mat_tempering_oil": 3 },"chance": 0.55, "pity": 2 },
+      { "to": 7, "yang":  18000, "mats": { "mat_steel_core": 4, "mat_shard_essence": 1 },"chance": 0.45, "pity": 3 },
+      { "to": 8, "yang":  34000, "mats": { "mat_steel_core": 7, "mat_shard_essence": 2 },"chance": 0.35, "pity": 3 },
+      { "to": 9, "yang":  60000, "mats": { "mat_steel_core": 12,"mat_radiant_core": 1 }, "chance": 0.25, "pity": 4 }
+    ]
+  },
+  {
+    "id": "upg_standard_armor",
+    "on_failure": "consume_materials_only",
+    "steps": [
+      { "to": 1, "yang":    350, "mats": { "mat_iron_scrap": 2 },                        "chance": 1.00, "pity": 0 },
+      { "to": 2, "yang":    600, "mats": { "mat_iron_scrap": 3 },                        "chance": 1.00, "pity": 0 },
+      { "to": 3, "yang":   1050, "mats": { "mat_iron_scrap": 5 },                        "chance": 1.00, "pity": 0 },
+      { "to": 4, "yang":   2600, "mats": { "mat_iron_scrap": 8, "mat_tempering_oil": 1 },"chance": 0.75, "pity": 2 },
+      { "to": 5, "yang":   4400, "mats": { "mat_iron_scrap": 12,"mat_tempering_oil": 2 },"chance": 0.65, "pity": 2 },
+      { "to": 6, "yang":   8000, "mats": { "mat_steel_core": 2, "mat_tempering_oil": 3 },"chance": 0.55, "pity": 2 },
+      { "to": 7, "yang":  16000, "mats": { "mat_steel_core": 4, "mat_shard_essence": 1 },"chance": 0.45, "pity": 3 },
+      { "to": 8, "yang":  30000, "mats": { "mat_steel_core": 7, "mat_shard_essence": 2 },"chance": 0.35, "pity": 3 },
+      { "to": 9, "yang":  54000, "mats": { "mat_steel_core": 12,"mat_radiant_core": 1 }, "chance": 0.25, "pity": 4 }
+    ]
+  }
+]
