@@ -6,6 +6,16 @@ namespace Kiln.Game.Combat;
 /// A bar floating above a combatant. Two quads and no textures, so it works with
 /// placeholder art and costs nothing.
 /// </summary>
+/// <remarks>
+/// <para><b>Why this billboards itself instead of using the material's billboard mode:</b>
+/// StandardMaterial3D billboarding replaces the model-view basis in the vertex shader, which
+/// discards the node's scale and makes local offsets drift as the camera rotates. The fill
+/// quad depends on both — it scales to the health fraction and shifts left to drain from one
+/// end — so with material billboarding the bar only slid sideways instead of emptying, which
+/// reads as the value jumping around at random.</para>
+/// <para>Copying the camera basis is also exactly right for a fixed-pitch camera, and it
+/// cannot hit the degenerate case a look-at billboard has when the view is near vertical.</para>
+/// </remarks>
 public partial class HealthBar3D : Node3D
 {
     private MeshInstance3D _fill = null!;
@@ -20,16 +30,20 @@ public partial class HealthBar3D : Node3D
     /// <summary>Hide while untouched, so a quiet field is not covered in bars.</summary>
     [Export] public bool HideWhenFull { get; set; } = true;
 
+    /// <summary>Keeps the bar visible regardless — set for the current target.</summary>
+    public bool ForceVisible { get; set; }
+
     public override void _Ready()
     {
-        var backdrop = Quad(new Color(0.05f, 0.05f, 0.07f, 0.85f), Width, Height);
-        backdrop.Position = new Vector3(0, 0, -0.001f);
+        var backdrop = Quad(new Color(0.05f, 0.05f, 0.07f, 0.9f), Width, Height);
+        backdrop.Position = new Vector3(0, 0, -0.002f);
         AddChild(backdrop);
 
-        _fill = Quad(FullColor, Width, Height * 0.78f);
+        _fill = Quad(FullColor, Width, Height * 0.74f);
         _fillMaterial = (StandardMaterial3D)_fill.MaterialOverride;
         AddChild(_fill);
 
+        TopLevel = true; // position is driven manually; parent rotation must not apply
         SetFraction(1f);
     }
 
@@ -40,9 +54,9 @@ public partial class HealthBar3D : Node3D
             AlbedoColor = color,
             ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
             Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
-            BillboardMode = BaseMaterial3D.BillboardModeEnum.Enabled,
             NoDepthTest = true,
             RenderPriority = 5,
+            CullMode = BaseMaterial3D.CullModeEnum.Disabled,
         };
 
         return new MeshInstance3D
@@ -52,6 +66,21 @@ public partial class HealthBar3D : Node3D
             CastShadow = GeometryInstance3D.ShadowCastingSetting.Off,
         };
     }
+
+    public override void _Process(double delta)
+    {
+        var parent = GetParent<Node3D>();
+        var camera = GetViewport().GetCamera3D();
+
+        if (parent is null || camera is null) return;
+
+        // TopLevel means we own our global transform: follow the parent's position, take
+        // the camera's orientation.
+        GlobalTransform = new Transform3D(camera.GlobalBasis.Orthonormalized(), parent.GlobalPosition + Offset);
+    }
+
+    /// <summary>Local offset above the body.</summary>
+    [Export] public Vector3 Offset { get; set; } = new(0, 2.1f, 0);
 
     public void SetFraction(float fraction)
     {
@@ -63,9 +92,8 @@ public partial class HealthBar3D : Node3D
 
         _fillMaterial.AlbedoColor = LowColor.Lerp(FullColor, _fraction);
 
-        if (HideWhenFull)
-        {
-            Visible = _fraction < 0.999f && _fraction > 0f;
-        }
+        Visible = ForceVisible || !HideWhenFull || (_fraction < 0.999f && _fraction > 0f);
     }
+
+    public void Refresh() => SetFraction(_fraction);
 }

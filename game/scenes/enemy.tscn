@@ -15,7 +15,9 @@ height = 1.7
 
 [node name="Enemy" type="CharacterBody3D"]
 collision_layer = 4
-collision_mask = 1
+; World + Enemy: without the Enemy bit, enemies walk through each other and stack,
+; which puts two health bars in the same place and reads as one bar jumping at random.
+collision_mask = 5
 script = ExtResource("1_brain")
 EnemyId = "mob_corrupted_wolf"
 
@@ -35,7 +37,7 @@ script = ExtResource("3_visual")
 VisualId = "mesh_placeholder_quadruped"
 
 [node name="HealthBar3D" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1, 0)
+; Position is driven by the script (TopLevel + Offset), so no transform here.
 script = ExtResource("4_bar")
 
 [node name="Combatant" type="Node" parent="."]

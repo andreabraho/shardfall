@@ -16,6 +16,7 @@ public partial class PlayerCombat : Node
     private PlayerMotor _motor = null!;
     private Combatant _self = null!;
     private Combatant? _target;
+    private TargetRing? _ring;
     private double _swingCooldown;
 
     /// <summary>Melee reach. Slightly generous so chasing a moving target is not fiddly.</summary>
@@ -41,7 +42,13 @@ public partial class PlayerCombat : Node
     {
         if (!enemy.IsAlive) return;
 
+        SetTargetBarForced(false);
         _target = enemy;
+        SetTargetBarForced(true);
+
+        _ring ??= GetTree().Root.FindChild("TargetRing", recursive: true, owned: false) as TargetRing;
+        _ring?.Follow(enemy.Body);
+
         EmitSignal(SignalName.TargetChanged);
     }
 
@@ -50,8 +57,26 @@ public partial class PlayerCombat : Node
     {
         if (_target is null) return;
 
+        SetTargetBarForced(false);
         _target = null;
+        _ring?.Follow(null);
+
         EmitSignal(SignalName.TargetChanged);
+    }
+
+    /// <summary>
+    /// Keeps the target's bar on screen even at full health, so selecting an untouched
+    /// enemy still shows which one is selected.
+    /// </summary>
+    private void SetTargetBarForced(bool forced)
+    {
+        if (_target is null || !IsInstanceValid(_target)) return;
+
+        var bar = _target.Body.GetNodeOrNull<HealthBar3D>("HealthBar3D");
+        if (bar is null) return;
+
+        bar.ForceVisible = forced;
+        bar.Refresh();
     }
 
     public override void _PhysicsProcess(double delta)

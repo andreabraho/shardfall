@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3]
+[gd_scene load_steps=19 format=3]
 
 ; MOV-01 greybox test arena.
 ;
@@ -14,6 +14,7 @@
 [ext_resource type="PackedScene" path="res://scenes/enemy.tscn" id="7_enemy"]
 [ext_resource type="Script" path="res://scripts/Combat/CombatFeedback.cs" id="8_feedback"]
 [ext_resource type="Script" path="res://scripts/UI/CombatHud.cs" id="9_hud"]
+[ext_resource type="Script" path="res://scripts/Combat/TargetRing.cs" id="10_ring"]
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="5_player"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_arena"]
@@ -184,6 +185,9 @@ script = ExtResource("4_cursor")
 
 [node name="CombatFeedback" type="Node3D" parent="."]
 script = ExtResource("8_feedback")
+
+[node name="TargetRing" type="Node3D" parent="."]
+script = ExtResource("10_ring")
 
 [node name="CombatHud" type="CanvasLayer" parent="."]
 script = ExtResource("9_hud")
