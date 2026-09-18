@@ -3,7 +3,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>$(ToolsTfm)</TargetFramework>
     <RootNamespace>Kiln.Tools</RootNamespace>
-    <AssemblyName>sohan</AssemblyName>
+    <AssemblyName>kiln</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Kiln.Core\Kiln.Core.csproj" />

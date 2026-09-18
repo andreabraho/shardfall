@@ -45,6 +45,12 @@ jobs:
       - name: Check generated ids are current
         run: dotnet run --project src/Kiln.Tools --no-build --configuration Release -- codegen --check
 
+      - name: Check campaign pacing
+        # Fails if the player would arrive at a zone under-levelled, or if the mix of
+        # quest/shard/trash experience has drifted. This is how "no grinding required"
+        # (doc 02 §8) stays a checked property rather than an intention.
+        run: dotnet run --project src/Kiln.Tools --no-build --configuration Release -- simulate
+
       - name: Test
         run: dotnet test Kiln.sln --no-build --configuration Release --verbosity normal
 

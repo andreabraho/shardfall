@@ -91,10 +91,15 @@ asserts the player enters every zone within its level band. **A failing balance 
 CI** — this is how "no grinding required" stops being a wish.
 
 ```
-TrashMobXP(n)   = round(1.1  * n^1.85)     // ~50 same-level kills per level if it were the only source
-ShardXP(tier,n) = round(14   * n^1.85 * tierMult)
-QuestXP(n)      = round(300  * n^1.5)
+TrashMobXP(n)   = round(1.1 * n^1.85)
+ShardXP(tier,n) = round(11  * n^1.85 * tierMult)   // tierMult = 1 + 0.25*(tier-1)
+QuestXP(n)      = round(41  * n^1.85)             // side quests are worth half
 ```
+
+**All three share the same exponent on purpose.** With different exponents the mix between
+questing, shard-breaking and killing drifts as the player levels, so a game balanced at
+level 10 quietly becomes a different game at level 40. These coefficients were derived by
+`kiln simulate`, not chosen by eye — the first draft gave quests 88% of all experience.
 
 ### Catch-up and floor (FR-2.7)
 

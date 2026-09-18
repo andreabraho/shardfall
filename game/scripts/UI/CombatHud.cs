@@ -29,6 +29,9 @@ public partial class CombatHud : CanvasLayer
     private DefensiveAbility? _guard;
     private Label _flaskLabel = null!;
     private Label _statusLabel = null!;
+    private Label _levelLabel = null!;
+    private ProgressBar _xpBar = null!;
+    private PlayerCharacter? _character;
 
     public override void _Ready()
     {
@@ -47,6 +50,13 @@ public partial class CombatHud : CanvasLayer
         _combat = playerBody.GetNodeOrNull<PlayerCombat>("PlayerCombat");
         _flask = playerBody.GetNodeOrNull<HealthFlask>("HealthFlask");
         _guard = playerBody.GetNodeOrNull<DefensiveAbility>("DefensiveAbility");
+        _character = playerBody.GetNodeOrNull<PlayerCharacter>("PlayerCharacter");
+
+        if (_character is not null)
+        {
+            _character.ExperienceChanged += RefreshExperience;
+            RefreshExperience();
+        }
 
         if (_player is not null)
         {
@@ -59,6 +69,19 @@ public partial class CombatHud : CanvasLayer
             _flask.ChargesChanged += (_, _) => RefreshFlask();
             RefreshFlask();
         }
+    }
+
+    private void RefreshExperience()
+    {
+        if (_character is null) return;
+
+        var p = _character.Progression;
+
+        _levelLabel.Text = p.IsMaxLevel
+            ? $"Level {p.Level} (max)"
+            : $"Level {p.Level}   {p.Experience:N0} / {p.ExperienceForNextLevel:N0} xp";
+
+        _xpBar.Value = p.LevelProgress;
     }
 
     private void RefreshFlask()
@@ -82,8 +105,12 @@ public partial class CombatHud : CanvasLayer
 
         _flaskLabel = new Label { Text = "Flask" };
         _statusLabel = new Label { Text = "" };
+        _levelLabel = new Label { Text = "Level 1" };
+        _xpBar = new ProgressBar { MinValue = 0, MaxValue = 1, Value = 0, ShowPercentage = false, CustomMinimumSize = new Vector2(320, 8) };
 
         box.AddChild(_statusLabel);
+        box.AddChild(_levelLabel);
+        box.AddChild(_xpBar);
         box.AddChild(_playerLabel);
         box.AddChild(_playerBar);
         box.AddChild(_manaBar);

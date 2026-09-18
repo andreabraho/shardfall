@@ -1,6 +1,7 @@
 using Godot;
 using Kiln.Core.Combat;
 using Kiln.Core.Foundation;
+using Kiln.Core.Progression;
 
 namespace Kiln.Game.Player;
 
@@ -22,6 +23,13 @@ public partial class PlayerCharacter : Node
     /// <summary>Respawn delay. Kept short: a long death screen makes a hard game feel unfair.</summary>
     [Export] public double RespawnSeconds { get; set; } = 1.5;
 
+    /// <summary>Level, experience and unspent points (PRG-01/02).</summary>
+    public CharacterProgression Progression { get; } = new();
+
+    [Signal] public delegate void LeveledUpEventHandler(int level);
+
+    [Signal] public delegate void ExperienceChangedEventHandler();
+
     public override void _Ready()
     {
         _motor = GetParent<PlayerMotor>();
@@ -30,23 +38,20 @@ public partial class PlayerCharacter : Node
         _spawnPoint = _motor.GlobalPosition;
         _motor.AddToGroup("player");
 
+        // Start partway up the curve so combat can be tested at a meaningful power level.
+        // A real new game begins at 1; the prologue quest chain covers the early levels.
+        Progression.Grant(ExperienceTable.CumulativeTo(StartingLevel));
+        SpendStartingPoints();
+
         _combatant.IsPlayer = true;
-        _combatant.Configure(
-            new StatBlock
-            {
-                Level = StartingLevel,
-                Class = CharacterClass.Warrior,
-                Family = MonsterFamily.Human,
-                Attributes = new Attributes(Str: 22, Dex: 14, Int: 8, Vit: 18),
-                WeaponDamage = 28,
-                ArmorValue = 34,
-            },
-            "$player.name");
+        ApplyStats();
 
         _combatant.Damaged += OnDamaged;
         _combatant.Died += OnDied;
 
         Debug.DebugOverlay.Register("hp", () => $"{_combatant.Health} ({_combatant.Health.Fraction:P0})");
+        Debug.DebugOverlay.Register("level", () =>
+            $"{Progression.Level} — {Progression.Experience}/{Progression.ExperienceForNextLevel} xp");
     }
 
     private void OnDamaged(int amount, bool critical, bool evaded)
@@ -71,6 +76,77 @@ public partial class PlayerCharacter : Node
         // just being motion. Only the player being hit moves the camera — reacting to every
         // blow the player lands would be constant noise.
         Camera.CameraRig.Kick(LastHitDirection(), critical ? severity * 1.4f : severity);
+    }
+
+    /// <summary>
+    /// Spends the level-up points for the test character. A real character sheet lets the
+    /// player choose; until then a Warrior-shaped split keeps the numbers sensible.
+    /// </summary>
+    private void SpendStartingPoints()
+    {
+        while (Progression.UnspentAttributePoints > 0)
+        {
+            var remaining = Progression.UnspentAttributePoints;
+
+            Progression.SpendAttributePoint(AttributeKind.Str);
+            if (remaining % 2 == 0) Progression.SpendAttributePoint(AttributeKind.Vit);
+        }
+    }
+
+    /// <summary>Rebuilds the stat block from current attributes. Called on every level.</summary>
+    private void ApplyStats()
+    {
+        var fraction = _combatant.Health.Max > 0 ? _combatant.Health.Fraction : 1.0;
+
+        _combatant.Configure(
+            new StatBlock
+            {
+                Level = Progression.Level,
+                Class = CharacterClass.Warrior,
+                Family = MonsterFamily.Human,
+                Attributes = Progression.TotalAttributes,
+                WeaponDamage = 28,
+                ArmorValue = 34,
+            },
+            "$player.name");
+
+        // Keep the same proportion of health rather than a free full heal on every level.
+        _combatant.Health.SetCurrent(_combatant.Health.Max * fraction);
+    }
+
+    /// <summary>
+    /// Awards experience for a kill, adjusted for the level gap (FR-2.7).
+    /// <para>
+    /// Killing far below your level is worth almost nothing, so clearing an easy zone is
+    /// never the efficient route — the campaign is meant to carry the player, not farming.
+    /// </para>
+    /// </summary>
+    public void AwardKill(int enemyLevel, int baseXp)
+    {
+        if (baseXp <= 0 || Progression.IsMaxLevel) return;
+
+        var scaled = (long)System.Math.Round(
+            baseXp * ExperienceTable.CatchUpMultiplier(Progression.Level, enemyLevel));
+
+        var levels = Progression.Grant(scaled);
+
+        EmitSignal(SignalName.ExperienceChanged);
+
+        if (levels.Count == 0) return;
+
+        ApplyStats();
+        _combatant.Health.Fill();
+        _combatant.Mana.Fill();
+
+        foreach (var level in levels)
+        {
+            GD.Print($"[progression] level {level.NewLevel} — {level.AttributePoints} attribute points, {level.SkillPoints} skill points");
+            EmitSignal(SignalName.LeveledUp, level.NewLevel);
+        }
+
+        // Level-up restores and is announced loudly: it is the reward beat of the loop.
+        Combat.CombatFeedback.Number(
+            _motor.GlobalPosition + (Vector3.Up * 2.6f), Progression.Level, critical: true, evaded: false);
     }
 
     /// <summary>

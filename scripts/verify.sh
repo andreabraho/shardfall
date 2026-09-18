@@ -12,6 +12,9 @@ dotnet run --project src/Kiln.Tools --no-build -- validate
 echo "== generated ids current? =="
 dotnet run --project src/Kiln.Tools --no-build -- codegen --check
 
+echo "== campaign pacing =="
+dotnet run --project src/Kiln.Tools --no-build -- simulate
+
 echo "== tests =="
 dotnet test Kiln.sln --no-build --nologo
 

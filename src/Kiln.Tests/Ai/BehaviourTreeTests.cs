@@ -107,7 +107,7 @@ public class BehaviourTreeTests
 
         // "first" must run once, not once per tick, or entering a branch would repeat
         // its setup every frame.
-        Assert.Single(ctx.Log.Where(l => l == "first"));
+        Assert.Single(ctx.Log, l => l == "first");
         Assert.Contains("last", ctx.Log);
     }
 

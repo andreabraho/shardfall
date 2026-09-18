@@ -90,6 +90,9 @@ public partial class EnemyBrain : CharacterBody3D
 
     public bool IsDead => _dead;
 
+    /// <summary>Experience granted on death, straight from the definition.</summary>
+    public int XpReward { get; private set; }
+
     public override void _Ready()
     {
         _agent = GetNode<NavigationAgent3D>("NavigationAgent3D");
@@ -135,6 +138,7 @@ public partial class EnemyBrain : CharacterBody3D
         AggroRadius = (float)def.AggroRadius;
         LeashRadius = (float)def.LeashRadius;
         MoveSpeed = (float)def.Stats.MoveSpeed;
+        XpReward = def.Xp;
 
         if (def.Abilities.Length > 0) Abilities = def.Abilities;
 
@@ -184,12 +188,22 @@ public partial class EnemyBrain : CharacterBody3D
         Velocity = Vector3.Zero;
         _telegraph?.Cancel();
         ReleaseShields();
+        AwardExperience();
 
         if (_bar is not null) _bar.Visible = false;
 
         var tween = CreateTween();
         tween.TweenProperty(this, "position:y", Position.Y - 1.4f, 0.6).SetDelay(0.15);
         tween.TweenCallback(Callable.From(QueueFree));
+    }
+
+    /// <summary>Hands the kill reward to the player.</summary>
+    private void AwardExperience()
+    {
+        if (XpReward <= 0) return;
+
+        var player = GetTree().GetFirstNodeInGroup("player");
+        player?.GetNodeOrNull<Player.PlayerCharacter>("PlayerCharacter")?.AwardKill(Self.Stats.Level, XpReward);
     }
 
     // -- Main loop ----------------------------------------------------------

@@ -101,15 +101,15 @@ click-to-move lives or dies on responsiveness.
 
 | ID | Task | Owner | Notes |
 |---|---|---|---|
-| PRG-01 | Attributes, derived stats, stat aggregation from gear/buffs | **[C]** | [06](06-data-model-and-formulas.md) §2 |
-| PRG-02 | XP curve, levelling, attribute + skill point award | **[C]** | [06](06-data-model-and-formulas.md) §3 |
+| PRG-01 | Attributes, derived stats, stat aggregation from gear/buffs | **[C]** | ✅ attributes + derived; gear aggregation lands with Phase 4 |
+| PRG-02 | XP curve, levelling, attribute + skill point award | **[C]** | ✅ |
 | PRG-03 | Skill system: definitions, cooldowns, mana costs, cast types, targeting modes | **[C]** | Data-driven |
 | PRG-04 | 8 Warrior skills across the two trees | **[C]** | |
 | PRG-05 | Skill mastery accrual + rank-up mechanical changes | **[C]** | Redesign §5 |
 | PRG-06 | Free respec at shrines | **[C]** | |
-| PRG-07 | Catch-up XP curve + low-level enemy floor (FR-2.7) | **[C]** | |
+| PRG-07 | Catch-up XP curve + low-level enemy floor (FR-2.7) | **[C]** | ✅ curve done; enemy floor pending |
 | PRG-08 | Skill VFX with primitives + Godot particles | **[C→You]** | You call readability |
-| PRG-09 | **Balance simulator v1** — walks the XP table, reports level-vs-zone-band deltas | **[C]** | Enforces "no grinding required" as a measurable property |
+| PRG-09 | **Balance simulator v1** — walks the XP table, reports level-vs-zone-band deltas | **[C]** | ✅ runs in CI; found the first draft gave quests 88% of all XP |
 
 ---
 

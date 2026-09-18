@@ -29,26 +29,27 @@ public static class Program
             {
                 "validate" => ValidateCommand.Run(rest),
                 "codegen" => CodegenCommand.Run(rest),
+                "simulate" => SimulateCommand.Run(rest),
                 _ => Unknown(command),
             };
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine($"sohan: {command} failed — {ex.Message}");
+            Console.Error.WriteLine($"kiln: {command} failed — {ex.Message}");
             return 70; // EX_SOFTWARE
         }
     }
 
     private static int Unknown(string command)
     {
-        Console.Error.WriteLine($"sohan: unknown command '{command}'.");
+        Console.Error.WriteLine($"kiln: unknown command '{command}'.");
         PrintUsage();
         return 64; // EX_USAGE
     }
 
     private static void PrintUsage() => Console.WriteLine(
         """
-        sohan — project tooling
+        kiln — project tooling
 
         Commands:
           validate [--data <dir>]              Load and validate all game content.
@@ -57,6 +58,10 @@ public static class Program
           codegen  [--data <dir>] [--out <f>]  Generate strongly-typed content id constants.
                    [--check]                   --check verifies the committed file is current
                                                instead of writing it (used by CI).
+
+          simulate [--verbose]                Walk the campaign experience budget and check
+                                              the player reaches each zone at the intended
+                                              level. Exit code 1 if pacing has drifted.
 
         Options:
           --data <dir>   Path to game/data. Defaults to searching upward from the current
