@@ -16,13 +16,34 @@ winget install --id GodotEngine.GodotEngine.Mono -e
 If winget's package id has drifted, download "Godot Engine – .NET" from godotengine.org and
 unzip it to `C:\tools\godot\`. Godot is a portable executable; there is no installer.
 
-**.NET note:** Godot 4.x C# projects target `net8.0`. Your SDK 10 can build that, but if the
-export or build complains about a missing targeting pack, install the .NET 8 SDK alongside —
-they coexist without conflict:
+**Installed version: Godot 4.7.2 stable mono.** Three places pin it and must stay in step:
+`game/Sohan.Game.csproj` (`Godot.NET.Sdk/4.7.2`), `game/project.godot` (`config/features`),
+and `.github/workflows/ci.yml` (the `godot-ci` image tag).
+
+**.NET note:** Godot 4.7's `GodotSharp` targets `net8.0`, so `Sohan.Core` and `Sohan.Data`
+target net8.0 too. The .NET 8 SDK is required alongside 10:
 
 ```bash
 winget install --id Microsoft.DotNet.SDK.8 -e
 ```
+
+### ⚠ Launch Godot from the real executable, not the winget shim
+
+winget puts a shim at `%LOCALAPPDATA%\Microsoft\WinGet\Links\godot.exe`. Godot resolves its
+C# API assemblies **relative to the executable path**, and the shim folder has no
+`GodotSharp/` beside it, so launching through it fails with:
+
+> Unable to find the .NET assemblies directory. Make sure the
+> `…/WinGet/Links/GodotSharp/Api/Debug` directory exists…
+
+…and then crashes. Nothing is wrong with the project — it is purely how the shim resolves.
+Use the real binary:
+
+```
+%LOCALAPPDATA%\Microsoft\WinGet\Packages\GodotEngine.GodotEngine.Mono_Microsoft.Winget.Source_8wekyb3d8bbwe\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_mono_win64.exe
+```
+
+Pin that to the taskbar. For scripting, `scripts/godot.sh` in the repo wraps it.
 
 ### Why Godot here, concretely
 

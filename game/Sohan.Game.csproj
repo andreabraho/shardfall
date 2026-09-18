@@ -1,10 +1,11 @@
-<Project Sdk="Godot.NET.Sdk/4.3.0">
+<Project Sdk="Godot.NET.Sdk/4.7.2">
 
   <!--
-    IMPORTANT: the Godot.NET.Sdk version above must match your installed Godot version.
-    After installing Godot, run:  godot --version
-    If it is not 4.3.x, change the version in the Sdk attribute to match (e.g. 4.5.0).
-    Godot will otherwise refuse to build with a version-mismatch error.
+    The Godot.NET.Sdk version must match the installed editor, or the build fails with a
+    version-mismatch error. Pinned to 4.7.2 to match the dev environment
+    (godot 4.7.2.stable.mono.official). Check the editor version after any upgrade, and
+    bump this together with config/features in project.godot and the godot-ci image tag
+    in .github/workflows/ci.yml — those three must stay in step.
 
     This project is intentionally NOT part of Sohan.sln: Godot manages its own solution.
     It references the engine-free logic assemblies, which is the whole point of the

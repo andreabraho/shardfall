@@ -2,6 +2,9 @@ using System.Collections.Generic;
 using Godot;
 using Sohan.Data.Loading;
 
+// Godot.FileAccess and System.IO.FileAccess collide under implicit usings.
+using FileAccess = Godot.FileAccess;
+
 namespace Sohan.Game;
 
 /// <summary>

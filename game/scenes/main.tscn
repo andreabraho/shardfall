@@ -1,7 +1,9 @@
-[gd_scene format=3]
+[gd_scene load_steps=7 format=3]
 
-; Phase 0 smoke scene: proves the project opens, renders and exports.
+; Phase 0 smoke scene: proves the project opens, loads content, renders and exports.
 ; Replaced by the real greybox arena in Phase 1 (MOV-01).
+
+[ext_resource type="Script" path="res://scripts/Bootstrap.cs" id="1_bootstrap"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
 size = Vector2(60, 60)
@@ -29,6 +31,9 @@ emission = Color(0.48, 0.31, 0.82, 1)
 emission_energy_multiplier = 0.6
 
 [node name="Main" type="Node3D"]
+
+[node name="Bootstrap" type="Node" parent="."]
+script = ExtResource("1_bootstrap")
 
 [node name="Ground" type="MeshInstance3D" parent="."]
 mesh = SubResource("PlaneMesh_ground")

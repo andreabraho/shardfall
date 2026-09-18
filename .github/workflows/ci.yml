@@ -58,7 +58,7 @@ jobs:
     if: hashFiles('game/project.godot') != '' && hashFiles('game/export_presets.cfg') != ''
 
     container:
-      image: barichello/godot-ci:4.3
+      image: barichello/godot-ci:4.7.2
     steps:
       - uses: actions/checkout@v4
         with:
