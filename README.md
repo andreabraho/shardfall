@@ -52,6 +52,6 @@ tests, Godot build and headless import.
 ## Status
 
 Phase 0 (foundations) and Phase 1 (click-to-move, camera, greybox arena) are implemented.
-Phase 1 is awaiting the MOV-08 feel review. Start at
-[docs/07-what-i-need-from-you.md](docs/07-what-i-need-from-you.md) — it lists the
-handful of things that unblock Phase 0.
+Phase 1 is awaiting the MOV-08 feel review: run `play.bat` and judge whether click-to-move
+feels responsive. What is needed from you at any point is tracked in
+[docs/07-what-i-need-from-you.md](docs/07-what-i-need-from-you.md).
