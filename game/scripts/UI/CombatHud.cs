@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Godot;
 using Kiln.Game.Combat;
 using Kiln.Game.Player;
@@ -135,6 +136,21 @@ public partial class CombatHud : CanvasLayer
             { CooldownRemaining: > 0 } g => $"Guard ready in {g.CooldownRemaining:F1}s",
             _ => "Guard ready  [Space]",
         };
+
+        // Status effects must be visible or they read as unexplained damage and sluggishness.
+        if (_player is not null && _player.Statuses.Count > 0)
+        {
+            var names = new List<string>();
+
+            foreach (var effect in _player.Statuses.Active)
+            {
+                names.Add(effect.Stacks > 1
+                    ? $"{effect.Kind} x{effect.Stacks} ({effect.Remaining:F0}s)"
+                    : $"{effect.Kind} ({effect.Remaining:F0}s)");
+            }
+
+            _statusLabel.Text += "     " + string.Join("  ", names);
+        }
 
         if (_combat is null) return;
 

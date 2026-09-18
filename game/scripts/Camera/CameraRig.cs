@@ -20,6 +20,9 @@ public partial class CameraRig : Node3D
 
     private float _targetZoom;
     private bool _dragging;
+    private double _shake;
+    private double _shakeDuration;
+    private static CameraRig? _instance;
 
     [Export] public NodePath TargetPath { get; set; } = "";
 
@@ -40,6 +43,9 @@ public partial class CameraRig : Node3D
 
     /// <summary>Degrees per pixel of middle-drag.</summary>
     [Export] public float DragSensitivity { get; set; } = 0.35f;
+
+    /// <summary>Peak camera displacement from a shake, in metres.</summary>
+    [Export] public float ShakeStrength { get; set; } = 0.22f;
 
     /// <summary>
     /// Let the SpringArm pull the camera in when geometry is behind the player.
@@ -67,11 +73,31 @@ public partial class CameraRig : Node3D
 
         // Snap to the target on the first frame instead of gliding in from the origin.
         if (_target is not null) GlobalPosition = _target.GlobalPosition;
+
+        _instance = this;
+    }
+
+    public override void _ExitTree()
+    {
+        if (_instance == this) _instance = null;
     }
 
     public void SetTarget(Node3D target) => _target = target;
 
     public float YawDegrees => _yaw.RotationDegrees.Y;
+
+    /// <summary>
+    /// Kicks the camera briefly. Reserved for hits that matter — a shake on every swing
+    /// stops meaning anything and just makes the game hard to look at.
+    /// </summary>
+    public static void Shake(double seconds = 0.18, float scale = 1f)
+    {
+        if (_instance is null) return;
+
+        // Never shorten an ongoing shake; overlapping impacts should not cut each other off.
+        _instance._shakeDuration = System.Math.Max(_instance._shakeDuration, seconds);
+        _instance._shake = System.Math.Max(_instance._shake, seconds * scale);
+    }
 
     public override void _UnhandledInput(InputEvent @event)
     {
@@ -106,10 +132,34 @@ public partial class CameraRig : Node3D
         if (_target is not null)
         {
             var t = 1f - Mathf.Exp(-FollowSharpness * (float)delta);
-            GlobalPosition = GlobalPosition.Lerp(_target.GlobalPosition, t);
+            GlobalPosition = GlobalPosition.Lerp(_target.GlobalPosition, t) + ShakeOffset(delta);
         }
 
         var zt = 1f - Mathf.Exp(-ZoomSharpness * (float)delta);
         _arm.SpringLength = Mathf.Lerp(_arm.SpringLength, _targetZoom, zt);
+    }
+
+    /// <summary>Displacement for this frame's shake, decaying to nothing.</summary>
+    private Vector3 ShakeOffset(double delta)
+    {
+        if (_shake <= 0) return Vector3.Zero;
+
+        _shake -= delta;
+
+        if (_shake <= 0)
+        {
+            _shakeDuration = 0;
+            return Vector3.Zero;
+        }
+
+        // Decay with the square so it hits hard and settles fast rather than wobbling.
+        var falloff = (float)(_shake / System.Math.Max(_shakeDuration, 0.0001));
+        var amount = ShakeStrength * falloff * falloff;
+
+        // Horizontal only: vertical shake on a fixed-pitch camera reads as the ground moving.
+        return new Vector3(
+            (float)GD.RandRange(-amount, amount),
+            0,
+            (float)GD.RandRange(-amount, amount));
     }
 }

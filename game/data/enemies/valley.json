@@ -10,6 +10,7 @@
     "abilities": [
       { "id": "abl_wolf_bite",  "cooldown": 2.4, "windup": 0.55, "damage_coef": 1.00 },
       { "id": "abl_wolf_lunge", "cooldown": 7.0, "windup": 1.50, "damage_coef": 1.60,
+        "applies": { "kind": "bleed", "magnitude": 7, "duration": 4.0 },
         "telegraph": { "shape": "cone", "radius": 2.5, "angle": 60 } }
     ],
     "ai": "bt_melee_chaser",
@@ -53,7 +54,8 @@
     "stats": { "hp": 980, "attack_power": 48, "defense": 72, "move_speed": 3.9 },
     "stagger_pool": 180,
     "abilities": [
-      { "id": "abl_warden_slam",  "cooldown": 3.2, "windup": 0.90, "damage_coef": 1.15 },
+      { "id": "abl_warden_slam",  "cooldown": 3.2, "windup": 0.90, "damage_coef": 1.15,
+        "applies": { "kind": "stun", "duration": 0.9, "chance": 0.35 } },
       { "id": "abl_warden_aegis", "cooldown": 14.0,"windup": 2.00, "damage_coef": 0.00 }
     ],
     "ai": "bt_support_shielder",
@@ -75,7 +77,8 @@
     "stagger_pool": 45,
     "abilities": [
       { "id": "abl_mend_ally",  "cooldown": 8.0, "windup": 1.40, "damage_coef": 0.00 },
-      { "id": "abl_rot_bolt",   "cooldown": 3.0, "windup": 0.85, "damage_coef": 0.90, "range": 10.0 }
+      { "id": "abl_rot_bolt",   "cooldown": 3.0, "windup": 0.85, "damage_coef": 0.90, "range": 10.0,
+        "applies": { "kind": "weaken", "magnitude": 0.20, "duration": 4.0, "chance": 0.5 } }
     ],
     "ai": "bt_support_healer",
     "aggro_radius": 14,
@@ -96,6 +99,7 @@
     "stagger_pool": 30,
     "abilities": [
       { "id": "abl_blight_detonate", "cooldown": 99.0, "windup": 2.40, "damage_coef": 3.20,
+        "applies": { "kind": "poison", "magnitude": 12, "duration": 6.0 },
         "telegraph": { "shape": "circle", "radius": 5.0 } }
     ],
     "ai": "bt_suicide_charger",

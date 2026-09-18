@@ -134,6 +134,25 @@ public sealed class AbilityDef
 
     /// <summary>"self" centres the telegraph on the caster; "target" places it on the victim.</summary>
     public string Placement { get; init; } = "self";
+
+    /// <summary>Status effect applied on hit, if any (FR-3.4).</summary>
+    public StatusApplicationDef? Applies { get; init; }
+}
+
+/// <summary>A status an ability inflicts. Durations and magnitudes stay in data so a status
+/// can be retuned without touching code.</summary>
+public sealed class StatusApplicationDef
+{
+    /// <summary>poison | bleed | stun | slow | weaken | vulnerability</summary>
+    public string Kind { get; init; } = string.Empty;
+
+    /// <summary>Damage per tick for damage-over-time, or a fraction for slow/weaken.</summary>
+    public double Magnitude { get; init; }
+
+    public double Duration { get; init; } = 3.0;
+
+    /// <summary>Probability of applying, 0..1. Defaults to always.</summary>
+    public double Chance { get; init; } = 1.0;
 }
 
 /// <summary>

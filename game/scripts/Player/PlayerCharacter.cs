@@ -54,7 +54,14 @@ public partial class PlayerCharacter : Node
         var at = _motor.GlobalPosition + (Vector3.Up * 2.0f);
         Combat.CombatFeedback.Number(at, amount, critical, evaded, onPlayer: true);
 
-        if (!evaded) Combat.CombatFeedback.HitStop(0.05);
+        if (evaded) return;
+
+        Combat.CombatFeedback.HitStop(0.05);
+        _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Flash();
+
+        // Only the player being hit shakes the camera. Shaking on every blow the player
+        // lands would be constant noise; being hit is the event worth emphasising.
+        Camera.CameraRig.Shake(0.18, critical ? 1.4f : 1.0f);
     }
 
     private async void OnDied()

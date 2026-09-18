@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Godot;
 using Kiln.Core.Ai;
+using Kiln.Core.Combat;
 using Kiln.Core.Foundation;
 using Kiln.Data.Definitions;
 using Kiln.Game.Foundation;
@@ -38,6 +39,7 @@ public partial class EnemyBrain : CharacterBody3D
     private Node3D? _visual;
     private HealthBar3D? _bar;
     private TelegraphVisual? _telegraph;
+    private RoleMarker _marker = null!;
 
     private readonly Dictionary<string, double> _abilityCooldowns = new(System.StringComparer.Ordinal);
     private readonly List<Combatant> _shielded = [];
@@ -98,6 +100,8 @@ public partial class EnemyBrain : CharacterBody3D
         _telegraph = new TelegraphVisual { Name = "Telegraph" };
         CallDeferred(Node.MethodName.AddChild, _telegraph);
 
+        _marker = new RoleMarker { Name = "RoleMarker" };
+
         _home = GlobalPosition;
         _agent.PathDesiredDistance = 0.5f;
         _agent.TargetDesiredDistance = AttackRange * 0.8f;
@@ -105,6 +109,11 @@ public partial class EnemyBrain : CharacterBody3D
 
         LoadDefinition();
         _tree = RoleTrees.Build(Role);
+
+        // Role is known only after the definition loads, so the marker is configured and
+        // parented here rather than alongside the telegraph.
+        _marker.Role = Role;
+        CallDeferred(Node.MethodName.AddChild, _marker);
         _retreatBudget = RetreatSeconds;
 
         Self.Damaged += OnDamaged;
@@ -158,7 +167,11 @@ public partial class EnemyBrain : CharacterBody3D
     {
         CombatFeedback.Number(GlobalPosition + (Vector3.Up * 1.6f), amount, critical, evaded);
 
-        if (!evaded) CombatFeedback.HitStop(critical ? 0.075 : 0.04);
+        if (!evaded)
+        {
+            CombatFeedback.HitStop(critical ? 0.075 : 0.04);
+            (_visual as VisualRoot)?.Flash();
+        }
 
         // Being hit pulls an enemy into the fight from outside aggro range — but not while
         // it is walking home, or chasing and poking a leashing enemy restarts the fight.
@@ -534,7 +547,34 @@ public partial class EnemyBrain : CharacterBody3D
         foreach (var victim in hits)
         {
             victim.TakeAttack(Self, skillCoef: ability.DamageCoef);
+            ApplyStatus(ability, victim);
         }
+    }
+
+    /// <summary>Inflicts the ability's status, if it has one and the roll lands.</summary>
+    private void ApplyStatus(AbilityDef ability, Combatant victim)
+    {
+        if (ability.Applies is not { } spec || !victim.IsAlive) return;
+        if (!GameSession.CombatRng.Chance(spec.Chance)) return;
+
+        var effect = spec.Kind switch
+        {
+            "poison" => StatusEffectSet.Poison(spec.Magnitude, spec.Duration),
+            "bleed" => StatusEffectSet.Bleed(spec.Magnitude, spec.Duration),
+            "stun" => StatusEffectSet.Stun(spec.Duration),
+            "slow" => StatusEffectSet.Slow(spec.Magnitude, spec.Duration),
+            "weaken" => StatusEffectSet.Weaken(spec.Magnitude, spec.Duration),
+            "vulnerability" => StatusEffectSet.Vulnerability(spec.Magnitude, spec.Duration),
+            _ => null,
+        };
+
+        if (effect is null)
+        {
+            GD.PushWarning($"EnemyBrain '{EnemyId}': unknown status kind '{spec.Kind}'.");
+            return;
+        }
+
+        victim.Statuses.Apply(effect);
     }
 
     // -- Role-specific actions ---------------------------------------------
