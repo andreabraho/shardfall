@@ -217,10 +217,10 @@ Pools are per slot. Representative entries:
 {
   "path": "standard_weapon",
   "steps": [
-    { "to": 1, "yang":   400, "mats": { "iron_scrap": 2 },                       "chance": 1.00, "pity": 0 },
-    { "to": 4, "yang":  3000, "mats": { "iron_scrap": 8, "tempering_oil": 1 },   "chance": 0.75, "pity": 2 },
-    { "to": 7, "yang": 18000, "mats": { "steel_core": 4, "shard_essence": 1 },   "chance": 0.45, "pity": 3 },
-    { "to": 9, "yang": 60000, "mats": { "steel_core": 12, "radiant_core": 1 },   "chance": 0.25, "pity": 4 }
+    { "to": 1, "yang":   5000, "mats": { "iron_scrap": 2 },                      "chance": 1.00, "pity": 0 },
+    { "to": 4, "yang":  19000, "mats": { "iron_scrap": 8, "tempering_oil": 1 },  "chance": 0.75, "pity": 2 },
+    { "to": 7, "yang":  60000, "mats": { "steel_core": 4, "shard_essence": 1 },  "chance": 0.45, "pity": 3 },
+    { "to": 9, "yang": 120000, "mats": { "steel_core": 12, "radiant_core": 1 },  "chance": 0.25, "pity": 4 }
   ],
   "on_failure": "consume_materials_only"    // never destroy, never downgrade
 }
@@ -229,6 +229,24 @@ Pools are per slot. Representative entries:
 `pity` = guaranteed success after that many consecutive failures at this step. **The counter
 is shown in the UI.** Failure costs resources; it can never cost progress — which is what
 removes the incentive to save-scum.
+
+Pity also makes the ladder *costable*. Without it the expected attempts on a rung are `1/p`
+with an unbounded tail, so no budget can be planned around it; with it the worst case is
+`pity + 1` and the economy simulator can price the whole chase.
+
+### Upgrade level → stats
+
+```
+multiplier(n) = 1 + 0.07n + 0.005n²          // +9 ≈ 2.03x
+```
+
+Applied to the item's **base** numbers only — weapon damage, armour value, a ring's flat
+stats. Rolled bonus lines are never scaled. The player upgrades the frame and rerolls the
+lines, and the two systems stay legible because they never touch each other.
+
+Yang costs are set against the campaign's income per band (see `kiln economy`), not picked
+by feel: the first half is meant to spend ~60% of income on gear, and the +9 capstone is
+meant to still be out of reach when the credits roll.
 
 ---
 
@@ -346,3 +364,10 @@ The build fails if any of these is false:
 - Every quest is reachable from the prologue via its prerequisite graph, and the graph is acyclic.
 - Every enemy's telegraphs pass the BAL-03 time-to-safety check at every difficulty.
 - Every item's `level_req` falls inside a zone band where it can actually drop.
+- Every stat a bonus line or an item's `base_stats` names resolves to a real modifier. A
+  mistyped stat key does not crash and does not look wrong — the line appears in the tooltip
+  and silently does nothing — so it has to be caught here or it ships.
+- Every equippable item's socket count and bonus-line range match its rarity (§5). Rarity is
+  a one-glance promise about an item's worth, and it only works if nothing contradicts it.
+- Every standard upgrade path is `consume_materials_only`, ascends, stays at or below +9, and
+  gives every fallible rung a pity counter.

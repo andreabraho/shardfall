@@ -40,6 +40,9 @@ public sealed class ItemDef : ContentDefBase
     public string? UpgradePath { get; init; }
     public int SellValue { get; init; }
     public string? Visual { get; init; }
+
+    /// <summary>How many fit in one grid cell. 1 means the item never stacks; equipment never does.</summary>
+    public int MaxStack { get; init; } = 1;
 }
 
 public sealed class BonusPoolDef : ContentDefBase

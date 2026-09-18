@@ -1,5 +1,6 @@
 using Kiln.Core.Combat;
 using Kiln.Core.Foundation;
+using Kiln.Core.Items;
 using Kiln.Data.Definitions;
 using Kiln.Data.Loading;
 
@@ -30,6 +31,8 @@ public static class ContentValidator
         TelegraphEscape(db, report);
         Weights(db, report);
         LevelRanges(db, report);
+        StatKeys(db, report);
+        RarityShape(db, report);
 
         return report;
     }
@@ -394,6 +397,86 @@ public static class ContentValidator
         {
             report.Error("level-range", quest.SourceFile,
                 $"'{quest.Id}' has level_req {quest.LevelReq}, outside 0..{MaxLevel}.");
+        }
+    }
+
+    // -- R10 ----------------------------------------------------------------
+    /// <summary>
+    /// Every stat a bonus line or an item names must resolve to a real modifier.
+    /// <para>
+    /// This is the highest-value rule in the file per line of code. A mistyped stat key does
+    /// not crash and does not look wrong: the item drops, the tooltip lists the line, and it
+    /// simply does nothing. Without this check that survives to release.
+    /// </para>
+    /// </summary>
+    private static void StatKeys(ContentDatabase db, ValidationReport report)
+    {
+        foreach (var pool in db.BonusPools.Values)
+        {
+            foreach (var line in pool.Lines)
+            {
+                if (BonusStat.TryParse(line.Stat, out _, out var error)) continue;
+
+                report.Error("stat-key", pool.SourceFile,
+                    $"'{pool.Id}' line '{line.Id}': {error}.",
+                    "See BonusStat for the accepted keys, e.g. damage_pct, max_hp_flat, vs_family.undead.");
+            }
+        }
+
+        // base_stats may name the item frame or any modifier the item grants outright.
+        string[] frameKeys = ["weapon_damage_min", "weapon_damage_max", "armor_value"];
+
+        foreach (var item in db.Items.Values)
+        {
+            foreach (var key in item.BaseStats.Keys)
+            {
+                if (frameKeys.Contains(key)) continue;
+                if (BonusStat.TryParse(key, out _, out var error)) continue;
+
+                report.Error("stat-key", item.SourceFile,
+                    $"'{item.Id}' base_stats '{key}': {error}.",
+                    "Use a frame key (weapon_damage_min/max, armor_value) or a modifier key.");
+            }
+        }
+    }
+
+    // -- R11 ----------------------------------------------------------------
+    /// <summary>
+    /// Sockets and bonus-line counts must follow the rarity table (doc 06 §5, FR-5.6).
+    /// <para>
+    /// Rarity is the player's one-glance promise about what an item is worth. It only works
+    /// if it is never contradicted, so the table is enforced rather than remembered.
+    /// </para>
+    /// </summary>
+    private static void RarityShape(ContentDatabase db, ValidationReport report)
+    {
+        foreach (var item in db.Items.Values.Where(i => i.Slot is not null))
+        {
+            var (sockets, minLines, maxLines) = item.Rarity switch
+            {
+                Rarity.Common => (0, 0, 1),
+                Rarity.Fine => (1, 2, 2),
+                Rarity.Rare => (2, 3, 3),
+                Rarity.Epic => (2, 4, 4),
+                Rarity.Relic => (3, 5, 5),
+                _ => (0, 0, 0),
+            };
+
+            if (item.Sockets != sockets)
+            {
+                report.Error("rarity-shape", item.SourceFile,
+                    $"'{item.Id}' is {item.Rarity} with {item.Sockets} sockets; the table says {sockets}.");
+            }
+
+            var low = item.BonusLineCount.Length > 0 ? item.BonusLineCount[0] : 0;
+            var high = item.BonusLineCount.Length > 1 ? item.BonusLineCount[1] : low;
+
+            if (low < minLines || high > maxLines)
+            {
+                report.Error("rarity-shape", item.SourceFile,
+                    $"'{item.Id}' is {item.Rarity} with bonus_line_count [{low}, {high}]; "
+                    + $"the table allows {minLines}..{maxLines}.");
+            }
         }
     }
 }

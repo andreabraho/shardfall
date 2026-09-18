@@ -51,6 +51,12 @@ jobs:
         # (doc 02 §8) stays a checked property rather than an intention.
         run: dotnet run --project src/Kiln.Tools --no-build --configuration Release -- simulate
 
+      - name: Check campaign economy
+        # Fails if the player is never money-constrained in the first half, or is still poor
+        # at the end. Keeps doc 02 §4.4 honest: a yang cost nobody feels is a yang cost that
+        # may as well not exist, and the upgrade ladder is built on those costs mattering.
+        run: dotnet run --project src/Kiln.Tools --no-build --configuration Release -- economy
+
       - name: Test
         run: dotnet test Kiln.sln --no-build --configuration Release --verbosity normal
 

@@ -4,4 +4,13 @@
     <RootNamespace>Kiln.Core</RootNamespace>
     <!-- HARD RULE (NFR-M.1): this assembly must never reference Godot. -->
   </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      Item state such as upgrade level is internal-set so only the anvil can change it in
+      play. The tests need to arrange an item mid-ladder, so they are a friend assembly
+      rather than that invariant being relaxed for everyone.
+    -->
+    <InternalsVisibleTo Include="Kiln.Tests" />
+  </ItemGroup>
 </Project>

@@ -15,30 +15,7 @@ namespace Kiln.Tools.Commands;
 /// </summary>
 public static class SimulateCommand
 {
-    /// <summary>A zone as the pacing model sees it: a level band and what it contains.</summary>
-    private sealed record Zone(
-        string Name,
-        int Band,
-        int StoryQuests,
-        int SideQuests,
-        int Shards,
-        int ShardTier,
-        int TrashKills);
-
-    /// <summary>
-    /// The MVP's planned content (doc 00 §3 Tier A, doc 02 §8). Placeholder until zones are
-    /// real data in Phase 6 — the point is that the shape is checkable now, while it is
-    /// still cheap to change.
-    /// </summary>
-    private static readonly Zone[] Campaign =
-    [
-        new("Prologue",        1,  2, 0,  2, 1, 20),
-        new("Valley Approach", 4,  2, 2,  5, 1, 45),
-        new("Valley Floor",    8,  2, 3,  6, 2, 50),
-        new("Ridge",          12,  2, 3,  7, 3, 55),
-        new("Broken Gate",    16,  3, 3,  7, 3, 55),
-        new("Catacombs",      20,  3, 3,  6, 4, 60),
-    ];
+    private static Zone[] Campaign => CampaignModel.Zones;
 
     /// <summary>Share of experience each source is meant to contribute (doc 06 §3).</summary>
     private const double QuestShareTarget = 0.45;

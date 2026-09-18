@@ -15,6 +15,9 @@ dotnet run --project src/Kiln.Tools --no-build -- codegen --check
 echo "== campaign pacing =="
 dotnet run --project src/Kiln.Tools --no-build -- simulate
 
+echo "== campaign economy =="
+dotnet run --project src/Kiln.Tools --no-build -- economy
+
 echo "== tests =="
 dotnet test Kiln.sln --no-build --nologo
 

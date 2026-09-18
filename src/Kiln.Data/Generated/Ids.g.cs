@@ -19,10 +19,18 @@ public static class Ids
         public const string MatShardEssence = "mat_shard_essence";
         public const string MatSteelCore = "mat_steel_core";
         public const string MatTemperingOil = "mat_tempering_oil";
+        public const string StnBaneAnimal = "stn_bane_animal";
+        public const string StnBaneDevil = "stn_bane_devil";
+        public const string StnBaneUndead = "stn_bane_undead";
+        public const string StnEmber = "stn_ember";
+        public const string StnFalcon = "stn_falcon";
+        public const string StnGranite = "stn_granite";
+        public const string StnThorn = "stn_thorn";
+        public const string StnWard = "stn_ward";
         public const string WpnIronSword = "wpn_iron_sword";
         public const string WpnSteelSword = "wpn_steel_sword";
 
-        public static readonly string[] All = ["arm_leather_vest", "arm_warden_plate", "mat_boring_stone", "mat_iron_scrap", "mat_mutation_ink", "mat_radiant_core", "mat_shard_essence", "mat_steel_core", "mat_tempering_oil", "wpn_iron_sword", "wpn_steel_sword"];
+        public static readonly string[] All = ["arm_leather_vest", "arm_warden_plate", "mat_boring_stone", "mat_iron_scrap", "mat_mutation_ink", "mat_radiant_core", "mat_shard_essence", "mat_steel_core", "mat_tempering_oil", "stn_bane_animal", "stn_bane_devil", "stn_bane_undead", "stn_ember", "stn_falcon", "stn_granite", "stn_thorn", "stn_ward", "wpn_iron_sword", "wpn_steel_sword"];
     }
 
     public static class Enemies

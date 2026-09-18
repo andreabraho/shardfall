@@ -1,0 +1,10 @@
+[
+  { "id": "stn_ember",       "name": "$item.stn_ember.name",       "level_req": 10, "rarity": "fine", "grid_size": [1, 1], "max_stack": 20, "base_stats": { "damage_pct": 4 },            "sell_value": 600,  "visual": "mesh_armor_a" },
+  { "id": "stn_granite",     "name": "$item.stn_granite.name",     "level_req": 10, "rarity": "fine", "grid_size": [1, 1], "max_stack": 20, "base_stats": { "max_hp_flat": 120 },         "sell_value": 600,  "visual": "mesh_armor_a" },
+  { "id": "stn_falcon",      "name": "$item.stn_falcon.name",      "level_req": 14, "rarity": "rare", "grid_size": [1, 1], "max_stack": 20, "base_stats": { "crit_chance": 3 },           "sell_value": 1400, "visual": "mesh_armor_a" },
+  { "id": "stn_thorn",       "name": "$item.stn_thorn.name",       "level_req": 14, "rarity": "rare", "grid_size": [1, 1], "max_stack": 20, "base_stats": { "pierce_chance": 2 },         "sell_value": 1400, "visual": "mesh_armor_a" },
+  { "id": "stn_ward",        "name": "$item.stn_ward.name",        "level_req": 14, "rarity": "rare", "grid_size": [1, 1], "max_stack": 20, "base_stats": { "resist_all": 3 },            "sell_value": 1400, "visual": "mesh_armor_a" },
+  { "id": "stn_bane_undead", "name": "$item.stn_bane_undead.name", "level_req": 16, "rarity": "rare", "grid_size": [1, 1], "max_stack": 20, "base_stats": { "vs_family.undead": 10 },     "sell_value": 1800, "visual": "mesh_armor_a" },
+  { "id": "stn_bane_animal", "name": "$item.stn_bane_animal.name", "level_req": 16, "rarity": "rare", "grid_size": [1, 1], "max_stack": 20, "base_stats": { "vs_family.animal": 10 },     "sell_value": 1800, "visual": "mesh_armor_a" },
+  { "id": "stn_bane_devil",  "name": "$item.stn_bane_devil.name",  "level_req": 16, "rarity": "rare", "grid_size": [1, 1], "max_stack": 20, "base_stats": { "vs_family.devil": 10 },      "sell_value": 1800, "visual": "mesh_armor_a" }
+]

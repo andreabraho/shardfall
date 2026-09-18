@@ -30,6 +30,7 @@ public static class Program
                 "validate" => ValidateCommand.Run(rest),
                 "codegen" => CodegenCommand.Run(rest),
                 "simulate" => SimulateCommand.Run(rest),
+                "economy" => EconomyCommand.Run(rest),
                 _ => Unknown(command),
             };
         }
@@ -62,6 +63,10 @@ public static class Program
           simulate [--verbose]                Walk the campaign experience budget and check
                                               the player reaches each zone at the intended
                                               level. Exit code 1 if pacing has drifted.
+
+          economy  [--verbose]                Walk the campaign yang budget and check the player
+                                              is money-constrained early and comfortable late.
+                                              Exit code 1 if the economy has drifted.
 
         Options:
           --data <dir>   Path to game/data. Defaults to searching upward from the current

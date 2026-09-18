@@ -1,9 +1,9 @@
 [
-  { "id": "mat_iron_scrap",     "name": "$item.mat_iron_scrap.name",     "level_req": 1,  "rarity": "common", "grid_size": [1, 1], "sell_value": 40,   "visual": "mesh_armor_a" },
-  { "id": "mat_tempering_oil",  "name": "$item.mat_tempering_oil.name",  "level_req": 1,  "rarity": "fine",   "grid_size": [1, 1], "sell_value": 220,  "visual": "mesh_armor_a" },
-  { "id": "mat_steel_core",     "name": "$item.mat_steel_core.name",     "level_req": 1,  "rarity": "rare",   "grid_size": [1, 1], "sell_value": 900,  "visual": "mesh_armor_a" },
-  { "id": "mat_shard_essence",  "name": "$item.mat_shard_essence.name",  "level_req": 1,  "rarity": "epic",   "grid_size": [1, 1], "sell_value": 2600, "visual": "mesh_armor_a" },
-  { "id": "mat_radiant_core",   "name": "$item.mat_radiant_core.name",   "level_req": 1,  "rarity": "relic",  "grid_size": [1, 1], "sell_value": 9000, "visual": "mesh_armor_a" },
-  { "id": "mat_boring_stone",   "name": "$item.mat_boring_stone.name",   "level_req": 1,  "rarity": "fine",   "grid_size": [1, 1], "sell_value": 350,  "visual": "mesh_armor_a" },
-  { "id": "mat_mutation_ink",   "name": "$item.mat_mutation_ink.name",   "level_req": 1,  "rarity": "rare",   "grid_size": [1, 1], "sell_value": 700,  "visual": "mesh_armor_a" }
+  { "id": "mat_iron_scrap",     "name": "$item.mat_iron_scrap.name",     "level_req": 1,  "rarity": "common", "grid_size": [1, 1], "max_stack": 99, "sell_value": 40,   "visual": "mesh_armor_a" },
+  { "id": "mat_tempering_oil",  "name": "$item.mat_tempering_oil.name",  "level_req": 1,  "rarity": "fine",   "grid_size": [1, 1], "max_stack": 50, "sell_value": 220,  "visual": "mesh_armor_a" },
+  { "id": "mat_steel_core",     "name": "$item.mat_steel_core.name",     "level_req": 1,  "rarity": "rare",   "grid_size": [1, 1], "max_stack": 50, "sell_value": 900,  "visual": "mesh_armor_a" },
+  { "id": "mat_shard_essence",  "name": "$item.mat_shard_essence.name",  "level_req": 1,  "rarity": "epic",   "grid_size": [1, 1], "max_stack": 50, "sell_value": 2600, "visual": "mesh_armor_a" },
+  { "id": "mat_radiant_core",   "name": "$item.mat_radiant_core.name",   "level_req": 1,  "rarity": "relic",  "grid_size": [1, 1], "max_stack": 20, "sell_value": 9000, "visual": "mesh_armor_a" },
+  { "id": "mat_boring_stone",   "name": "$item.mat_boring_stone.name",   "level_req": 1,  "rarity": "fine",   "grid_size": [1, 1], "max_stack": 20, "sell_value": 350,  "visual": "mesh_armor_a" },
+  { "id": "mat_mutation_ink",   "name": "$item.mat_mutation_ink.name",   "level_req": 1,  "rarity": "rare",   "grid_size": [1, 1], "max_stack": 20, "sell_value": 700,  "visual": "mesh_armor_a" }
 ]
