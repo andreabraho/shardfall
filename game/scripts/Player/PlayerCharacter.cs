@@ -56,12 +56,47 @@ public partial class PlayerCharacter : Node
 
         if (evaded) return;
 
-        Combat.CombatFeedback.HitStop(0.05);
         _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Flash();
 
-        // Only the player being hit shakes the camera. Shaking on every blow the player
-        // lands would be constant noise; being hit is the event worth emphasising.
-        Camera.CameraRig.Shake(0.18, critical ? 1.4f : 1.0f);
+        // Weight the feedback by how much the hit actually mattered. A scratch gets a flash
+        // and nothing more; only a real blow freezes the frame or moves the camera.
+        var severity = (float)(amount / System.Math.Max(1.0, _combatant.Stats.MaxHp));
+
+        if (severity >= 0.05f || critical)
+        {
+            Combat.CombatFeedback.HitStop(critical ? 0.06 : 0.04);
+        }
+
+        // Pushed away from whatever hit us, so the kick carries information rather than
+        // just being motion. Only the player being hit moves the camera — reacting to every
+        // blow the player lands would be constant noise.
+        Camera.CameraRig.Kick(LastHitDirection(), critical ? severity * 1.4f : severity);
+    }
+
+    /// <summary>
+    /// Direction away from the nearest living enemy, as a stand-in for the true hit
+    /// direction. Damage does not currently carry its source; when it does (needed anyway
+    /// for threat and for directional blocking) this reads it from there instead.
+    /// </summary>
+    private Vector3 LastHitDirection()
+    {
+        Node3D? nearest = null;
+        var best = float.MaxValue;
+
+        foreach (var node in GetTree().GetNodesInGroup("combatants"))
+        {
+            if (node is not Combat.Combatant other || other == _combatant || !other.IsAlive) continue;
+
+            var distance = _motor.GlobalPosition.DistanceSquaredTo(other.Body.GlobalPosition);
+            if (distance >= best) continue;
+
+            best = distance;
+            nearest = other.Body;
+        }
+
+        return nearest is null
+            ? Vector3.Zero
+            : _motor.GlobalPosition - nearest.GlobalPosition;
     }
 
     private async void OnDied()

@@ -20,8 +20,7 @@ public partial class CameraRig : Node3D
 
     private float _targetZoom;
     private bool _dragging;
-    private double _shake;
-    private double _shakeDuration;
+    private Vector3 _kick;
     private static CameraRig? _instance;
 
     [Export] public NodePath TargetPath { get; set; } = "";
@@ -44,8 +43,14 @@ public partial class CameraRig : Node3D
     /// <summary>Degrees per pixel of middle-drag.</summary>
     [Export] public float DragSensitivity { get; set; } = 0.35f;
 
-    /// <summary>Peak camera displacement from a shake, in metres.</summary>
-    [Export] public float ShakeStrength { get; set; } = 0.22f;
+    /// <summary>Peak camera displacement from an impact, in metres. Deliberately subtle.</summary>
+    [Export] public float ShakeStrength { get; set; } = 0.10f;
+
+    /// <summary>How fast the camera returns after a kick. Higher settles sooner.</summary>
+    [Export] public float KickRecovery { get; set; } = 9f;
+
+    /// <summary>Off disables camera impacts entirely. Belongs in the settings menu (NFR-A.1).</summary>
+    [Export] public bool EnableScreenShake { get; set; } = true;
 
     /// <summary>
     /// Let the SpringArm pull the camera in when geometry is behind the player.
@@ -87,17 +92,39 @@ public partial class CameraRig : Node3D
     public float YawDegrees => _yaw.RotationDegrees.Y;
 
     /// <summary>
-    /// Kicks the camera briefly. Reserved for hits that matter — a shake on every swing
-    /// stops meaning anything and just makes the game hard to look at.
+    /// Nudges the camera away from an impact, then eases back.
+    /// <para>
+    /// A directional kick rather than random per-frame jitter. Jitter reads as the screen
+    /// trembling — it is uncomfortable to look at and says nothing about what happened,
+    /// while a single push in the direction of the blow reads as impact and settles.
+    /// </para>
     /// </summary>
-    public static void Shake(double seconds = 0.18, float scale = 1f)
+    /// <param name="fromDirection">World direction the hit came from. Zero picks a stable fallback.</param>
+    /// <param name="strength">0..1, normally the fraction of health lost.</param>
+    public static void Kick(Vector3 fromDirection, float strength)
     {
-        if (_instance is null) return;
+        if (_instance is null || !_instance.EnableScreenShake) return;
 
-        // Never shorten an ongoing shake; overlapping impacts should not cut each other off.
-        _instance._shakeDuration = System.Math.Max(_instance._shakeDuration, seconds);
-        _instance._shake = System.Math.Max(_instance._shake, seconds * scale);
+        // Small hits do not move the camera at all. Reacting to every scratch is what turns
+        // feedback into noise.
+        if (strength < MinKickStrength) return;
+
+        var flat = fromDirection with { Y = 0 };
+        var direction = flat.LengthSquared() > 0.0001f ? flat.Normalized() : Vector3.Forward;
+
+        var impulse = direction * _instance.ShakeStrength * Mathf.Min(strength / 0.25f, 1.5f);
+
+        // Add rather than replace, so several blows at once land as one firmer push.
+        _instance._kick += impulse;
+
+        if (_instance._kick.Length() > _instance.ShakeStrength * 2f)
+        {
+            _instance._kick = _instance._kick.Normalized() * _instance.ShakeStrength * 2f;
+        }
     }
+
+    /// <summary>Fraction of health lost below which the camera stays still.</summary>
+    private const float MinKickStrength = 0.04f;
 
     public override void _UnhandledInput(InputEvent @event)
     {
@@ -139,27 +166,20 @@ public partial class CameraRig : Node3D
         _arm.SpringLength = Mathf.Lerp(_arm.SpringLength, _targetZoom, zt);
     }
 
-    /// <summary>Displacement for this frame's shake, decaying to nothing.</summary>
+    /// <summary>Current impact displacement, easing smoothly back to zero.</summary>
     private Vector3 ShakeOffset(double delta)
     {
-        if (_shake <= 0) return Vector3.Zero;
-
-        _shake -= delta;
-
-        if (_shake <= 0)
+        if (_kick.LengthSquared() < 0.000001f)
         {
-            _shakeDuration = 0;
+            _kick = Vector3.Zero;
             return Vector3.Zero;
         }
 
-        // Decay with the square so it hits hard and settles fast rather than wobbling.
-        var falloff = (float)(_shake / System.Math.Max(_shakeDuration, 0.0001));
-        var amount = ShakeStrength * falloff * falloff;
+        var offset = _kick;
 
-        // Horizontal only: vertical shake on a fixed-pitch camera reads as the ground moving.
-        return new Vector3(
-            (float)GD.RandRange(-amount, amount),
-            0,
-            (float)GD.RandRange(-amount, amount));
+        // Frame-rate independent ease-out, matching the follow smoothing.
+        _kick = _kick.Lerp(Vector3.Zero, 1f - Mathf.Exp(-KickRecovery * (float)delta));
+
+        return offset;
     }
 }
