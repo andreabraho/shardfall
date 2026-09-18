@@ -14,7 +14,8 @@ Every MUST is an MVP exit gate — the vertical slice is not done until all of t
 | FR-1.3 | 6 hotbar slots (1–6) for skills, 2 for consumables (Q/E), 1 defensive ability (Space) | MUST |
 | FR-1.4 | Per-class defensive ability on 8–12 s cooldown (design §2.2) | MUST |
 | FR-1.5 | Healing flask: finite charges, refills at shrines/zone entry, cast time interruptible by damage | MUST |
-| FR-1.6 | Camera: fixed-pitch third-person follow, mouse-wheel zoom range, Q/E or middle-drag rotate, collision-aware | MUST |
+| FR-1.6 | Camera: fixed-pitch third-person follow, mouse-wheel zoom range, Z/C or middle-drag rotate | MUST |
+| FR-1.6a | **Camera distance stays constant.** Obstructions between camera and player fade out; the camera never pulls in. Pull-in changes the screen-to-world mapping the player aims with, which directly costs click accuracy under click-to-move. | MUST |
 | FR-1.7 | Alternative WASD control scheme in options, feeding the same destination-move core | SHOULD |
 | FR-1.8 | Full key rebinding | SHOULD |
 | FR-1.9 | Controller support | COULD |

@@ -1,4 +1,5 @@
 using Godot;
+using Kiln.Game.Foundation;
 using Kiln.Game.Input;
 
 namespace Kiln.Game.Camera;
@@ -6,9 +7,9 @@ namespace Kiln.Game.Camera;
 /// <summary>
 /// Fixed-pitch semi-isometric follow camera (D2, FR-1.6).
 /// <para>
-/// Node layout: CameraRig → Yaw → SpringArm3D → Camera3D. The SpringArm gives collision
-/// pull-in for free, and keeping yaw on its own node means camera-relative WASD input is
-/// just the yaw basis.
+/// Node layout: CameraRig → Yaw → SpringArm3D → Camera3D. Keeping yaw on its own node
+/// means camera-relative WASD input is just the yaw basis. The SpringArm's own collision
+/// pull-in is disabled by default — see <see cref="CollisionPullIn"/>.
 /// </para>
 /// </summary>
 public partial class CameraRig : Node3D
@@ -40,6 +41,18 @@ public partial class CameraRig : Node3D
     /// <summary>Degrees per pixel of middle-drag.</summary>
     [Export] public float DragSensitivity { get; set; } = 0.35f;
 
+    /// <summary>
+    /// Let the SpringArm pull the camera in when geometry is behind the player.
+    /// <para>
+    /// Off by default, and that is a deliberate design call rather than an oversight.
+    /// Pull-in makes the camera lurch closer whenever the player stands near a wall or
+    /// pillar, which in a click-to-move game keeps changing the screen-to-world mapping
+    /// the player aims with — clicks then land somewhere other than intended. Occlusion is
+    /// handled by <see cref="CameraOccluderFade"/> instead, which keeps the distance fixed.
+    /// </para>
+    /// </summary>
+    [Export] public bool CollisionPullIn { get; set; }
+
     public override void _Ready()
     {
         _yaw = GetNode<Node3D>("Yaw");
@@ -47,6 +60,7 @@ public partial class CameraRig : Node3D
 
         if (!TargetPath.IsEmpty) _target = GetNodeOrNull<Node3D>(TargetPath);
 
+        _arm.CollisionMask = CollisionPullIn ? Layers.World : 0;
         _arm.RotationDegrees = _arm.RotationDegrees with { X = -PitchDegrees };
         _targetZoom = Mathf.Clamp(_arm.SpringLength, MinZoom, MaxZoom);
         _arm.SpringLength = _targetZoom;
