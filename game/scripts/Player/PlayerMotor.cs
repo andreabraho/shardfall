@@ -48,6 +48,12 @@ public partial class PlayerMotor : CharacterBody3D
 
     public MoveMode Mode { get; private set; } = MoveMode.Destination;
 
+    /// <summary>
+    /// Blocks movement without clearing the order. Set by Guard Stance, which trades
+    /// mobility for damage reduction (decision D4).
+    /// </summary>
+    public bool MovementLocked { get; set; }
+
     public bool IsMoving => Velocity with { Y = 0 } != Vector3.Zero;
 
     public Vector3 Destination => _agent.TargetPosition;
@@ -106,9 +112,11 @@ public partial class PlayerMotor : CharacterBody3D
 
     public override void _PhysicsProcess(double delta)
     {
-        var desired = Mode == MoveMode.Direction
-            ? _directionInput
-            : DirectionAlongPath();
+        var desired = MovementLocked
+            ? Vector3.Zero
+            : Mode == MoveMode.Direction
+                ? _directionInput
+                : DirectionAlongPath();
 
         var targetVelocity = desired * MoveSpeed;
         var horizontal = Velocity with { Y = 0 };

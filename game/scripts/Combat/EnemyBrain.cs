@@ -1,17 +1,21 @@
+using System.Collections.Generic;
 using Godot;
+using Kiln.Core.Foundation;
+using Kiln.Data.Definitions;
+using Kiln.Game.Foundation;
 using Kiln.Game.Visual;
 
 namespace Kiln.Game.Combat;
 
 /// <summary>
-/// Minimal enemy AI for the Phase 2 combat slice: idle → chase → attack, with aggro and a
-/// leash (CBT-05).
+/// Enemy AI for the Phase 2 combat slice: idle → chase → wind-up → strike → recover, with
+/// aggro, a leash, and per-ability cooldowns (CBT-04/05/08).
 /// </summary>
 /// <remarks>
 /// A readable state machine on purpose. The behaviour-tree framework arrives with CBT-06/07
 /// when five roles need to share behaviour; building it for one melee chaser would be
-/// scaffolding with nothing to hold up. The attack timing model here — wind-up, strike,
-/// recovery, and no rotation once committed — is the real content, and it carries over.
+/// scaffolding with nothing to hold up. The attack timing model here — commit on wind-up,
+/// resolve against the telegraphed shape — is the real content, and it carries over.
 /// </remarks>
 public partial class EnemyBrain : CharacterBody3D
 {
@@ -24,33 +28,47 @@ public partial class EnemyBrain : CharacterBody3D
         Dead,
     }
 
+    /// <summary>Fallback when a definition has no abilities at all.</summary>
+    private static readonly AbilityDef DefaultMelee = new()
+    {
+        Id = "abl_default_melee",
+        Cooldown = 1.8,
+        Windup = 0.55,
+        DamageCoef = 1.0,
+    };
+
     private NavigationAgent3D _agent = null!;
     private Combatant _combatant = null!;
     private Node3D? _visual;
     private HealthBar3D? _bar;
+    private TelegraphVisual? _telegraph;
+
+    private readonly Dictionary<string, double> _abilityCooldowns = new(System.StringComparer.Ordinal);
+    private AbilityDef[] _abilities = [DefaultMelee];
 
     private Node3D? _target;
     private Combatant? _targetCombatant;
     private State _state = State.Idle;
     private Vector3 _home;
     private double _timer;
-    private double _attackCooldown;
     private Vector3 _committedFacing;
+    private AbilityDef? _current;
 
     [Export] public string EnemyId { get; set; } = "mob_corrupted_wolf";
 
     [Export] public float AggroRadius { get; set; } = 12f;
     [Export] public float LeashRadius { get; set; } = 35f;
-    [Export] public float AttackRange { get; set; } = 2.2f;
-    [Export] public float MoveSpeed { get; set; } = 4.5f;
 
-    /// <summary>Wind-up before the hit lands. The player's window to react.</summary>
-    [Export] public double WindupSeconds { get; set; } = 0.55;
+    /// <summary>Reach of an untelegraphed melee swing.</summary>
+    [Export] public float AttackRange { get; set; } = 2.2f;
+
+    [Export] public float MoveSpeed { get; set; } = 4.5f;
 
     /// <summary>Recovery after striking — the player's window to punish.</summary>
     [Export] public double RecoverSeconds { get; set; } = 0.8;
 
-    [Export] public double AttackCooldownSeconds { get; set; } = 1.6;
+    /// <summary>Spread of an untelegraphed melee swing, in degrees.</summary>
+    [Export] public float MeleeArc { get; set; } = 110f;
 
     [Export] public float Gravity { get; set; } = 24f;
 
@@ -61,44 +79,41 @@ public partial class EnemyBrain : CharacterBody3D
         _visual = GetNodeOrNull<Node3D>("VisualRoot");
         _bar = GetNodeOrNull<HealthBar3D>("HealthBar3D");
 
+        _telegraph = new TelegraphVisual { Name = "Telegraph" };
+        AddChild(_telegraph);
+
         _home = GlobalPosition;
         _agent.PathDesiredDistance = 0.5f;
         _agent.TargetDesiredDistance = AttackRange * 0.8f;
         _agent.AvoidanceEnabled = false;
 
-        if (GameContent.IsLoaded && GameContent.Database.Enemies.TryGetValue(EnemyId, out var def))
-        {
-            _combatant.ConfigureFromEnemy(def);
-
-            AggroRadius = (float)def.AggroRadius;
-            LeashRadius = (float)def.LeashRadius;
-            MoveSpeed = (float)def.Stats.MoveSpeed;
-
-            if (_visual is VisualRoot root && !string.IsNullOrEmpty(def.Visual))
-            {
-                root.Apply(def.Visual, def.VisualTint, def.VisualScale);
-            }
-
-            // Use the enemy's telegraphed ability wind-up when it has one, so the
-            // BAL-03 escape guarantee actually reaches the game rather than living
-            // only in the validator.
-            foreach (var ability in def.Abilities)
-            {
-                if (ability.Telegraph is not null)
-                {
-                    WindupSeconds = ability.Windup * GameSession.Difficulty.TelegraphScale;
-                    break;
-                }
-            }
-        }
-        else
-        {
-            GD.PushWarning($"EnemyBrain '{Name}': unknown enemy id '{EnemyId}'.");
-        }
+        LoadDefinition();
 
         _combatant.Damaged += OnDamaged;
         _combatant.Died += OnDied;
         _combatant.HealthChanged += f => _bar?.SetFraction(f);
+    }
+
+    private void LoadDefinition()
+    {
+        if (!GameContent.IsLoaded || !GameContent.Database.Enemies.TryGetValue(EnemyId, out var def))
+        {
+            GD.PushWarning($"EnemyBrain '{Name}': unknown enemy id '{EnemyId}'.");
+            return;
+        }
+
+        _combatant.ConfigureFromEnemy(def);
+
+        AggroRadius = (float)def.AggroRadius;
+        LeashRadius = (float)def.LeashRadius;
+        MoveSpeed = (float)def.Stats.MoveSpeed;
+
+        if (def.Abilities.Length > 0) _abilities = def.Abilities;
+
+        if (_visual is VisualRoot root && !string.IsNullOrEmpty(def.Visual))
+        {
+            root.Apply(def.Visual, def.VisualTint, def.VisualScale);
+        }
     }
 
     private void OnDamaged(int amount, bool critical, bool evaded)
@@ -106,12 +121,8 @@ public partial class EnemyBrain : CharacterBody3D
         var at = GlobalPosition + (Vector3.Up * 1.6f);
         CombatFeedback.Number(at, amount, critical, evaded);
 
-        if (!evaded)
-        {
-            CombatFeedback.HitStop(critical ? 0.075 : 0.04);
-        }
+        if (!evaded) CombatFeedback.HitStop(critical ? 0.075 : 0.04);
 
-        // Being hit pulls an idle enemy into the fight even outside aggro range.
         if (_state == State.Idle) AcquireTarget(force: true);
     }
 
@@ -119,10 +130,10 @@ public partial class EnemyBrain : CharacterBody3D
     {
         _state = State.Dead;
         Velocity = Vector3.Zero;
+        _telegraph?.Cancel();
 
         if (_bar is not null) _bar.Visible = false;
 
-        // Sink into the ground and remove. A corpse system arrives with loot in Phase 4.
         var tween = CreateTween();
         tween.TweenProperty(this, "position:y", Position.Y - 1.4f, 0.6).SetDelay(0.15);
         tween.TweenCallback(Callable.From(QueueFree));
@@ -132,10 +143,18 @@ public partial class EnemyBrain : CharacterBody3D
     {
         if (_state == State.Dead) return;
 
-        _attackCooldown -= delta;
+        TickCooldowns(delta);
 
         if (_combatant.Statuses.IsStunned)
         {
+            // A stun interrupts a wind-up: the telegraph must go, or the player is warned
+            // of an attack that will never arrive.
+            if (_state == State.Windup)
+            {
+                _telegraph?.Cancel();
+                _state = State.Chase;
+            }
+
             Velocity = Velocity with { X = 0, Z = 0 };
             MoveAndSlide();
             return;
@@ -171,10 +190,45 @@ public partial class EnemyBrain : CharacterBody3D
         MoveAndSlide();
     }
 
+    private void TickCooldowns(double delta)
+    {
+        if (_abilityCooldowns.Count == 0) return;
+
+        foreach (var id in new List<string>(_abilityCooldowns.Keys))
+        {
+            if (_abilityCooldowns[id] > 0) _abilityCooldowns[id] -= delta;
+        }
+    }
+
+    private bool Ready(AbilityDef ability) =>
+        !_abilityCooldowns.TryGetValue(ability.Id, out var cd) || cd <= 0;
+
+    /// <summary>Effective reach: a telegraphed ability reaches as far as its shape.</summary>
+    private float RangeOf(AbilityDef ability) =>
+        ability.Telegraph is { } tel ? (float)tel.Radius : AttackRange;
+
+    /// <summary>
+    /// Picks what to cast. Telegraphed abilities are preferred when available, because they
+    /// are the interesting ones — the basic swing is the filler between them.
+    /// </summary>
+    private AbilityDef? ChooseAbility(float distance)
+    {
+        AbilityDef? fallback = null;
+
+        foreach (var ability in _abilities)
+        {
+            if (!Ready(ability) || distance > RangeOf(ability)) continue;
+
+            if (ability.Telegraph is not null) return ability;
+            fallback ??= ability;
+        }
+
+        return fallback;
+    }
+
     private void AcquireTarget(bool force)
     {
-        var player = GetTree().GetFirstNodeInGroup("player") as Node3D;
-        if (player is null) return;
+        if (GetTree().GetFirstNodeInGroup("player") is not Node3D player) return;
 
         var distance = GlobalPosition.DistanceTo(player.GlobalPosition);
         if (!force && distance > AggroRadius) return;
@@ -204,10 +258,11 @@ public partial class EnemyBrain : CharacterBody3D
         }
 
         var distance = GlobalPosition.DistanceTo(_target.GlobalPosition);
+        var ability = ChooseAbility(distance);
 
-        if (distance <= AttackRange && _attackCooldown <= 0)
+        if (ability is not null)
         {
-            BeginWindup();
+            BeginWindup(ability);
             return;
         }
 
@@ -231,37 +286,72 @@ public partial class EnemyBrain : CharacterBody3D
         }
     }
 
-    private void BeginWindup()
+    private void BeginWindup(AbilityDef ability)
     {
+        _current = ability;
         _state = State.Windup;
-        _timer = WindupSeconds;
+
+        // Difficulty stretches or compresses the reaction window (doc 02 §1). The content
+        // validator guarantees this stays long enough to walk out of at every tier.
+        _timer = ability.Windup * GameSession.Difficulty.TelegraphScale;
 
         if (_target is not null)
         {
             _committedFacing = (_target.GlobalPosition - GlobalPosition) with { Y = 0 };
+
             if (_committedFacing.LengthSquared() > 0.0001f)
             {
                 _committedFacing = _committedFacing.Normalized();
                 SnapFacing(_committedFacing);
             }
         }
+
+        if (ability.Telegraph is { } tel && _telegraph is not null)
+        {
+            _telegraph.Begin(
+                tel.Shape,
+                GlobalPosition,
+                _committedFacing,
+                (float)tel.Radius,
+                (float)(tel.Angle > 0 ? tel.Angle : 90),
+                _timer);
+        }
     }
 
     private void Strike()
     {
+        var ability = _current ?? DefaultMelee;
+
         _state = State.Recover;
         _timer = RecoverSeconds;
-        _attackCooldown = AttackCooldownSeconds;
+        _abilityCooldowns[ability.Id] = ability.Cooldown;
+        _telegraph?.Cancel();
+        _current = null;
 
-        if (_target is null || _targetCombatant is null || !_targetCombatant.IsAlive) return;
+        if (_targetCombatant is null || !_targetCombatant.IsAlive) return;
 
-        // Resolve against where the player is NOW, and only inside a forgiving cone in the
-        // committed direction. Walking out of the swing must actually work.
-        var toTarget = (_target.GlobalPosition - GlobalPosition) with { Y = 0 };
-        if (toTarget.Length() > AttackRange + 0.8f) return;
-        if (_committedFacing != Vector3.Zero && toTarget.Normalized().Dot(_committedFacing) < 0.35f) return;
+        // Resolve against the telegraphed shape, evaluated now. Walking out has to work —
+        // that is the entire skill expression the design rests on (doc 02 §2.1).
+        List<Combatant> hits;
 
-        _targetCombatant.TakeAttack(_combatant);
+        if (ability.Telegraph is { } tel)
+        {
+            hits = tel.Shape == TelegraphShape.Cone
+                ? AreaQuery.Cone(this, GlobalPosition, _committedFacing, (float)tel.Radius,
+                    (float)(tel.Angle > 0 ? tel.Angle : 90), Layers.Player)
+                : AreaQuery.Sphere(this, GlobalPosition, (float)tel.Radius, Layers.Player);
+
+            AoeVisual.Circle(GlobalPosition, (float)tel.Radius, hostile: true);
+        }
+        else
+        {
+            hits = AreaQuery.Cone(this, GlobalPosition, _committedFacing, AttackRange + 0.6f, MeleeArc, Layers.Player);
+        }
+
+        foreach (var victim in hits)
+        {
+            victim.TakeAttack(_combatant, skillCoef: ability.DamageCoef);
+        }
     }
 
     private void Brake(double delta)

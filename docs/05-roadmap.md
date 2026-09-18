@@ -83,10 +83,10 @@ click-to-move lives or dies on responsiveness.
 | CBT-05 | Threat/aggro system with leash and de-aggro | **[C]** | |
 | CBT-06 | Behaviour-tree AI framework + idle/patrol/chase/attack/reposition/flee | **[C]** | |
 | CBT-07 | The 5 enemy roles (Bruiser, Archer, Shielder, Mender, Bomber) as data + behaviours | **[C]** | The tactical layer from redesign §2.4 |
-| CBT-08 | Telegraph system: ground decals with fill animation, shape library (circle/cone/line), colourblind-safe shapes | **[C]** | |
+| CBT-08 | Telegraph system: ground decals with fill animation, shape library (circle/cone/line), colourblind-safe shapes | **[C]** | ✅ circle + cone; line and colourblind shapes pending |
 | CBT-09 | Status effects: poison, bleed, stun, slow, weaken, vulnerability + stacking rules | **[C]** | |
-| CBT-10 | Per-class defensive ability framework + Warrior Guard Stance | **[C]** | Redesign §2.2 |
-| CBT-11 | Healing flask with charges, cast time, interrupt | **[C]** | |
+| CBT-10 | Per-class defensive ability framework + Warrior Guard Stance | **[C]** | ✅ |
+| CBT-11 | Healing flask with charges, cast time, interrupt | **[C]** | ✅ refills out of combat until shrines land (WLD-02) |
 | CBT-12 | Game feel: hit-stop, screen shake, hit flash, floating damage numbers, impact VFX | **[C→You]** | Where "weight" comes from with placeholder art |
 | CBT-13 | Object pooling for projectiles/numbers/VFX (NFR-P.5) | **[C]** | |
 | CBT-14 | **Combat feel review** + written notes | **[You]** | |

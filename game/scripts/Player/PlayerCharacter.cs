@@ -67,7 +67,11 @@ public partial class PlayerCharacter : Node
         if (!IsInstanceValid(this)) return;
 
         _motor.GlobalPosition = _spawnPoint;
+        _motor.MovementLocked = false;
         _motor.Stop();
         _combatant.Revive();
+
+        // Respawning with an empty flask would just feed the next death.
+        GetParent().GetNodeOrNull<HealthFlask>("HealthFlask")?.Refill();
     }
 }

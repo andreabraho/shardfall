@@ -42,6 +42,13 @@ public partial class Combatant : Node
 
     public bool IsPlayer { get; set; }
 
+    /// <summary>
+    /// Multiplier on incoming damage, set by defensive abilities such as Guard Stance.
+    /// Separate from resistances and mitigation so it is never capped by them — a 70%
+    /// reduction must actually be 70%.
+    /// </summary>
+    public double IncomingDamageMultiplier { get; set; } = 1.0;
+
     public override void _Ready() => AddToGroup("combatants");
 
     public void Configure(StatBlock stats, string displayName)
@@ -100,7 +107,10 @@ public partial class Combatant : Node
         }
 
         var scaled = (int)Math.Round(
-            result.Amount * Statuses.DamageTakenMultiplier * attacker.Statuses.DamageDealtMultiplier);
+            result.Amount
+            * Statuses.DamageTakenMultiplier
+            * attacker.Statuses.DamageDealtMultiplier
+            * IncomingDamageMultiplier);
 
         ApplyDamage(Math.Max(1, scaled), result.Critical);
         return result with { Amount = scaled };

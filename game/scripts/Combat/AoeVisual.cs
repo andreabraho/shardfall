@@ -81,7 +81,7 @@ public partial class AoeVisual : Node3D
             AddChild(_preview);
         }
 
-        _preview.Mesh = BuildFan(radius, 360f);
+        _preview.Mesh = AoeGeometry.Fan(radius, 360f);
         _preview.GlobalPosition = center + (Vector3.Up * 0.06f);
         _preview.Visible = true;
 
@@ -104,7 +104,7 @@ public partial class AoeVisual : Node3D
     {
         var mesh = Rent();
 
-        mesh.Mesh = BuildFan(radius, angleDegrees);
+        mesh.Mesh = AoeGeometry.Fan(radius, angleDegrees);
         mesh.GlobalPosition = origin + (Vector3.Up * 0.08f);
 
         // A 360° fan needs no orientation; a wedge is rotated to face the attack direction.
@@ -124,41 +124,6 @@ public partial class AoeVisual : Node3D
 
         mesh.Visible = true;
         _active.Add(new Flash { Mesh = mesh, Material = material, Color = color, Radius = radius });
-    }
-
-    /// <summary>Builds a flat fan on the XZ plane, centred on the origin.</summary>
-    private static ArrayMesh BuildFan(float radius, float angleDegrees)
-    {
-        const int segmentsPerTurn = 48;
-
-        var segments = Mathf.Max(3, Mathf.RoundToInt(segmentsPerTurn * (angleDegrees / 360f)));
-        var half = Mathf.DegToRad(angleDegrees * 0.5f);
-
-        var vertices = new List<Vector3> { Vector3.Zero };
-
-        for (var i = 0; i <= segments; i++)
-        {
-            var t = segments == 0 ? 0f : i / (float)segments;
-            var a = -half + (t * half * 2f);
-            vertices.Add(new Vector3(Mathf.Sin(a) * radius, 0, Mathf.Cos(a) * radius));
-        }
-
-        var indices = new List<int>();
-        for (var i = 1; i < vertices.Count - 1; i++)
-        {
-            indices.Add(0);
-            indices.Add(i + 1);
-            indices.Add(i);
-        }
-
-        var arrays = new Godot.Collections.Array();
-        arrays.Resize((int)Mesh.ArrayType.Max);
-        arrays[(int)Mesh.ArrayType.Vertex] = vertices.ToArray();
-        arrays[(int)Mesh.ArrayType.Index] = indices.ToArray();
-
-        var mesh = new ArrayMesh();
-        mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, arrays);
-        return mesh;
     }
 
     private MeshInstance3D Rent()

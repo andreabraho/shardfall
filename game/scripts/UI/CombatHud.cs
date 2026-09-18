@@ -1,3 +1,4 @@
+using System;
 using Godot;
 using Kiln.Game.Combat;
 using Kiln.Game.Player;
@@ -23,6 +24,10 @@ public partial class CombatHud : CanvasLayer
 
     private Combatant? _player;
     private PlayerCombat? _combat;
+    private HealthFlask? _flask;
+    private DefensiveAbility? _guard;
+    private Label _flaskLabel = null!;
+    private Label _statusLabel = null!;
 
     public override void _Ready()
     {
@@ -39,12 +44,28 @@ public partial class CombatHud : CanvasLayer
 
         _player = playerBody.GetNodeOrNull<Combatant>("Combatant");
         _combat = playerBody.GetNodeOrNull<PlayerCombat>("PlayerCombat");
+        _flask = playerBody.GetNodeOrNull<HealthFlask>("HealthFlask");
+        _guard = playerBody.GetNodeOrNull<DefensiveAbility>("DefensiveAbility");
 
         if (_player is not null)
         {
             _player.HealthChanged += _ => RefreshPlayer();
             RefreshPlayer();
         }
+
+        if (_flask is not null)
+        {
+            _flask.ChargesChanged += (_, _) => RefreshFlask();
+            RefreshFlask();
+        }
+    }
+
+    private void RefreshFlask()
+    {
+        if (_flask is null) return;
+
+        // Pips rather than a number: charge count has to be readable at a glance mid-fight.
+        _flaskLabel.Text = $"Flask  {new string('◆', _flask.Charges)}{new string('◇', Math.Max(0, _flask.MaxCharges - _flask.Charges))}";
     }
 
     private void BuildPlayerFrame()
@@ -58,9 +79,14 @@ public partial class CombatHud : CanvasLayer
         _playerBar = new ProgressBar { MinValue = 0, MaxValue = 1, Value = 1, ShowPercentage = false, CustomMinimumSize = new Vector2(320, 22) };
         _manaBar = new ProgressBar { MinValue = 0, MaxValue = 1, Value = 1, ShowPercentage = false, CustomMinimumSize = new Vector2(320, 12) };
 
+        _flaskLabel = new Label { Text = "Flask" };
+        _statusLabel = new Label { Text = "" };
+
+        box.AddChild(_statusLabel);
         box.AddChild(_playerLabel);
         box.AddChild(_playerBar);
         box.AddChild(_manaBar);
+        box.AddChild(_flaskLabel);
         root.AddChild(box);
         AddChild(root);
     }
@@ -102,6 +128,13 @@ public partial class CombatHud : CanvasLayer
     {
         // Mana drains and regenerates continuously, so it cannot be signal-driven.
         if (_player is not null) _manaBar.Value = _player.Mana.Fraction;
+
+        _statusLabel.Text = _guard switch
+        {
+            { IsGuarding: true } => "GUARDING",
+            { CooldownRemaining: > 0 } g => $"Guard ready in {g.CooldownRemaining:F1}s",
+            _ => "Guard ready  [Space]",
+        };
 
         if (_combat is null) return;
 
