@@ -111,6 +111,7 @@ if enemyLevel  <= playerLevel - 8:  dies in one hit, does not aggro
 Order matters; this is the exact evaluation sequence.
 
 ```
+ 0. evade     = roll(Evasion) ? MISS : continue        // skipped when Unavoidable
  1. base      = AttackPower × weaponCoef × skillCoef
  2. flat      = base + flatBonuses
  3. pct       = flat × (1 + Σ percentBonuses)          // avg damage %, skill damage %
@@ -131,6 +132,27 @@ DamageReduction = Defense / (Defense + 60 + 14 × AttackerLevel)     // soft cap
 This curve is deliberately **soft-capped and asymptotic**: stacking defence always helps a
 little and never makes you invulnerable, which is what prevents the gear-check spiral that
 would otherwise dominate a click-to-move game.
+
+**Step 0 (evade) was added during implementation.** §2 defines an Evasion stat, and the
+original pipeline draft never used it — a stat that exists but does nothing is a bug waiting
+to be found. Unavoidable effects (shard pulses, scripted boss mechanics) set
+`Unavoidable = true` and skip it. If random misses turn out to feel bad in a game where the
+player cannot dodge manually, the cleanest change is to repurpose Evasion as flat damage
+reduction rather than to delete the stat.
+
+### Caps, and why they exist
+
+| Stat | Cap | Reason |
+|---|---|---|
+| Crit chance | 50% | Past this, crit stops being a gamble and becomes baseline damage |
+| Crit damage | none | The intended investment sink for a crit build |
+| Pierce chance | 35% | It ignores mitigation entirely, so it must stay a spike, not a norm |
+| Evasion | 30% | Higher, and fights become unreadable coin-flips |
+| Elemental resist | 70% | Leaves every element meaningfully dangerous |
+| Mitigation | 75% | The single most important cap: it is what stops gear trivialising the game |
+
+Every cap is enforced in `StatBlock` and covered by tests, so a bonus line with an absurd
+roll cannot quietly break the curve.
 
 ### Stagger
 
