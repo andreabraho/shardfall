@@ -143,7 +143,7 @@ public partial class SpawnFieldNode : Node3D
         enemy.Name = $"{FieldId}_{enemyId}_{Time.GetTicksMsec()}_{_mine.Count}";
 
         (_container ?? this).AddChild(enemy);
-        enemy.GlobalPosition = Scatter();
+        enemy.PlaceAt(Scatter());
 
         _mine.Add(enemy);
     }

@@ -61,6 +61,7 @@ public partial class EnemyBrain : CharacterBody3D
     private bool _retreating;
     private double _retreatBudget;
     private bool _returning;
+    private bool _evicted;
 
     [Export] public string EnemyId { get; set; } = "mob_corrupted_wolf";
 
@@ -118,6 +119,8 @@ public partial class EnemyBrain : CharacterBody3D
         // to be in it however it arrived — placed in the scene, spawned by a field or by a shard.
         AddToGroup("enemies");
 
+        // Correct only for an enemy placed in the scene file. Anything spawned is positioned
+        // after AddChild, and AddChild is what runs this — so a spawner must call PlaceAt.
         _home = GlobalPosition;
         _agent.PathDesiredDistance = 0.5f;
         _agent.TargetDesiredDistance = AttackRange * 0.8f;
@@ -299,6 +302,27 @@ public partial class EnemyBrain : CharacterBody3D
         }
     }
 
+    /// <summary>
+    /// Puts a spawned creature down and fixes the point it leashes back to.
+    /// </summary>
+    /// <remarks>
+    /// Both in one call, because they were two and drifted apart. <c>_Ready</c> takes the
+    /// home from the node's position, but <c>_Ready</c> runs inside <c>AddChild</c> — before
+    /// the spawner has moved the node anywhere. Every spawned creature therefore leashed to
+    /// the scene origin, and with nothing to fight walked there and stood in the village
+    /// square, which in a village map is exactly where the player is standing.
+    /// </remarks>
+    public void PlaceAt(Vector3 at)
+    {
+        GlobalPosition = at;
+        _home = at;
+
+        if (World.GameWorld.IsLoaded && World.GameWorld.IsSafe(at))
+        {
+            GD.PushWarning($"[spawn] '{EnemyId}' was placed on safe ground at {at}. It will walk back out.");
+        }
+    }
+
     private void RefreshTarget()
     {
         // Whatever brought it here — a camp placed too close, a shove, a future bug — nothing
@@ -306,6 +330,17 @@ public partial class EnemyBrain : CharacterBody3D
         // it self-correcting at run time, because the promise is worth more than the diagnosis.
         if (!_returning && World.GameWorld.IsSafe(GlobalPosition))
         {
+            // Reported rather than quietly corrected. Silent self-healing here is how the
+            // first version of this hid a broken home position for a day: everything looked
+            // fine except to the person playing it.
+            if (!_evicted)
+            {
+                _evicted = true;
+                GD.PushWarning(
+                    $"[safe] '{EnemyId}' was standing in a safe region at {GlobalPosition}, "
+                    + $"home {_home}. Sending it back.");
+            }
+
             BeginReturn();
             return;
         }

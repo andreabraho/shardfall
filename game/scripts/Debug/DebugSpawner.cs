@@ -104,8 +104,8 @@ public partial class DebugSpawner : Node
         enemy.Name = $"Debug_{enemy.EnemyId}_{Time.GetTicksMsec()}";
 
         GetTree().CurrentScene.AddChild(enemy);
-        enemy.GlobalPosition = player.GlobalPosition
-            + (new Vector3((float)Mathf.Cos(angle), 0, (float)Mathf.Sin(angle)) * 6f);
+        enemy.PlaceAt(player.GlobalPosition
+            + (new Vector3((float)Mathf.Cos(angle), 0, (float)Mathf.Sin(angle)) * 6f));
 
         GD.Print($"[spawner] spawned {enemy.EnemyId}");
     }

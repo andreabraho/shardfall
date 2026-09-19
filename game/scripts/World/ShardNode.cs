@@ -272,7 +272,7 @@ public partial class ShardNode : StaticBody3D
             add.MoveSpeed *= (float)_fight!.Effects.AddSpeedMultiplier;
 
             _addsRoot.AddChild(add);
-            add.GlobalPosition = GlobalPosition + offset;
+            add.PlaceAt(GlobalPosition + offset);
 
             _adds.Add(add);
 
