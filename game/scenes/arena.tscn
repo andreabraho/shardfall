@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3]
+[gd_scene load_steps=22 format=3]
 
 ; MOV-01 greybox test arena.
 ;
@@ -16,6 +16,8 @@
 [ext_resource type="Script" path="res://scripts/UI/CombatHud.cs" id="9_hud"]
 [ext_resource type="Script" path="res://scripts/Combat/TargetRing.cs" id="10_ring"]
 [ext_resource type="Script" path="res://scripts/Combat/AoeVisual.cs" id="11_aoe"]
+[ext_resource type="Script" path="res://scripts/UI/InventoryPanel.cs" id="12_bagui"]
+[ext_resource type="Script" path="res://scripts/UI/WorkbenchPanel.cs" id="13_bench"]
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="5_player"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_arena"]
@@ -195,6 +197,12 @@ script = ExtResource("10_ring")
 
 [node name="CombatHud" type="CanvasLayer" parent="."]
 script = ExtResource("9_hud")
+
+[node name="InventoryPanel" type="CanvasLayer" parent="."]
+script = ExtResource("12_bagui")
+
+[node name="WorkbenchPanel" type="CanvasLayer" parent="."]
+script = ExtResource("13_bench")
 
 [node name="Enemies" type="Node3D" parent="."]
 

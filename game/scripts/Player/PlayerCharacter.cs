@@ -99,26 +99,34 @@ public partial class PlayerCharacter : Node
         }
     }
 
-    /// <summary>Rebuilds the stat block from current attributes. Called on every level.</summary>
+    /// <summary>Rebuilds the stat block from current attributes and gear. Called on every level.</summary>
     private void ApplyStats()
     {
         var fraction = _combatant.Health.Max > 0 ? _combatant.Health.Fraction : 1.0;
 
-        _combatant.Configure(
-            new StatBlock
-            {
-                Level = Progression.Level,
-                Class = CharacterClass.Warrior,
-                Family = MonsterFamily.Human,
-                Attributes = Progression.TotalAttributes,
-                WeaponDamage = 28,
-                ArmorValue = 34,
-            },
-            "$player.name");
+        var stats = new StatBlock
+        {
+            Level = Progression.Level,
+            Class = CharacterClass.Warrior,
+            Family = MonsterFamily.Human,
+            Attributes = Progression.TotalAttributes,
+
+            // Fallback for a character with nothing equipped, so a bare-handed player is
+            // weak rather than harmless.
+            WeaponDamage = 6,
+            ArmorValue = 0,
+        };
+
+        GetParent().GetNodeOrNull<Items.PlayerInventory>("PlayerInventory")?.Gear?.ApplyTo(stats);
+
+        _combatant.Configure(stats, "$player.name");
 
         // Keep the same proportion of health rather than a free full heal on every level.
         _combatant.Health.SetCurrent(_combatant.Health.Max * fraction);
     }
+
+    /// <summary>Recomputes stats after a gear change.</summary>
+    public void RefreshStats() => ApplyStats();
 
     /// <summary>
     /// Awards experience for a kill, adjusted for the level gap (FR-2.7).

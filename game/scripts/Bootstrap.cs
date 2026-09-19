@@ -32,6 +32,10 @@ public partial class Bootstrap : Node
             return;
         }
 
+        // Projects content into the shapes the item simulation works with. Must follow the
+        // content load and precede any scene that mints an item.
+        Items.GameItems.Load();
+
         AddChild(new DebugOverlay { Name = "DebugOverlay" });
         AddChild(new DisplaySettings { Name = "DisplaySettings" });
 

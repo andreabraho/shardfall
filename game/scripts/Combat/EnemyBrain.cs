@@ -94,6 +94,9 @@ public partial class EnemyBrain : CharacterBody3D
     /// <summary>Experience granted on death, straight from the definition.</summary>
     public int XpReward { get; private set; }
 
+    /// <summary>The table this enemy rolls on death, or null when it drops nothing.</summary>
+    public string? DropTableId { get; private set; }
+
     public override void _Ready()
     {
         _agent = GetNode<NavigationAgent3D>("NavigationAgent3D");
@@ -140,6 +143,7 @@ public partial class EnemyBrain : CharacterBody3D
         LeashRadius = (float)def.LeashRadius;
         MoveSpeed = (float)def.Stats.MoveSpeed;
         XpReward = def.Xp;
+        DropTableId = def.DropTable;
 
         if (def.Abilities.Length > 0) Abilities = def.Abilities;
 
@@ -190,6 +194,7 @@ public partial class EnemyBrain : CharacterBody3D
         _telegraph?.Cancel();
         ReleaseShields();
         AwardExperience();
+        DropLoot();
 
         if (_bar is not null) _bar.Visible = false;
 
@@ -205,6 +210,34 @@ public partial class EnemyBrain : CharacterBody3D
 
         var player = GetTree().GetFirstNodeInGroup("player");
         player?.GetNodeOrNull<Player.PlayerCharacter>("PlayerCharacter")?.AwardKill(Self.Stats.Level, XpReward);
+    }
+
+    /// <summary>
+    /// Rolls the drop table (ITM-03). Yang goes straight into the purse — walking over coins
+    /// is busywork — while items land on the ground so the player sees what fell and can
+    /// decide whether it is worth the walk.
+    /// </summary>
+    private void DropLoot()
+    {
+        if (DropTableId is null || !GameContent.IsLoaded || !Items.GameItems.IsLoaded) return;
+        if (!GameContent.Database.DropTables.TryGetValue(DropTableId, out var table)) return;
+
+        var player = GetTree().GetFirstNodeInGroup("player") as Node3D;
+        var bag = player?.GetNodeOrNull<Items.PlayerInventory>("PlayerInventory");
+
+        var rng = Items.GameItems.LootRng;
+        var loot = Items.LootRoller.Roll(table, rng);
+
+        if (loot.Yang > 0 && bag is not null)
+        {
+            bag.Bag.AddYang(loot.Yang);
+            CombatFeedback.Yang(GlobalPosition + (Vector3.Up * 1.2f), loot.Yang);
+        }
+
+        foreach (var item in loot.Items)
+        {
+            World.LootDrop.Spawn(GetParent(), item, GlobalPosition, rng);
+        }
     }
 
     // -- Main loop ----------------------------------------------------------

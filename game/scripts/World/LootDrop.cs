@@ -1,0 +1,134 @@
+using Godot;
+using Kiln.Core.Foundation;
+using Kiln.Core.Items;
+using Kiln.Game.Items;
+
+namespace Kiln.Game.World;
+
+/// <summary>
+/// One item lying on the ground, waiting to be walked over.
+/// </summary>
+/// <remarks>
+/// Auto-pickup on proximity rather than a click, because click-to-move already owns the left
+/// mouse button and a game where looting fights with moving is a game where looting feels
+/// bad. The rarity filter of FR-5.8 lands with the settings screen; until then everything is
+/// collected, which is the right default while bags are large and vendors do not exist.
+/// <para>
+/// The drop is labelled, coloured by rarity, and never despawns. Nothing in a single-player
+/// game is served by loot that expires while the player is reading its name.
+/// </para>
+/// </remarks>
+public partial class LootDrop : Area3D
+{
+    private ItemInstance _item = null!;
+    private ItemSpec? _spec;
+    private Label3D _label = null!;
+    private MeshInstance3D _mesh = null!;
+    private double _age;
+
+    /// <summary>Seconds before the drop can be collected, so it visibly lands first.</summary>
+    [Export] public double ArmDelay { get; set; } = 0.35;
+
+    [Export] public float PickupRadius { get; set; } = 1.6f;
+
+    public ItemInstance Item => _item;
+
+    public static LootDrop Spawn(Node parent, ItemInstance item, Vector3 at, DeterministicRng rng)
+    {
+        var drop = new LootDrop
+        {
+            Name = $"Loot_{item.Uid}",
+            _item = item,
+        };
+
+        // Scattered so a burst of drops does not stack into one unreadable pile.
+        var angle = rng.NextDouble(0, Mathf.Tau);
+        var distance = rng.NextDouble(0.3, 1.1);
+        var offset = new Vector3((float)(Mathf.Cos(angle) * distance), 0, (float)(Mathf.Sin(angle) * distance));
+
+        parent.CallDeferred(Node.MethodName.AddChild, drop);
+        drop.SetDeferred(Node3D.PropertyName.GlobalPosition, at + offset + (Vector3.Up * 0.25f));
+
+        return drop;
+    }
+
+    public override void _Ready()
+    {
+        _spec = GameItems.Spec(_item.DefId);
+
+        CollisionLayer = 0;
+        CollisionMask = 0;
+        Monitoring = false;
+
+        var colour = RarityColour(_spec?.Rarity ?? Rarity.Common);
+
+        _mesh = new MeshInstance3D
+        {
+            Mesh = new BoxMesh { Size = new Vector3(0.28f, 0.28f, 0.28f) },
+            MaterialOverride = new StandardMaterial3D
+            {
+                AlbedoColor = colour,
+                EmissionEnabled = true,
+                Emission = colour,
+                EmissionEnergyMultiplier = 0.6f,
+            },
+        };
+
+        AddChild(_mesh);
+
+        _label = new Label3D
+        {
+            Text = Describe(),
+            Modulate = colour,
+            FontSize = 24,
+            OutlineSize = 8,
+            Position = new Vector3(0, 0.55f, 0),
+            Billboard = BaseMaterial3D.BillboardModeEnum.Enabled,
+
+            // Scales with distance, like the damage numbers. FixedSize would hold the same
+            // screen size at every zoom, so pulling the camera out would fill the view with
+            // loot names — the same problem the damage numbers had.
+            FixedSize = false,
+            PixelSize = 0.006f,
+        };
+
+        AddChild(_label);
+    }
+
+    private string Describe()
+    {
+        var name = GameItems.NameOf(_item);
+
+        return _item.Count > 1 ? $"{name} x{_item.Count}" : name;
+    }
+
+    public static Color RarityColour(Rarity rarity) => rarity switch
+    {
+        Rarity.Fine => new Color("6fd36f"),
+        Rarity.Rare => new Color("5aa9ff"),
+        Rarity.Epic => new Color("c47bff"),
+        Rarity.Relic => new Color("ffb347"),
+        _ => new Color("d8d8d8"),
+    };
+
+    public override void _Process(double delta)
+    {
+        _age += delta;
+
+        // A slow bob and spin so a drop reads as an object to collect rather than scenery.
+        _mesh.Rotation = new Vector3(0, (float)(_age * 1.6), 0);
+        _mesh.Position = new Vector3(0, (float)(Mathf.Sin(_age * 2.2) * 0.06), 0);
+
+        if (_age < ArmDelay) return;
+
+        var player = GetTree().GetFirstNodeInGroup("player") as Node3D;
+
+        if (player is null || GlobalPosition.DistanceTo(player.GlobalPosition) > PickupRadius) return;
+
+        var bag = player.GetNodeOrNull<PlayerInventory>("PlayerInventory");
+
+        if (bag is null || !bag.TryPickUp(_item)) return;
+
+        QueueFree();
+    }
+}

@@ -68,6 +68,18 @@ public partial class CombatFeedback : Node3D
         => _instance?.Spawn(worldPosition, amount, critical, evaded, onPlayer);
 
     /// <summary>
+    /// Coin picked up from a kill. Uses the same floating labels as damage so income reads as
+    /// part of the fight rather than as a line in a log the player never opens.
+    /// </summary>
+    public static void Yang(Vector3 worldPosition, long amount)
+        => _instance?.SpawnYang(worldPosition, amount);
+
+    private void SpawnYang(Vector3 worldPosition, long amount)
+        => SpawnText(worldPosition, $"+{amount:N0}", YangColor, NormalFontSize);
+
+    private static readonly Color YangColor = new("f0c96a");
+
+    /// <summary>
     /// Freezes time briefly on impact. Scaled by significance: a crit bites harder than a
     /// chip hit, which is what makes big hits feel big without any animation work.
     /// </summary>
@@ -82,6 +94,16 @@ public partial class CombatFeedback : Node3D
 
     private void Spawn(Vector3 worldPosition, int amount, bool critical, bool evaded, bool onPlayer)
     {
+        var text = evaded ? "miss" : amount.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        var colour = evaded
+            ? new Color(0.75f, 0.78f, 0.82f)
+            : onPlayer ? PlayerHurtColor : critical ? CritColor : NormalColor;
+
+        SpawnText(worldPosition, text, colour, critical ? CritFontSize : NormalFontSize);
+    }
+
+    private void SpawnText(Vector3 worldPosition, string text, Color colour, int fontSize)
+    {
         // Recycle the oldest rather than letting numbers pile up over the fight.
         while (_active.Count >= MaxActive)
         {
@@ -93,14 +115,11 @@ public partial class CombatFeedback : Node3D
 
         var label = Rent();
 
-        label.Text = evaded ? "miss" : amount.ToString(System.Globalization.CultureInfo.InvariantCulture);
-        label.Modulate = evaded
-            ? new Color(0.75f, 0.78f, 0.82f)
-            : onPlayer ? PlayerHurtColor : critical ? CritColor : NormalColor;
-
+        label.Text = text;
+        label.Modulate = colour;
         label.PixelSize = PixelSize;
         label.OutlineSize = OutlineSize;
-        label.FontSize = critical ? CritFontSize : NormalFontSize;
+        label.FontSize = fontSize;
         label.GlobalPosition = worldPosition;
         label.Visible = true;
 

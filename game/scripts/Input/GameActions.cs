@@ -42,6 +42,8 @@ public static class GameActions
     public const string ToggleFullscreen = "toggle_fullscreen";
     public const string ToggleControlScheme = "toggle_control_scheme";
     public const string Cancel = "cancel";
+    public const string ToggleInventory = "toggle_inventory";
+    public const string ToggleUpgradeBench = "toggle_upgrade_bench";
 
     private static readonly Dictionary<string, InputEvent[]> Defaults = new()
     {
@@ -70,6 +72,8 @@ public static class GameActions
         [ToggleFullscreen] = [Key(Godot.Key.F11)],
         [ToggleControlScheme] = [Key(Godot.Key.F4)],
         [Cancel] = [Key(Godot.Key.Escape)],
+        [ToggleInventory] = [Key(Godot.Key.I)],
+        [ToggleUpgradeBench] = [Key(Godot.Key.U)],
     };
 
     private static InputEvent Key(Key key) => new InputEventKey { PhysicalKeycode = key };
