@@ -37,6 +37,7 @@ public static class ContentValidator
         RarityShape(db, report);
         ShardEncounters(db, report);
         WorldGraph(db, report);
+        GreyboxKit(db, report);
 
         return report;
     }
@@ -795,6 +796,60 @@ public static class ContentValidator
                         + $"'{zone.Id}', a level {band[0]}–{band[1]} zone.",
                         "Move the field, or widen the zone's band to match what stands in it.");
                 }
+            }
+        }
+    }
+
+    // -- R14 ----------------------------------------------------------------
+    /// <summary>
+    /// The greybox kit (WLD-04).
+    /// </summary>
+    /// <remarks>
+    /// Cheap rules for an expensive mistake. A piece with a zero dimension is invisible, and
+    /// a scene full of invisible walls is debugged by walking into them; a shape the registry
+    /// does not know silently falls back to a box, so a ramp becomes a step the player cannot
+    /// climb and the level looks finished while being impassable.
+    /// </remarks>
+    private static void GreyboxKit(ContentDatabase db, ValidationReport report)
+    {
+        string[] shapes = ["box", "ramp", "cylinder", "sphere", "arch", "model"];
+
+        foreach (var piece in db.KitPieces.Values)
+        {
+            if (!shapes.Contains(piece.Shape))
+            {
+                report.Error("kit-shape", piece.SourceFile,
+                    $"'{piece.Id}' has shape '{piece.Shape}'.",
+                    $"Use one of: {string.Join(", ", shapes)}.");
+            }
+
+            if (piece.Shape == "model" && string.IsNullOrEmpty(piece.ModelPath))
+            {
+                report.Error("kit-shape", piece.SourceFile,
+                    $"'{piece.Id}' is a model with no model_path.");
+            }
+
+            if (piece.Size.Length != 3 || piece.Size.Any(v => v <= 0))
+            {
+                report.Error("kit-size", piece.SourceFile,
+                    $"'{piece.Id}' has size [{string.Join(", ", piece.Size)}].",
+                    "Every piece needs three positive dimensions in metres.");
+            }
+
+            // Baking geometry the player walks through would carve holes in the navmesh
+            // around decoration, and enemies would path into shrubbery and stop.
+            if (piece.Navigation && !piece.Solid)
+            {
+                report.Error("kit-shape", piece.SourceFile,
+                    $"'{piece.Id}' is navigation geometry but not solid.",
+                    "Navigation is baked from collision, so a piece cannot be one without the other.");
+            }
+
+            if (!piece.Color.StartsWith('#') || piece.Color.Length is not (4 or 7))
+            {
+                report.Error("kit-colour", piece.SourceFile,
+                    $"'{piece.Id}' has colour \"{piece.Color}\".",
+                    "Use #rgb or #rrggbb.");
             }
         }
     }

@@ -81,6 +81,7 @@ public static class CodegenCommand
         Section(sb, "Visuals", db.Visuals.Keys);
         Section(sb, "Shards", db.Shards.Keys);
         Section(sb, "Zones", db.Zones.Keys);
+        Section(sb, "KitPieces", db.KitPieces.Keys);
 
         sb.AppendLine("}");
         return sb.ToString().ReplaceLineEndings("\n");

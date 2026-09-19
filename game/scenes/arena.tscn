@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3]
+[gd_scene load_steps=31 format=3]
 
 ; zone_ridge — the greybox stand-in for the ridge (WLD-05 replaces the layout).
 ;
@@ -16,6 +16,7 @@
 [ext_resource type="Script" path="res://scripts/World/ShrineNode.cs" id="21_shrine"]
 [ext_resource type="Script" path="res://scripts/UI/ShrinePanel.cs" id="22_shrineui"]
 [ext_resource type="Script" path="res://scripts/UI/CharacterPanel.cs" id="23_charui"]
+[ext_resource type="Script" path="res://scripts/World/KitPiece.cs" id="24_kit"]
 [ext_resource type="Script" path="res://scripts/Camera/CameraRig.cs" id="2_camera"]
 [ext_resource type="Script" path="res://scripts/World/ClickMarker.cs" id="3_marker"]
 [ext_resource type="Script" path="res://scripts/World/CursorManager.cs" id="4_cursor"]
@@ -299,3 +300,82 @@ VisualId = "mesh_placeholder_monolith"
 
 [node name="CharacterPanel" type="CanvasLayer" parent="."]
 script = ExtResource("23_charui")
+
+; WLD-04 proof: a walled compound around the watch shrine, built entirely from kit pieces.
+; Every node below names a piece id and nothing else — no mesh, no shape, no colour. This is
+; the shape the two villages get built in, at village scale.
+[node name="Compound" type="Node3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, -16)
+
+[node name="WallN" type="StaticBody3D" parent="NavigationRegion3D/Compound"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -7)
+script = ExtResource("24_kit")
+PieceId = "kit_wall_8"
+
+[node name="WallS_L" type="StaticBody3D" parent="NavigationRegion3D/Compound"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1.5, 7)
+script = ExtResource("24_kit")
+PieceId = "kit_wall_4"
+
+[node name="WallS_R" type="StaticBody3D" parent="NavigationRegion3D/Compound"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1.5, 7)
+script = ExtResource("24_kit")
+PieceId = "kit_wall_4"
+
+; The one way in. An arch is legs plus a lintel, so it is genuinely walkable.
+[node name="Gate" type="StaticBody3D" parent="NavigationRegion3D/Compound"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 7)
+script = ExtResource("24_kit")
+PieceId = "kit_gate"
+
+[node name="WallW" type="StaticBody3D" parent="NavigationRegion3D/Compound"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -7.5, 1.5, 0)
+script = ExtResource("24_kit")
+PieceId = "kit_wall_8"
+
+[node name="WallE" type="StaticBody3D" parent="NavigationRegion3D/Compound"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 7.5, 1.5, 0)
+script = ExtResource("24_kit")
+PieceId = "kit_wall_8"
+
+[node name="TowerNW" type="StaticBody3D" parent="NavigationRegion3D/Compound"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 2.75, -7)
+script = ExtResource("24_kit")
+PieceId = "kit_tower"
+
+[node name="TowerNE" type="StaticBody3D" parent="NavigationRegion3D/Compound"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 2.75, -7)
+script = ExtResource("24_kit")
+PieceId = "kit_tower"
+
+[node name="Path" type="StaticBody3D" parent="NavigationRegion3D/Compound"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0.06, 10)
+script = ExtResource("24_kit")
+PieceId = "kit_path_4"
+
+; Decoration: no collision, never baked, walked straight through.
+[node name="BrazierL" type="StaticBody3D" parent="NavigationRegion3D/Compound"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6, 0.55, 6.4)
+script = ExtResource("24_kit")
+PieceId = "kit_brazier"
+
+[node name="BrazierR" type="StaticBody3D" parent="NavigationRegion3D/Compound"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6, 0.55, 6.4)
+script = ExtResource("24_kit")
+PieceId = "kit_brazier"
+
+[node name="ShrubA" type="StaticBody3D" parent="NavigationRegion3D/Compound"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.2, 0.5, -3.5)
+script = ExtResource("24_kit")
+PieceId = "kit_shrub"
+
+; Ruins: solid, but placed outside the bake so they block without carving the navmesh.
+[node name="RuinWall" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0.9, -2)
+script = ExtResource("24_kit")
+PieceId = "kit_ruin_wall"
+
+[node name="Boulder" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0.95, -3)
+script = ExtResource("24_kit")
+PieceId = "kit_boulder"

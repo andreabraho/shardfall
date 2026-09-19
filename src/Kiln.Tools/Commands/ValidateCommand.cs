@@ -35,7 +35,8 @@ public static class ValidateCommand
             $"({db.Items.Count} items, {db.Enemies.Count} enemies, {db.Skills.Count} skills, " +
             $"{db.Quests.Count} quests, {db.DropTables.Count} drop tables, {db.BonusPools.Count} bonus pools, " +
             $"{db.UpgradePaths.Count} upgrade paths, {db.Visuals.Count} visuals, "
-            + $"{db.Shards.Count} shards, {db.Zones.Count} zones) in {sw.ElapsedMilliseconds} ms\n");
+            + $"{db.Shards.Count} shards, {db.Zones.Count} zones, {db.KitPieces.Count} kit pieces) "
+            + $"in {sw.ElapsedMilliseconds} ms\n");
 
         if (report.Findings.Count > 0)
         {

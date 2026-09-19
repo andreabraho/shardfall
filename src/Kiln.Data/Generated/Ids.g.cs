@@ -206,4 +206,28 @@ public static class Ids
         public static readonly string[] All = ["zone_broken_gate", "zone_catacombs", "zone_ember_hollow", "zone_ridge", "zone_vale_approach", "zone_vale_floor"];
     }
 
+    public static class KitPieces
+    {
+        public const string KitBanner = "kit_banner";
+        public const string KitBoulder = "kit_boulder";
+        public const string KitBrazier = "kit_brazier";
+        public const string KitCliff8 = "kit_cliff_8";
+        public const string KitFloor4 = "kit_floor_4";
+        public const string KitFloor8 = "kit_floor_8";
+        public const string KitGate = "kit_gate";
+        public const string KitMarkerPost = "kit_marker_post";
+        public const string KitPath4 = "kit_path_4";
+        public const string KitPillar = "kit_pillar";
+        public const string KitRamp4 = "kit_ramp_4";
+        public const string KitRuinRubble = "kit_ruin_rubble";
+        public const string KitRuinWall = "kit_ruin_wall";
+        public const string KitShrub = "kit_shrub";
+        public const string KitTower = "kit_tower";
+        public const string KitWall4 = "kit_wall_4";
+        public const string KitWall8 = "kit_wall_8";
+        public const string KitWallLow4 = "kit_wall_low_4";
+
+        public static readonly string[] All = ["kit_banner", "kit_boulder", "kit_brazier", "kit_cliff_8", "kit_floor_4", "kit_floor_8", "kit_gate", "kit_marker_post", "kit_path_4", "kit_pillar", "kit_ramp_4", "kit_ruin_rubble", "kit_ruin_wall", "kit_shrub", "kit_tower", "kit_wall_4", "kit_wall_8", "kit_wall_low_4"];
+    }
+
 }

@@ -38,6 +38,7 @@ public static class ContentLoader
         ("tables/bonus_pools.json", typeof(BonusPoolDef)),
         ("tables/upgrade_paths.json", typeof(UpgradePathDef)),
         ("tables/visuals.json", typeof(VisualDef)),
+        ("tables/world_kit.json", typeof(KitPieceDef)),
     ];
 
     public static ContentLoadResult LoadFromDirectory(string dataRoot)
@@ -84,6 +85,7 @@ public static class ContentLoader
             Visuals = ctx.Visuals,
             Shards = ctx.Shards,
             Zones = ctx.Zones,
+            KitPieces = ctx.KitPieces,
         };
 
         return new ContentLoadResult(db, ctx.Errors);
@@ -102,6 +104,7 @@ public static class ContentLoader
         public readonly Dictionary<string, VisualDef> Visuals = new(StringComparer.Ordinal);
         public readonly Dictionary<string, ShardDef> Shards = new(StringComparer.Ordinal);
         public readonly Dictionary<string, ZoneDef> Zones = new(StringComparer.Ordinal);
+        public readonly Dictionary<string, KitPieceDef> KitPieces = new(StringComparer.Ordinal);
     }
 
     private static void LoadFile(IContentFileSource source, string file, Type type, LoadContext ctx)
@@ -150,6 +153,9 @@ public static class ContentLoader
                     break;
                 case var t when t == typeof(ZoneDef):
                     Add(Deserialize<ZoneDef>(json), file, ctx.Zones, ctx.Errors);
+                    break;
+                case var t when t == typeof(KitPieceDef):
+                    Add(Deserialize<KitPieceDef>(json), file, ctx.KitPieces, ctx.Errors);
                     break;
             }
         }

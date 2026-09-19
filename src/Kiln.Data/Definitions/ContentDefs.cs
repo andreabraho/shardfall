@@ -442,3 +442,39 @@ public sealed class SpawnEntryDef
     public string Enemy { get; init; } = string.Empty;
     public double Weight { get; init; } = 1.0;
 }
+
+// ---------------------------------------------------------------------------
+// Greybox kit — world geometry as data (WLD-04, via the ENG-07 boundary)
+// ---------------------------------------------------------------------------
+
+/// <summary>
+/// One reusable piece of world geometry: a wall segment, a ramp, a gate, a rock.
+/// </summary>
+/// <remarks>
+/// The same boundary the character visuals use, applied to level geometry. A scene names
+/// <c>kit_wall_straight</c> and never a mesh, so replacing the grey box with a modelled wall
+/// is an edit to this file and to nothing else — including the villages, which will be built
+/// almost entirely out of these.
+/// </remarks>
+public sealed class KitPieceDef : ContentDefBase
+{
+    /// <summary>box | ramp | cylinder | sphere | arch — or "model" once art exists.</summary>
+    public string Shape { get; init; } = "box";
+
+    /// <summary>Set only when <see cref="Shape"/> is "model": res:// path to the scene.</summary>
+    public string? ModelPath { get; init; }
+
+    /// <summary>[x, y, z] metres. A piece is authored at its real size so scenes need no scaling.</summary>
+    public double[] Size { get; init; } = [1, 1, 1];
+
+    public string Color { get; init; } = "#6b7280";
+
+    /// <summary>False for decoration the player walks through — grass, banners, decals.</summary>
+    public bool Solid { get; init; } = true;
+
+    /// <summary>
+    /// Whether the piece is baked into the navigation mesh. Solid-but-not-navigation is for
+    /// anything placed after the bake; navigation-but-not-solid makes no sense and is rejected.
+    /// </summary>
+    public bool Navigation { get; init; } = true;
+}

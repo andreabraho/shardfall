@@ -183,14 +183,43 @@ fields, 25 enemies across every band from 3 to 23 — and the ridge is playable 
 is left is level design: five of the six zones are declared but not laid out, which CI now
 reports as a warning on every run rather than as something to remember.
 
+### World structure (decided 2026-09-19)
+
+The shape is the one the genre established: **a village with a safe zone, fields of monsters
+immediately around it, and a chain of further maps banded by level.** Two villages, not one,
+so the pattern is established and then repeated — a single village reads as a menu, two read
+as a world. (Layout convention only; no names, maps or assets from any existing game — see
+[00 §2](00-overview-and-decisions.md).)
+
+Three things in the current model have to change to express it, and none of them are large:
+
+1. **A village is a safe region inside a map, not a map of its own.** Today the hub is a
+   separate zone, which puts a loading boundary at the village gate and means you can never
+   stand in the village and see the field you are about to walk into. Both of those are the
+   opposite of what makes the layout work.
+2. **Safe zones become a validated thing, not a convention.** No spawn field may overlap one,
+   no enemy may follow the player into one, and nothing inside one can damage the player. A
+   safe zone that is only safe because nobody happened to place a camp there will stop being
+   safe the first time somebody does.
+3. **More than one hub.** The validator currently *errors* on anything other than exactly one
+   hub zone — a rule written when one village was the plan, and now the thing standing in the
+   way. It becomes "at least one", with each village anchoring the region around it.
+
+Tier A scope in [00 §3](00-overview-and-decisions.md) moves from `hub village + 3 outdoor
+zones + 1 dungeon` to `2 villages + 4 field maps + 1 dungeon`. That is one more village and
+one more map than planned — real added scope, taken deliberately, because the second village
+is what proves the structure rather than decorating it.
+
 | ID | Task | Owner | Notes |
 |---|---|---|---|
 | WLD-01 | Zone loading/streaming, level bands, transitions | **[C]** | ◐ graph, bands and gating done and validated; scene-to-scene loading waits on WLD-05/06/07 |
 | WLD-02 | Shrine system: save, respawn, fast travel, flask refill, respec | **[C]** | ✅ save waits on Phase 8; respec unblocks PRG-06 |
 | WLD-03 | Spawn-zone system: density caps, respawn timers, distance activation | **[C]** | ✅ camps come back as camps, and keep their timers while you are away |
-| WLD-04 | Modular greybox kit (cliffs, paths, ruins, props) as primitives | **[C]** | Via the ENG-07 registry |
-| WLD-05 | **Greybox the 3 outdoor zones** — layout, landmarks, encounter placement, sightlines | **[C→You]** | I can place a first pass from a spec; level design by feel is yours |
-| WLD-06 | **Greybox the hub village** + NPC placement | **[C→You]** | |
+| WLD-04 | Modular greybox kit (cliffs, paths, ruins, props) as primitives | **[C]** | ✅ 18 pieces in `tables/world_kit.json`; a scene names a piece id and nothing else. No editor preview yet — content does not load in the editor, so pieces appear only at run time |
+| WLD-05 | **Greybox the 4 field maps** — layout, landmarks, encounter placement, sightlines | **[C→You]** | I can place a first pass from a spec; level design by feel is yours |
+| WLD-06 | **Greybox the 2 villages** + NPC placement | **[C→You]** | Each a safe zone with fields immediately outside it |
+| WLD-12 | **Safe zones**: no spawn overlap, no enemy entry, no damage inside — validated | **[C]** | ⬜ before WLD-06; the thing a village actually is |
+| WLD-13 | **Multi-hub**: relax the one-hub rule, each village anchors its region | **[C]** | ⬜ with WLD-12 |
 | WLD-07 | **Greybox the dungeon**: 2 mini-bosses, secret room, 3-phase boss arena, checkpoints | **[C→You]** | |
 | WLD-08 | Map + minimap: fog of war, markers, custom pins, shard-node overlay | **[C]** | |
 | WLD-09 | Fast travel UI + yang cost | **[C]** | ✅ flat fee by destination band; refused in combat, and to a dungeon checkpoint |

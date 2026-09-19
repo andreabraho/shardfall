@@ -58,7 +58,8 @@ Scope is the number-one risk on a project like this, so it is explicit.
 
 ### Tier A — MVP / Vertical Slice (proves the game works)
 - 1 playable class (Warrior), 8 skills, 3 tiers of gear
-- 1 region: hub village + 3 outdoor zones + 1 dungeon
+- 1 region: 2 villages (each a safe zone with fields around it) + 4 field maps + 1 dungeon
+  — structure decided 2026-09-19, see [05 Phase 6](05-roadmap.md)
 - ~18 enemy types, 5 shard tiers, 2 bosses
 - Full loop: explore → fight → break shard → loot → upgrade → skill up → next zone
 - ~90 minutes of gameplay, fully polished, difficulty settings working

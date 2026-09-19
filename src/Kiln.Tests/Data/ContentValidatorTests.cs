@@ -22,10 +22,12 @@ public class ContentValidatorTests
         IEnumerable<UpgradePathDef>? upgradePaths = null,
         IEnumerable<VisualDef>? visuals = null,
         IEnumerable<ShardDef>? shards = null,
-        IEnumerable<ZoneDef>? zones = null) => new()
+        IEnumerable<ZoneDef>? zones = null,
+        IEnumerable<KitPieceDef>? kit = null) => new()
     {
         Shards = Index(shards),
         Zones = Index(zones),
+        KitPieces = Index(kit),
         Items = Index(items),
         Enemies = Index(enemies),
         Skills = Index(skills),
@@ -351,6 +353,47 @@ public class ContentValidatorTests
             [new ItemDef { Id = "wpn_x", Name = "$x", LevelReq = 105 }]));
 
         Assert.True(HasError(report, "level-range"));
+    }
+
+    // -- greybox kit --------------------------------------------------------
+
+    [Fact]
+    public void Flags_KitPieceWithAZeroDimension()
+    {
+        // Invisible in the scene, and found by walking into it.
+        var report = ContentValidator.Validate(Db(kit:
+            [new KitPieceDef { Id = "kit_x", Size = [4, 0, 2] }]));
+
+        Assert.True(HasError(report, "kit-size"));
+    }
+
+    [Fact]
+    public void Flags_UnknownKitShape()
+    {
+        // Falls back to a box, so a ramp silently becomes a step nobody can climb.
+        var report = ContentValidator.Validate(Db(kit:
+            [new KitPieceDef { Id = "kit_x", Shape = "wedge", Size = [1, 1, 1] }]));
+
+        Assert.True(HasError(report, "kit-shape"));
+    }
+
+    [Fact]
+    public void Flags_NavigationGeometryThatIsNotSolid()
+    {
+        // Navigation is baked from collision, so this would carve a hole around decoration.
+        var report = ContentValidator.Validate(Db(kit:
+            [new KitPieceDef { Id = "kit_x", Size = [1, 1, 1], Solid = false, Navigation = true }]));
+
+        Assert.True(HasError(report, "kit-shape"));
+    }
+
+    [Fact]
+    public void Accepts_DecorationThatIsNeitherSolidNorBaked()
+    {
+        var report = ContentValidator.Validate(Db(kit:
+            [new KitPieceDef { Id = "kit_x", Size = [1, 1, 1], Solid = false, Navigation = false }]));
+
+        Assert.False(report.HasErrors);
     }
 
     [Fact]
