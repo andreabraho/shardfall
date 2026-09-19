@@ -50,7 +50,12 @@ public sealed class StatBlock
 
     public double HpRegenPerSecond => 0.4 + (Attributes.Vit * 0.05) + Modifiers.HpRegenFlat;
 
-    public double ManaRegenPerSecond => 0.8 + (Attributes.Int * 0.06);
+    /// <summary>
+    /// Out-of-combat mana regeneration. Partly a share of the pool, so it does not fall
+    /// behind as the pool grows — a flat trickle meant a high-level character with a large
+    /// mana bar waited proportionally longer than a starting one, which is backwards.
+    /// </summary>
+    public double ManaRegenPerSecond => 1.2 + (Attributes.Int * 0.10) + (MaxMana * 0.012);
 
     /// <summary>Regeneration is throttled in combat so potions and pacing matter (doc 06 §2).</summary>
     public double HpRegenInCombat => HpRegenPerSecond * 0.25;

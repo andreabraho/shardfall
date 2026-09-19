@@ -40,7 +40,8 @@ Entity
 MaxHP        = 120 + VIT * 18 + Level * 14
 MaxMana      = 60  + INT * 12 + Level * 6
 HPRegen/s    = 0.4 + VIT * 0.05            (× 0.25 while in combat)
-ManaRegen/s  = 0.8 + INT * 0.06            (× 0.30 while in combat)
+ManaRegen/s  = 1.2 + INT * 0.10 + MaxMana * 0.012   (× 0.30 while in combat)
+ManaPerKill  = MaxMana * 0.10              (nothing from trivial enemies)
 
 AttackPower  = WeaponDamage + Primary * 1.8 + Level * 1.2
 MagicPower   = WeaponDamage + INT     * 2.1 + Level * 1.2

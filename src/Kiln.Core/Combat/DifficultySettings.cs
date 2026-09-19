@@ -64,6 +64,22 @@ public static class PlayerConstants
     public const double BaseMoveSpeed = 5.2;
 
     /// <summary>
+    /// Fraction of maximum mana a kill restores.
+    /// <para>
+    /// Mana regeneration alone cannot fund skills: a trickle that refills the pool over a
+    /// minute means the right play is to auto-attack and wait, which is the opposite of what
+    /// the skill system is for. Tying the refund to kills makes using a skill to end a fight
+    /// faster pay for the next one, so the resource follows the loop instead of throttling it.
+    /// </para>
+    /// <para>
+    /// At roughly a tenth of the pool, an average skill costs about one kill. Enemies far
+    /// below the player give nothing, for the same reason they give no experience — farming
+    /// trivia must never be the efficient route.
+    /// </para>
+    /// </summary>
+    public const double ManaPerKillFraction = 0.10;
+
+    /// <summary>
     /// Budget for "see the decal, decide, move the mouse, click" under click-to-move.
     /// Higher than an action game's reaction budget on purpose: the player cannot simply
     /// hold a direction, they must aim and click a destination first.

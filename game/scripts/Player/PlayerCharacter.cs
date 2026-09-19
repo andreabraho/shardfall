@@ -137,6 +137,10 @@ public partial class PlayerCharacter : Node
     /// </summary>
     public void AwardKill(int enemyLevel, int baseXp)
     {
+        // Mana first, and independently of experience: it is the fuel for the next fight, so
+        // a character at the level cap must still be paid for killing things.
+        RestoreManaForKill(enemyLevel);
+
         if (baseXp <= 0 || Progression.IsMaxLevel) return;
 
         var scaled = (long)System.Math.Round(
@@ -162,6 +166,26 @@ public partial class PlayerCharacter : Node
         // Level-up restores and is announced loudly: it is the reward beat of the loop.
         Combat.CombatFeedback.Number(
             _motor.GlobalPosition + (Vector3.Up * 2.6f), Progression.Level, critical: true, evaded: false);
+    }
+
+    /// <summary>
+    /// Pays back mana for a kill (CBT-12). Trivial enemies give nothing, matching the
+    /// experience rule: farming things far below you must never be the efficient play.
+    /// </summary>
+    private void RestoreManaForKill(int enemyLevel)
+    {
+        if (ExperienceTable.IsTrivial(Progression.Level, enemyLevel)) return;
+
+        var amount = _combatant.Stats.MaxMana * PlayerConstants.ManaPerKillFraction;
+
+        if (_combatant.Mana.IsFull || amount <= 0) return;
+
+        var restored = _combatant.Mana.Add(amount);
+
+        if (restored >= 1)
+        {
+            Combat.CombatFeedback.Mana(_motor.GlobalPosition + (Vector3.Up * 2.2f), restored);
+        }
     }
 
     /// <summary>Learns whatever the current level unlocks.</summary>

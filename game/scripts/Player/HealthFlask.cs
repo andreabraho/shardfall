@@ -23,6 +23,18 @@ public partial class HealthFlask : Node
     /// <summary>Fraction of maximum health restored per charge.</summary>
     [Export] public double HealFraction { get; set; } = 0.45;
 
+    /// <summary>
+    /// Fraction of maximum mana restored per charge, alongside the healing.
+    /// <para>
+    /// Deliberately not a separate resource competing for the same charges. Making the player
+    /// choose between healing and casting sounds like a decision, but health always wins when
+    /// it is the thing keeping you alive, so the mana half would simply never be chosen. It
+    /// rides along instead, which is what makes the flask the recovery button rather than the
+    /// healing button.
+    /// </para>
+    /// </summary>
+    [Export] public double ManaFraction { get; set; } = 0.35;
+
     /// <summary>Cast time. Long enough that drinking mid-telegraph is a real gamble.</summary>
     [Export] public double CastSeconds { get; set; } = 0.8;
 
@@ -78,7 +90,9 @@ public partial class HealthFlask : Node
     private void TryDrink()
     {
         if (IsCasting || _charges <= 0 || !_self.IsAlive || _self.Statuses.IsStunned) return;
-        if (_self.Health.IsFull) return;
+
+        // Now that it restores both, a charge is worth spending when either pool is short.
+        if (_self.Health.IsFull && _self.Mana.IsFull) return;
 
         _charges--;
         _casting = CastSeconds;
@@ -95,6 +109,7 @@ public partial class HealthFlask : Node
             if (_casting <= 0 && _self.IsAlive)
             {
                 _self.Heal((int)System.Math.Round(_self.Stats.MaxHp * HealFraction));
+                _self.Mana.Add(_self.Stats.MaxMana * ManaFraction);
             }
         }
 

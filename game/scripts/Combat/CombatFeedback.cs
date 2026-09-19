@@ -77,6 +77,18 @@ public partial class CombatFeedback : Node3D
     private void SpawnYang(Vector3 worldPosition, long amount)
         => SpawnText(worldPosition, $"+{amount:N0}", YangColor, NormalFontSize);
 
+    /// <summary>
+    /// Mana paid back by a kill. Shown because a resource that refills silently is a resource
+    /// the player never learns they have — they would keep auto-attacking and waiting.
+    /// </summary>
+    public static void Mana(Vector3 worldPosition, double amount)
+        => _instance?.SpawnMana(worldPosition, amount);
+
+    private void SpawnMana(Vector3 worldPosition, double amount)
+        => SpawnText(worldPosition, $"+{amount:F0} mp", ManaColor, NormalFontSize - 6);
+
+    private static readonly Color ManaColor = new("6fa8e8");
+
     private static readonly Color YangColor = new("f0c96a");
 
     /// <summary>

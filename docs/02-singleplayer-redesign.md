@@ -108,8 +108,16 @@ Short cooldown (8–12 s), so it is a *reaction*, not a rotation filler. This re
   instead of the original's stack-of-500 potions. This is the single most important change:
   while a player can carry 500 potions, no encounter can ever threaten them, and every
   difficulty lever we build is void.
-- Mana matters: skills cost real mana, and mana regen is low in combat, so a rotation has an
-  opportunity cost.
+- Mana matters: skills cost real mana, and regeneration in combat is deliberately too slow to
+  fund a rotation, so casting has an opportunity cost.
+- **Kills pay the mana back** (10% of the pool, nothing from enemies far below you). This is
+  what keeps the previous point from becoming "auto-attack and wait", which is where a pure
+  regeneration economy always lands: a skill spent to end a fight faster funds the next one,
+  so the resource follows the loop instead of throttling it.
+- The flask restores **mana as well as health**. Not as a competing choice on the same
+  charges — health always wins when it is the thing keeping you alive, so the mana half would
+  never be picked. It rides along, which makes the flask the recovery button rather than the
+  healing button.
 - Consumables (buff scrolls, antidotes, throwing knives) are meaningful because they are
   finite and slot-limited.
 
