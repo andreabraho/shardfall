@@ -67,6 +67,9 @@ public partial class DefensiveAbility : Node
 
     public override void _UnhandledInput(InputEvent @event)
     {
+        // A panel has the player's attention; firing a skill behind it is never intended.
+        if (UI.UiState.ModalOpen) return;
+
         if (!@event.IsActionPressed(GameActions.DefensiveAbility)) return;
 
         TryGuard();

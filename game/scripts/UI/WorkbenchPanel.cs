@@ -61,6 +61,7 @@ public partial class WorkbenchPanel : CanvasLayer
         if (@event.IsActionPressed(GameActions.ToggleUpgradeBench))
         {
             Visible = !Visible;
+            UiState.SetOpen(ref _counted, Visible);
 
             if (Visible)
             {
@@ -75,9 +76,16 @@ public partial class WorkbenchPanel : CanvasLayer
         if (Visible && @event.IsActionPressed(GameActions.Cancel))
         {
             Visible = false;
+            UiState.SetOpen(ref _counted, false);
             GetViewport().SetInputAsHandled();
         }
     }
+
+    private bool _counted;
+
+    // A panel freed while open would otherwise leave the modal count raised forever, and the
+    // player could never move again.
+    public override void _ExitTree() => UiState.SetOpen(ref _counted, false);
 
     private ItemInstance? FirstUpgradable()
     {

@@ -616,6 +616,11 @@ public partial class EnemyBrain : CharacterBody3D
             hits = AreaQuery.Cone(this, GlobalPosition, _committedFacing, AttackRange + 0.6f, MeleeArc, Layers.Player);
         }
 
+        // Same reason the player lunges: an untelegraphed melee swing had no visual at all,
+        // so taking damage read as happening for no reason. Telegraphed abilities already
+        // have their ground decal and do not need it.
+        if (ability.Telegraph is null) (_visual as VisualRoot)?.Lunge(_committedFacing, 0.3f);
+
         foreach (var victim in hits)
         {
             victim.TakeAttack(Self, skillCoef: ability.DamageCoef);

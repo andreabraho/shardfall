@@ -70,6 +70,17 @@ public partial class PlayerController : Node
         // The camera can be swapped at runtime (debug cameras, cutscenes later).
         _camera = GetViewport().GetCamera3D() ?? _camera;
 
+        // A panel owns the mouse while it is open. Movement polls the button directly rather
+        // than going through _UnhandledInput, so without this check clicking a button in the
+        // inventory also walks the character across the arena.
+        if (UI.UiState.ModalOpen)
+        {
+            // Cleared so reopening does not read the next click as the continuation of a drag.
+            _wasapHeld = false;
+            _holdTimer = 0;
+            return;
+        }
+
         if (UseDirectMovement)
         {
             HandleDirectMovement();

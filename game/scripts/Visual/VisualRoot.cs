@@ -26,10 +26,40 @@ public partial class VisualRoot : Node3D
 
     public override void _Ready()
     {
+        _restPosition = Position;
+
         if (!string.IsNullOrEmpty(VisualId))
         {
             Apply(VisualId, string.IsNullOrEmpty(TintOverride) ? null : TintOverride, VisualScale);
         }
+    }
+
+    private Vector3 _restPosition;
+    private Vector3 _lungeDirection;
+    private double _lunge;
+    private double _lungeDuration;
+    private float _lungeDistance;
+
+    /// <summary>
+    /// A short shove forward and back along <paramref name="direction"/> — the swing.
+    /// </summary>
+    /// <remarks>
+    /// With placeholder capsules and no skeletal animation, a basic attack was completely
+    /// invisible against a single enemy: the only feedback was the victim's flash and a
+    /// damage number, so the player could not tell an attack from standing still. This is the
+    /// cheapest motion that reads as "I swung", and it is thrown away the moment real attack
+    /// animations exist.
+    /// </remarks>
+    public void Lunge(Vector3 direction, float distance = 0.35f, double seconds = 0.18)
+    {
+        var flat = direction with { Y = 0 };
+
+        if (flat.LengthSquared() < 0.0001f) return;
+
+        _lungeDirection = flat.Normalized();
+        _lungeDistance = distance;
+        _lungeDuration = System.Math.Max(0.01, seconds);
+        _lunge = _lungeDuration;
     }
 
     private StandardMaterial3D? _flashMaterial;
@@ -67,13 +97,31 @@ public partial class VisualRoot : Node3D
 
     public override void _Process(double delta)
     {
-        if (_flash <= 0 || _flashMaterial is null) return;
+        if (_flash > 0 && _flashMaterial is not null)
+        {
+            _flash -= delta;
 
-        _flash -= delta;
+            _flashMaterial.AlbedoColor = _flash > 0
+                ? _baseColor.Lerp(Colors.White, 0.75f)
+                : _baseColor;
+        }
 
-        _flashMaterial.AlbedoColor = _flash > 0
-            ? _baseColor.Lerp(Colors.White, 0.75f)
-            : _baseColor;
+        if (_lunge <= 0) return;
+
+        _lunge -= delta;
+
+        if (_lunge <= 0)
+        {
+            Position = _restPosition;
+            return;
+        }
+
+        // Out fast and back slower, so the swing has a direction in time as well as in space.
+        // A symmetric curve reads as a twitch rather than a blow.
+        var t = 1.0 - (_lunge / _lungeDuration);
+        var curve = t < 0.35 ? t / 0.35 : 1.0 - ((t - 0.35) / 0.65);
+
+        Position = _restPosition + (_lungeDirection * _lungeDistance * (float)curve);
     }
 
     /// <summary>Replaces the current visual. Safe to call at runtime (used by the debug tools).</summary>

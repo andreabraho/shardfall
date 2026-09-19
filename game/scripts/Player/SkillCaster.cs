@@ -128,6 +128,9 @@ public partial class SkillCaster : Node
 
     public override void _UnhandledInput(InputEvent @event)
     {
+        // A panel has the player's attention; firing a skill behind it is never intended.
+        if (UI.UiState.ModalOpen) return;
+
         for (var slot = 0; slot < SlotActions.Length && slot < Hotbar.Length; slot++)
         {
             var id = Hotbar[slot];

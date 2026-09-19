@@ -65,12 +65,19 @@ public partial class InventoryPanel : CanvasLayer
         }
     }
 
+    private bool _counted;
+
     private void Toggle()
     {
         Visible = !Visible;
+        UiState.SetOpen(ref _counted, Visible);
 
         if (Visible) Refresh();
     }
+
+    // A panel freed while open would otherwise leave the modal count raised forever, and the
+    // player could never move again.
+    public override void _ExitTree() => UiState.SetOpen(ref _counted, false);
 
     // ------------------------------------------------------------------ build
 

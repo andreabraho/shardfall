@@ -153,30 +153,25 @@ public partial class PlayerCombat : Node
         // the player explicitly selected it and a whiff would read as a bug.
         _target.TakeAttack(_self);
 
-        if (!CleaveEnabled) return;
-
         var origin = _motor.GlobalPosition;
         var forward = (targetPosition - origin) with { Y = 0 };
         if (forward.LengthSquared() < 0.0001f) return;
 
         forward = forward.Normalized();
 
-        var swept = AreaQuery.Cone(_motor, origin, forward, CleaveRange, CleaveAngle);
-        var secondaries = 0;
+        // The swing itself, shown on every attack rather than only on a multi-hit. Against a
+        // single enemy the attack was otherwise invisible — the only feedback was the
+        // victim's flash — so a fight read as two figures standing still trading numbers.
+        _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Lunge(forward);
+        AoeVisual.Cone(origin, forward, CleaveRange, CleaveAngle);
 
-        foreach (var other in swept)
+        if (!CleaveEnabled) return;
+
+        foreach (var other in AreaQuery.Cone(_motor, origin, forward, CleaveRange, CleaveAngle))
         {
             if (other == _target || !other.IsAlive) continue;
 
             other.TakeAttack(_self, weaponCoef: CleaveFalloff);
-            secondaries++;
-        }
-
-        // Only draw the arc when it actually caught someone else, so single-target fighting
-        // is not covered in flashes.
-        if (secondaries > 0)
-        {
-            AoeVisual.Cone(origin, forward, CleaveRange, CleaveAngle);
         }
     }
 }

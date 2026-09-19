@@ -28,6 +28,7 @@ public partial class CombatHud : CanvasLayer
     private HealthFlask? _flask;
     private DefensiveAbility? _guard;
     private Label _flaskLabel = null!;
+    private Label _manaLabel = null!;
     private Label _statusLabel = null!;
     private Label _levelLabel = null!;
     private ProgressBar _xpBar = null!;
@@ -94,14 +95,26 @@ public partial class CombatHud : CanvasLayer
 
     private void BuildPlayerFrame()
     {
-        var root = new MarginContainer { AnchorTop = 1, AnchorBottom = 1, OffsetTop = -96, OffsetLeft = 24, OffsetRight = 344 };
+        // Tall enough for everything it holds. At 96 the box was shorter than its contents,
+        // so the last rows — mana among them — were squeezed to nothing and never appeared.
+        var root = new MarginContainer { AnchorTop = 1, AnchorBottom = 1, OffsetTop = -210, OffsetLeft = 24, OffsetRight = 344 };
         root.AddThemeConstantOverride("margin_bottom", 24);
 
         var box = new VBoxContainer();
+        box.AddThemeConstantOverride("separation", 3);
 
         _playerLabel = new Label { Text = "Health" };
         _playerBar = new ProgressBar { MinValue = 0, MaxValue = 1, Value = 1, ShowPercentage = false, CustomMinimumSize = new Vector2(320, 22) };
-        _manaBar = new ProgressBar { MinValue = 0, MaxValue = 1, Value = 1, ShowPercentage = false, CustomMinimumSize = new Vector2(320, 12) };
+        _manaBar = new ProgressBar { MinValue = 0, MaxValue = 1, Value = 1, ShowPercentage = false, CustomMinimumSize = new Vector2(320, 14) };
+
+        // Each bar is coloured for what it is. Three identically styled bars stacked on top
+        // of one another are three bars the player has to decode mid-fight.
+        Tint(_playerBar, new Color("c0392b"));
+        Tint(_manaBar, new Color("3f7fd0"));
+
+        _manaLabel = new Label { Text = "Mana" };
+        _manaLabel.AddThemeFontSizeOverride("font_size", 12);
+        _manaLabel.AddThemeColorOverride("font_color", new Color("8fb6e8"));
 
         _flaskLabel = new Label { Text = "Flask" };
         _statusLabel = new Label { Text = "" };
@@ -113,10 +126,33 @@ public partial class CombatHud : CanvasLayer
         box.AddChild(_xpBar);
         box.AddChild(_playerLabel);
         box.AddChild(_playerBar);
+        box.AddChild(_manaLabel);
         box.AddChild(_manaBar);
         box.AddChild(_flaskLabel);
         root.AddChild(box);
         AddChild(root);
+    }
+
+    private static void Tint(ProgressBar bar, Color fill)
+    {
+        bar.AddThemeStyleboxOverride("fill", new StyleBoxFlat
+        {
+            BgColor = fill,
+            CornerRadiusTopLeft = 2,
+            CornerRadiusTopRight = 2,
+            CornerRadiusBottomLeft = 2,
+            CornerRadiusBottomRight = 2,
+        });
+
+        bar.AddThemeStyleboxOverride("background", new StyleBoxFlat
+        {
+            BgColor = new Color(0.10f, 0.11f, 0.13f, 0.85f),
+            BorderColor = new Color(0.28f, 0.31f, 0.36f),
+            BorderWidthTop = 1,
+            BorderWidthBottom = 1,
+            BorderWidthLeft = 1,
+            BorderWidthRight = 1,
+        });
     }
 
     private void BuildTargetFrame()
@@ -155,7 +191,11 @@ public partial class CombatHud : CanvasLayer
     public override void _Process(double _)
     {
         // Mana drains and regenerates continuously, so it cannot be signal-driven.
-        if (_player is not null) _manaBar.Value = _player.Mana.Fraction;
+        if (_player is not null)
+        {
+            _manaBar.Value = _player.Mana.Fraction;
+            _manaLabel.Text = $"Mana  {_player.Mana}";
+        }
 
         _statusLabel.Text = _guard switch
         {
