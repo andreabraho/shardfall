@@ -11,8 +11,8 @@
       { "id": "abl_hopper_nip", "cooldown": 2.4, "windup": 0.45, "damage_coef": 0.85 }
     ],
     "ai": "bt_melee_chaser",
-    "aggro_radius": 8,
-    "leash_radius": 14,
+    "aggro_radius": 10,
+    "leash_radius": 12,
     "xp": 24,
     "drop_table": "dt_valley_animal_t1",
     "visual": "mesh_placeholder_quadruped",
@@ -33,8 +33,8 @@
         "telegraph": { "shape": "circle", "radius": 2.5 } }
     ],
     "ai": "bt_melee_chaser",
-    "aggro_radius": 9,
-    "leash_radius": 16,
+    "aggro_radius": 11,
+    "leash_radius": 14,
     "xp": 38,
     "drop_table": "dt_valley_animal_t1",
     "visual": "mesh_placeholder_quadruped",
@@ -53,8 +53,8 @@
       { "id": "abl_sprite_dart", "cooldown": 2.4, "windup": 0.70, "damage_coef": 0.95, "range": 10.0 }
     ],
     "ai": "bt_ranged_kiter",
-    "aggro_radius": 12,
-    "leash_radius": 18,
+    "aggro_radius": 13,
+    "leash_radius": 16,
     "xp": 52,
     "drop_table": "dt_valley_animal_t1",
     "visual": "mesh_placeholder_humanoid",

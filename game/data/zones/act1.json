@@ -12,38 +12,68 @@
       { "id": "shr_hollow_flame", "name": "$shrine.shr_hollow_flame.name", "fast_travel": true }
     ],
     "safe_regions": [
-      { "id": "saf_ember_hollow", "name": "$safe.saf_ember_hollow.name", "radius": 22 }
+      { "id": "saf_ember_hollow", "name": "$safe.saf_ember_hollow.name", "radius": 20 }
     ],
     "spawn_fields": [
       {
-        "id": "spf_hollow_reeds",
+        "id": "spf_hollow_reeds_east",
         "entries": [{ "enemy": "mob_reed_hopper", "weight": 1.0 }],
         "count": 4,
-        "respawn_seconds": 22,
-        "activation_radius": 50,
-        "radius": 8
+        "respawn_seconds": 20,
+        "activation_radius": 60,
+        "radius": 7
       },
       {
-        "id": "spf_hollow_ditch",
+        "id": "spf_hollow_reeds_south",
+        "entries": [{ "enemy": "mob_reed_hopper", "weight": 1.0 }],
+        "count": 4,
+        "respawn_seconds": 20,
+        "activation_radius": 60,
+        "radius": 7
+      },
+      {
+        "id": "spf_hollow_ditch_north",
         "entries": [
           { "enemy": "mob_ditch_lurker", "weight": 1.0 },
           { "enemy": "mob_reed_hopper", "weight": 2.0 }
         ],
         "count": 4,
-        "respawn_seconds": 26,
-        "activation_radius": 50,
-        "radius": 9
+        "respawn_seconds": 24,
+        "activation_radius": 60,
+        "radius": 8
       },
       {
-        "id": "spf_hollow_thicket",
+        "id": "spf_hollow_ditch_west",
+        "entries": [
+          { "enemy": "mob_ditch_lurker", "weight": 1.0 },
+          { "enemy": "mob_reed_hopper", "weight": 2.0 }
+        ],
+        "count": 4,
+        "respawn_seconds": 24,
+        "activation_radius": 60,
+        "radius": 8
+      },
+      {
+        "id": "spf_hollow_thicket_nw",
         "entries": [
           { "enemy": "mob_thistle_sprite", "weight": 1.0 },
           { "enemy": "mob_ditch_lurker", "weight": 1.5 }
         ],
         "count": 4,
-        "respawn_seconds": 28,
-        "activation_radius": 50,
-        "radius": 9
+        "respawn_seconds": 26,
+        "activation_radius": 60,
+        "radius": 8
+      },
+      {
+        "id": "spf_hollow_thicket_se",
+        "entries": [
+          { "enemy": "mob_thistle_sprite", "weight": 1.0 },
+          { "enemy": "mob_ditch_lurker", "weight": 1.5 }
+        ],
+        "count": 4,
+        "respawn_seconds": 26,
+        "activation_radius": 60,
+        "radius": 8
       }
     ],
     "shards": []

@@ -2,11 +2,10 @@
 
 ; zone_ember_hollow — the first village and the ground around it (WLD-06).
 ;
-; The layout the whole world is built on: a walled village that is safe ground, one road out,
-; and camps close enough to see from the wall but far enough that nothing standing in them can
-; reach someone inside. That distance is not taste — ZoneRoot.Audit measures each camp against
-; the leash of the creatures it produces, which is why they sit around fifty metres out rather
-; than forty: a creature parked on the near edge of its camp reaches its whole tether further.
+; The layout the whole world is built on: a walled village that is safe ground, two gates, and
+; six camps ringed around it. The distances are not taste — ZoneRoot.Audit measures each camp
+; against the leash of the creatures it produces, so the hopper camps sit nearest because a
+; hopper gives up soonest, and the sprite camps furthest because a sprite follows longest.
 ;
 ; Everything the player walks on or into is a kit piece naming an id and nothing else, and
 ; every creature here is tuning in game/data/zones/act1.json. This file is coordinates.
@@ -35,14 +34,14 @@ geometry_source_geometry_mode = 1
 geometry_source_group_name = "navsource"
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
-size = Vector2(150, 150)
+size = Vector2(180, 180)
 
 [sub_resource type="StandardMaterial3D" id="Material_ground"]
 albedo_color = Color(0.26, 0.29, 0.24, 1)
 roughness = 0.95
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
-size = Vector3(150, 1, 150)
+size = Vector3(180, 1, 180)
 
 [sub_resource type="Environment" id="Environment_hollow"]
 background_mode = 1
@@ -79,8 +78,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 shape = SubResource("BoxShape3D_ground")
 
 ; -- The village ---------------------------------------------------------------
-; A 36 m square with one gate, on the east side, facing the road to the Vale. One way in is
-; what makes a village read as a village rather than as a decorated clearing.
+; A 36 m square with two gates, east towards the road to the Vale and north towards the ditch.
+; One gate made three quarters of the ground around the village a place nobody had a reason to
+; walk to, which is most of what an empty-feeling map is.
 
 [node name="Village" type="Node3D" parent="NavigationRegion3D"]
 
@@ -90,24 +90,26 @@ script = ExtResource("3_kit")
 PieceId = "kit_wall_8"
 
 [node name="WallN_B" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1.5, -18)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5, 1.5, -18)
 script = ExtResource("3_kit")
 PieceId = "kit_wall_8"
 
+; A second way out. One gate made three quarters of the village a dead end, and the camps
+; behind it may as well not have existed.
+[node name="GateNorth" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -18)
+script = ExtResource("3_kit")
+PieceId = "kit_gate"
+
 [node name="WallN_C" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1.5, -18)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 1.5, -18)
 script = ExtResource("3_kit")
 PieceId = "kit_wall_8"
 
 [node name="WallN_D" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1.5, -18)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 1.5, -18)
 script = ExtResource("3_kit")
 PieceId = "kit_wall_8"
-
-[node name="WallN_E" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 1.5, -18)
-script = ExtResource("3_kit")
-PieceId = "kit_wall_4"
 
 [node name="WallS_A" type="StaticBody3D" parent="NavigationRegion3D/Village"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 1.5, 18)
@@ -341,19 +343,104 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
 script = ExtResource("7_visualroot")
 VisualId = "mesh_placeholder_shrine"
 
-; Three camps, forty metres out: visible from the wall, and far enough that the audit passes.
-; Composition and respawn are data; these coordinates are the only level design here.
-[node name="ReedCamp" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46, 0, 14)
-script = ExtResource("5_spawnfield")
-FieldId = "spf_hollow_reeds"
+; Six camps ringed around the village rather than three on one side. Three camps meant that
+; leaving by the only gate showed you one of them and the other two were behind the walls,
+; which reads as an empty map however many creatures are actually standing in it.
+;
+; Distances are the minimum the audit allows for each roster: the hopper camps are nearest
+; because a hopper gives up soonest, and the sprite camps are furthest because a sprite
+; follows longest. Composition and respawn are data; these coordinates are the level design.
 
-[node name="DitchCamp" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, 50)
+[node name="ReedCampEast" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0, 4)
 script = ExtResource("5_spawnfield")
-FieldId = "spf_hollow_ditch"
+FieldId = "spf_hollow_reeds_east"
 
-[node name="ThicketCamp" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 0, -20)
+[node name="ReedCampSouth" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 44)
 script = ExtResource("5_spawnfield")
-FieldId = "spf_hollow_thicket"
+FieldId = "spf_hollow_reeds_south"
+
+[node name="DitchCampNorth" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, -44)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_hollow_ditch_north"
+
+[node name="DitchCampWest" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 0, 6)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_hollow_ditch_west"
+
+[node name="ThicketCampNW" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -34, 0, -40)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_hollow_thicket_nw"
+
+[node name="ThicketCampSE" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34, 0, 40)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_hollow_thicket_se"
+
+; Posts on the ground between the gates and the camps. Forty metres of identical grass gives
+; the player nothing to steer by, and a map with nothing to steer by feels empty even when it
+; is not — which is most of what "I cannot find the camps" actually means.
+
+[node name="PostEast" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 1.1, 2)
+script = ExtResource("3_kit")
+PieceId = "kit_marker_post"
+
+[node name="PostNorth" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1.1, -30)
+script = ExtResource("3_kit")
+PieceId = "kit_marker_post"
+
+[node name="PostWest" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32, 1.1, 4)
+script = ExtResource("3_kit")
+PieceId = "kit_marker_post"
+
+[node name="PostSouth" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1.1, 30)
+script = ExtResource("3_kit")
+PieceId = "kit_marker_post"
+
+[node name="BoulderNW" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26, 0.95, -30)
+script = ExtResource("3_kit")
+PieceId = "kit_boulder"
+
+[node name="BoulderSE" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0.95, 30)
+script = ExtResource("3_kit")
+PieceId = "kit_boulder"
+
+[node name="RoadN_A" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0.06, -12)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="RoadN_B" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0.06, -16)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="RoadN_C" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0.06, -20)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="RoadN_D" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0.06, -24)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="BrazierNGateW" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.55, -16)
+script = ExtResource("3_kit")
+PieceId = "kit_brazier"
+
+[node name="BrazierNGateE" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.55, -16)
+script = ExtResource("3_kit")
+PieceId = "kit_brazier"
