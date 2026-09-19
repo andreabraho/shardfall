@@ -176,27 +176,14 @@ public static class EconomyCommand
     /// <summary>Yang earned in a zone: kills, shards, quests, and what the drops sell for.</summary>
     private static long ZoneIncome(Zone zone, ContentDatabase db)
     {
-        var tables = db.Enemies.Values
-            .Where(e => Math.Abs(e.Level - zone.Band) <= 3 && e.DropTable is not null)
-            .Select(e => e.DropTable!)
-            .Distinct()
-            .Select(id => db.DropTables.GetValueOrDefault(id))
-            .Where(t => t is not null)
-            .ToList();
+        // The zone names its own table, so each band is priced on what actually drops there
+        // rather than on whichever enemy happened to be authored nearest to it.
+        if (!db.DropTables.TryGetValue(zone.DropTable, out var table)) return 0;
 
-        // Zones beyond the enemies that exist today fall back to the closest table, so the
-        // report stays meaningful while content is still being written.
-        if (tables.Count == 0) tables = [.. db.DropTables.Values.Take(1)];
-        if (tables.Count == 0) return 0;
+        var perKill = PerKillYang(table, db);
 
-        var perKill = tables.Average(t => PerKillYang(t!, db));
-
-        // Enemy yang has to grow with the band or late zones would pay prologue wages. The
-        // drop tables themselves are per-zone data; this scales the ones that exist.
-        var bandScale = Math.Pow(zone.Band, 1.15);
-
-        var trash = zone.TrashKills * perKill * bandScale;
-        var shards = zone.Shards * perKill * bandScale * ShardYangMultiplier;
+        var trash = zone.TrashKills * perKill;
+        var shards = zone.Shards * perKill * ShardYangMultiplier;
         var quests = (zone.StoryQuests * QuestYang(zone.Band)) + (zone.SideQuests * QuestYang(zone.Band) / 2);
 
         return (long)Math.Round(trash + shards + quests);

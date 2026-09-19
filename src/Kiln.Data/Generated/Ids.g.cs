@@ -10,8 +10,28 @@ public static class Ids
 {
     public static class Items
     {
+        public const string ArmAshenCarapace = "arm_ashen_carapace";
+        public const string ArmKilnAegis = "arm_kiln_aegis";
         public const string ArmLeatherVest = "arm_leather_vest";
+        public const string ArmPaddedCoat = "arm_padded_coat";
+        public const string ArmRidgeMail = "arm_ridge_mail";
+        public const string ArmScaleHauberk = "arm_scale_hauberk";
         public const string ArmWardenPlate = "arm_warden_plate";
+        public const string BrcIronBracer = "brc_iron_bracer";
+        public const string BrcKilnCoil = "brc_kiln_coil";
+        public const string BrcLeatherBand = "brc_leather_band";
+        public const string BrcWardenVambrace = "brc_warden_vambrace";
+        public const string BtsAshenStriders = "bts_ashen_striders";
+        public const string BtsRidgeGreaves = "bts_ridge_greaves";
+        public const string BtsScoutBoots = "bts_scout_boots";
+        public const string BtsWornBoots = "bts_worn_boots";
+        public const string EarCopperStud = "ear_copper_stud";
+        public const string EarJadeDrop = "ear_jade_drop";
+        public const string EarStormglass = "ear_stormglass";
+        public const string HlmAshenVisor = "hlm_ashen_visor";
+        public const string HlmIronHelm = "hlm_iron_helm";
+        public const string HlmLeatherCap = "hlm_leather_cap";
+        public const string HlmWardenCrown = "hlm_warden_crown";
         public const string MatBoringStone = "mat_boring_stone";
         public const string MatIronScrap = "mat_iron_scrap";
         public const string MatMutationInk = "mat_mutation_ink";
@@ -19,6 +39,19 @@ public static class Ids
         public const string MatShardEssence = "mat_shard_essence";
         public const string MatSteelCore = "mat_steel_core";
         public const string MatTemperingOil = "mat_tempering_oil";
+        public const string NckBoneCharm = "nck_bone_charm";
+        public const string NckEmberheart = "nck_emberheart";
+        public const string NckShardLocket = "nck_shard_locket";
+        public const string NckSilverPendant = "nck_silver_pendant";
+        public const string RngAshenCircle = "rng_ashen_circle";
+        public const string RngHuntersSignet = "rng_hunters_signet";
+        public const string RngKilnSigil = "rng_kiln_sigil";
+        public const string RngTinBand = "rng_tin_band";
+        public const string RngWardenSeal = "rng_warden_seal";
+        public const string ShdBandedShield = "shd_banded_shield";
+        public const string ShdKilnWard = "shd_kiln_ward";
+        public const string ShdRidgeBulwark = "shd_ridge_bulwark";
+        public const string ShdWoodenBuckler = "shd_wooden_buckler";
         public const string StnBaneAnimal = "stn_bane_animal";
         public const string StnBaneDevil = "stn_bane_devil";
         public const string StnBaneUndead = "stn_bane_undead";
@@ -27,10 +60,20 @@ public static class Ids
         public const string StnGranite = "stn_granite";
         public const string StnThorn = "stn_thorn";
         public const string StnWard = "stn_ward";
+        public const string WpnBronzeSpear = "wpn_bronze_spear";
+        public const string WpnEmberEdge = "wpn_ember_edge";
+        public const string WpnGravecaller = "wpn_gravecaller";
+        public const string WpnHollowReaver = "wpn_hollow_reaver";
+        public const string WpnHuntersAxe = "wpn_hunters_axe";
         public const string WpnIronSword = "wpn_iron_sword";
+        public const string WpnKilnBrand = "wpn_kiln_brand";
+        public const string WpnRidgeCleaver = "wpn_ridge_cleaver";
+        public const string WpnShardLance = "wpn_shard_lance";
         public const string WpnSteelSword = "wpn_steel_sword";
+        public const string WpnWardenPike = "wpn_warden_pike";
+        public const string WpnWornBlade = "wpn_worn_blade";
 
-        public static readonly string[] All = ["arm_leather_vest", "arm_warden_plate", "mat_boring_stone", "mat_iron_scrap", "mat_mutation_ink", "mat_radiant_core", "mat_shard_essence", "mat_steel_core", "mat_tempering_oil", "stn_bane_animal", "stn_bane_devil", "stn_bane_undead", "stn_ember", "stn_falcon", "stn_granite", "stn_thorn", "stn_ward", "wpn_iron_sword", "wpn_steel_sword"];
+        public static readonly string[] All = ["arm_ashen_carapace", "arm_kiln_aegis", "arm_leather_vest", "arm_padded_coat", "arm_ridge_mail", "arm_scale_hauberk", "arm_warden_plate", "brc_iron_bracer", "brc_kiln_coil", "brc_leather_band", "brc_warden_vambrace", "bts_ashen_striders", "bts_ridge_greaves", "bts_scout_boots", "bts_worn_boots", "ear_copper_stud", "ear_jade_drop", "ear_stormglass", "hlm_ashen_visor", "hlm_iron_helm", "hlm_leather_cap", "hlm_warden_crown", "mat_boring_stone", "mat_iron_scrap", "mat_mutation_ink", "mat_radiant_core", "mat_shard_essence", "mat_steel_core", "mat_tempering_oil", "nck_bone_charm", "nck_emberheart", "nck_shard_locket", "nck_silver_pendant", "rng_ashen_circle", "rng_hunters_signet", "rng_kiln_sigil", "rng_tin_band", "rng_warden_seal", "shd_banded_shield", "shd_kiln_ward", "shd_ridge_bulwark", "shd_wooden_buckler", "stn_bane_animal", "stn_bane_devil", "stn_bane_undead", "stn_ember", "stn_falcon", "stn_granite", "stn_thorn", "stn_ward", "wpn_bronze_spear", "wpn_ember_edge", "wpn_gravecaller", "wpn_hollow_reaver", "wpn_hunters_axe", "wpn_iron_sword", "wpn_kiln_brand", "wpn_ridge_cleaver", "wpn_shard_lance", "wpn_steel_sword", "wpn_warden_pike", "wpn_worn_blade"];
     }
 
     public static class Enemies
@@ -70,18 +113,25 @@ public static class Ids
 
     public static class DropTables
     {
+        public const string DtCatacombsT5 = "dt_catacombs_t5";
+        public const string DtGateT4 = "dt_gate_t4";
+        public const string DtRidgeT3 = "dt_ridge_t3";
+        public const string DtValleyAnimalT1 = "dt_valley_animal_t1";
         public const string DtValleyAnimalT2 = "dt_valley_animal_t2";
         public const string DtValleyUndeadT2 = "dt_valley_undead_t2";
 
-        public static readonly string[] All = ["dt_valley_animal_t2", "dt_valley_undead_t2"];
+        public static readonly string[] All = ["dt_catacombs_t5", "dt_gate_t4", "dt_ridge_t3", "dt_valley_animal_t1", "dt_valley_animal_t2", "dt_valley_undead_t2"];
     }
 
     public static class BonusPools
     {
+        public const string BonusAccessory = "bonus_accessory";
         public const string BonusArmor = "bonus_armor";
+        public const string BonusBoots = "bonus_boots";
+        public const string BonusShield = "bonus_shield";
         public const string BonusWeaponMelee = "bonus_weapon_melee";
 
-        public static readonly string[] All = ["bonus_armor", "bonus_weapon_melee"];
+        public static readonly string[] All = ["bonus_accessory", "bonus_armor", "bonus_boots", "bonus_shield", "bonus_weapon_melee"];
     }
 
     public static class UpgradePaths
@@ -95,14 +145,21 @@ public static class Ids
     public static class Visuals
     {
         public const string MeshArmorA = "mesh_armor_a";
+        public const string MeshAxeA = "mesh_axe_a";
+        public const string MeshBootsA = "mesh_boots_a";
+        public const string MeshHelmetA = "mesh_helmet_a";
         public const string MeshPlaceholderHeavy = "mesh_placeholder_heavy";
         public const string MeshPlaceholderHumanoid = "mesh_placeholder_humanoid";
         public const string MeshPlaceholderMonolith = "mesh_placeholder_monolith";
         public const string MeshPlaceholderPlayer = "mesh_placeholder_player";
         public const string MeshPlaceholderQuadruped = "mesh_placeholder_quadruped";
+        public const string MeshShieldA = "mesh_shield_a";
+        public const string MeshSpearA = "mesh_spear_a";
+        public const string MeshStoneA = "mesh_stone_a";
         public const string MeshSwordA = "mesh_sword_a";
+        public const string MeshTrinketA = "mesh_trinket_a";
 
-        public static readonly string[] All = ["mesh_armor_a", "mesh_placeholder_heavy", "mesh_placeholder_humanoid", "mesh_placeholder_monolith", "mesh_placeholder_player", "mesh_placeholder_quadruped", "mesh_sword_a"];
+        public static readonly string[] All = ["mesh_armor_a", "mesh_axe_a", "mesh_boots_a", "mesh_helmet_a", "mesh_placeholder_heavy", "mesh_placeholder_humanoid", "mesh_placeholder_monolith", "mesh_placeholder_player", "mesh_placeholder_quadruped", "mesh_shield_a", "mesh_spear_a", "mesh_stone_a", "mesh_sword_a", "mesh_trinket_a"];
     }
 
 }

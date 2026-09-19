@@ -400,6 +400,47 @@ public class EquipmentTests
     }
 
     [Fact]
+    public void ASecondRing_GoesInTheOtherHand()
+    {
+        // Rings name one slot in data but belong in either. Without the fallback the second
+        // ring slot could only be filled by an item authored specifically for it, which would
+        // reach the player as "this ring does not fit" for no reason they could see.
+        var specs = TestSpecs.Standard();
+        var gear = new Equipment(specs);
+        var factory = new ItemFactory(specs, specs);
+
+        var first = factory.CreatePlain("rng_test_band");
+        var second = factory.CreatePlain("rng_test_band");
+
+        gear.TryEquip(first, 20, CharacterClass.Warrior, out _);
+        gear.TryEquip(second, 20, CharacterClass.Warrior, out var displaced);
+
+        Assert.Null(displaced);
+        Assert.Same(first, gear.In(EquipSlot.Ring1));
+        Assert.Same(second, gear.In(EquipSlot.Ring2));
+    }
+
+    [Fact]
+    public void AThirdRing_ReplacesTheFirst()
+    {
+        // With both hands full the fallback must stop: the swap has to displace something,
+        // not silently fail.
+        var specs = TestSpecs.Standard();
+        var gear = new Equipment(specs);
+        var factory = new ItemFactory(specs, specs);
+
+        var first = factory.CreatePlain("rng_test_band");
+
+        gear.TryEquip(first, 20, CharacterClass.Warrior, out _);
+        gear.TryEquip(factory.CreatePlain("rng_test_band"), 20, CharacterClass.Warrior, out _);
+        gear.TryEquip(factory.CreatePlain("rng_test_band"), 20, CharacterClass.Warrior, out var displaced);
+
+        Assert.Same(first, displaced);
+        Assert.NotNull(gear.In(EquipSlot.Ring1));
+        Assert.NotNull(gear.In(EquipSlot.Ring2));
+    }
+
+    [Fact]
     public void ArmorValue_SumsEveryWornPiece()
     {
         var specs = TestSpecs.Standard();

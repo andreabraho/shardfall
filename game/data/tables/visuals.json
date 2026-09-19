@@ -4,6 +4,14 @@
   { "id": "mesh_placeholder_quadruped", "primitive": "capsule",  "height": 0.90, "radius": 0.40, "color": "#8a6b4f" },
   { "id": "mesh_placeholder_heavy",     "primitive": "box",      "height": 2.10, "radius": 0.55, "color": "#6d7a86" },
   { "id": "mesh_placeholder_monolith",  "primitive": "monolith", "height": 3.20, "radius": 0.80, "color": "#7a4fd0" },
+
   { "id": "mesh_sword_a",               "primitive": "box",      "height": 1.10, "radius": 0.06, "color": "#d9dde2" },
-  { "id": "mesh_armor_a",               "primitive": "box",      "height": 0.80, "radius": 0.30, "color": "#8b5a2b" }
+  { "id": "mesh_axe_a",                 "primitive": "box",      "height": 1.00, "radius": 0.12, "color": "#c9b08a" },
+  { "id": "mesh_spear_a",               "primitive": "cylinder", "height": 1.60, "radius": 0.05, "color": "#b9c2cc" },
+  { "id": "mesh_armor_a",               "primitive": "box",      "height": 0.80, "radius": 0.30, "color": "#8b5a2b" },
+  { "id": "mesh_helmet_a",              "primitive": "sphere",   "height": 0.34, "radius": 0.17, "color": "#9aa3ad" },
+  { "id": "mesh_shield_a",              "primitive": "box",      "height": 0.70, "radius": 0.26, "color": "#7f8c99" },
+  { "id": "mesh_boots_a",               "primitive": "box",      "height": 0.30, "radius": 0.16, "color": "#6b533c" },
+  { "id": "mesh_trinket_a",             "primitive": "sphere",   "height": 0.16, "radius": 0.08, "color": "#e0c979" },
+  { "id": "mesh_stone_a",               "primitive": "sphere",   "height": 0.18, "radius": 0.09, "color": "#8fa2b5" }
 ]

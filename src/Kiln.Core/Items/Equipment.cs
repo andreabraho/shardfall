@@ -60,12 +60,25 @@ public sealed class Equipment
 
         if (verdict != EquipOutcome.Equipped) return verdict;
 
+        // A ring names one slot in data but belongs in either. Without this, the second ring
+        // slot could only ever be filled by an item authored specifically for it, which is a
+        // schema detail leaking into the player's hands as "this ring does not fit".
+        if (In(slot) is not null && Alternate(slot) is { } spare && In(spare) is null) slot = spare;
+
         displaced = In(slot);
         _worn[slot] = item;
         Changed?.Invoke();
 
         return EquipOutcome.Equipped;
     }
+
+    /// <summary>The interchangeable partner of a slot, where one exists.</summary>
+    private static EquipSlot? Alternate(EquipSlot slot) => slot switch
+    {
+        EquipSlot.Ring1 => EquipSlot.Ring2,
+        EquipSlot.Ring2 => EquipSlot.Ring1,
+        _ => null,
+    };
 
     public ItemInstance? Unequip(EquipSlot slot)
     {

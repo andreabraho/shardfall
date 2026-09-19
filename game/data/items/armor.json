@@ -1,34 +1,24 @@
 [
-  {
-    "id": "arm_leather_vest",
-    "name": "$item.arm_leather_vest.name",
-    "slot": "armor",
-    "class_restriction": ["warrior", "blade"],
-    "level_req": 6,
-    "rarity": "common",
-    "grid_size": [2, 3],
-    "base_stats": { "armor_value": 28 },
-    "sockets": 0,
-    "bonus_line_count": [0, 1],
-    "bonus_pool": "bonus_armor",
-    "upgrade_path": "upg_standard_armor",
-    "sell_value": 800,
-    "visual": "mesh_armor_a"
-  },
-  {
-    "id": "arm_warden_plate",
-    "name": "$item.arm_warden_plate.name",
-    "slot": "armor",
-    "class_restriction": ["warrior"],
-    "level_req": 18,
-    "rarity": "epic",
-    "grid_size": [2, 3],
-    "base_stats": { "armor_value": 71 },
-    "sockets": 2,
-    "bonus_line_count": [4, 4],
-    "bonus_pool": "bonus_armor",
-    "upgrade_path": "upg_standard_armor",
-    "sell_value": 9600,
-    "visual": "mesh_armor_a"
-  }
+  { "id": "arm_padded_coat",     "name": "$item.arm_padded_coat.name",     "slot": "armor",  "class_restriction": ["warrior", "blade"], "level_req": 1,  "rarity": "common", "grid_size": [2, 3], "base_stats": { "armor_value": 10 },  "sockets": 0, "bonus_line_count": [0, 1], "bonus_pool": "bonus_armor",  "upgrade_path": "upg_standard_armor", "sell_value": 150,   "visual": "mesh_armor_a" },
+  { "id": "arm_leather_vest",    "name": "$item.arm_leather_vest.name",    "slot": "armor",  "class_restriction": ["warrior", "blade"], "level_req": 6,  "rarity": "common", "grid_size": [2, 3], "base_stats": { "armor_value": 28 },  "sockets": 0, "bonus_line_count": [0, 1], "bonus_pool": "bonus_armor",  "upgrade_path": "upg_standard_armor", "sell_value": 800,   "visual": "mesh_armor_a" },
+  { "id": "arm_scale_hauberk",   "name": "$item.arm_scale_hauberk.name",   "slot": "armor",  "class_restriction": ["warrior"],          "level_req": 10, "rarity": "fine",   "grid_size": [2, 3], "base_stats": { "armor_value": 40 },  "sockets": 1, "bonus_line_count": [2, 2], "bonus_pool": "bonus_armor",  "upgrade_path": "upg_standard_armor", "sell_value": 2200,  "visual": "mesh_armor_a" },
+  { "id": "arm_ridge_mail",      "name": "$item.arm_ridge_mail.name",      "slot": "armor",  "class_restriction": ["warrior"],          "level_req": 14, "rarity": "rare",   "grid_size": [2, 3], "base_stats": { "armor_value": 55 },  "sockets": 2, "bonus_line_count": [3, 3], "bonus_pool": "bonus_armor",  "upgrade_path": "upg_standard_armor", "sell_value": 5200,  "visual": "mesh_armor_a" },
+  { "id": "arm_warden_plate",    "name": "$item.arm_warden_plate.name",    "slot": "armor",  "class_restriction": ["warrior"],          "level_req": 18, "rarity": "epic",   "grid_size": [2, 3], "base_stats": { "armor_value": 71 },  "sockets": 2, "bonus_line_count": [4, 4], "bonus_pool": "bonus_armor",  "upgrade_path": "upg_standard_armor", "sell_value": 9600,  "visual": "mesh_armor_a" },
+  { "id": "arm_ashen_carapace",  "name": "$item.arm_ashen_carapace.name",  "slot": "armor",  "class_restriction": ["warrior"],          "level_req": 22, "rarity": "epic",   "grid_size": [2, 3], "base_stats": { "armor_value": 88 },  "sockets": 2, "bonus_line_count": [4, 4], "bonus_pool": "bonus_armor",  "upgrade_path": "upg_standard_armor", "sell_value": 15000, "visual": "mesh_armor_a" },
+  { "id": "arm_kiln_aegis",      "name": "$item.arm_kiln_aegis.name",      "slot": "armor",  "class_restriction": ["warrior"],          "level_req": 24, "rarity": "relic",  "grid_size": [2, 3], "base_stats": { "armor_value": 104 }, "sockets": 3, "bonus_line_count": [5, 5], "bonus_pool": "bonus_armor",  "upgrade_path": "upg_standard_armor", "sell_value": 28000, "visual": "mesh_armor_a" },
+
+  { "id": "hlm_leather_cap",     "name": "$item.hlm_leather_cap.name",     "slot": "helmet", "class_restriction": [],                   "level_req": 3,  "rarity": "common", "grid_size": [2, 2], "base_stats": { "armor_value": 6 },   "sockets": 0, "bonus_line_count": [0, 1], "bonus_pool": "bonus_armor",  "upgrade_path": "upg_standard_armor", "sell_value": 200,   "visual": "mesh_helmet_a" },
+  { "id": "hlm_iron_helm",       "name": "$item.hlm_iron_helm.name",       "slot": "helmet", "class_restriction": ["warrior"],          "level_req": 9,  "rarity": "fine",   "grid_size": [2, 2], "base_stats": { "armor_value": 14 },  "sockets": 1, "bonus_line_count": [2, 2], "bonus_pool": "bonus_armor",  "upgrade_path": "upg_standard_armor", "sell_value": 1100,  "visual": "mesh_helmet_a" },
+  { "id": "hlm_warden_crown",    "name": "$item.hlm_warden_crown.name",    "slot": "helmet", "class_restriction": ["warrior"],          "level_req": 15, "rarity": "rare",   "grid_size": [2, 2], "base_stats": { "armor_value": 22 },  "sockets": 2, "bonus_line_count": [3, 3], "bonus_pool": "bonus_armor",  "upgrade_path": "upg_standard_armor", "sell_value": 3600,  "visual": "mesh_helmet_a" },
+  { "id": "hlm_ashen_visor",     "name": "$item.hlm_ashen_visor.name",     "slot": "helmet", "class_restriction": ["warrior"],          "level_req": 21, "rarity": "epic",   "grid_size": [2, 2], "base_stats": { "armor_value": 32 },  "sockets": 2, "bonus_line_count": [4, 4], "bonus_pool": "bonus_armor",  "upgrade_path": "upg_standard_armor", "sell_value": 8800,  "visual": "mesh_helmet_a" },
+
+  { "id": "shd_wooden_buckler",  "name": "$item.shd_wooden_buckler.name",  "slot": "shield", "class_restriction": ["warrior"],          "level_req": 2,  "rarity": "common", "grid_size": [2, 2], "base_stats": { "armor_value": 8 },   "sockets": 0, "bonus_line_count": [0, 1], "bonus_pool": "bonus_shield", "upgrade_path": "upg_standard_armor", "sell_value": 180,   "visual": "mesh_shield_a" },
+  { "id": "shd_banded_shield",   "name": "$item.shd_banded_shield.name",   "slot": "shield", "class_restriction": ["warrior"],          "level_req": 8,  "rarity": "fine",   "grid_size": [2, 2], "base_stats": { "armor_value": 18 },  "sockets": 1, "bonus_line_count": [2, 2], "bonus_pool": "bonus_shield", "upgrade_path": "upg_standard_armor", "sell_value": 1400,  "visual": "mesh_shield_a" },
+  { "id": "shd_ridge_bulwark",   "name": "$item.shd_ridge_bulwark.name",   "slot": "shield", "class_restriction": ["warrior"],          "level_req": 14, "rarity": "rare",   "grid_size": [2, 2], "base_stats": { "armor_value": 30 },  "sockets": 2, "bonus_line_count": [3, 3], "bonus_pool": "bonus_shield", "upgrade_path": "upg_standard_armor", "sell_value": 4200,  "visual": "mesh_shield_a" },
+  { "id": "shd_kiln_ward",       "name": "$item.shd_kiln_ward.name",       "slot": "shield", "class_restriction": ["warrior"],          "level_req": 22, "rarity": "epic",   "grid_size": [2, 2], "base_stats": { "armor_value": 44 },  "sockets": 2, "bonus_line_count": [4, 4], "bonus_pool": "bonus_shield", "upgrade_path": "upg_standard_armor", "sell_value": 11500, "visual": "mesh_shield_a" },
+
+  { "id": "bts_worn_boots",      "name": "$item.bts_worn_boots.name",      "slot": "boots",  "class_restriction": [],                   "level_req": 1,  "rarity": "common", "grid_size": [2, 2], "base_stats": { "armor_value": 4 },   "sockets": 0, "bonus_line_count": [0, 1], "bonus_pool": "bonus_boots",  "upgrade_path": "upg_standard_armor", "sell_value": 120,   "visual": "mesh_boots_a" },
+  { "id": "bts_scout_boots",     "name": "$item.bts_scout_boots.name",     "slot": "boots",  "class_restriction": [],                   "level_req": 7,  "rarity": "fine",   "grid_size": [2, 2], "base_stats": { "armor_value": 10 },  "sockets": 1, "bonus_line_count": [2, 2], "bonus_pool": "bonus_boots",  "upgrade_path": "upg_standard_armor", "sell_value": 950,   "visual": "mesh_boots_a" },
+  { "id": "bts_ridge_greaves",   "name": "$item.bts_ridge_greaves.name",   "slot": "boots",  "class_restriction": ["warrior"],          "level_req": 13, "rarity": "rare",   "grid_size": [2, 2], "base_stats": { "armor_value": 18 },  "sockets": 2, "bonus_line_count": [3, 3], "bonus_pool": "bonus_boots",  "upgrade_path": "upg_standard_armor", "sell_value": 3300,  "visual": "mesh_boots_a" },
+  { "id": "bts_ashen_striders",  "name": "$item.bts_ashen_striders.name",  "slot": "boots",  "class_restriction": [],                   "level_req": 20, "rarity": "epic",   "grid_size": [2, 2], "base_stats": { "armor_value": 27 },  "sockets": 2, "bonus_line_count": [4, 4], "bonus_pool": "bonus_boots",  "upgrade_path": "upg_standard_armor", "sell_value": 8200,  "visual": "mesh_boots_a" }
 ]

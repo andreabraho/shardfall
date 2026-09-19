@@ -15,7 +15,10 @@ public sealed record Zone(
 
     /// <summary>Sockets bored and bonus rerolls bought here, as planned play rather than obsession.</summary>
     int Bores,
-    int Rerolls);
+    int Rerolls,
+
+    /// <summary>The drop table this zone's enemies roll on. Moves into zone data in Phase 6.</summary>
+    string DropTable);
 
 /// <summary>
 /// The MVP's planned content (doc 00 §3 Tier A, doc 02 §8), shared by the pacing and economy
@@ -29,11 +32,11 @@ public static class CampaignModel
 {
     public static readonly Zone[] Zones =
     [
-        new("Prologue",        1,  2, 0,  2, 1, 20, 0, 0, 0),
-        new("Valley Approach", 4,  2, 2,  5, 1, 45, 2, 1, 0),
-        new("Valley Floor",    8,  2, 3,  6, 2, 50, 4, 1, 1),
-        new("Ridge",          12,  2, 3,  7, 3, 55, 6, 1, 1),
-        new("Broken Gate",    16,  3, 3,  7, 3, 55, 7, 2, 2),
-        new("Catacombs",      20,  3, 3,  6, 4, 60, 8, 2, 2),
+        new("Prologue",        1,  2, 0,  2, 1, 20, 0, 0, 0, "dt_valley_animal_t1"),
+        new("Valley Approach", 4,  2, 2,  5, 1, 45, 2, 1, 0, "dt_valley_animal_t2"),
+        new("Valley Floor",    8,  2, 3,  6, 2, 50, 4, 1, 1, "dt_valley_undead_t2"),
+        new("Ridge",          12,  2, 3,  7, 3, 55, 6, 1, 1, "dt_ridge_t3"),
+        new("Broken Gate",    16,  3, 3,  7, 3, 55, 7, 2, 2, "dt_gate_t4"),
+        new("Catacombs",      20,  3, 3,  6, 4, 60, 8, 2, 2, "dt_catacombs_t5"),
     ];
 }

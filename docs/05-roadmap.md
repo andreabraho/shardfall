@@ -122,15 +122,15 @@ click-to-move lives or dies on responsiveness.
 |---|---|---|---|
 | ITM-01 | Item model: bases, rarity, sockets, bonus lines, upgrade level, durability | **[C]** | ✅ durability cut — a repair tax is busywork, not a decision |
 | ITM-02 | Item generation: rarity roll, bonus-line rolls from slot pools | **[C]** | ✅ deterministic from the save seed, so reloading cannot reroll a drop |
-| ITM-03 | Drop tables + loot burst, auto-loot with rarity filter | **[C]** | next — needs the world layer |
+| ITM-03 | Drop tables + loot burst, auto-loot with rarity filter | **[C]** | ✅ six per-band tables; the rarity filter waits for the settings screen |
 | ITM-04 | Grid inventory with multi-cell items, drag/drop, auto-sort, junk flow | **[C]** | ✅ grid, stacking, auto-sort, atomic spending; drag/drop lands with the UI |
 | ITM-05 | Equipment slots + stat aggregation into PRG-01 | **[C]** | ✅ recomputed from scratch on every change |
 | ITM-06 | **Upgrade ladder +0→+9** with material costs, displayed chance, displayed pity counter, no destruction | **[C]** | ✅ Redesign §4.1 — the signature change |
 | ITM-07 | Sockets: rarity-driven count, Boring Stone opening, non-destructive stone removal | **[C]** | ✅ removal returns the stone intact |
 | ITM-08 | Bonus reroll with Mutation Ink + line locking | **[C]** | ✅ locking makes rerolling converge instead of gamble |
-| ITM-09 | Comparison tooltips, plain-language stat descriptions | **[C]** | ◐ descriptions done; comparison tooltips with the UI |
+| ITM-09 | Comparison tooltips, plain-language stat descriptions | **[C]** | ✅ hovering a bag item shows the delta against what it would replace |
 | ITM-10 | Yang economy + sinks; vendor buy/sell | **[C]** | ◐ sinks and costs done; the vendor itself needs NPCs |
-| ITM-11 | ~70 MVP items as data | **[C]** | ◐ stones and materials done; the weapon/armour spread is still thin |
+| ITM-11 | ~70 MVP items as data | **[C]** | ✅ 62 items — 47 equippable across every slot and band, plus materials and stones |
 | ITM-12 | **Economy simulator** — verifies you are yang-constrained early and comfortable later | **[C]** | ✅ runs in CI; its first honest version showed money never mattered before Act 2 |
 | ITM-13 | Item icons | **[You]** *(deferred)* | Coloured frames until art phase |
 

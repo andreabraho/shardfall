@@ -64,6 +64,16 @@ internal sealed class TestSpecs : IItemSpecs, IBonusPools
             UpgradePathId = "upg_test",
         });
 
+        specs.Add(new ItemSpec
+        {
+            Id = "rng_test_band",
+            Slot = EquipSlot.Ring1,
+            Rarity = Rarity.Common,
+            Width = 1,
+            Height = 1,
+            Grants = [new BonusLine("rng_test_band", BonusStat.Parse("damage_pct"), 3)],
+        });
+
         specs.Add(new ItemSpec { Id = "mat_test_scrap", Width = 1, Height = 1, MaxStack = 99, SellValue = 10 });
         specs.Add(new ItemSpec { Id = "mat_boring_stone", Width = 1, Height = 1, MaxStack = 20 });
         specs.Add(new ItemSpec { Id = "mat_mutation_ink", Width = 1, Height = 1, MaxStack = 20 });

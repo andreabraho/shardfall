@@ -271,7 +271,10 @@ public partial class InventoryPanel : CanvasLayer
                     (placed.Width * (CellSize + CellGap)) - CellGap,
                     (placed.Height * (CellSize + CellGap)) - CellGap),
                 Text = ItemText.Label(placed.Item),
-                TooltipText = ItemText.Tooltip(placed.Item),
+
+                // Compared against whatever occupies the slot it would go into, so the
+                // tooltip answers "should I wear this" rather than only "what is this".
+                TooltipText = ItemText.Tooltip(placed.Item, WornRival(spec)),
                 AutowrapMode = TextServer.AutowrapMode.WordSmart,
                 ClipText = true,
             };
@@ -291,6 +294,23 @@ public partial class InventoryPanel : CanvasLayer
             _gridRoot.AddChild(button);
             _itemNodes.Add(button);
         }
+    }
+
+    /// <summary>
+    /// What this item would be replacing. For a ring, the second slot when it is free — the
+    /// honest comparison is against what you would actually lose, and you lose nothing by
+    /// filling an empty finger.
+    /// </summary>
+    private ItemInstance? WornRival(ItemSpec? spec)
+    {
+        if (spec?.Slot is not { } slot || _inventory is null) return null;
+
+        if (slot is EquipSlot.Ring1 or EquipSlot.Ring2)
+        {
+            if (_inventory.Gear.In(EquipSlot.Ring1) is null || _inventory.Gear.In(EquipSlot.Ring2) is null) return null;
+        }
+
+        return _inventory.Gear.In(slot);
     }
 
     private void RefreshStats()

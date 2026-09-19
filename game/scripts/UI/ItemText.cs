@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Kiln.Core.Items;
 using Kiln.Game.Items;
@@ -15,7 +18,11 @@ namespace Kiln.Game.UI;
 /// </remarks>
 public static class ItemText
 {
-    public static string Tooltip(ItemInstance item)
+    /// <summary>
+    /// The item's own description, and — when something comparable is worn — what changing to
+    /// it would do (ITM-09).
+    /// </summary>
+    public static string Tooltip(ItemInstance item, ItemInstance? equipped = null)
     {
         var spec = GameItems.Spec(item.DefId);
         var text = new StringBuilder();
@@ -79,7 +86,78 @@ public static class ItemText
                 .Append(" yang");
         }
 
+        if (equipped is not null && !ReferenceEquals(equipped, item))
+        {
+            AppendComparison(text, item, spec, equipped);
+        }
+
         return text.ToString();
+    }
+
+    /// <summary>
+    /// What swapping would change, as signed lines.
+    /// </summary>
+    /// <remarks>
+    /// Without this the player is comparing two lists of unrelated numbers in their head, and
+    /// the honest answer to "is this better" is usually unknowable — a sword with more damage
+    /// and fewer sockets against one with a vs-undead line is exactly the comparison the
+    /// original leaves you to guess at. Showing the delta is what makes a gear decision a
+    /// decision rather than a coin flip on the bigger number.
+    /// </remarks>
+    private static void AppendComparison(StringBuilder text, ItemInstance item, ItemSpec spec, ItemInstance equipped)
+    {
+        var wornSpec = GameItems.Spec(equipped.DefId);
+
+        if (wornSpec is null || wornSpec.Slot != spec.Slot) return;
+
+        var lines = new List<string>();
+
+        Line(lines, "damage", Average(item, spec), Average(equipped, wornSpec), "0");
+        Line(lines, "armour", item.ArmorValue(spec), equipped.ArmorValue(wornSpec), "0");
+
+        var mine = item.ModifiersFor(spec, GameItems.Catalogue);
+        var theirs = equipped.ModifiersFor(wornSpec, GameItems.Catalogue);
+
+        Line(lines, "damage %", mine.DamagePct * 100, theirs.DamagePct * 100, "0.#");
+        Line(lines, "skill damage %", mine.SkillDamagePct * 100, theirs.SkillDamagePct * 100, "0.#");
+        Line(lines, "crit %", mine.CritChance * 100, theirs.CritChance * 100, "0.#");
+        Line(lines, "pierce %", mine.PierceChance * 100, theirs.PierceChance * 100, "0.#");
+        Line(lines, "evasion %", mine.Evasion * 100, theirs.Evasion * 100, "0.#");
+        Line(lines, "max health", mine.MaxHpFlat, theirs.MaxHpFlat, "0");
+        Line(lines, "max mana", mine.MaxManaFlat, theirs.MaxManaFlat, "0");
+        Line(lines, "defence", mine.DefenseFlat, theirs.DefenseFlat, "0");
+        Line(lines, "attack power", mine.AttackPowerFlat, theirs.AttackPowerFlat, "0");
+        Line(lines, "attack speed", mine.AttackSpeedFlat, theirs.AttackSpeedFlat, "0.#");
+        Line(lines, "move speed %", mine.MoveSpeedPct * 100, theirs.MoveSpeedPct * 100, "0.#");
+
+        foreach (var family in mine.VsFamily.Keys.Union(theirs.VsFamily.Keys))
+        {
+            Line(lines, $"vs {family.ToString().ToLowerInvariant()}s %",
+                mine.VsFamilyBonus(family) * 100, theirs.VsFamilyBonus(family) * 100, "0.#");
+        }
+
+        text.Append("\n\n— compared to ").Append(GameItems.NameOf(equipped)).Append(" —");
+
+        if (lines.Count == 0)
+        {
+            text.Append("\nno difference");
+            return;
+        }
+
+        foreach (var line in lines) text.Append('\n').Append(line);
+    }
+
+    private static double Average(ItemInstance item, ItemSpec spec) =>
+        (item.WeaponDamageMin(spec) + item.WeaponDamageMax(spec)) / 2.0;
+
+    private static void Line(List<string> into, string label, double mine, double theirs, string format)
+    {
+        var delta = mine - theirs;
+
+        // Rounding noise would otherwise fill the panel with "+0" rows.
+        if (Math.Abs(delta) < 0.05) return;
+
+        into.Add($"{(delta > 0 ? "+" : "−")}{Math.Abs(delta).ToString(format)} {label}");
     }
 
     private static string DescribeSocket(Socket socket)

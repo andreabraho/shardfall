@@ -1,34 +1,14 @@
 [
-  {
-    "id": "wpn_iron_sword",
-    "name": "$item.wpn_iron_sword.name",
-    "slot": "weapon",
-    "class_restriction": ["warrior"],
-    "level_req": 8,
-    "rarity": "fine",
-    "grid_size": [1, 3],
-    "base_stats": { "weapon_damage_min": 24, "weapon_damage_max": 38 },
-    "sockets": 1,
-    "bonus_line_count": [2, 2],
-    "bonus_pool": "bonus_weapon_melee",
-    "upgrade_path": "upg_standard_weapon",
-    "sell_value": 1200,
-    "visual": "mesh_sword_a"
-  },
-  {
-    "id": "wpn_steel_sword",
-    "name": "$item.wpn_steel_sword.name",
-    "slot": "weapon",
-    "class_restriction": ["warrior"],
-    "level_req": 16,
-    "rarity": "rare",
-    "grid_size": [1, 3],
-    "base_stats": { "weapon_damage_min": 41, "weapon_damage_max": 62 },
-    "sockets": 2,
-    "bonus_line_count": [3, 3],
-    "bonus_pool": "bonus_weapon_melee",
-    "upgrade_path": "upg_standard_weapon",
-    "sell_value": 4100,
-    "visual": "mesh_sword_a"
-  }
+  { "id": "wpn_worn_blade",     "name": "$item.wpn_worn_blade.name",     "slot": "weapon", "class_restriction": ["warrior"], "level_req": 1,  "rarity": "common", "grid_size": [1, 3], "base_stats": { "weapon_damage_min": 8,  "weapon_damage_max": 13 },  "sockets": 0, "bonus_line_count": [0, 1], "bonus_pool": "bonus_weapon_melee", "upgrade_path": "upg_standard_weapon", "sell_value": 120,   "visual": "mesh_sword_a" },
+  { "id": "wpn_hunters_axe",    "name": "$item.wpn_hunters_axe.name",    "slot": "weapon", "class_restriction": ["warrior"], "level_req": 4,  "rarity": "common", "grid_size": [1, 3], "base_stats": { "weapon_damage_min": 13, "weapon_damage_max": 20 },  "sockets": 0, "bonus_line_count": [0, 1], "bonus_pool": "bonus_weapon_melee", "upgrade_path": "upg_standard_weapon", "sell_value": 300,   "visual": "mesh_axe_a" },
+  { "id": "wpn_bronze_spear",   "name": "$item.wpn_bronze_spear.name",   "slot": "weapon", "class_restriction": ["warrior"], "level_req": 8,  "rarity": "common", "grid_size": [1, 3], "base_stats": { "weapon_damage_min": 22, "weapon_damage_max": 36 },  "sockets": 0, "bonus_line_count": [0, 1], "bonus_pool": "bonus_weapon_melee", "upgrade_path": "upg_standard_weapon", "sell_value": 700,   "visual": "mesh_spear_a" },
+  { "id": "wpn_iron_sword",     "name": "$item.wpn_iron_sword.name",     "slot": "weapon", "class_restriction": ["warrior"], "level_req": 8,  "rarity": "fine",   "grid_size": [1, 3], "base_stats": { "weapon_damage_min": 24, "weapon_damage_max": 38 },  "sockets": 1, "bonus_line_count": [2, 2], "bonus_pool": "bonus_weapon_melee", "upgrade_path": "upg_standard_weapon", "sell_value": 1200,  "visual": "mesh_sword_a" },
+  { "id": "wpn_ridge_cleaver",  "name": "$item.wpn_ridge_cleaver.name",  "slot": "weapon", "class_restriction": ["warrior"], "level_req": 12, "rarity": "fine",   "grid_size": [1, 3], "base_stats": { "weapon_damage_min": 32, "weapon_damage_max": 50 },  "sockets": 1, "bonus_line_count": [2, 2], "bonus_pool": "bonus_weapon_melee", "upgrade_path": "upg_standard_weapon", "sell_value": 2400,  "visual": "mesh_axe_a" },
+  { "id": "wpn_warden_pike",    "name": "$item.wpn_warden_pike.name",    "slot": "weapon", "class_restriction": ["warrior"], "level_req": 16, "rarity": "fine",   "grid_size": [1, 3], "base_stats": { "weapon_damage_min": 44, "weapon_damage_max": 66 },  "sockets": 1, "bonus_line_count": [2, 2], "bonus_pool": "bonus_weapon_melee", "upgrade_path": "upg_standard_weapon", "sell_value": 3200,  "visual": "mesh_spear_a" },
+  { "id": "wpn_steel_sword",    "name": "$item.wpn_steel_sword.name",    "slot": "weapon", "class_restriction": ["warrior"], "level_req": 16, "rarity": "rare",   "grid_size": [1, 3], "base_stats": { "weapon_damage_min": 41, "weapon_damage_max": 62 },  "sockets": 2, "bonus_line_count": [3, 3], "bonus_pool": "bonus_weapon_melee", "upgrade_path": "upg_standard_weapon", "sell_value": 4100,  "visual": "mesh_sword_a" },
+  { "id": "wpn_gravecaller",    "name": "$item.wpn_gravecaller.name",    "slot": "weapon", "class_restriction": ["warrior"], "level_req": 18, "rarity": "epic",   "grid_size": [1, 3], "base_stats": { "weapon_damage_min": 52, "weapon_damage_max": 76 },  "sockets": 2, "bonus_line_count": [4, 4], "bonus_pool": "bonus_weapon_melee", "upgrade_path": "upg_standard_weapon", "sell_value": 9800,  "visual": "mesh_axe_a" },
+  { "id": "wpn_ember_edge",     "name": "$item.wpn_ember_edge.name",     "slot": "weapon", "class_restriction": ["warrior"], "level_req": 20, "rarity": "rare",   "grid_size": [1, 3], "base_stats": { "weapon_damage_min": 55, "weapon_damage_max": 82 },  "sockets": 2, "bonus_line_count": [3, 3], "bonus_pool": "bonus_weapon_melee", "upgrade_path": "upg_standard_weapon", "sell_value": 7400,  "visual": "mesh_sword_a" },
+  { "id": "wpn_hollow_reaver",  "name": "$item.wpn_hollow_reaver.name",  "slot": "weapon", "class_restriction": ["warrior"], "level_req": 22, "rarity": "epic",   "grid_size": [1, 3], "base_stats": { "weapon_damage_min": 64, "weapon_damage_max": 94 },  "sockets": 2, "bonus_line_count": [4, 4], "bonus_pool": "bonus_weapon_melee", "upgrade_path": "upg_standard_weapon", "sell_value": 14000, "visual": "mesh_axe_a" },
+  { "id": "wpn_shard_lance",    "name": "$item.wpn_shard_lance.name",    "slot": "weapon", "class_restriction": ["warrior"], "level_req": 24, "rarity": "epic",   "grid_size": [1, 3], "base_stats": { "weapon_damage_min": 70, "weapon_damage_max": 102 }, "sockets": 2, "bonus_line_count": [4, 4], "bonus_pool": "bonus_weapon_melee", "upgrade_path": "upg_standard_weapon", "sell_value": 17000, "visual": "mesh_spear_a" },
+  { "id": "wpn_kiln_brand",     "name": "$item.wpn_kiln_brand.name",     "slot": "weapon", "class_restriction": ["warrior"], "level_req": 24, "rarity": "relic",  "grid_size": [1, 3], "base_stats": { "weapon_damage_min": 74, "weapon_damage_max": 108 }, "sockets": 3, "bonus_line_count": [5, 5], "bonus_pool": "bonus_weapon_melee", "upgrade_path": "upg_standard_weapon", "sell_value": 26000, "visual": "mesh_sword_a" }
 ]

@@ -1,19 +1,35 @@
 [
   {
+    "id": "dt_valley_animal_t1",
+    "yang_range": [120, 280],
+    "entries": [
+      { "item": "mat_iron_scrap",    "weight": 100, "chance": 0.45, "count_range": [1, 2] },
+      { "item": "wpn_worn_blade",    "weight": 10,  "chance": 0.05, "count_range": [1, 1] },
+      { "item": "arm_padded_coat",   "weight": 10,  "chance": 0.05, "count_range": [1, 1] },
+      { "item": "bts_worn_boots",    "weight": 10,  "chance": 0.05, "count_range": [1, 1] },
+      { "item": "shd_wooden_buckler","weight": 8,   "chance": 0.04, "count_range": [1, 1] },
+      { "item": "rng_tin_band",      "weight": 6,   "chance": 0.03, "count_range": [1, 1] }
+    ]
+  },
+  {
     "id": "dt_valley_animal_t2",
-    "yang_range": [40, 120],
+    "yang_range": [260, 600],
     "entries": [
       { "item": "mat_iron_scrap",    "weight": 100, "chance": 0.55, "count_range": [1, 3] },
       { "item": "mat_tempering_oil", "weight": 30,  "chance": 0.12, "count_range": [1, 1] },
       { "item": "mat_boring_stone",  "weight": 20,  "chance": 0.08, "count_range": [1, 1] },
       { "item": "stn_falcon",        "weight": 10,  "chance": 0.04, "count_range": [1, 1] },
+      { "item": "wpn_hunters_axe",   "weight": 9,   "chance": 0.05, "count_range": [1, 1] },
       { "item": "wpn_iron_sword",    "weight": 8,   "chance": 0.04, "count_range": [1, 1] },
-      { "item": "arm_leather_vest",  "weight": 8,   "chance": 0.04, "count_range": [1, 1] }
+      { "item": "arm_leather_vest",  "weight": 8,   "chance": 0.04, "count_range": [1, 1] },
+      { "item": "hlm_leather_cap",   "weight": 8,   "chance": 0.04, "count_range": [1, 1] },
+      { "item": "bts_scout_boots",   "weight": 7,   "chance": 0.03, "count_range": [1, 1] },
+      { "item": "brc_leather_band",  "weight": 6,   "chance": 0.03, "count_range": [1, 1] }
     ]
   },
   {
     "id": "dt_valley_undead_t2",
-    "yang_range": [60, 160],
+    "yang_range": [750, 1700],
     "entries": [
       { "item": "mat_iron_scrap",    "weight": 90,  "chance": 0.50, "count_range": [1, 3] },
       { "item": "mat_boring_stone",  "weight": 25,  "chance": 0.10, "count_range": [1, 1] },
@@ -21,7 +37,77 @@
       { "item": "stn_ember",         "weight": 12,  "chance": 0.05, "count_range": [1, 1] },
       { "item": "stn_granite",       "weight": 12,  "chance": 0.05, "count_range": [1, 1] },
       { "item": "stn_bane_undead",   "weight": 6,   "chance": 0.03, "count_range": [1, 1] },
+      { "item": "wpn_bronze_spear",  "weight": 8,   "chance": 0.04, "count_range": [1, 1] },
+      { "item": "shd_banded_shield", "weight": 7,   "chance": 0.03, "count_range": [1, 1] },
+      { "item": "hlm_iron_helm",     "weight": 7,   "chance": 0.03, "count_range": [1, 1] },
+      { "item": "rng_hunters_signet","weight": 5,   "chance": 0.02, "count_range": [1, 1] },
       { "item": "wpn_steel_sword",   "weight": 5,   "chance": 0.02, "count_range": [1, 1] }
+    ]
+  },
+  {
+    "id": "dt_ridge_t3",
+    "yang_range": [1450, 3300],
+    "entries": [
+      { "item": "mat_iron_scrap",    "weight": 80,  "chance": 0.50, "count_range": [2, 4] },
+      { "item": "mat_tempering_oil", "weight": 40,  "chance": 0.18, "count_range": [1, 2] },
+      { "item": "mat_steel_core",    "weight": 24,  "chance": 0.10, "count_range": [1, 1] },
+      { "item": "mat_mutation_ink",  "weight": 20,  "chance": 0.09, "count_range": [1, 1] },
+      { "item": "mat_boring_stone",  "weight": 20,  "chance": 0.09, "count_range": [1, 1] },
+      { "item": "stn_thorn",         "weight": 10,  "chance": 0.04, "count_range": [1, 1] },
+      { "item": "stn_ward",          "weight": 10,  "chance": 0.04, "count_range": [1, 1] },
+      { "item": "wpn_ridge_cleaver", "weight": 9,   "chance": 0.04, "count_range": [1, 1] },
+      { "item": "arm_scale_hauberk", "weight": 9,   "chance": 0.04, "count_range": [1, 1] },
+      { "item": "bts_ridge_greaves", "weight": 7,   "chance": 0.03, "count_range": [1, 1] },
+      { "item": "shd_ridge_bulwark", "weight": 6,   "chance": 0.025, "count_range": [1, 1] },
+      { "item": "arm_ridge_mail",    "weight": 6,   "chance": 0.025, "count_range": [1, 1] },
+      { "item": "nck_silver_pendant","weight": 6,   "chance": 0.025, "count_range": [1, 1] },
+      { "item": "ear_jade_drop",     "weight": 6,   "chance": 0.025, "count_range": [1, 1] }
+    ]
+  },
+  {
+    "id": "dt_gate_t4",
+    "yang_range": [2200, 4900],
+    "entries": [
+      { "item": "mat_steel_core",    "weight": 60,  "chance": 0.22, "count_range": [1, 2] },
+      { "item": "mat_tempering_oil", "weight": 40,  "chance": 0.18, "count_range": [1, 2] },
+      { "item": "mat_shard_essence", "weight": 18,  "chance": 0.07, "count_range": [1, 1] },
+      { "item": "mat_mutation_ink",  "weight": 22,  "chance": 0.10, "count_range": [1, 1] },
+      { "item": "mat_boring_stone",  "weight": 22,  "chance": 0.10, "count_range": [1, 1] },
+      { "item": "stn_bane_animal",   "weight": 9,   "chance": 0.035, "count_range": [1, 1] },
+      { "item": "stn_bane_devil",    "weight": 9,   "chance": 0.035, "count_range": [1, 1] },
+      { "item": "wpn_warden_pike",   "weight": 8,   "chance": 0.035, "count_range": [1, 1] },
+      { "item": "hlm_warden_crown",  "weight": 7,   "chance": 0.03, "count_range": [1, 1] },
+      { "item": "brc_warden_vambrace","weight": 7,  "chance": 0.03, "count_range": [1, 1] },
+      { "item": "rng_warden_seal",   "weight": 6,   "chance": 0.025, "count_range": [1, 1] },
+      { "item": "nck_shard_locket",  "weight": 5,   "chance": 0.02, "count_range": [1, 1] },
+      { "item": "wpn_gravecaller",   "weight": 3,   "chance": 0.012, "count_range": [1, 1] },
+      { "item": "arm_warden_plate",  "weight": 3,   "chance": 0.012, "count_range": [1, 1] }
+    ]
+  },
+  {
+    "id": "dt_catacombs_t5",
+    "yang_range": [2500, 5500],
+    "entries": [
+      { "item": "mat_steel_core",    "weight": 60,  "chance": 0.26, "count_range": [1, 3] },
+      { "item": "mat_shard_essence", "weight": 30,  "chance": 0.13, "count_range": [1, 2] },
+      { "item": "mat_radiant_core",  "weight": 6,   "chance": 0.025, "count_range": [1, 1] },
+      { "item": "mat_mutation_ink",  "weight": 24,  "chance": 0.11, "count_range": [1, 1] },
+      { "item": "mat_boring_stone",  "weight": 24,  "chance": 0.11, "count_range": [1, 1] },
+      { "item": "stn_bane_undead",   "weight": 12,  "chance": 0.05, "count_range": [1, 1] },
+      { "item": "ear_stormglass",    "weight": 8,   "chance": 0.03, "count_range": [1, 1] },
+      { "item": "wpn_ember_edge",    "weight": 7,   "chance": 0.03, "count_range": [1, 1] },
+      { "item": "bts_ashen_striders","weight": 6,   "chance": 0.025, "count_range": [1, 1] },
+      { "item": "hlm_ashen_visor",   "weight": 5,   "chance": 0.02, "count_range": [1, 1] },
+      { "item": "rng_ashen_circle",  "weight": 5,   "chance": 0.02, "count_range": [1, 1] },
+      { "item": "arm_ashen_carapace","weight": 4,   "chance": 0.016, "count_range": [1, 1] },
+      { "item": "shd_kiln_ward",     "weight": 4,   "chance": 0.016, "count_range": [1, 1] },
+      { "item": "brc_kiln_coil",     "weight": 4,   "chance": 0.016, "count_range": [1, 1] },
+      { "item": "nck_emberheart",    "weight": 4,   "chance": 0.016, "count_range": [1, 1] },
+      { "item": "wpn_hollow_reaver", "weight": 3,   "chance": 0.012, "count_range": [1, 1] },
+      { "item": "wpn_shard_lance",   "weight": 2,   "chance": 0.008, "count_range": [1, 1] },
+      { "item": "wpn_kiln_brand",    "weight": 1,   "chance": 0.004, "count_range": [1, 1] },
+      { "item": "arm_kiln_aegis",    "weight": 1,   "chance": 0.004, "count_range": [1, 1] },
+      { "item": "rng_kiln_sigil",    "weight": 1,   "chance": 0.004, "count_range": [1, 1] }
     ]
   }
 ]
