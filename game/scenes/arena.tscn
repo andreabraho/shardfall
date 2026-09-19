@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3]
+[gd_scene load_steps=32 format=3]
 
 ; zone_ridge — the greybox stand-in for the ridge (WLD-05 replaces the layout).
 ;
@@ -17,6 +17,7 @@
 [ext_resource type="Script" path="res://scripts/UI/ShrinePanel.cs" id="22_shrineui"]
 [ext_resource type="Script" path="res://scripts/UI/CharacterPanel.cs" id="23_charui"]
 [ext_resource type="Script" path="res://scripts/World/KitPiece.cs" id="24_kit"]
+[ext_resource type="Script" path="res://scripts/World/SafeZoneNode.cs" id="25_safe"]
 [ext_resource type="Script" path="res://scripts/Camera/CameraRig.cs" id="2_camera"]
 [ext_resource type="Script" path="res://scripts/World/ClickMarker.cs" id="3_marker"]
 [ext_resource type="Script" path="res://scripts/World/CursorManager.cs" id="4_cursor"]
@@ -379,3 +380,9 @@ PieceId = "kit_ruin_wall"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0.95, -3)
 script = ExtResource("24_kit")
 PieceId = "kit_boulder"
+
+; WLD-12: the compound is safe ground. The walls are decoration; this marker is the promise.
+; Placed as a child of Compound so moving the compound moves the village with it.
+[node name="SafeGround" type="Node3D" parent="NavigationRegion3D/Compound"]
+script = ExtResource("25_safe")
+RegionId = "saf_ridge_outpost"

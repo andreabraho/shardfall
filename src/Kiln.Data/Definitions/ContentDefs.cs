@@ -396,8 +396,28 @@ public sealed class ZoneDef : ContentDefBase
     public ShrineDef[] Shrines { get; init; } = [];
     public SpawnFieldDef[] SpawnFields { get; init; } = [];
 
+    /// <summary>The villages inside this map. The scene decides where they stand.</summary>
+    public SafeRegionDef[] SafeRegions { get; init; } = [];
+
     /// <summary>Shard node ids this zone may host. The scene decides where they stand.</summary>
     public string[] Shards { get; init; } = [];
+}
+
+/// <summary>
+/// Safe ground inside a map (WLD-12): nothing spawns in it, nothing follows the player into
+/// it, and nothing can hurt them while they stand in it.
+/// </summary>
+/// <remarks>
+/// Nested in its zone for the same reason a shrine is: a village belongs to exactly one map,
+/// and making that true by construction is cheaper than a rule enforcing it.
+/// </remarks>
+public sealed class SafeRegionDef
+{
+    public string Id { get; init; } = string.Empty;
+    public string Name { get; init; } = string.Empty;
+
+    /// <summary>Metres from the marker the scene places. The walls are decoration; this is the promise.</summary>
+    public double Radius { get; init; } = 20.0;
 }
 
 public sealed class ZoneExitDef

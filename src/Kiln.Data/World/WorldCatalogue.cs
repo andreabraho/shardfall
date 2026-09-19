@@ -19,6 +19,7 @@ public sealed class WorldCatalogue
     {
         var zones = new List<Zone>();
         var shrines = new List<Shrine>();
+        var safe = new List<SafeRegion>();
 
         foreach (var def in content.Zones.Values.OrderBy(z => z.Id, StringComparer.Ordinal))
         {
@@ -29,6 +30,11 @@ public sealed class WorldCatalogue
                 shrines.Add(new Shrine(shrine.Id, shrine.Name, def.Id, shrine.FastTravel));
             }
 
+            foreach (var region in def.SafeRegions)
+            {
+                safe.Add(new SafeRegion(region.Id, region.Name, def.Id, region.Radius));
+            }
+
             foreach (var field in def.SpawnFields)
             {
                 _fields[field.Id] = ToField(field);
@@ -36,7 +42,7 @@ public sealed class WorldCatalogue
             }
         }
 
-        Graph = new ZoneGraph(zones, shrines);
+        Graph = new ZoneGraph(zones, shrines, safe);
     }
 
     public ZoneGraph Graph { get; }

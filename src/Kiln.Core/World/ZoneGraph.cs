@@ -12,23 +12,60 @@ public sealed class ZoneGraph
 {
     private readonly Dictionary<string, Zone> _zones;
     private readonly Dictionary<string, Shrine> _shrines;
+    private readonly Dictionary<string, SafeRegion> _safe;
 
-    public ZoneGraph(IEnumerable<Zone> zones, IEnumerable<Shrine> shrines)
+    public ZoneGraph(
+        IEnumerable<Zone> zones,
+        IEnumerable<Shrine> shrines,
+        IEnumerable<SafeRegion>? safeRegions = null)
     {
-        _zones = zones.ToDictionary(z => z.Id, StringComparer.Ordinal);
-        _shrines = shrines.ToDictionary(s => s.Id, StringComparer.Ordinal);
+        _zones = Index(zones, z => z.Id);
+        _shrines = Index(shrines, s => s.Id);
+        _safe = Index(safeRegions ?? [], s => s.Id);
+    }
+
+    /// <summary>
+    /// Last one wins, rather than throwing on a duplicate id.
+    /// </summary>
+    /// <remarks>
+    /// The graph is built by the validator before it has had a chance to report anything, so
+    /// throwing here would replace "duplicate shrine id 'shr_x'" with a stack trace — the
+    /// validator crashing on precisely the content it exists to diagnose.
+    /// </remarks>
+    private static Dictionary<string, T> Index<T>(IEnumerable<T> source, Func<T, string> id)
+    {
+        var map = new Dictionary<string, T>(StringComparer.Ordinal);
+
+        foreach (var item in source) map[id(item)] = item;
+
+        return map;
     }
 
     public IReadOnlyCollection<Zone> Zones => _zones.Values;
 
     public IReadOnlyCollection<Shrine> Shrines => _shrines.Values;
 
+    public IReadOnlyCollection<SafeRegion> SafeRegions => _safe.Values;
+
     public Zone? this[string id] => _zones.GetValueOrDefault(id);
 
     public Shrine? Shrine(string id) => _shrines.GetValueOrDefault(id);
 
-    /// <summary>The village. Null when content has not defined one — which the validator rejects.</summary>
-    public Zone? Hub => _zones.Values.FirstOrDefault(z => z.Kind == ZoneKind.Hub);
+    public SafeRegion? SafeRegion(string id) => _safe.GetValueOrDefault(id);
+
+    /// <summary>
+    /// Every village. More than one is the normal case (WLD-13): the world is a chain of
+    /// villages with fields between them, not a wheel around a single town.
+    /// </summary>
+    public IReadOnlyList<Zone> Hubs =>
+        _zones.Values.Where(z => z.Kind == ZoneKind.Hub)
+            .OrderBy(z => z.Band.Min).ThenBy(z => z.Id, StringComparer.Ordinal).ToList();
+
+    /// <summary>The starting village: the lowest-banded hub. Null when content defines none.</summary>
+    public Zone? Hub => Hubs.FirstOrDefault();
+
+    public IEnumerable<SafeRegion> SafeRegionsIn(string zoneId) =>
+        _safe.Values.Where(s => s.Zone == zoneId);
 
     public IEnumerable<Shrine> ShrinesIn(string zoneId) =>
         this[zoneId] is { } zone
@@ -58,6 +95,9 @@ public sealed class ZoneGraph
     {
         var seen = new HashSet<string>(StringComparer.Ordinal);
 
+        // Seeded from the starting village only, deliberately, now that there is more than one.
+        // Seeding from every hub would make a second village nothing links to look reachable —
+        // and an unreachable village is precisely the mistake this walk exists to find.
         if (Hub is not { } hub) return seen;
 
         var queue = new Queue<string>();
@@ -100,7 +140,6 @@ public sealed class ZoneGraph
         var bands = ReachableFromHub()
             .Select(id => this[id])
             .OfType<Zone>()
-            .Where(z => z.Kind != ZoneKind.Hub)
             .Select(z => z.Band)
             .ToList();
 

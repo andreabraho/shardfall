@@ -610,11 +610,14 @@ public static class ContentValidator
         var graph = catalogue.Graph;
         var hubs = db.Zones.Values.Where(z => World.WorldCatalogue.KindOf(z.Kind) == ZoneKind.Hub).ToList();
 
-        if (hubs.Count != 1)
+        // At least one, not exactly one (WLD-13). The world is a chain of villages with fields
+        // between them; the rule that said "exactly one" was written when one village was the
+        // whole plan, and would now reject the shape the game is being built towards.
+        if (hubs.Count == 0)
         {
-            report.Error("world-graph", hubs.FirstOrDefault()?.SourceFile ?? "zones/",
-                $"the world has {hubs.Count} hub zones.",
-                "Exactly one zone must be kind \"hub\": it is where death, fast travel and every service lead.");
+            report.Error("world-graph", "zones/",
+                "the world has no hub zone.",
+                "At least one zone must be kind \"hub\": it is where the player starts and where death leads.");
         }
 
         foreach (var id in graph.Orphans())
@@ -634,6 +637,7 @@ public static class ContentValidator
         }
 
         var shrineIds = new HashSet<string>(StringComparer.Ordinal);
+        var safeIds = new HashSet<string>(StringComparer.Ordinal);
 
         foreach (var zone in db.Zones.Values)
         {
@@ -650,6 +654,7 @@ public static class ContentValidator
 
             ZoneExits(db, zone, report);
             ZoneShrines(zone, kind, shrineIds, report);
+            ZoneSafeRegions(zone, kind, safeIds, report);
             ZoneFields(db, zone, kind, report);
 
             foreach (var shard in zone.Shards)
@@ -725,6 +730,67 @@ public static class ContentValidator
                 report.Error("localisation", zone.SourceFile,
                     $"shrine '{shrine.Id}' has a literal name \"{shrine.Name}\".",
                     "Player-facing text must be a $localisation.key (NFR-L.1).");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Safe ground: a village is a region inside a map, and the rule has to be checkable
+    /// (WLD-12).
+    /// </summary>
+    /// <remarks>
+    /// A hub zone is required to declare one rather than being safe by virtue of its kind. Two
+    /// ways of being safe would mean two implementations of "am I inside the village", and the
+    /// day they disagreed the player would find out by dying somewhere the map called safe.
+    /// </remarks>
+    private static void ZoneSafeRegions(
+        ZoneDef zone, ZoneKind kind, HashSet<string> seen, ValidationReport report)
+    {
+        // The upper bound is not arbitrary taste: a region wider than this covers a field map
+        // whole, and the reachable world quietly stops having anywhere dangerous in it.
+        const double MaxRadius = 120.0;
+
+        if (kind == ZoneKind.Hub && zone.SafeRegions.Length == 0)
+        {
+            report.Error("world-safe", zone.SourceFile,
+                $"the hub '{zone.Id}' declares no safe region.",
+                "A village is safe ground with a radius, not a zone kind. Add one covering it.");
+        }
+
+        if (kind == ZoneKind.Dungeon && zone.SafeRegions.Length > 0)
+        {
+            report.Error("world-safe", zone.SourceFile,
+                $"the dungeon '{zone.Id}' declares safe ground.",
+                "A dungeon offers checkpoints, not sanctuary; somewhere to stand and heal would undo the run.");
+        }
+
+        foreach (var region in zone.SafeRegions)
+        {
+            if (!ContentId.IsValid(region.Id))
+            {
+                report.Error("id-format", zone.SourceFile,
+                    $"safe region '{region.Id}' in '{zone.Id}' is not a valid id.",
+                    "Use lowercase prefix_name, e.g. 'saf_ember_hollow'.");
+            }
+
+            if (!seen.Add(region.Id))
+            {
+                report.Error("world-safe", zone.SourceFile,
+                    $"duplicate safe region id '{region.Id}'.");
+            }
+
+            if (!string.IsNullOrEmpty(region.Name) && !region.Name.StartsWith('$'))
+            {
+                report.Error("localisation", zone.SourceFile,
+                    $"safe region '{region.Id}' has a literal name \"{region.Name}\".",
+                    "Player-facing text must be a $localisation.key (NFR-L.1).");
+            }
+
+            if (region.Radius <= 0 || region.Radius > MaxRadius)
+            {
+                report.Error("world-safe", zone.SourceFile,
+                    $"safe region '{region.Id}' has radius {region.Radius}.",
+                    $"Use a radius between 0 and {MaxRadius} metres.");
             }
         }
     }

@@ -30,6 +30,9 @@ public partial class SpawnFieldNode : Node3D
 
     [Export] public string FieldId { get; set; } = "";
 
+    /// <summary>The field's tuning, or null when it failed to resolve. Read by the scene audit.</summary>
+    public Kiln.Core.World.SpawnFieldDef? Def => _field?.Def;
+
     public override void _Ready()
     {
         if (!GameWorld.IsLoaded)
@@ -46,15 +49,9 @@ public partial class SpawnFieldNode : Node3D
             return;
         }
 
-        // A camp placed in the wrong scene inherits a band it was never balanced for, and
-        // nothing about the running game would show it.
-        var owner = GameWorld.Catalogue.ZoneOf(FieldId);
-
-        if (owner is not null && GameWorld.CurrentZoneId.Length > 0 && owner != GameWorld.CurrentZoneId)
-        {
-            GD.PushWarning($"[spawn] '{FieldId}' belongs to '{owner}' but is placed in '{GameWorld.CurrentZoneId}'.");
-        }
-
+        // Whether this camp belongs in this scene is checked by ZoneRoot.Audit, not here: at
+        // this point the current zone is still the previous scene's, because a node is ready
+        // before its parent is.
         AddToGroup("spawn_fields");
 
         _field = new SpawnField(def, new DeterministicRng(GameSession.Seed).Fork($"spawn:{FieldId}"));

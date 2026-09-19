@@ -218,8 +218,8 @@ is what proves the structure rather than decorating it.
 | WLD-04 | Modular greybox kit (cliffs, paths, ruins, props) as primitives | **[C]** | ✅ 18 pieces in `tables/world_kit.json`; a scene names a piece id and nothing else. No editor preview yet — content does not load in the editor, so pieces appear only at run time |
 | WLD-05 | **Greybox the 4 field maps** — layout, landmarks, encounter placement, sightlines | **[C→You]** | I can place a first pass from a spec; level design by feel is yours |
 | WLD-06 | **Greybox the 2 villages** + NPC placement | **[C→You]** | Each a safe zone with fields immediately outside it |
-| WLD-12 | **Safe zones**: no spawn overlap, no enemy entry, no damage inside — validated | **[C]** | ⬜ before WLD-06; the thing a village actually is |
-| WLD-13 | **Multi-hub**: relax the one-hub rule, each village anchors its region | **[C]** | ⬜ with WLD-12 |
+| WLD-12 | **Safe zones**: no spawn overlap, no enemy entry, no damage inside — validated | **[C]** | ✅ `SafeRegion` + `SafetyField` in Core; declared per zone in data, placed by a `SafeZoneNode` in the scene. Enforced at all three points: aggro drops at the boundary, damage to the player is refused, and `ZoneRoot.Audit` errors on a camp within 6 m of the line |
+| WLD-13 | **Multi-hub**: relax the one-hub rule, each village anchors its region | **[C]** | ✅ "exactly one hub" → "at least one"; reachability still seeds from the starting village, so village 2 must be walkable from village 1 or it reports as an orphan |
 | WLD-07 | **Greybox the dungeon**: 2 mini-bosses, secret room, 3-phase boss arena, checkpoints | **[C→You]** | |
 | WLD-08 | Map + minimap: fog of war, markers, custom pins, shard-node overlay | **[C]** | |
 | WLD-09 | Fast travel UI + yang cost | **[C]** | ✅ flat fee by destination band; refused in combat, and to a dungeon checkpoint |

@@ -39,6 +39,22 @@ public static class GameWorld
     public static FastTravelNetwork Travel =>
         _travel ??= new FastTravelNetwork(Graph);
 
+    /// <summary>
+    /// The safe ground of the loaded scene (WLD-12), and the only authority on whether a
+    /// point is inside a village.
+    /// </summary>
+    /// <remarks>
+    /// Scene-scoped rather than world-scoped: the coordinates only mean anything inside the
+    /// scene that supplied them, so each marker adds itself on entering the tree and takes
+    /// itself out on leaving. Clearing it on a zone change instead would make safety depend on
+    /// whether the zone was announced before or after its markers woke up — an ordering that
+    /// is not ours to control.
+    /// </remarks>
+    public static SafetyField Safety { get; } = new();
+
+    /// <summary>Whether this point is on safe ground. Works for any body, not just the player.</summary>
+    public static bool IsSafe(Vector3 at) => Safety.IsSafe(at.X, at.Z);
+
     /// <summary>The zone the loaded scene declares. Empty until a <see cref="ZoneRoot"/> reports one.</summary>
     public static string CurrentZoneId { get; private set; } = "";
 

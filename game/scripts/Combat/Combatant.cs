@@ -38,6 +38,10 @@ public partial class Combatant : Node
     /// <summary>The body this component belongs to — used for positioning effects.</summary>
     public Node3D Body => GetParent<Node3D>();
 
+    /// <summary>Whether this combatant is standing inside a village (WLD-12).</summary>
+    public bool OnSafeGround =>
+        GetParent() is Node3D body && World.GameWorld.IsLoaded && World.GameWorld.IsSafe(body.GlobalPosition);
+
     /// <summary>Display name key, for the target frame.</summary>
     public string DisplayName { get; set; } = "";
 
@@ -90,6 +94,10 @@ public partial class Combatant : Node
     {
         if (!IsAlive) return DamageResult.Miss;
 
+        // Safe ground (WLD-12). Returned as a miss rather than silently dropped so the feedback
+        // the player sees matches what happened: the blow arrived and did nothing.
+        if (IsPlayer && !attacker.IsPlayer && OnSafeGround) return DamageResult.Miss;
+
         var request = new DamageRequest
         {
             Attacker = attacker.Stats,
@@ -137,6 +145,12 @@ public partial class Combatant : Node
     public void ApplyDamage(int amount, bool critical = false)
     {
         if (!IsAlive || amount <= 0) return;
+
+        // The backstop for everything that does not come through the pipeline — a bleed
+        // carried in from the field, a shard pulse, a scripted effect. Walking into the
+        // village with a stack of poison on and dying at the well would make the promise
+        // technically kept and completely broken.
+        if (IsPlayer && OnSafeGround) return;
 
         _sinceCombat = 0;
         Health.Remove(amount);

@@ -402,4 +402,88 @@ public class ContentValidatorTests
         var report = ContentValidator.Validate(ContentDatabase.Empty());
         Assert.False(report.HasErrors);
     }
+    // -- safe ground (WLD-12/13) --------------------------------------------
+
+    private static SafeRegionDef Safe(string id = "saf_x", double radius = 40) =>
+        new() { Id = id, Name = $"$safe.{id}.name", Radius = radius };
+
+    private static ZoneDef Zone(
+        string id, string kind, int min, int max, string[]? exits = null, SafeRegionDef[]? safe = null) => new()
+    {
+        Id = id,
+        Name = $"$zone.{id}.name",
+        Kind = kind,
+        LevelBand = [min, max],
+        Scene = "res://x.tscn",
+        Exits = (exits ?? []).Select(e => new ZoneExitDef { To = e }).ToArray(),
+        Shrines = [new ShrineDef { Id = $"shr_{id}", Name = $"$shrine.shr_{id}.name" }],
+        SafeRegions = safe ?? (kind == "hub" ? [Safe($"saf_{id}")] : []),
+    };
+
+    [Fact]
+    public void Accepts_TwoVillages()
+    {
+        // WLD-13. The rule used to be "exactly one hub" and would have rejected the world the
+        // game is being built towards.
+        var report = ContentValidator.Validate(Db(zones:
+        [
+            Zone("zone_hub_a", "hub", 1, 3, ["zone_hub_b"]),
+            Zone("zone_hub_b", "hub", 3, 5, ["zone_hub_a"]),
+        ]));
+
+        Assert.False(report.HasErrors);
+    }
+
+    [Fact]
+    public void Flags_WorldWithNoVillageAtAll()
+    {
+        var report = ContentValidator.Validate(Db(zones: [Zone("zone_a", "wilds", 1, 3)]));
+
+        Assert.True(HasError(report, "world-graph"));
+    }
+
+    [Fact]
+    public void Flags_VillageThatDeclaresNoSafeGround()
+    {
+        // A hub that is safe only because of its kind would be a second implementation of
+        // "am I inside the village"; the runtime enforces the region, not the kind.
+        var report = ContentValidator.Validate(Db(zones:
+            [Zone("zone_hub", "hub", 1, 3, safe: [])]));
+
+        Assert.True(HasError(report, "world-safe"));
+    }
+
+    [Fact]
+    public void Flags_DungeonWithSafeGround()
+    {
+        var report = ContentValidator.Validate(Db(zones:
+        [
+            Zone("zone_hub", "hub", 1, 3, ["zone_deep"]),
+            Zone("zone_deep", "dungeon", 3, 5, safe: [Safe("saf_deep", 10)]),
+        ]));
+
+        Assert.True(HasError(report, "world-safe"));
+    }
+
+    [Fact]
+    public void Flags_SafeGroundWideEnoughToCoverTheMap()
+    {
+        var report = ContentValidator.Validate(Db(zones:
+            [Zone("zone_hub", "hub", 1, 3, safe: [Safe("saf_x", 400)])]));
+
+        Assert.True(HasError(report, "world-safe"));
+    }
+
+    [Fact]
+    public void Flags_DuplicateSafeRegionId()
+    {
+        var report = ContentValidator.Validate(Db(zones:
+        [
+            Zone("zone_hub_a", "hub", 1, 3, ["zone_hub_b"], [Safe("saf_same")]),
+            Zone("zone_hub_b", "hub", 3, 5, ["zone_hub_a"], [Safe("saf_same")]),
+        ]));
+
+        Assert.True(HasError(report, "world-safe"));
+    }
+
 }

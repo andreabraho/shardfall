@@ -100,4 +100,42 @@ public class ZoneGraphTests
 
         Assert.Equal(expected, zone.DangerFor(level));
     }
+
+    [Fact]
+    public void ASecondVillageIsAllowed()
+    {
+        // WLD-13. The rule used to be "exactly one hub", written when one village was the
+        // whole plan; the world is a chain of villages with fields between them.
+        var graph = Graph(
+            Z("zone_hub_a", ZoneKind.Hub, 1, 3, "zone_a"),
+            Z("zone_a", ZoneKind.Wilds, 3, 7, "zone_hub_b"),
+            Z("zone_hub_b", ZoneKind.Hub, 7, 9));
+
+        Assert.Equal(2, graph.Hubs.Count);
+        Assert.Empty(graph.Orphans());
+        Assert.Empty(graph.BandGaps());
+    }
+
+    [Fact]
+    public void TheStartingVillageIsTheLowestBandedOne()
+    {
+        var graph = Graph(
+            Z("zone_late", ZoneKind.Hub, 7, 9),
+            Z("zone_first", ZoneKind.Hub, 1, 3, "zone_late"));
+
+        Assert.Equal("zone_first", graph.Hub?.Id);
+    }
+
+    [Fact]
+    public void ASecondVillageNothingLeadsToIsStillAnOrphan()
+    {
+        // The reachability walk seeds from the starting village only. Seeding from every hub
+        // would make an unreachable village look fine — the exact mistake this walk is for.
+        var graph = Graph(
+            Z("zone_hub_a", ZoneKind.Hub, 1, 3, "zone_a"),
+            Z("zone_a", ZoneKind.Wilds, 3, 7),
+            Z("zone_hub_b", ZoneKind.Hub, 7, 9));
+
+        Assert.Equal(["zone_hub_b"], graph.Orphans());
+    }
 }

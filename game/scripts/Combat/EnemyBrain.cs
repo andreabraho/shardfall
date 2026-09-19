@@ -310,6 +310,15 @@ public partial class EnemyBrain : CharacterBody3D
             return;
         }
 
+        // Reaching safe ground ends the chase, wherever the leash happens to be (WLD-12). The
+        // village gate is the promise; making the player also outrun the tether to collect on
+        // it would mean the gate does not quite work, which is worse than no gate at all.
+        if (!_returning && Target is not null && World.GameWorld.IsSafe(Target.GlobalPosition))
+        {
+            BeginReturn();
+            return;
+        }
+
         if (_returning || TargetCombatant is { IsAlive: true }) return;
 
         Target = null;
@@ -335,6 +344,9 @@ public partial class EnemyBrain : CharacterBody3D
         if (GetTree().GetFirstNodeInGroup("player") is not Node3D player) return;
 
         if (!force && GlobalPosition.DistanceTo(player.GlobalPosition) > AggroRadius) return;
+
+        // Even a forced acquisition — being shot from inside the village — stops at the line.
+        if (World.GameWorld.IsSafe(player.GlobalPosition)) return;
 
         var combatant = player.GetNodeOrNull<Combatant>("Combatant");
 
