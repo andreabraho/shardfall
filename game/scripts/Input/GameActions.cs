@@ -45,6 +45,12 @@ public static class GameActions
     public const string ToggleInventory = "toggle_inventory";
     public const string ToggleUpgradeBench = "toggle_upgrade_bench";
 
+    // Development only — the arena spawner (see DebugSpawner). Stripped from release builds.
+    public const string DebugSpawnWave = "debug_spawn_wave";
+    public const string DebugSpawnOne = "debug_spawn_one";
+    public const string DebugToggleRespawn = "debug_toggle_respawn";
+    public const string DebugGrantResources = "debug_grant_resources";
+
     private static readonly Dictionary<string, InputEvent[]> Defaults = new()
     {
         [MoveCommand] = [Mouse(MouseButton.Left)],
@@ -74,6 +80,10 @@ public static class GameActions
         [Cancel] = [Key(Godot.Key.Escape)],
         [ToggleInventory] = [Key(Godot.Key.I)],
         [ToggleUpgradeBench] = [Key(Godot.Key.U)],
+        [DebugSpawnWave] = [Key(Godot.Key.F5)],
+        [DebugSpawnOne] = [Key(Godot.Key.F6)],
+        [DebugToggleRespawn] = [Key(Godot.Key.F7)],
+        [DebugGrantResources] = [Key(Godot.Key.F8)],
     };
 
     private static InputEvent Key(Key key) => new InputEventKey { PhysicalKeycode = key };

@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3]
+[gd_scene load_steps=24 format=3]
 
 ; MOV-01 greybox test arena.
 ;
@@ -18,6 +18,8 @@
 [ext_resource type="Script" path="res://scripts/Combat/AoeVisual.cs" id="11_aoe"]
 [ext_resource type="Script" path="res://scripts/UI/InventoryPanel.cs" id="12_bagui"]
 [ext_resource type="Script" path="res://scripts/UI/WorkbenchPanel.cs" id="13_bench"]
+[ext_resource type="Script" path="res://scripts/Debug/DebugSpawner.cs" id="14_spawner"]
+[ext_resource type="Script" path="res://scripts/Debug/DebugGrants.cs" id="15_grants"]
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="5_player"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_arena"]
@@ -203,6 +205,12 @@ script = ExtResource("12_bagui")
 
 [node name="WorkbenchPanel" type="CanvasLayer" parent="."]
 script = ExtResource("13_bench")
+
+[node name="DebugGrants" type="Node" parent="."]
+script = ExtResource("15_grants")
+
+[node name="DebugSpawner" type="Node" parent="."]
+script = ExtResource("14_spawner")
 
 [node name="Enemies" type="Node3D" parent="."]
 
