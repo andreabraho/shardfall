@@ -39,6 +39,7 @@ public partial class ShardNode : StaticBody3D
     private VisualRoot? _visual;
     private TelegraphVisual _telegraph = null!;
     private Node3D _addsRoot = null!;
+    private NamePlate _plate = null!;
     private PackedScene? _enemyScene;
 
     private readonly List<EnemyBrain> _adds = [];
@@ -79,6 +80,15 @@ public partial class ShardNode : StaticBody3D
 
         _addsRoot = new Node3D { Name = "Adds" };
         CallDeferred(Node.MethodName.AddChild, _addsRoot);
+
+        _plate = new NamePlate
+        {
+            Name = "NamePlate",
+            Rank = NameRank.Boss,
+            Offset = new Vector3(0, 3.8f, 0),
+        };
+
+        CallDeferred(Node.MethodName.AddChild, _plate);
 
         var collision = new CollisionShape3D
         {
@@ -133,6 +143,16 @@ public partial class ShardNode : StaticBody3D
             _visual.Visible = true;
             _visual.Apply("mesh_placeholder_monolith", ModifierTint(_modifier), 1.0);
         }
+
+        var label = GameContent.Database.Shards.TryGetValue(ShardId, out var def)
+            ? GameItems.Localise(def.Name)
+            : ShardId;
+
+        // The modifier is part of the name, because it is the thing the player needs to know
+        // before deciding whether to walk in.
+        _plate.SetText(_modifier == ShardModifier.None ? label : $"{label}  ·  {_modifier}");
+        _plate.Tint = new Color(ModifierTint(_modifier));
+        _plate.Visible = true;
 
         GD.Print($"[shard] {ShardId} armed — tier {_tier.Tier}, {_tier.MaxHp:N0} hp, modifier {_modifier}");
 
@@ -260,6 +280,13 @@ public partial class ShardNode : StaticBody3D
             {
                 _anchor = add;
                 add.GetNodeOrNull<VisualRoot>("VisualRoot")?.Apply("mesh_placeholder_humanoid", "#ffd24f", 1.15);
+
+                // The one add the player has to find in a crowd, so it gets a louder plate
+                // and says why it matters.
+                add.Plate.Rank = NameRank.Elite;
+                add.Plate.Tint = new Color("ffd24f");
+                add.Plate.Offset = new Vector3(0, 2.7f, 0);
+                add.Plate.SetText($"{Items.GameItems.NameOfEnemy(entry.EnemyId)}  ·  ANCHOR");
             }
 
             index++;
@@ -331,6 +358,8 @@ public partial class ShardNode : StaticBody3D
         GrantRewards();
 
         if (_visual is not null) _visual.Visible = false;
+
+        _plate.Visible = false;
 
         EmitSignal(SignalName.EncounterChanged);
     }

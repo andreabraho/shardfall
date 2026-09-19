@@ -41,6 +41,10 @@ public partial class EnemyBrain : CharacterBody3D
     private HealthBar3D? _bar;
     private TelegraphVisual? _telegraph;
     private RoleMarker _marker = null!;
+    private NamePlate _plate = null!;
+
+    /// <summary>The floating name, so an encounter can promote one add to elite.</summary>
+    public NamePlate Plate => _plate;
 
     private readonly Dictionary<string, double> _abilityCooldowns = new(System.StringComparer.Ordinal);
     private readonly List<Combatant> _shielded = [];
@@ -108,6 +112,7 @@ public partial class EnemyBrain : CharacterBody3D
         CallDeferred(Node.MethodName.AddChild, _telegraph);
 
         _marker = new RoleMarker { Name = "RoleMarker" };
+        _plate = new NamePlate { Name = "NamePlate" };
 
         _home = GlobalPosition;
         _agent.PathDesiredDistance = 0.5f;
@@ -121,6 +126,11 @@ public partial class EnemyBrain : CharacterBody3D
         // parented here rather than alongside the telegraph.
         _marker.Role = Role;
         CallDeferred(Node.MethodName.AddChild, _marker);
+
+        // Tinted to match the role marker: shape, colour and name all say the same thing, so
+        // none of them has to be learned on its own.
+        _plate.Tint = RoleMarker.ColorFor(Role);
+        CallDeferred(Node.MethodName.AddChild, _plate);
         _retreatBudget = RetreatSeconds;
 
         Self.Damaged += OnDamaged;
@@ -144,6 +154,7 @@ public partial class EnemyBrain : CharacterBody3D
         MoveSpeed = (float)def.Stats.MoveSpeed;
         XpReward = def.Xp;
         DropTableId = def.DropTable;
+        _plate.SetText(Items.GameItems.Localise(def.Name));
 
         if (def.Abilities.Length > 0) Abilities = def.Abilities;
 

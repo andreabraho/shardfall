@@ -84,6 +84,12 @@ public static class GameItems
         return item.UpgradeLevel > 0 ? $"{name} +{item.UpgradeLevel}" : name;
     }
 
+    /// <summary>Display name for an enemy definition.</summary>
+    public static string NameOfEnemy(string enemyId) =>
+        GameContent.IsLoaded && GameContent.Database.Enemies.TryGetValue(enemyId, out var def)
+            ? Localise(def.Name)
+            : enemyId;
+
     /// <summary>
     /// Stand-in for the localisation table (Phase 11). Turns "$item.wpn_iron_sword.name" into
     /// "Iron Sword" so the UI is readable while the real strings do not exist yet.
