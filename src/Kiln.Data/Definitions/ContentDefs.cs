@@ -370,3 +370,75 @@ public sealed class DropEntryDef
     public double Chance { get; init; } = 1.0;
     public int[] CountRange { get; init; } = [1, 1];
 }
+
+// ---------------------------------------------------------------------------
+// Zones — the world graph (WLD-01, WLD-02, WLD-03)
+// ---------------------------------------------------------------------------
+
+/// <summary>
+/// A zone as content: who it is for, what it connects to, and the tuning of the things
+/// inside it. Coordinates are deliberately absent — see <see cref="Kiln.Core.World.Zone"/>.
+/// </summary>
+public sealed class ZoneDef : ContentDefBase
+{
+    public string Name { get; init; } = string.Empty;
+
+    /// <summary>hub | wilds | dungeon</summary>
+    public string Kind { get; init; } = "wilds";
+
+    /// <summary>[min, max] character level this zone is built for.</summary>
+    public int[] LevelBand { get; init; } = [1, 1];
+
+    /// <summary>res:// path to the scene that lays it out.</summary>
+    public string Scene { get; init; } = string.Empty;
+
+    public ZoneExitDef[] Exits { get; init; } = [];
+    public ShrineDef[] Shrines { get; init; } = [];
+    public SpawnFieldDef[] SpawnFields { get; init; } = [];
+
+    /// <summary>Shard node ids this zone may host. The scene decides where they stand.</summary>
+    public string[] Shards { get; init; } = [];
+}
+
+public sealed class ZoneExitDef
+{
+    public string To { get; init; } = string.Empty;
+    public int RequiredLevel { get; init; }
+    public string? RequiredQuest { get; init; }
+}
+
+/// <summary>
+/// Nested in its zone rather than declared globally, so "a shrine belongs to exactly one
+/// zone" is true by construction instead of being another rule the validator has to enforce.
+/// </summary>
+public sealed class ShrineDef
+{
+    public string Id { get; init; } = string.Empty;
+    public string Name { get; init; } = string.Empty;
+
+    /// <summary>False for a dungeon checkpoint: it saves and respawns, but you cannot warp in.</summary>
+    public bool FastTravel { get; init; } = true;
+}
+
+public sealed class SpawnFieldDef
+{
+    public string Id { get; init; } = string.Empty;
+    public SpawnEntryDef[] Entries { get; init; } = [];
+
+    /// <summary>How many stand here when the player is present.</summary>
+    public int Count { get; init; } = 3;
+
+    public double RespawnSeconds { get; init; } = 28.0;
+
+    /// <summary>Beyond this the field stops putting creatures in the world.</summary>
+    public double ActivationRadius { get; init; } = 55.0;
+
+    /// <summary>Scatter radius around the field's centre.</summary>
+    public double Radius { get; init; } = 7.0;
+}
+
+public sealed class SpawnEntryDef
+{
+    public string Enemy { get; init; } = string.Empty;
+    public double Weight { get; init; } = 1.0;
+}

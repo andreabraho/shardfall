@@ -1,106 +1,46 @@
-using System.Collections.Generic;
 using Godot;
 using Kiln.Game.Input;
 
 namespace Kiln.Game.Debug;
 
 /// <summary>
-/// Refills the test arena with enemies so a system can be exercised for longer than one
-/// clear takes.
+/// Shortcuts for exercising the spawn fields (WLD-03) without waiting on their timers.
 /// </summary>
 /// <remarks>
-/// Purely a development tool, and one worth having: the drop tables, the upgrade ladder and
-/// the socket bench all need dozens of kills to judge, and an arena that empties after ninety
-/// seconds means every session is spent restarting rather than playing. Real zones get proper
-/// spawn rules in Phase 6; this is the scaffolding that makes the systems testable now.
-/// <para>
-/// It remembers the arena's original placements at startup rather than inventing positions,
-/// so a respawned wave stands where the scene author put it — packs stay packs, and the
-/// archer stays at the range it was placed at.
-/// </para>
+/// The arena used to be refilled by this node from a snapshot of its scene placements, which
+/// was scaffolding for testing items before zones existed. The fields now own population, so
+/// what is left is the two things a tester still cannot do by playing: empty the zone on
+/// demand, and stop it refilling while something is being checked.
 /// </remarks>
 public partial class DebugSpawner : Node
 {
-    private sealed record Placement(string EnemyId, Vector3 Position);
-
-    private readonly List<Placement> _placements = [];
-    private Node3D? _container;
-    private PackedScene? _enemyScene;
-    private double _sinceCheck;
-
-    /// <summary>Seconds between refills. The arena repopulates on its own so testing never stalls.</summary>
-    [Export] public double RespawnSeconds { get; set; } = 12.0;
-
-    /// <summary>
-    /// On by default: an empty arena is the problem this node exists to solve. F7 turns it off
-    /// when a test needs the arena to stay cleared — checking leashing, or that a pack really
-    /// is dead.
-    /// </summary>
-    [Export] public bool AutoRespawn { get; set; } = true;
-
-    /// <summary>Enemies are only refilled while the player is at least this far from the spot.</summary>
-    [Export] public float SafeDistance { get; set; } = 8f;
-
     public override void _Ready()
     {
-        // Debug-only. A release build must never repopulate a zone behind the player's back.
+        // Debug-only. A release build must never let a key empty a zone.
         if (!OS.IsDebugBuild())
         {
             QueueFree();
             return;
         }
 
-        _enemyScene = GD.Load<PackedScene>("res://scenes/enemy.tscn");
-
-        CallDeferred(nameof(RecordPlacements));
+        GD.Print("[spawner] F5 clears every enemy · F6 spawns one next to you · F7 freezes the fields");
 
         DebugOverlay.Register("spawner", () =>
-            _container is null
-                ? "no arena"
-                : $"{LivingCount()}/{_placements.Count} alive · auto {(AutoRespawn ? "on" : "off")}");
+            $"{World.GameWorld.LivingEnemies(GetTree())}/{World.GameWorld.PopulationCap} alive"
+            + (Frozen ? " · fields frozen" : ""));
     }
 
-    /// <summary>Snapshots where the scene author put each enemy, before any of them die.</summary>
-    private void RecordPlacements()
-    {
-        _container = GetTree().CurrentScene?.GetNodeOrNull<Node3D>("Enemies");
-
-        if (_container is null)
-        {
-            GD.Print("[spawner] no Enemies node in this scene — spawning disabled");
-            return;
-        }
-
-        foreach (var child in _container.GetChildren())
-        {
-            if (child is not Combat.EnemyBrain brain) continue;
-
-            _placements.Add(new Placement(brain.EnemyId, brain.GlobalPosition));
-        }
-
-        GD.Print($"[spawner] recorded {_placements.Count} placements — F5 refills, F6 spawns one, F7 toggles auto");
-    }
-
-    private int LivingCount()
-    {
-        if (_container is null) return 0;
-
-        var count = 0;
-
-        foreach (var child in _container.GetChildren())
-        {
-            if (child is Combat.EnemyBrain { IsDead: false }) count++;
-        }
-
-        return count;
-    }
+    /// <summary>
+    /// Stops every field putting anything new in the world. For checking leashing, or that a
+    /// camp really is dead, without a respawn arriving mid-observation.
+    /// </summary>
+    public static bool Frozen { get; private set; }
 
     public override void _UnhandledInput(InputEvent @event)
     {
         if (@event.IsActionPressed(GameActions.DebugSpawnWave))
         {
-            var spawned = Refill(force: true);
-            GD.Print($"[spawner] refilled {spawned} enemies");
+            GD.Print($"[spawner] cleared {ClearAll()} enemies");
             GetViewport().SetInputAsHandled();
             return;
         }
@@ -114,111 +54,79 @@ public partial class DebugSpawner : Node
 
         if (@event.IsActionPressed(GameActions.DebugToggleRespawn))
         {
-            AutoRespawn = !AutoRespawn;
-            GD.Print($"[spawner] auto-respawn {(AutoRespawn ? "on" : "off")}");
+            Frozen = !Frozen;
+            GD.Print($"[spawner] fields {(Frozen ? "frozen" : "running")}");
             GetViewport().SetInputAsHandled();
         }
     }
 
-    public override void _Process(double delta)
+    private int ClearAll()
     {
-        if (!AutoRespawn || _container is null) return;
+        var count = 0;
 
-        _sinceCheck += delta;
-
-        if (_sinceCheck < RespawnSeconds) return;
-
-        _sinceCheck = 0;
-        Refill(force: false);
-    }
-
-    /// <summary>
-    /// Puts back whatever is missing. Returns how many were spawned.
-    /// </summary>
-    /// <param name="force">
-    /// Ignores the safe-distance rule. Pressing the key means "now", even if the player is
-    /// standing on the spot; the timed refill stays polite and never materialises an enemy
-    /// in the player's face.
-    /// </param>
-    private int Refill(bool force)
-    {
-        if (_container is null || _enemyScene is null) return 0;
-
-        // The hard cap. Occupancy below is judged by position, and an enemy chasing the
-        // player is nowhere near the spot it started from — without this, every pull would
-        // free up a placement and the arena would fill without limit.
-        var budget = _placements.Count - LivingCount();
-
-        if (budget <= 0) return 0;
-
-        var occupied = new List<Vector3>();
-
-        foreach (var child in _container.GetChildren())
+        foreach (var node in GetTree().GetNodesInGroup("enemies"))
         {
-            if (child is Combat.EnemyBrain { IsDead: false } brain) occupied.Add(brain.GlobalPosition);
+            if (node is not Combat.EnemyBrain { IsDead: false } brain) continue;
+
+            brain.QueueFree();
+            count++;
         }
 
-        var player = GetTree().GetFirstNodeInGroup("player") as Node3D;
-        var spawned = 0;
-
-        foreach (var placement in _placements)
-        {
-            if (spawned >= budget) break;
-
-            if (IsTaken(placement.Position, occupied)) continue;
-
-            if (!force && player is not null
-                && player.GlobalPosition.DistanceTo(placement.Position) < SafeDistance)
-            {
-                continue;
-            }
-
-            Spawn(placement.EnemyId, placement.Position);
-            occupied.Add(placement.Position);
-            spawned++;
-        }
-
-        return spawned;
+        return count;
     }
 
-    private static bool IsTaken(Vector3 position, List<Vector3> occupied)
-    {
-        foreach (var taken in occupied)
-        {
-            if (taken.DistanceTo(position) < 2.5f) return true;
-        }
-
-        return false;
-    }
-
-    /// <summary>One enemy a few metres from the player, for testing a single fight.</summary>
+    /// <summary>One enemy from the nearest field's roster, a few metres away, for a single fight.</summary>
     private void SpawnNearPlayer()
     {
-        if (_container is null || _placements.Count == 0) return;
-
         if (GetTree().GetFirstNodeInGroup("player") is not Node3D player)
         {
             GD.Print("[spawner] no player to spawn next to");
             return;
         }
 
-        var placement = _placements[(int)(GD.Randi() % (uint)_placements.Count)];
-        var angle = GD.RandRange(0, Mathf.Tau);
-        var offset = new Vector3((float)Mathf.Cos(angle), 0, (float)Mathf.Sin(angle)) * 6f;
+        var field = Nearest(player.GlobalPosition);
 
-        Spawn(placement.EnemyId, player.GlobalPosition + offset);
-        GD.Print($"[spawner] spawned {placement.EnemyId}");
+        if (field is null)
+        {
+            GD.Print("[spawner] no spawn field in this scene");
+            return;
+        }
+
+        var def = World.GameWorld.Catalogue.Field(field.FieldId);
+
+        if (def is null || def.Entries.Count == 0) return;
+
+        if (GD.Load<PackedScene>("res://scenes/enemy.tscn").Instantiate() is not Combat.EnemyBrain enemy) return;
+
+        var angle = GD.RandRange(0, Mathf.Tau);
+
+        enemy.EnemyId = def.Entries[(int)(GD.Randi() % (uint)def.Entries.Count)].EnemyId;
+        enemy.Name = $"Debug_{enemy.EnemyId}_{Time.GetTicksMsec()}";
+
+        GetTree().CurrentScene.AddChild(enemy);
+        enemy.GlobalPosition = player.GlobalPosition
+            + (new Vector3((float)Mathf.Cos(angle), 0, (float)Mathf.Sin(angle)) * 6f);
+
+        GD.Print($"[spawner] spawned {enemy.EnemyId}");
     }
 
-    private void Spawn(string enemyId, Vector3 at)
+    private World.SpawnFieldNode? Nearest(Vector3 to)
     {
-        if (_enemyScene?.Instantiate() is not Combat.EnemyBrain enemy) return;
+        World.SpawnFieldNode? best = null;
+        var distance = float.MaxValue;
 
-        // Set before the node enters the tree: EnemyBrain reads its definition in _Ready.
-        enemy.EnemyId = enemyId;
-        enemy.Name = $"Spawned_{enemyId}_{Time.GetTicksMsec()}";
+        foreach (var node in GetTree().GetNodesInGroup("spawn_fields"))
+        {
+            if (node is not World.SpawnFieldNode field) continue;
 
-        _container!.AddChild(enemy);
-        enemy.GlobalPosition = at;
+            var d = field.GlobalPosition.DistanceTo(to);
+
+            if (d >= distance) continue;
+
+            distance = d;
+            best = field;
+        }
+
+        return best;
     }
 }

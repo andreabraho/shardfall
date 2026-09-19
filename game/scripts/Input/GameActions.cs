@@ -45,6 +45,9 @@ public static class GameActions
     public const string ToggleInventory = "toggle_inventory";
     public const string ToggleUpgradeBench = "toggle_upgrade_bench";
 
+    /// <summary>Shrines, and later NPCs and doors. One key for "use the thing I am standing at".</summary>
+    public const string Interact = "interact";
+
     // Development only — the arena spawner (see DebugSpawner). Stripped from release builds.
     public const string DebugSpawnWave = "debug_spawn_wave";
     public const string DebugSpawnOne = "debug_spawn_one";
@@ -80,6 +83,7 @@ public static class GameActions
         [Cancel] = [Key(Godot.Key.Escape)],
         [ToggleInventory] = [Key(Godot.Key.I)],
         [ToggleUpgradeBench] = [Key(Godot.Key.U)],
+        [Interact] = [Key(Godot.Key.F)],
         [DebugSpawnWave] = [Key(Godot.Key.F5)],
         [DebugSpawnOne] = [Key(Godot.Key.F6)],
         [DebugToggleRespawn] = [Key(Godot.Key.F7)],

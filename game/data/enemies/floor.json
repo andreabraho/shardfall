@@ -1,0 +1,112 @@
+[
+  {
+    "id": "mob_pale_gnawer",
+    "name": "$mob.mob_pale_gnawer.name",
+    "family": "undead",
+    "role": "bruiser",
+    "level": 8,
+    "stats": { "hp": 415, "attack_power": 45, "defense": 26, "move_speed": 5.6 },
+    "stagger_pool": 80,
+    "abilities": [
+      { "id": "abl_gnaw", "cooldown": 2.3, "windup": 0.55, "damage_coef": 1.00 },
+      { "id": "abl_gnawer_leap", "cooldown": 7.5, "windup": 1.55, "damage_coef": 1.50,
+        "telegraph": { "shape": "cone", "radius": 2.5, "angle": 60 } }
+    ],
+    "ai": "bt_melee_chaser",
+    "aggro_radius": 12,
+    "leash_radius": 20,
+    "xp": 215,
+    "drop_table": "dt_valley_undead_t2",
+    "visual": "mesh_placeholder_humanoid",
+    "visual_scale": 0.95,
+    "visual_tint": "#9aa08f"
+  },
+  {
+    "id": "mob_bone_flinger",
+    "name": "$mob.mob_bone_flinger.name",
+    "family": "undead",
+    "role": "archer",
+    "level": 9,
+    "stats": { "hp": 300, "attack_power": 52, "defense": 20, "move_speed": 4.6 },
+    "stagger_pool": 50,
+    "abilities": [
+      { "id": "abl_bone_shard", "cooldown": 2.1, "windup": 0.80, "damage_coef": 1.10, "range": 12.0 },
+      { "id": "abl_bone_scatter", "cooldown": 9.0, "windup": 1.75, "damage_coef": 1.30, "range": 11.0,
+        "placement": "target",
+        "telegraph": { "shape": "circle", "radius": 3.0 } }
+    ],
+    "ai": "bt_ranged_kiter",
+    "aggro_radius": 15,
+    "leash_radius": 23,
+    "xp": 242,
+    "drop_table": "dt_valley_undead_t2",
+    "visual": "mesh_placeholder_humanoid",
+    "visual_scale": 1.0,
+    "visual_tint": "#b3ae9a"
+  },
+  {
+    "id": "mob_barrow_shield",
+    "name": "$mob.mob_barrow_shield.name",
+    "family": "undead",
+    "role": "shielder",
+    "level": 10,
+    "stats": { "hp": 760, "attack_power": 40, "defense": 56, "move_speed": 3.8 },
+    "stagger_pool": 155,
+    "abilities": [
+      { "id": "abl_barrow_slam", "cooldown": 3.2, "windup": 0.90, "damage_coef": 1.15,
+        "applies": { "kind": "stun", "duration": 0.8, "chance": 0.30 } },
+      { "id": "abl_barrow_aegis", "cooldown": 14.0, "windup": 2.00, "damage_coef": 0.00 }
+    ],
+    "ai": "bt_support_shielder",
+    "aggro_radius": 11,
+    "leash_radius": 18,
+    "xp": 292,
+    "drop_table": "dt_valley_undead_t2",
+    "visual": "mesh_placeholder_heavy",
+    "visual_scale": 1.05,
+    "visual_tint": "#8d8f7d"
+  },
+  {
+    "id": "mob_grave_stitcher",
+    "name": "$mob.mob_grave_stitcher.name",
+    "family": "undead",
+    "role": "mender",
+    "level": 10,
+    "stats": { "hp": 430, "attack_power": 34, "defense": 24, "move_speed": 4.1 },
+    "stagger_pool": 65,
+    "abilities": [
+      { "id": "abl_stitch_ally", "cooldown": 7.0, "windup": 1.45, "damage_coef": 0.00, "range": 10.0 },
+      { "id": "abl_stitch_bolt", "cooldown": 3.0, "windup": 0.85, "damage_coef": 0.90, "range": 9.5 }
+    ],
+    "ai": "bt_support_healer",
+    "aggro_radius": 13,
+    "leash_radius": 20,
+    "xp": 298,
+    "drop_table": "dt_valley_undead_t2",
+    "visual": "mesh_placeholder_humanoid",
+    "visual_scale": 0.95,
+    "visual_tint": "#6f7a6b"
+  },
+  {
+    "id": "mob_carrion_bloat",
+    "name": "$mob.mob_carrion_bloat.name",
+    "family": "undead",
+    "role": "bomber",
+    "level": 11,
+    "stats": { "hp": 375, "attack_power": 70, "defense": 18, "move_speed": 4.9 },
+    "stagger_pool": 45,
+    "abilities": [
+      { "id": "abl_bloat_rupture", "cooldown": 1.0, "windup": 1.95, "damage_coef": 1.95,
+        "applies": { "kind": "poison", "magnitude": 9, "duration": 5.0 },
+        "telegraph": { "shape": "circle", "radius": 3.8 } }
+    ],
+    "ai": "bt_suicide_charger",
+    "aggro_radius": 13,
+    "leash_radius": 22,
+    "xp": 336,
+    "drop_table": "dt_valley_undead_t2",
+    "visual": "mesh_placeholder_quadruped",
+    "visual_scale": 0.9,
+    "visual_tint": "#8b7f55"
+  }
+]

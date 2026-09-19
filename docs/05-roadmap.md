@@ -106,7 +106,7 @@ click-to-move lives or dies on responsiveness.
 | PRG-03 | Skill system: definitions, cooldowns, mana costs, cast types, targeting modes | **[C]** | ✅ |
 | PRG-04 | 8 Warrior skills across the two trees | **[C]** | ✅ data + level gating; 3 are passive/self and land with their effects |
 | PRG-05 | Skill mastery accrual + rank-up mechanical changes | **[C]** | ✅ ranks change behaviour, not just numbers |
-| PRG-06 | Free respec at shrines | **[C]** | |
+| PRG-06 | Free respec at shrines | **[C]** | ✅ (WLD-02) — 600 yang rather than free, so it is a decision and not a slider |
 | PRG-07 | Catch-up XP curve + low-level enemy floor (FR-2.7) | **[C]** | ✅ |
 | PRG-08 | Skill VFX with primitives + Godot particles | **[C→You]** | You call readability |
 | PRG-09 | **Balance simulator v1** — walks the XP table, reports level-vs-zone-band deltas | **[C]** | ✅ runs in CI; found the first draft gave quests 88% of all XP |
@@ -161,17 +161,22 @@ click-to-move lives or dies on responsiveness.
 **Goal:** a place to play, not an arena.
 **Exit:** hub → 3 zones → dungeon traversable, shrines and fast travel working.
 
+**Status 2026-09-19:** the world exists as a validated graph — 6 zones, 11 shrines, 15 spawn
+fields, 25 enemies across every band from 3 to 23 — and the ridge is playable with it. What
+is left is level design: five of the six zones are declared but not laid out, which CI now
+reports as a warning on every run rather than as something to remember.
+
 | ID | Task | Owner | Notes |
 |---|---|---|---|
-| WLD-01 | Zone loading/streaming, level bands, transitions | **[C]** | |
-| WLD-02 | Shrine system: save, respawn, fast travel, flask refill, respec | **[C]** | |
-| WLD-03 | Spawn-zone system: density caps, respawn timers, distance activation | **[C]** | |
+| WLD-01 | Zone loading/streaming, level bands, transitions | **[C]** | ◐ graph, bands and gating done and validated; scene-to-scene loading waits on WLD-05/06/07 |
+| WLD-02 | Shrine system: save, respawn, fast travel, flask refill, respec | **[C]** | ✅ save waits on Phase 8; respec unblocks PRG-06 |
+| WLD-03 | Spawn-zone system: density caps, respawn timers, distance activation | **[C]** | ✅ camps come back as camps, and keep their timers while you are away |
 | WLD-04 | Modular greybox kit (cliffs, paths, ruins, props) as primitives | **[C]** | Via the ENG-07 registry |
 | WLD-05 | **Greybox the 3 outdoor zones** — layout, landmarks, encounter placement, sightlines | **[C→You]** | I can place a first pass from a spec; level design by feel is yours |
 | WLD-06 | **Greybox the hub village** + NPC placement | **[C→You]** | |
 | WLD-07 | **Greybox the dungeon**: 2 mini-bosses, secret room, 3-phase boss arena, checkpoints | **[C→You]** | |
 | WLD-08 | Map + minimap: fog of war, markers, custom pins, shard-node overlay | **[C]** | |
-| WLD-09 | Fast travel UI + yang cost | **[C]** | |
+| WLD-09 | Fast travel UI + yang cost | **[C]** | ✅ flat fee by destination band; refused in combat, and to a dungeon checkpoint |
 | WLD-10 | 2 bosses: phases, mechanics, arenas | **[C→You]** | I build, you tune the difficulty |
 | WLD-11 | **Zone-layout review and iteration** | **[You]** | |
 

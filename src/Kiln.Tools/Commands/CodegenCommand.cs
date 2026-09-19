@@ -79,6 +79,8 @@ public static class CodegenCommand
         Section(sb, "BonusPools", db.BonusPools.Keys);
         Section(sb, "UpgradePaths", db.UpgradePaths.Keys);
         Section(sb, "Visuals", db.Visuals.Keys);
+        Section(sb, "Shards", db.Shards.Keys);
+        Section(sb, "Zones", db.Zones.Keys);
 
         sb.AppendLine("}");
         return sb.ToString().ReplaceLineEndings("\n");

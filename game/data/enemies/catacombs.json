@@ -1,0 +1,113 @@
+[
+  {
+    "id": "mob_crypt_stalker",
+    "name": "$mob.mob_crypt_stalker.name",
+    "family": "devil",
+    "role": "bruiser",
+    "level": 20,
+    "stats": { "hp": 1360, "attack_power": 96, "defense": 74, "move_speed": 5.8 },
+    "stagger_pool": 160,
+    "abilities": [
+      { "id": "abl_stalker_rend", "cooldown": 2.2, "windup": 0.55, "damage_coef": 1.05,
+        "applies": { "kind": "bleed", "magnitude": 14, "duration": 4.0 } },
+      { "id": "abl_stalker_pounce", "cooldown": 7.0, "windup": 1.70, "damage_coef": 1.65,
+        "telegraph": { "shape": "cone", "radius": 3.0, "angle": 70 } }
+    ],
+    "ai": "bt_melee_chaser",
+    "aggro_radius": 14,
+    "leash_radius": 22,
+    "xp": 800,
+    "drop_table": "dt_catacombs_t5",
+    "visual": "mesh_placeholder_quadruped",
+    "visual_scale": 1.15,
+    "visual_tint": "#4b3a58"
+  },
+  {
+    "id": "mob_void_caster",
+    "name": "$mob.mob_void_caster.name",
+    "family": "devil",
+    "role": "archer",
+    "level": 21,
+    "stats": { "hp": 930, "attack_power": 116, "defense": 50, "move_speed": 4.8 },
+    "stagger_pool": 85,
+    "abilities": [
+      { "id": "abl_void_lance", "cooldown": 2.0, "windup": 0.85, "damage_coef": 1.15, "range": 14.0 },
+      { "id": "abl_void_collapse", "cooldown": 10.0, "windup": 2.10, "damage_coef": 1.55, "range": 13.0,
+        "placement": "target",
+        "telegraph": { "shape": "circle", "radius": 4.0 } }
+    ],
+    "ai": "bt_ranged_kiter",
+    "aggro_radius": 17,
+    "leash_radius": 26,
+    "xp": 855,
+    "drop_table": "dt_catacombs_t5",
+    "visual": "mesh_placeholder_humanoid",
+    "visual_scale": 1.05,
+    "visual_tint": "#6b4a8c"
+  },
+  {
+    "id": "mob_obsidian_ward",
+    "name": "$mob.mob_obsidian_ward.name",
+    "family": "devil",
+    "role": "shielder",
+    "level": 22,
+    "stats": { "hp": 2340, "attack_power": 84, "defense": 138, "move_speed": 3.6 },
+    "stagger_pool": 290,
+    "abilities": [
+      { "id": "abl_obsidian_slam", "cooldown": 3.4, "windup": 1.00, "damage_coef": 1.20,
+        "applies": { "kind": "stun", "duration": 1.1, "chance": 0.35 } },
+      { "id": "abl_obsidian_aegis", "cooldown": 13.0, "windup": 2.00, "damage_coef": 0.00 }
+    ],
+    "ai": "bt_support_shielder",
+    "aggro_radius": 12,
+    "leash_radius": 19,
+    "xp": 990,
+    "drop_table": "dt_catacombs_t5",
+    "visual": "mesh_placeholder_heavy",
+    "visual_scale": 1.25,
+    "visual_tint": "#3d3a46"
+  },
+  {
+    "id": "mob_hollow_choir",
+    "name": "$mob.mob_hollow_choir.name",
+    "family": "devil",
+    "role": "mender",
+    "level": 22,
+    "stats": { "hp": 1250, "attack_power": 76, "defense": 58, "move_speed": 4.2 },
+    "stagger_pool": 105,
+    "abilities": [
+      { "id": "abl_choir_restore", "cooldown": 6.0, "windup": 1.55, "damage_coef": 0.00, "range": 12.0 },
+      { "id": "abl_choir_wail", "cooldown": 3.0, "windup": 0.90, "damage_coef": 1.00, "range": 10.5 }
+    ],
+    "ai": "bt_support_healer",
+    "aggro_radius": 15,
+    "leash_radius": 22,
+    "xp": 1000,
+    "drop_table": "dt_catacombs_t5",
+    "visual": "mesh_placeholder_humanoid",
+    "visual_scale": 1.05,
+    "visual_tint": "#7a6aa0"
+  },
+  {
+    "id": "mob_rift_seed",
+    "name": "$mob.mob_rift_seed.name",
+    "family": "devil",
+    "role": "bomber",
+    "level": 23,
+    "stats": { "hp": 1090, "attack_power": 160, "defense": 44, "move_speed": 5.2 },
+    "stagger_pool": 70,
+    "abilities": [
+      { "id": "abl_rift_collapse", "cooldown": 1.0, "windup": 2.45, "damage_coef": 2.20,
+        "applies": { "kind": "poison", "magnitude": 22, "duration": 5.0 },
+        "telegraph": { "shape": "circle", "radius": 5.0 } }
+    ],
+    "ai": "bt_suicide_charger",
+    "aggro_radius": 15,
+    "leash_radius": 24,
+    "xp": 1090,
+    "drop_table": "dt_catacombs_t5",
+    "visual": "mesh_placeholder_quadruped",
+    "visual_scale": 1.05,
+    "visual_tint": "#5a3f6e"
+  }
+]

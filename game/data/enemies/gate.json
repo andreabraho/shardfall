@@ -1,0 +1,112 @@
+[
+  {
+    "id": "mob_gate_breaker",
+    "name": "$mob.mob_gate_breaker.name",
+    "family": "orc",
+    "role": "bruiser",
+    "level": 16,
+    "stats": { "hp": 1020, "attack_power": 78, "defense": 58, "move_speed": 5.5 },
+    "stagger_pool": 140,
+    "abilities": [
+      { "id": "abl_breaker_cleave", "cooldown": 2.6, "windup": 0.60, "damage_coef": 1.05 },
+      { "id": "abl_breaker_sweep", "cooldown": 8.5, "windup": 2.05, "damage_coef": 1.70,
+        "telegraph": { "shape": "cone", "radius": 4.0, "angle": 110 } }
+    ],
+    "ai": "bt_melee_chaser",
+    "aggro_radius": 13,
+    "leash_radius": 21,
+    "xp": 505,
+    "drop_table": "dt_gate_t4",
+    "visual": "mesh_placeholder_heavy",
+    "visual_scale": 1.15,
+    "visual_tint": "#6d5a43"
+  },
+  {
+    "id": "mob_ash_slinger",
+    "name": "$mob.mob_ash_slinger.name",
+    "family": "orc",
+    "role": "archer",
+    "level": 17,
+    "stats": { "hp": 700, "attack_power": 92, "defense": 40, "move_speed": 4.9 },
+    "stagger_pool": 75,
+    "abilities": [
+      { "id": "abl_ash_bolt", "cooldown": 2.0, "windup": 0.80, "damage_coef": 1.10, "range": 13.0 },
+      { "id": "abl_ash_rain", "cooldown": 9.0, "windup": 2.10, "damage_coef": 1.45, "range": 12.0,
+        "placement": "target",
+        "telegraph": { "shape": "circle", "radius": 4.0 } }
+    ],
+    "ai": "bt_ranged_kiter",
+    "aggro_radius": 16,
+    "leash_radius": 25,
+    "xp": 548,
+    "drop_table": "dt_gate_t4",
+    "visual": "mesh_placeholder_humanoid",
+    "visual_scale": 1.05,
+    "visual_tint": "#8c5c3a"
+  },
+  {
+    "id": "mob_iron_bulwark",
+    "name": "$mob.mob_iron_bulwark.name",
+    "family": "orc",
+    "role": "shielder",
+    "level": 18,
+    "stats": { "hp": 1780, "attack_power": 66, "defense": 108, "move_speed": 3.7 },
+    "stagger_pool": 240,
+    "abilities": [
+      { "id": "abl_bulwark_slam", "cooldown": 3.4, "windup": 0.95, "damage_coef": 1.20,
+        "applies": { "kind": "stun", "duration": 1.0, "chance": 0.35 } },
+      { "id": "abl_bulwark_aegis", "cooldown": 14.0, "windup": 2.00, "damage_coef": 0.00 }
+    ],
+    "ai": "bt_support_shielder",
+    "aggro_radius": 12,
+    "leash_radius": 19,
+    "xp": 660,
+    "drop_table": "dt_gate_t4",
+    "visual": "mesh_placeholder_heavy",
+    "visual_scale": 1.2,
+    "visual_tint": "#59616b"
+  },
+  {
+    "id": "mob_ember_chanter",
+    "name": "$mob.mob_ember_chanter.name",
+    "family": "orc",
+    "role": "mender",
+    "level": 18,
+    "stats": { "hp": 950, "attack_power": 60, "defense": 46, "move_speed": 4.2 },
+    "stagger_pool": 90,
+    "abilities": [
+      { "id": "abl_ember_mend", "cooldown": 6.5, "windup": 1.50, "damage_coef": 0.00, "range": 11.0 },
+      { "id": "abl_ember_spit", "cooldown": 3.0, "windup": 0.85, "damage_coef": 0.95, "range": 10.0 }
+    ],
+    "ai": "bt_support_healer",
+    "aggro_radius": 14,
+    "leash_radius": 21,
+    "xp": 668,
+    "drop_table": "dt_gate_t4",
+    "visual": "mesh_placeholder_humanoid",
+    "visual_scale": 1.0,
+    "visual_tint": "#a8642f"
+  },
+  {
+    "id": "mob_cinder_bearer",
+    "name": "$mob.mob_cinder_bearer.name",
+    "family": "orc",
+    "role": "bomber",
+    "level": 19,
+    "stats": { "hp": 820, "attack_power": 125, "defense": 36, "move_speed": 5.1 },
+    "stagger_pool": 60,
+    "abilities": [
+      { "id": "abl_cinder_detonate", "cooldown": 1.0, "windup": 2.45, "damage_coef": 2.10,
+        "applies": { "kind": "burn", "magnitude": 16, "duration": 4.0 },
+        "telegraph": { "shape": "circle", "radius": 5.0 } }
+    ],
+    "ai": "bt_suicide_charger",
+    "aggro_radius": 14,
+    "leash_radius": 23,
+    "xp": 730,
+    "drop_table": "dt_gate_t4",
+    "visual": "mesh_placeholder_quadruped",
+    "visual_scale": 1.0,
+    "visual_tint": "#b0522a"
+  }
+]

@@ -1,0 +1,111 @@
+[
+  {
+    "id": "mob_thornback_boar",
+    "name": "$mob.mob_thornback_boar.name",
+    "family": "animal",
+    "role": "bruiser",
+    "level": 3,
+    "stats": { "hp": 205, "attack_power": 30, "defense": 13, "move_speed": 5.4 },
+    "stagger_pool": 60,
+    "abilities": [
+      { "id": "abl_boar_gore", "cooldown": 2.6, "windup": 0.50, "damage_coef": 1.00 },
+      { "id": "abl_boar_charge", "cooldown": 8.0, "windup": 2.20, "damage_coef": 1.45,
+        "telegraph": { "shape": "line", "radius": 4.5, "angle": 0 } }
+    ],
+    "ai": "bt_melee_chaser",
+    "aggro_radius": 10,
+    "leash_radius": 18,
+    "xp": 62,
+    "drop_table": "dt_valley_animal_t1",
+    "visual": "mesh_placeholder_quadruped",
+    "visual_scale": 0.95,
+    "visual_tint": "#7a5b42"
+  },
+  {
+    "id": "mob_sling_scavenger",
+    "name": "$mob.mob_sling_scavenger.name",
+    "family": "human",
+    "role": "archer",
+    "level": 4,
+    "stats": { "hp": 165, "attack_power": 36, "defense": 11, "move_speed": 4.7 },
+    "stagger_pool": 40,
+    "abilities": [
+      { "id": "abl_sling_stone", "cooldown": 2.2, "windup": 0.75, "damage_coef": 1.05, "range": 11.0 },
+      { "id": "abl_sling_scatter", "cooldown": 9.5, "windup": 1.70, "damage_coef": 1.25, "range": 10.0,
+        "placement": "target",
+        "telegraph": { "shape": "circle", "radius": 3.0 } }
+    ],
+    "ai": "bt_ranged_kiter",
+    "aggro_radius": 14,
+    "leash_radius": 22,
+    "xp": 88,
+    "drop_table": "dt_valley_animal_t1",
+    "visual": "mesh_placeholder_humanoid",
+    "visual_scale": 0.95,
+    "visual_tint": "#8a7a55"
+  },
+  {
+    "id": "mob_husk_sentinel",
+    "name": "$mob.mob_husk_sentinel.name",
+    "family": "mystic",
+    "role": "shielder",
+    "level": 5,
+    "stats": { "hp": 420, "attack_power": 32, "defense": 34, "move_speed": 3.7 },
+    "stagger_pool": 110,
+    "abilities": [
+      { "id": "abl_husk_swing", "cooldown": 3.2, "windup": 0.85, "damage_coef": 1.10 },
+      { "id": "abl_husk_bulwark", "cooldown": 15.0, "windup": 2.10, "damage_coef": 0.00 }
+    ],
+    "ai": "bt_support_shielder",
+    "aggro_radius": 11,
+    "leash_radius": 18,
+    "xp": 128,
+    "drop_table": "dt_valley_animal_t1",
+    "visual": "mesh_placeholder_heavy",
+    "visual_scale": 1.0,
+    "visual_tint": "#6b7280"
+  },
+  {
+    "id": "mob_moss_tender",
+    "name": "$mob.mob_moss_tender.name",
+    "family": "mystic",
+    "role": "mender",
+    "level": 5,
+    "stats": { "hp": 225, "attack_power": 26, "defense": 14, "move_speed": 4.2 },
+    "stagger_pool": 50,
+    "abilities": [
+      { "id": "abl_tend_ally", "cooldown": 7.5, "windup": 1.40, "damage_coef": 0.00, "range": 10.0 },
+      { "id": "abl_moss_lash", "cooldown": 3.0, "windup": 0.80, "damage_coef": 0.85, "range": 9.0 }
+    ],
+    "ai": "bt_support_healer",
+    "aggro_radius": 13,
+    "leash_radius": 20,
+    "xp": 132,
+    "drop_table": "dt_valley_animal_t1",
+    "visual": "mesh_placeholder_humanoid",
+    "visual_scale": 0.9,
+    "visual_tint": "#5f8a5c"
+  },
+  {
+    "id": "mob_spore_pod",
+    "name": "$mob.mob_spore_pod.name",
+    "family": "mystic",
+    "role": "bomber",
+    "level": 6,
+    "stats": { "hp": 190, "attack_power": 44, "defense": 10, "move_speed": 5.0 },
+    "stagger_pool": 35,
+    "abilities": [
+      { "id": "abl_spore_burst", "cooldown": 1.0, "windup": 1.85, "damage_coef": 1.90,
+        "applies": { "kind": "poison", "magnitude": 5, "duration": 4.0 },
+        "telegraph": { "shape": "circle", "radius": 3.5 } }
+    ],
+    "ai": "bt_suicide_charger",
+    "aggro_radius": 13,
+    "leash_radius": 22,
+    "xp": 158,
+    "drop_table": "dt_valley_animal_t1",
+    "visual": "mesh_placeholder_quadruped",
+    "visual_scale": 0.8,
+    "visual_tint": "#7d9b4a"
+  }
+]

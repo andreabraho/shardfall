@@ -114,6 +114,10 @@ public partial class EnemyBrain : CharacterBody3D
         _marker = new RoleMarker { Name = "RoleMarker" };
         _plate = new NamePlate { Name = "NamePlate" };
 
+        // The spawn fields and the population cap both count this group, so every enemy has
+        // to be in it however it arrived — placed in the scene, spawned by a field or by a shard.
+        AddToGroup("enemies");
+
         _home = GlobalPosition;
         _agent.PathDesiredDistance = 0.5f;
         _agent.TargetDesiredDistance = AttackRange * 0.8f;

@@ -218,16 +218,40 @@ public partial class PlayerCharacter : Node
             : _motor.GlobalPosition - nearest.GlobalPosition;
     }
 
+    /// <summary>
+    /// Where death sends the player: the last shrine they touched, falling back to where they
+    /// started. The fallback matters — a zone the player has crossed without finding a shrine
+    /// must still have an answer to dying in it.
+    /// </summary>
+    private Vector3 RespawnPoint()
+    {
+        var anchor = World.GameWorld.IsLoaded ? World.GameWorld.Travel.Anchor : null;
+
+        if (anchor is null) return _spawnPoint;
+
+        foreach (var node in GetTree().GetNodesInGroup("shrines"))
+        {
+            if (node is World.ShrineNode shrine && shrine.ShrineId == anchor)
+            {
+                return shrine.GlobalPosition + new Vector3(0, 0.1f, 2.5f);
+            }
+        }
+
+        return _spawnPoint;
+    }
+
     private async void OnDied()
     {
-        GD.Print("[combat] player died — respawning at spawn point");
+        var at = RespawnPoint();
+
+        GD.Print($"[combat] player died — respawning at {(World.GameWorld.IsLoaded ? World.GameWorld.Travel.Anchor ?? "start" : "start")}");
         _motor.Stop();
 
         await ToSignal(GetTree().CreateTimer(RespawnSeconds), SceneTreeTimer.SignalName.Timeout);
 
         if (!IsInstanceValid(this)) return;
 
-        _motor.GlobalPosition = _spawnPoint;
+        _motor.GlobalPosition = at;
         _motor.MovementLocked = false;
         _motor.Stop();
         _combatant.Revive();

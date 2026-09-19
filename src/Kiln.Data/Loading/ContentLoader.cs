@@ -28,6 +28,7 @@ public static class ContentLoader
         ("skills", typeof(SkillDef)),
         ("quests", typeof(QuestDef)),
         ("shards", typeof(ShardDef)),
+        ("zones", typeof(ZoneDef)),
     ];
 
     /// <summary>Files under <c>tables/</c> that hold a specific type.</summary>
@@ -82,6 +83,7 @@ public static class ContentLoader
             UpgradePaths = ctx.UpgradePaths,
             Visuals = ctx.Visuals,
             Shards = ctx.Shards,
+            Zones = ctx.Zones,
         };
 
         return new ContentLoadResult(db, ctx.Errors);
@@ -99,6 +101,7 @@ public static class ContentLoader
         public readonly Dictionary<string, UpgradePathDef> UpgradePaths = new(StringComparer.Ordinal);
         public readonly Dictionary<string, VisualDef> Visuals = new(StringComparer.Ordinal);
         public readonly Dictionary<string, ShardDef> Shards = new(StringComparer.Ordinal);
+        public readonly Dictionary<string, ZoneDef> Zones = new(StringComparer.Ordinal);
     }
 
     private static void LoadFile(IContentFileSource source, string file, Type type, LoadContext ctx)
@@ -144,6 +147,9 @@ public static class ContentLoader
                     break;
                 case var t when t == typeof(VisualDef):
                     Add(Deserialize<VisualDef>(json), file, ctx.Visuals, ctx.Errors);
+                    break;
+                case var t when t == typeof(ZoneDef):
+                    Add(Deserialize<ZoneDef>(json), file, ctx.Zones, ctx.Errors);
                     break;
             }
         }

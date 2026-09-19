@@ -2,6 +2,7 @@ using Kiln.Core.Combat;
 using Kiln.Core.Foundation;
 using Kiln.Core.Encounters;
 using Kiln.Core.Items;
+using Kiln.Core.World;
 using Kiln.Data.Definitions;
 using Kiln.Data.Loading;
 
@@ -35,6 +36,7 @@ public static class ContentValidator
         StatKeys(db, report);
         RarityShape(db, report);
         ShardEncounters(db, report);
+        WorldGraph(db, report);
 
         return report;
     }
@@ -586,5 +588,214 @@ public static class ContentValidator
         }
 
         return null;
+    }
+
+    // -- R13 ----------------------------------------------------------------
+    /// <summary>
+    /// The world has to be a world (WLD-01/02/03).
+    /// </summary>
+    /// <remarks>
+    /// Every failure here is invisible in a scene file and obvious in play: a zone no path
+    /// reaches, a door to a zone that was renamed, a level nothing is built for, a zone you
+    /// can die in with nowhere to come back to, a camp of creatures six levels above the band
+    /// they were placed in. The graph is small enough to check exhaustively, so there is no
+    /// reason to find any of them by walking there.
+    /// </remarks>
+    private static void WorldGraph(ContentDatabase db, ValidationReport report)
+    {
+        if (db.Zones.Count == 0) return;
+
+        var catalogue = new World.WorldCatalogue(db);
+        var graph = catalogue.Graph;
+        var hubs = db.Zones.Values.Where(z => World.WorldCatalogue.KindOf(z.Kind) == ZoneKind.Hub).ToList();
+
+        if (hubs.Count != 1)
+        {
+            report.Error("world-graph", hubs.FirstOrDefault()?.SourceFile ?? "zones/",
+                $"the world has {hubs.Count} hub zones.",
+                "Exactly one zone must be kind \"hub\": it is where death, fast travel and every service lead.");
+        }
+
+        foreach (var id in graph.Orphans())
+        {
+            report.Error("world-graph", db.Zones[id].SourceFile,
+                $"'{id}' cannot be reached from the hub by any chain of exits.",
+                "Add an exit leading to it, or delete it.");
+        }
+
+        var gaps = graph.BandGaps();
+
+        if (gaps.Count > 0)
+        {
+            report.Error("world-bands", "zones/",
+                $"no zone is built for level{(gaps.Count > 1 ? "s" : "")} {string.Join(", ", gaps)}.",
+                "Widen a neighbouring band. A gap leaves the player with nothing to do but grind a zone that has stopped paying.");
+        }
+
+        var shrineIds = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach (var zone in db.Zones.Values)
+        {
+            var kind = World.WorldCatalogue.KindOf(zone.Kind);
+
+            // Declared but not yet laid out. A warning rather than an error so the graph can be
+            // designed ahead of the greybox, and so the count of unbuilt zones stays visible in
+            // every CI run instead of living in someone's head.
+            if (string.IsNullOrEmpty(zone.Scene))
+            {
+                report.Warn("world-graph", zone.SourceFile,
+                    $"'{zone.Id}' has no scene yet (WLD-05/06/07).");
+            }
+
+            ZoneExits(db, zone, report);
+            ZoneShrines(zone, kind, shrineIds, report);
+            ZoneFields(db, zone, kind, report);
+
+            foreach (var shard in zone.Shards)
+            {
+                if (!db.Shards.ContainsKey(shard))
+                {
+                    report.Error("cross-ref", zone.SourceFile,
+                        $"'{zone.Id}' hosts shard '{shard}', which does not exist.");
+                }
+            }
+        }
+    }
+
+    private static void ZoneExits(ContentDatabase db, ZoneDef zone, ValidationReport report)
+    {
+        foreach (var exit in zone.Exits)
+        {
+            if (!db.Zones.TryGetValue(exit.To, out var target))
+            {
+                report.Error("cross-ref", zone.SourceFile,
+                    $"'{zone.Id}' has an exit to '{exit.To}', which does not exist.");
+                continue;
+            }
+
+            if (exit.RequiredQuest is { } quest && !db.Quests.ContainsKey(quest))
+            {
+                report.Error("cross-ref", zone.SourceFile,
+                    $"'{zone.Id}' gates its exit to '{exit.To}' behind quest '{quest}', which does not exist.");
+            }
+
+            // A one-way door out of open country is almost always a missing line rather than a
+            // design choice; a dungeon mouth legitimately is one, so only the wilds are warned.
+            if (World.WorldCatalogue.KindOf(target.Kind) == ZoneKind.Dungeon) continue;
+
+            if (!target.Exits.Any(back => back.To == zone.Id))
+            {
+                report.Warn("world-graph", zone.SourceFile,
+                    $"'{zone.Id}' exits to '{exit.To}' but '{exit.To}' has no way back.",
+                    "Add the return exit, unless the one-way trip is deliberate.");
+            }
+        }
+    }
+
+    private static void ZoneShrines(
+        ZoneDef zone, ZoneKind kind, HashSet<string> seen, ValidationReport report)
+    {
+        // The hub is a shrine-shaped place in its own right, but everywhere the player can die
+        // needs somewhere to come back to, or death has no defined answer.
+        if (zone.Shrines.Length == 0 && kind != ZoneKind.Hub)
+        {
+            report.Error("world-shrines", zone.SourceFile,
+                $"'{zone.Id}' has no shrine.",
+                "Every zone the player can die in needs a respawn point.");
+        }
+
+        foreach (var shrine in zone.Shrines)
+        {
+            if (!ContentId.IsValid(shrine.Id))
+            {
+                report.Error("id-format", zone.SourceFile,
+                    $"shrine '{shrine.Id}' in '{zone.Id}' is not a valid id.",
+                    "Use lowercase prefix_name, e.g. 'shr_vale_gate'.");
+            }
+
+            if (!seen.Add(shrine.Id))
+            {
+                report.Error("world-shrines", zone.SourceFile,
+                    $"duplicate shrine id '{shrine.Id}'.");
+            }
+
+            if (!string.IsNullOrEmpty(shrine.Name) && !shrine.Name.StartsWith('$'))
+            {
+                report.Error("localisation", zone.SourceFile,
+                    $"shrine '{shrine.Id}' has a literal name \"{shrine.Name}\".",
+                    "Player-facing text must be a $localisation.key (NFR-L.1).");
+            }
+        }
+    }
+
+    private static void ZoneFields(ContentDatabase db, ZoneDef zone, ZoneKind kind, ValidationReport report)
+    {
+        if (kind == ZoneKind.Hub && zone.SpawnFields.Length > 0)
+        {
+            report.Error("world-spawns", zone.SourceFile,
+                $"the hub '{zone.Id}' declares spawn fields.",
+                "The hub is the one place guaranteed safe; hostile spawns there break that promise.");
+        }
+
+        var band = zone.LevelBand.Length > 1 ? zone.LevelBand : [1, 1];
+
+        foreach (var field in zone.SpawnFields)
+        {
+            if (!ContentId.IsValid(field.Id))
+            {
+                report.Error("id-format", zone.SourceFile,
+                    $"spawn field '{field.Id}' in '{zone.Id}' is not a valid id.");
+            }
+
+            if (field.Entries.Length == 0)
+            {
+                report.Error("world-spawns", zone.SourceFile,
+                    $"spawn field '{field.Id}' lists no enemies.");
+            }
+
+            if (field.Count < 1 || field.RespawnSeconds <= 0)
+            {
+                report.Error("world-spawns", zone.SourceFile,
+                    $"spawn field '{field.Id}' has count {field.Count} and respawn {field.RespawnSeconds}s.",
+                    "Both must be positive or the field produces nothing.");
+            }
+
+            // Creatures scattered outside the radius that governs whether the field is awake
+            // would pop in and out of existence around its edge.
+            if (field.Radius >= field.ActivationRadius)
+            {
+                report.Error("world-spawns", zone.SourceFile,
+                    $"spawn field '{field.Id}' scatters {field.Radius:F0}m but only activates within "
+                    + $"{field.ActivationRadius:F0}m.",
+                    "The activation radius must comfortably exceed the scatter radius.");
+            }
+
+            foreach (var entry in field.Entries)
+            {
+                if (!db.Enemies.TryGetValue(entry.Enemy, out var enemy))
+                {
+                    report.Error("cross-ref", zone.SourceFile,
+                        $"spawn field '{field.Id}' places '{entry.Enemy}', which does not exist.");
+                    continue;
+                }
+
+                if (entry.Weight <= 0)
+                {
+                    report.Error("weights", zone.SourceFile,
+                        $"spawn field '{field.Id}' gives '{entry.Enemy}' weight {entry.Weight}.",
+                        "A non-positive weight means it can never be chosen; remove the entry instead.");
+                }
+
+                // The band is the only difficulty signal a single-player world has. An enemy
+                // placed outside it makes the band a lie wherever that field happens to sit.
+                if (enemy.Level < band[0] - 1 || enemy.Level > band[1] + 1)
+                {
+                    report.Error("world-bands", zone.SourceFile,
+                        $"spawn field '{field.Id}' places level-{enemy.Level} '{entry.Enemy}' in "
+                        + $"'{zone.Id}', a level {band[0]}–{band[1]} zone.",
+                        "Move the field, or widen the zone's band to match what stands in it.");
+                }
+            }
+        }
     }
 }

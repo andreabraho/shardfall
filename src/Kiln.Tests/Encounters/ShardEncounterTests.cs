@@ -79,7 +79,7 @@ public class ShardEncounterTests
         events.AddRange(fight.Tick(0.1, 1.0, World()));
         events.AddRange(Run(fight, 20, 1.0, World()));
 
-        Assert.Single(events.Where(e => e.Kind == ShardEventKind.SpawnWave && e.Phase == ShardPhase.One));
+        Assert.Single(events, e => e.Kind == ShardEventKind.SpawnWave && e.Phase == ShardPhase.One);
     }
 
     [Fact]
@@ -95,7 +95,7 @@ public class ShardEncounterTests
 
         foreach (var phase in (ShardPhase[])[ShardPhase.One, ShardPhase.Two, ShardPhase.Three])
         {
-            Assert.Single(events.Where(e => e.Kind == ShardEventKind.SpawnWave && e.Phase == phase));
+            Assert.Single(events, e => e.Kind == ShardEventKind.SpawnWave && e.Phase == phase);
         }
     }
 

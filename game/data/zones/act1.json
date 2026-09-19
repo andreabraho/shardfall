@@ -1,0 +1,267 @@
+[
+  {
+    "id": "zone_ember_hollow",
+    "name": "$zone.zone_ember_hollow.name",
+    "kind": "hub",
+    "level_band": [1, 3],
+    "scene": "",
+    "exits": [
+      { "to": "zone_vale_approach" }
+    ],
+    "shrines": [
+      { "id": "shr_hollow_flame", "name": "$shrine.shr_hollow_flame.name", "fast_travel": true }
+    ],
+    "spawn_fields": [],
+    "shards": []
+  },
+  {
+    "id": "zone_vale_approach",
+    "name": "$zone.zone_vale_approach.name",
+    "kind": "wilds",
+    "level_band": [3, 7],
+    "scene": "",
+    "exits": [
+      { "to": "zone_ember_hollow" },
+      { "to": "zone_vale_floor", "required_level": 6 }
+    ],
+    "shrines": [
+      { "id": "shr_approach_ford", "name": "$shrine.shr_approach_ford.name", "fast_travel": true }
+    ],
+    "spawn_fields": [
+      {
+        "id": "spf_approach_boars",
+        "entries": [{ "enemy": "mob_thornback_boar", "weight": 1.0 }],
+        "count": 4,
+        "respawn_seconds": 26,
+        "activation_radius": 55,
+        "radius": 8
+      },
+      {
+        "id": "spf_approach_camp",
+        "entries": [
+          { "enemy": "mob_sling_scavenger", "weight": 2.0 },
+          { "enemy": "mob_husk_sentinel", "weight": 1.0 }
+        ],
+        "count": 4,
+        "respawn_seconds": 34,
+        "activation_radius": 55,
+        "radius": 9
+      },
+      {
+        "id": "spf_approach_grove",
+        "entries": [
+          { "enemy": "mob_moss_tender", "weight": 1.0 },
+          { "enemy": "mob_spore_pod", "weight": 1.5 },
+          { "enemy": "mob_thornback_boar", "weight": 2.0 }
+        ],
+        "count": 5,
+        "respawn_seconds": 30,
+        "activation_radius": 55,
+        "radius": 10
+      }
+    ],
+    "shards": ["shd_cracked_seed"]
+  },
+  {
+    "id": "zone_vale_floor",
+    "name": "$zone.zone_vale_floor.name",
+    "kind": "wilds",
+    "level_band": [7, 11],
+    "scene": "",
+    "exits": [
+      { "to": "zone_vale_approach" },
+      { "to": "zone_ridge", "required_level": 10 }
+    ],
+    "shrines": [
+      { "id": "shr_floor_cairn", "name": "$shrine.shr_floor_cairn.name", "fast_travel": true },
+      { "id": "shr_floor_barrows", "name": "$shrine.shr_floor_barrows.name", "fast_travel": true }
+    ],
+    "spawn_fields": [
+      {
+        "id": "spf_floor_gnawers",
+        "entries": [{ "enemy": "mob_pale_gnawer", "weight": 1.0 }],
+        "count": 5,
+        "respawn_seconds": 28,
+        "activation_radius": 55,
+        "radius": 9
+      },
+      {
+        "id": "spf_floor_barrow_line",
+        "entries": [
+          { "enemy": "mob_barrow_shield", "weight": 1.0 },
+          { "enemy": "mob_bone_flinger", "weight": 2.0 },
+          { "enemy": "mob_grave_stitcher", "weight": 1.0 }
+        ],
+        "count": 5,
+        "respawn_seconds": 36,
+        "activation_radius": 55,
+        "radius": 10
+      },
+      {
+        "id": "spf_floor_bloat_pit",
+        "entries": [
+          { "enemy": "mob_carrion_bloat", "weight": 1.0 },
+          { "enemy": "mob_pale_gnawer", "weight": 2.0 }
+        ],
+        "count": 4,
+        "respawn_seconds": 32,
+        "activation_radius": 55,
+        "radius": 8
+      }
+    ],
+    "shards": ["shd_hollow_bloom"]
+  },
+  {
+    "id": "zone_ridge",
+    "name": "$zone.zone_ridge.name",
+    "kind": "wilds",
+    "level_band": [11, 15],
+    "scene": "res://scenes/arena.tscn",
+    "exits": [
+      { "to": "zone_vale_floor" },
+      { "to": "zone_broken_gate", "required_level": 14, "required_quest": "qst_a1_01_the_broken_gate" }
+    ],
+    "shrines": [
+      { "id": "shr_ridge_watch", "name": "$shrine.shr_ridge_watch.name", "fast_travel": true },
+      { "id": "shr_ridge_spur", "name": "$shrine.shr_ridge_spur.name", "fast_travel": true }
+    ],
+    "spawn_fields": [
+      {
+        "id": "spf_ridge_wolves",
+        "entries": [{ "enemy": "mob_corrupted_wolf", "weight": 1.0 }],
+        "count": 4,
+        "respawn_seconds": 26,
+        "activation_radius": 55,
+        "radius": 8
+      },
+      {
+        "id": "spf_ridge_watchpost",
+        "entries": [
+          { "enemy": "mob_shard_archer", "weight": 2.0 },
+          { "enemy": "mob_grave_warden", "weight": 1.0 }
+        ],
+        "count": 4,
+        "respawn_seconds": 34,
+        "activation_radius": 55,
+        "radius": 9
+      },
+      {
+        "id": "spf_ridge_rot_nest",
+        "entries": [
+          { "enemy": "mob_rot_mender", "weight": 1.0 },
+          { "enemy": "mob_blight_bomber", "weight": 1.0 },
+          { "enemy": "mob_corrupted_wolf", "weight": 2.0 }
+        ],
+        "count": 5,
+        "respawn_seconds": 32,
+        "activation_radius": 55,
+        "radius": 10
+      }
+    ],
+    "shards": ["shd_ridge_spine"]
+  },
+  {
+    "id": "zone_broken_gate",
+    "name": "$zone.zone_broken_gate.name",
+    "kind": "wilds",
+    "level_band": [15, 19],
+    "scene": "",
+    "exits": [
+      { "to": "zone_ridge" },
+      { "to": "zone_catacombs", "required_level": 18 }
+    ],
+    "shrines": [
+      { "id": "shr_gate_arch", "name": "$shrine.shr_gate_arch.name", "fast_travel": true },
+      { "id": "shr_gate_yard", "name": "$shrine.shr_gate_yard.name", "fast_travel": true }
+    ],
+    "spawn_fields": [
+      {
+        "id": "spf_gate_breakers",
+        "entries": [
+          { "enemy": "mob_gate_breaker", "weight": 2.0 },
+          { "enemy": "mob_ash_slinger", "weight": 1.0 }
+        ],
+        "count": 5,
+        "respawn_seconds": 30,
+        "activation_radius": 55,
+        "radius": 9
+      },
+      {
+        "id": "spf_gate_wall_line",
+        "entries": [
+          { "enemy": "mob_iron_bulwark", "weight": 1.0 },
+          { "enemy": "mob_ember_chanter", "weight": 1.0 },
+          { "enemy": "mob_ash_slinger", "weight": 2.0 }
+        ],
+        "count": 5,
+        "respawn_seconds": 38,
+        "activation_radius": 55,
+        "radius": 10
+      },
+      {
+        "id": "spf_gate_cinder_row",
+        "entries": [
+          { "enemy": "mob_cinder_bearer", "weight": 1.0 },
+          { "enemy": "mob_gate_breaker", "weight": 2.0 }
+        ],
+        "count": 4,
+        "respawn_seconds": 34,
+        "activation_radius": 55,
+        "radius": 8
+      }
+    ],
+    "shards": ["shd_gate_warden"]
+  },
+  {
+    "id": "zone_catacombs",
+    "name": "$zone.zone_catacombs.name",
+    "kind": "dungeon",
+    "level_band": [19, 23],
+    "scene": "",
+    "exits": [
+      { "to": "zone_broken_gate" }
+    ],
+    "shrines": [
+      { "id": "shr_catacombs_mouth", "name": "$shrine.shr_catacombs_mouth.name", "fast_travel": true },
+      { "id": "shr_catacombs_gallery", "name": "$shrine.shr_catacombs_gallery.name", "fast_travel": false },
+      { "id": "shr_catacombs_vault", "name": "$shrine.shr_catacombs_vault.name", "fast_travel": false }
+    ],
+    "spawn_fields": [
+      {
+        "id": "spf_catacombs_stalkers",
+        "entries": [
+          { "enemy": "mob_crypt_stalker", "weight": 2.0 },
+          { "enemy": "mob_void_caster", "weight": 1.0 }
+        ],
+        "count": 5,
+        "respawn_seconds": 32,
+        "activation_radius": 50,
+        "radius": 8
+      },
+      {
+        "id": "spf_catacombs_gallery",
+        "entries": [
+          { "enemy": "mob_obsidian_ward", "weight": 1.0 },
+          { "enemy": "mob_hollow_choir", "weight": 1.0 },
+          { "enemy": "mob_void_caster", "weight": 2.0 }
+        ],
+        "count": 5,
+        "respawn_seconds": 40,
+        "activation_radius": 50,
+        "radius": 9
+      },
+      {
+        "id": "spf_catacombs_rift",
+        "entries": [
+          { "enemy": "mob_rift_seed", "weight": 1.0 },
+          { "enemy": "mob_crypt_stalker", "weight": 2.0 }
+        ],
+        "count": 4,
+        "respawn_seconds": 36,
+        "activation_radius": 50,
+        "radius": 8
+      }
+    ],
+    "shards": ["shd_catacomb_heart"]
+  }
+]
