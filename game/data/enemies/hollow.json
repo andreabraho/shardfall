@@ -1,0 +1,64 @@
+[
+  {
+    "id": "mob_reed_hopper",
+    "name": "$mob.mob_reed_hopper.name",
+    "family": "animal",
+    "role": "bruiser",
+    "level": 1,
+    "stats": { "hp": 85, "attack_power": 15, "defense": 4, "move_speed": 4.6 },
+    "stagger_pool": 25,
+    "abilities": [
+      { "id": "abl_hopper_nip", "cooldown": 2.4, "windup": 0.45, "damage_coef": 0.85 }
+    ],
+    "ai": "bt_melee_chaser",
+    "aggro_radius": 8,
+    "leash_radius": 14,
+    "xp": 24,
+    "drop_table": "dt_valley_animal_t1",
+    "visual": "mesh_placeholder_quadruped",
+    "visual_scale": 0.75,
+    "visual_tint": "#8f9a6b"
+  },
+  {
+    "id": "mob_ditch_lurker",
+    "name": "$mob.mob_ditch_lurker.name",
+    "family": "animal",
+    "role": "bruiser",
+    "level": 2,
+    "stats": { "hp": 135, "attack_power": 21, "defense": 8, "move_speed": 4.4 },
+    "stagger_pool": 45,
+    "abilities": [
+      { "id": "abl_lurker_bite", "cooldown": 2.6, "windup": 0.55, "damage_coef": 1.00 },
+      { "id": "abl_lurker_lunge", "cooldown": 9.0, "windup": 1.55, "damage_coef": 1.20,
+        "telegraph": { "shape": "circle", "radius": 2.5 } }
+    ],
+    "ai": "bt_melee_chaser",
+    "aggro_radius": 9,
+    "leash_radius": 16,
+    "xp": 38,
+    "drop_table": "dt_valley_animal_t1",
+    "visual": "mesh_placeholder_quadruped",
+    "visual_scale": 0.85,
+    "visual_tint": "#6f7a5a"
+  },
+  {
+    "id": "mob_thistle_sprite",
+    "name": "$mob.mob_thistle_sprite.name",
+    "family": "mystic",
+    "role": "archer",
+    "level": 3,
+    "stats": { "hp": 110, "attack_power": 24, "defense": 6, "move_speed": 4.8 },
+    "stagger_pool": 30,
+    "abilities": [
+      { "id": "abl_sprite_dart", "cooldown": 2.4, "windup": 0.70, "damage_coef": 0.95, "range": 10.0 }
+    ],
+    "ai": "bt_ranged_kiter",
+    "aggro_radius": 12,
+    "leash_radius": 18,
+    "xp": 52,
+    "drop_table": "dt_valley_animal_t1",
+    "visual": "mesh_placeholder_humanoid",
+    "visual_scale": 0.8,
+    "visual_tint": "#9d7fb8"
+  }
+]

@@ -86,6 +86,7 @@ public static class Ids
         public const string MobCinderBearer = "mob_cinder_bearer";
         public const string MobCorruptedWolf = "mob_corrupted_wolf";
         public const string MobCryptStalker = "mob_crypt_stalker";
+        public const string MobDitchLurker = "mob_ditch_lurker";
         public const string MobEmberChanter = "mob_ember_chanter";
         public const string MobGateBreaker = "mob_gate_breaker";
         public const string MobGraveStitcher = "mob_grave_stitcher";
@@ -96,15 +97,17 @@ public static class Ids
         public const string MobMossTender = "mob_moss_tender";
         public const string MobObsidianWard = "mob_obsidian_ward";
         public const string MobPaleGnawer = "mob_pale_gnawer";
+        public const string MobReedHopper = "mob_reed_hopper";
         public const string MobRiftSeed = "mob_rift_seed";
         public const string MobRotMender = "mob_rot_mender";
         public const string MobShardArcher = "mob_shard_archer";
         public const string MobSlingScavenger = "mob_sling_scavenger";
         public const string MobSporePod = "mob_spore_pod";
+        public const string MobThistleSprite = "mob_thistle_sprite";
         public const string MobThornbackBoar = "mob_thornback_boar";
         public const string MobVoidCaster = "mob_void_caster";
 
-        public static readonly string[] All = ["mob_ash_slinger", "mob_barrow_shield", "mob_blight_bomber", "mob_bone_flinger", "mob_carrion_bloat", "mob_cinder_bearer", "mob_corrupted_wolf", "mob_crypt_stalker", "mob_ember_chanter", "mob_gate_breaker", "mob_grave_stitcher", "mob_grave_warden", "mob_hollow_choir", "mob_husk_sentinel", "mob_iron_bulwark", "mob_moss_tender", "mob_obsidian_ward", "mob_pale_gnawer", "mob_rift_seed", "mob_rot_mender", "mob_shard_archer", "mob_sling_scavenger", "mob_spore_pod", "mob_thornback_boar", "mob_void_caster"];
+        public static readonly string[] All = ["mob_ash_slinger", "mob_barrow_shield", "mob_blight_bomber", "mob_bone_flinger", "mob_carrion_bloat", "mob_cinder_bearer", "mob_corrupted_wolf", "mob_crypt_stalker", "mob_ditch_lurker", "mob_ember_chanter", "mob_gate_breaker", "mob_grave_stitcher", "mob_grave_warden", "mob_hollow_choir", "mob_husk_sentinel", "mob_iron_bulwark", "mob_moss_tender", "mob_obsidian_ward", "mob_pale_gnawer", "mob_reed_hopper", "mob_rift_seed", "mob_rot_mender", "mob_shard_archer", "mob_sling_scavenger", "mob_spore_pod", "mob_thistle_sprite", "mob_thornback_boar", "mob_void_caster"];
     }
 
     public static class Skills

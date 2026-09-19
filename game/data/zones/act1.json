@@ -4,7 +4,7 @@
     "name": "$zone.zone_ember_hollow.name",
     "kind": "hub",
     "level_band": [1, 3],
-    "scene": "",
+    "scene": "res://scenes/ember_hollow.tscn",
     "exits": [
       { "to": "zone_vale_approach" }
     ],
@@ -12,9 +12,40 @@
       { "id": "shr_hollow_flame", "name": "$shrine.shr_hollow_flame.name", "fast_travel": true }
     ],
     "safe_regions": [
-      { "id": "saf_ember_hollow", "name": "$safe.saf_ember_hollow.name", "radius": 60 }
+      { "id": "saf_ember_hollow", "name": "$safe.saf_ember_hollow.name", "radius": 22 }
     ],
-    "spawn_fields": [],
+    "spawn_fields": [
+      {
+        "id": "spf_hollow_reeds",
+        "entries": [{ "enemy": "mob_reed_hopper", "weight": 1.0 }],
+        "count": 4,
+        "respawn_seconds": 22,
+        "activation_radius": 50,
+        "radius": 8
+      },
+      {
+        "id": "spf_hollow_ditch",
+        "entries": [
+          { "enemy": "mob_ditch_lurker", "weight": 1.0 },
+          { "enemy": "mob_reed_hopper", "weight": 2.0 }
+        ],
+        "count": 4,
+        "respawn_seconds": 26,
+        "activation_radius": 50,
+        "radius": 9
+      },
+      {
+        "id": "spf_hollow_thicket",
+        "entries": [
+          { "enemy": "mob_thistle_sprite", "weight": 1.0 },
+          { "enemy": "mob_ditch_lurker", "weight": 1.5 }
+        ],
+        "count": 4,
+        "respawn_seconds": 28,
+        "activation_radius": 50,
+        "radius": 9
+      }
+    ],
     "shards": []
   },
   {

@@ -655,7 +655,7 @@ public static class ContentValidator
             ZoneExits(db, zone, report);
             ZoneShrines(zone, kind, shrineIds, report);
             ZoneSafeRegions(zone, kind, safeIds, report);
-            ZoneFields(db, zone, kind, report);
+            ZoneFields(db, zone, report);
 
             foreach (var shard in zone.Shards)
             {
@@ -795,15 +795,12 @@ public static class ContentValidator
         }
     }
 
-    private static void ZoneFields(ContentDatabase db, ZoneDef zone, ZoneKind kind, ValidationReport report)
+    private static void ZoneFields(ContentDatabase db, ZoneDef zone, ValidationReport report)
     {
-        if (kind == ZoneKind.Hub && zone.SpawnFields.Length > 0)
-        {
-            report.Error("world-spawns", zone.SourceFile,
-                $"the hub '{zone.Id}' declares spawn fields.",
-                "The hub is the one place guaranteed safe; hostile spawns there break that promise.");
-        }
-
+        // A hub's camps used to be an error, back when "hub" meant the whole map was safe.
+        // Since WLD-12 safety is a region with a radius, so a village map is expected to have
+        // creatures around the village — and the distance between the two is enforced against
+        // real coordinates by ZoneRoot.Audit, which is the only place that can see them.
         var band = zone.LevelBand.Length > 1 ? zone.LevelBand : [1, 1];
 
         foreach (var field in zone.SpawnFields)

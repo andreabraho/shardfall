@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3]
+[gd_scene load_steps=19 format=3]
 
 ; zone_ridge — the greybox stand-in for the ridge (WLD-05 replaces the layout).
 ;
@@ -14,26 +14,12 @@
 [ext_resource type="Script" path="res://scripts/World/ZoneRoot.cs" id="19_zoneroot"]
 [ext_resource type="Script" path="res://scripts/World/SpawnFieldNode.cs" id="20_spawnfield"]
 [ext_resource type="Script" path="res://scripts/World/ShrineNode.cs" id="21_shrine"]
-[ext_resource type="Script" path="res://scripts/UI/ShrinePanel.cs" id="22_shrineui"]
-[ext_resource type="Script" path="res://scripts/UI/CharacterPanel.cs" id="23_charui"]
 [ext_resource type="Script" path="res://scripts/World/KitPiece.cs" id="24_kit"]
 [ext_resource type="Script" path="res://scripts/World/SafeZoneNode.cs" id="25_safe"]
-[ext_resource type="Script" path="res://scripts/Camera/CameraRig.cs" id="2_camera"]
-[ext_resource type="Script" path="res://scripts/World/ClickMarker.cs" id="3_marker"]
-[ext_resource type="Script" path="res://scripts/World/CursorManager.cs" id="4_cursor"]
-[ext_resource type="Script" path="res://scripts/Camera/CameraOccluderFade.cs" id="6_occluder"]
-[ext_resource type="Script" path="res://scripts/Combat/CombatFeedback.cs" id="8_feedback"]
-[ext_resource type="Script" path="res://scripts/UI/CombatHud.cs" id="9_hud"]
-[ext_resource type="Script" path="res://scripts/Combat/TargetRing.cs" id="10_ring"]
-[ext_resource type="Script" path="res://scripts/Combat/AoeVisual.cs" id="11_aoe"]
-[ext_resource type="Script" path="res://scripts/UI/InventoryPanel.cs" id="12_bagui"]
-[ext_resource type="Script" path="res://scripts/UI/WorkbenchPanel.cs" id="13_bench"]
-[ext_resource type="Script" path="res://scripts/Debug/DebugSpawner.cs" id="14_spawner"]
-[ext_resource type="Script" path="res://scripts/Debug/DebugGrants.cs" id="15_grants"]
 [ext_resource type="Script" path="res://scripts/World/ShardNode.cs" id="16_shard"]
 [ext_resource type="Script" path="res://scripts/Visual/VisualRoot.cs" id="17_visualroot"]
-[ext_resource type="Script" path="res://scripts/UI/ShardHud.cs" id="18_shardhud"]
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="5_player"]
+[ext_resource type="PackedScene" path="res://scenes/session.tscn" id="26_session"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_arena"]
 vertices = PackedVector3Array()
@@ -177,58 +163,10 @@ shape = SubResource("BoxShape3D_unit")
 [node name="Player" parent="." instance=ExtResource("5_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 
-[node name="CameraRig" type="Node3D" parent="."]
-script = ExtResource("2_camera")
-TargetPath = NodePath("../Player")
+; Camera, cursor, HUD, panels and debug tools. Shared by every zone scene so that adding a
+; map is a matter of geometry, not of re-wiring fifteen nodes correctly.
+[node name="Session" parent="." instance=ExtResource("26_session")]
 
-[node name="Yaw" type="Node3D" parent="CameraRig"]
-
-[node name="SpringArm3D" type="SpringArm3D" parent="CameraRig/Yaw"]
-transform = Transform3D(1, 0, 0, 0, 0.6427876, -0.76604444, 0, 0.76604444, 0.6427876, 0, 0, 0)
-; Disabled: occlusion is handled by CameraOccluderFade so the camera distance stays fixed.
-collision_mask = 0
-spring_length = 12.0
-margin = 0.5
-
-[node name="Camera3D" type="Camera3D" parent="CameraRig/Yaw/SpringArm3D"]
-fov = 50.0
-
-[node name="OccluderFade" type="Node" parent="CameraRig"]
-script = ExtResource("6_occluder")
-TargetPath = NodePath("../../Player")
-
-[node name="ClickMarker" type="Node3D" parent="."]
-script = ExtResource("3_marker")
-
-[node name="CursorManager" type="Node" parent="."]
-script = ExtResource("4_cursor")
-
-[node name="CombatFeedback" type="Node3D" parent="."]
-script = ExtResource("8_feedback")
-
-[node name="AoeVisual" type="Node3D" parent="."]
-script = ExtResource("11_aoe")
-
-[node name="TargetRing" type="Node3D" parent="."]
-script = ExtResource("10_ring")
-
-[node name="CombatHud" type="CanvasLayer" parent="."]
-script = ExtResource("9_hud")
-
-[node name="InventoryPanel" type="CanvasLayer" parent="."]
-script = ExtResource("12_bagui")
-
-[node name="WorkbenchPanel" type="CanvasLayer" parent="."]
-script = ExtResource("13_bench")
-
-[node name="DebugGrants" type="Node" parent="."]
-script = ExtResource("15_grants")
-
-[node name="DebugSpawner" type="Node" parent="."]
-script = ExtResource("14_spawner")
-
-; Everything a field spawns is parented here, so the scene tree stays readable once three
-; camps are running.
 [node name="Enemies" type="Node3D" parent="."]
 
 ; The three ridge camps. Composition, population and respawn come from the zone data; only
@@ -270,10 +208,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
 script = ExtResource("17_visualroot")
 VisualId = "mesh_placeholder_shrine"
 
-[node name="ShrinePanel" type="CanvasLayer" parent="."]
-script = ExtResource("22_shrineui")
-
-; A tier-1 shard, far enough from the enemy packs that walking into its zone is deliberate.
 [node name="Shard" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -24)
 script = ExtResource("16_shard")
@@ -284,11 +218,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
 script = ExtResource("17_visualroot")
 VisualId = "mesh_placeholder_monolith"
 
-[node name="ShardHud" type="CanvasLayer" parent="."]
-script = ExtResource("18_shardhud")
-
-; A tier-3 shard on the far side, so the warded modifier and the two-ring pulse can be
-; tested without waiting for a respawn to roll them.
 [node name="Shard2" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0.1, 22)
 script = ExtResource("16_shard")
@@ -299,12 +228,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
 script = ExtResource("17_visualroot")
 VisualId = "mesh_placeholder_monolith"
 
-[node name="CharacterPanel" type="CanvasLayer" parent="."]
-script = ExtResource("23_charui")
-
-; WLD-04 proof: a walled compound around the watch shrine, built entirely from kit pieces.
-; Every node below names a piece id and nothing else — no mesh, no shape, no colour. This is
-; the shape the two villages get built in, at village scale.
 [node name="Compound" type="Node3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, -16)
 

@@ -1,0 +1,89 @@
+[gd_scene load_steps=16 format=3]
+
+; Everything a zone scene needs and no zone scene decides: the camera, the cursor, the combat
+; feedback layers, the HUD and the panels.
+;
+; Extracted before greyboxing six maps (WLD-05/06/07). Copied into each of them instead, the
+; same fifteen nodes and fourteen script references would have to be kept in step by hand, and
+; the first thing to go out of step is always the one scene nobody opened this week.
+;
+; Contract: instanced as a DIRECT child of the zone scene's root, alongside a node named
+; "Player". The node paths below cross the instance boundary to reach it, which is what lets
+; each map place its own start point while sharing this wiring.
+
+[ext_resource type="Script" path="res://scripts/Camera/CameraRig.cs" id="1_camera"]
+[ext_resource type="Script" path="res://scripts/Camera/CameraOccluderFade.cs" id="2_occluder"]
+[ext_resource type="Script" path="res://scripts/World/ClickMarker.cs" id="3_marker"]
+[ext_resource type="Script" path="res://scripts/World/CursorManager.cs" id="4_cursor"]
+[ext_resource type="Script" path="res://scripts/Combat/CombatFeedback.cs" id="5_feedback"]
+[ext_resource type="Script" path="res://scripts/Combat/AoeVisual.cs" id="6_aoe"]
+[ext_resource type="Script" path="res://scripts/Combat/TargetRing.cs" id="7_ring"]
+[ext_resource type="Script" path="res://scripts/UI/CombatHud.cs" id="8_hud"]
+[ext_resource type="Script" path="res://scripts/UI/InventoryPanel.cs" id="9_bagui"]
+[ext_resource type="Script" path="res://scripts/UI/WorkbenchPanel.cs" id="10_bench"]
+[ext_resource type="Script" path="res://scripts/UI/CharacterPanel.cs" id="11_charui"]
+[ext_resource type="Script" path="res://scripts/UI/ShrinePanel.cs" id="12_shrineui"]
+[ext_resource type="Script" path="res://scripts/UI/ShardHud.cs" id="13_shardhud"]
+[ext_resource type="Script" path="res://scripts/Debug/DebugGrants.cs" id="14_grants"]
+[ext_resource type="Script" path="res://scripts/Debug/DebugSpawner.cs" id="15_spawner"]
+
+[node name="Session" type="Node3D"]
+
+[node name="CameraRig" type="Node3D" parent="."]
+script = ExtResource("1_camera")
+TargetPath = NodePath("../../Player")
+
+[node name="Yaw" type="Node3D" parent="CameraRig"]
+
+[node name="SpringArm3D" type="SpringArm3D" parent="CameraRig/Yaw"]
+transform = Transform3D(1, 0, 0, 0, 0.6427876, -0.76604444, 0, 0.76604444, 0.6427876, 0, 0, 0)
+; Disabled: occlusion is handled by CameraOccluderFade so the camera distance stays fixed.
+collision_mask = 0
+spring_length = 12.0
+margin = 0.5
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig/Yaw/SpringArm3D"]
+fov = 50.0
+
+[node name="OccluderFade" type="Node" parent="CameraRig"]
+script = ExtResource("2_occluder")
+TargetPath = NodePath("../../../Player")
+
+[node name="ClickMarker" type="Node3D" parent="."]
+script = ExtResource("3_marker")
+
+[node name="CursorManager" type="Node" parent="."]
+script = ExtResource("4_cursor")
+
+[node name="CombatFeedback" type="Node3D" parent="."]
+script = ExtResource("5_feedback")
+
+[node name="AoeVisual" type="Node3D" parent="."]
+script = ExtResource("6_aoe")
+
+[node name="TargetRing" type="Node3D" parent="."]
+script = ExtResource("7_ring")
+
+[node name="CombatHud" type="CanvasLayer" parent="."]
+script = ExtResource("8_hud")
+
+[node name="InventoryPanel" type="CanvasLayer" parent="."]
+script = ExtResource("9_bagui")
+
+[node name="WorkbenchPanel" type="CanvasLayer" parent="."]
+script = ExtResource("10_bench")
+
+[node name="CharacterPanel" type="CanvasLayer" parent="."]
+script = ExtResource("11_charui")
+
+[node name="ShrinePanel" type="CanvasLayer" parent="."]
+script = ExtResource("12_shrineui")
+
+[node name="ShardHud" type="CanvasLayer" parent="."]
+script = ExtResource("13_shardhud")
+
+[node name="DebugGrants" type="Node" parent="."]
+script = ExtResource("14_grants")
+
+[node name="DebugSpawner" type="Node" parent="."]
+script = ExtResource("15_spawner")

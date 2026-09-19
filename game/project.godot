@@ -9,7 +9,7 @@ config_version=5
 
 config/name="Kiln"
 config/description="A single-player action RPG in the spirit of Metin2."
-run/main_scene="res://scenes/arena.tscn"
+run/main_scene="res://scenes/ember_hollow.tscn"
 config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 
 [dotnet]

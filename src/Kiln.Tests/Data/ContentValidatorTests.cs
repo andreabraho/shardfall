@@ -486,4 +486,34 @@ public class ContentValidatorTests
         Assert.True(HasError(report, "world-safe"));
     }
 
+
+    [Fact]
+    public void Accepts_AVillageWithCampsAroundIt()
+    {
+        // This was an error until WLD-12, back when "hub" meant the whole map was safe. It is
+        // now the intended shape — a village with creatures outside the wall — and the
+        // distance between the two is enforced against real coordinates by the scene audit,
+        // which is the only place that can see them.
+        var hub = Zone("zone_hub", "hub", 1, 3);
+        var camped = new ZoneDef
+        {
+            Id = hub.Id, Name = hub.Name, Kind = hub.Kind, LevelBand = hub.LevelBand,
+            Scene = hub.Scene, Shrines = hub.Shrines, SafeRegions = hub.SafeRegions,
+            SpawnFields =
+            [
+                new SpawnFieldDef
+                {
+                    Id = "spf_hollow", Count = 4, RespawnSeconds = 20,
+                    ActivationRadius = 50, Radius = 8,
+                    Entries = [new SpawnEntryDef { Enemy = "mob_x", Weight = 1 }],
+                },
+            ],
+        };
+
+        var report = ContentValidator.Validate(Db(
+            enemies: [new EnemyDef { Id = "mob_x", Name = "$m", Level = 2 }],
+            zones: [camped]));
+
+        Assert.False(report.HasErrors);
+    }
 }
