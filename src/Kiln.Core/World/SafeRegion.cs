@@ -29,14 +29,16 @@ public sealed record SafeRegion(string Id, string Name, string Zone, double Radi
 public sealed class SafetyField
 {
     /// <summary>
-    /// How far a spawn field must stay clear of safe ground, in metres.
+    /// Breathing room added on top of how far a camp's creatures can roam, in metres.
     /// </summary>
     /// <remarks>
-    /// Not merely "must not overlap". A camp whose edge touches the boundary puts creatures
-    /// within aggro range of someone standing safely inside, which produces the worst version
-    /// of a safe zone: one that works, while something visibly tries to reach you.
+    /// The distance that matters is not the camp's own radius but its creatures' leash: a
+    /// creature parked eight metres from its marker with a fourteen-metre tether reaches
+    /// twenty-two metres past it, and walks into the village without ever chasing anybody.
+    /// Measuring the footprint instead of the reach is what let that happen, so callers pass
+    /// <c>fieldRadius + maxLeash + ClearanceMargin</c> and this is only the last term.
     /// </remarks>
-    public const double SpawnClearance = 6.0;
+    public const double ClearanceMargin = 4.0;
 
     private readonly List<Circle> _regions = [];
 
@@ -72,10 +74,10 @@ public sealed class SafetyField
     public bool IsSafe(double x, double z) => RegionAt(x, z) is not null;
 
     /// <summary>
-    /// The region a circle of this radius reaches into, counting <see cref="SpawnClearance"/>,
+    /// The region a circle of this radius reaches into, counting <see cref="ClearanceMargin"/>,
     /// or null when it is properly clear of every one of them.
     /// </summary>
-    public string? Encroaches(double x, double z, double radius, double clearance = SpawnClearance)
+    public string? Encroaches(double x, double z, double radius, double clearance = ClearanceMargin)
     {
         foreach (var region in _regions)
         {

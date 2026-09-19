@@ -301,6 +301,15 @@ public partial class EnemyBrain : CharacterBody3D
 
     private void RefreshTarget()
     {
+        // Whatever brought it here — a camp placed too close, a shove, a future bug — nothing
+        // hostile stands in the village. The scene audit stops this at build time; this makes
+        // it self-correcting at run time, because the promise is worth more than the diagnosis.
+        if (!_returning && World.GameWorld.IsSafe(GlobalPosition))
+        {
+            BeginReturn();
+            return;
+        }
+
         // Crossing the leash gives up for good, rather than being re-evaluated each frame.
         // Without the latch the enemy oscillates on the boundary: step out, turn for home,
         // step back inside, charge again.
@@ -345,8 +354,10 @@ public partial class EnemyBrain : CharacterBody3D
 
         if (!force && GlobalPosition.DistanceTo(player.GlobalPosition) > AggroRadius) return;
 
-        // Even a forced acquisition — being shot from inside the village — stops at the line.
+        // Either side of the line ends it: a forced acquisition from inside the village, and
+        // a creature that has somehow ended up standing in one.
         if (World.GameWorld.IsSafe(player.GlobalPosition)) return;
+        if (World.GameWorld.IsSafe(GlobalPosition)) return;
 
         var combatant = player.GetNodeOrNull<Combatant>("Combatant");
 
@@ -458,7 +469,7 @@ public partial class EnemyBrain : CharacterBody3D
     /// <summary>Walks back to where it started, and resets on arrival.</summary>
     public BtStatus ReturnHome(double delta)
     {
-        if (GlobalPosition.DistanceTo(_home) < 1.0f || (_returning && _agent.IsNavigationFinished()))
+        if (GlobalPosition.DistanceTo(_home) < 1.0f)
         {
             Brake(delta);
             ArriveHome();
@@ -467,14 +478,21 @@ public partial class EnemyBrain : CharacterBody3D
 
         _agent.TargetPosition = _home;
 
-        if (_agent.IsNavigationFinished())
+        // GetNextPathPosition is what makes the agent compute the path, so asking
+        // IsNavigationFinished before it reports "arrived" for a path that does not exist
+        // yet — and since the answer never changes, the creature stands still for good.
+        // That is how one wandered into the village and stayed there: nothing was chasing it
+        // and nothing could bring it home.
+        var step = (_agent.GetNextPathPosition() - GlobalPosition) with { Y = 0 };
+
+        if (_agent.IsNavigationFinished() || step.LengthSquared() < 0.0001f)
         {
             Brake(delta);
             ArriveHome();
             return BtStatus.Success;
         }
 
-        Steer((_agent.GetNextPathPosition() - GlobalPosition) with { Y = 0 }, delta);
+        Steer(step, delta);
         return BtStatus.Running;
     }
 

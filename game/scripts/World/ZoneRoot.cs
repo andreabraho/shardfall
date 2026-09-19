@@ -91,15 +91,41 @@ public partial class ZoneRoot : Node3D
                 GD.PushWarning($"[spawn] '{field.FieldId}' belongs to '{owner}' but stands in '{ZoneId}'.");
             }
 
+            // Measured against how far the camp's creatures can get from it, not against the
+            // camp's own footprint. A creature standing at the edge of its field with a
+            // fourteen-metre leash reaches twenty-two metres past the marker, and walks into
+            // the village without ever having chased anybody there.
+            var reach = def.Radius + LeashOf(def) + Kiln.Core.World.SafetyField.ClearanceMargin;
             var hit = GameWorld.Safety.Encroaches(
-                field.GlobalPosition.X, field.GlobalPosition.Z, def.Radius);
+                field.GlobalPosition.X, field.GlobalPosition.Z, def.Radius, reach - def.Radius);
 
             if (hit is null) continue;
 
             GD.PushError(
-                $"[safe] spawn field '{field.FieldId}' comes within "
-                + $"{Kiln.Core.World.SafetyField.SpawnClearance} m of safe region '{hit}'. "
-                + "Move the camp: creatures would aggro someone standing safely inside.");
+                $"[safe] spawn field '{field.FieldId}' comes within {reach:0.#} m of safe "
+                + $"region '{hit}' — its creatures can reach that far from the marker. "
+                + "Move the camp out, or shorten their leash.");
         }
+    }
+
+    /// <summary>The longest leash among the creatures a field can produce.</summary>
+    /// <remarks>
+    /// The whole roster, not an average: the camp is only as close to the village as its
+    /// furthest-roaming member allows, and a one-in-five spawn that wanders into the square
+    /// is a bug the player meets once and never forgets.
+    /// </remarks>
+    private static double LeashOf(Kiln.Core.World.SpawnFieldDef def)
+    {
+        var longest = 0.0;
+
+        foreach (var entry in def.Entries)
+        {
+            if (GameContent.Database.Enemies.TryGetValue(entry.EnemyId, out var enemy))
+            {
+                longest = System.Math.Max(longest, enemy.LeashRadius);
+            }
+        }
+
+        return longest;
     }
 }

@@ -44,7 +44,7 @@ public class SafetyFieldTests
     public void ClearanceIsCountedFromTheCampEdgeNotItsCentre()
     {
         var field = Village();
-        var justClear = 20 + 8 + SafetyField.SpawnClearance + 0.1;
+        var justClear = 20 + 8 + SafetyField.ClearanceMargin + 0.1;
 
         Assert.Null(field.Encroaches(justClear, 0, radius: 8));
         Assert.NotNull(field.Encroaches(justClear - 0.3, 0, radius: 8));
@@ -91,5 +91,24 @@ public class SafetyFieldTests
         Assert.Equal("saf_village", field.RegionAt(0, 0));
         Assert.Equal("saf_second", field.RegionAt(200, 0));
         Assert.False(field.IsSafe(100, 0));
+    }
+
+    [Fact]
+    public void ClearanceIsMeasuredAgainstHowFarCreaturesRoamNotTheCampSize()
+    {
+        // The bug this exists for, reported from play: reed hoppers standing in the village.
+        // Nothing chased them there. Their camp sat 41 m out with a radius of 8 and a leash of
+        // 14, so one spawned on the near edge could stand 19 m from the village centre — inside
+        // safe ground of radius 22 — while never leaving its tether. Measured against the camp's
+        // own footprint the placement looked fine, which is exactly why it shipped.
+        var field = Village(22);
+        const double campRadius = 8;
+        const double leash = 14;
+
+        Assert.Null(field.Encroaches(41, 0, campRadius));
+
+        var reach = campRadius + leash + SafetyField.ClearanceMargin;
+        Assert.Equal("saf_village", field.Encroaches(41, 0, campRadius, reach - campRadius));
+        Assert.Null(field.Encroaches(49, 0, campRadius, reach - campRadius));
     }
 }

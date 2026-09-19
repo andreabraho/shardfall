@@ -176,7 +176,7 @@ public partial class SpawnFieldNode : Node3D
         {
             var clearance = new Node3D { Name = "Clearance" };
             AddChild(clearance);
-            EditorRing.Show(clearance, radius + SafetyField.SpawnClearance,
+            EditorRing.Show(clearance, radius + SafetyField.ClearanceMargin,
                 new Color(0.85f, 0.35f, 0.3f, 0.22f), thickness: 0.12f);
         }
     }

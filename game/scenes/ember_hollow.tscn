@@ -4,8 +4,9 @@
 ;
 ; The layout the whole world is built on: a walled village that is safe ground, one road out,
 ; and camps close enough to see from the wall but far enough that nothing standing in them can
-; reach someone inside. That distance is not taste — ZoneRoot.Audit fails the scene if a camp
-; comes within six metres of the village, so the three camps below sit forty metres out.
+; reach someone inside. That distance is not taste — ZoneRoot.Audit measures each camp against
+; the leash of the creatures it produces, which is why they sit around fifty metres out rather
+; than forty: a creature parked on the near edge of its camp reaches its whole tether further.
 ;
 ; Everything the player walks on or into is a kit piece naming an id and nothing else, and
 ; every creature here is tuning in game/data/zones/act1.json. This file is coordinates.
@@ -34,14 +35,14 @@ geometry_source_geometry_mode = 1
 geometry_source_group_name = "navsource"
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
-size = Vector2(120, 120)
+size = Vector2(150, 150)
 
 [sub_resource type="StandardMaterial3D" id="Material_ground"]
 albedo_color = Color(0.26, 0.29, 0.24, 1)
 roughness = 0.95
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
-size = Vector3(120, 1, 120)
+size = Vector3(150, 1, 150)
 
 [sub_resource type="Environment" id="Environment_hollow"]
 background_mode = 1
@@ -343,16 +344,16 @@ VisualId = "mesh_placeholder_shrine"
 ; Three camps, forty metres out: visible from the wall, and far enough that the audit passes.
 ; Composition and respawn are data; these coordinates are the only level design here.
 [node name="ReedCamp" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0, 10)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46, 0, 14)
 script = ExtResource("5_spawnfield")
 FieldId = "spf_hollow_reeds"
 
 [node name="DitchCamp" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, 40)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, 50)
 script = ExtResource("5_spawnfield")
 FieldId = "spf_hollow_ditch"
 
 [node name="ThicketCamp" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38, 0, -16)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 0, -20)
 script = ExtResource("5_spawnfield")
 FieldId = "spf_hollow_thicket"
