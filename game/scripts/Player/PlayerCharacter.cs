@@ -18,7 +18,19 @@ public partial class PlayerCharacter : Node
     private Combat.Combatant _combatant = null!;
     private Vector3 _spawnPoint;
 
-    [Export] public int StartingLevel { get; set; } = 10;
+
+    /// <summary>
+    /// The level the character begins at. One, because the game begins in the first village
+    /// and its band is 1–3.
+    /// </summary>
+    /// <remarks>
+    /// This was 10 for as long as the only playable scene was the test arena, whose band is
+    /// 11–15. Once the village became the entry point that default made every creature
+    /// outside it trivial, and FR-2.7 had them ignore the player entirely — which reads,
+    /// from the outside, exactly like broken aggro. Test scenes above the starting band
+    /// override it on their own Player node.
+    /// </remarks>
+    [Export] public int StartingLevel { get; set; } = 1;
 
     /// <summary>Respawn delay. Kept short: a long death screen makes a hard game feel unfair.</summary>
     [Export] public double RespawnSeconds { get; set; } = 1.5;

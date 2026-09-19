@@ -163,6 +163,11 @@ shape = SubResource("BoxShape3D_unit")
 [node name="Player" parent="." instance=ExtResource("5_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 
+; The ridge is band 11–15, so the test character starts there rather than at the level the
+; first village hands you.
+[node name="PlayerCharacter" parent="Player" index="8"]
+StartingLevel = 12
+
 ; Camera, cursor, HUD, panels and debug tools. Shared by every zone scene so that adding a
 ; map is a matter of geometry, not of re-wiring fifteen nodes correctly.
 [node name="Session" parent="." instance=ExtResource("26_session")]
