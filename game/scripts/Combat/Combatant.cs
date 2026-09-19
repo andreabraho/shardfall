@@ -43,6 +43,9 @@ public partial class Combatant : Node
 
     public bool IsPlayer { get; set; }
 
+    /// <summary>A designed encounter — a shard — rather than an ordinary enemy.</summary>
+    public bool IsEncounter { get; set; }
+
     /// <summary>
     /// Multiplier on incoming damage, set by defensive abilities such as Guard Stance.
     /// Separate from resistances and mitigation so it is never capped by them — a 70%
@@ -101,7 +104,11 @@ public partial class Combatant : Node
 
         // Enemies far below the player stop being a fight: one hit kills them (FR-2.7). Running
         // back through a cleared zone should cost patience, not time.
-        if (attacker.IsPlayer && ExperienceTable.IsTrivial(attacker.Stats.Level, Stats.Level))
+        //
+        // Encounters are exempt. A shard is a designed fight with phases and a payoff, and
+        // deleting a low-tier one in a single click would skip the whole thing rather than
+        // save the player time.
+        if (attacker.IsPlayer && !IsEncounter && ExperienceTable.IsTrivial(attacker.Stats.Level, Stats.Level))
         {
             var overkill = (int)Math.Ceiling(Health.Current);
             ApplyDamage(overkill, critical: true);

@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3]
+[gd_scene load_steps=27 format=3]
 
 ; MOV-01 greybox test arena.
 ;
@@ -20,6 +20,9 @@
 [ext_resource type="Script" path="res://scripts/UI/WorkbenchPanel.cs" id="13_bench"]
 [ext_resource type="Script" path="res://scripts/Debug/DebugSpawner.cs" id="14_spawner"]
 [ext_resource type="Script" path="res://scripts/Debug/DebugGrants.cs" id="15_grants"]
+[ext_resource type="Script" path="res://scripts/World/ShardNode.cs" id="16_shard"]
+[ext_resource type="Script" path="res://scripts/Visual/VisualRoot.cs" id="17_visualroot"]
+[ext_resource type="Script" path="res://scripts/UI/ShardHud.cs" id="18_shardhud"]
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="5_player"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_arena"]
@@ -245,3 +248,29 @@ EnemyId = "mob_rot_mender"
 [node name="Pack5" parent="Enemies" instance=ExtResource("7_enemy")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.1, 8)
 EnemyId = "mob_blight_bomber"
+
+; A tier-1 shard, far enough from the enemy packs that walking into its zone is deliberate.
+[node name="Shard" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -24)
+script = ExtResource("16_shard")
+ShardId = "shd_hollow_bloom"
+
+[node name="VisualRoot" type="Node3D" parent="Shard"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+script = ExtResource("17_visualroot")
+VisualId = "mesh_placeholder_monolith"
+
+[node name="ShardHud" type="CanvasLayer" parent="."]
+script = ExtResource("18_shardhud")
+
+; A tier-3 shard on the far side, so the warded modifier and the two-ring pulse can be
+; tested without waiting for a respawn to roll them.
+[node name="Shard2" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0.1, 22)
+script = ExtResource("16_shard")
+ShardId = "shd_ridge_spine"
+
+[node name="VisualRoot" type="Node3D" parent="Shard2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+script = ExtResource("17_visualroot")
+VisualId = "mesh_placeholder_monolith"

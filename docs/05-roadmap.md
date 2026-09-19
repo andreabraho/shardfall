@@ -143,15 +143,15 @@ click-to-move lives or dies on responsiveness.
 
 | ID | Task | Owner | Notes |
 |---|---|---|---|
-| SHD-01 | Shard node entity, respawn timer, tier data, modifier roll | **[C]** | |
-| SHD-02 | Three-phase encounter state machine | **[C]** | Redesign §3 |
-| SHD-03 | Wave composer: role mixes per tier and phase | **[C]** | |
-| SHD-04 | Radial pulse AoE with difficulty-scaled telegraph | **[C]** | |
-| SHD-05 | Reclamation cast + anchor-add interrupt | **[C]** | The phase-3 tension beat |
-| SHD-06 | Soft arena barrier, leave-resets-encounter | **[C]** | |
-| SHD-07 | Break payoff: shockwave, loot burst, Shard Essence, buff | **[C]** | |
-| SHD-08 | 4 modifiers (Frenzied / Warded / Venomous / Twin) | **[C]** | |
-| SHD-09 | 5 shard tiers as data | **[C]** | |
+| SHD-01 | Shard node entity, respawn timer, tier data, modifier roll | **[C]** | ✅ rerolled on every respawn, and tinted so you see it before engaging |
+| SHD-02 | Three-phase encounter state machine | **[C]** | ✅ engine-free — Redesign §3 |
+| SHD-03 | Wave composer: role mixes per tier and phase | **[C]** | ✅ waves are roles, so any zone can dress the same shape |
+| SHD-04 | Radial pulse AoE with difficulty-scaled telegraph | **[C]** | ✅ validated under BAL-03 at every difficulty |
+| SHD-05 | Reclamation cast + anchor-add interrupt | **[C]** | ✅ the phase-3 tension beat; a landed cast starts another |
+| SHD-06 | Soft arena barrier, leave-resets-encounter | **[C]** | ◐ leaving resets and clears the adds; the visible barrier is art |
+| SHD-07 | Break payoff: shockwave, loot burst, Shard Essence, buff | **[C]** | ◐ shockwave, burst and essence done; the absorbed-power buff needs the buff system |
+| SHD-08 | 4 modifiers (Frenzied / Warded / Venomous / Twin) | **[C]** | ◐ three live; Twin needs a second node spawned at runtime |
+| SHD-09 | 5 shard tiers as data | **[C]** | ✅ |
 | SHD-10 | **Encounter tuning pass** — you play each tier, I adjust | **[C→You]** | |
 
 ---

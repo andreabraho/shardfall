@@ -50,7 +50,16 @@ public static class GameItems
     public static DeterministicRng CraftRng =>
         _craftRng ??= new DeterministicRng(GameSession.Seed).Fork("craft");
 
+    /// <summary>
+    /// Encounters — shard modifier rolls and wave composition. Separate from loot so arming a
+    /// shard cannot shift what the next kill drops, which would make a loot bug impossible to
+    /// reproduce from a seed.
+    /// </summary>
+    public static DeterministicRng EncounterRng =>
+        _encounterRng ??= new DeterministicRng(GameSession.Seed).Fork("encounter");
+
     private static DeterministicRng? _craftRng;
+    private static DeterministicRng? _encounterRng;
 
     public static void Load()
     {
@@ -58,6 +67,7 @@ public static class GameItems
         _factory = new ItemFactory(_catalogue, _catalogue);
         _lootRng = null;
         _craftRng = null;
+        _encounterRng = null;
 
         GD.Print($"[items] catalogue ready — {_catalogue.Specs.Count} item kinds");
     }
