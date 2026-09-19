@@ -149,6 +149,7 @@ Option 2 is the one that adds a build decision without adding a system. Your cal
 | ITM-11 | ~70 MVP items as data | **[C]** | ✅ 62 items — 47 equippable across every slot and band, plus materials and stones |
 | ITM-12 | **Economy simulator** — verifies you are yang-constrained early and comfortable later | **[C]** | ✅ runs in CI; its first honest version showed money never mattered before Act 2 |
 | ITM-13 | Item icons | **[You]** *(deferred)* | Coloured frames until art phase |
+| ITM-14 | Drop, destroy and lock items from the bag | **[C]** | ✅ added 2026-09-19 — drop is reversible so it is instant, destroy always asks, lock is the standing answer |
 
 ---
 

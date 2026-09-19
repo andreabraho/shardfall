@@ -31,7 +31,44 @@ public partial class LootDrop : Area3D
 
     [Export] public float PickupRadius { get; set; } = 1.6f;
 
+    /// <summary>
+    /// Set for an item the player threw away themselves: it will not be collected again
+    /// until they have stepped out of pickup range at least once.
+    /// </summary>
+    /// <remarks>
+    /// Without this, dropping something is a no-op — auto-pickup is proximity-based and the
+    /// player is standing on the spot, so the item returns to the bag on the next frame and
+    /// the feature looks broken.
+    /// </remarks>
+    public bool RequiresStepAway { get; set; }
+
+    private bool _steppedAway = true;
+
     public ItemInstance Item => _item;
+
+    /// <summary>
+    /// A deliberate, single drop at a known spot — the player emptying their bag.
+    /// </summary>
+    /// <remarks>
+    /// Separate from the rolled overload because the scatter there needs an RNG, and running
+    /// the loot stream for a UI action would mean two players with the same seed no longer
+    /// got the same drops. Loot has to stay reproducible from a seed alone.
+    /// </remarks>
+    public static LootDrop Place(Node parent, ItemInstance item, Vector3 at)
+    {
+        var drop = new LootDrop
+        {
+            Name = $"Loot_{item.Uid}",
+            _item = item,
+            RequiresStepAway = true,
+            _steppedAway = false,
+        };
+
+        parent.CallDeferred(Node.MethodName.AddChild, drop);
+        drop.SetDeferred(Node3D.PropertyName.GlobalPosition, at + (Vector3.Up * 0.25f));
+
+        return drop;
+    }
 
     public static LootDrop Spawn(Node parent, ItemInstance item, Vector3 at, DeterministicRng rng)
     {
@@ -123,7 +160,20 @@ public partial class LootDrop : Area3D
 
         var player = GetTree().GetFirstNodeInGroup("player") as Node3D;
 
-        if (player is null || GlobalPosition.DistanceTo(player.GlobalPosition) > PickupRadius) return;
+        if (player is null) return;
+
+        var distance = GlobalPosition.DistanceTo(player.GlobalPosition);
+
+        if (RequiresStepAway && !_steppedAway)
+        {
+            // Armed the moment the player walks off it, so one step is all it takes to change
+            // their mind — and standing still is all it takes not to.
+            if (distance > PickupRadius) _steppedAway = true;
+
+            return;
+        }
+
+        if (distance > PickupRadius) return;
 
         var bag = player.GetNodeOrNull<PlayerInventory>("PlayerInventory");
 

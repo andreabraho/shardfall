@@ -27,6 +27,7 @@ public partial class InventoryPanel : CanvasLayer
     private VBoxContainer _gearList = null!;
     private Label _yangLabel = null!;
     private Label _statsLabel = null!;
+    private Label _notice = null!;
     private readonly List<Control> _itemNodes = [];
 
     public override void _Ready()
@@ -152,12 +153,20 @@ public partial class InventoryPanel : CanvasLayer
 
         var hint = new Label
         {
-            Text = "Click an item to equip or unequip it · I to close · U for the anvil",
+            Text = "Click to equip or unequip · right-click to drop on the ground\n"
+                + "Shift + right-click destroys it · Ctrl + right-click locks it against both\n"
+                + "I to close · U for the anvil",
+            AutowrapMode = TextServer.AutowrapMode.WordSmart,
         };
 
         hint.AddThemeFontSizeOverride("font_size", 12);
         hint.AddThemeColorOverride("font_color", new Color(0.55f, 0.60f, 0.66f));
         right.AddChild(hint);
+
+        _notice = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart };
+        _notice.AddThemeFontSizeOverride("font_size", 13);
+        _notice.AddThemeColorOverride("font_color", new Color("f0c96a"));
+        right.AddChild(_notice);
     }
 
     private static Label Heading(string text)
@@ -166,6 +175,20 @@ public partial class InventoryPanel : CanvasLayer
         label.AddThemeFontSizeOverride("font_size", 18);
 
         return label;
+    }
+
+    /// <summary>A protected item: the same fill, with its rarity colour drawn as a hard border.</summary>
+    private static StyleBoxFlat Locked(Color colour)
+    {
+        var style = Background(colour * new Color(1, 1, 1, 0.18f));
+
+        style.BorderColor = colour;
+        style.BorderWidthTop = 2;
+        style.BorderWidthBottom = 2;
+        style.BorderWidthLeft = 2;
+        style.BorderWidthRight = 2;
+
+        return style;
     }
 
     private static StyleBoxFlat Background(Color colour) => new()
@@ -279,11 +302,19 @@ public partial class InventoryPanel : CanvasLayer
                 ClipText = true,
             };
 
+            var item = placed.Item;
+
             button.AddThemeFontSizeOverride("font_size", 11);
             button.AddThemeColorOverride("font_color", colour);
-            button.AddThemeStyleboxOverride("normal", Background(colour * new Color(1, 1, 1, 0.18f)));
 
-            var item = placed.Item;
+            // A locked item is outlined rather than dimmed: it is protected, not unavailable,
+            // and dimming it would read as "you cannot use this".
+            button.AddThemeStyleboxOverride("normal", item.Locked
+                ? Locked(colour)
+                : Background(colour * new Color(1, 1, 1, 0.18f)));
+
+            if (item.Locked) button.Text = "🔒 " + button.Text;
+
             button.Pressed += () =>
             {
                 if (spec?.IsEquipment == true) _inventory.Equip(item);
@@ -291,10 +322,132 @@ public partial class InventoryPanel : CanvasLayer
                 Refresh();
             };
 
+            button.GuiInput += @event => OnItemInput(@event, item, button);
+
             _gridRoot.AddChild(button);
             _itemNodes.Add(button);
         }
     }
+
+    // ------------------------------------------------------------------ throwing things away
+
+    /// <summary>
+    /// Right-click, and its two modifiers (ITM-14).
+    /// </summary>
+    /// <remarks>
+    /// The three actions are deliberately asymmetric in how much they ask of the player.
+    /// Dropping is reversible — the item is at their feet — so it happens immediately.
+    /// Destroying is not, so it always asks, every time, however worthless the item looks:
+    /// a rule about which items are worth confirming is a rule that will one day be wrong
+    /// about someone's stack of upgrade materials.
+    /// <para>
+    /// Locking is the standing answer for anything the player never wants to be asked about
+    /// again, and it refuses both actions rather than confirming harder.
+    /// </para>
+    /// </remarks>
+    private void OnItemInput(InputEvent @event, ItemInstance item, Control source)
+    {
+        if (@event is not InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Right } click) return;
+
+        source.AcceptEvent();
+
+        if (click.CtrlPressed)
+        {
+            item.Locked = !item.Locked;
+            Refresh();
+
+            return;
+        }
+
+        if (item.Locked)
+        {
+            Notify($"{GameItems.NameOf(item)} is locked. Ctrl + right-click to unlock it.");
+            return;
+        }
+
+        if (click.ShiftPressed)
+        {
+            ConfirmDestroy(item);
+            return;
+        }
+
+        Drop(item);
+    }
+
+    /// <summary>Puts the item on the ground beside the player, where it can be picked up again.</summary>
+    private void Drop(ItemInstance item)
+    {
+        if (_inventory is null) return;
+
+        if (GetTree().GetFirstNodeInGroup("player") is not Node3D player)
+        {
+            Notify("Nowhere to drop it.");
+            return;
+        }
+
+        if (!_inventory.Bag.Remove(item))
+        {
+            Notify("That item is no longer in the bag.");
+            return;
+        }
+
+        // Far enough out that it is visible beside the player rather than under them, and
+        // close enough that one step recovers it.
+        var facing = -player.GlobalTransform.Basis.Z;
+        var offset = facing.LengthSquared() > 0.01f ? facing.Normalized() : Vector3.Forward;
+
+        World.LootDrop.Place(GetTree().CurrentScene, item, player.GlobalPosition + (offset * 1.8f));
+
+        Notify($"Dropped {GameItems.NameOf(item)}.");
+        Refresh();
+    }
+
+    private void ConfirmDestroy(ItemInstance item)
+    {
+        var dialog = new ConfirmationDialog
+        {
+            Title = "Destroy item",
+            DialogText = $"Destroy {GameItems.NameOf(item)}"
+                + (item.Count > 1 ? $" x{item.Count}" : "")
+                + "?\n\nThis cannot be undone. To keep it but free the space, right-click to drop it instead.",
+            OkButtonText = "Destroy",
+        };
+
+        dialog.Confirmed += () =>
+        {
+            if (_inventory?.Bag.Remove(item) == true)
+            {
+                Notify($"Destroyed {GameItems.NameOf(item)}.");
+                Refresh();
+            }
+
+            dialog.QueueFree();
+        };
+
+        dialog.Canceled += dialog.QueueFree;
+
+        AddChild(dialog);
+        dialog.PopupCentered();
+    }
+
+    private void Notify(string message)
+    {
+        _notice.Text = message;
+        _noticeFor = 3.5;
+        _notice.Modulate = new Color(1, 1, 1, 1);
+    }
+
+    public override void _Process(double delta)
+    {
+        if (_noticeFor <= 0) return;
+
+        _noticeFor -= delta;
+
+        if (_noticeFor < 1.0) _notice.Modulate = new Color(1, 1, 1, (float)Mathf.Max(0, _noticeFor));
+        if (_noticeFor <= 0) _notice.Text = "";
+    }
+
+    private double _noticeFor;
 
     /// <summary>
     /// What this item would be replacing. For a ring, the second slot when it is free — the
