@@ -19,6 +19,7 @@ namespace Kiln.Game.World;
 /// wrong thing spawned here" is reproducible.
 /// </para>
 /// </remarks>
+[Tool]
 public partial class SpawnFieldNode : Node3D
 {
     private readonly List<Combat.EnemyBrain> _mine = [];
@@ -27,14 +28,26 @@ public partial class SpawnFieldNode : Node3D
     private PackedScene? _enemyScene;
     private Node3D? _container;
     private Node3D? _player;
+    private string _fieldId = "";
 
-    [Export] public string FieldId { get; set; } = "";
+    [Export]
+    public string FieldId
+    {
+        get => _fieldId;
+        set { _fieldId = value; if (Engine.IsEditorHint() && IsNodeReady()) DrawFootprint(); }
+    }
 
     /// <summary>The field's tuning, or null when it failed to resolve. Read by the scene audit.</summary>
     public Kiln.Core.World.SpawnFieldDef? Def => _field?.Def;
 
     public override void _Ready()
     {
+        if (Engine.IsEditorHint())
+        {
+            DrawFootprint();
+            return;
+        }
+
         if (!GameWorld.IsLoaded)
         {
             GD.PushError($"[spawn] '{FieldId}' loaded before GameWorld.Load() ran.");
@@ -133,6 +146,52 @@ public partial class SpawnFieldNode : Node3D
         enemy.GlobalPosition = Scatter();
 
         _mine.Add(enemy);
+    }
+
+    /// <summary>
+    /// Shows the camp's footprint and the ring inside which it must not meet safe ground.
+    /// </summary>
+    /// <remarks>
+    /// Two rings rather than one: the inner is where creatures stand, the outer is the
+    /// distance the scene audit enforces against a village. Placing a camp against a
+    /// boundary you cannot see means finding out at the next run, which is the loop this is
+    /// meant to close.
+    /// </remarks>
+    private void DrawFootprint()
+    {
+        if (!GameContent.IsLoaded && !GameContent.EnsureLoadedForEditor()) return;
+
+        var radius = FootprintRadius();
+
+        EditorRing.Show(this, radius, new Color(0.85f, 0.35f, 0.3f, 0.5f));
+
+        // Freed before the replacement is named, or Godot renames the new one around it.
+        if (GetNodeOrNull<Node>("Clearance") is { } stale)
+        {
+            RemoveChild(stale);
+            stale.QueueFree();
+        }
+
+        if (radius > 0)
+        {
+            var clearance = new Node3D { Name = "Clearance" };
+            AddChild(clearance);
+            EditorRing.Show(clearance, radius + SafetyField.SpawnClearance,
+                new Color(0.85f, 0.35f, 0.3f, 0.22f), thickness: 0.12f);
+        }
+    }
+
+    private double FootprintRadius()
+    {
+        foreach (var zone in GameContent.Database.Zones.Values)
+        {
+            foreach (var field in zone.SpawnFields)
+            {
+                if (field.Id == _fieldId) return field.Radius;
+            }
+        }
+
+        return 0;
     }
 
     /// <summary>

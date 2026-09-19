@@ -19,32 +19,84 @@ namespace Kiln.Game.World;
 /// for one wall.
 /// </para>
 /// </remarks>
+[Tool]
 public partial class KitPiece : StaticBody3D
 {
     private static readonly Dictionary<string, Mesh> Meshes = [];
     private static readonly Dictionary<string, Material> Materials = [];
     private static readonly Dictionary<string, Shape3D> Shapes = [];
 
-    [Export] public string PieceId { get; set; } = "";
+    private string _pieceId = "";
+    private string _tint = "";
+
+    [Export]
+    public string PieceId
+    {
+        get => _pieceId;
+        set { _pieceId = value; Rebuild(); }
+    }
 
     /// <summary>Overrides the piece's colour, for marking a route or a faction's wall.</summary>
-    [Export] public string TintOverride { get; set; } = "";
-
-    public override void _Ready()
+    [Export]
+    public string TintOverride
     {
-        if (!GameContent.IsLoaded)
+        get => _tint;
+        set { _tint = value; Rebuild(); }
+    }
+
+    public override void _Ready() => Apply();
+
+    /// <summary>
+    /// Builds, or rebuilds, the piece's geometry.
+    /// </summary>
+    /// <remarks>
+    /// Called from the property setters as well as <c>_Ready</c> so that changing the piece id
+    /// in the inspector shows the new piece immediately — which is the entire point of the
+    /// editor preview, and the reason the generated nodes get no <c>Owner</c>: without one
+    /// Godot leaves them out of the saved scene, so a <c>.tscn</c> stays a list of piece ids
+    /// rather than a copy of the meshes they happened to produce.
+    /// </remarks>
+    private void Rebuild()
+    {
+        // The setters run while the scene is still being deserialised, before the node is in
+        // the tree and before its siblings exist. _Ready does the first build.
+        if (!IsNodeReady()) return;
+
+        Apply();
+    }
+
+    private void Apply()
+    {
+        Clear();
+
+        if (_pieceId.Length == 0) return;
+
+        if (!GameContent.IsLoaded && !GameContent.EnsureLoadedForEditor())
         {
-            GD.PushError($"[kit] '{PieceId}' loaded before content.");
+            if (!Engine.IsEditorHint()) GD.PushError($"[kit] '{_pieceId}' loaded before content.");
             return;
         }
 
-        if (!GameContent.Database.KitPieces.TryGetValue(PieceId, out var def))
+        if (!GameContent.Database.KitPieces.TryGetValue(_pieceId, out var def))
         {
-            GD.PushError($"[kit] no piece '{PieceId}' in the kit — this node will be invisible.");
+            GD.PushError($"[kit] no piece '{_pieceId}' in the kit — this node will be invisible.");
             return;
         }
 
         Build(def);
+    }
+
+    private void Clear()
+    {
+        foreach (var child in GetChildren())
+        {
+            // Only what a previous build added. Anything the designer parented to the piece —
+            // a light on a brazier, a marker on a gate — has an owner and is left alone.
+            if (child.Owner is not null) continue;
+
+            RemoveChild(child);
+            child.QueueFree();
+        }
     }
 
     private void Build(KitPieceDef def)
@@ -68,7 +120,7 @@ public partial class KitPiece : StaticBody3D
             {
                 Name = "Mesh",
                 Mesh = MeshFor(def, size),
-                MaterialOverride = MaterialFor(string.IsNullOrEmpty(TintOverride) ? def.Color : TintOverride),
+                MaterialOverride = MaterialFor(string.IsNullOrEmpty(_tint) ? def.Color : _tint),
 
                 // An arch is two legs and a lintel, so its centre is empty; a solid shadow
                 // caster would fill the gateway with darkness the player can walk through.
@@ -131,9 +183,11 @@ public partial class KitPiece : StaticBody3D
     {
         if (Materials.TryGetValue(colour, out var cached)) return cached;
 
+        // A tint typed by hand in the inspector is half-finished for as long as it takes to
+        // type it, so an unparseable one is a normal intermediate state, not an error.
         var material = new StandardMaterial3D
         {
-            AlbedoColor = new Color(colour),
+            AlbedoColor = Color.HtmlIsValid(colour.TrimStart('#')) ? new Color(colour) : Colors.Magenta,
             Roughness = 0.9f,
         };
 
