@@ -234,6 +234,64 @@ public sealed class SkillRankDef
 }
 
 // ---------------------------------------------------------------------------
+// Shards
+// ---------------------------------------------------------------------------
+
+/// <summary>
+/// A shard tier (SHD-09). Tier changes wave composition, pulse pattern and loot rather than
+/// only the size of the numbers — a tier 5 that is a tier 1 with more health teaches the
+/// player nothing (doc 02 §3).
+/// </summary>
+public sealed class ShardDef : ContentDefBase
+{
+    public string Name { get; init; } = string.Empty;
+    public int Tier { get; init; }
+    public int Level { get; init; }
+    public double Hp { get; init; }
+
+    /// <summary>Seconds between pulses, measured from the end of the previous one.</summary>
+    public double PulseInterval { get; init; } = 6.0;
+
+    /// <summary>Wind-up at the Disciple baseline. Validated by BAL-03 like every telegraph.</summary>
+    public double PulseWindup { get; init; } = 2.4;
+
+    public double PulseRadius { get; init; } = 9.0;
+    public double PulseDamageCoef { get; init; } = 1.0;
+    public double ReclamationSeconds { get; init; } = 12.0;
+    public double ReclamationHeal { get; init; } = 0.30;
+
+    public ShardWaveDef[] Waves { get; init; } = [];
+
+    /// <summary>Modifiers this node can roll on respawn. Empty means it is always plain.</summary>
+    public string[] Modifiers { get; init; } = [];
+
+    public string? DropTable { get; init; }
+    public string? Visual { get; init; }
+
+    /// <summary>Shard Essence granted on the break, before any modifier bonus.</summary>
+    public int Essence { get; init; } = 1;
+}
+
+public sealed class ShardWaveDef
+{
+    /// <summary>one | two | three</summary>
+    public string Phase { get; init; } = "one";
+
+    public WaveSlotDef[] Slots { get; init; } = [];
+}
+
+public sealed class WaveSlotDef
+{
+    /// <summary>bruiser | archer | shielder | mender | bomber</summary>
+    public string Role { get; init; } = "bruiser";
+
+    public int Count { get; init; } = 1;
+
+    /// <summary>Marks the add whose death interrupts the reclamation cast.</summary>
+    public bool Anchor { get; init; }
+}
+
+// ---------------------------------------------------------------------------
 // Quests
 // ---------------------------------------------------------------------------
 

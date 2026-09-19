@@ -1,0 +1,112 @@
+[
+  {
+    "id": "shd_cracked_seed",
+    "name": "$shard.shd_cracked_seed.name",
+    "tier": 1,
+    "level": 4,
+    "hp": 900,
+    "pulse_interval": 10.0,
+    "pulse_windup": 3.0,
+    "pulse_radius": 7.0,
+    "pulse_damage_coef": 0.8,
+    "reclamation_seconds": 16.0,
+    "reclamation_heal": 0.25,
+    "essence": 1,
+    "drop_table": "dt_valley_animal_t2",
+    "visual": "mesh_placeholder_monolith",
+    "modifiers": [],
+    "waves": [
+      { "phase": "one",   "slots": [ { "role": "bruiser", "count": 3 } ] },
+      { "phase": "two",   "slots": [ { "role": "bruiser", "count": 2 }, { "role": "archer", "count": 1 } ] },
+      { "phase": "three", "slots": [ { "role": "bruiser", "count": 2 }, { "role": "mender", "count": 1, "anchor": true } ] }
+    ]
+  },
+  {
+    "id": "shd_hollow_bloom",
+    "name": "$shard.shd_hollow_bloom.name",
+    "tier": 2,
+    "level": 8,
+    "hp": 2100,
+    "pulse_interval": 9.5,
+    "pulse_windup": 3.2,
+    "pulse_radius": 7.5,
+    "pulse_damage_coef": 1.0,
+    "reclamation_seconds": 14.0,
+    "reclamation_heal": 0.30,
+    "essence": 2,
+    "drop_table": "dt_valley_undead_t2",
+    "visual": "mesh_placeholder_monolith",
+    "modifiers": ["frenzied", "venomous"],
+    "waves": [
+      { "phase": "one",   "slots": [ { "role": "bruiser", "count": 4 } ] },
+      { "phase": "two",   "slots": [ { "role": "bruiser", "count": 2 }, { "role": "archer", "count": 2 }, { "role": "shielder", "count": 1 } ] },
+      { "phase": "three", "slots": [ { "role": "bruiser", "count": 3 }, { "role": "mender", "count": 1, "anchor": true } ] }
+    ]
+  },
+  {
+    "id": "shd_ridge_spine",
+    "name": "$shard.shd_ridge_spine.name",
+    "tier": 3,
+    "level": 12,
+    "hp": 4200,
+    "pulse_interval": 9.0,
+    "pulse_windup": 3.4,
+    "pulse_radius": 8.0,
+    "pulse_damage_coef": 1.15,
+    "reclamation_seconds": 13.0,
+    "reclamation_heal": 0.30,
+    "essence": 3,
+    "drop_table": "dt_ridge_t3",
+    "visual": "mesh_placeholder_monolith",
+    "modifiers": ["frenzied", "warded", "venomous"],
+    "waves": [
+      { "phase": "one",   "slots": [ { "role": "bruiser", "count": 4 }, { "role": "archer", "count": 1 } ] },
+      { "phase": "two",   "slots": [ { "role": "bruiser", "count": 2 }, { "role": "archer", "count": 2 }, { "role": "shielder", "count": 1 }, { "role": "bomber", "count": 1 } ] },
+      { "phase": "three", "slots": [ { "role": "bruiser", "count": 3 }, { "role": "archer", "count": 1 }, { "role": "mender", "count": 1, "anchor": true } ] }
+    ]
+  },
+  {
+    "id": "shd_gate_warden",
+    "name": "$shard.shd_gate_warden.name",
+    "tier": 4,
+    "level": 16,
+    "hp": 7600,
+    "pulse_interval": 8.5,
+    "pulse_windup": 3.6,
+    "pulse_radius": 8.5,
+    "pulse_damage_coef": 1.3,
+    "reclamation_seconds": 12.0,
+    "reclamation_heal": 0.30,
+    "essence": 5,
+    "drop_table": "dt_gate_t4",
+    "visual": "mesh_placeholder_monolith",
+    "modifiers": ["frenzied", "warded", "venomous", "twin"],
+    "waves": [
+      { "phase": "one",   "slots": [ { "role": "bruiser", "count": 4 }, { "role": "archer", "count": 2 } ] },
+      { "phase": "two",   "slots": [ { "role": "bruiser", "count": 3 }, { "role": "archer", "count": 2 }, { "role": "shielder", "count": 2 }, { "role": "bomber", "count": 1 } ] },
+      { "phase": "three", "slots": [ { "role": "bruiser", "count": 3 }, { "role": "bomber", "count": 1 }, { "role": "mender", "count": 1, "anchor": true } ] }
+    ]
+  },
+  {
+    "id": "shd_catacomb_heart",
+    "name": "$shard.shd_catacomb_heart.name",
+    "tier": 5,
+    "level": 20,
+    "hp": 12800,
+    "pulse_interval": 8.0,
+    "pulse_windup": 3.7,
+    "pulse_radius": 9.0,
+    "pulse_damage_coef": 1.45,
+    "reclamation_seconds": 11.0,
+    "reclamation_heal": 0.30,
+    "essence": 8,
+    "drop_table": "dt_catacombs_t5",
+    "visual": "mesh_placeholder_monolith",
+    "modifiers": ["frenzied", "warded", "venomous", "twin"],
+    "waves": [
+      { "phase": "one",   "slots": [ { "role": "bruiser", "count": 5 }, { "role": "archer", "count": 2 } ] },
+      { "phase": "two",   "slots": [ { "role": "bruiser", "count": 3 }, { "role": "archer", "count": 3 }, { "role": "shielder", "count": 2 }, { "role": "bomber", "count": 2 } ] },
+      { "phase": "three", "slots": [ { "role": "bruiser", "count": 4 }, { "role": "shielder", "count": 1 }, { "role": "bomber", "count": 1 }, { "role": "mender", "count": 1, "anchor": true } ] }
+    ]
+  }
+]

@@ -20,8 +20,10 @@ public class ContentValidatorTests
         IEnumerable<DropTableDef>? dropTables = null,
         IEnumerable<BonusPoolDef>? bonusPools = null,
         IEnumerable<UpgradePathDef>? upgradePaths = null,
-        IEnumerable<VisualDef>? visuals = null) => new()
+        IEnumerable<VisualDef>? visuals = null,
+        IEnumerable<ShardDef>? shards = null) => new()
     {
+        Shards = Index(shards),
         Items = Index(items),
         Enemies = Index(enemies),
         Skills = Index(skills),

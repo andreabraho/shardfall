@@ -20,9 +20,11 @@ public sealed class ContentDatabase
     /// <summary>The art-swap boundary (ENG-07): logical visual id → what currently renders it.</summary>
     public required IReadOnlyDictionary<string, VisualDef> Visuals { get; init; }
 
+    public required IReadOnlyDictionary<string, ShardDef> Shards { get; init; }
+
     public int TotalDefinitions =>
         Items.Count + Enemies.Count + Skills.Count + Quests.Count +
-        DropTables.Count + BonusPools.Count + UpgradePaths.Count + Visuals.Count;
+        DropTables.Count + BonusPools.Count + UpgradePaths.Count + Visuals.Count + Shards.Count;
 
     /// <summary>All definitions, for rules that apply across every type (id format, uniqueness).</summary>
     public IEnumerable<IContentDef> All()
@@ -35,13 +37,14 @@ public sealed class ContentDatabase
         foreach (var d in BonusPools.Values) yield return d;
         foreach (var d in UpgradePaths.Values) yield return d;
         foreach (var d in Visuals.Values) yield return d;
+        foreach (var d in Shards.Values) yield return d;
     }
 
     /// <summary>True when the id exists in any registry — used by cross-reference checks.</summary>
     public bool Exists(string id) =>
         Items.ContainsKey(id) || Enemies.ContainsKey(id) || Skills.ContainsKey(id) ||
         Quests.ContainsKey(id) || DropTables.ContainsKey(id) || BonusPools.ContainsKey(id) ||
-        UpgradePaths.ContainsKey(id) || Visuals.ContainsKey(id);
+        UpgradePaths.ContainsKey(id) || Visuals.ContainsKey(id) || Shards.ContainsKey(id);
 
     public static ContentDatabase Empty() => new()
     {
@@ -53,5 +56,6 @@ public sealed class ContentDatabase
         BonusPools = new Dictionary<string, BonusPoolDef>(),
         UpgradePaths = new Dictionary<string, UpgradePathDef>(),
         Visuals = new Dictionary<string, VisualDef>(),
+        Shards = new Dictionary<string, ShardDef>(),
     };
 }

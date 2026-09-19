@@ -1,5 +1,6 @@
 using Kiln.Core.Combat;
 using Kiln.Core.Foundation;
+using Kiln.Core.Encounters;
 using Kiln.Core.Items;
 using Kiln.Data.Definitions;
 using Kiln.Data.Loading;
@@ -33,6 +34,7 @@ public static class ContentValidator
         LevelRanges(db, report);
         StatKeys(db, report);
         RarityShape(db, report);
+        ShardEncounters(db, report);
 
         return report;
     }
@@ -478,5 +480,111 @@ public static class ContentValidator
                     + $"the table allows {minLines}..{maxLines}.");
             }
         }
+    }
+
+    // -- R12 ----------------------------------------------------------------
+    /// <summary>
+    /// Shard fights must be survivable and completable (SHD-02/03, doc 02 §3).
+    /// <para>
+    /// The radial pulse is a telegraph like any other and gets the same BAL-03 treatment: on
+    /// every difficulty the player must have time to see it, aim and walk out. A shard is the
+    /// one fight the player cannot simply leave, so an unescapable pulse is not a hard fight,
+    /// it is an unwinnable one.
+    /// </para>
+    /// </summary>
+    private static void ShardEncounters(ContentDatabase db, ValidationReport report)
+    {
+        foreach (var shard in db.Shards.Values)
+        {
+            var escape = PlayerConstants.TimeToEscape(shard.PulseRadius);
+
+            foreach (var tier in DifficultySettings.All)
+            {
+                var actual = shard.PulseWindup * tier.TelegraphScale;
+
+                if (actual >= escape) continue;
+
+                report.Error("telegraph-escape", shard.SourceFile,
+                    $"'{shard.Id}' pulse: on {tier.Tier} the telegraph lasts {actual:F2}s but "
+                    + $"escaping a {shard.PulseRadius:F1}m ring takes {escape:F2}s.",
+                    $"Raise pulse_windup to at least {escape / tier.TelegraphScale:F2}s, or shrink the radius.");
+            }
+
+            // The rhythm the fight is built on — clear adds, hit the shard, walk out — needs
+            // a window between pulses. An interval shorter than the wind-up means the next
+            // telegraph starts before the last one lands and the player never gets a turn.
+            if (shard.PulseInterval <= shard.PulseWindup)
+            {
+                report.Error("shard-pacing", shard.SourceFile,
+                    $"'{shard.Id}' pulses every {shard.PulseInterval:F1}s with a {shard.PulseWindup:F1}s wind-up.",
+                    "Leave a window between pulses or there is no time to attack the shard.");
+            }
+
+            foreach (var phase in (ShardPhase[])[ShardPhase.One, ShardPhase.Two, ShardPhase.Three])
+            {
+                var wave = ToWave(shard, phase);
+
+                if (wave is null)
+                {
+                    report.Error("shard-waves", shard.SourceFile,
+                        $"'{shard.Id}' has no wave for phase {phase.ToString().ToLowerInvariant()}.");
+                    continue;
+                }
+
+                // Exactly one anchor in phase three. None means the reclamation cast cannot be
+                // interrupted and the fight becomes a pure damage race; more than one halves
+                // the pressure the beat exists to create.
+                if (phase != ShardPhase.Three) continue;
+
+                if (!WaveComposer.HasSingleAnchor(wave))
+                {
+                    report.Error("shard-waves", shard.SourceFile,
+                        $"'{shard.Id}' phase three does not name exactly one anchor add.",
+                        "The anchor is the interrupt; without it the reclamation cast cannot be stopped.");
+                }
+            }
+
+            foreach (var name in shard.Modifiers)
+            {
+                if (Enum.TryParse<ShardModifier>(name, ignoreCase: true, out var modifier)
+                    && Enum.IsDefined(modifier)
+                    && modifier != ShardModifier.None)
+                {
+                    continue;
+                }
+
+                report.Error("shard-modifier", shard.SourceFile,
+                    $"'{shard.Id}' lists unknown modifier '{name}'.",
+                    "Use frenzied, warded, venomous or twin.");
+            }
+
+            if (shard.DropTable is not null && !db.DropTables.ContainsKey(shard.DropTable))
+            {
+                report.Error("cross-ref", shard.SourceFile,
+                    $"'{shard.Id}' references drop table '{shard.DropTable}', which does not exist.");
+            }
+        }
+    }
+
+    private static ShardWave? ToWave(ShardDef shard, ShardPhase phase)
+    {
+        foreach (var wave in shard.Waves)
+        {
+            if (!Encounters.ShardCatalogue.TryParsePhase(wave.Phase, out var parsed) || parsed != phase) continue;
+
+            var slots = new List<WaveSlot>();
+
+            foreach (var slot in wave.Slots)
+            {
+                if (Enum.TryParse<EnemyRole>(slot.Role, ignoreCase: true, out var role))
+                {
+                    slots.Add(new WaveSlot(role, Math.Max(1, slot.Count), slot.Anchor));
+                }
+            }
+
+            return new ShardWave(phase, slots);
+        }
+
+        return null;
     }
 }

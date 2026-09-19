@@ -34,7 +34,8 @@ public static class ValidateCommand
             $"Loaded {db.TotalDefinitions} definitions " +
             $"({db.Items.Count} items, {db.Enemies.Count} enemies, {db.Skills.Count} skills, " +
             $"{db.Quests.Count} quests, {db.DropTables.Count} drop tables, {db.BonusPools.Count} bonus pools, " +
-            $"{db.UpgradePaths.Count} upgrade paths, {db.Visuals.Count} visuals) in {sw.ElapsedMilliseconds} ms\n");
+            $"{db.UpgradePaths.Count} upgrade paths, {db.Visuals.Count} visuals, "
+            + $"{db.Shards.Count} shards) in {sw.ElapsedMilliseconds} ms\n");
 
         if (report.Findings.Count > 0)
         {
