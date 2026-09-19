@@ -44,6 +44,7 @@ public static class GameActions
     public const string Cancel = "cancel";
     public const string ToggleInventory = "toggle_inventory";
     public const string ToggleUpgradeBench = "toggle_upgrade_bench";
+    public const string ToggleCharacter = "toggle_character";
 
     /// <summary>Shrines, and later NPCs and doors. One key for "use the thing I am standing at".</summary>
     public const string Interact = "interact";
@@ -71,8 +72,10 @@ public static class GameActions
         [Skill6] = [Key(Godot.Key.Key6)],
         [HealthFlask] = [Key(Godot.Key.Q)],
 
+        // Z/X rather than Z/C: C is the near-universal key for the character sheet, and a
+        // sheet nobody can find is a sheet nobody uses.
         [CameraRotateLeft] = [Key(Godot.Key.Z)],
-        [CameraRotateRight] = [Key(Godot.Key.C)],
+        [CameraRotateRight] = [Key(Godot.Key.X)],
         [CameraDrag] = [Mouse(MouseButton.Middle)],
         [CameraZoomIn] = [Mouse(MouseButton.WheelUp)],
         [CameraZoomOut] = [Mouse(MouseButton.WheelDown)],
@@ -83,6 +86,7 @@ public static class GameActions
         [Cancel] = [Key(Godot.Key.Escape)],
         [ToggleInventory] = [Key(Godot.Key.I)],
         [ToggleUpgradeBench] = [Key(Godot.Key.U)],
+        [ToggleCharacter] = [Key(Godot.Key.C)],
         [Interact] = [Key(Godot.Key.F)],
         [DebugSpawnWave] = [Key(Godot.Key.F5)],
         [DebugSpawnOne] = [Key(Godot.Key.F6)],

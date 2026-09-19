@@ -35,11 +35,6 @@ public partial class ShrinePanel : CanvasLayer
     private string _here = "";
     private bool _counted;
 
-    /// <summary>
-    /// Flat, and modest. A respec priced to hurt does not make the first choice more
-    /// meaningful; it makes the player look the answer up instead of finding it.
-    /// </summary>
-    public const long RespecYang = 600;
 
     public override void _Ready()
     {
@@ -186,7 +181,7 @@ public partial class ShrinePanel : CanvasLayer
         _respecCost.AddThemeFontSizeOverride("font_size", 13);
         column.AddChild(_respecCost);
 
-        _respec = new Button { Text = "Refund attribute and skill points" };
+        _respec = new Button { Text = "Refund attribute points" };
         _respec.Pressed += DoRespec;
         column.AddChild(_respec);
 
@@ -276,12 +271,11 @@ public partial class ShrinePanel : CanvasLayer
             return;
         }
 
-        var yang = _inventory?.Bag.Yang ?? 0;
+        _respecCost.Text = "Free. Returns every attribute point you have placed, including the "
+            + $"opening spread the game assigned for you. Level {progression.Level}, "
+            + $"{progression.Assigned.Total} point(s) placed.";
 
-        _respecCost.Text = $"{RespecYang:N0} yang — returns every attribute point and every "
-            + $"skill point spent. Level {progression.Level}.";
-
-        _respec.Disabled = yang < RespecYang;
+        _respec.Disabled = progression.Assigned.Total == 0;
     }
 
     private bool InCombat()
@@ -342,24 +336,33 @@ public partial class ShrinePanel : CanvasLayer
         _ => "You cannot travel there.",
     };
 
+    /// <summary>
+    /// Refunds attribute points, and only attribute points.
+    /// </summary>
+    /// <remarks>
+    /// Free, per FR-2.6 and the reasoning already recorded on
+    /// <see cref="Kiln.Core.Progression.CharacterProgression.Respec"/>: in an MMO a ruined
+    /// build is fixed by rolling another character, but offline it is a ruined save, so a
+    /// price on respec only taxes the experimenting the build system exists to invite.
+    /// <para>
+    /// Skills are left alone. They unlock automatically at their level and the curve grants
+    /// far more points than the tree can absorb, so wiping them would refund a currency with
+    /// nothing to buy and leave the player skill-less until their next level-up.
+    /// </para>
+    /// </remarks>
     private void DoRespec()
     {
-        if (_inventory is null || _character is null) return;
-        if (!_inventory.Bag.TrySpendYang(RespecYang))
-        {
-            _status.Text = "Not enough yang.";
-            return;
-        }
+        if (_character is null) return;
 
-        var book = _character.Skills;
-        var spent = book.Count;
+        var returned = _character.Progression.Assigned.Total;
 
-        _character.Progression.Respec(spent);
-        book.Clear();
-        _inventory.ApplyToStats();
+        if (returned == 0) return;
 
-        _status.Text = $"Refunded every attribute point and {spent} skill point(s). "
-            + "Spend them again from the character screen.";
+        _character.Progression.Respec();
+        _character.RefreshStats();
+
+        _status.Text = $"Returned {returned} attribute point(s). Place them from the "
+            + "character sheet (C).";
 
         RefreshRespec();
     }

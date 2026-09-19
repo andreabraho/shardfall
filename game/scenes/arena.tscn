@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3]
+[gd_scene load_steps=30 format=3]
 
 ; zone_ridge — the greybox stand-in for the ridge (WLD-05 replaces the layout).
 ;
@@ -15,6 +15,7 @@
 [ext_resource type="Script" path="res://scripts/World/SpawnFieldNode.cs" id="20_spawnfield"]
 [ext_resource type="Script" path="res://scripts/World/ShrineNode.cs" id="21_shrine"]
 [ext_resource type="Script" path="res://scripts/UI/ShrinePanel.cs" id="22_shrineui"]
+[ext_resource type="Script" path="res://scripts/UI/CharacterPanel.cs" id="23_charui"]
 [ext_resource type="Script" path="res://scripts/Camera/CameraRig.cs" id="2_camera"]
 [ext_resource type="Script" path="res://scripts/World/ClickMarker.cs" id="3_marker"]
 [ext_resource type="Script" path="res://scripts/World/CursorManager.cs" id="4_cursor"]
@@ -295,3 +296,6 @@ ShardId = "shd_ridge_spine"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
 script = ExtResource("17_visualroot")
 VisualId = "mesh_placeholder_monolith"
+
+[node name="CharacterPanel" type="CanvasLayer" parent="."]
+script = ExtResource("23_charui")

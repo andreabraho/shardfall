@@ -129,6 +129,26 @@ public partial class PlayerCharacter : Node
     public void RefreshStats() => ApplyStats();
 
     /// <summary>
+    /// Spends one unspent attribute point (PRG-10). Returns false when there are none left.
+    /// </summary>
+    /// <remarks>
+    /// Deliberately free-form: nothing stops the player pouring every point into one
+    /// attribute. The derived stats already diminish — crit caps at 50%, evasion at 30%,
+    /// mitigation at 75% — so a single-stat build runs into the ceiling on its own. A
+    /// per-level cap would be a second, redundant rule that only removes the option of
+    /// trying it.
+    /// </remarks>
+    public bool SpendAttribute(AttributeKind kind)
+    {
+        if (!Progression.SpendAttributePoint(kind)) return false;
+
+        ApplyStats();
+        EmitSignal(SignalName.ExperienceChanged);
+
+        return true;
+    }
+
+    /// <summary>
     /// Awards experience for a kill, adjusted for the level gap (FR-2.7).
     /// <para>
     /// Killing far below your level is worth almost nothing, so clearing an easy zone is

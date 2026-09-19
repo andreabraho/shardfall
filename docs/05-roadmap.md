@@ -106,10 +106,26 @@ click-to-move lives or dies on responsiveness.
 | PRG-03 | Skill system: definitions, cooldowns, mana costs, cast types, targeting modes | **[C]** | ✅ |
 | PRG-04 | 8 Warrior skills across the two trees | **[C]** | ✅ data + level gating; 3 are passive/self and land with their effects |
 | PRG-05 | Skill mastery accrual + rank-up mechanical changes | **[C]** | ✅ ranks change behaviour, not just numbers |
-| PRG-06 | Free respec at shrines | **[C]** | ✅ (WLD-02) — 600 yang rather than free, so it is a decision and not a slider |
+| PRG-06 | Free respec at shrines | **[C]** | ✅ (WLD-02) — free, per FR-2.6; refunds attributes only, as skills have nothing to respec |
 | PRG-07 | Catch-up XP curve + low-level enemy floor (FR-2.7) | **[C]** | ✅ |
 | PRG-08 | Skill VFX with primitives + Godot particles | **[C→You]** | You call readability |
 | PRG-09 | **Balance simulator v1** — walks the XP table, reports level-vs-zone-band deltas | **[C]** | ✅ runs in CI; found the first draft gave quests 88% of all XP |
+| PRG-10 | **Character sheet** (C): spend attribute points, derived stats live, skill list | **[C]** | ✅ added 2026-09-19 — the phase awarded points and nothing could spend them |
+| PRG-11 | **Skill points have no sink** — decide whether they become a real choice | **[Provide]** | ⬜ 8 skills vs ~24 points by level 24; see the note below |
+
+**PRG-11, the open question.** Attribute points now have a home; skill points do not. The
+Warrior has 8 skills, unlocking at levels 1/3/6/8/12/14/20/24, and the curve grants one point
+per level — so the tree absorbs a third of what the player earns and the rest is dead weight.
+Three ways out, none of them chosen yet:
+
+1. **Leave it a gate.** Points stop existing; skills simply unlock at their level. Honest, and
+   one less number on the sheet.
+2. **Buy mastery ranks with points**, instead of (or alongside) earning them by use. Gives
+   points a deep sink and lets a player specialise early.
+3. **Make the two trees compete** — a shared budget that cannot unlock everything, so Body and
+   Mental are a real fork rather than a reading order.
+
+Option 2 is the one that adds a build decision without adding a system. Your call.
 
 ---
 
