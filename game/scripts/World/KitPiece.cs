@@ -36,6 +36,10 @@ public partial class KitPiece : StaticBody3D
         set { _pieceId = value; Rebuild(); }
     }
 
+    /// <summary>This piece's tuning, or null while content is not loaded or the id is unknown.</summary>
+    public KitPieceDef? Piece =>
+        GameContent.IsLoaded && GameContent.Database.KitPieces.TryGetValue(_pieceId, out var def) ? def : null;
+
     /// <summary>Overrides the piece's colour, for marking a route or a faction's wall.</summary>
     [Export]
     public string TintOverride
@@ -144,6 +148,11 @@ public partial class KitPiece : StaticBody3D
         // The navigation bake reads this group, so a piece opts in by data rather than by
         // somebody remembering to tick a box in the editor.
         if (def.Navigation) AddToGroup("navsource");
+
+        // Every piece, navigable or not, so the map (WLD-08) can draw the zone from the same
+        // nodes the zone is built from. A map drawn from a second description of the level
+        // is a map that goes stale the first time somebody moves a wall.
+        AddToGroup("kit");
     }
 
     private static Vector3 Size(KitPieceDef def) => def.Size.Length == 3

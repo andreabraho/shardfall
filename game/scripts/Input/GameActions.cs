@@ -45,6 +45,7 @@ public static class GameActions
     public const string ToggleInventory = "toggle_inventory";
     public const string ToggleUpgradeBench = "toggle_upgrade_bench";
     public const string ToggleCharacter = "toggle_character";
+    public const string ToggleMap = "toggle_map";
 
     /// <summary>Shrines, and later NPCs and doors. One key for "use the thing I am standing at".</summary>
     public const string Interact = "interact";
@@ -91,6 +92,7 @@ public static class GameActions
         [ToggleInventory] = [Key(Godot.Key.I)],
         [ToggleUpgradeBench] = [Key(Godot.Key.U)],
         [ToggleCharacter] = [Key(Godot.Key.C)],
+        [ToggleMap] = [Key(Godot.Key.M)],
         [Interact] = [Key(Godot.Key.F)],
         [RevealLabels] = [Key(Godot.Key.Alt)],
         [DebugSpawnWave] = [Key(Godot.Key.F5)],

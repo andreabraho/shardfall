@@ -221,7 +221,7 @@ is what proves the structure rather than decorating it.
 | WLD-12 | **Safe zones**: no spawn overlap, no enemy entry, no damage inside — validated | **[C]** | ✅ `SafeRegion` + `SafetyField` in Core; declared per zone in data, placed by a `SafeZoneNode` in the scene. Enforced at all three points: aggro drops at the boundary, damage to the player is refused, and `ZoneRoot.Audit` errors on a camp within 6 m of the line |
 | WLD-13 | **Multi-hub**: relax the one-hub rule, each village anchors its region | **[C]** | ✅ "exactly one hub" → "at least one"; reachability still seeds from the starting village, so village 2 must be walkable from village 1 or it reports as an orphan |
 | WLD-07 | **Greybox the dungeon**: 2 mini-bosses, secret room, 3-phase boss arena, checkpoints | **[C→You]** | |
-| WLD-08 | Map + minimap: fog of war, markers, custom pins, shard-node overlay | **[C]** | |
+| WLD-08 | Map + minimap: fog of war, markers, custom pins, shard-node overlay | **[C]** | ◐ zone map on **M**: drawn from the live scene (kit pieces, gates, shrines, shards, camps, safe ground), with fog of war remembered per zone across borders. Custom pins and a corner minimap still open |
 | WLD-09 | Fast travel UI + yang cost | **[C]** | ✅ flat fee by destination band; refused in combat, and to a dungeon checkpoint |
 | WLD-10 | 2 bosses: phases, mechanics, arenas | **[C→You]** | I build, you tune the difficulty |
 | WLD-11 | **Zone-layout review and iteration** | **[You]** | |

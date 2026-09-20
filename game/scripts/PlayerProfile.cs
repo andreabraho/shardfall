@@ -72,6 +72,16 @@ public static class PlayerProfile
     /// <summary>Flask charges carried across. Refilled at a shrine, not at a border.</summary>
     public static int FlaskCharges { get; set; } = -1;
 
+    /// <summary>
+    /// Ground the character has walked, per zone, as a coarse grid of cells (WLD-08).
+    /// </summary>
+    /// <remarks>
+    /// Here rather than on the map panel because the panel is rebuilt with every scene, and a
+    /// map that forgets the zone the moment you leave it would be redrawn from nothing on the
+    /// way back — which turns a returning trip through familiar country into a first visit.
+    /// </remarks>
+    public static Dictionary<string, HashSet<long>> Explored { get; } = new(StringComparer.Ordinal);
+
     public static Inventory AdoptBag(System.Func<Inventory> create) => _bag ??= create();
 
     public static Equipment AdoptGear(System.Func<Equipment> create) => _gear ??= create();
@@ -87,5 +97,7 @@ public static class PlayerProfile
         HealthFraction = 1.0;
         ManaFraction = 1.0;
         FlaskCharges = -1;
+        CompletedQuests.Clear();
+        Explored.Clear();
     }
 }
