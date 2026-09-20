@@ -162,7 +162,7 @@ public partial class EnemyBrain : CharacterBody3D
         MoveSpeed = (float)def.Stats.MoveSpeed;
         XpReward = def.Xp;
         DropTableId = def.DropTable;
-        _plate.SetText(Items.GameItems.Localise(def.Name));
+        LabelPlate();
 
         if (def.Abilities.Length > 0) Abilities = def.Abilities;
 
@@ -187,6 +187,26 @@ public partial class EnemyBrain : CharacterBody3D
         {
             root.Apply(def.Visual, def.VisualTint, def.VisualScale);
         }
+    }
+
+    /// <summary>
+    /// Writes the floating label: the level first, then the name.
+    /// </summary>
+    /// <remarks>
+    /// Level first because it is the part the player acts on. A name tells them what they are
+    /// looking at; the number tells them whether to walk towards it, and in a world banded by
+    /// level that decision is made at a glance from across the field.
+    /// <para>
+    /// The one place that composes it, so a creature promoted by an encounter does not end up
+    /// as the only thing in the world whose level is not shown.
+    /// </para>
+    /// </remarks>
+    public void LabelPlate(string? suffix = null)
+    {
+        var name = Items.GameItems.NameOfEnemy(EnemyId);
+        var label = $"[{Self.Stats.Level}] {name}";
+
+        _plate.SetText(suffix is null ? label : $"{label}  ·  {suffix}");
     }
 
     // -- Signals ------------------------------------------------------------

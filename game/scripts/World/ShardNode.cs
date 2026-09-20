@@ -286,7 +286,7 @@ public partial class ShardNode : StaticBody3D
                 add.Plate.Rank = NameRank.Elite;
                 add.Plate.Tint = new Color("ffd24f");
                 add.Plate.Offset = new Vector3(0, 2.7f, 0);
-                add.Plate.SetText($"{Items.GameItems.NameOfEnemy(entry.EnemyId)}  ·  ANCHOR");
+                add.LabelPlate("ANCHOR");
             }
 
             index++;
