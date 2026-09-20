@@ -1,0 +1,375 @@
+[gd_scene load_steps=14 format=3]
+
+; zone_broken_gate — the last field map (WLD-05), band 15–19.
+;
+; The third field map, and deliberately the third shape. The Approach is a corridor you are
+; pushed along and the Vale Floor is a basin you choose a line across; this one is a wall you
+; have to get through. Everything is arranged around a single north–south curtain wall with
+; two ways past it: the arch in the middle, and a collapsed stretch in the north that costs
+; a detour. Two yards, one barrier, and the decision is which gap to take.
+;
+; The wall is what makes the camps readable. West of it the breakers hold the open ground;
+; the wall line itself is archers and a bulwark, so pushing the arch head-on is the expensive
+; way in; the cinder row waits in the inner yard, which is the part the player only sees once
+; they are already committed.
+
+[ext_resource type="Script" path="res://scripts/World/ZoneRoot.cs" id="1_zoneroot"]
+[ext_resource type="Script" path="res://scripts/World/NavBaker.cs" id="2_navbaker"]
+[ext_resource type="Script" path="res://scripts/World/KitPiece.cs" id="3_kit"]
+[ext_resource type="Script" path="res://scripts/World/SpawnFieldNode.cs" id="4_spawnfield"]
+[ext_resource type="Script" path="res://scripts/World/ShrineNode.cs" id="5_shrine"]
+[ext_resource type="Script" path="res://scripts/World/ShardNode.cs" id="6_shard"]
+[ext_resource type="Script" path="res://scripts/Visual/VisualRoot.cs" id="7_visualroot"]
+[ext_resource type="Script" path="res://scripts/World/ZoneGate.cs" id="8_gate"]
+[ext_resource type="Script" path="res://scripts/World/ZoneArrival.cs" id="9_arrival"]
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="10_player"]
+[ext_resource type="PackedScene" path="res://scenes/session.tscn" id="11_session"]
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_gate"]
+vertices = PackedVector3Array()
+cell_size = 0.15
+cell_height = 0.15
+agent_height = 1.8
+agent_radius = 0.45
+agent_max_climb = 0.3
+agent_max_slope = 45.0
+geometry_parsed_geometry_type = 1
+geometry_collision_mask = 1
+geometry_source_geometry_mode = 1
+geometry_source_group_name = "navsource"
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+size = Vector2(200, 160)
+
+[sub_resource type="StandardMaterial3D" id="Material_ground"]
+albedo_color = Color(0.19, 0.17, 0.16, 1)
+roughness = 0.95
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
+size = Vector3(200, 1, 160)
+
+[sub_resource type="Environment" id="Environment_gate"]
+background_mode = 1
+background_color = Color(0.09, 0.07, 0.07, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.46, 0.4, 0.38, 1)
+ambient_light_energy = 0.34
+
+[node name="BrokenGate" type="Node3D"]
+script = ExtResource("1_zoneroot")
+ZoneId = "zone_broken_gate"
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_gate")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.8660254, -0.25, 0.4330127, 0, 0.8660254, 0.5, -0.5, -0.4330127, 0.75, 0, 14, 0)
+shadow_enabled = true
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("NavigationMesh_gate")
+script = ExtResource("2_navbaker")
+
+[node name="Ground" type="StaticBody3D" parent="NavigationRegion3D" groups=["navsource"]]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Ground"]
+mesh = SubResource("PlaneMesh_ground")
+surface_material_override/0 = SubResource("Material_ground")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Ground"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = SubResource("BoxShape3D_ground")
+
+; -- The curtain wall ----------------------------------------------------------
+; Runs north-south at x = 0. Eight-metre segments, rotated a quarter turn so they run along
+; z rather than x, laid end to end from one cliff to the other. Two gaps and nothing else:
+; the arch at the centre, and the collapsed stretch between z = -34 and z = -22.
+
+[node name="Wall" type="Node3D" parent="NavigationRegion3D"]
+
+[node name="WallN1" type="StaticBody3D" parent="NavigationRegion3D/Wall"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0, -70)
+script = ExtResource("3_kit")
+PieceId = "kit_wall_8"
+
+[node name="WallN2" type="StaticBody3D" parent="NavigationRegion3D/Wall"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0, -62)
+script = ExtResource("3_kit")
+PieceId = "kit_wall_8"
+
+[node name="WallN3" type="StaticBody3D" parent="NavigationRegion3D/Wall"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0, -54)
+script = ExtResource("3_kit")
+PieceId = "kit_wall_8"
+
+[node name="WallN4" type="StaticBody3D" parent="NavigationRegion3D/Wall"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0, -46)
+script = ExtResource("3_kit")
+PieceId = "kit_wall_8"
+
+[node name="WallN5" type="StaticBody3D" parent="NavigationRegion3D/Wall"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0, -38)
+script = ExtResource("3_kit")
+PieceId = "kit_wall_8"
+
+; The collapsed stretch: twelve metres of nothing. The second way through, and the reason
+; the arch is a choice rather than the only road. Longer, quieter, and past the warden
+; rather than past the archers.
+
+[node name="WallN6" type="StaticBody3D" parent="NavigationRegion3D/Wall"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0, -18)
+script = ExtResource("3_kit")
+PieceId = "kit_wall_8"
+
+[node name="WallN7" type="StaticBody3D" parent="NavigationRegion3D/Wall"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0, -10)
+script = ExtResource("3_kit")
+PieceId = "kit_wall_8"
+
+[node name="WallS1" type="StaticBody3D" parent="NavigationRegion3D/Wall"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0, 8)
+script = ExtResource("3_kit")
+PieceId = "kit_wall_8"
+
+[node name="WallS2" type="StaticBody3D" parent="NavigationRegion3D/Wall"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0, 16)
+script = ExtResource("3_kit")
+PieceId = "kit_wall_8"
+
+[node name="WallS3" type="StaticBody3D" parent="NavigationRegion3D/Wall"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0, 24)
+script = ExtResource("3_kit")
+PieceId = "kit_wall_8"
+
+[node name="WallS4" type="StaticBody3D" parent="NavigationRegion3D/Wall"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0, 32)
+script = ExtResource("3_kit")
+PieceId = "kit_wall_8"
+
+[node name="WallS5" type="StaticBody3D" parent="NavigationRegion3D/Wall"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0, 40)
+script = ExtResource("3_kit")
+PieceId = "kit_wall_8"
+
+[node name="WallS6" type="StaticBody3D" parent="NavigationRegion3D/Wall"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0, 48)
+script = ExtResource("3_kit")
+PieceId = "kit_wall_8"
+
+[node name="WallS7" type="StaticBody3D" parent="NavigationRegion3D/Wall"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0, 56)
+script = ExtResource("3_kit")
+PieceId = "kit_wall_8"
+
+[node name="WallS8" type="StaticBody3D" parent="NavigationRegion3D/Wall"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0, 64)
+script = ExtResource("3_kit")
+PieceId = "kit_wall_8"
+
+[node name="WallS9" type="StaticBody3D" parent="NavigationRegion3D/Wall"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0, 72)
+script = ExtResource("3_kit")
+PieceId = "kit_wall_8"
+
+; -- The arch and its towers ----------------------------------------------------
+; The gap between WallN7 and WallS1 is ten metres wide, and the arch fills five of them.
+; Narrow on purpose: this is the expensive way through, and it has to feel like a doorway
+; rather than a missing piece of wall. The towers stand on the wall ends flanking it, and
+; are tall enough to be picked out from the far side of either yard — this is the landmark
+; the map is named for, and it has to be findable from anywhere on it.
+
+[node name="Arch" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0, -1)
+script = ExtResource("3_kit")
+PieceId = "kit_gate"
+
+[node name="TowerNorth" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8)
+script = ExtResource("3_kit")
+PieceId = "kit_tower"
+
+[node name="TowerSouth" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6)
+script = ExtResource("3_kit")
+PieceId = "kit_tower"
+
+; -- The rim --------------------------------------------------------------------
+; Cliffs closing the north and south ends of the wall, so the curtain cannot simply be
+; walked around. Without these the whole layout is decoration.
+
+[node name="Rim" type="Node3D" parent="NavigationRegion3D"]
+
+[node name="RimN1" type="StaticBody3D" parent="NavigationRegion3D/Rim"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 3, -78)
+script = ExtResource("3_kit")
+PieceId = "kit_cliff_8"
+
+[node name="RimN2" type="StaticBody3D" parent="NavigationRegion3D/Rim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 3, -76)
+script = ExtResource("3_kit")
+PieceId = "kit_cliff_8"
+
+[node name="RimN3" type="StaticBody3D" parent="NavigationRegion3D/Rim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34, 3, -76)
+script = ExtResource("3_kit")
+PieceId = "kit_cliff_8"
+
+[node name="RimS1" type="StaticBody3D" parent="NavigationRegion3D/Rim"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 3, 78)
+script = ExtResource("3_kit")
+PieceId = "kit_cliff_8"
+
+[node name="RimS2" type="StaticBody3D" parent="NavigationRegion3D/Rim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -34, 3, 74)
+script = ExtResource("3_kit")
+PieceId = "kit_cliff_8"
+
+[node name="RimS3" type="StaticBody3D" parent="NavigationRegion3D/Rim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 3, 74)
+script = ExtResource("3_kit")
+PieceId = "kit_cliff_8"
+
+; -- Rubble and ruin -------------------------------------------------------------
+; Piled where the wall came down, and scattered across the outer yard. It is there so the
+; collapsed stretch reads as collapsed rather than as unbuilt.
+
+[node name="RubbleGapN" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0.35, -32)
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_rubble"
+
+[node name="RubbleGapS" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.35, -24)
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_rubble"
+
+[node name="RubbleYard" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 0.35, 8)
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_rubble"
+
+[node name="RuinWestA" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58, 0.9, -8)
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_wall"
+
+[node name="RuinWestB" type="StaticBody3D" parent="."]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -55, 0.9, -5)
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_wall"
+
+[node name="RuinEastA" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46, 0.9, 40)
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_wall"
+
+[node name="BoulderWest" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -34, 0.95, 34)
+script = ExtResource("3_kit")
+PieceId = "kit_boulder"
+
+[node name="BoulderEast" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0.95, -52)
+script = ExtResource("3_kit")
+PieceId = "kit_boulder"
+
+[node name="PillarYard" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 2, 12)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="PostWest" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -76, 1.1, 4)
+script = ExtResource("3_kit")
+PieceId = "kit_marker_post"
+
+[node name="PostEast" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 76, 1.1, 4)
+script = ExtResource("3_kit")
+PieceId = "kit_marker_post"
+
+; -- Session, player and the two borders ------------------------------------------
+
+[node name="Player" parent="." instance=ExtResource("10_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -82, 0.1, 0)
+
+[node name="Session" parent="." instance=ExtResource("11_session")]
+
+[node name="Enemies" type="Node3D" parent="."]
+
+[node name="GateToRidge" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -92, 0, 0)
+script = ExtResource("8_gate")
+ToZone = "zone_ridge"
+
+[node name="ArrivalFromRidge" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -82, 0.1, 0)
+script = ExtResource("9_arrival")
+FromZone = "zone_ridge"
+
+[node name="GateToCatacombs" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 92, 0, 0)
+script = ExtResource("8_gate")
+ToZone = "zone_catacombs"
+
+[node name="ArrivalFromCatacombs" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 82, 0.1, 0)
+script = ExtResource("9_arrival")
+FromZone = "zone_catacombs"
+
+; One shrine on each side of the wall. Getting through the arch is the expensive part of
+; this map, and a death in the inner yard that sent the player back to the outer one would
+; make them pay for it twice.
+
+[node name="ShrineArch" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0.1, -6)
+script = ExtResource("5_shrine")
+ShrineId = "shr_gate_arch"
+
+[node name="VisualRoot" type="Node3D" parent="ShrineArch"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+script = ExtResource("7_visualroot")
+VisualId = "mesh_placeholder_shrine"
+
+[node name="ShrineYard" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58, 0.1, 18)
+script = ExtResource("5_shrine")
+ShrineId = "shr_gate_yard"
+
+[node name="VisualRoot" type="Node3D" parent="ShrineYard"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+script = ExtResource("7_visualroot")
+VisualId = "mesh_placeholder_shrine"
+
+; -- The camps ---------------------------------------------------------------------
+; Placed so that neither arrival point is inside anybody's reach. The furthest-roaming
+; creature here is the ash slinger at twenty-five metres, which is what sets the spacing.
+
+[node name="Breakers" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -46, 0, -26)
+script = ExtResource("4_spawnfield")
+FieldId = "spf_gate_breakers"
+
+[node name="WallLine" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 0, 32)
+script = ExtResource("4_spawnfield")
+FieldId = "spf_gate_wall_line"
+
+[node name="CinderRow" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38, 0, -30)
+script = ExtResource("4_spawnfield")
+FieldId = "spf_gate_cinder_row"
+
+; Behind the collapsed stretch, so the quieter way through is also the way past the warden.
+
+[node name="Shard" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.1, -30)
+script = ExtResource("6_shard")
+ShardId = "shd_gate_warden"
+
+[node name="VisualRoot" type="Node3D" parent="Shard"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+script = ExtResource("7_visualroot")
+VisualId = "mesh_placeholder_monolith"

@@ -229,7 +229,7 @@
     "name": "$zone.zone_broken_gate.name",
     "kind": "wilds",
     "level_band": [15, 19],
-    "scene": "",
+    "scene": "res://scenes/broken_gate.tscn",
     "exits": [
       { "to": "zone_ridge" },
       { "to": "zone_catacombs", "required_level": 18 }

@@ -57,6 +57,7 @@ public static class GameActions
     public const string DebugSpawnOne = "debug_spawn_one";
     public const string DebugToggleRespawn = "debug_toggle_respawn";
     public const string DebugGrantResources = "debug_grant_resources";
+    public const string DebugCompleteQuests = "debug_complete_quests";
 
     private static readonly Dictionary<string, InputEvent[]> Defaults = new()
     {
@@ -96,6 +97,7 @@ public static class GameActions
         [DebugSpawnOne] = [Key(Godot.Key.F6)],
         [DebugToggleRespawn] = [Key(Godot.Key.F7)],
         [DebugGrantResources] = [Key(Godot.Key.F8)],
+        [DebugCompleteQuests] = [Key(Godot.Key.F9)],
     };
 
     private static InputEvent Key(Key key) => new InputEventKey { PhysicalKeycode = key };

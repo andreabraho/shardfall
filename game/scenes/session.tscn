@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=17 format=3]
 
 ; Everything a zone scene needs and no zone scene decides: the camera, the cursor, the combat
 ; feedback layers, the HUD and the panels.
@@ -26,6 +26,7 @@
 [ext_resource type="Script" path="res://scripts/UI/ShardHud.cs" id="13_shardhud"]
 [ext_resource type="Script" path="res://scripts/Debug/DebugGrants.cs" id="14_grants"]
 [ext_resource type="Script" path="res://scripts/Debug/DebugSpawner.cs" id="15_spawner"]
+[ext_resource type="Script" path="res://scripts/Debug/DebugPassage.cs" id="16_passage"]
 
 [node name="Session" type="Node3D"]
 
@@ -87,3 +88,6 @@ script = ExtResource("14_grants")
 
 [node name="DebugSpawner" type="Node" parent="."]
 script = ExtResource("15_spawner")
+
+[node name="DebugPassage" type="Node" parent="."]
+script = ExtResource("16_passage")
