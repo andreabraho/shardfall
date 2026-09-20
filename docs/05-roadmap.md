@@ -66,6 +66,22 @@ click-to-move lives or dies on responsiveness.
 | MOV-06 | Alternative WASD scheme feeding the same destination core (FR-1.7) | **[C]** | Cheap now, expensive later |
 | MOV-07 | Input map + rebinding infrastructure | **[C]** | |
 | MOV-08 | **Feel review** — 20 min of play, written notes | **[You]** | ⬅ **TESTABLE NOW.** The one thing I genuinely cannot do |
+| MOV-09 | **One scheme, not two**: WASD and click-to-move both live at once, either interrupting the other; the F4 exclusive toggle goes | **[C]** | Added 2026-09-20 on your note. A mode switch asks the player to decide in advance which hand they will use |
+| MOV-10 | Right-mouse look, and WASD relative to where the camera points | **[C]** | Added 2026-09-20. Pairs with MOV-09: camera-relative movement is what makes holding W usable while the camera swings |
+| MOV-11 | Attack on Space | **[C→You]** | Added 2026-09-20. **Blocked on a decision:** Space is Guard Stance today. See the note below the table |
+
+**The Space collision (MOV-11).** Space is Guard Stance, and Guard is held, not tapped — the
+two cannot share a key. Whichever wins, the other needs a home, and the obvious one is taken:
+right-mouse becomes the camera in MOV-10.
+
+My recommendation is **Guard moves to Shift and Space becomes attack**. Attack is the key
+pressed hundreds of times a minute and belongs under the thumb; Guard is held, and holding a
+modifier is what modifiers are for. The cost is that Shift is the conventional home for walk
+or hold-position, neither of which exists yet — so the cost is a door closed, not a feature
+lost. Say the word and I will do it the other way.
+
+**Sequencing note.** MOV-09/10/11 change the scheme MOV-08 is meant to review, so the feel
+review is better spent after them than before. That is the one reason to do this block first.
 
 ---
 
@@ -91,6 +107,19 @@ click-to-move lives or dies on responsiveness.
 | CBT-13 | Object pooling for projectiles/numbers/VFX (NFR-P.5) | **[C]** | |
 | CBT-14 | **Combat feel review** + written notes | **[You]** | |
 | CBT-15 | Placeholder visual set, plus role markers (shape + colour) | **[C]** | ✅ role is what matters tactically, so markers encode role not family |
+| CBT-16 | Crowd separation: enemies push each other apart with a soft radius, overlapping up to a limit rather than not at all | **[C]** | Added 2026-09-20 on your note. Hard collision makes a pack queue single-file down a corridor; none at all makes six creatures one creature |
+| CBT-17 | **Four-hit basic attack chain**, each swing different, the fourth sweeping non-boss enemies away | **[C→You]** | Added 2026-09-20. Wants CBT-16 first: a finisher that throws a crowd is only readable once the crowd has shape |
+
+**When these land.** CBT-16/17 reopen Phase 2 while Phase 6 is still going, which is fine —
+the phases are an order of dependency, not a promise never to return. Both want to be in
+before CBT-14, the combat feel review, for the same reason MOV-09/10/11 want to be in before
+MOV-08: reviewing a loop you are about to replace spends your time twice.
+
+CBT-17 is the largest of the six additions by some distance. A chain means per-swing timing,
+a window in which the next input extends the chain rather than restarting it, and a reset
+rule — and the fourth swing throwing a crowd needs knockback, which nothing in the game does
+yet. It is worth doing properly rather than quickly; the basic attack is the thing the player
+presses more than everything else combined.
 
 ---
 
@@ -150,6 +179,7 @@ Option 2 is the one that adds a build decision without adding a system. Your cal
 | ITM-12 | **Economy simulator** — verifies you are yang-constrained early and comfortable later | **[C]** | ✅ runs in CI; its first honest version showed money never mattered before Act 2 |
 | ITM-13 | Item icons | **[You]** *(deferred)* | Coloured frames until art phase |
 | ITM-14 | Drop, destroy and lock items from the bag | **[C]** | ✅ added 2026-09-19 — drop is reversible so it is instant, destroy always asks, lock is the standing answer |
+| ITM-15 | The upgrade bench shows what is equipped, as icons | **[C]** | Added 2026-09-20 on your note. Small and self-contained — the bench currently makes you remember what you are wearing while deciding what to improve |
 
 ---
 
