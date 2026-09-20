@@ -321,6 +321,14 @@ public partial class EnemyBrain : CharacterBody3D
 
         TickCooldowns(delta);
 
+        // Checked before the stun branch and before the tree: a creature in the air has no
+        // opinion about any of it, and separation would only fight the throw.
+        if (_shoveFor > 0)
+        {
+            CarryShove(delta);
+            return;
+        }
+
         if (Self.Statuses.IsStunned)
         {
             // A stun cancels a wind-up, or the player is warned of an attack that never lands.
@@ -899,6 +907,60 @@ public partial class EnemyBrain : CharacterBody3D
     {
         var horizontal = (Velocity with { Y = 0 }).MoveToward(Vector3.Zero, 40f * (float)delta);
         Velocity = Velocity with { X = horizontal.X, Z = horizontal.Z };
+    }
+
+    // -- Being thrown (CBT-17) ----------------------------------------------
+
+    /// <summary>How fast a shove bleeds off, in metres per second per second.</summary>
+    [Export] public float ShoveDrag { get; set; } = 14f;
+
+    private Vector3 _shove;
+    private double _shoveFor;
+
+    /// <summary>True while this creature is being thrown and has no say in where it goes.</summary>
+    public bool Shoved => _shoveFor > 0;
+
+    /// <summary>
+    /// Throws this creature directly away from a point.
+    /// </summary>
+    /// <remarks>
+    /// The wind-up is cancelled with it. A creature that was thrown across the clearing and
+    /// landed still swinging at where the player used to be is the version of this that
+    /// makes the sweep feel like it did nothing.
+    /// <para>
+    /// Bosses are shards, which are not brains and so cannot be shoved at all. When a boss
+    /// arrives that is a brain (WLD-10), it wants a flag here rather than an exception at
+    /// the call site — whether a thing can be thrown is a property of the thing.
+    /// </para>
+    /// </remarks>
+    public void Shove(Vector3 from, float speed, double seconds)
+    {
+        if (_dead) return;
+
+        var away = (GlobalPosition - from) with { Y = 0 };
+
+        // Thrown from exactly underfoot has no direction; send it the way it is facing, so
+        // a creature standing on the player still goes somewhere rather than nowhere.
+        _shove = away.LengthSquared() < 0.0001f
+            ? (-GlobalBasis.Z with { Y = 0 }).Normalized() * speed
+            : away.Normalized() * speed;
+
+        _shoveFor = seconds;
+
+        CancelAbility();
+        _phase = Phase.Idle;
+    }
+
+    /// <summary>Carries a thrown creature, in place of anything it would rather be doing.</summary>
+    private void CarryShove(double delta)
+    {
+        _shoveFor -= delta;
+
+        Velocity = Velocity with { X = _shove.X, Z = _shove.Z };
+        _shove = _shove.MoveToward(Vector3.Zero, ShoveDrag * (float)delta);
+
+        ApplyGravity(delta);
+        MoveAndSlide();
     }
 
     // -- Crowding (CBT-16) --------------------------------------------------

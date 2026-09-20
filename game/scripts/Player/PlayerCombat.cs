@@ -23,6 +23,16 @@ public partial class PlayerCombat : Node
     private double _swingCooldown;
     private bool _committed;
 
+    /// <summary>
+    /// The four-swing basic attack (CBT-17), shared by both ways of throwing it.
+    /// </summary>
+    /// <remarks>
+    /// One chain rather than one per input. Clicking an enemy and pressing the attack key are
+    /// two ways of doing the same thing — attacking without stopping — and a player using
+    /// both would otherwise restart the chain every time they switched.
+    /// </remarks>
+    private readonly Kiln.Core.Combat.AttackChain _chain = new();
+
     /// <summary>Melee reach. Slightly generous so chasing a moving target is not fiddly.</summary>
     [Export] public float AttackRange { get; set; } = 2.4f;
 
@@ -54,6 +64,17 @@ public partial class PlayerCombat : Node
     /// </summary>
     [Export] public float CleaveFalloff { get; set; } = 1.0f;
 
+    /// <summary>How hard the fourth swing throws what it catches, in metres per second.</summary>
+    /// <remarks>
+    /// Fast and brief rather than slow and long. The point of the sweep is to buy a moment of
+    /// room, and a gentle shove that took a second to play out would give the pack time to
+    /// walk back in while it was still happening.
+    /// </remarks>
+    [Export] public float SweepSpeed { get; set; } = 11f;
+
+    /// <summary>How long a swept creature is out of its own control, in seconds.</summary>
+    [Export] public double SweepSeconds { get; set; } = 0.35;
+
     public Combatant? Target => _target;
 
     [Signal] public delegate void TargetChangedEventHandler();
@@ -64,9 +85,15 @@ public partial class PlayerCombat : Node
         _self = GetParent().GetNode<Combatant>("Combatant");
 
         Debug.DebugOverlay.Register("combat", this, () =>
-            _target is { IsAlive: true }
+        {
+            var chain = _chain.Open
+                ? $"  chain [color=#e0b356]{_chain.Step}[/color]/{Kiln.Core.Combat.AttackChain.Length}"
+                : "";
+
+            return (_target is { IsAlive: true }
                 ? $"target={_target.DisplayName} hp={_target.Health}"
-                : "no target");
+                : "no target") + chain;
+        });
     }
 
     /// <summary>Called by PlayerController when the click landed on an enemy.</summary>
@@ -136,6 +163,7 @@ public partial class PlayerCombat : Node
     public override void _PhysicsProcess(double delta)
     {
         _swingCooldown -= delta;
+        _chain.Tick(delta);
 
         if (!_self.IsAlive)
         {
@@ -180,34 +208,36 @@ public partial class PlayerCombat : Node
 
         if (_swingCooldown > 0) return;
 
-        _swingCooldown = 1.0 / Math.Max(0.1, _self.Stats.AttacksPerSecond);
-        Swing(targetBody.GlobalPosition);
+        Strike(targetBody.GlobalPosition - _motor.GlobalPosition, _target, TakeSwing());
     }
 
-    private void Swing(Vector3 targetPosition)
+    /// <summary>The next swing of the chain, and the cooldown it costs.</summary>
+    private Kiln.Core.Combat.ChainSwing TakeSwing()
     {
-        if (_target is null) return;
+        var rate = Math.Max(0.1, _self.Stats.AttacksPerSecond);
+        var swing = _chain.Swing(rate);
 
-        Strike(targetPosition - _motor.GlobalPosition, _target);
+        // Cadence rather than a flat interval: the sweep is slow enough to be a commitment,
+        // and the jab that opens the chain is quick enough to be worth opening with.
+        _swingCooldown = swing.Cadence / rate;
+
+        return swing;
     }
 
     /// <summary>
     /// A swing at whatever happens to be in front, with nothing selected (MOV-11).
     /// </summary>
     /// <remarks>
-    /// The manual counterpart to the automatic chain above: it costs the same cooldown and
-    /// does the same damage, but it goes where the character is facing rather than where a
+    /// The manual counterpart to the automatic chain above: it draws from the same chain and
+    /// costs the same cadence, but it goes where the camera is looking rather than where a
     /// selection is, and it never walks anywhere. That makes it the attack that works while
-    /// the other hand is steering — and it is the shape the four-hit chain (CBT-17) will be
-    /// built on, so it is worth having the swing be a thing you press before it is a thing
-    /// that counts.
+    /// the other hand is steering.
     /// </remarks>
     public bool SwingForward()
     {
         if (!_self.IsAlive || _swingCooldown > 0) return false;
 
-        _swingCooldown = 1.0 / Math.Max(0.1, _self.Stats.AttacksPerSecond);
-
+        var swing = TakeSwing();
         var aim = CameraForward();
 
         // The character turns to the swing rather than the swing bending to the character.
@@ -219,7 +249,7 @@ public partial class PlayerCombat : Node
         // hitting something else moves the marker with you. Nothing hit clears it: a ring
         // left over from a click, while the player swings somewhere else, is the marker
         // pointing at one enemy and the sword at another.
-        var hit = StrikeForward(aim);
+        var hit = StrikeForward(aim, swing);
 
         if (hit is { IsAlive: true }) Mark(hit);
         else ClearTarget();
@@ -235,7 +265,8 @@ public partial class PlayerCombat : Node
     /// behind the player is not in front of them, and a key aimed by the camera that still
     /// reached it would be lying about what aiming means.
     /// </remarks>
-    private Combatant? StrikeForward(Vector3 aim) => Strike(aim, null);
+    private Combatant? StrikeForward(Vector3 aim, Kiln.Core.Combat.ChainSwing swing) =>
+        Strike(aim, null, swing);
 
     /// <summary>Where the camera is looking, flattened to the ground.</summary>
     private Vector3 CameraForward()
@@ -254,11 +285,14 @@ public partial class PlayerCombat : Node
     /// One swing: the selected enemy if there is one, and the arc either way. Returns the
     /// nearest enemy it hit, which is the one the ring should point at.
     /// </summary>
-    private Combatant? Strike(Vector3 direction, Combatant? primary)
+    private Combatant? Strike(Vector3 direction, Combatant? primary, Kiln.Core.Combat.ChainSwing swing)
     {
+        var arc = (float)swing.ArcDegrees;
+        var range = (float)swing.Range;
+
         // The primary target always takes a full hit, even if the arc maths would miss it —
         // the player explicitly selected it and a whiff would read as a bug.
-        primary?.TakeAttack(_self);
+        primary?.TakeAttack(_self, weaponCoef: swing.DamageCoef);
 
         var origin = _motor.GlobalPosition;
         var forward = direction with { Y = 0 };
@@ -269,24 +303,39 @@ public partial class PlayerCombat : Node
         // The swing itself, shown on every attack rather than only on a multi-hit. Against a
         // single enemy the attack was otherwise invisible — the only feedback was the
         // victim's flash — so a fight read as two figures standing still trading numbers.
-        _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Lunge(forward);
-        AoeVisual.Cone(origin, forward, CleaveRange, CleaveAngle);
+        _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Lunge(forward, (float)swing.Lunge);
+
+        // The sweep is drawn as the full circle it is, not as a 360-degree wedge, and it
+        // shakes the camera. It is the one swing the player should be able to recognise
+        // from the shape on the ground without having counted the three before it.
+        if (swing.Sweeps)
+        {
+            AoeVisual.Circle(origin, range);
+            Camera.CameraRig.Kick(-forward, 0.5f);
+        }
+        else
+        {
+            AoeVisual.Cone(origin, forward, range, arc);
+        }
 
         // With nothing selected the arc is the whole attack, so it swings even when cleave is
         // off: switching cleave off means an auto-attack should not splash, not that pressing
         // the attack key should do nothing.
-        if (!CleaveEnabled && primary is not null) return primary;
+        if (!CleaveEnabled && primary is not null && !swing.Sweeps) return primary;
 
         var nearest = primary;
         var nearestDistance = primary is null
             ? float.MaxValue
             : origin.DistanceTo(primary.Body.GlobalPosition);
 
-        foreach (var other in AreaQuery.Cone(_motor, origin, forward, CleaveRange, CleaveAngle))
+        foreach (var other in AreaQuery.Cone(_motor, origin, forward, range, arc))
         {
             if (other == primary || !other.IsAlive) continue;
 
-            other.TakeAttack(_self, weaponCoef: primary is null ? 1.0 : CleaveFalloff);
+            other.TakeAttack(_self,
+                weaponCoef: swing.DamageCoef * (primary is null ? 1.0 : CleaveFalloff));
+
+            if (swing.Sweeps) Sweep(other, origin);
 
             // Nearest rather than first, so the ring lands on the one the player is most
             // obviously fighting rather than on whichever the physics query happened to
@@ -299,7 +348,23 @@ public partial class PlayerCombat : Node
             nearestDistance = distance;
         }
 
+        if (swing.Sweeps && primary is not null) Sweep(primary, origin);
+
         return nearest;
+    }
+
+    /// <summary>
+    /// Throws one creature clear of the sweep.
+    /// </summary>
+    /// <remarks>
+    /// Only creatures with a brain are thrown, which is also the rule the player asked for:
+    /// bosses are shards, and a shard is a different kind of thing that happens not to have
+    /// one. So "everything but the boss goes flying" needs no list of exceptions — it falls
+    /// out of what the sweep is able to pick up.
+    /// </remarks>
+    private void Sweep(Combatant victim, Vector3 origin)
+    {
+        if (victim.Body is EnemyBrain brain) brain.Shove(origin, SweepSpeed, SweepSeconds);
     }
 
     public override void _UnhandledInput(InputEvent @event)
