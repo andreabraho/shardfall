@@ -326,6 +326,7 @@ public partial class EnemyBrain : CharacterBody3D
             // A stun cancels a wind-up, or the player is warned of an attack that never lands.
             CancelAbility();
             Brake(delta);
+            Separate(delta);
             ApplyGravity(delta);
             MoveAndSlide();
             return;
@@ -343,6 +344,7 @@ public partial class EnemyBrain : CharacterBody3D
             _retreatBudget = System.Math.Min(_retreatBudget + (delta * RetreatRefillRate), RetreatSeconds);
         }
 
+        Separate(delta);
         ApplyGravity(delta);
         MoveAndSlide();
     }
@@ -897,6 +899,96 @@ public partial class EnemyBrain : CharacterBody3D
     {
         var horizontal = (Velocity with { Y = 0 }).MoveToward(Vector3.Zero, 40f * (float)delta);
         Velocity = Velocity with { X = horizontal.X, Z = horizontal.Z };
+    }
+
+    // -- Crowding (CBT-16) --------------------------------------------------
+
+    /// <summary>Physics ticks between recounts of the neighbours. Twenty hertz is plenty.</summary>
+    private const int SeparationInterval = 3;
+
+    /// <summary>
+    /// How close creatures tolerate each other before pushing apart, in metres.
+    /// </summary>
+    /// <remarks>
+    /// Comfortably inside melee reach, so a creature pressed against its neighbours can still
+    /// close on the player: separation that held a pack further apart than it could strike
+    /// from would leave it milling about just out of range.
+    /// </remarks>
+    [Export] public float SeparationRadius { get; set; } = 1.1f;
+
+    /// <summary>The hardest a crowded creature is pushed, in metres per second.</summary>
+    [Export] public float SeparationPush { get; set; } = 2.0f;
+
+    private Vector3 _separation;
+    private int _separationTick;
+
+    /// <summary>
+    /// Eases creatures out of each other instead of colliding (CBT-16).
+    /// </summary>
+    /// <remarks>
+    /// Bodies used to collide outright, which made a pack queue single-file down a corridor
+    /// and shove each other off ledges. Removing the collision entirely is the other bad
+    /// answer: six creatures converge to the same point and read as one. A push that grows
+    /// as they close sits between the two — they overlap, but only so far, and a pile always
+    /// unpacks itself.
+    /// <para>
+    /// Applied after the behaviour tree has set the velocity for this tick, because
+    /// <see cref="Steer"/> assigns rather than accumulates and anything added earlier would
+    /// be overwritten. It is a drift on top of whatever the creature decided to do, never a
+    /// replacement for it.
+    /// </para>
+    /// </remarks>
+    private void Separate(double delta)
+    {
+        if (--_separationTick <= 0)
+        {
+            _separationTick = SeparationInterval;
+            _separation = CrowdPush();
+        }
+
+        if (_separation == Vector3.Zero) return;
+
+        Velocity = Velocity with
+        {
+            X = Velocity.X + _separation.X,
+            Z = Velocity.Z + _separation.Z,
+        };
+    }
+
+    private Vector3 CrowdPush()
+    {
+        // The player counts as a neighbour. Creatures do not collide with them either, so
+        // without this a whole pack stands inside the player's own capsule.
+        var crowd = AreaQuery.Sphere(this, GlobalPosition, SeparationRadius,
+            Foundation.Layers.Enemy | Foundation.Layers.Player);
+
+        var push = Vector3.Zero;
+
+        foreach (var other in crowd)
+        {
+            if (other == Self) continue;
+
+            var away = (GlobalPosition - other.Body.GlobalPosition) with { Y = 0 };
+            var distance = away.Length();
+
+            if (distance >= SeparationRadius) continue;
+
+            if (distance < 0.05f)
+            {
+                // Exactly on top of each other gives no direction to push along. Derived
+                // from the instance id rather than random, so two stacked creatures pick
+                // their own way out instead of both choosing the same one every frame.
+                var angle = (GetInstanceId() % 360) * Mathf.Pi / 180f;
+
+                push += new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle));
+                continue;
+            }
+
+            // Nothing at the edge of the radius, everything at the centre of it.
+            push += away / distance * (1f - (distance / SeparationRadius));
+        }
+
+        return push == Vector3.Zero ? Vector3.Zero : push.LimitLength(1f) * SeparationPush;
     }
 
     private void ApplyGravity(double delta)

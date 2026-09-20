@@ -15,9 +15,9 @@ height = 1.7
 
 [node name="Enemy" type="CharacterBody3D"]
 collision_layer = 4
-; World + Enemy: without the Enemy bit, enemies walk through each other and stack,
-; which puts two health bars in the same place and reads as one bar jumping at random.
-collision_mask = 5
+; World only. Enemies do not collide with each other: EnemyBrain eases them apart instead
+; (CBT-16), so a pack spreads out without queueing single-file down a corridor.
+collision_mask = 1
 script = ExtResource("1_brain")
 EnemyId = "mob_corrupted_wolf"
 

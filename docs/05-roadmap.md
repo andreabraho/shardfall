@@ -109,7 +109,7 @@ they went first. MOV-08 is now worth doing.
 | CBT-13 | Object pooling for projectiles/numbers/VFX (NFR-P.5) | **[C]** | |
 | CBT-14 | **Combat feel review** + written notes | **[You]** | |
 | CBT-15 | Placeholder visual set, plus role markers (shape + colour) | **[C]** | ✅ role is what matters tactically, so markers encode role not family |
-| CBT-16 | Crowd separation: enemies push each other apart with a soft radius, overlapping up to a limit rather than not at all | **[C]** | Added 2026-09-20 on your note. Hard collision makes a pack queue single-file down a corridor; none at all makes six creatures one creature |
+| CBT-16 | Crowd separation: enemies push each other apart with a soft radius, overlapping up to a limit rather than not at all | **[C]** | ✅ Added 2026-09-20 on your note. Hard collision makes a pack queue single-file down a corridor; none at all makes six creatures one creature. The player counts as a neighbour, so a pack no longer stands inside them |
 | CBT-17 | **Four-hit basic attack chain**, each swing different, the fourth sweeping non-boss enemies away | **[C→You]** | Added 2026-09-20. Wants CBT-16 first: a finisher that throws a crowd is only readable once the crowd has shape |
 
 **When these land.** CBT-16/17 reopen Phase 2 while Phase 6 is still going, which is fine —
