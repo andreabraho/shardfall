@@ -195,6 +195,54 @@ companions rather than counting corpses. Quest data stays data-driven (JSON, not
 **Verdict: KEEP the structure, retune for one player.** Dungeons are already the most
 "designed" content in the game and translate directly.
 
+#### 2.13.1 The floor tower, in detail
+
+Looked at properly on 2026-09-20, because it is the format our own dungeon is being built
+on. The original's is nine floors, each gated behind a **different task** rather than a
+different room. From the official wiki, the tasks are roughly:
+
+| Floor | What unlocks the stairs |
+|---|---|
+| 1 | Destroy one named stone |
+| 2 | Kill everything on the floor |
+| 3 | Kill everything, then a boss |
+| 4 | Destroy a stone, which starts a 15-minute timer and spawns seven identical ones — destroy the right one |
+| 5 | Kill waves, collect a key stone from each, seat them all in a seal |
+| 6 | Clear the floor, kill a boss; a smith then appears and upgrades your gear for free |
+| 7 | Destroy every stone of one kind; more monsters and a second kind spawn behind them |
+| 8 | Find the real key among fakes and place it at a monument |
+| 9 | Kill the final boss, then you are teleported out |
+
+**What is actually good here, and why:**
+
+- **Every floor has a different verb.** Destroy / clear / kill / discriminate / collect /
+  seat / survive. This is the whole reason nine floors of the same corridor do not read as
+  nine of the same floor, and it is the part worth taking.
+- **A boss every third floor** (3, 6, 9) gives the climb a pulse, so the player always knows
+  roughly how far from the next punctuation mark they are.
+- **The smith after the floor-6 boss** is the best idea in it: a reward that is a *decision*
+  rather than an item, dropped in the middle of a run when the player knows exactly which
+  piece is holding them back.
+- **Floor 5's refuge** — a corner of the floor with almost nothing in it — is a deliberate
+  breathing space inside a fight. Cheap to build and it changes how the floor is played.
+
+**What does not survive the move to one player:**
+
+- **Floor 4's seven identical stones.** With a party you spread out and check them in
+  parallel; alone it is a one-in-seven guess against a timer, which is not a puzzle, it is a
+  dice roll with a loading screen attached. Keep the shape, give the right one a **tell** the
+  player can read.
+- **"Kill everything on the floor."** A chore verb. It is there to consume time, and in a
+  game with no subscription to defend there is no reason to inherit it.
+- **The mid-tower level gate** (the original requires level 75 to progress past floor 7).
+  That is an MMO device for stretching one dungeon across two level brackets. Ours occupies
+  one band and gates at the door or not at all.
+- **Party-shaped tasks and the entry NPC/key economy** generally.
+
+**Names are not taken.** The tower, its floors, its stones, its bosses and its drops are all
+renamed — see §2 of [00](00-overview-and-decisions.md). Mechanics are not copyrightable and
+are reimplemented freely; the original's nouns are not ours to use.
+
 ### 2.14 Mounts, pets, costumes
 
 - Horses with their own level and combat skills; later mounts purely cosmetic/utility;

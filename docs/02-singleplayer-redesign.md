@@ -326,6 +326,65 @@ Solo-tuned, 25–45 minutes, each with: a traversal gimmick, 2 mini-bosses, an o
 room, and a boss with 3 phases. Checkpoints before each boss (removed on Shardbound).
 Re-runnable with a tier selector for loot.
 
+### 10.1 The format: a floor tower
+
+**Decided 2026-09-20.** Dungeons are built as a stack of floors, each one unlocked by
+finishing a **task**, not by walking to the far wall. The analysis of the original's version
+is in [01](01-metin2-analysis.md) §2.13.1; this is what we take from it.
+
+The rule that carries the whole format: **every floor has a different verb.** Nine floors of
+"clear the room" is one floor nine times. The verbs we have, in roughly the order they get
+harder to read:
+
+| Verb | What the player does |
+|---|---|
+| **Break** | Destroy a named shard; the stairs open |
+| **Hold** | Survive waves for a duration, in a space that gets worse |
+| **Find** | One of several identical shards is the real one — it has a *tell* |
+| **Carry** | Each wave drops a key; seat them all in the seal |
+| **Race** | A timer starts when you break the first thing; finish before it ends |
+| **Fight** | A boss, alone, on an empty floor |
+
+**A boss every third floor.** It gives the climb a pulse: the player always knows roughly how
+far the next punctuation mark is. Floors between bosses escalate; the boss resets the tension.
+
+**After every boss floor, a shrine and a bench.** This is the original's best idea — the
+smith who appears after the floor-6 boss — and it lands even better here because we already
+have both pieces. It is a reward that is a *decision* rather than an item, handed over in the
+middle of a run at the exact moment the player knows which piece is holding them back.
+
+**One floor in the middle has a refuge**: a corner with nothing in it. Cheap to build, and it
+changes how the floor is played — somewhere to drink, re-read the room, and go back in.
+
+**No "kill everything" floor.** It is a chore verb that exists to consume time, and we have no
+subscription to defend.
+
+**The find-the-real-one floor gets a tell.** In the original it is one of seven identical
+stones against a timer, which with a party is a search and alone is a one-in-seven guess. Ours
+differs in something the player can actually perceive — it is the one that is *not* doing what
+the others are doing.
+
+### 10.2 Two towers, on purpose
+
+The endgame **Tower of Shards** (§8.1) is also a tower, and that is a deliberate relationship
+rather than a duplication:
+
+| | Act 1 dungeon | Tower of Shards |
+|---|---|---|
+| Built | Hand-authored, fixed | Procedural from room modules |
+| Length | 6–9 floors, ends | Endless, run ends on death |
+| Direction | **Descends** | **Ascends** |
+| Job | Teaches the format | Varies it forever |
+
+The campaign tower is where the player learns what a floor task is and what the boss pulse
+feels like. The endgame tower then has a vocabulary to draw on from its first floor, instead
+of spending its opening run explaining itself.
+
+The descent is not decoration. The campaign dungeon is `zone_catacombs`, whose shrines were
+already named for a mouth, a gallery and a vault — the shape was in the data before the format
+was decided, and going down rather than up is what keeps the two towers from reading as the
+same building twice.
+
 ---
 
 ## 11. Mounts, pets, cosmetics

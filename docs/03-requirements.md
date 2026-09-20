@@ -99,6 +99,31 @@ Every MUST is an MVP exit gate — the vertical slice is not done until all of t
 | FR-7.9 | Tower of Shards procedural endgame with per-floor affix draft and daily seed | SHOULD |
 | FR-7.10 | New Game+ | SHOULD |
 
+### FR-7.11 — Dungeons are floor towers
+
+Added 2026-09-20. Design in [02](02-singleplayer-redesign.md) §10.1; the analysis of the
+original's version it is taken from is in [01](01-metin2-analysis.md) §2.13.1.
+
+| ID | Requirement | Priority |
+|---|---|---|
+| FR-7.11 | A dungeon is a stack of floors; each floor is left only by finishing its task | MUST |
+| FR-7.12 | At least **five distinct task verbs** across a tower — break, hold, find, carry, race, fight — and **no floor repeats the verb of the floor before it** | MUST |
+| FR-7.13 | A boss floor every third floor, alone on an otherwise empty floor | MUST |
+| FR-7.14 | A shrine **and** an upgrade bench immediately after every boss floor | MUST |
+| FR-7.15 | Floor completion is announced and the way on opens visibly; the player is never left hunting for what changed | MUST |
+| FR-7.16 | A "find the real one among identical" floor must give the real one a **perceivable tell** — never a blind guess against a timer | MUST |
+| FR-7.17 | No floor whose task is "kill every enemy on it" | MUST |
+| FR-7.18 | One mid-tower floor carries a low-threat refuge | SHOULD |
+| FR-7.19 | Level is gated at the entrance only; never between floors | MUST |
+| FR-7.20 | Floor state survives a save and reload inside the dungeon | SHOULD |
+
+**FR-7.12 is the load-bearing one.** Nine floors that all ask for the same thing are one
+floor nine times, and every other requirement here is decoration if that one is broken.
+
+**FR-7.16 and FR-7.17 are single-player corrections**, not preferences. The original's
+discrimination floor is a search with a party and a one-in-seven guess alone; its clear-the-
+floor tasks exist to consume subscription time we do not charge for.
+
 ## FR-8 Quests and narrative
 
 | ID | Req | Pri |
