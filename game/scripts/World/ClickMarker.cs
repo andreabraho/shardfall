@@ -36,15 +36,18 @@ public partial class ClickMarker : Node3D
             DisableReceiveShadows = true,
         };
 
+        // Unrotated. A TorusMesh already lies in the XZ plane with its hole along Y, so it is
+        // flat on the ground as built. This node used to turn it a quarter about X, on the
+        // stated belief that a torus stands upright — which it does not, and that quarter
+        // turn is what stood the marker on edge. Seen from directly behind, an upright ring
+        // is indistinguishable from a flat one, so the error only showed once the camera
+        // could be swung (MOV-10).
         _ring = new MeshInstance3D
         {
             Mesh = new TorusMesh { InnerRadius = 0.45f, OuterRadius = 0.6f, RingSegments = 24 },
             MaterialOverride = _material,
             CastShadow = GeometryInstance3D.ShadowCastingSetting.Off,
         };
-
-        // TorusMesh stands upright by default; lay it flat on the ground.
-        _ring.RotationDegrees = new Vector3(90, 0, 0);
 
         AddChild(_ring);
         Visible = false;
