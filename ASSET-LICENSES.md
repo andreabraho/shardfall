@@ -1,4 +1,3 @@
-| KayKit Character Pack: Adventurers 1.0 — Knight (the player), Barbarian (heavy enemies) ||
 # Asset licences
 
 **Rule (doc 00 §2): every third-party asset gets an entry here the moment it enters the
@@ -12,8 +11,8 @@ attribution is required in-game.
 | Asset | Path | Source | Licence | Attribution required | Added |
 |---|---|---|---|---|---|
 | KayKit Dungeon Remastered 1.0 — 14 models (walls, floor, stairs, pillar, column, rubble, banner, torches) | `game/assets/kaykit/dungeon/` | [github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0](https://github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0) | **CC0 1.0** | No | 2026-09-20 |
-| KayKit Character Pack: Adventurers 1.0 — Knight, Barbarian | `game/assets/kaykit/characters/` | [github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0](https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0) | **CC0 1.0** | No | 2026-09-20 |
-| KayKit Character Pack: Skeletons 1.0 — Warrior, Rogue, Mage, Minion | `game/assets/kaykit/characters/` | [github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0](https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0) | **CC0 1.0** | No | 2026-09-20 |
+| KayKit Character Pack: Adventurers 1.0 — Knight (the player), Barbarian (heavy enemies) | `game/assets/kaykit/characters/` | [github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0](https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0) | **CC0 1.0** | No | 2026-09-20 |
+| KayKit Character Pack: Skeletons 1.0 — Warrior (humanoid enemies), Minion (small enemies), Rogue and Mage (unused yet) | `game/assets/kaykit/characters/` | [github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0](https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0) | **CC0 1.0** | No | 2026-09-20 |
 
 All three are by Kay Lousberg (www.kaylousberg.com). The packs' own `LICENSE.txt` files are
 kept verbatim beside the models, in `game/assets/kaykit/`, and each states Creative Commons
