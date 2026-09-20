@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Godot;
 
@@ -29,6 +30,7 @@ public partial class ZoneRoot : Node3D
         }
 
         GameWorld.EnterZone(ZoneId);
+        PlaceArrivingPlayer();
         Audit();
 
         Debug.DebugOverlay.Register("zone", () =>
@@ -43,6 +45,37 @@ public partial class ZoneRoot : Node3D
             return $"{zone.Id} {zone.Band} · "
                 + $"{GameWorld.LivingEnemies(GetTree())}/{GameWorld.PopulationCap} alive{where}";
         });
+    }
+
+    /// <summary>
+    /// Moves the player to the end of the road they walked in on.
+    /// </summary>
+    /// <remarks>
+    /// Nothing happens on a cold start, so the scene's own Player position stays the new-game
+    /// spawn. A missing arrival is a warning rather than an error: the player still lands
+    /// somewhere sensible, and failing to load the map over it would be a worse trade.
+    /// </remarks>
+    private void PlaceArrivingPlayer()
+    {
+        var from = ZoneTransition.TakeArrival();
+
+        if (from.Length == 0) return;
+
+        if (GetTree().GetFirstNodeInGroup("player") is not Node3D player) return;
+
+        foreach (var node in GetTree().GetNodesInGroup("zone_arrivals"))
+        {
+            if (node is not ZoneArrival arrival || arrival.FromZone != from) continue;
+
+            player.GlobalPosition = arrival.GlobalPosition;
+
+            GD.Print($"[gate] arrived in {ZoneId} from {from} — level {PlayerProfile.Progression.Level}, "
+                + $"{PlayerProfile.HealthFraction:P0} health");
+
+            return;
+        }
+
+        GD.PushWarning($"[gate] '{ZoneId}' has no arrival point from '{from}'; using the scene's start.");
     }
 
     /// <summary>
@@ -76,6 +109,31 @@ public partial class ZoneRoot : Node3D
         foreach (var missing in declared)
         {
             GD.PushError($"[safe] '{ZoneId}' declares safe region '{missing}' but the scene places no marker for it.");
+        }
+
+        // An exit in the data with no gate on the ground is a road that stops being a road
+        // halfway along it. A warning, not an error, because the graph is deliberately
+        // designed ahead of the maps and this is the running count of what is left to build.
+        var unbuilt = new List<string>();
+
+        foreach (var exit in GameWorld.Graph[ZoneId]?.Exits ?? [])
+        {
+            unbuilt.Add(exit.To);
+        }
+
+        foreach (var node in GetTree().GetNodesInGroup("zone_gates"))
+        {
+            if (node is not ZoneGate gate) continue;
+
+            if (!unbuilt.Remove(gate.ToZone))
+            {
+                GD.PushError($"[gate] '{ZoneId}' has a gate to '{gate.ToZone}', which is not one of its exits.");
+            }
+        }
+
+        foreach (var missing in unbuilt)
+        {
+            GD.PushWarning($"[gate] '{ZoneId}' exits to '{missing}' but the scene places no gate for it.");
         }
 
         foreach (var node in GetTree().GetNodesInGroup("spawn_fields"))

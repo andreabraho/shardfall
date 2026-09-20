@@ -37,8 +37,12 @@ public partial class PlayerInventory : Node
             return;
         }
 
-        Bag = new Inventory(GameItems.Catalogue, GridWidth, GridHeight, StartingYang);
-        Gear = new Equipment(GameItems.Catalogue);
+        // Adopted from the session, not built here: a zone gate replaces the scene tree, and
+        // a bag owned by this node would be a fresh empty bag on the far side of every gate.
+        var isNewCharacter = !PlayerProfile.Exists;
+
+        Bag = PlayerProfile.AdoptBag(() => new Inventory(GameItems.Catalogue, GridWidth, GridHeight, StartingYang));
+        Gear = PlayerProfile.AdoptGear(() => new Equipment(GameItems.Catalogue));
 
         Bag.Changed += () => EmitSignal(SignalName.Changed);
         Gear.Changed += () =>
@@ -47,7 +51,11 @@ public partial class PlayerInventory : Node
             EmitSignal(SignalName.Changed);
         };
 
-        CallDeferred(nameof(GiveStartingGear));
+        if (isNewCharacter) CallDeferred(nameof(GiveStartingGear));
+
+        // Worn gear survives the journey, but the stat block it feeds is rebuilt with the
+        // scene, so it has to be re-applied on arrival rather than only when gear changes.
+        CallDeferred(nameof(ApplyToStats));
 
         Debug.DebugOverlay.Register("yang", () => $"{Bag.Yang:N0} ({Bag.FreeCells} free cells)");
     }

@@ -212,11 +212,11 @@ is what proves the structure rather than decorating it.
 
 | ID | Task | Owner | Notes |
 |---|---|---|---|
-| WLD-01 | Zone loading/streaming, level bands, transitions | **[C]** | ◐ graph, bands and gating done and validated; scene-to-scene loading waits on WLD-05/06/07 |
+| WLD-01 | Zone loading/streaming, level bands, transitions | **[C]** | ✅ gates cross between maps, carrying the character; level and quest gates are read from the world graph, never re-stated by a scene. Streaming (as opposed to a scene swap) is not needed at this map size |
 | WLD-02 | Shrine system: save, respawn, fast travel, flask refill, respec | **[C]** | ✅ save waits on Phase 8; respec unblocks PRG-06 |
 | WLD-03 | Spawn-zone system: density caps, respawn timers, distance activation | **[C]** | ✅ camps come back as camps, and keep their timers while you are away |
 | WLD-04 | Modular greybox kit (cliffs, paths, ruins, props) as primitives | **[C]** | ✅ 18 pieces in `tables/world_kit.json`; a scene names a piece id and nothing else. Editor preview works: content loads on demand in the editor, pieces rebuild when the id changes, and safe zones and camps draw their radius as a ring |
-| WLD-05 | **Greybox the 4 field maps** — layout, landmarks, encounter placement, sightlines | **[C→You]** | I can place a first pass from a spec; level design by feel is yours |
+| WLD-05 | **Greybox the 4 field maps** — layout, landmarks, encounter placement, sightlines | **[C→You]** | ◐ Vale Approach built (`vale_approach.tscn`): a corridor between cliffs with a pinch in the middle, three camps off the road, the ford shrine and a tier-1 shard. Three maps left. Layout is a first pass — level design by feel is yours |
 | WLD-06 | **Greybox the 2 villages** + NPC placement | **[C→You]** | ◐ village 1 (`ember_hollow.tscn`) built: 36 m walled square, one gate, shrine, safe ground r22, three camps 40 m out. Village 2 waits on WLD-05; NPCs wait on ITM-10. Layout is a first pass — level design by feel is yours |
 | WLD-12 | **Safe zones**: no spawn overlap, no enemy entry, no damage inside — validated | **[C]** | ✅ `SafeRegion` + `SafetyField` in Core; declared per zone in data, placed by a `SafeZoneNode` in the scene. Enforced at all three points: aggro drops at the boundary, damage to the player is refused, and `ZoneRoot.Audit` errors on a camp within 6 m of the line |
 | WLD-13 | **Multi-hub**: relax the one-hub rule, each village anchors its region | **[C]** | ✅ "exactly one hub" → "at least one"; reachability still seeds from the starting village, so village 2 must be walkable from village 1 or it reports as an orphan |

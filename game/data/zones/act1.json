@@ -83,7 +83,7 @@
     "name": "$zone.zone_vale_approach.name",
     "kind": "wilds",
     "level_band": [3, 7],
-    "scene": "",
+    "scene": "res://scenes/vale_approach.tscn",
     "exits": [
       { "to": "zone_ember_hollow" },
       { "to": "zone_vale_floor", "required_level": 6 }

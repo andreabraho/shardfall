@@ -35,11 +35,16 @@ public partial class PlayerCharacter : Node
     /// <summary>Respawn delay. Kept short: a long death screen makes a hard game feel unfair.</summary>
     [Export] public double RespawnSeconds { get; set; } = 1.5;
 
-    /// <summary>Level, experience and unspent points (PRG-01/02).</summary>
-    public CharacterProgression Progression { get; } = new();
+    /// <summary>Level, experience and unspent points (PRG-01/02). Owned by the session.</summary>
+    /// <remarks>
+    /// Taken from <see cref="PlayerProfile"/> rather than constructed, because walking through
+    /// a zone gate replaces the scene tree and this node with it. A character that belonged to
+    /// the node would be a new character on the far side of every gate.
+    /// </remarks>
+    public CharacterProgression Progression => PlayerProfile.Progression;
 
     /// <summary>Which skills are learned, and their mastery (PRG-03/05).</summary>
-    public SkillBook Skills { get; } = new();
+    public SkillBook Skills => PlayerProfile.Skills;
 
     [Signal] public delegate void LeveledUpEventHandler(int level);
 
@@ -53,13 +58,21 @@ public partial class PlayerCharacter : Node
         _spawnPoint = _motor.GlobalPosition;
         _motor.AddToGroup("player");
 
-        // Start partway up the curve so combat can be tested at a meaningful power level.
-        // A real new game begins at 1; the prologue quest chain covers the early levels.
-        Progression.Grant(ExperienceTable.CumulativeTo(StartingLevel));
-        SpendStartingPoints();
+        // Only for a character that does not exist yet. Arriving through a gate must not
+        // re-grant the starting level, or every border would be a reset.
+        var isNewCharacter = !PlayerProfile.Exists;
+
+        if (isNewCharacter)
+        {
+            Progression.Grant(ExperienceTable.CumulativeTo(StartingLevel));
+            SpendStartingPoints();
+            PlayerProfile.MarkCreated();
+        }
 
         _combatant.IsPlayer = true;
         ApplyStats();
+
+        if (!isNewCharacter) RestoreCarriedHealth();
 
         _combatant.Damaged += OnDamaged;
         _combatant.Died += OnDied;
@@ -70,6 +83,27 @@ public partial class PlayerCharacter : Node
 
         // Skills the starting level already allows.
         CallDeferred(nameof(LearnSkills));
+    }
+
+    /// <summary>Puts back the condition the character walked through the gate in.</summary>
+    private void RestoreCarriedHealth()
+    {
+        _combatant.Health.SetCurrent(_combatant.Health.Max * PlayerProfile.HealthFraction);
+        _combatant.Mana.SetCurrent(_combatant.Mana.Max * PlayerProfile.ManaFraction);
+    }
+
+    /// <summary>
+    /// Records the character's condition just before the scene is replaced.
+    /// </summary>
+    /// <remarks>
+    /// Called by the gate rather than from <c>_ExitTree</c>: a scene change tears everything
+    /// down, and reading a half-dismantled node's health is how a border quietly becomes a
+    /// free heal.
+    /// </remarks>
+    public void CarryOut()
+    {
+        PlayerProfile.HealthFraction = _combatant.Health.Fraction;
+        PlayerProfile.ManaFraction = _combatant.Mana.Fraction;
     }
 
     private void OnDamaged(int amount, bool critical, bool evaded)

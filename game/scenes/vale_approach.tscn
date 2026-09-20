@@ -1,0 +1,279 @@
+[gd_scene load_steps=13 format=3]
+
+; zone_vale_approach — the first field map (WLD-05), band 3–7.
+;
+; A corridor rather than a clearing: the road runs west to east between cliffs, from the gate
+; back to Ember Hollow at one end to the descent into the Vale Floor at the other. The shape
+; is the point — a field map the player crosses has somewhere to be going, and the camps sit
+; on the way rather than scattered in an open plane.
+;
+; No safe ground here. This is the first map where standing still is not an option, which is
+; what the village is for.
+
+[ext_resource type="Script" path="res://scripts/World/ZoneRoot.cs" id="1_zoneroot"]
+[ext_resource type="Script" path="res://scripts/World/NavBaker.cs" id="2_navbaker"]
+[ext_resource type="Script" path="res://scripts/World/KitPiece.cs" id="3_kit"]
+[ext_resource type="Script" path="res://scripts/World/SpawnFieldNode.cs" id="4_spawnfield"]
+[ext_resource type="Script" path="res://scripts/World/ShrineNode.cs" id="5_shrine"]
+[ext_resource type="Script" path="res://scripts/World/ShardNode.cs" id="6_shard"]
+[ext_resource type="Script" path="res://scripts/Visual/VisualRoot.cs" id="7_visualroot"]
+[ext_resource type="Script" path="res://scripts/World/ZoneGate.cs" id="8_gate"]
+[ext_resource type="Script" path="res://scripts/World/ZoneArrival.cs" id="9_arrival"]
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="10_player"]
+[ext_resource type="PackedScene" path="res://scenes/session.tscn" id="11_session"]
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_vale"]
+vertices = PackedVector3Array()
+cell_size = 0.15
+cell_height = 0.15
+agent_height = 1.8
+agent_radius = 0.45
+agent_max_climb = 0.3
+agent_max_slope = 45.0
+geometry_parsed_geometry_type = 1
+geometry_collision_mask = 1
+geometry_source_geometry_mode = 1
+geometry_source_group_name = "navsource"
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+size = Vector2(190, 120)
+
+[sub_resource type="StandardMaterial3D" id="Material_ground"]
+albedo_color = Color(0.22, 0.25, 0.22, 1)
+roughness = 0.95
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
+size = Vector3(190, 1, 120)
+
+[sub_resource type="Environment" id="Environment_vale"]
+background_mode = 1
+background_color = Color(0.09, 0.12, 0.13, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.46, 0.5, 0.55, 1)
+ambient_light_energy = 0.4
+
+[node name="ValeApproach" type="Node3D"]
+script = ExtResource("1_zoneroot")
+ZoneId = "zone_vale_approach"
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_vale")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.8660254, -0.25, 0.4330127, 0, 0.8660254, 0.5, -0.5, -0.4330127, 0.75, 0, 14, 0)
+shadow_enabled = true
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("NavigationMesh_vale")
+script = ExtResource("2_navbaker")
+
+[node name="Ground" type="StaticBody3D" parent="NavigationRegion3D" groups=["navsource"]]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Ground"]
+mesh = SubResource("PlaneMesh_ground")
+surface_material_override/0 = SubResource("Material_ground")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Ground"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = SubResource("BoxShape3D_ground")
+
+; -- The valley walls ----------------------------------------------------------
+; Cliffs north and south turn an open plane into a route. Without them the player can walk
+; from one end to the other in a straight line and never meet anything they did not choose to.
+
+[node name="Walls" type="Node3D" parent="NavigationRegion3D"]
+
+[node name="CliffN1" type="StaticBody3D" parent="NavigationRegion3D/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -60, 3, -46)
+script = ExtResource("3_kit")
+PieceId = "kit_cliff_8"
+
+[node name="CliffN2" type="StaticBody3D" parent="NavigationRegion3D/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -52, 3, -46)
+script = ExtResource("3_kit")
+PieceId = "kit_cliff_8"
+
+[node name="CliffN3" type="StaticBody3D" parent="NavigationRegion3D/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 3, -40)
+script = ExtResource("3_kit")
+PieceId = "kit_cliff_8"
+
+[node name="CliffN4" type="StaticBody3D" parent="NavigationRegion3D/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 3, -40)
+script = ExtResource("3_kit")
+PieceId = "kit_cliff_8"
+
+[node name="CliffN5" type="StaticBody3D" parent="NavigationRegion3D/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 3, -44)
+script = ExtResource("3_kit")
+PieceId = "kit_cliff_8"
+
+[node name="CliffN6" type="StaticBody3D" parent="NavigationRegion3D/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 3, -44)
+script = ExtResource("3_kit")
+PieceId = "kit_cliff_8"
+
+[node name="CliffS1" type="StaticBody3D" parent="NavigationRegion3D/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -46, 3, 44)
+script = ExtResource("3_kit")
+PieceId = "kit_cliff_8"
+
+[node name="CliffS2" type="StaticBody3D" parent="NavigationRegion3D/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38, 3, 44)
+script = ExtResource("3_kit")
+PieceId = "kit_cliff_8"
+
+[node name="CliffS3" type="StaticBody3D" parent="NavigationRegion3D/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 3, 42)
+script = ExtResource("3_kit")
+PieceId = "kit_cliff_8"
+
+[node name="CliffS4" type="StaticBody3D" parent="NavigationRegion3D/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 3, 42)
+script = ExtResource("3_kit")
+PieceId = "kit_cliff_8"
+
+; A pinch in the middle: the two ends of the valley cannot be seen from each other, so
+; crossing it is a sequence of places rather than one long look.
+[node name="PinchN" type="StaticBody3D" parent="NavigationRegion3D/Walls"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -6, 3, -18)
+script = ExtResource("3_kit")
+PieceId = "kit_cliff_8"
+
+[node name="PinchS" type="StaticBody3D" parent="NavigationRegion3D/Walls"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -6, 3, 20)
+script = ExtResource("3_kit")
+PieceId = "kit_cliff_8"
+
+; -- The road ------------------------------------------------------------------
+
+[node name="Road" type="Node3D" parent="NavigationRegion3D"]
+
+[node name="RoadA" type="StaticBody3D" parent="NavigationRegion3D/Road"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -72, 0.06, 0)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="RoadB" type="StaticBody3D" parent="NavigationRegion3D/Road"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -68, 0.06, 0)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="RoadC" type="StaticBody3D" parent="NavigationRegion3D/Road"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -64, 0.06, 0)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="RoadD" type="StaticBody3D" parent="NavigationRegion3D/Road"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 0.06, 0)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="RoadE" type="StaticBody3D" parent="NavigationRegion3D/Road"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26, 0.06, 0)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="RoadF" type="StaticBody3D" parent="NavigationRegion3D/Road"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0.06, 0)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="RoadG" type="StaticBody3D" parent="NavigationRegion3D/Road"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66, 0.06, 0)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="RoadH" type="StaticBody3D" parent="NavigationRegion3D/Road"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70, 0.06, 0)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="PostWest" type="StaticBody3D" parent="NavigationRegion3D/Road"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -66, 1.1, 4)
+script = ExtResource("3_kit")
+PieceId = "kit_marker_post"
+
+[node name="PostEast" type="StaticBody3D" parent="NavigationRegion3D/Road"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 68, 1.1, 4)
+script = ExtResource("3_kit")
+PieceId = "kit_marker_post"
+
+[node name="RuinMid" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.9, -10)
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_wall"
+
+[node name="RubbleMid" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0.35, -8)
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_rubble"
+
+; -- Session, player and the two borders ---------------------------------------
+
+[node name="Player" parent="." instance=ExtResource("10_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -70, 0.1, 0)
+
+[node name="Session" parent="." instance=ExtResource("11_session")]
+
+[node name="Enemies" type="Node3D" parent="."]
+
+; West: back to the village. East: on into the Vale Floor, once the player is level 6.
+[node name="GateToHollow" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -80, 0, 0)
+script = ExtResource("8_gate")
+ToZone = "zone_ember_hollow"
+
+[node name="ArrivalFromHollow" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -70, 0.1, 0)
+script = ExtResource("9_arrival")
+FromZone = "zone_ember_hollow"
+
+[node name="GateToFloor" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 80, 0, 0)
+script = ExtResource("8_gate")
+ToZone = "zone_vale_floor"
+
+[node name="ArrivalFromFloor" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70, 0.1, 0)
+script = ExtResource("9_arrival")
+FromZone = "zone_vale_floor"
+
+[node name="ShrineFord" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.1, 8)
+script = ExtResource("5_shrine")
+ShrineId = "shr_approach_ford"
+
+[node name="VisualRoot" type="Node3D" parent="ShrineFord"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+script = ExtResource("7_visualroot")
+VisualId = "mesh_placeholder_shrine"
+
+; Three camps along the route, each off the road by enough that walking it is a choice
+; rather than a gauntlet.
+[node name="BoarRun" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42, 0, -18)
+script = ExtResource("4_spawnfield")
+FieldId = "spf_approach_boars"
+
+[node name="Scavengers" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, 22)
+script = ExtResource("4_spawnfield")
+FieldId = "spf_approach_camp"
+
+[node name="Grove" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 0, -16)
+script = ExtResource("4_spawnfield")
+FieldId = "spf_approach_grove"
+
+[node name="Shard" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0.1, -34)
+script = ExtResource("6_shard")
+ShardId = "shd_cracked_seed"
+
+[node name="VisualRoot" type="Node3D" parent="Shard"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+script = ExtResource("7_visualroot")
+VisualId = "mesh_placeholder_monolith"
