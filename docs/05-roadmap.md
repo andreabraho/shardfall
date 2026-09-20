@@ -66,22 +66,24 @@ click-to-move lives or dies on responsiveness.
 | MOV-06 | Alternative WASD scheme feeding the same destination core (FR-1.7) | **[C]** | Cheap now, expensive later |
 | MOV-07 | Input map + rebinding infrastructure | **[C]** | |
 | MOV-08 | **Feel review** — 20 min of play, written notes | **[You]** | ⬅ **TESTABLE NOW.** The one thing I genuinely cannot do |
-| MOV-09 | **One scheme, not two**: WASD and click-to-move both live at once, either interrupting the other; the F4 exclusive toggle goes | **[C]** | Added 2026-09-20 on your note. A mode switch asks the player to decide in advance which hand they will use |
-| MOV-10 | Right-mouse look, and WASD relative to where the camera points | **[C]** | Added 2026-09-20. Pairs with MOV-09: camera-relative movement is what makes holding W usable while the camera swings |
-| MOV-11 | Attack on Space | **[C→You]** | Added 2026-09-20. **Blocked on a decision:** Space is Guard Stance today. See the note below the table |
+| MOV-09 | **One scheme, not two**: WASD and click-to-move both live at once, either interrupting the other; the F4 exclusive toggle goes | **[C]** | ✅ Added 2026-09-20 on your note. A mode switch asks the player to decide in advance which hand they will use |
+| MOV-10 | Right-mouse look, and WASD relative to where the camera points | **[C]** | ✅ Added 2026-09-20. Pairs with MOV-09: camera-relative movement is what makes holding W usable while the camera swings. The cursor is captured while looking and put back on release |
+| MOV-11 | Attack on Space | **[C→You]** | ✅ Added and done 2026-09-20. Guard moved to Shift. Swings where you face with nothing selected, so it works while the other hand steers |
 
-**The Space collision (MOV-11).** Space is Guard Stance, and Guard is held, not tapped — the
-two cannot share a key. Whichever wins, the other needs a home, and the obvious one is taken:
-right-mouse becomes the camera in MOV-10.
+**The Space collision (MOV-11), resolved.** Guard moved to **Shift**, Space became attack.
 
-My recommendation is **Guard moves to Shift and Space becomes attack**. Attack is the key
-pressed hundreds of times a minute and belongs under the thumb; Guard is held, and holding a
-modifier is what modifiers are for. The cost is that Shift is the conventional home for walk
-or hold-position, neither of which exists yet — so the cost is a door closed, not a feature
-lost. Say the word and I will do it the other way.
+I had recorded the reason as "Guard is held, not tapped". That was wrong — Guard is a tap
+that starts a timed stance on a ten-second cooldown. The conclusion survives the correction
+and gets easier: a key pressed once every ten seconds has no claim on the best key on the
+keyboard, and the attack is pressed more often than everything else combined. Shift is the
+conventional home for walk or hold-position, neither of which exists, so the cost is a door
+closed rather than a feature lost.
 
-**Sequencing note.** MOV-09/10/11 change the scheme MOV-08 is meant to review, so the feel
-review is better spent after them than before. That is the one reason to do this block first.
+The HUD hint now reads the live binding instead of naming a key in a string, because it spent
+an hour telling the player to press Space for Guard.
+
+**Sequencing note.** MOV-09/10/11 changed the scheme MOV-08 is meant to review, which is why
+they went first. MOV-08 is now worth doing.
 
 ---
 

@@ -1,14 +1,17 @@
 using Godot;
 using Kiln.Game.Combat;
+using Kiln.Game.Input;
 
 namespace Kiln.Game.Player;
 
 /// <summary>
 /// Click-to-attack (CBT-03, FR-1.2): click an enemy to close distance and auto-attack until
-/// it dies, leaves range, or you give another order.
+/// it dies, leaves range, or you give another order — and Space to swing where you face,
+/// with nothing selected at all (MOV-11).
 /// <para>
-/// Faithful to the original's scheme (D3) — the player commits to a target rather than
-/// aiming each swing.
+/// The click scheme is faithful to the original (D3): the player commits to a target rather
+/// than aiming each swing. The key is the escape hatch from that commitment, for the moments
+/// when the other hand is steering and there is something in the way.
 /// </para>
 /// </summary>
 public partial class PlayerCombat : Node
@@ -149,12 +152,40 @@ public partial class PlayerCombat : Node
     {
         if (_target is null) return;
 
+        Strike(targetPosition - _motor.GlobalPosition, _target);
+    }
+
+    /// <summary>
+    /// A swing at whatever happens to be in front, with nothing selected (MOV-11).
+    /// </summary>
+    /// <remarks>
+    /// The manual counterpart to the automatic chain above: it costs the same cooldown and
+    /// does the same damage, but it goes where the character is facing rather than where a
+    /// selection is, and it never walks anywhere. That makes it the attack that works while
+    /// the other hand is steering — and it is the shape the four-hit chain (CBT-17) will be
+    /// built on, so it is worth having the swing be a thing you press before it is a thing
+    /// that counts.
+    /// </remarks>
+    public bool SwingForward()
+    {
+        if (!_self.IsAlive || _swingCooldown > 0) return false;
+
+        _swingCooldown = 1.0 / Math.Max(0.1, _self.Stats.AttacksPerSecond);
+
+        Strike(-_motor.GlobalBasis.Z, _target is { IsAlive: true } ? _target : null);
+
+        return true;
+    }
+
+    /// <summary>One swing: the selected enemy if there is one, and the arc either way.</summary>
+    private void Strike(Vector3 direction, Combatant? primary)
+    {
         // The primary target always takes a full hit, even if the arc maths would miss it —
         // the player explicitly selected it and a whiff would read as a bug.
-        _target.TakeAttack(_self);
+        primary?.TakeAttack(_self);
 
         var origin = _motor.GlobalPosition;
-        var forward = (targetPosition - origin) with { Y = 0 };
+        var forward = direction with { Y = 0 };
         if (forward.LengthSquared() < 0.0001f) return;
 
         forward = forward.Normalized();
@@ -165,13 +196,25 @@ public partial class PlayerCombat : Node
         _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Lunge(forward);
         AoeVisual.Cone(origin, forward, CleaveRange, CleaveAngle);
 
-        if (!CleaveEnabled) return;
+        // With nothing selected the arc is the whole attack, so it swings even when cleave is
+        // off: switching cleave off means an auto-attack should not splash, not that pressing
+        // the attack key should do nothing.
+        if (!CleaveEnabled && primary is not null) return;
 
         foreach (var other in AreaQuery.Cone(_motor, origin, forward, CleaveRange, CleaveAngle))
         {
-            if (other == _target || !other.IsAlive) continue;
+            if (other == primary || !other.IsAlive) continue;
 
-            other.TakeAttack(_self, weaponCoef: CleaveFalloff);
+            other.TakeAttack(_self, weaponCoef: primary is null ? 1.0 : CleaveFalloff);
         }
+    }
+
+    public override void _UnhandledInput(InputEvent @event)
+    {
+        // A panel has the player's attention; swinging behind it is never intended.
+        if (UI.UiState.ModalOpen || !@event.IsActionPressed(GameActions.Attack)) return;
+
+        SwingForward();
+        GetViewport().SetInputAsHandled();
     }
 }

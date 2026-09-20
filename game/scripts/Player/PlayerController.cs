@@ -6,9 +6,14 @@ using Kiln.Game.World;
 namespace Kiln.Game.Player;
 
 /// <summary>
-/// Turns input into move orders. Click-to-move is the designed scheme (D3); WASD is offered
-/// as an alternative that feeds the same motor.
+/// Turns input into move orders. Click-to-move and WASD are both live at once, feeding the
+/// same motor (MOV-09).
 /// </summary>
+/// <remarks>
+/// There used to be a mode switch on F4. A switch asks the player to decide in advance which
+/// hand they are going to use, which is not a decision anybody makes in advance — they reach
+/// for whichever suits the moment, and the game should follow rather than ask.
+/// </remarks>
 public partial class PlayerController : Node
 {
     /// <summary>
@@ -28,13 +33,11 @@ public partial class PlayerController : Node
     private double _holdTimer;
     private Vector3 _lastOrderPoint;
     private bool _wasapHeld;
+    private bool _steering;
     private PlayerCombat? _combat;
 
     [Export] public NodePath MotorPath { get; set; } = "..";
     [Export] public NodePath MarkerPath { get; set; } = "";
-
-    /// <summary>WASD instead of click-to-move. Toggled with F4; the game is balanced for false.</summary>
-    [Export] public bool UseDirectMovement { get; set; }
 
     public override void _Ready()
     {
@@ -55,16 +58,6 @@ public partial class PlayerController : Node
             $"speed={(_motor.Velocity with { Y = 0 }).Length():F1}");
     }
 
-    public override void _UnhandledInput(InputEvent @event)
-    {
-        if (@event.IsActionPressed(GameActions.ToggleControlScheme))
-        {
-            UseDirectMovement = !UseDirectMovement;
-            _motor.Stop();
-            GD.Print($"[input] control scheme: {(UseDirectMovement ? "WASD (alternative)" : "click-to-move (default)")}");
-        }
-    }
-
     public override void _Process(double delta)
     {
         // The camera can be swapped at runtime (debug cameras, cutscenes later).
@@ -81,34 +74,61 @@ public partial class PlayerController : Node
             return;
         }
 
-        if (UseDirectMovement)
+        // The keys are asked first, so a hand already on WASD overrides whatever the last
+        // click ordered. Deciding in advance which of the two you are using is a decision a
+        // player should never have to make; the one they are making right now is the answer.
+        var steering = Steering();
+
+        if (steering != Vector3.Zero)
         {
-            HandleDirectMovement();
+            // Walking away under your own power abandons the fight, exactly as clicking the
+            // ground does. Otherwise combat would re-issue its approach order every physics
+            // frame and the character would fight the hand holding the key.
+            if (!_steering)
+            {
+                _combat?.ClearTarget();
+                _steering = true;
+            }
+
+            _motor.CommandMoveDirection(steering);
+
+            // So releasing the keys mid-drag is not read as the continuation of that drag.
+            _wasapHeld = false;
+            _holdTimer = 0;
+
+            return;
         }
-        else
+
+        if (_steering)
         {
-            HandleClickToMove(delta);
+            _motor.CommandMoveDirection(Vector3.Zero);
+            _steering = false;
         }
+
+        HandleClickToMove(delta);
     }
 
-    private void HandleDirectMovement()
+    /// <summary>
+    /// The WASD direction, in world space, or zero when no key is down.
+    /// </summary>
+    /// <remarks>
+    /// Relative to the camera rather than to the world or the character: with the camera on
+    /// the right mouse button, the direction the player is looking is the direction they
+    /// mean, and holding W through a turn should curve rather than carry on north.
+    /// </remarks>
+    private Vector3 Steering()
     {
         var input = Godot.Input.GetVector(
             GameActions.MoveLeft, GameActions.MoveRight,
             GameActions.MoveForward, GameActions.MoveBack);
 
-        if (input == Vector2.Zero)
-        {
-            _motor.CommandMoveDirection(Vector3.Zero);
-            return;
-        }
+        if (input == Vector2.Zero) return Vector3.Zero;
 
-        // Camera-relative, flattened to the ground plane.
         var basis = _camera.GlobalTransform.Basis;
         var forward = -(basis.Z with { Y = 0 }).Normalized();
         var right = (basis.X with { Y = 0 }).Normalized();
 
-        _motor.CommandMoveDirection((right * input.X) + (forward * input.Y));
+        return (right * input.X) + (forward * input.Y);
     }
 
     private void HandleClickToMove(double delta)

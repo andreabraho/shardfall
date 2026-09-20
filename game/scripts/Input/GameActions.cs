@@ -21,6 +21,10 @@ public static class GameActions
     public const string MoveRight = "move_right";
 
     // Combat
+
+    /// <summary>A swing at whatever is in front, with nothing selected (MOV-11).</summary>
+    public const string Attack = "attack";
+
     public const string DefensiveAbility = "defensive_ability";
     public const string Skill1 = "skill_1";
     public const string Skill2 = "skill_2";
@@ -40,7 +44,6 @@ public static class GameActions
     // Meta
     public const string ToggleDebugOverlay = "toggle_debug_overlay";
     public const string ToggleFullscreen = "toggle_fullscreen";
-    public const string ToggleControlScheme = "toggle_control_scheme";
     public const string Cancel = "cancel";
     public const string ToggleInventory = "toggle_inventory";
     public const string ToggleUpgradeBench = "toggle_upgrade_bench";
@@ -68,7 +71,10 @@ public static class GameActions
         [MoveLeft] = [Key(Godot.Key.A)],
         [MoveRight] = [Key(Godot.Key.D)],
 
-        [DefensiveAbility] = [Key(Godot.Key.Space)],
+        // Space is the key pressed more than every other key combined, so it holds the swing.
+        // Guard is a tap on a ten-second cooldown and does not need to be under the thumb.
+        [Attack] = [Key(Godot.Key.Space)],
+        [DefensiveAbility] = [Key(Godot.Key.Shift)],
         [Skill1] = [Key(Godot.Key.Key1)],
         [Skill2] = [Key(Godot.Key.Key2)],
         [Skill3] = [Key(Godot.Key.Key3)],
@@ -81,13 +87,14 @@ public static class GameActions
         // sheet nobody can find is a sheet nobody uses.
         [CameraRotateLeft] = [Key(Godot.Key.Z)],
         [CameraRotateRight] = [Key(Godot.Key.X)],
-        [CameraDrag] = [Mouse(MouseButton.Middle)],
+        // Right drag to look, with middle kept as a second way in: it costs nothing to leave
+        // the old binding in place for anybody whose hand already knows it.
+        [CameraDrag] = [Mouse(MouseButton.Right), Mouse(MouseButton.Middle)],
         [CameraZoomIn] = [Mouse(MouseButton.WheelUp)],
         [CameraZoomOut] = [Mouse(MouseButton.WheelDown)],
 
         [ToggleDebugOverlay] = [Key(Godot.Key.F3)],
         [ToggleFullscreen] = [Key(Godot.Key.F11)],
-        [ToggleControlScheme] = [Key(Godot.Key.F4)],
         [Cancel] = [Key(Godot.Key.Escape)],
         [ToggleInventory] = [Key(Godot.Key.I)],
         [ToggleUpgradeBench] = [Key(Godot.Key.U)],
@@ -147,7 +154,9 @@ public static class GameActions
 
         foreach (var e in InputMap.ActionGetEvents(action))
         {
-            return e.AsText();
+            // Godot appends " (Physical)" to a physical key. True, and noise on a HUD hint
+            // or a settings row — the player only ever needed the key.
+            return e.AsText().Replace(" (Physical)", "").Replace(" - Physical", "");
         }
 
         return "unbound";

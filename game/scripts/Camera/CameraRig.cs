@@ -20,6 +20,7 @@ public partial class CameraRig : Node3D
 
     private float _targetZoom;
     private bool _dragging;
+    private Vector2 _restoreCursorTo;
     private Vector3 _kick;
     private static CameraRig? _instance;
 
@@ -40,7 +41,7 @@ public partial class CameraRig : Node3D
     /// <summary>Degrees per second for keyboard rotation.</summary>
     [Export] public float RotateSpeed { get; set; } = 120f;
 
-    /// <summary>Degrees per pixel of middle-drag.</summary>
+    /// <summary>Degrees per pixel of look-drag.</summary>
     [Export] public float DragSensitivity { get; set; } = 0.35f;
 
     /// <summary>Peak camera displacement from an impact, in metres. Deliberately subtle.</summary>
@@ -130,8 +131,8 @@ public partial class CameraRig : Node3D
     {
         if (@event.IsActionPressed(GameActions.CameraZoomIn)) _targetZoom -= ZoomStep;
         else if (@event.IsActionPressed(GameActions.CameraZoomOut)) _targetZoom += ZoomStep;
-        else if (@event.IsActionPressed(GameActions.CameraDrag)) _dragging = true;
-        else if (@event.IsActionReleased(GameActions.CameraDrag)) _dragging = false;
+        else if (@event.IsActionPressed(GameActions.CameraDrag)) Look(true);
+        else if (@event.IsActionReleased(GameActions.CameraDrag)) Look(false);
 
         _targetZoom = Mathf.Clamp(_targetZoom, MinZoom, MaxZoom);
 
@@ -144,8 +145,41 @@ public partial class CameraRig : Node3D
         }
     }
 
+    /// <summary>
+    /// Starts or stops looking around, capturing the cursor while it lasts (MOV-10).
+    /// </summary>
+    /// <remarks>
+    /// Captured rather than merely hidden: a swing of the camera is easily a whole screen
+    /// width of mouse travel, and without capture the pointer runs off the window and the
+    /// turn stops halfway. On release it goes back exactly where it was taken from, so a
+    /// look does not cost the player the cursor position they had lined up.
+    /// </remarks>
+    private void Look(bool on)
+    {
+        if (_dragging == on) return;
+
+        if (on && UI.UiState.ModalOpen) return;
+
+        _dragging = on;
+
+        if (on) _restoreCursorTo = GetViewport().GetMousePosition();
+
+        Godot.Input.MouseMode = on ? Godot.Input.MouseModeEnum.Captured : Godot.Input.MouseModeEnum.Visible;
+
+        if (!on) Godot.Input.WarpMouse(_restoreCursorTo);
+    }
+
     public override void _Process(double delta)
     {
+        // The button can be released while the window is not focused, or a panel can open
+        // under the held button, and either way the release event never arrives. Letting go
+        // of the cursor is not something to get wrong: a captured mouse with nothing driving
+        // it looks exactly like a frozen game.
+        if (_dragging && (!Godot.Input.IsActionPressed(GameActions.CameraDrag) || UI.UiState.ModalOpen))
+        {
+            Look(false);
+        }
+
         var rotate = Godot.Input.GetAxis(GameActions.CameraRotateRight, GameActions.CameraRotateLeft);
         if (rotate != 0)
         {

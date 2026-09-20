@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Kiln.Game.Input;
 using Godot;
 using Kiln.Game.Combat;
 using Kiln.Game.Player;
@@ -201,7 +202,10 @@ public partial class CombatHud : CanvasLayer
         {
             { IsGuarding: true } => "GUARDING",
             { CooldownRemaining: > 0 } g => $"Guard ready in {g.CooldownRemaining:F1}s",
-            _ => "Guard ready  [Space]",
+            // Read from the binding rather than written in: a hint that names the wrong key
+            // is worse than no hint, and this one named Space for an hour after Space became
+            // the attack.
+            _ => $"Guard ready  [{GameActions.DescribeBinding(GameActions.DefensiveAbility)}]",
         };
 
         // Status effects must be visible or they read as unexplained damage and sluggishness.
