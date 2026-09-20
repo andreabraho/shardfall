@@ -56,7 +56,11 @@ public static class ModelFit
     private static void Place(Node3D instance, Aabb bounds, Vector3 scale)
     {
         instance.Scale = scale;
-        instance.Position = -(bounds.Position + (bounds.Size * 0.5f)) * scale;
+
+        // Through the basis rather than multiplying by the scale directly, so that a model
+        // turned to face the right way (ModelYaw) still ends up centred. The basis already
+        // carries whatever rotation it was given along with the scale set above.
+        instance.Position = -(instance.Basis * (bounds.Position + (bounds.Size * 0.5f)));
     }
 
     /// <summary>The combined extent of every mesh under a node, in that node's own space.</summary>

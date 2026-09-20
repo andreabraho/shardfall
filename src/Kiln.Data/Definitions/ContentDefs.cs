@@ -346,6 +346,20 @@ public sealed class VisualDef : ContentDefBase
     /// <summary>Set only when <see cref="Primitive"/> is "model": res:// path to the scene.</summary>
     public string? ModelPath { get; init; }
 
+    /// <summary>
+    /// Degrees to turn the model about Y so that its front matches the engine's.
+    /// </summary>
+    /// <remarks>
+    /// Godot treats -Z as forward and the motor turns bodies on that assumption, but a model
+    /// faces wherever its author pointed it. A pack that faces +Z makes every character in
+    /// the game walk backwards, which is exactly what the first one did.
+    /// <para>
+    /// Per-visual rather than a constant, because the next pack will have its own opinion and
+    /// this is the only honest place to record whose.
+    /// </para>
+    /// </remarks>
+    public double ModelYaw { get; init; }
+
     public double Height { get; init; } = 1.8;
     public double Radius { get; init; } = 0.4;
 

@@ -34,6 +34,11 @@ public static class VisualRegistry
             {
                 var instance = packed.Instantiate<Node3D>();
 
+                // Turned to face the way the engine thinks is forward, before it is fitted:
+                // the fit centres the model, and centring something that is about to be spun
+                // around leaves it off to one side.
+                instance.RotationDegrees = new Vector3(0, (float)def.ModelYaw, 0);
+
                 // Scaled to the height the data declares, not to the size its author worked
                 // in, and then the per-creature scale on top. Without this a model lands at
                 // whatever metre-per-unit its pack used and a wolf stands taller than a wall.
