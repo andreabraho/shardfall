@@ -44,12 +44,8 @@ public partial class PlayerInventory : Node
         Bag = PlayerProfile.AdoptBag(() => new Inventory(GameItems.Catalogue, GridWidth, GridHeight, StartingYang));
         Gear = PlayerProfile.AdoptGear(() => new Equipment(GameItems.Catalogue));
 
-        Bag.Changed += () => EmitSignal(SignalName.Changed);
-        Gear.Changed += () =>
-        {
-            ApplyToStats();
-            EmitSignal(SignalName.Changed);
-        };
+        Bag.Changed += OnBagChanged;
+        Gear.Changed += OnGearChanged;
 
         if (isNewCharacter) CallDeferred(nameof(GiveStartingGear));
 
@@ -58,6 +54,35 @@ public partial class PlayerInventory : Node
         CallDeferred(nameof(ApplyToStats));
 
         Debug.DebugOverlay.Register("yang", this, () => $"{Bag.Yang:N0} ({Bag.FreeCells} free cells)");
+    }
+
+    /// <summary>
+    /// Lets go of the bag and the gear before this node is freed.
+    /// </summary>
+    /// <remarks>
+    /// The bag outlives the scene and this node does not, so a subscription left behind is a
+    /// dead node the bag still calls. Every border crossing added one, and the next change to
+    /// the bag then threw <c>ObjectDisposedException</c> out of the middle of whatever caused
+    /// it — which is worse than it sounds, because the throw aborts the caller: a shard that
+    /// had just granted its rewards never finished breaking, and a drop the player walked
+    /// over was never freed. One leak, two bugs that look unrelated.
+    /// <para>
+    /// The handlers are named methods rather than lambdas for exactly this reason: a lambda
+    /// cannot be unsubscribed.
+    /// </para>
+    /// </remarks>
+    public override void _ExitTree()
+    {
+        if (Bag is not null) Bag.Changed -= OnBagChanged;
+        if (Gear is not null) Gear.Changed -= OnGearChanged;
+    }
+
+    private void OnBagChanged() => EmitSignal(SignalName.Changed);
+
+    private void OnGearChanged()
+    {
+        ApplyToStats();
+        EmitSignal(SignalName.Changed);
     }
 
     /// <summary>

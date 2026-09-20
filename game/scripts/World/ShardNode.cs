@@ -355,13 +355,17 @@ public partial class ShardNode : StaticBody3D
         AoeVisual.Circle(GlobalPosition, ZoneRadius * 0.5f, hostile: false);
         Camera.CameraRig.Kick(Vector3.Up, 1.0f);
 
-        GrantRewards();
-
+        // The shard finishes being broken before anybody is paid. Rewards reach across into
+        // the player's bag and the experience table, and when that threw, the shard was left
+        // standing there at zero health with its name still floating over it — beaten, and
+        // still on the map. Whether the shard is gone is the shard's own business.
         if (_visual is not null) _visual.Visible = false;
 
         _plate.Visible = false;
 
         EmitSignal(SignalName.EncounterChanged);
+
+        GrantRewards();
     }
 
     private void GrantRewards()
