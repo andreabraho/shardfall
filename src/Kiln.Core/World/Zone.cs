@@ -80,6 +80,19 @@ public sealed record Zone(
     IReadOnlyList<ZoneExit> Exits,
     IReadOnlyList<string> Shrines)
 {
+    /// <summary>
+    /// The floors of this dungeon, top to bottom (FR-7.11). Empty for everything that is not
+    /// a tower.
+    /// </summary>
+    /// <remarks>
+    /// Not a positional parameter, so that the several places that build a plain zone keep
+    /// working: a tower is a special case of a zone, not a second kind of one.
+    /// </remarks>
+    public IReadOnlyList<TowerFloor> Floors { get; init; } = [];
+
+    /// <summary>True when this zone is built as a stack of floors rather than a map.</summary>
+    public bool IsTower => Floors.Count > 0;
+
     public bool IsSafe => Kind == ZoneKind.Hub;
 
     public ZoneDanger DangerFor(int level)

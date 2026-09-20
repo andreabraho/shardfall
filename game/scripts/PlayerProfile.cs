@@ -82,6 +82,21 @@ public static class PlayerProfile
     /// </remarks>
     public static Dictionary<string, HashSet<long>> Explored { get; } = new(StringComparer.Ordinal);
 
+    /// <summary>
+    /// How far down each tower the player has reached (FR-7.20).
+    /// </summary>
+    /// <remarks>
+    /// The deepest floor, not the current one. Walking back up to leave must not cost the
+    /// descent, and the only number anybody wants restored is the furthest they got.
+    /// </remarks>
+    private static readonly Dictionary<string, int> Depths = new(StringComparer.Ordinal);
+
+    /// <summary>The floor to resume on, or the first.</summary>
+    public static int DepthIn(string zoneId) => Depths.GetValueOrDefault(zoneId, 1);
+
+    public static void ReachedDepth(string zoneId, int depth) =>
+        Depths[zoneId] = System.Math.Max(DepthIn(zoneId), depth);
+
     public static Inventory AdoptBag(System.Func<Inventory> create) => _bag ??= create();
 
     public static Equipment AdoptGear(System.Func<Equipment> create) => _gear ??= create();
@@ -99,5 +114,6 @@ public static class PlayerProfile
         FlaskCharges = -1;
         CompletedQuests.Clear();
         Explored.Clear();
+        Depths.Clear();
     }
 }

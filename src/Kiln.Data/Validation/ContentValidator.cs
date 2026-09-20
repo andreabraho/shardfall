@@ -656,6 +656,7 @@ public static class ContentValidator
             ZoneShrines(zone, kind, shrineIds, report);
             ZoneSafeRegions(zone, kind, safeIds, report);
             ZoneFields(db, zone, report);
+            ZoneFloors(db, zone, kind, report);
 
             foreach (var shard in zone.Shards)
             {
@@ -795,6 +796,243 @@ public static class ContentValidator
         }
     }
 
+
+    /// <summary>
+    /// The rules that make a tower a tower (FR-7.11–7.20).
+    /// </summary>
+    /// <remarks>
+    /// Checked in data rather than left to review because every one of these fails silently.
+    /// Nine floors that all ask the same thing still load, still run, and still ship; the
+    /// player is the one who finds out, four floors in, that the dungeon has one idea.
+    /// <para>
+    /// FR-7.12 is the load-bearing one and it is the reason this method exists at all. The
+    /// rest are cheap to check once the list is in front of you.
+    /// </para>
+    /// </remarks>
+    private static void ZoneFloors(ContentDatabase db, ZoneDef zone, ZoneKind kind, ValidationReport report)
+    {
+        if (zone.Floors.Length == 0)
+        {
+            if (kind == ZoneKind.Dungeon)
+            {
+                report.Warn("world-floors", zone.SourceFile,
+                    $"the dungeon '{zone.Id}' declares no floors (FR-7.11).");
+            }
+
+            return;
+        }
+
+        if (kind != ZoneKind.Dungeon)
+        {
+            report.Error("world-floors", zone.SourceFile,
+                $"'{zone.Id}' declares floors but is not a dungeon.",
+                "Floors are a dungeon's format. Set \"kind\": \"dungeon\", or drop the floors.");
+        }
+
+        var verbs = new[] { "break", "hold", "find", "carry", "race", "fight" };
+        var ids = new HashSet<string>(StringComparer.Ordinal);
+        var shrines = zone.Shrines.Select(s => s.Id).ToHashSet(StringComparer.Ordinal);
+        var previous = "";
+
+        for (var i = 0; i < zone.Floors.Length; i++)
+        {
+            var floor = zone.Floors[i];
+            var depth = i + 1;
+            var where = $"floor {depth} ('{floor.Id}') of '{zone.Id}'";
+
+            if (!ContentId.IsValid(floor.Id))
+            {
+                report.Error("id-format", zone.SourceFile,
+                    $"{where} is not a valid id.",
+                    "Use lowercase prefix_name, e.g. 'flr_catacombs_01'.");
+            }
+
+            if (!ids.Add(floor.Id))
+            {
+                report.Error("world-floors", zone.SourceFile, $"duplicate floor id '{floor.Id}'.");
+            }
+
+            if (!string.IsNullOrEmpty(floor.Name) && !floor.Name.StartsWith('$'))
+            {
+                report.Error("localisation", zone.SourceFile,
+                    $"{where} has a literal name \"{floor.Name}\".",
+                    "Player-facing text must be a $localisation.key (NFR-L.1).");
+            }
+
+            if (!verbs.Contains(floor.Task))
+            {
+                report.Error("world-floors", zone.SourceFile,
+                    $"{where} has unknown task \"{floor.Task}\".",
+                    $"One of: {string.Join(", ", verbs)}. There is deliberately no \"clear\" (FR-7.17).");
+
+                previous = floor.Task;
+                continue;
+            }
+
+            // FR-7.12, the half of it that is local. The other half — five distinct verbs
+            // across the tower — is counted below.
+            if (floor.Task == previous)
+            {
+                report.Error("world-floors", zone.SourceFile,
+                    $"{where} repeats the task of the floor above it (\"{floor.Task}\").",
+                    "FR-7.12: no floor may ask for the same thing as the one before it.");
+            }
+
+            previous = floor.Task;
+
+            // FR-7.13. Stated as an equivalence rather than two rules, because a boss on the
+            // fourth floor breaks the pulse just as surely as a missing one on the third.
+            var shouldFight = depth % 3 == 0;
+
+            if (shouldFight && floor.Task != "fight")
+            {
+                report.Error("world-floors", zone.SourceFile,
+                    $"{where} is every third floor but its task is \"{floor.Task}\".",
+                    "FR-7.13: a boss floor every third floor. It is what gives the climb a pulse.");
+            }
+            else if (!shouldFight && floor.Task == "fight")
+            {
+                report.Error("world-floors", zone.SourceFile,
+                    $"{where} is a boss floor out of step with the third-floor pulse.",
+                    "FR-7.13: bosses belong on floors 3, 6, 9 and so on.");
+            }
+
+            FloorShape(db, zone, floor, where, shrines, report);
+        }
+
+        var distinct = zone.Floors.Select(f => f.Task).Distinct().Count();
+
+        if (distinct < 5)
+        {
+            report.Error("world-floors", zone.SourceFile,
+                $"'{zone.Id}' uses only {distinct} distinct floor task{(distinct == 1 ? "" : "s")}.",
+                "FR-7.12: at least five. Fewer, and the tower is one floor repeated.");
+        }
+
+        BossAftermath(zone, report);
+
+        // SHOULD, not MUST — and cheap enough that a missing one is worth saying out loud.
+        if (!zone.Floors.Any(f => f.Refuge))
+        {
+            report.Warn("world-floors", zone.SourceFile,
+                $"'{zone.Id}' has no floor with a refuge (FR-7.18).");
+        }
+    }
+
+    /// <summary>The fields a floor's task does and does not make sense of.</summary>
+    private static void FloorShape(
+        ContentDatabase db, ZoneDef zone, FloorDef floor, string where,
+        HashSet<string> shrines, ValidationReport report)
+    {
+        var clocked = floor.Task is "hold" or "race";
+
+        if (clocked && floor.Seconds <= 0)
+        {
+            report.Error("world-floors", zone.SourceFile,
+                $"{where} is a \"{floor.Task}\" floor with no duration.",
+                "A hold needs something to survive until; a race needs something to beat.");
+        }
+
+        if (!clocked && floor.Seconds > 0)
+        {
+            report.Error("world-floors", zone.SourceFile,
+                $"{where} sets seconds on a \"{floor.Task}\" floor, which has no clock.");
+        }
+
+        if (floor.Task == "find" && floor.Decoys < 1)
+        {
+            report.Error("world-floors", zone.SourceFile,
+                $"{where} is a \"find\" floor with no lookalikes.",
+                "Without decoys there is nothing to tell apart.");
+        }
+
+        if (floor.Task != "find" && floor.Decoys > 0)
+        {
+            report.Error("world-floors", zone.SourceFile,
+                $"{where} sets decoys on a \"{floor.Task}\" floor.");
+        }
+
+        // A carry floor with one key is a break floor that made you walk.
+        if (floor.Task == "carry" && floor.Targets < 2)
+        {
+            report.Error("world-floors", zone.SourceFile,
+                $"{where} is a \"carry\" floor asking for {floor.Targets} key.",
+                "Carry needs at least two, or it is a break floor with extra steps.");
+        }
+
+        if (floor.Task == "fight")
+        {
+            if (string.IsNullOrEmpty(floor.Boss) || !db.Enemies.ContainsKey(floor.Boss))
+            {
+                report.Error("cross-ref", zone.SourceFile,
+                    $"{where} is a boss floor whose boss '{floor.Boss}' does not exist.");
+            }
+
+            // FR-7.13 says alone on an otherwise empty floor. Adds would make it a hold.
+            if (floor.Waves.Length > 0)
+            {
+                report.Error("world-floors", zone.SourceFile,
+                    $"{where} is a boss floor that also sends waves.",
+                    "FR-7.13: the boss stands alone.");
+            }
+        }
+        else if (!string.IsNullOrEmpty(floor.Boss))
+        {
+            report.Error("world-floors", zone.SourceFile,
+                $"{where} names a boss but its task is \"{floor.Task}\".");
+        }
+
+        foreach (var enemy in floor.Waves)
+        {
+            if (!db.Enemies.ContainsKey(enemy))
+            {
+                report.Error("cross-ref", zone.SourceFile,
+                    $"{where} sends '{enemy}', which does not exist.");
+            }
+        }
+
+        if (!string.IsNullOrEmpty(floor.Shrine) && !shrines.Contains(floor.Shrine))
+        {
+            report.Error("cross-ref", zone.SourceFile,
+                $"{where} stands shrine '{floor.Shrine}', which '{zone.Id}' does not declare.");
+        }
+    }
+
+    /// <summary>
+    /// A shrine and a bench immediately after every boss floor (FR-7.14).
+    /// </summary>
+    /// <remarks>
+    /// The original's best idea, and the reason is worth keeping in the error text: it is a
+    /// reward that is a decision, handed over at the exact moment the player has just learned
+    /// which piece of their kit is holding them back.
+    /// <para>
+    /// A boss on the last floor is exempt. There is no floor after it, and the way out of the
+    /// tower is not a floor.
+    /// </para>
+    /// </remarks>
+    private static void BossAftermath(ZoneDef zone, ValidationReport report)
+    {
+        for (var i = 0; i < zone.Floors.Length - 1; i++)
+        {
+            if (zone.Floors[i].Task != "fight") continue;
+
+            var after = zone.Floors[i + 1];
+
+            if (string.IsNullOrEmpty(after.Shrine))
+            {
+                report.Error("world-floors", zone.SourceFile,
+                    $"floor {i + 2} ('{after.Id}') of '{zone.Id}' follows a boss but has no shrine.",
+                    "FR-7.14: a shrine and a bench immediately after every boss floor.");
+            }
+
+            if (!after.Bench)
+            {
+                report.Error("world-floors", zone.SourceFile,
+                    $"floor {i + 2} ('{after.Id}') of '{zone.Id}' follows a boss but has no bench.",
+                    "FR-7.14: the upgrade decision is the reward, and this is the moment it means most.");
+            }
+        }
+    }
     private static void ZoneFields(ContentDatabase db, ZoneDef zone, ValidationReport report)
     {
         // A hub's camps used to be an error, back when "hub" meant the whole map was safe.

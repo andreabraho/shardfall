@@ -78,8 +78,48 @@ public sealed class WorldCatalogue
             band,
             def.Scene,
             exits,
-            def.Shrines.Select(s => s.Id).ToList());
+            def.Shrines.Select(s => s.Id).ToList())
+        {
+            Floors = def.Floors.Select(ToFloor).ToList(),
+        };
     }
+
+    /// <summary>Depth comes from the list's order — see <see cref="FloorDef"/>.</summary>
+    private static TowerFloor ToFloor(FloorDef def, int position) => new(
+        def.Id,
+        position + 1,
+        def.Name,
+        TaskOf(def.Task),
+        def.Targets,
+        def.Decoys,
+        def.Seconds,
+        def.Boss,
+        def.Shrine,
+        def.Bench,
+        def.Refuge)
+    {
+        Waves = def.Waves,
+        WaveSize = def.WaveSize,
+        WaveSeconds = def.WaveSeconds,
+    };
+
+    /// <summary>
+    /// The verb, by name.
+    /// </summary>
+    /// <remarks>
+    /// An unknown verb falls back to Break rather than throwing, because the validator rejects
+    /// it by name with a line number and that is a far better error than a stack trace from
+    /// inside the loader. The fallback exists so the validator gets to run at all.
+    /// </remarks>
+    public static FloorTask TaskOf(string task) => task switch
+    {
+        "hold" => FloorTask.Hold,
+        "find" => FloorTask.Find,
+        "carry" => FloorTask.Carry,
+        "race" => FloorTask.Race,
+        "fight" => FloorTask.Fight,
+        _ => FloorTask.Break,
+    };
 
     private static CoreSpawnField ToField(DataSpawnField def) => new(
         def.Id,

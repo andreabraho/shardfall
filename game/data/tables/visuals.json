@@ -3,6 +3,8 @@
   { "id": "mesh_placeholder_humanoid",  "primitive": "model",    "height": 1.80, "radius": 0.35, "color": "#b8b8c0", "model_yaw": 180, "model_path": "res://assets/kaykit/characters/Skeleton_Warrior.glb" },
   { "id": "mesh_placeholder_quadruped", "primitive": "model",    "height": 1.40, "radius": 0.40, "color": "#8a6b4f", "model_yaw": 180, "model_path": "res://assets/kaykit/characters/Skeleton_Minion.glb" },
   { "id": "mesh_placeholder_heavy",     "primitive": "model",    "height": 2.10, "radius": 0.55, "color": "#6d7a86", "model_yaw": 180, "model_path": "res://assets/kaykit/characters/Barbarian.glb" },
+  { "id": "mesh_placeholder_caster",    "primitive": "model",    "height": 1.85, "radius": 0.36, "color": "#8f6ad2", "model_yaw": 180, "model_path": "res://assets/kaykit/characters/Skeleton_Mage.glb" },
+  { "id": "mesh_placeholder_rogue",     "primitive": "model",    "height": 1.78, "radius": 0.36, "color": "#6f5a8c", "model_yaw": 180, "model_path": "res://assets/kaykit/characters/Skeleton_Rogue.glb" },
   { "id": "mesh_placeholder_monolith",  "primitive": "monolith", "height": 3.20, "radius": 0.80, "color": "#7a4fd0" },
   { "id": "mesh_placeholder_shrine",    "primitive": "cylinder", "height": 1.70, "radius": 0.45, "color": "#55606b" },
 

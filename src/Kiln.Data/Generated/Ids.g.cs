@@ -88,9 +88,11 @@ public static class Ids
         public const string MobCryptStalker = "mob_crypt_stalker";
         public const string MobDitchLurker = "mob_ditch_lurker";
         public const string MobEmberChanter = "mob_ember_chanter";
+        public const string MobGalleryWarden = "mob_gallery_warden";
         public const string MobGateBreaker = "mob_gate_breaker";
         public const string MobGraveStitcher = "mob_grave_stitcher";
         public const string MobGraveWarden = "mob_grave_warden";
+        public const string MobHeartKeeper = "mob_heart_keeper";
         public const string MobHollowChoir = "mob_hollow_choir";
         public const string MobHuskSentinel = "mob_husk_sentinel";
         public const string MobIronBulwark = "mob_iron_bulwark";
@@ -105,9 +107,10 @@ public static class Ids
         public const string MobSporePod = "mob_spore_pod";
         public const string MobThistleSprite = "mob_thistle_sprite";
         public const string MobThornbackBoar = "mob_thornback_boar";
+        public const string MobVaultChorister = "mob_vault_chorister";
         public const string MobVoidCaster = "mob_void_caster";
 
-        public static readonly string[] All = ["mob_ash_slinger", "mob_barrow_shield", "mob_blight_bomber", "mob_bone_flinger", "mob_carrion_bloat", "mob_cinder_bearer", "mob_corrupted_wolf", "mob_crypt_stalker", "mob_ditch_lurker", "mob_ember_chanter", "mob_gate_breaker", "mob_grave_stitcher", "mob_grave_warden", "mob_hollow_choir", "mob_husk_sentinel", "mob_iron_bulwark", "mob_moss_tender", "mob_obsidian_ward", "mob_pale_gnawer", "mob_reed_hopper", "mob_rift_seed", "mob_rot_mender", "mob_shard_archer", "mob_sling_scavenger", "mob_spore_pod", "mob_thistle_sprite", "mob_thornback_boar", "mob_void_caster"];
+        public static readonly string[] All = ["mob_ash_slinger", "mob_barrow_shield", "mob_blight_bomber", "mob_bone_flinger", "mob_carrion_bloat", "mob_cinder_bearer", "mob_corrupted_wolf", "mob_crypt_stalker", "mob_ditch_lurker", "mob_ember_chanter", "mob_gallery_warden", "mob_gate_breaker", "mob_grave_stitcher", "mob_grave_warden", "mob_heart_keeper", "mob_hollow_choir", "mob_husk_sentinel", "mob_iron_bulwark", "mob_moss_tender", "mob_obsidian_ward", "mob_pale_gnawer", "mob_reed_hopper", "mob_rift_seed", "mob_rot_mender", "mob_shard_archer", "mob_sling_scavenger", "mob_spore_pod", "mob_thistle_sprite", "mob_thornback_boar", "mob_vault_chorister", "mob_void_caster"];
     }
 
     public static class Skills
@@ -171,11 +174,13 @@ public static class Ids
         public const string MeshAxeA = "mesh_axe_a";
         public const string MeshBootsA = "mesh_boots_a";
         public const string MeshHelmetA = "mesh_helmet_a";
+        public const string MeshPlaceholderCaster = "mesh_placeholder_caster";
         public const string MeshPlaceholderHeavy = "mesh_placeholder_heavy";
         public const string MeshPlaceholderHumanoid = "mesh_placeholder_humanoid";
         public const string MeshPlaceholderMonolith = "mesh_placeholder_monolith";
         public const string MeshPlaceholderPlayer = "mesh_placeholder_player";
         public const string MeshPlaceholderQuadruped = "mesh_placeholder_quadruped";
+        public const string MeshPlaceholderRogue = "mesh_placeholder_rogue";
         public const string MeshPlaceholderShrine = "mesh_placeholder_shrine";
         public const string MeshShieldA = "mesh_shield_a";
         public const string MeshSpearA = "mesh_spear_a";
@@ -183,7 +188,7 @@ public static class Ids
         public const string MeshSwordA = "mesh_sword_a";
         public const string MeshTrinketA = "mesh_trinket_a";
 
-        public static readonly string[] All = ["mesh_armor_a", "mesh_axe_a", "mesh_boots_a", "mesh_helmet_a", "mesh_placeholder_heavy", "mesh_placeholder_humanoid", "mesh_placeholder_monolith", "mesh_placeholder_player", "mesh_placeholder_quadruped", "mesh_placeholder_shrine", "mesh_shield_a", "mesh_spear_a", "mesh_stone_a", "mesh_sword_a", "mesh_trinket_a"];
+        public static readonly string[] All = ["mesh_armor_a", "mesh_axe_a", "mesh_boots_a", "mesh_helmet_a", "mesh_placeholder_caster", "mesh_placeholder_heavy", "mesh_placeholder_humanoid", "mesh_placeholder_monolith", "mesh_placeholder_player", "mesh_placeholder_quadruped", "mesh_placeholder_rogue", "mesh_placeholder_shrine", "mesh_shield_a", "mesh_spear_a", "mesh_stone_a", "mesh_sword_a", "mesh_trinket_a"];
     }
 
     public static class Shards

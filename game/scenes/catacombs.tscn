@@ -1,0 +1,1496 @@
+[gd_scene load_steps=25 format=3]
+
+; zone_catacombs — the floor tower (WLD-07), band 19–23.
+;
+; Nine floors, one footprint. Every floor is the same forty-metre room at a different depth,
+; stacked twenty-four metres apart, and only the one the player is standing on is awake. That
+; is a deliberate trade: the variety in a tower is meant to come from what each floor ASKS,
+; not from what it looks like (FR-7.12, doc 02 §10.1). Nine hand-carved rooms asking the same
+; question would still be one floor nine times.
+;
+; One scene rather than nine means one navigation bake, one load, and a descent that is a fade
+; rather than a loading screen the player sits through eight times on the way to the boss.
+;
+; What lives here is only what data cannot hold: where the player lands, where the stair is,
+; where a pylon may stand and where a wave walks in. Which verb each floor asks, how long its
+; clock runs and what it sends is in game/data/zones/act1.json, where the validator can check
+; that no two floors in a row ask the same thing.
+;
+; The exit is on floor one, beside the mouth shrine — you leave the way you came in, and the
+; bottom of the tower sends you back up to it.
+
+[ext_resource type="Script" path="res://scripts/World/ZoneRoot.cs" id="1_zoneroot"]
+[ext_resource type="Script" path="res://scripts/World/NavBaker.cs" id="2_navbaker"]
+[ext_resource type="Script" path="res://scripts/World/KitPiece.cs" id="3_kit"]
+[ext_resource type="Script" path="res://scripts/World/ShrineNode.cs" id="4_shrine"]
+[ext_resource type="Script" path="res://scripts/World/ShardNode.cs" id="5_shard"]
+[ext_resource type="Script" path="res://scripts/Visual/VisualRoot.cs" id="6_visualroot"]
+[ext_resource type="Script" path="res://scripts/World/ZoneGate.cs" id="7_gate"]
+[ext_resource type="Script" path="res://scripts/World/ZoneArrival.cs" id="8_arrival"]
+[ext_resource type="Script" path="res://scripts/World/TowerNode.cs" id="9_tower"]
+[ext_resource type="Script" path="res://scripts/World/TowerFloorNode.cs" id="10_floor"]
+[ext_resource type="Script" path="res://scripts/World/FloorStair.cs" id="11_stair"]
+[ext_resource type="Script" path="res://scripts/World/BenchNode.cs" id="12_bench"]
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="13_player"]
+[ext_resource type="PackedScene" path="res://scenes/session.tscn" id="14_session"]
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_tower"]
+vertices = PackedVector3Array()
+cell_size = 0.15
+cell_height = 0.15
+agent_height = 1.8
+agent_radius = 0.45
+agent_max_climb = 0.3
+agent_max_slope = 45.0
+geometry_parsed_geometry_type = 1
+geometry_collision_mask = 1
+geometry_source_geometry_mode = 1
+geometry_source_group_name = "navsource"
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_slab"]
+size = Vector2(40, 40)
+
+[sub_resource type="StandardMaterial3D" id="Material_slab"]
+albedo_color = Color(0.13, 0.12, 0.15, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="Material_wall"]
+albedo_color = Color(0.2, 0.19, 0.23, 1)
+roughness = 0.9
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_slab"]
+size = Vector3(40, 1, 40)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wall_ns"]
+size = Vector3(42, 5, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wall_ns"]
+size = Vector3(42, 5, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wall_ew"]
+size = Vector3(1, 5, 42)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wall_ew"]
+size = Vector3(1, 5, 42)
+
+[sub_resource type="Environment" id="Environment_tower"]
+background_mode = 1
+background_color = Color(0.04, 0.03, 0.05, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.3, 0.26, 0.34, 1)
+ambient_light_energy = 0.3
+
+[node name="Catacombs" type="Node3D"]
+script = ExtResource("1_zoneroot")
+ZoneId = "zone_catacombs"
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_tower")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.8660254, -0.25, 0.4330127, 0, 0.8660254, 0.5, -0.5, -0.4330127, 0.75, 0, 14, 0)
+light_energy = 0.55
+shadow_enabled = true
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("NavigationMesh_tower")
+script = ExtResource("2_navbaker")
+
+[node name="Tower" type="Node3D" parent="NavigationRegion3D"]
+script = ExtResource("9_tower")
+
+; -- Floor 1 · flr_the_mouth --------------------------------------------------------
+
+[node name="Floor01" type="Node3D" parent="NavigationRegion3D/Tower"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+script = ExtResource("10_floor")
+FloorId = "flr_the_mouth"
+
+[node name="Slab" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor01" groups=["navsource"]]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor01/Slab"]
+mesh = SubResource("PlaneMesh_slab")
+surface_material_override/0 = SubResource("Material_slab")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor01/Slab"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = SubResource("BoxShape3D_slab")
+
+[node name="WallNorth" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor01" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -20.5)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor01/WallNorth"]
+mesh = SubResource("BoxMesh_wall_ns")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor01/WallNorth"]
+shape = SubResource("BoxShape3D_wall_ns")
+
+[node name="WallSouth" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor01" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 20.5)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor01/WallSouth"]
+mesh = SubResource("BoxMesh_wall_ns")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor01/WallSouth"]
+shape = SubResource("BoxShape3D_wall_ns")
+
+[node name="WallWest" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor01" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.5, 2.5, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor01/WallWest"]
+mesh = SubResource("BoxMesh_wall_ew")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor01/WallWest"]
+shape = SubResource("BoxShape3D_wall_ew")
+
+[node name="WallEast" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor01" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.5, 2.5, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor01/WallEast"]
+mesh = SubResource("BoxMesh_wall_ew")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor01/WallEast"]
+shape = SubResource("BoxShape3D_wall_ew")
+
+[node name="Entry" type="Node3D" parent="NavigationRegion3D/Tower/Floor01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.1, 0)
+
+[node name="Stair" type="Area3D" parent="NavigationRegion3D/Tower/Floor01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0.1, 0)
+script = ExtResource("11_stair")
+
+[node name="Marks" type="Node3D" parent="NavigationRegion3D/Tower/Floor01"]
+
+[node name="Mark1" type="Node3D" parent="NavigationRegion3D/Tower/Floor01/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.1, -10)
+
+[node name="Mark2" type="Node3D" parent="NavigationRegion3D/Tower/Floor01/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -12)
+
+[node name="Mark3" type="Node3D" parent="NavigationRegion3D/Tower/Floor01/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.1, -10)
+
+[node name="Mark4" type="Node3D" parent="NavigationRegion3D/Tower/Floor01/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0.1, 0)
+
+[node name="Mark5" type="Node3D" parent="NavigationRegion3D/Tower/Floor01/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.1, 10)
+
+[node name="Mark6" type="Node3D" parent="NavigationRegion3D/Tower/Floor01/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 12)
+
+[node name="Mark7" type="Node3D" parent="NavigationRegion3D/Tower/Floor01/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.1, 10)
+
+[node name="Mark8" type="Node3D" parent="NavigationRegion3D/Tower/Floor01/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0.1, 0)
+
+[node name="Spawns" type="Node3D" parent="NavigationRegion3D/Tower/Floor01"]
+
+[node name="Spawn1" type="Node3D" parent="NavigationRegion3D/Tower/Floor01/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.1, -16)
+
+[node name="Spawn2" type="Node3D" parent="NavigationRegion3D/Tower/Floor01/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.1, -16)
+
+[node name="Spawn3" type="Node3D" parent="NavigationRegion3D/Tower/Floor01/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.1, 16)
+
+[node name="Spawn4" type="Node3D" parent="NavigationRegion3D/Tower/Floor01/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.1, 16)
+
+[node name="Pillar1" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Pillar2" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Pillar3" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Pillar4" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="BrazierEntry" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17, 0, -3)
+script = ExtResource("3_kit")
+PieceId = "kit_brazier"
+
+[node name="BrazierStair" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0, 3)
+script = ExtResource("3_kit")
+PieceId = "kit_brazier"
+
+[node name="Shrine" type="Area3D" parent="NavigationRegion3D/Tower/Floor01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.1, 6)
+script = ExtResource("4_shrine")
+ShrineId = "shr_catacombs_mouth"
+
+[node name="VisualRoot" type="Node3D" parent="NavigationRegion3D/Tower/Floor01/Shrine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+script = ExtResource("6_visualroot")
+VisualId = "mesh_placeholder_shrine"
+
+; -- Floor 2 · flr_the_cistern --------------------------------------------------------
+
+[node name="Floor02" type="Node3D" parent="NavigationRegion3D/Tower"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -24, 0)
+script = ExtResource("10_floor")
+FloorId = "flr_the_cistern"
+
+[node name="Slab" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor02" groups=["navsource"]]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor02/Slab"]
+mesh = SubResource("PlaneMesh_slab")
+surface_material_override/0 = SubResource("Material_slab")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor02/Slab"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = SubResource("BoxShape3D_slab")
+
+[node name="WallNorth" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor02" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -20.5)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor02/WallNorth"]
+mesh = SubResource("BoxMesh_wall_ns")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor02/WallNorth"]
+shape = SubResource("BoxShape3D_wall_ns")
+
+[node name="WallSouth" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor02" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 20.5)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor02/WallSouth"]
+mesh = SubResource("BoxMesh_wall_ns")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor02/WallSouth"]
+shape = SubResource("BoxShape3D_wall_ns")
+
+[node name="WallWest" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor02" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.5, 2.5, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor02/WallWest"]
+mesh = SubResource("BoxMesh_wall_ew")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor02/WallWest"]
+shape = SubResource("BoxShape3D_wall_ew")
+
+[node name="WallEast" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor02" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.5, 2.5, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor02/WallEast"]
+mesh = SubResource("BoxMesh_wall_ew")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor02/WallEast"]
+shape = SubResource("BoxShape3D_wall_ew")
+
+[node name="Entry" type="Node3D" parent="NavigationRegion3D/Tower/Floor02"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.1, 0)
+
+[node name="Stair" type="Area3D" parent="NavigationRegion3D/Tower/Floor02"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0.1, 0)
+script = ExtResource("11_stair")
+
+[node name="Marks" type="Node3D" parent="NavigationRegion3D/Tower/Floor02"]
+
+[node name="Mark1" type="Node3D" parent="NavigationRegion3D/Tower/Floor02/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.1, -10)
+
+[node name="Mark2" type="Node3D" parent="NavigationRegion3D/Tower/Floor02/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -12)
+
+[node name="Mark3" type="Node3D" parent="NavigationRegion3D/Tower/Floor02/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.1, -10)
+
+[node name="Mark4" type="Node3D" parent="NavigationRegion3D/Tower/Floor02/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0.1, 0)
+
+[node name="Mark5" type="Node3D" parent="NavigationRegion3D/Tower/Floor02/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.1, 10)
+
+[node name="Mark6" type="Node3D" parent="NavigationRegion3D/Tower/Floor02/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 12)
+
+[node name="Mark7" type="Node3D" parent="NavigationRegion3D/Tower/Floor02/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.1, 10)
+
+[node name="Mark8" type="Node3D" parent="NavigationRegion3D/Tower/Floor02/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0.1, 0)
+
+[node name="Spawns" type="Node3D" parent="NavigationRegion3D/Tower/Floor02"]
+
+[node name="Spawn1" type="Node3D" parent="NavigationRegion3D/Tower/Floor02/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.1, -16)
+
+[node name="Spawn2" type="Node3D" parent="NavigationRegion3D/Tower/Floor02/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.1, -16)
+
+[node name="Spawn3" type="Node3D" parent="NavigationRegion3D/Tower/Floor02/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.1, 16)
+
+[node name="Spawn4" type="Node3D" parent="NavigationRegion3D/Tower/Floor02/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.1, 16)
+
+[node name="Pillar1" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor02"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Pillar2" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor02"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Pillar3" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor02"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Pillar4" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor02"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="BrazierEntry" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor02"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17, 0, -3)
+script = ExtResource("3_kit")
+PieceId = "kit_brazier"
+
+[node name="BrazierStair" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor02"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0, 3)
+script = ExtResource("3_kit")
+PieceId = "kit_brazier"
+
+; -- Floor 3 · flr_the_gallery --------------------------------------------------------
+
+[node name="Floor03" type="Node3D" parent="NavigationRegion3D/Tower"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -48, 0)
+script = ExtResource("10_floor")
+FloorId = "flr_the_gallery"
+
+[node name="Slab" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor03" groups=["navsource"]]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor03/Slab"]
+mesh = SubResource("PlaneMesh_slab")
+surface_material_override/0 = SubResource("Material_slab")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor03/Slab"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = SubResource("BoxShape3D_slab")
+
+[node name="WallNorth" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor03" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -20.5)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor03/WallNorth"]
+mesh = SubResource("BoxMesh_wall_ns")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor03/WallNorth"]
+shape = SubResource("BoxShape3D_wall_ns")
+
+[node name="WallSouth" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor03" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 20.5)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor03/WallSouth"]
+mesh = SubResource("BoxMesh_wall_ns")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor03/WallSouth"]
+shape = SubResource("BoxShape3D_wall_ns")
+
+[node name="WallWest" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor03" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.5, 2.5, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor03/WallWest"]
+mesh = SubResource("BoxMesh_wall_ew")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor03/WallWest"]
+shape = SubResource("BoxShape3D_wall_ew")
+
+[node name="WallEast" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor03" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.5, 2.5, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor03/WallEast"]
+mesh = SubResource("BoxMesh_wall_ew")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor03/WallEast"]
+shape = SubResource("BoxShape3D_wall_ew")
+
+[node name="Entry" type="Node3D" parent="NavigationRegion3D/Tower/Floor03"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.1, 0)
+
+[node name="Stair" type="Area3D" parent="NavigationRegion3D/Tower/Floor03"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0.1, 0)
+script = ExtResource("11_stair")
+
+[node name="Marks" type="Node3D" parent="NavigationRegion3D/Tower/Floor03"]
+
+[node name="Mark1" type="Node3D" parent="NavigationRegion3D/Tower/Floor03/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.1, -10)
+
+[node name="Mark2" type="Node3D" parent="NavigationRegion3D/Tower/Floor03/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -12)
+
+[node name="Mark3" type="Node3D" parent="NavigationRegion3D/Tower/Floor03/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.1, -10)
+
+[node name="Mark4" type="Node3D" parent="NavigationRegion3D/Tower/Floor03/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0.1, 0)
+
+[node name="Mark5" type="Node3D" parent="NavigationRegion3D/Tower/Floor03/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.1, 10)
+
+[node name="Mark6" type="Node3D" parent="NavigationRegion3D/Tower/Floor03/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 12)
+
+[node name="Mark7" type="Node3D" parent="NavigationRegion3D/Tower/Floor03/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.1, 10)
+
+[node name="Mark8" type="Node3D" parent="NavigationRegion3D/Tower/Floor03/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0.1, 0)
+
+[node name="Spawns" type="Node3D" parent="NavigationRegion3D/Tower/Floor03"]
+
+[node name="Spawn1" type="Node3D" parent="NavigationRegion3D/Tower/Floor03/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.1, -16)
+
+[node name="Spawn2" type="Node3D" parent="NavigationRegion3D/Tower/Floor03/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.1, -16)
+
+[node name="Spawn3" type="Node3D" parent="NavigationRegion3D/Tower/Floor03/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.1, 16)
+
+[node name="Spawn4" type="Node3D" parent="NavigationRegion3D/Tower/Floor03/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.1, 16)
+
+[node name="Pillar1" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor03"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Pillar2" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor03"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Pillar3" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor03"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Pillar4" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor03"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="BrazierEntry" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor03"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17, 0, -3)
+script = ExtResource("3_kit")
+PieceId = "kit_brazier"
+
+[node name="BrazierStair" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor03"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0, 3)
+script = ExtResource("3_kit")
+PieceId = "kit_brazier"
+
+; -- Floor 4 · flr_the_lantern_walk --------------------------------------------------------
+
+[node name="Floor04" type="Node3D" parent="NavigationRegion3D/Tower"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -72, 0)
+script = ExtResource("10_floor")
+FloorId = "flr_the_lantern_walk"
+
+[node name="Slab" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor04" groups=["navsource"]]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor04/Slab"]
+mesh = SubResource("PlaneMesh_slab")
+surface_material_override/0 = SubResource("Material_slab")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor04/Slab"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = SubResource("BoxShape3D_slab")
+
+[node name="WallNorth" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor04" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -20.5)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor04/WallNorth"]
+mesh = SubResource("BoxMesh_wall_ns")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor04/WallNorth"]
+shape = SubResource("BoxShape3D_wall_ns")
+
+[node name="WallSouth" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor04" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 20.5)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor04/WallSouth"]
+mesh = SubResource("BoxMesh_wall_ns")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor04/WallSouth"]
+shape = SubResource("BoxShape3D_wall_ns")
+
+[node name="WallWest" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor04" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.5, 2.5, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor04/WallWest"]
+mesh = SubResource("BoxMesh_wall_ew")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor04/WallWest"]
+shape = SubResource("BoxShape3D_wall_ew")
+
+[node name="WallEast" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor04" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.5, 2.5, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor04/WallEast"]
+mesh = SubResource("BoxMesh_wall_ew")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor04/WallEast"]
+shape = SubResource("BoxShape3D_wall_ew")
+
+[node name="Entry" type="Node3D" parent="NavigationRegion3D/Tower/Floor04"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.1, 0)
+
+[node name="Stair" type="Area3D" parent="NavigationRegion3D/Tower/Floor04"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0.1, 0)
+script = ExtResource("11_stair")
+
+[node name="Marks" type="Node3D" parent="NavigationRegion3D/Tower/Floor04"]
+
+[node name="Mark1" type="Node3D" parent="NavigationRegion3D/Tower/Floor04/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.1, -10)
+
+[node name="Mark2" type="Node3D" parent="NavigationRegion3D/Tower/Floor04/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -12)
+
+[node name="Mark3" type="Node3D" parent="NavigationRegion3D/Tower/Floor04/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.1, -10)
+
+[node name="Mark4" type="Node3D" parent="NavigationRegion3D/Tower/Floor04/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0.1, 0)
+
+[node name="Mark5" type="Node3D" parent="NavigationRegion3D/Tower/Floor04/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.1, 10)
+
+[node name="Mark6" type="Node3D" parent="NavigationRegion3D/Tower/Floor04/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 12)
+
+[node name="Mark7" type="Node3D" parent="NavigationRegion3D/Tower/Floor04/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.1, 10)
+
+[node name="Mark8" type="Node3D" parent="NavigationRegion3D/Tower/Floor04/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0.1, 0)
+
+[node name="Spawns" type="Node3D" parent="NavigationRegion3D/Tower/Floor04"]
+
+[node name="Spawn1" type="Node3D" parent="NavigationRegion3D/Tower/Floor04/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.1, -16)
+
+[node name="Spawn2" type="Node3D" parent="NavigationRegion3D/Tower/Floor04/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.1, -16)
+
+[node name="Spawn3" type="Node3D" parent="NavigationRegion3D/Tower/Floor04/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.1, 16)
+
+[node name="Spawn4" type="Node3D" parent="NavigationRegion3D/Tower/Floor04/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.1, 16)
+
+[node name="Pillar1" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor04"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Pillar2" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor04"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Pillar3" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor04"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Pillar4" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor04"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="BrazierEntry" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor04"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17, 0, -3)
+script = ExtResource("3_kit")
+PieceId = "kit_brazier"
+
+[node name="BrazierStair" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor04"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0, 3)
+script = ExtResource("3_kit")
+PieceId = "kit_brazier"
+
+[node name="Shrine" type="Area3D" parent="NavigationRegion3D/Tower/Floor04"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.1, 6)
+script = ExtResource("4_shrine")
+ShrineId = "shr_catacombs_gallery"
+
+[node name="VisualRoot" type="Node3D" parent="NavigationRegion3D/Tower/Floor04/Shrine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+script = ExtResource("6_visualroot")
+VisualId = "mesh_placeholder_shrine"
+
+[node name="Bench" type="Area3D" parent="NavigationRegion3D/Tower/Floor04"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.1, -6)
+script = ExtResource("12_bench")
+
+[node name="Piece" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor04/Bench"]
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_rubble"
+
+; -- Floor 5 · flr_the_sealed_crossing --------------------------------------------------------
+
+[node name="Floor05" type="Node3D" parent="NavigationRegion3D/Tower"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -96, 0)
+script = ExtResource("10_floor")
+FloorId = "flr_the_sealed_crossing"
+
+[node name="Slab" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor05" groups=["navsource"]]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor05/Slab"]
+mesh = SubResource("PlaneMesh_slab")
+surface_material_override/0 = SubResource("Material_slab")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor05/Slab"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = SubResource("BoxShape3D_slab")
+
+[node name="WallNorth" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor05" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -20.5)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor05/WallNorth"]
+mesh = SubResource("BoxMesh_wall_ns")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor05/WallNorth"]
+shape = SubResource("BoxShape3D_wall_ns")
+
+[node name="WallSouth" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor05" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 20.5)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor05/WallSouth"]
+mesh = SubResource("BoxMesh_wall_ns")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor05/WallSouth"]
+shape = SubResource("BoxShape3D_wall_ns")
+
+[node name="WallWest" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor05" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.5, 2.5, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor05/WallWest"]
+mesh = SubResource("BoxMesh_wall_ew")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor05/WallWest"]
+shape = SubResource("BoxShape3D_wall_ew")
+
+[node name="WallEast" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor05" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.5, 2.5, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor05/WallEast"]
+mesh = SubResource("BoxMesh_wall_ew")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor05/WallEast"]
+shape = SubResource("BoxShape3D_wall_ew")
+
+[node name="Entry" type="Node3D" parent="NavigationRegion3D/Tower/Floor05"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.1, 0)
+
+[node name="Stair" type="Area3D" parent="NavigationRegion3D/Tower/Floor05"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0.1, 0)
+script = ExtResource("11_stair")
+
+[node name="Marks" type="Node3D" parent="NavigationRegion3D/Tower/Floor05"]
+
+[node name="Mark1" type="Node3D" parent="NavigationRegion3D/Tower/Floor05/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.1, -10)
+
+[node name="Mark2" type="Node3D" parent="NavigationRegion3D/Tower/Floor05/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -12)
+
+[node name="Mark3" type="Node3D" parent="NavigationRegion3D/Tower/Floor05/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.1, -10)
+
+[node name="Mark4" type="Node3D" parent="NavigationRegion3D/Tower/Floor05/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0.1, 0)
+
+[node name="Mark5" type="Node3D" parent="NavigationRegion3D/Tower/Floor05/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.1, 10)
+
+[node name="Mark6" type="Node3D" parent="NavigationRegion3D/Tower/Floor05/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 12)
+
+[node name="Mark7" type="Node3D" parent="NavigationRegion3D/Tower/Floor05/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.1, 10)
+
+[node name="Mark8" type="Node3D" parent="NavigationRegion3D/Tower/Floor05/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0.1, 0)
+
+[node name="Spawns" type="Node3D" parent="NavigationRegion3D/Tower/Floor05"]
+
+[node name="Spawn1" type="Node3D" parent="NavigationRegion3D/Tower/Floor05/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.1, -16)
+
+[node name="Spawn2" type="Node3D" parent="NavigationRegion3D/Tower/Floor05/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.1, -16)
+
+[node name="Spawn3" type="Node3D" parent="NavigationRegion3D/Tower/Floor05/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.1, 16)
+
+[node name="Spawn4" type="Node3D" parent="NavigationRegion3D/Tower/Floor05/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.1, 16)
+
+[node name="Pillar1" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor05"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Pillar2" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor05"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Pillar3" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor05"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Pillar4" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor05"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="BrazierEntry" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor05"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17, 0, -3)
+script = ExtResource("3_kit")
+PieceId = "kit_brazier"
+
+[node name="BrazierStair" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor05"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0, 3)
+script = ExtResource("3_kit")
+PieceId = "kit_brazier"
+
+; The refuge (FR-7.18): a corner with nothing in it and no spawn pointing at it.
+; Cheap to build, and it changes how the floor is played — somewhere to drink, re-read
+; the room, and go back in.
+
+[node name="RefugeWallA" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor05"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, -12)
+script = ExtResource("3_kit")
+PieceId = "kit_wall_low_4"
+
+[node name="RefugeWallB" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor05"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 12, 0, -14)
+script = ExtResource("3_kit")
+PieceId = "kit_wall_low_4"
+
+[node name="RefugeLight" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor05"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, -16)
+script = ExtResource("3_kit")
+PieceId = "kit_brazier"
+
+; Optional, and nothing on this floor asks for it: the shard the zone hosts, standing
+; where a player who wants more than the task can go and find it.
+
+[node name="Shard" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor05"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0.1, 14)
+script = ExtResource("5_shard")
+ShardId = "shd_catacomb_heart"
+
+[node name="VisualRoot" type="Node3D" parent="NavigationRegion3D/Tower/Floor05/Shard"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+script = ExtResource("6_visualroot")
+VisualId = "mesh_placeholder_monolith"
+
+; -- Floor 6 · flr_the_choir_vault --------------------------------------------------------
+
+[node name="Floor06" type="Node3D" parent="NavigationRegion3D/Tower"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -120, 0)
+script = ExtResource("10_floor")
+FloorId = "flr_the_choir_vault"
+
+[node name="Slab" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor06" groups=["navsource"]]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor06/Slab"]
+mesh = SubResource("PlaneMesh_slab")
+surface_material_override/0 = SubResource("Material_slab")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor06/Slab"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = SubResource("BoxShape3D_slab")
+
+[node name="WallNorth" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor06" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -20.5)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor06/WallNorth"]
+mesh = SubResource("BoxMesh_wall_ns")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor06/WallNorth"]
+shape = SubResource("BoxShape3D_wall_ns")
+
+[node name="WallSouth" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor06" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 20.5)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor06/WallSouth"]
+mesh = SubResource("BoxMesh_wall_ns")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor06/WallSouth"]
+shape = SubResource("BoxShape3D_wall_ns")
+
+[node name="WallWest" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor06" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.5, 2.5, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor06/WallWest"]
+mesh = SubResource("BoxMesh_wall_ew")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor06/WallWest"]
+shape = SubResource("BoxShape3D_wall_ew")
+
+[node name="WallEast" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor06" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.5, 2.5, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor06/WallEast"]
+mesh = SubResource("BoxMesh_wall_ew")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor06/WallEast"]
+shape = SubResource("BoxShape3D_wall_ew")
+
+[node name="Entry" type="Node3D" parent="NavigationRegion3D/Tower/Floor06"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.1, 0)
+
+[node name="Stair" type="Area3D" parent="NavigationRegion3D/Tower/Floor06"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0.1, 0)
+script = ExtResource("11_stair")
+
+[node name="Marks" type="Node3D" parent="NavigationRegion3D/Tower/Floor06"]
+
+[node name="Mark1" type="Node3D" parent="NavigationRegion3D/Tower/Floor06/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.1, -10)
+
+[node name="Mark2" type="Node3D" parent="NavigationRegion3D/Tower/Floor06/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -12)
+
+[node name="Mark3" type="Node3D" parent="NavigationRegion3D/Tower/Floor06/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.1, -10)
+
+[node name="Mark4" type="Node3D" parent="NavigationRegion3D/Tower/Floor06/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0.1, 0)
+
+[node name="Mark5" type="Node3D" parent="NavigationRegion3D/Tower/Floor06/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.1, 10)
+
+[node name="Mark6" type="Node3D" parent="NavigationRegion3D/Tower/Floor06/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 12)
+
+[node name="Mark7" type="Node3D" parent="NavigationRegion3D/Tower/Floor06/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.1, 10)
+
+[node name="Mark8" type="Node3D" parent="NavigationRegion3D/Tower/Floor06/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0.1, 0)
+
+[node name="Spawns" type="Node3D" parent="NavigationRegion3D/Tower/Floor06"]
+
+[node name="Spawn1" type="Node3D" parent="NavigationRegion3D/Tower/Floor06/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.1, -16)
+
+[node name="Spawn2" type="Node3D" parent="NavigationRegion3D/Tower/Floor06/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.1, -16)
+
+[node name="Spawn3" type="Node3D" parent="NavigationRegion3D/Tower/Floor06/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.1, 16)
+
+[node name="Spawn4" type="Node3D" parent="NavigationRegion3D/Tower/Floor06/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.1, 16)
+
+[node name="Pillar1" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor06"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Pillar2" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor06"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Pillar3" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor06"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Pillar4" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor06"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="BrazierEntry" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor06"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17, 0, -3)
+script = ExtResource("3_kit")
+PieceId = "kit_brazier"
+
+[node name="BrazierStair" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor06"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0, 3)
+script = ExtResource("3_kit")
+PieceId = "kit_brazier"
+
+; -- Floor 7 · flr_the_falling_stair --------------------------------------------------------
+
+[node name="Floor07" type="Node3D" parent="NavigationRegion3D/Tower"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -144, 0)
+script = ExtResource("10_floor")
+FloorId = "flr_the_falling_stair"
+
+[node name="Slab" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor07" groups=["navsource"]]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor07/Slab"]
+mesh = SubResource("PlaneMesh_slab")
+surface_material_override/0 = SubResource("Material_slab")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor07/Slab"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = SubResource("BoxShape3D_slab")
+
+[node name="WallNorth" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor07" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -20.5)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor07/WallNorth"]
+mesh = SubResource("BoxMesh_wall_ns")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor07/WallNorth"]
+shape = SubResource("BoxShape3D_wall_ns")
+
+[node name="WallSouth" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor07" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 20.5)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor07/WallSouth"]
+mesh = SubResource("BoxMesh_wall_ns")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor07/WallSouth"]
+shape = SubResource("BoxShape3D_wall_ns")
+
+[node name="WallWest" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor07" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.5, 2.5, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor07/WallWest"]
+mesh = SubResource("BoxMesh_wall_ew")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor07/WallWest"]
+shape = SubResource("BoxShape3D_wall_ew")
+
+[node name="WallEast" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor07" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.5, 2.5, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor07/WallEast"]
+mesh = SubResource("BoxMesh_wall_ew")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor07/WallEast"]
+shape = SubResource("BoxShape3D_wall_ew")
+
+[node name="Entry" type="Node3D" parent="NavigationRegion3D/Tower/Floor07"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.1, 0)
+
+[node name="Stair" type="Area3D" parent="NavigationRegion3D/Tower/Floor07"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0.1, 0)
+script = ExtResource("11_stair")
+
+[node name="Marks" type="Node3D" parent="NavigationRegion3D/Tower/Floor07"]
+
+[node name="Mark1" type="Node3D" parent="NavigationRegion3D/Tower/Floor07/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.1, -10)
+
+[node name="Mark2" type="Node3D" parent="NavigationRegion3D/Tower/Floor07/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -12)
+
+[node name="Mark3" type="Node3D" parent="NavigationRegion3D/Tower/Floor07/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.1, -10)
+
+[node name="Mark4" type="Node3D" parent="NavigationRegion3D/Tower/Floor07/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0.1, 0)
+
+[node name="Mark5" type="Node3D" parent="NavigationRegion3D/Tower/Floor07/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.1, 10)
+
+[node name="Mark6" type="Node3D" parent="NavigationRegion3D/Tower/Floor07/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 12)
+
+[node name="Mark7" type="Node3D" parent="NavigationRegion3D/Tower/Floor07/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.1, 10)
+
+[node name="Mark8" type="Node3D" parent="NavigationRegion3D/Tower/Floor07/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0.1, 0)
+
+[node name="Spawns" type="Node3D" parent="NavigationRegion3D/Tower/Floor07"]
+
+[node name="Spawn1" type="Node3D" parent="NavigationRegion3D/Tower/Floor07/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.1, -16)
+
+[node name="Spawn2" type="Node3D" parent="NavigationRegion3D/Tower/Floor07/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.1, -16)
+
+[node name="Spawn3" type="Node3D" parent="NavigationRegion3D/Tower/Floor07/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.1, 16)
+
+[node name="Spawn4" type="Node3D" parent="NavigationRegion3D/Tower/Floor07/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.1, 16)
+
+[node name="Pillar1" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor07"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Pillar2" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor07"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Pillar3" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor07"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Pillar4" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor07"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="BrazierEntry" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor07"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17, 0, -3)
+script = ExtResource("3_kit")
+PieceId = "kit_brazier"
+
+[node name="BrazierStair" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor07"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0, 3)
+script = ExtResource("3_kit")
+PieceId = "kit_brazier"
+
+[node name="Shrine" type="Area3D" parent="NavigationRegion3D/Tower/Floor07"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.1, 6)
+script = ExtResource("4_shrine")
+ShrineId = "shr_catacombs_vault"
+
+[node name="VisualRoot" type="Node3D" parent="NavigationRegion3D/Tower/Floor07/Shrine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+script = ExtResource("6_visualroot")
+VisualId = "mesh_placeholder_shrine"
+
+[node name="Bench" type="Area3D" parent="NavigationRegion3D/Tower/Floor07"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.1, -6)
+script = ExtResource("12_bench")
+
+[node name="Piece" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor07/Bench"]
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_rubble"
+
+; -- Floor 8 · flr_the_black_cloister --------------------------------------------------------
+
+[node name="Floor08" type="Node3D" parent="NavigationRegion3D/Tower"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -168, 0)
+script = ExtResource("10_floor")
+FloorId = "flr_the_black_cloister"
+
+[node name="Slab" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor08" groups=["navsource"]]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor08/Slab"]
+mesh = SubResource("PlaneMesh_slab")
+surface_material_override/0 = SubResource("Material_slab")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor08/Slab"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = SubResource("BoxShape3D_slab")
+
+[node name="WallNorth" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor08" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -20.5)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor08/WallNorth"]
+mesh = SubResource("BoxMesh_wall_ns")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor08/WallNorth"]
+shape = SubResource("BoxShape3D_wall_ns")
+
+[node name="WallSouth" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor08" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 20.5)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor08/WallSouth"]
+mesh = SubResource("BoxMesh_wall_ns")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor08/WallSouth"]
+shape = SubResource("BoxShape3D_wall_ns")
+
+[node name="WallWest" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor08" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.5, 2.5, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor08/WallWest"]
+mesh = SubResource("BoxMesh_wall_ew")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor08/WallWest"]
+shape = SubResource("BoxShape3D_wall_ew")
+
+[node name="WallEast" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor08" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.5, 2.5, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor08/WallEast"]
+mesh = SubResource("BoxMesh_wall_ew")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor08/WallEast"]
+shape = SubResource("BoxShape3D_wall_ew")
+
+[node name="Entry" type="Node3D" parent="NavigationRegion3D/Tower/Floor08"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.1, 0)
+
+[node name="Stair" type="Area3D" parent="NavigationRegion3D/Tower/Floor08"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0.1, 0)
+script = ExtResource("11_stair")
+
+[node name="Marks" type="Node3D" parent="NavigationRegion3D/Tower/Floor08"]
+
+[node name="Mark1" type="Node3D" parent="NavigationRegion3D/Tower/Floor08/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.1, -10)
+
+[node name="Mark2" type="Node3D" parent="NavigationRegion3D/Tower/Floor08/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -12)
+
+[node name="Mark3" type="Node3D" parent="NavigationRegion3D/Tower/Floor08/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.1, -10)
+
+[node name="Mark4" type="Node3D" parent="NavigationRegion3D/Tower/Floor08/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0.1, 0)
+
+[node name="Mark5" type="Node3D" parent="NavigationRegion3D/Tower/Floor08/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.1, 10)
+
+[node name="Mark6" type="Node3D" parent="NavigationRegion3D/Tower/Floor08/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 12)
+
+[node name="Mark7" type="Node3D" parent="NavigationRegion3D/Tower/Floor08/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.1, 10)
+
+[node name="Mark8" type="Node3D" parent="NavigationRegion3D/Tower/Floor08/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0.1, 0)
+
+[node name="Spawns" type="Node3D" parent="NavigationRegion3D/Tower/Floor08"]
+
+[node name="Spawn1" type="Node3D" parent="NavigationRegion3D/Tower/Floor08/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.1, -16)
+
+[node name="Spawn2" type="Node3D" parent="NavigationRegion3D/Tower/Floor08/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.1, -16)
+
+[node name="Spawn3" type="Node3D" parent="NavigationRegion3D/Tower/Floor08/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.1, 16)
+
+[node name="Spawn4" type="Node3D" parent="NavigationRegion3D/Tower/Floor08/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.1, 16)
+
+[node name="Pillar1" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor08"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Pillar2" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor08"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Pillar3" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor08"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Pillar4" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor08"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="BrazierEntry" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor08"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17, 0, -3)
+script = ExtResource("3_kit")
+PieceId = "kit_brazier"
+
+[node name="BrazierStair" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor08"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0, 3)
+script = ExtResource("3_kit")
+PieceId = "kit_brazier"
+
+; -- Floor 9 · flr_the_heart --------------------------------------------------------
+
+[node name="Floor09" type="Node3D" parent="NavigationRegion3D/Tower"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -192, 0)
+script = ExtResource("10_floor")
+FloorId = "flr_the_heart"
+
+[node name="Slab" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor09" groups=["navsource"]]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor09/Slab"]
+mesh = SubResource("PlaneMesh_slab")
+surface_material_override/0 = SubResource("Material_slab")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor09/Slab"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = SubResource("BoxShape3D_slab")
+
+[node name="WallNorth" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor09" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -20.5)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor09/WallNorth"]
+mesh = SubResource("BoxMesh_wall_ns")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor09/WallNorth"]
+shape = SubResource("BoxShape3D_wall_ns")
+
+[node name="WallSouth" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor09" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 20.5)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor09/WallSouth"]
+mesh = SubResource("BoxMesh_wall_ns")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor09/WallSouth"]
+shape = SubResource("BoxShape3D_wall_ns")
+
+[node name="WallWest" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor09" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.5, 2.5, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor09/WallWest"]
+mesh = SubResource("BoxMesh_wall_ew")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor09/WallWest"]
+shape = SubResource("BoxShape3D_wall_ew")
+
+[node name="WallEast" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor09" groups=["navsource"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.5, 2.5, 0)
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Tower/Floor09/WallEast"]
+mesh = SubResource("BoxMesh_wall_ew")
+surface_material_override/0 = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Tower/Floor09/WallEast"]
+shape = SubResource("BoxShape3D_wall_ew")
+
+[node name="Entry" type="Node3D" parent="NavigationRegion3D/Tower/Floor09"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.1, 0)
+
+[node name="Stair" type="Area3D" parent="NavigationRegion3D/Tower/Floor09"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0.1, 0)
+script = ExtResource("11_stair")
+
+[node name="Marks" type="Node3D" parent="NavigationRegion3D/Tower/Floor09"]
+
+[node name="Mark1" type="Node3D" parent="NavigationRegion3D/Tower/Floor09/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.1, -10)
+
+[node name="Mark2" type="Node3D" parent="NavigationRegion3D/Tower/Floor09/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -12)
+
+[node name="Mark3" type="Node3D" parent="NavigationRegion3D/Tower/Floor09/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.1, -10)
+
+[node name="Mark4" type="Node3D" parent="NavigationRegion3D/Tower/Floor09/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0.1, 0)
+
+[node name="Mark5" type="Node3D" parent="NavigationRegion3D/Tower/Floor09/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.1, 10)
+
+[node name="Mark6" type="Node3D" parent="NavigationRegion3D/Tower/Floor09/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 12)
+
+[node name="Mark7" type="Node3D" parent="NavigationRegion3D/Tower/Floor09/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.1, 10)
+
+[node name="Mark8" type="Node3D" parent="NavigationRegion3D/Tower/Floor09/Marks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0.1, 0)
+
+[node name="Spawns" type="Node3D" parent="NavigationRegion3D/Tower/Floor09"]
+
+[node name="Spawn1" type="Node3D" parent="NavigationRegion3D/Tower/Floor09/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.1, -16)
+
+[node name="Spawn2" type="Node3D" parent="NavigationRegion3D/Tower/Floor09/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.1, -16)
+
+[node name="Spawn3" type="Node3D" parent="NavigationRegion3D/Tower/Floor09/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.1, 16)
+
+[node name="Spawn4" type="Node3D" parent="NavigationRegion3D/Tower/Floor09/Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0.1, 16)
+
+[node name="Pillar1" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor09"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Pillar2" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor09"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Pillar3" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor09"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Pillar4" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor09"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 10)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="BrazierEntry" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor09"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17, 0, -3)
+script = ExtResource("3_kit")
+PieceId = "kit_brazier"
+
+[node name="BrazierStair" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor09"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0, 3)
+script = ExtResource("3_kit")
+PieceId = "kit_brazier"
+
+; -- Session, player and the way back out -----------------------------------------
+; The border stands on floor one beside the mouth shrine. One gate, because the zone has one
+; exit — the scene audit rejects a second, and a dungeon with two ways out is a dungeon that
+; can be walked past.
+
+[node name="Player" parent="." instance=ExtResource("13_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.1, 0)
+
+[node name="Session" parent="." instance=ExtResource("14_session")]
+
+[node name="Enemies" type="Node3D" parent="."]
+
+[node name="GateToBrokenGate" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17, 0, 14)
+script = ExtResource("7_gate")
+ToZone = "zone_broken_gate"
+
+[node name="ArrivalFromBrokenGate" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.1, 0)
+script = ExtResource("8_arrival")
+FromZone = "zone_broken_gate"

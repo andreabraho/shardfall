@@ -415,6 +415,65 @@ public sealed class ZoneDef : ContentDefBase
 
     /// <summary>Shard node ids this zone may host. The scene decides where they stand.</summary>
     public string[] Shards { get; init; } = [];
+
+    /// <summary>
+    /// The floors of a tower, in descending order (FR-7.11). Empty for every zone that is not
+    /// a dungeon.
+    /// </summary>
+    /// <remarks>
+    /// Nested in the zone rather than given its own table because a floor belongs to exactly
+    /// one dungeon and always will, and the rules the validator enforces across them — five
+    /// verbs, no repeat in a row, a boss every third — are rules about one zone's list. A flat
+    /// table would have to reconstruct that grouping before it could check anything.
+    /// </remarks>
+    public FloorDef[] Floors { get; init; } = [];
+}
+
+/// <summary>
+/// One floor of a tower: the task that opens the way down, and what furniture stands on it.
+/// </summary>
+/// <remarks>
+/// Depth is the array order, not a field. A floor declaring it is the fourth while sitting
+/// third in the list is a contradiction nobody can resolve from the data, and the list has an
+/// order anyway.
+/// </remarks>
+public sealed class FloorDef
+{
+    public string Id { get; init; } = string.Empty;
+    public string Name { get; init; } = string.Empty;
+
+    /// <summary>break | hold | find | carry | race | fight</summary>
+    public string Task { get; init; } = "break";
+
+    /// <summary>How many things must go down. A boss counts as one.</summary>
+    public int Targets { get; init; } = 1;
+
+    /// <summary>Lookalikes that score nothing. <c>find</c> only.</summary>
+    public int Decoys { get; init; }
+
+    /// <summary>Duration for <c>hold</c>, deadline for <c>race</c>.</summary>
+    public double Seconds { get; init; }
+
+    /// <summary>Enemy id for <c>fight</c>.</summary>
+    public string Boss { get; init; } = string.Empty;
+
+    /// <summary>What the floor keeps sending while its task runs. Empty on a boss floor.</summary>
+    public string[] Waves { get; init; } = [];
+
+    /// <summary>How many arrive per wave.</summary>
+    public int WaveSize { get; init; } = 3;
+
+    /// <summary>Seconds between waves.</summary>
+    public double WaveSeconds { get; init; } = 14.0;
+
+    /// <summary>A shrine standing on this floor, or empty. Must be one the zone declares.</summary>
+    public string Shrine { get; init; } = string.Empty;
+
+    /// <summary>Whether an upgrade bench stands here (FR-7.14).</summary>
+    public bool Bench { get; init; }
+
+    /// <summary>Whether this floor carries a corner nothing walks into (FR-7.18).</summary>
+    public bool Refuge { get; init; }
 }
 
 /// <summary>

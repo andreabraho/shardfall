@@ -281,7 +281,7 @@
     "name": "$zone.zone_catacombs.name",
     "kind": "dungeon",
     "level_band": [19, 23],
-    "scene": "",
+    "scene": "res://scenes/catacombs.tscn",
     "exits": [
       { "to": "zone_broken_gate" }
     ],
@@ -290,42 +290,41 @@
       { "id": "shr_catacombs_gallery", "name": "$shrine.shr_catacombs_gallery.name", "fast_travel": false },
       { "id": "shr_catacombs_vault", "name": "$shrine.shr_catacombs_vault.name", "fast_travel": false }
     ],
-    "spawn_fields": [
-      {
-        "id": "spf_catacombs_stalkers",
-        "entries": [
-          { "enemy": "mob_crypt_stalker", "weight": 2.0 },
-          { "enemy": "mob_void_caster", "weight": 1.0 }
-        ],
-        "count": 5,
-        "respawn_seconds": 32,
-        "activation_radius": 50,
-        "radius": 8
-      },
-      {
-        "id": "spf_catacombs_gallery",
-        "entries": [
-          { "enemy": "mob_obsidian_ward", "weight": 1.0 },
-          { "enemy": "mob_hollow_choir", "weight": 1.0 },
-          { "enemy": "mob_void_caster", "weight": 2.0 }
-        ],
-        "count": 5,
-        "respawn_seconds": 40,
-        "activation_radius": 50,
-        "radius": 9
-      },
-      {
-        "id": "spf_catacombs_rift",
-        "entries": [
-          { "enemy": "mob_rift_seed", "weight": 1.0 },
-          { "enemy": "mob_crypt_stalker", "weight": 2.0 }
-        ],
-        "count": 4,
-        "respawn_seconds": 36,
-        "activation_radius": 50,
-        "radius": 8
-      }
-    ],
-    "shards": ["shd_catacomb_heart"]
+    "spawn_fields": [],
+    "shards": ["shd_catacomb_heart"],
+    "floors": [
+      { "id": "flr_the_mouth", "name": "$floor.flr_the_mouth.name", "task": "break",
+        "targets": 1, "shrine": "shr_catacombs_mouth",
+        "waves": ["mob_crypt_stalker"], "wave_size": 3, "wave_seconds": 20 },
+
+      { "id": "flr_the_cistern", "name": "$floor.flr_the_cistern.name", "task": "hold",
+        "seconds": 75,
+        "waves": ["mob_crypt_stalker", "mob_void_caster"], "wave_size": 4, "wave_seconds": 14 },
+
+      { "id": "flr_the_gallery", "name": "$floor.flr_the_gallery.name", "task": "fight",
+        "boss": "mob_gallery_warden" },
+
+      { "id": "flr_the_lantern_walk", "name": "$floor.flr_the_lantern_walk.name", "task": "find",
+        "targets": 1, "decoys": 4, "shrine": "shr_catacombs_gallery", "bench": true,
+        "waves": ["mob_void_caster"], "wave_size": 2, "wave_seconds": 22 },
+
+      { "id": "flr_the_sealed_crossing", "name": "$floor.flr_the_sealed_crossing.name", "task": "carry",
+        "targets": 3, "refuge": true,
+        "waves": ["mob_obsidian_ward", "mob_hollow_choir"], "wave_size": 3, "wave_seconds": 16 },
+
+      { "id": "flr_the_choir_vault", "name": "$floor.flr_the_choir_vault.name", "task": "fight",
+        "boss": "mob_vault_chorister" },
+
+      { "id": "flr_the_falling_stair", "name": "$floor.flr_the_falling_stair.name", "task": "race",
+        "targets": 4, "seconds": 90, "shrine": "shr_catacombs_vault", "bench": true,
+        "waves": ["mob_crypt_stalker", "mob_rift_seed"], "wave_size": 3, "wave_seconds": 12 },
+
+      { "id": "flr_the_black_cloister", "name": "$floor.flr_the_black_cloister.name", "task": "hold",
+        "seconds": 90,
+        "waves": ["mob_obsidian_ward", "mob_void_caster", "mob_hollow_choir"], "wave_size": 5, "wave_seconds": 12 },
+
+      { "id": "flr_the_heart", "name": "$floor.flr_the_heart.name", "task": "fight",
+        "boss": "mob_heart_keeper" }
+    ]
   }
 ]

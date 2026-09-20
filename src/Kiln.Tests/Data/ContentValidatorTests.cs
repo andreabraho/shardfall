@@ -516,4 +516,230 @@ public class ContentValidatorTests
 
         Assert.False(report.HasErrors);
     }
+
+    // -- floor towers (FR-7.11–7.20) ----------------------------------------
+
+    private static FloorDef Floor(
+        string id, string task, int targets = 1, int decoys = 0, double seconds = 0,
+        string boss = "", string shrine = "", bool bench = false, bool refuge = false) => new()
+    {
+        Id = id,
+        Name = $"$floor.{id}.name",
+        Task = task,
+        Targets = targets,
+        Decoys = decoys,
+        Seconds = seconds,
+        Boss = boss,
+        Shrine = shrine,
+        Bench = bench,
+        Refuge = refuge,
+    };
+
+    /// <summary>A tower that passes every rule, so a test can break exactly one thing.</summary>
+    private static ZoneDef Tower(params FloorDef[] floors)
+    {
+        var plain = Zone("zone_tower", "dungeon", 3, 6);
+
+        return new ZoneDef
+        {
+            Id = plain.Id,
+            Name = plain.Name,
+            Kind = plain.Kind,
+            LevelBand = plain.LevelBand,
+            Scene = plain.Scene,
+            Shrines = [new ShrineDef { Id = "shr_zone_tower", Name = "$shrine.shr_zone_tower.name" }],
+            Floors = floors.Length > 0 ? floors : Sound(),
+        };
+    }
+
+    private static FloorDef[] Sound() =>
+    [
+        Floor("flr_a", "break"),
+        Floor("flr_b", "hold", seconds: 60),
+        Floor("flr_c", "fight", boss: "mob_boss"),
+        Floor("flr_d", "find", decoys: 4, shrine: "shr_zone_tower", bench: true, refuge: true),
+        Floor("flr_e", "carry", targets: 3),
+        Floor("flr_f", "fight", boss: "mob_boss"),
+    ];
+
+    private static ValidationReport Validate(ZoneDef tower) => ContentValidator.Validate(Db(
+        enemies: [new EnemyDef { Id = "mob_boss", Name = "$m", Level = 5 }],
+        zones: [Zone("zone_hub", "hub", 1, 3, [tower.Id]), tower]));
+
+    [Fact]
+    public void Accepts_ASoundTower()
+    {
+        Assert.False(Validate(Tower()).HasErrors);
+    }
+
+    /// <summary>
+    /// FR-7.12, the rule the whole format rests on. Nine floors that all ask for the same
+    /// thing are one floor nine times, and nothing else in the list can rescue that.
+    /// </summary>
+    [Fact]
+    public void Flags_AFloorRepeatingTheVerbAboveIt()
+    {
+        var report = Validate(Tower(
+            Floor("flr_a", "break"),
+            Floor("flr_b", "break"),
+            Floor("flr_c", "fight", boss: "mob_boss"),
+            Floor("flr_d", "find", decoys: 4, shrine: "shr_zone_tower", bench: true, refuge: true),
+            Floor("flr_e", "carry", targets: 3),
+            Floor("flr_f", "fight", boss: "mob_boss")));
+
+        Assert.True(HasError(report, "world-floors"));
+    }
+
+    [Fact]
+    public void Flags_ATowerWithTooFewDistinctVerbs()
+    {
+        // Alternating two verbs passes the no-repeat rule and is still one floor six times.
+        var report = Validate(Tower(
+            Floor("flr_a", "break"),
+            Floor("flr_b", "hold", seconds: 60),
+            Floor("flr_c", "fight", boss: "mob_boss"),
+            Floor("flr_d", "break", shrine: "shr_zone_tower", bench: true, refuge: true),
+            Floor("flr_e", "hold", seconds: 60),
+            Floor("flr_f", "fight", boss: "mob_boss")));
+
+        Assert.True(HasError(report, "world-floors"));
+    }
+
+    [Fact]
+    public void Flags_AThirdFloorThatIsNotABoss()
+    {
+        var report = Validate(Tower(
+            Floor("flr_a", "break"),
+            Floor("flr_b", "hold", seconds: 60),
+            Floor("flr_c", "carry", targets: 3),
+            Floor("flr_d", "find", decoys: 4, refuge: true),
+            Floor("flr_e", "race", targets: 3, seconds: 60),
+            Floor("flr_f", "fight", boss: "mob_boss")));
+
+        Assert.True(HasError(report, "world-floors"));
+    }
+
+    [Fact]
+    public void Flags_ABossOutOfStepWithThePulse()
+    {
+        var report = Validate(Tower(
+            Floor("flr_a", "break"),
+            Floor("flr_b", "fight", boss: "mob_boss"),
+            Floor("flr_c", "fight", boss: "mob_boss"),
+            Floor("flr_d", "find", decoys: 4, shrine: "shr_zone_tower", bench: true, refuge: true),
+            Floor("flr_e", "carry", targets: 3),
+            Floor("flr_f", "fight", boss: "mob_boss")));
+
+        Assert.True(HasError(report, "world-floors"));
+    }
+
+    [Fact]
+    public void Flags_ABossFloorWithNoShrineAfterIt()
+    {
+        var report = Validate(Tower(
+            Floor("flr_a", "break"),
+            Floor("flr_b", "hold", seconds: 60),
+            Floor("flr_c", "fight", boss: "mob_boss"),
+            Floor("flr_d", "find", decoys: 4, bench: true, refuge: true),
+            Floor("flr_e", "carry", targets: 3),
+            Floor("flr_f", "fight", boss: "mob_boss")));
+
+        Assert.True(HasError(report, "world-floors"));
+    }
+
+    [Fact]
+    public void Flags_ABossFloorWithNoBenchAfterIt()
+    {
+        var report = Validate(Tower(
+            Floor("flr_a", "break"),
+            Floor("flr_b", "hold", seconds: 60),
+            Floor("flr_c", "fight", boss: "mob_boss"),
+            Floor("flr_d", "find", decoys: 4, shrine: "shr_zone_tower", refuge: true),
+            Floor("flr_e", "carry", targets: 3),
+            Floor("flr_f", "fight", boss: "mob_boss")));
+
+        Assert.True(HasError(report, "world-floors"));
+    }
+
+    [Fact]
+    public void Flags_AFindFloorWithNothingToTellApart()
+    {
+        var report = Validate(Tower(
+            Floor("flr_a", "break"),
+            Floor("flr_b", "hold", seconds: 60),
+            Floor("flr_c", "fight", boss: "mob_boss"),
+            Floor("flr_d", "find", shrine: "shr_zone_tower", bench: true, refuge: true),
+            Floor("flr_e", "carry", targets: 3),
+            Floor("flr_f", "fight", boss: "mob_boss")));
+
+        Assert.True(HasError(report, "world-floors"));
+    }
+
+    [Fact]
+    public void Flags_AClockedFloorWithNoClock()
+    {
+        var report = Validate(Tower(
+            Floor("flr_a", "break"),
+            Floor("flr_b", "hold"),
+            Floor("flr_c", "fight", boss: "mob_boss"),
+            Floor("flr_d", "find", decoys: 4, shrine: "shr_zone_tower", bench: true, refuge: true),
+            Floor("flr_e", "carry", targets: 3),
+            Floor("flr_f", "fight", boss: "mob_boss")));
+
+        Assert.True(HasError(report, "world-floors"));
+    }
+
+    [Fact]
+    public void Flags_ABossFloorThatAlsoSendsWaves()
+    {
+        var crowded = Floor("flr_c", "fight", boss: "mob_boss");
+        var report = Validate(Tower(
+            Floor("flr_a", "break"),
+            Floor("flr_b", "hold", seconds: 60),
+            new FloorDef
+            {
+                Id = crowded.Id, Name = crowded.Name, Task = crowded.Task, Boss = crowded.Boss,
+                Waves = ["mob_boss"],
+            },
+            Floor("flr_d", "find", decoys: 4, shrine: "shr_zone_tower", bench: true, refuge: true),
+            Floor("flr_e", "carry", targets: 3),
+            Floor("flr_f", "fight", boss: "mob_boss")));
+
+        Assert.True(HasError(report, "world-floors"));
+    }
+
+    [Fact]
+    public void Flags_AnUnknownVerb()
+    {
+        // "clear" in particular: the chore verb the format exists to avoid (FR-7.17).
+        var report = Validate(Tower(
+            Floor("flr_a", "clear"),
+            Floor("flr_b", "hold", seconds: 60),
+            Floor("flr_c", "fight", boss: "mob_boss"),
+            Floor("flr_d", "find", decoys: 4, shrine: "shr_zone_tower", bench: true, refuge: true),
+            Floor("flr_e", "carry", targets: 3),
+            Floor("flr_f", "fight", boss: "mob_boss")));
+
+        Assert.True(HasError(report, "world-floors"));
+    }
+
+    [Fact]
+    public void Flags_FloorsOnAZoneThatIsNotADungeon()
+    {
+        var wilds = Zone("zone_field", "wilds", 3, 6);
+        var report = ContentValidator.Validate(Db(
+            enemies: [new EnemyDef { Id = "mob_boss", Name = "$m", Level = 5 }],
+            zones:
+            [
+                Zone("zone_hub", "hub", 1, 3, ["zone_field"]),
+                new ZoneDef
+                {
+                    Id = wilds.Id, Name = wilds.Name, Kind = wilds.Kind, LevelBand = wilds.LevelBand,
+                    Scene = wilds.Scene, Shrines = wilds.Shrines, Exits = wilds.Exits,
+                    Floors = [Floor("flr_a", "break")],
+                },
+            ]));
+
+        Assert.True(HasError(report, "world-floors"));
+    }
 }

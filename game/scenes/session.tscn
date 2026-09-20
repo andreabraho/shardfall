@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3]
+[gd_scene load_steps=19 format=3]
 
 ; Everything a zone scene needs and no zone scene decides: the camera, the cursor, the combat
 ; feedback layers, the HUD and the panels.
@@ -28,6 +28,7 @@
 [ext_resource type="Script" path="res://scripts/Debug/DebugSpawner.cs" id="15_spawner"]
 [ext_resource type="Script" path="res://scripts/Debug/DebugPassage.cs" id="16_passage"]
 [ext_resource type="Script" path="res://scripts/UI/MapPanel.cs" id="17_map"]
+[ext_resource type="Script" path="res://scripts/UI/TowerHud.cs" id="18_towerhud"]
 
 [node name="Session" type="Node3D"]
 
@@ -95,3 +96,6 @@ script = ExtResource("16_passage")
 
 [node name="MapPanel" type="CanvasLayer" parent="."]
 script = ExtResource("17_map")
+
+[node name="TowerHud" type="CanvasLayer" parent="."]
+script = ExtResource("18_towerhud")

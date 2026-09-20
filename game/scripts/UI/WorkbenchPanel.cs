@@ -56,17 +56,29 @@ public partial class WorkbenchPanel : CanvasLayer
         _inventory.Changed += Refresh;
     }
 
+    /// <summary>Opens the bench, as a bench in the world does (FR-7.14).</summary>
+    public void Open()
+    {
+        if (Visible) return;
+
+        Visible = true;
+        UiState.SetOpen(ref _counted, true);
+        _selected ??= FirstUpgradable();
+        Refresh();
+    }
+
     public override void _UnhandledInput(InputEvent @event)
     {
         if (@event.IsActionPressed(GameActions.ToggleUpgradeBench))
         {
-            Visible = !Visible;
-            UiState.SetOpen(ref _counted, Visible);
-
             if (Visible)
             {
-                _selected ??= FirstUpgradable();
-                Refresh();
+                Visible = false;
+                UiState.SetOpen(ref _counted, false);
+            }
+            else
+            {
+                Open();
             }
 
             GetViewport().SetInputAsHandled();
