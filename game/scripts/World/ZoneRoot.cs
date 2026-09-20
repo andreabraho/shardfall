@@ -40,7 +40,9 @@ public partial class ZoneRoot : Node3D
             if (zone is null) return "—";
 
             var player = GetTree().GetFirstNodeInGroup("player") as Node3D;
-            var where = player is not null && GameWorld.IsSafe(player.GlobalPosition) ? " · SAFE" : "";
+            var where = player is not null && GameWorld.IsSafe(player.GlobalPosition)
+                ? "  [color=#7fc98a]SAFE[/color]"
+                : "";
 
             return $"{zone.Id} {zone.Band} · "
                 + $"{GameWorld.LivingEnemies(GetTree())}/{GameWorld.PopulationCap} alive{where}";

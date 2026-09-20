@@ -77,7 +77,14 @@ public partial class PlayerCharacter : Node
         _combatant.Damaged += OnDamaged;
         _combatant.Died += OnDied;
 
-        Debug.DebugOverlay.Register("hp", this, () => $"{_combatant.Health} ({_combatant.Health.Fraction:P0})");
+        Debug.DebugOverlay.Register("hp", this, () =>
+        {
+            // Coloured because it is the one number worth seeing without reading.
+            var f = _combatant.Health.Fraction;
+            var tone = f > 0.5 ? "#7fc98a" : f > 0.25 ? "#e0b356" : "#e06c6c";
+
+            return $"[color={tone}]{_combatant.Health}[/color] ({f:P0})";
+        });
         Debug.DebugOverlay.Register("level", this, () =>
             $"{Progression.Level} — {Progression.Experience}/{Progression.ExperienceForNextLevel} xp");
 

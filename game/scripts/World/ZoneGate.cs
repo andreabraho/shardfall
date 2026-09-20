@@ -16,6 +16,7 @@ namespace Kiln.Game.World;
 public partial class ZoneGate : Area3D
 {
     private double _cooldown;
+    private Combat.NamePlate? _label;
 
     /// <summary>The zone on the other side. Must be a declared exit of the zone this scene is.</summary>
     [Export] public string ToZone { get; set; } = "";
@@ -44,11 +45,85 @@ public partial class ZoneGate : Area3D
         });
 
         BodyEntered += OnBodyEntered;
+        BuildLabel();
+    }
+
+    /// <summary>
+    /// The sign over the border, shown only while the reveal key is held.
+    /// </summary>
+    /// <remarks>
+    /// Held rather than permanent because a label that is always on is scenery the player
+    /// stops reading, and a map with four borders would carry four permanent captions. Ranked
+    /// as a boss plate on purpose: that rank is the one that neither fades with distance nor
+    /// hides behind terrain, which is exactly what a border needs — the whole use of the key
+    /// is working out which way to go from where you are standing, not from beside the gate.
+    /// </remarks>
+    private void BuildLabel()
+    {
+        var target = GameWorld.Graph[ToZone];
+
+        _label = new Combat.NamePlate
+        {
+            Name = "Sign",
+            Offset = new Vector3(0, 4.2f, 0),
+            Rank = Combat.NameRank.Boss,
+            Tint = new Color(0.62f, 0.82f, 1f),
+            Visible = false,
+        };
+
+        AddChild(_label);
+    }
+
+    /// <summary>
+    /// Fills the sign once, on the first frame.
+    /// </summary>
+    /// <remarks>
+    /// Not in <c>_Ready</c>: a node is ready before its parent, so at that point the current
+    /// zone is still the one the player just left, and the requirement would be read from the
+    /// wrong side of the border.
+    /// </remarks>
+    private void FillLabel()
+    {
+        var target = GameWorld.Graph[ToZone];
+
+        _label!.SetText(target is null
+            ? ToZone
+            : Items.GameItems.Localise(target.Name) + Requirement(target));
+    }
+
+    /// <summary>What the border asks of the player, or nothing when it is simply open.</summary>
+    private string Requirement(Kiln.Core.World.Zone target)
+    {
+        var notes = "";
+
+        if (GameWorld.Graph[GameWorld.CurrentZoneId] is { } here)
+        {
+            foreach (var exit in here.Exits)
+            {
+                if (exit.To != ToZone) continue;
+
+                if (exit.RequiredLevel > 0) notes += $"  ·  level {exit.RequiredLevel}";
+                if (exit.RequiredQuest is not null) notes += "  ·  barred";
+            }
+        }
+
+        // Added alongside a level requirement rather than instead of it. A border that asks
+        // for level fourteen and then turns out to lead nowhere is two facts, and the second
+        // is the one worth knowing before walking there.
+        if (target.Scene.Length == 0) notes += "  ·  unbuilt";
+
+        return notes;
     }
 
     public override void _Process(double delta)
     {
         if (_cooldown > 0) _cooldown -= delta;
+
+        if (_label is null) return;
+
+        if (_label.Text.Length == 0) FillLabel();
+
+        _label.Visible = Godot.Input.IsActionPressed(Kiln.Game.Input.GameActions.RevealLabels);
     }
 
     private void OnBodyEntered(Node3D body)

@@ -16,7 +16,7 @@ public partial class DebugOverlay : CanvasLayer
 {
     private static readonly Dictionary<string, System.Func<string>> Providers = new();
 
-    private Label? _label;
+    private RichTextLabel? _label;
     private double _accum;
     private double _worstFrameMs;
 
@@ -68,10 +68,17 @@ public partial class DebugOverlay : CanvasLayer
             MouseFilter = Control.MouseFilterEnum.Ignore,
         };
 
-        _label = new Label
+        // Rich text rather than a plain label: colouring the values is the whole point, and a
+        // plain Label can only be tinted as a block.
+        _label = new RichTextLabel
         {
+            BbcodeEnabled = true,
             Text = "…",
+            FitContent = true,
+            ScrollActive = false,
+            AutowrapMode = TextServer.AutowrapMode.Off,
             MouseFilter = Control.MouseFilterEnum.Ignore,
+            CustomMinimumSize = new Vector2(320, 0),
         };
 
         panel.AddChild(_label);
@@ -101,10 +108,19 @@ public partial class DebugOverlay : CanvasLayer
         if (_accum < 0.25) return; // 4 Hz is plenty and keeps the overlay itself cheap
         _accum = 0;
 
+        var fps = Engine.GetFramesPerSecond();
         var sb = new System.Text.StringBuilder();
-        sb.AppendLine($"FPS {Engine.GetFramesPerSecond():F0}   frame {frameMs:F1} ms   worst {_worstFrameMs:F1} ms");
-        sb.AppendLine($"nodes {GetTree().GetNodeCount()}   objects {Performance.GetMonitor(Performance.Monitor.ObjectCount):F0}");
-        sb.AppendLine($"draw calls {Performance.GetMonitor(Performance.Monitor.RenderTotalDrawCallsInFrame):F0}");
+
+        // One line for the budget, one for the scene. Three separate lines of counters pushed
+        // everything a system actually registered further down the screen, which is the part
+        // worth reading — the frame rate is the part you glance at.
+        sb.Append(Rate(fps)).Append(Dim(" fps  ")).Append(Frame(frameMs))
+            .Append(Dim($"  peak {_worstFrameMs:F0}")).Append('\n');
+
+        sb.Append(Dim("nodes ")).Append(GetTree().GetNodeCount())
+            .Append(Dim("  obj ")).Append($"{Performance.GetMonitor(Performance.Monitor.ObjectCount):F0}")
+            .Append(Dim("  draws ")).Append($"{Performance.GetMonitor(Performance.Monitor.RenderTotalDrawCallsInFrame):F0}")
+            .Append('\n');
 
         DropOrphans();
 
@@ -118,14 +134,40 @@ public partial class DebugOverlay : CanvasLayer
             catch (System.Exception ex)
             {
                 // A broken debug provider must never take down the game.
-                value = $"<error: {ex.GetType().Name}>";
+                value = $"[color=#e06c6c]<{ex.GetType().Name}>[/color]";
             }
 
-            sb.AppendLine($"{key}: {value}");
+            sb.Append(Dim(key + " ")).Append(value).Append('\n');
         }
 
         _label!.Text = sb.ToString().TrimEnd();
     }
+
+    /// <summary>
+    /// Labels are dimmed so the numbers carry the line.
+    /// </summary>
+    /// <remarks>
+    /// The overlay is read at a glance while doing something else. Every word at the same
+    /// weight means every glance costs a read; dimming the words that never change turns it
+    /// into a row of values with captions attached.
+    /// </remarks>
+    private static string Dim(string text) => $"[color=#7b8794]{text}[/color]";
+
+    /// <summary>Frame rate, coloured against the sixty the game is built for.</summary>
+    private static string Rate(double fps) => fps switch
+    {
+        >= 55 => $"[color=#7fc98a]{fps:F0}[/color]",
+        >= 30 => $"[color=#e0b356]{fps:F0}[/color]",
+        _ => $"[color=#e06c6c]{fps:F0}[/color]",
+    };
+
+    /// <summary>Frame time against the 16.7 ms budget, which is the same story told usefully.</summary>
+    private static string Frame(double ms) => ms switch
+    {
+        <= 18 => $"[color=#7fc98a]{ms:F1} ms[/color]",
+        <= 33 => $"[color=#e0b356]{ms:F1} ms[/color]",
+        _ => $"[color=#e06c6c]{ms:F1} ms[/color]",
+    };
 
     /// <summary>Resets the worst-frame tracker — call when starting a perf measurement.</summary>
     public void ResetWorstFrame() => _worstFrameMs = 0;

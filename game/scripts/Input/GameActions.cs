@@ -49,6 +49,9 @@ public static class GameActions
     /// <summary>Shrines, and later NPCs and doors. One key for "use the thing I am standing at".</summary>
     public const string Interact = "interact";
 
+    /// <summary>Held down to label the borders of the map. Alt, as the genre has taught.</summary>
+    public const string RevealLabels = "reveal_labels";
+
     // Development only — the arena spawner (see DebugSpawner). Stripped from release builds.
     public const string DebugSpawnWave = "debug_spawn_wave";
     public const string DebugSpawnOne = "debug_spawn_one";
@@ -88,6 +91,7 @@ public static class GameActions
         [ToggleUpgradeBench] = [Key(Godot.Key.U)],
         [ToggleCharacter] = [Key(Godot.Key.C)],
         [Interact] = [Key(Godot.Key.F)],
+        [RevealLabels] = [Key(Godot.Key.Alt)],
         [DebugSpawnWave] = [Key(Godot.Key.F5)],
         [DebugSpawnOne] = [Key(Godot.Key.F6)],
         [DebugToggleRespawn] = [Key(Godot.Key.F7)],
