@@ -32,12 +32,15 @@ public partial class TargetRing : Node3D
             RenderPriority = 4,
         };
 
+        // Unrotated. A TorusMesh already lies in the XZ plane with its hole along Y, so it is
+        // flat on the ground as built; the quarter turn it used to carry stood it upright
+        // like a wheel, and an upright ring facing the camera reads as a circle drawn over
+        // the enemy rather than as a mark on the ground beneath it.
         _ring = new MeshInstance3D
         {
             Mesh = new TorusMesh { InnerRadius = Radius * 0.88f, OuterRadius = Radius, RingSegments = 28 },
             MaterialOverride = _material,
             CastShadow = GeometryInstance3D.ShadowCastingSetting.Off,
-            RotationDegrees = new Vector3(90, 0, 0),
         };
 
         AddChild(_ring);
