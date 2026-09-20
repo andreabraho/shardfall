@@ -21,6 +21,7 @@ public partial class PlayerCombat : Node
     private Combatant? _target;
     private TargetRing? _ring;
     private double _swingCooldown;
+    private bool _committed;
 
     /// <summary>Melee reach. Slightly generous so chasing a moving target is not fiddly.</summary>
     [Export] public float AttackRange { get; set; } = 2.4f;
@@ -69,12 +70,33 @@ public partial class PlayerCombat : Node
     }
 
     /// <summary>Called by PlayerController when the click landed on an enemy.</summary>
+    /// <remarks>
+    /// A click is a commitment: the character walks to this enemy and keeps swinging at it
+    /// without being asked again. That is what separates it from <see cref="Mark"/>.
+    /// </remarks>
     public void CommandAttack(Combatant enemy)
     {
         if (!enemy.IsAlive) return;
 
+        Mark(enemy);
+        _committed = true;
+    }
+
+    /// <summary>
+    /// Points the ring at an enemy without committing to chasing it.
+    /// </summary>
+    /// <remarks>
+    /// The ring means "this is who I am fighting", and a camera-aimed swing has to be able to
+    /// say that too — otherwise the ring sits on whatever was last clicked while the player
+    /// turns and hits something else entirely, which is a marker that lies. Marking without
+    /// committing is the distinction that lets it be honest: the swing moves the ring, but
+    /// only a click makes the character walk anywhere.
+    /// </remarks>
+    private void Mark(Combatant enemy)
+    {
         SetTargetBarForced(false);
         _target = enemy;
+        _committed = false;
         SetTargetBarForced(true);
 
         _ring ??= GetTree().Root.FindChild("TargetRing", recursive: true, owned: false) as TargetRing;
@@ -90,6 +112,7 @@ public partial class PlayerCombat : Node
 
         SetTargetBarForced(false);
         _target = null;
+        _committed = false;
         _ring?.Follow(null);
 
         EmitSignal(SignalName.TargetChanged);
@@ -124,10 +147,23 @@ public partial class PlayerCombat : Node
 
         if (!_target.IsAlive || !GodotObject.IsInstanceValid(_target))
         {
+            // Only a commitment is worth stopping for. The character was walking to this
+            // enemy, so standing still on arrival is right — but a marked one was never
+            // being walked to, and halting there would cancel a move order the player gave
+            // for their own reasons.
+            var chased = _committed;
+
             ClearTarget();
-            _motor.Stop();
+
+            if (chased) _motor.Stop();
+
             return;
         }
+
+        // A marked enemy is shown, not chased. Only a click asked the character to go there,
+        // and a ring that started walking the player across the field would turn the attack
+        // key into a move order nobody gave.
+        if (!_committed) return;
 
         var targetBody = _target.Body;
         var distance = _motor.GlobalPosition.DistanceTo(targetBody.GlobalPosition);
@@ -179,13 +215,27 @@ public partial class PlayerCombat : Node
         // they are aiming, and a swing that ignored that would make the camera a spectator.
         _motor.FaceTowards(aim);
 
-        // No primary: whatever is in the arc is what gets hit. A selected enemy standing
-        // behind the player is not in front of them, and a key aimed by the camera that
-        // still hit it would be lying about what aiming means.
-        Strike(aim, null);
+        // Whatever the swing connected with becomes what the ring points at, so turning and
+        // hitting something else moves the marker with you. Nothing hit clears it: a ring
+        // left over from a click, while the player swings somewhere else, is the marker
+        // pointing at one enemy and the sword at another.
+        var hit = StrikeForward(aim);
+
+        if (hit is { IsAlive: true }) Mark(hit);
+        else ClearTarget();
 
         return true;
     }
+
+    /// <summary>
+    /// The camera-aimed swing, returning the nearest enemy it caught.
+    /// </summary>
+    /// <remarks>
+    /// No primary target: whatever is in the arc is what gets hit. A selected enemy standing
+    /// behind the player is not in front of them, and a key aimed by the camera that still
+    /// reached it would be lying about what aiming means.
+    /// </remarks>
+    private Combatant? StrikeForward(Vector3 aim) => Strike(aim, null);
 
     /// <summary>Where the camera is looking, flattened to the ground.</summary>
     private Vector3 CameraForward()
@@ -200,8 +250,11 @@ public partial class PlayerCombat : Node
         return forward.LengthSquared() < 0.0001f ? _motor.Facing : forward.Normalized();
     }
 
-    /// <summary>One swing: the selected enemy if there is one, and the arc either way.</summary>
-    private void Strike(Vector3 direction, Combatant? primary)
+    /// <summary>
+    /// One swing: the selected enemy if there is one, and the arc either way. Returns the
+    /// nearest enemy it hit, which is the one the ring should point at.
+    /// </summary>
+    private Combatant? Strike(Vector3 direction, Combatant? primary)
     {
         // The primary target always takes a full hit, even if the arc maths would miss it —
         // the player explicitly selected it and a whiff would read as a bug.
@@ -209,7 +262,7 @@ public partial class PlayerCombat : Node
 
         var origin = _motor.GlobalPosition;
         var forward = direction with { Y = 0 };
-        if (forward.LengthSquared() < 0.0001f) return;
+        if (forward.LengthSquared() < 0.0001f) return primary;
 
         forward = forward.Normalized();
 
@@ -222,14 +275,31 @@ public partial class PlayerCombat : Node
         // With nothing selected the arc is the whole attack, so it swings even when cleave is
         // off: switching cleave off means an auto-attack should not splash, not that pressing
         // the attack key should do nothing.
-        if (!CleaveEnabled && primary is not null) return;
+        if (!CleaveEnabled && primary is not null) return primary;
+
+        var nearest = primary;
+        var nearestDistance = primary is null
+            ? float.MaxValue
+            : origin.DistanceTo(primary.Body.GlobalPosition);
 
         foreach (var other in AreaQuery.Cone(_motor, origin, forward, CleaveRange, CleaveAngle))
         {
             if (other == primary || !other.IsAlive) continue;
 
             other.TakeAttack(_self, weaponCoef: primary is null ? 1.0 : CleaveFalloff);
+
+            // Nearest rather than first, so the ring lands on the one the player is most
+            // obviously fighting rather than on whichever the physics query happened to
+            // return first.
+            var distance = origin.DistanceTo(other.Body.GlobalPosition);
+
+            if (distance >= nearestDistance) continue;
+
+            nearest = other;
+            nearestDistance = distance;
         }
+
+        return nearest;
     }
 
     public override void _UnhandledInput(InputEvent @event)
