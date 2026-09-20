@@ -62,6 +62,7 @@ public partial class EnemyBrain : CharacterBody3D
     private double _retreatBudget;
     private bool _returning;
     private bool _evicted;
+    private int _deadFrames;
 
     [Export] public string EnemyId { get; set; } = "mob_corrupted_wolf";
 
@@ -216,9 +217,39 @@ public partial class EnemyBrain : CharacterBody3D
 
         if (_bar is not null) _bar.Visible = false;
 
-        var tween = CreateTween();
+        // Immune to hit-stop. The freeze drives Engine.TimeScale to a ten-thousandth, and a
+        // death animation on scaled time stretches with it — so every swing the player lands
+        // while a body is sinking holds that body on the field a little longer. Fighting a
+        // camp means landing a lot of swings, which is how a corpse ends up standing there
+        // with an empty health bar looking like a creature that refused to die.
+        var tween = CreateTween().SetIgnoreTimeScale();
         tween.TweenProperty(this, "position:y", Position.Y - 1.4f, 0.6).SetDelay(0.15);
         tween.TweenCallback(Callable.From(QueueFree));
+    }
+
+    /// <summary>
+    /// Takes a body off the field even if its death animation never finishes.
+    /// </summary>
+    /// <remarks>
+    /// "A creature the player killed leaves" is a promise; a tween completing is an
+    /// implementation detail, and the promise should not depend on it. Reported rather than
+    /// silently swept up, because a corpse that needed this is evidence of something else
+    /// going wrong and the log line is the only place that survives to say so.
+    /// <para>
+    /// Counted in physics frames rather than seconds on purpose: hit-stop drives
+    /// <c>Engine.TimeScale</c> to a ten-thousandth, so a watchdog measured in scaled seconds
+    /// would stall in exactly the situation it exists to catch.
+    /// </para>
+    /// </remarks>
+    private void WatchCorpse()
+    {
+        // Generous: the animation is 0.75 s, so roughly three seconds at sixty ticks.
+        const int GraceFrames = 180;
+
+        if (++_deadFrames < GraceFrames) return;
+
+        GD.PushWarning($"[combat] '{EnemyId}' was still on the field {GraceFrames} ticks after dying. Removing it.");
+        QueueFree();
     }
 
     /// <summary>Hands the kill reward to the player.</summary>
@@ -262,7 +293,11 @@ public partial class EnemyBrain : CharacterBody3D
 
     public override void _PhysicsProcess(double delta)
     {
-        if (_dead) return;
+        if (_dead)
+        {
+            WatchCorpse();
+            return;
+        }
 
         TickCooldowns(delta);
 
