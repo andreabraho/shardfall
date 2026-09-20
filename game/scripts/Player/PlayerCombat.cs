@@ -75,6 +75,22 @@ public partial class PlayerCombat : Node
     /// <summary>How long a swept creature is out of its own control, in seconds.</summary>
     [Export] public double SweepSeconds { get; set; } = 0.35;
 
+    /// <summary>
+    /// How hard the sweep nudges the camera, on the same 0..1 scale as a hit taken.
+    /// </summary>
+    /// <remarks>
+    /// Small on purpose. The camera kick exists to punctuate something the player did not
+    /// choose — being hit — and the sweep is the opposite of that: they pressed for it and
+    /// they are already watching the creatures leave. This was first written at 0.5, which
+    /// saturates the kick's own ceiling, so the one swing the player throws most often
+    /// deliberately was also the biggest camera movement in the game.
+    /// <para>
+    /// Anything at or below <c>CameraRig.MinKickStrength</c> is no kick at all, so this is a
+    /// narrow band: the useful range is roughly 0.05 to 0.15.
+    /// </para>
+    /// </remarks>
+    [Export] public float SweepShake { get; set; } = 0.08f;
+
     public Combatant? Target => _target;
 
     [Signal] public delegate void TargetChangedEventHandler();
@@ -311,7 +327,7 @@ public partial class PlayerCombat : Node
         if (swing.Sweeps)
         {
             AoeVisual.Circle(origin, range);
-            Camera.CameraRig.Kick(-forward, 0.5f);
+            Camera.CameraRig.Kick(-forward, SweepShake);
         }
         else
         {
