@@ -18,7 +18,28 @@ public partial class TargetRing : Node3D
     private double _pulse;
 
     [Export] public Color Color { get; set; } = new(1f, 0.55f, 0.35f);
-    [Export] public float Radius { get; set; } = 0.95f;
+
+    /// <summary>Used only for a body that does not say how big it is.</summary>
+    [Export] public float Radius { get; set; } = 0.6f;
+
+    /// <summary>How far outside the creature the ring sits, as a multiple of its own width.</summary>
+    /// <remarks>
+    /// Just outside rather than generously around: the ring has to say "this one" in a
+    /// crowd, and a ring wide enough to enclose its neighbours says the opposite.
+    /// </remarks>
+    [Export] public float Margin { get; set; } = 1.35f;
+
+    /// <summary>
+    /// Width of the drawn band, in metres — constant whatever the creature's size.
+    /// </summary>
+    /// <remarks>
+    /// Not a fraction of the radius. Scaling the line with the ring would make a boss's
+    /// marker a thick smear and a rat's a hairline, when both need to be equally easy to
+    /// pick out of the ground clutter.
+    /// </remarks>
+    [Export] public float Thickness { get; set; } = 0.09f;
+
+    private float _drawnFor = -1f;
 
     public override void _Ready()
     {
@@ -38,12 +59,13 @@ public partial class TargetRing : Node3D
         // the enemy rather than as a mark on the ground beneath it.
         _ring = new MeshInstance3D
         {
-            Mesh = new TorusMesh { InnerRadius = Radius * 0.88f, OuterRadius = Radius, RingSegments = 28 },
             MaterialOverride = _material,
             CastShadow = GeometryInstance3D.ShadowCastingSetting.Off,
         };
 
         AddChild(_ring);
+        Resize(Radius);
+
         TopLevel = true;
         Visible = false;
     }
@@ -52,6 +74,39 @@ public partial class TargetRing : Node3D
     {
         _follow = body;
         Visible = body is not null;
+
+        if (body is not null) Resize(RadiusFor(body));
+    }
+
+    /// <summary>
+    /// How big the ring should be for this body.
+    /// </summary>
+    /// <remarks>
+    /// Asked of the creature rather than fixed, because one size cannot fit a rat and a
+    /// boss: the ring was drawn at nearly a metre for everything, which around a wolf half
+    /// that wide read as a circle on the floor near it rather than a mark on it.
+    /// </remarks>
+    private float RadiusFor(Node3D body)
+    {
+        var visual = body.GetNodeOrNull<Visual.VisualRoot>("VisualRoot");
+
+        return (visual?.GroundRadius ?? Radius) * Margin;
+    }
+
+    private void Resize(float radius)
+    {
+        // Rebuilt only when the size actually changes: re-marking the same creature, which
+        // every swing does, would otherwise throw away a mesh and build another every time.
+        if (Mathf.IsEqualApprox(radius, _drawnFor)) return;
+
+        _drawnFor = radius;
+
+        _ring.Mesh = new TorusMesh
+        {
+            InnerRadius = Mathf.Max(radius - Thickness, 0.02f),
+            OuterRadius = Mathf.Max(radius, 0.04f),
+            RingSegments = 28,
+        };
     }
 
     public override void _Process(double delta)

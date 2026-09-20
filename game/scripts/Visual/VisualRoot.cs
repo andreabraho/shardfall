@@ -151,7 +151,21 @@ public partial class VisualRoot : Node3D
             return;
         }
 
+        GroundRadius = (float)(def.Radius * scale);
+
         _current = VisualRegistry.Create(def, tint, scale);
         AddChild(_current);
     }
+
+    /// <summary>
+    /// How wide what is drawn here stands on the ground, in metres.
+    /// </summary>
+    /// <remarks>
+    /// Taken from the same visual definition and per-creature scale that built the mesh, so
+    /// anything drawing around a body — the target ring today — is sized by the body rather
+    /// than by a number somebody guessed once. It keeps working across the ENG-07 boundary:
+    /// when real models replace the placeholders, the radius still comes from the data that
+    /// sizes them.
+    /// </remarks>
+    public float GroundRadius { get; private set; } = 0.4f;
 }
