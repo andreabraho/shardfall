@@ -2,8 +2,11 @@
   // Sizes are the contract, not the models. Every scene in the game was laid out against the
   // numbers below — walls run end to end at eight metres because a piece is eight metres — so
   // a model is stretched to fill its box rather than the box being redrawn around the model.
-  // Collision is always built from the size too, never from the mesh, which is what makes
-  // swapping art unable to move a wall or break a navigation bake.
+  // Collision is built from the size too, never from the mesh — but the *shape* of it is its
+  // own field. That was learned the hard way: pointing the gate at a model changed its
+  // collider from two legs to one solid box and sealed the village shut, because what was
+  // drawn and what stopped you were the same word. "collision" is only written where the two
+  // differ, which is every piece that is not a box.
   //
   // Models: KayKit Dungeon Remastered 1.0, CC0. See ASSET-LICENSES.md.
   // Anything still on a primitive is there because the pack has no equivalent, not because
@@ -19,19 +22,19 @@
   { "id": "kit_wall_4",         "shape": "model",    "size": [4.0, 3.00, 0.60], "color": "#6b7280", "model_path": "res://assets/kaykit/dungeon/wall.glb" },
   { "id": "kit_wall_8",         "shape": "model",    "size": [8.0, 3.00, 0.60], "color": "#6b7280", "model_path": "res://assets/kaykit/dungeon/wall.glb" },
   { "id": "kit_wall_low_4",     "shape": "model",    "size": [4.0, 1.10, 0.50], "color": "#6b7280", "model_path": "res://assets/kaykit/dungeon/wall_half.glb" },
-  { "id": "kit_tower",          "shape": "model",    "size": [2.4, 5.50, 2.4],  "color": "#737c88", "model_path": "res://assets/kaykit/dungeon/column.glb" },
-  { "id": "kit_gate",           "shape": "model",    "size": [5.0, 4.20, 1.00], "color": "#828b97", "model_path": "res://assets/kaykit/dungeon/wall_doorway.glb" },
+  { "id": "kit_tower",          "shape": "model",    "size": [2.4, 5.50, 2.4],  "color": "#737c88", "collision": "cylinder", "model_path": "res://assets/kaykit/dungeon/column.glb" },
+  { "id": "kit_gate",           "shape": "model",    "size": [5.0, 4.20, 1.00], "color": "#828b97", "collision": "arch",     "model_path": "res://assets/kaykit/dungeon/wall_doorway.glb" },
 
   // Terrain. Cliffs are what turn an open plane into a route — and the one thing an indoor
   // pack cannot supply, so these stay primitives until an outdoor pack lands.
   { "id": "kit_cliff_8",        "shape": "box",      "size": [8.0, 6.00, 3.00], "color": "#4e5550" },
   { "id": "kit_boulder",        "shape": "sphere",   "size": [2.2, 1.90, 2.2],  "color": "#5c625c" },
-  { "id": "kit_pillar",         "shape": "model",    "size": [1.2, 4.00, 1.2],  "color": "#79817d", "model_path": "res://assets/kaykit/dungeon/pillar_decorated.glb" },
+  { "id": "kit_pillar",         "shape": "model",    "size": [1.2, 4.00, 1.2],  "color": "#79817d", "collision": "cylinder", "model_path": "res://assets/kaykit/dungeon/pillar_decorated.glb" },
 
   // Ruins — placed after the bake, so they are solid but not navigation geometry: a
   // half-collapsed wall should block the player without carving a hole in the mesh.
   { "id": "kit_ruin_wall",      "shape": "model",    "size": [3.2, 1.80, 0.55], "color": "#6a6055", "navigation": false, "model_path": "res://assets/kaykit/dungeon/wall_broken.glb" },
-  { "id": "kit_ruin_rubble",    "shape": "model",    "size": [1.6, 0.70, 1.6],  "color": "#6a6055", "navigation": false, "model_path": "res://assets/kaykit/dungeon/rubble_half.glb" },
+  { "id": "kit_ruin_rubble",    "shape": "model",    "size": [1.6, 0.70, 1.6],  "color": "#6a6055", "navigation": false, "collision": "sphere", "model_path": "res://assets/kaykit/dungeon/rubble_half.glb" },
 
   // Decoration. Walked through, never collided with, never baked.
   { "id": "kit_banner",         "shape": "model",    "size": [0.1, 2.40, 0.90], "color": "#8f4a4a", "solid": false, "navigation": false, "model_path": "res://assets/kaykit/dungeon/banner_red.glb" },

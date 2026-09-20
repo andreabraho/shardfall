@@ -493,6 +493,21 @@ public sealed class KitPieceDef : ContentDefBase
     public bool Solid { get; init; } = true;
 
     /// <summary>
+    /// The shape the collider takes, when it differs from the shape that is drawn.
+    /// </summary>
+    /// <remarks>
+    /// Separate from <see cref="Shape"/> because they are separate concerns, and the day
+    /// they shared a field proved it: pointing the gate at a model changed its collision
+    /// from two legs to one solid box, and sealed the village. What a piece looks like and
+    /// what a player can walk through must be sayable independently.
+    /// <para>
+    /// Empty means "the same as what is drawn", which is right for every primitive. A piece
+    /// with a model must state it, since a model says nothing about what should stop you.
+    /// </para>
+    /// </remarks>
+    public string Collision { get; init; } = string.Empty;
+
+    /// <summary>
     /// Whether the piece is baked into the navigation mesh. Solid-but-not-navigation is for
     /// anything placed after the bake; navigation-but-not-solid makes no sense and is rejected.
     /// </summary>

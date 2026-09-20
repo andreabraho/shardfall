@@ -206,11 +206,16 @@ public partial class KitPiece : StaticBody3D
         return material;
     }
 
+    /// <summary>The shape that stops you, which is not always the shape you see.</summary>
+    private static string CollisionShapeOf(KitPieceDef def) =>
+        def.Collision.Length > 0 ? def.Collision : def.Shape;
+
     private static List<CollisionShape3D> CollisionFor(KitPieceDef def, Vector3 size)
     {
         var shapes = new List<CollisionShape3D>();
+        var form = CollisionShapeOf(def);
 
-        if (def.Shape == "arch")
+        if (form == "arch")
         {
             // Two legs and a lintel. Walking through a gateway is the whole point of a gate,
             // and a single box would make it a wall.
@@ -229,7 +234,7 @@ public partial class KitPiece : StaticBody3D
 
         if (!Shapes.TryGetValue(key, out var shape))
         {
-            shape = def.Shape switch
+            shape = form switch
             {
                 "cylinder" => new CylinderShape3D { Radius = size.X * 0.5f, Height = size.Y },
                 "sphere" => new SphereShape3D { Radius = size.X * 0.5f },
