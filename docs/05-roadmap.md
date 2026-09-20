@@ -181,7 +181,7 @@ Option 2 is the one that adds a build decision without adding a system. Your cal
 | ITM-12 | **Economy simulator** — verifies you are yang-constrained early and comfortable later | **[C]** | ✅ runs in CI; its first honest version showed money never mattered before Act 2 |
 | ITM-13 | Item icons | **[You]** *(deferred)* | Coloured frames until art phase |
 | ITM-14 | Drop, destroy and lock items from the bag | **[C]** | ✅ added 2026-09-19 — drop is reversible so it is instant, destroy always asks, lock is the standing answer |
-| ITM-15 | The upgrade bench shows what is equipped, as icons | **[C]** | Added 2026-09-20 on your note. Small and self-contained — the bench currently makes you remember what you are wearing while deciding what to improve |
+| ITM-15 | The upgrade bench shows what is equipped, as icons | **[C]** | ✅ Added 2026-09-20 on your note. Small and self-contained — the bench currently makes you remember what you are wearing while deciding what to improve. A rarity tile, ringed when worn, plus the slot name. The tile is the placeholder ITM-13 replaces |
 
 ---
 

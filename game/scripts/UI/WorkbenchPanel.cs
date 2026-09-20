@@ -390,30 +390,40 @@ public partial class WorkbenchPanel : CanvasLayer
     {
         foreach (var child in _itemList.GetChildren()) child.QueueFree();
 
-        var candidates = new List<ItemInstance>();
+        // Worn first, then the bag — and each row carries which it is (ITM-15). The bench is
+        // where the player decides what to improve, and that decision is mostly "is this the
+        // thing I am actually wearing?". Leaving it to be inferred from the order made them
+        // hold the list's shape in their head to read a single row.
+        var candidates = new List<(ItemInstance Item, EquipSlot? Worn)>();
 
         foreach (var slot in System.Enum.GetValues<EquipSlot>())
         {
-            if (_inventory!.Gear.In(slot) is { } worn) candidates.Add(worn);
+            if (_inventory!.Gear.In(slot) is { } worn) candidates.Add((worn, slot));
         }
 
         candidates.AddRange(_inventory!.Bag.Items
             .Select(p => p.Item)
-            .Where(i => GameItems.Spec(i.DefId)?.IsEquipment == true));
+            .Where(i => GameItems.Spec(i.DefId)?.IsEquipment == true)
+            .Select(i => (i, (EquipSlot?)null)));
 
-        foreach (var item in candidates)
+        foreach (var (item, worn) in candidates)
         {
             var spec = GameItems.Spec(item.DefId);
+            var rarity = spec?.Rarity ?? Rarity.Common;
 
             var button = new Button
             {
-                Text = GameItems.NameOf(item),
+                Text = worn is null
+                    ? GameItems.NameOf(item)
+                    : $"{GameItems.NameOf(item)}   ·   {ItemIcon.NameOf(worn.Value)}",
                 Alignment = HorizontalAlignment.Left,
                 TooltipText = ItemText.Tooltip(item),
                 Disabled = ReferenceEquals(item, _selected),
+                Icon = ItemIcon.For(rarity, worn is not null),
+                ExpandIcon = false,
             };
 
-            button.AddThemeColorOverride("font_color", World.LootDrop.RarityColour(spec?.Rarity ?? Rarity.Common));
+            button.AddThemeColorOverride("font_color", World.LootDrop.RarityColour(rarity));
 
             var captured = item;
             button.Pressed += () =>
@@ -427,7 +437,10 @@ public partial class WorkbenchPanel : CanvasLayer
         }
 
         if (candidates.Count == 0) _selected = null;
-        else if (_selected is not null && !candidates.Any(c => ReferenceEquals(c, _selected))) _selected = candidates[0];
+        else if (_selected is not null && !candidates.Any(c => ReferenceEquals(c.Item, _selected)))
+        {
+            _selected = candidates[0].Item;
+        }
     }
 
     private void RefreshUpgrade()
