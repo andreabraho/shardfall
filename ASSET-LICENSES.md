@@ -1,3 +1,4 @@
+| KayKit Character Pack: Adventurers 1.0 — Knight (the player), Barbarian (heavy enemies) ||
 # Asset licences
 
 **Rule (doc 00 §2): every third-party asset gets an entry here the moment it enters the

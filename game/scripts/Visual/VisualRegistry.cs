@@ -33,7 +33,12 @@ public static class VisualRegistry
             if (packed is not null)
             {
                 var instance = packed.Instantiate<Node3D>();
-                instance.Scale = Vector3.One * (float)scale;
+
+                // Scaled to the height the data declares, not to the size its author worked
+                // in, and then the per-creature scale on top. Without this a model lands at
+                // whatever metre-per-unit its pack used and a wolf stands taller than a wall.
+                ModelFit.ByHeight(instance, (float)(def.Height * scale));
+
                 return instance;
             }
 

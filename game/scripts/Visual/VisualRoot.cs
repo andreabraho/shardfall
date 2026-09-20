@@ -37,6 +37,7 @@ public partial class VisualRoot : Node3D
     private Vector3 _restPosition;
     private Vector3 _lungeDirection;
     private double _lunge;
+    private ModelAnimator? _animator;
     private double _lungeDuration;
     private float _lungeDistance;
 
@@ -47,14 +48,23 @@ public partial class VisualRoot : Node3D
     /// With placeholder capsules and no skeletal animation, a basic attack was completely
     /// invisible against a single enemy: the only feedback was the victim's flash and a
     /// damage number, so the player could not tell an attack from standing still. This is the
-    /// cheapest motion that reads as "I swung", and it is thrown away the moment real attack
-    /// animations exist.
+    /// cheapest motion that reads as "I swung".
+    /// <para>
+    /// A model that can animate plays the swing instead, and the shove is dropped rather than
+    /// layered on top — a body that both swings and slides forward reads as skating.
+    /// </para>
     /// </remarks>
     public void Lunge(Vector3 direction, float distance = 0.35f, double seconds = 0.18)
     {
         var flat = direction with { Y = 0 };
 
         if (flat.LengthSquared() < 0.0001f) return;
+
+        if (_animator is { Ready: true })
+        {
+            _animator.Attack();
+            return;
+        }
 
         _lungeDirection = flat.Normalized();
         _lungeDistance = distance;
@@ -155,6 +165,32 @@ public partial class VisualRoot : Node3D
 
         _current = VisualRegistry.Create(def, tint, scale);
         AddChild(_current);
+
+        AdoptAnimator();
+    }
+
+    /// <summary>
+    /// Hands the new model to an animator, if it brought animations with it.
+    /// </summary>
+    /// <remarks>
+    /// The animator is a child of this node rather than of the model, so replacing the visual
+    /// — which happens whenever an enemy's definition is applied — cannot leave a second one
+    /// running against a freed skeleton.
+    /// </remarks>
+    private void AdoptAnimator()
+    {
+        _animator?.QueueFree();
+        _animator = null;
+
+        if (_current is null) return;
+
+        var animator = new ModelAnimator { Name = "Animator" };
+
+        AddChild(animator);
+        animator.Adopt(_current, this);
+
+        if (animator.Ready) _animator = animator;
+        else animator.QueueFree();
     }
 
     /// <summary>
