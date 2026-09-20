@@ -59,7 +59,7 @@ public partial class PlayerCombat : Node
         _motor = GetParent<PlayerMotor>();
         _self = GetParent().GetNode<Combatant>("Combatant");
 
-        Debug.DebugOverlay.Register("combat", () =>
+        Debug.DebugOverlay.Register("combat", this, () =>
             _target is { IsAlive: true }
                 ? $"target={_target.DisplayName} hp={_target.Health}"
                 : "no target");

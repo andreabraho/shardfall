@@ -131,7 +131,7 @@
     "name": "$zone.zone_vale_floor.name",
     "kind": "wilds",
     "level_band": [7, 11],
-    "scene": "",
+    "scene": "res://scenes/vale_floor.tscn",
     "exits": [
       { "to": "zone_vale_approach" },
       { "to": "zone_ridge", "required_level": 10 }
@@ -188,9 +188,6 @@
     "shrines": [
       { "id": "shr_ridge_watch", "name": "$shrine.shr_ridge_watch.name", "fast_travel": true },
       { "id": "shr_ridge_spur", "name": "$shrine.shr_ridge_spur.name", "fast_travel": true }
-    ],
-    "safe_regions": [
-      { "id": "saf_ridge_outpost", "name": "$safe.saf_ridge_outpost.name", "radius": 12 }
     ],
     "spawn_fields": [
       {

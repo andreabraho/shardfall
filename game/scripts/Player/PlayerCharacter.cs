@@ -77,8 +77,8 @@ public partial class PlayerCharacter : Node
         _combatant.Damaged += OnDamaged;
         _combatant.Died += OnDied;
 
-        Debug.DebugOverlay.Register("hp", () => $"{_combatant.Health} ({_combatant.Health.Fraction:P0})");
-        Debug.DebugOverlay.Register("level", () =>
+        Debug.DebugOverlay.Register("hp", this, () => $"{_combatant.Health} ({_combatant.Health.Fraction:P0})");
+        Debug.DebugOverlay.Register("level", this, () =>
             $"{Progression.Level} — {Progression.Experience}/{Progression.ExperienceForNextLevel} xp");
 
         // Skills the starting level already allows.

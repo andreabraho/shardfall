@@ -101,7 +101,7 @@ public partial class ShardNode : StaticBody3D
 
         CallDeferred(nameof(Arm));
 
-        Debug.DebugOverlay.Register("shard", () => _fight is null
+        Debug.DebugOverlay.Register("shard", this, () => _fight is null
             ? "none"
             : $"{ShardId} {_fight.Phase} {_self.Health.Fraction:P0} {_modifier}"
               + (_fight.IsReclaiming ? $" reclaim {_fight.ReclamationRemaining:F1}s" : ""));

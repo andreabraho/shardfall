@@ -50,7 +50,7 @@ public partial class PlayerController : Node
         _marker ??= GetTree().Root.FindChild("ClickMarker", recursive: true, owned: false) as ClickMarker;
         _cursor = GetTree().Root.FindChild("CursorManager", recursive: true, owned: false) as CursorManager;
 
-        Debug.DebugOverlay.Register("player", () =>
+        Debug.DebugOverlay.Register("player", this, () =>
             $"mode={_motor.Mode} moving={_motor.IsMoving} order={_motor.HasActiveOrder} " +
             $"speed={(_motor.Velocity with { Y = 0 }).Length():F1}");
     }

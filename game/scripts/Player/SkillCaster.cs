@@ -63,7 +63,7 @@ public partial class SkillCaster : Node
         _book = character?.Skills;
         _progression = character?.Progression;
 
-        Debug.DebugOverlay.Register("skills", () =>
+        Debug.DebugOverlay.Register("skills", this, () =>
         {
             var parts = new List<string>();
             for (var i = 0; i < Hotbar.Length; i++)

@@ -1,0 +1,252 @@
+[gd_scene load_steps=13 format=3]
+
+; zone_vale_floor — the second field map (WLD-05), band 7–11.
+;
+; Deliberately the opposite shape to the Approach. That one is a corridor the player is
+; pushed along; this is a basin they cross, with the two shrines far apart and the camps
+; between them. A chain of maps that are all corridors is one long map with loading screens
+; in it, so the second one has to be somewhere you choose a line through.
+;
+; The barrow mounds are the landmark: they block sight rather than movement, so the far side
+; of the basin is revealed by walking, not by arriving.
+
+[ext_resource type="Script" path="res://scripts/World/ZoneRoot.cs" id="1_zoneroot"]
+[ext_resource type="Script" path="res://scripts/World/NavBaker.cs" id="2_navbaker"]
+[ext_resource type="Script" path="res://scripts/World/KitPiece.cs" id="3_kit"]
+[ext_resource type="Script" path="res://scripts/World/SpawnFieldNode.cs" id="4_spawnfield"]
+[ext_resource type="Script" path="res://scripts/World/ShrineNode.cs" id="5_shrine"]
+[ext_resource type="Script" path="res://scripts/World/ShardNode.cs" id="6_shard"]
+[ext_resource type="Script" path="res://scripts/Visual/VisualRoot.cs" id="7_visualroot"]
+[ext_resource type="Script" path="res://scripts/World/ZoneGate.cs" id="8_gate"]
+[ext_resource type="Script" path="res://scripts/World/ZoneArrival.cs" id="9_arrival"]
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="10_player"]
+[ext_resource type="PackedScene" path="res://scenes/session.tscn" id="11_session"]
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_floor"]
+vertices = PackedVector3Array()
+cell_size = 0.15
+cell_height = 0.15
+agent_height = 1.8
+agent_radius = 0.45
+agent_max_climb = 0.3
+agent_max_slope = 45.0
+geometry_parsed_geometry_type = 1
+geometry_collision_mask = 1
+geometry_source_geometry_mode = 1
+geometry_source_group_name = "navsource"
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+size = Vector2(200, 150)
+
+[sub_resource type="StandardMaterial3D" id="Material_ground"]
+albedo_color = Color(0.2, 0.21, 0.19, 1)
+roughness = 0.95
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
+size = Vector3(200, 1, 150)
+
+[sub_resource type="Environment" id="Environment_floor"]
+background_mode = 1
+background_color = Color(0.08, 0.09, 0.11, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.42, 0.44, 0.5, 1)
+ambient_light_energy = 0.38
+
+[node name="ValeFloor" type="Node3D"]
+script = ExtResource("1_zoneroot")
+ZoneId = "zone_vale_floor"
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_floor")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.8660254, -0.25, 0.4330127, 0, 0.8660254, 0.5, -0.5, -0.4330127, 0.75, 0, 14, 0)
+shadow_enabled = true
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("NavigationMesh_floor")
+script = ExtResource("2_navbaker")
+
+[node name="Ground" type="StaticBody3D" parent="NavigationRegion3D" groups=["navsource"]]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Ground"]
+mesh = SubResource("PlaneMesh_ground")
+surface_material_override/0 = SubResource("Material_ground")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Ground"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = SubResource("BoxShape3D_ground")
+
+; -- The rim -------------------------------------------------------------------
+; Cliffs only at the far north and south, so the basin is bounded without being a tube.
+
+[node name="Rim" type="Node3D" parent="NavigationRegion3D"]
+
+[node name="RimN1" type="StaticBody3D" parent="NavigationRegion3D/Rim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -56, 3, -56)
+script = ExtResource("3_kit")
+PieceId = "kit_cliff_8"
+
+[node name="RimN2" type="StaticBody3D" parent="NavigationRegion3D/Rim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 3, -56)
+script = ExtResource("3_kit")
+PieceId = "kit_cliff_8"
+
+[node name="RimN3" type="StaticBody3D" parent="NavigationRegion3D/Rim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32, 3, -58)
+script = ExtResource("3_kit")
+PieceId = "kit_cliff_8"
+
+[node name="RimN4" type="StaticBody3D" parent="NavigationRegion3D/Rim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 3, -58)
+script = ExtResource("3_kit")
+PieceId = "kit_cliff_8"
+
+[node name="RimS1" type="StaticBody3D" parent="NavigationRegion3D/Rim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 3, 56)
+script = ExtResource("3_kit")
+PieceId = "kit_cliff_8"
+
+[node name="RimS2" type="StaticBody3D" parent="NavigationRegion3D/Rim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 3, 56)
+script = ExtResource("3_kit")
+PieceId = "kit_cliff_8"
+
+[node name="RimS3" type="StaticBody3D" parent="NavigationRegion3D/Rim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52, 3, 54)
+script = ExtResource("3_kit")
+PieceId = "kit_cliff_8"
+
+; -- The barrows ---------------------------------------------------------------
+; Mounds and broken walls in the middle of the basin. Tall enough to hide what is behind
+; them, low enough that the player can see over them from a few paces back.
+
+[node name="Barrows" type="Node3D" parent="NavigationRegion3D"]
+
+[node name="MoundA" type="StaticBody3D" parent="NavigationRegion3D/Barrows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.95, 16)
+script = ExtResource("3_kit")
+PieceId = "kit_boulder"
+
+[node name="MoundB" type="StaticBody3D" parent="NavigationRegion3D/Barrows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.95, 22)
+script = ExtResource("3_kit")
+PieceId = "kit_boulder"
+
+[node name="MoundC" type="StaticBody3D" parent="NavigationRegion3D/Barrows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34, 0.95, -18)
+script = ExtResource("3_kit")
+PieceId = "kit_boulder"
+
+[node name="PillarA" type="StaticBody3D" parent="NavigationRegion3D/Barrows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 2, -6)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="PillarB" type="StaticBody3D" parent="NavigationRegion3D/Barrows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 2, -4)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="RuinA" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0.9, 30)
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_wall"
+
+[node name="RuinB" type="StaticBody3D" parent="."]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 27, 0.9, 33)
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_wall"
+
+[node name="RubbleA" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -36, 0.35, -12)
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_rubble"
+
+[node name="PostWest" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -76, 1.1, 4)
+script = ExtResource("3_kit")
+PieceId = "kit_marker_post"
+
+[node name="PostEast" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 78, 1.1, 4)
+script = ExtResource("3_kit")
+PieceId = "kit_marker_post"
+
+; -- Session, player and the two borders ---------------------------------------
+
+[node name="Player" parent="." instance=ExtResource("10_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -82, 0.1, 0)
+
+[node name="Session" parent="." instance=ExtResource("11_session")]
+
+[node name="Enemies" type="Node3D" parent="."]
+
+[node name="GateToApproach" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -92, 0, 0)
+script = ExtResource("8_gate")
+ToZone = "zone_vale_approach"
+
+[node name="ArrivalFromApproach" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -82, 0.1, 0)
+script = ExtResource("9_arrival")
+FromZone = "zone_vale_approach"
+
+[node name="GateToRidge" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 92, 0, 0)
+script = ExtResource("8_gate")
+ToZone = "zone_ridge"
+
+[node name="ArrivalFromRidge" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 82, 0.1, 0)
+script = ExtResource("9_arrival")
+FromZone = "zone_ridge"
+
+; Two shrines at opposite ends, so crossing the basin is not something the player has to
+; undo when they die halfway.
+[node name="ShrineCairn" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 0.1, 10)
+script = ExtResource("5_shrine")
+ShrineId = "shr_floor_cairn"
+
+[node name="VisualRoot" type="Node3D" parent="ShrineCairn"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+script = ExtResource("7_visualroot")
+VisualId = "mesh_placeholder_shrine"
+
+[node name="ShrineBarrows" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54, 0.1, -12)
+script = ExtResource("5_shrine")
+ShrineId = "shr_floor_barrows"
+
+[node name="VisualRoot" type="Node3D" parent="ShrineBarrows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+script = ExtResource("7_visualroot")
+VisualId = "mesh_placeholder_shrine"
+
+[node name="GnawerNest" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0, -30)
+script = ExtResource("4_spawnfield")
+FieldId = "spf_floor_gnawers"
+
+[node name="BarrowLine" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, 28)
+script = ExtResource("4_spawnfield")
+FieldId = "spf_floor_barrow_line"
+
+[node name="BloatPit" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64, 0, 24)
+script = ExtResource("4_spawnfield")
+FieldId = "spf_floor_bloat_pit"
+
+[node name="Shard" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.1, -42)
+script = ExtResource("6_shard")
+ShardId = "shd_hollow_bloom"
+
+[node name="VisualRoot" type="Node3D" parent="Shard"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+script = ExtResource("7_visualroot")
+VisualId = "mesh_placeholder_monolith"

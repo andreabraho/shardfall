@@ -61,7 +61,7 @@ public partial class DefensiveAbility : Node
             if (IsGuarding && !evaded) _visual.Flash();
         };
 
-        Debug.DebugOverlay.Register("guard", () =>
+        Debug.DebugOverlay.Register("guard", this, () =>
             IsGuarding ? $"GUARDING {_active:F1}s" : _cooldown > 0 ? $"cd {_cooldown:F1}s" : "ready");
     }
 

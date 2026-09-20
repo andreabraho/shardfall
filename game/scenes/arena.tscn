@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3]
+[gd_scene load_steps=20 format=3]
 
 ; zone_ridge — the greybox stand-in for the ridge (WLD-05 replaces the layout).
 ;
@@ -15,11 +15,12 @@
 [ext_resource type="Script" path="res://scripts/World/SpawnFieldNode.cs" id="20_spawnfield"]
 [ext_resource type="Script" path="res://scripts/World/ShrineNode.cs" id="21_shrine"]
 [ext_resource type="Script" path="res://scripts/World/KitPiece.cs" id="24_kit"]
-[ext_resource type="Script" path="res://scripts/World/SafeZoneNode.cs" id="25_safe"]
 [ext_resource type="Script" path="res://scripts/World/ShardNode.cs" id="16_shard"]
 [ext_resource type="Script" path="res://scripts/Visual/VisualRoot.cs" id="17_visualroot"]
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="5_player"]
 [ext_resource type="PackedScene" path="res://scenes/session.tscn" id="26_session"]
+[ext_resource type="Script" path="res://scripts/World/ZoneGate.cs" id="27_gate"]
+[ext_resource type="Script" path="res://scripts/World/ZoneArrival.cs" id="28_arrival"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_arena"]
 vertices = PackedVector3Array()
@@ -213,16 +214,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
 script = ExtResource("17_visualroot")
 VisualId = "mesh_placeholder_shrine"
 
-[node name="Shard" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -24)
-script = ExtResource("16_shard")
-ShardId = "shd_hollow_bloom"
-
-[node name="VisualRoot" type="Node3D" parent="Shard"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
-script = ExtResource("17_visualroot")
-VisualId = "mesh_placeholder_monolith"
-
 [node name="Shard2" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0.1, 22)
 script = ExtResource("16_shard")
@@ -309,8 +300,24 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0.95, -3)
 script = ExtResource("24_kit")
 PieceId = "kit_boulder"
 
-; WLD-12: the compound is safe ground. The walls are decoration; this marker is the promise.
-; Placed as a child of Compound so moving the compound moves the village with it.
-[node name="SafeGround" type="Node3D" parent="NavigationRegion3D/Compound"]
-script = ExtResource("25_safe")
-RegionId = "saf_ridge_outpost"
+; The ridge sits between the Vale Floor and the Broken Gate. The eastern border leads
+; somewhere that has no scene yet, and the gate says so rather than pretending the road ends.
+[node name="GateToFloor" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28, 0, 0)
+script = ExtResource("27_gate")
+ToZone = "zone_vale_floor"
+
+[node name="ArrivalFromFloor" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0.1, 0)
+script = ExtResource("28_arrival")
+FromZone = "zone_vale_floor"
+
+[node name="GateToBrokenGate" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0, 0)
+script = ExtResource("27_gate")
+ToZone = "zone_broken_gate"
+
+[node name="ArrivalFromBrokenGate" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0.1, 0)
+script = ExtResource("28_arrival")
+FromZone = "zone_broken_gate"

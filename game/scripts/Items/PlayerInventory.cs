@@ -57,7 +57,7 @@ public partial class PlayerInventory : Node
         // scene, so it has to be re-applied on arrival rather than only when gear changes.
         CallDeferred(nameof(ApplyToStats));
 
-        Debug.DebugOverlay.Register("yang", () => $"{Bag.Yang:N0} ({Bag.FreeCells} free cells)");
+        Debug.DebugOverlay.Register("yang", this, () => $"{Bag.Yang:N0} ({Bag.FreeCells} free cells)");
     }
 
     /// <summary>

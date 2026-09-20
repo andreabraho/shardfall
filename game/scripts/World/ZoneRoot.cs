@@ -33,7 +33,7 @@ public partial class ZoneRoot : Node3D
         PlaceArrivingPlayer();
         Audit();
 
-        Debug.DebugOverlay.Register("zone", () =>
+        Debug.DebugOverlay.Register("zone", this, () =>
         {
             var zone = GameWorld.CurrentZone;
 
@@ -134,6 +134,21 @@ public partial class ZoneRoot : Node3D
         foreach (var missing in unbuilt)
         {
             GD.PushWarning($"[gate] '{ZoneId}' exits to '{missing}' but the scene places no gate for it.");
+        }
+
+        // Which shards a zone hosts is content; where they stand is level design. A scene
+        // placing one that belongs elsewhere gives the world two of it, each with its own
+        // cooldown and its own drops — and the arena had exactly that until this rule existed.
+        var hosted = GameWorld.Graph[ZoneId] is null
+            ? []
+            : GameContent.Database.Zones[ZoneId].Shards.ToHashSet(System.StringComparer.Ordinal);
+
+        foreach (var node in GetTree().GetNodesInGroup("shards"))
+        {
+            if (node is ShardNode shard && !hosted.Contains(shard.ShardId))
+            {
+                GD.PushError($"[shard] '{shard.ShardId}' stands in '{ZoneId}', which does not host it.");
+            }
         }
 
         foreach (var node in GetTree().GetNodesInGroup("spawn_fields"))

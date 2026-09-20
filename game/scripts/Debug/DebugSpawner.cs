@@ -25,7 +25,7 @@ public partial class DebugSpawner : Node
 
         GD.Print("[spawner] F5 clears every enemy · F6 spawns one next to you · F7 freezes the fields");
 
-        DebugOverlay.Register("spawner", () =>
+        DebugOverlay.Register("spawner", this, () =>
             $"{World.GameWorld.LivingEnemies(GetTree())}/{World.GameWorld.PopulationCap} alive"
             + (Frozen ? " · fields frozen" : ""));
     }

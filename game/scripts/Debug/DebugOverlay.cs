@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections.Generic;
 using Godot;
 
@@ -24,6 +25,35 @@ public partial class DebugOverlay : CanvasLayer
     /// <code>DebugOverlay.Register("combat", () => $"targets={_targets.Count}");</code>
     /// </summary>
     public static void Register(string key, System.Func<string> provider) => Providers[key] = provider;
+
+    /// <summary>
+    /// Registers a line owned by a scene node, dropped when that node goes.
+    /// </summary>
+    /// <remarks>
+    /// The overlay is an autoload and outlives every scene. A line registered by a node in a
+    /// zone scene keeps being asked for its value after a gate replaces that scene, and the
+    /// closure reaches through a freed node — which is an error per line, per frame, forever.
+    /// Passing the owner is what lets the overlay let go.
+    /// </remarks>
+    public static void Register(string key, Node owner, System.Func<string> provider)
+    {
+        Owners[key] = owner;
+        Providers[key] = provider;
+    }
+
+    private static readonly Dictionary<string, Node> Owners = [];
+
+    /// <summary>Forgets lines whose owning node has been freed or taken out of the tree.</summary>
+    private static void DropOrphans()
+    {
+        foreach (var key in Owners.Keys.ToList())
+        {
+            if (GodotObject.IsInstanceValid(Owners[key]) && Owners[key].IsInsideTree()) continue;
+
+            Owners.Remove(key);
+            Providers.Remove(key);
+        }
+    }
 
     public static void Unregister(string key) => Providers.Remove(key);
 
@@ -75,6 +105,8 @@ public partial class DebugOverlay : CanvasLayer
         sb.AppendLine($"FPS {Engine.GetFramesPerSecond():F0}   frame {frameMs:F1} ms   worst {_worstFrameMs:F1} ms");
         sb.AppendLine($"nodes {GetTree().GetNodeCount()}   objects {Performance.GetMonitor(Performance.Monitor.ObjectCount):F0}");
         sb.AppendLine($"draw calls {Performance.GetMonitor(Performance.Monitor.RenderTotalDrawCallsInFrame):F0}");
+
+        DropOrphans();
 
         foreach (var (key, provider) in Providers)
         {
