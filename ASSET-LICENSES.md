@@ -10,12 +10,32 @@ attribution is required in-game.
 
 | Asset | Path | Source | Licence | Attribution required | Added |
 |---|---|---|---|---|---|
-| _(none yet — all visuals are procedurally generated primitives, see `game/scripts/Visual/VisualRegistry.cs`)_ | | | | | |
+| KayKit Dungeon Remastered 1.0 — 14 models (walls, floor, stairs, pillar, column, rubble, banner, torches) | `game/assets/kaykit/dungeon/` | [github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0](https://github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0) | **CC0 1.0** | No | 2026-09-20 |
+| KayKit Character Pack: Adventurers 1.0 — Knight, Barbarian | `game/assets/kaykit/characters/` | [github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0](https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0) | **CC0 1.0** | No | 2026-09-20 |
+| KayKit Character Pack: Skeletons 1.0 — Warrior, Rogue, Mage, Minion | `game/assets/kaykit/characters/` | [github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0](https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0) | **CC0 1.0** | No | 2026-09-20 |
 
-## Currently clean
+All three are by Kay Lousberg (www.kaylousberg.com). The packs' own `LICENSE.txt` files are
+kept verbatim beside the models, in `game/assets/kaykit/`, and each states Creative Commons
+Zero with a link to the deed, explicitly permitting commercial use and explicitly making
+credit optional.
 
-The project contains **no third-party assets**. Every visual is a Godot primitive mesh
-generated at runtime from `game/data/tables/visuals.json`, and all code is original.
+**The licence text was read before anything was committed, not the download page.** GitHub's
+own licence detector reports `NOASSERTION` for all three repositories, which means only that
+its matcher did not recognise the file's wording — the files themselves name CC0 plainly.
+
+Crediting is not required, and we will do it anyway in the credits screen when there is one:
+an author who gives work away for nothing is the cheapest possible thing to be generous
+about.
+
+**Only the models actually used are in the repo.** The packs together hold over two hundred
+models; carrying the rest would be paying repository weight for things no scene references.
+Adding another is a copy, and another row here.
+
+## What is still procedural
+
+Everything with no row above. Cliffs, boulders, shrubs and marker posts stay Godot primitives
+because the pack is a *dungeon* pack and has no outdoor geometry — a rubble pile standing in
+for a cliff would look worse than the honest grey box it replaced.
 
 ## When art starts (Phase 9)
 

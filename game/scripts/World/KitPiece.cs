@@ -112,6 +112,7 @@ public partial class KitPiece : StaticBody3D
             if (ResourceLoader.Load<PackedScene>(def.ModelPath)?.Instantiate<Node3D>() is { } instance)
             {
                 AddChild(instance);
+                FitToBox(instance, size);
             }
             else
             {
@@ -153,6 +154,97 @@ public partial class KitPiece : StaticBody3D
         // nodes the zone is built from. A map drawn from a second description of the level
         // is a map that goes stale the first time somebody moves a wall.
         AddToGroup("kit");
+    }
+
+    /// <summary>
+    /// Squeezes a model into the box its piece declares, centred exactly where the primitive
+    /// it replaces would have been.
+    /// </summary>
+    /// <remarks>
+    /// The greybox is dimensioned. A wall segment is eight metres because the scene that
+    /// placed it counted on eight, and half the layouts in the game are runs of pieces laid
+    /// end to end — a model dropped in at its own scale would leave gaps in walls that are
+    /// only walls because they have none. So the model fills the declared box rather than the
+    /// box being redrawn around the model.
+    /// <para>
+    /// Stretched rather than fitted inside, and non-uniformly when the proportions differ.
+    /// That is the right trade here: the piece replaces a box of exactly these dimensions and
+    /// the scenes were built against them, so filling them is the contract. When a piece ends
+    /// up looking squashed, the fix is its declared size in <c>world_kit.json</c> — which is
+    /// where the decision belongs anyway, because it moves the collision with it.
+    /// </para>
+    /// <para>
+    /// Collision is untouched by any of this: it is still a box built from the declared size,
+    /// so navigation, physics and the audits cannot be changed by swapping art. That is the
+    /// property that makes this safe to do to a game that already has maps in it.
+    /// </para>
+    /// </remarks>
+    private static void FitToBox(Node3D instance, Vector3 size)
+    {
+        var bounds = LocalBounds(instance);
+
+        if (bounds.Size.X <= 0.0001f || bounds.Size.Y <= 0.0001f || bounds.Size.Z <= 0.0001f)
+        {
+            return;
+        }
+
+        var scale = new Vector3(size.X / bounds.Size.X, size.Y / bounds.Size.Y, size.Z / bounds.Size.Z);
+
+        instance.Scale = scale;
+
+        // Kit models put their origin at the foot; the primitives they replace are centred on
+        // the node. Lining up the two centres is what keeps a swapped piece in the same place.
+        instance.Position = -(bounds.Position + (bounds.Size * 0.5f)) * scale;
+    }
+
+    /// <summary>The combined extent of every mesh under a node, in that node's own space.</summary>
+    private static Aabb LocalBounds(Node3D root)
+    {
+        var bounds = new Aabb();
+        var found = false;
+
+        void Walk(Node node, Transform3D relative)
+        {
+            if (node is MeshInstance3D { Mesh: not null } mesh)
+            {
+                var box = Transformed(relative, mesh.Mesh.GetAabb());
+
+                bounds = found ? bounds.Merge(box) : box;
+                found = true;
+            }
+
+            foreach (var child in node.GetChildren())
+            {
+                Walk(child, child is Node3D spatial ? relative * spatial.Transform : relative);
+            }
+        }
+
+        Walk(root, Transform3D.Identity);
+
+        return bounds;
+    }
+
+    /// <summary>
+    /// An AABB moved into another space, by its corners.
+    /// </summary>
+    /// <remarks>
+    /// The eight corners rather than the two extremes: under rotation the extremes of the
+    /// transformed box are not the transforms of the extremes, and kit models are full of
+    /// rotated sub-meshes.
+    /// </remarks>
+    private static Aabb Transformed(Transform3D transform, Aabb box)
+    {
+        var result = new Aabb(transform * box.Position, Vector3.Zero);
+
+        for (var corner = 1; corner < 8; corner++)
+        {
+            result = result.Expand(transform * (box.Position + new Vector3(
+                (corner & 1) == 0 ? 0 : box.Size.X,
+                (corner & 2) == 0 ? 0 : box.Size.Y,
+                (corner & 4) == 0 ? 0 : box.Size.Z)));
+        }
+
+        return result;
     }
 
     private static Vector3 Size(KitPieceDef def) => def.Size.Length == 3
