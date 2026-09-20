@@ -145,6 +145,43 @@ public partial class PlayerMotor : CharacterBody3D
         return toNext.LengthSquared() > 0.0001f ? toNext.Normalized() : Vector3.Zero;
     }
 
+    /// <summary>
+    /// Which way the character is actually facing, on the ground plane.
+    /// </summary>
+    /// <remarks>
+    /// Read from the visual rather than from this body, which never turns: the body keeps
+    /// its spawn rotation for the whole game and only <c>VisualRoot</c> swings. Anything that
+    /// asked the body which way it was pointing got the same answer forever — which is how
+    /// the attack key ended up swinging north whatever the player could see.
+    /// </remarks>
+    public Vector3 Facing
+    {
+        get
+        {
+            if (_visual is null) return -GlobalBasis.Z;
+
+            var yaw = _visual.Rotation.Y;
+
+            return new Vector3(-Mathf.Sin(yaw), 0, -Mathf.Cos(yaw));
+        }
+    }
+
+    /// <summary>Turns the character to look along a direction, immediately.</summary>
+    /// <remarks>
+    /// Snapped rather than eased, because its caller is an attack: a swing that lands before
+    /// the character has finished turning points somewhere nobody aimed at.
+    /// </remarks>
+    public void FaceTowards(Vector3 direction)
+    {
+        var flat = direction with { Y = 0 };
+
+        if (_visual is null || flat.LengthSquared() < 0.0001f) return;
+
+        flat = flat.Normalized();
+
+        _visual.Rotation = _visual.Rotation with { Y = Mathf.Atan2(-flat.X, -flat.Z) };
+    }
+
     private void FaceMovement(double delta)
     {
         if (_visual is null) return;

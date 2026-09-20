@@ -172,9 +172,32 @@ public partial class PlayerCombat : Node
 
         _swingCooldown = 1.0 / Math.Max(0.1, _self.Stats.AttacksPerSecond);
 
-        Strike(-_motor.GlobalBasis.Z, _target is { IsAlive: true } ? _target : null);
+        var aim = CameraForward();
+
+        // The character turns to the swing rather than the swing bending to the character.
+        // With the camera on the right mouse button, where the player is looking is where
+        // they are aiming, and a swing that ignored that would make the camera a spectator.
+        _motor.FaceTowards(aim);
+
+        // No primary: whatever is in the arc is what gets hit. A selected enemy standing
+        // behind the player is not in front of them, and a key aimed by the camera that
+        // still hit it would be lying about what aiming means.
+        Strike(aim, null);
 
         return true;
+    }
+
+    /// <summary>Where the camera is looking, flattened to the ground.</summary>
+    private Vector3 CameraForward()
+    {
+        var camera = GetViewport().GetCamera3D();
+
+        if (camera is null) return _motor.Facing;
+
+        var forward = -camera.GlobalTransform.Basis.Z with { Y = 0 };
+
+        // Looking straight down leaves nothing to flatten; keep the character's own facing.
+        return forward.LengthSquared() < 0.0001f ? _motor.Facing : forward.Normalized();
     }
 
     /// <summary>One swing: the selected enemy if there is one, and the arc either way.</summary>

@@ -128,7 +128,10 @@ public partial class PlayerController : Node
         var forward = -(basis.Z with { Y = 0 }).Normalized();
         var right = (basis.X with { Y = 0 }).Normalized();
 
-        return (right * input.X) + (forward * input.Y);
+        // GetVector's Y is negative-up — it is built for screen coordinates, so holding
+        // forward reads as -1. Left as it came, W walked away from the camera backwards,
+        // which is what the scheme did for as long as it sat behind the F4 toggle.
+        return (right * input.X) - (forward * input.Y);
     }
 
     private void HandleClickToMove(double delta)
