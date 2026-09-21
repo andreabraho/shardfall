@@ -309,14 +309,24 @@ enemy tier +1, new elite variants, NG+-only gear line, alternate campaign ending
 
 ## 9. Quests and narrative
 
-- **Main quest**: authored, 3 acts, ~28 story quests, voiced-lite (text + barks, no full VO).
-- **Side quests**: ~45, and each one must give a *mechanical* reward — a recipe, a companion
-  ability, a shortcut, a vendor unlock, a codex entry. **Zero pure "kill 20 X" quests**;
-  where a kill count exists it is a side objective of something else.
-- **Codex/Bestiary**: fills as you kill and discover; entries reveal enemy weaknesses and
-  drop tables. This replaces the wiki that MMO players rely on and is a strong solo hook.
-- Dialogue is data (JSON), with conditional nodes and a small number of choices that gate
-  side content and the ending variant.
+**Decided 2026-09-21: few quests, and only ones that move the game forward.** This is not a
+quest game. The loop is fields, shards, the tower and the upgrade bench; a quest exists only
+where the player would otherwise not know where to go next, or where a border needs a reason
+to open. Everything below is sized to that.
+
+- **Main progress chain only.** Roughly one quest per step of the road — the village, each
+  field map's border, the tower — so about **five in the MVP** and a handful per act after
+  that. Each one points at the next place and pays out when you get there.
+- **No side quests.** The old plan (~45, each with a mechanical reward) is dropped. Where a
+  side quest would have unlocked a recipe or a vendor, that unlock comes from the world
+  instead — a shard, a tower floor, a level.
+- **No kill counts as objectives.** Still true, and now easier: the chain only ever asks you
+  to *reach* somewhere, *break* something, or *talk* to someone.
+- **Linear dialogue.** A few lines from an NPC, no branching choices, no ending variants.
+- **No journal screen.** The current objective is one line on the HUD and one marker on the
+  map; there is never more than one active quest to track.
+- **Codex/Bestiary** stays, and is not a quest system: it fills as you kill and discover,
+  and replaces the wiki that MMO players rely on.
 
 ---
 

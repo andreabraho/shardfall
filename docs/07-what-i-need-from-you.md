@@ -48,7 +48,7 @@ something feels good.
 | 2 | **CBT-14** — combat feel | Fight each enemy role. Are telegraphs readable? Do hits feel weighty with capsules? |
 | 5 | **SHD-10** — shard encounter tuning | Play every shard tier. Too easy, too long, too chaotic? |
 | 6 | **WLD-11** — zone layouts | Do the zones read as places? Are encounters spaced right? |
-| 7 | **QST-09** — story and tone | Does the writing land? Are the names good? |
+| 7 | **QST-08** — story and tone | Does the writing land? Are the names good? |
 | 8 | **TST-01/02** — full playthroughs + the stranger test | The gate to Tier B |
 
 Written notes are enough — bullet points, no formality. "The character hesitates before

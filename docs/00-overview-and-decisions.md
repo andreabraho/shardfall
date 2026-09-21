@@ -70,7 +70,7 @@ Scope is the number-one risk on a project like this, so it is explicit.
 - 4 classes (Warrior, Blade, Sura, Shaman), ~16 skills each
 - 3 regions, 12 zones, 5 dungeons, hub village + 2 outposts
 - ~55 enemy types, 9 shard tiers, 10 bosses
-- Campaign in 3 acts, ~40 quests, companion system, mounts
+- Campaign in 3 acts carried by a short main-quest chain (no side quests), companion system, mounts
 - Endgame: Tower of Shards (procedural), New Game+, 4 difficulty tiers
 - Full UI, settings, controller support, EN + IT localization
 - **15–25 hours to credits**

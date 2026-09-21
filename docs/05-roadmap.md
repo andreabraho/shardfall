@@ -260,23 +260,30 @@ is what proves the structure rather than decorating it.
 
 ---
 
-## Phase 7 — Quests, dialogue, narrative (week 11)
+## Phase 7 — The main road (week 11)
 
-**Goal:** a reason to go there.
-**Exit:** prologue + 6 story + 6 side quests completable start to finish.
+**Reshaped 2026-09-21 on your call: this is not a quest game.** A handful of quests that
+say where to go next, no side quests, no journal. Design in
+[02](02-singleplayer-redesign.md) §9; requirements FR-8.
+
+**Goal:** the player always knows where to go next.
+**Exit:** a new character can follow the chain from the village to the tower without being
+told anything outside the game.
 
 | ID | Task | Owner | Notes |
 |---|---|---|---|
-| QST-01 | Quest state machine: objectives, prerequisites, rewards, persistence | **[C]** | |
-| QST-02 | Objective types: kill / collect / reach / interact / escort / survive | **[C]** | |
-| QST-03 | Dialogue system: conditional nodes, choices, dialogue log | **[C]** | |
-| QST-04 | Quest journal + map markers | **[C]** | |
-| QST-05 | Prologue (tutorial disguised as a shard-fall escape) | **[C]** | Teaches move, attack, defensive ability, first shard |
-| QST-06 | 6 story quests + 6 side quests, each side quest with a mechanical reward | **[C]** | Redesign §9 |
-| QST-07 | 6 NPCs with dialogue and vendor/trainer roles | **[C]** | |
-| QST-08 | Codex/bestiary filling on kills | **[C]** | |
-| QST-09 | **Story and tone review** — names, writing, whether it lands | **[You]** | Taste call |
-| QST-10 | **Final naming pass** — replace `Kiln` and any placeholder names (IP hygiene) | **[Provide]** | Your call on the name |
+| QST-01 | Quest state machine: one active quest, objectives, prerequisites, rewards, saved with the game | **[C]** | Small on purpose: at most one active quest |
+| QST-02 | Objective types: reach / break / talk / collect | **[C]** | Escort and survive dropped; no kill counts |
+| QST-03 | Linear dialogue: a few lines per NPC, no choices | **[C]** | |
+| QST-04 | Current objective as one HUD line + one map marker | **[C]** | Replaces the journal screen |
+| QST-05 | **The chain: about five main-progress quests**, village → fields → tower | **[C]** | One per step of the road. Re-gates the Broken Gate border properly |
+| QST-06 | The NPCs the chain and the economy need (elder, smith, vendor) | **[C]** | Vendor also closes ITM-10 |
+| QST-07 | Codex/bestiary filling on kills | **[C]** | Not a quest system; kept |
+| QST-08 | **Story and tone review** — names, writing, whether it lands | **[You]** | Taste call |
+| QST-09 | **Final naming pass** — replace `Kiln` and any placeholder names (IP hygiene) | **[Provide]** | Your call on the name |
+
+Dropped from the old plan: 6 side quests, the quest journal screen, dialogue choices, the
+escort and survive objectives, and faction reputation.
 
 ---
 
@@ -301,6 +308,7 @@ is what proves the structure rather than decorating it.
 | BAL-03 | **Telegraph/AoE validator**: asserts every telegraph is longer than time-to-safety at that AoE radius and move speed | **[C]** | Non-negotiable for click-to-move (redesign §1) |
 | BAL-04 | Performance pass to NFR-P.1 on the low-end machine | **[C→You]** | You run it on the 1060-class box |
 | BAL-05 | Bug-fix sweep | **[C]** | |
+| BAL-06 | **Tower pass** — per-floor balance, bespoke catacomb monsters, boss phases (WLD-10), a visible exit door on floor 1 and a free "return to the entrance" at the floor-4 and floor-7 shrines | **[C→You]** | Deferred here on 2026-09-21 at your call: the tower works and is fine as it stands until then. The exit today is an unmarked sphere in floor 1's corner (hold Alt to see its sign) |
 | TST-01 | **Play the whole slice start to finish, 3 times, on 3 difficulties** | **[You]** | |
 | TST-02 | **Exit test: a stranger plays 60 min unattended, unassisted** | **[You]** | The gate to Tier B |
 

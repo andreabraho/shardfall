@@ -326,7 +326,7 @@ Mastery ranks change **behaviour**, not only numbers (redesign §5).
 }
 ```
 
-Every side quest must carry a `unlock` or a non-trivial reward (FR-8.4) — no pure kill counts.
+There are no side quests (FR-8.4, reshaped 2026-09-21): every quest is on the main progress chain, and objectives are reach / break / talk / collect — never a kill count. The `side` type and the side-quest reward rule in the validator go when the chain is built (QST-05).
 
 ---
 

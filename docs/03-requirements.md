@@ -126,14 +126,19 @@ floor tasks exist to consume subscription time we do not charge for.
 
 ## FR-8 Quests and narrative
 
+Reshaped 2026-09-21: few quests, main progress only. Design in [02](02-singleplayer-redesign.md) §9.
+
 | ID | Req | Pri |
 |---|---|---|
-| FR-8.1 | Data-driven quest system: objectives (kill / collect / reach / interact / escort / survive), prerequisites, rewards, state machine | MUST |
-| FR-8.2 | Dialogue system with conditional nodes and player choices | MUST |
-| FR-8.3 | Quest journal with active/completed tracking and map markers | MUST |
-| FR-8.4 | MVP: prologue + 6 story quests + 6 side quests, each side quest granting a mechanical reward | MUST |
-| FR-8.5 | v1.0: 3 acts, ~28 story quests, ~45 side quests, 3 scripted siege set-pieces | SHOULD |
-| FR-8.6 | Faction reputation with 3 factions unlocking vendors and gear lines | SHOULD |
+| FR-8.1 | Data-driven quest system: objectives (reach / break / talk / collect), prerequisites, rewards, state machine | MUST |
+| FR-8.2 | Linear dialogue: a few lines per NPC, no choices | MUST |
+| FR-8.3 | Current objective shown as one HUD line and one map marker; at most one active quest | MUST |
+| FR-8.4 | MVP: a main progress chain of about five quests, one per step of the road. **No side quests** | MUST |
+| FR-8.5 | v1.0: the chain continues through each act, a handful of quests per act | SHOULD |
+| FR-8.6 | Faction reputation with 3 factions unlocking vendors and gear lines | WON'T (dropped with side quests) |
+
+**No kill-count objectives, no quest journal screen, no branching dialogue.** Each was
+weighed and dropped on purpose: this is a game about the loop, not the log.
 
 ## FR-9 Companion, mounts, pets
 
@@ -210,7 +215,7 @@ floor tasks exist to consume subscription time we do not charge for.
 | Shard tiers | 5 | emissive monolith primitive, colour per tier |
 | Zones | 3 outdoor + 1 dungeon + hub | greybox terrain + modular blockout |
 | Items | ~70 | icon-less coloured slot frames until icons exist |
-| Quests | 12 | — |
+| Quests | ~5, main progress only | — |
 | NPCs | 6 | capsules with name tags |
 | Music tracks | 3 | CC0 placeholder |
 | SFX | ~40 | CC0 placeholder |
