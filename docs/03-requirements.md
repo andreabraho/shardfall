@@ -10,7 +10,7 @@ Every MUST is an MVP exit gate — the vertical slice is not done until all of t
 | ID | Req | Pri |
 |---|---|---|
 | FR-1.1 | Click-to-move with NavMesh pathfinding; hold-to-continue-moving; path recalculates on obstacle | MUST |
-| FR-1.2 | Click-to-attack: click an enemy to close distance and begin single-target auto-attack on an attack-speed timer (REF-01); keeps attacking until the target dies, is out of range, or a new order is given | MUST |
+| FR-1.2 | Click-to-attack: click an enemy to close distance and begin auto-attack on an attack-speed timer, each blow hitting everything in a frontal arc (REF-01); keeps attacking until the target dies, is out of range, or a new order is given | MUST |
 | FR-1.3 | 6 hotbar slots (1–6) for skills, 2 for consumables (Q/E), 1 defensive ability (Space) | MUST |
 | FR-1.4 | Per-class defensive ability on 8–12 s cooldown (design §2.2) | MUST |
 | FR-1.5 | Healing flask: finite charges, refills at shrines/zone entry, cast time interruptible by damage | MUST |

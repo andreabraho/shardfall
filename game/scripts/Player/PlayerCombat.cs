@@ -20,12 +20,14 @@ namespace Kiln.Game.Player;
 /// The timer is <see cref="AttackCycle"/> and comes from attack speed alone. The animation
 /// follows it; moving during the recovery cuts the animation short but never the timer.
 /// <para>
-/// Single target: the basic attack hits the one enemy it was aimed at. Hitting a crowd is what
-/// skills are for. Nothing is knocked back — a hit makes the enemy flinch where it stands.
+/// Every blow is an area blow, as in Metin2: it lands on the target and on every other enemy in
+/// an arc in front of the Warrior, within reach, at full damage. The target decides where the
+/// Warrior faces and walks; the arc decides who is hit. Nothing is knocked back — a hit makes
+/// each enemy flinch where it stands.
 /// </para>
 /// <para>
-/// Space, with no click, strikes whatever is in front of the character once, without locking on.
-/// Held, it keeps striking on the same timer.
+/// Space, with no click, strikes in front of the character once, without locking on. Held, it
+/// keeps striking on the same timer.
 /// </para>
 /// </remarks>
 public partial class PlayerCombat : Node
@@ -36,8 +38,8 @@ public partial class PlayerCombat : Node
     /// </summary>
     private const float HitTolerance = 0.6f;
 
-    /// <summary>How wide "in front" is for Space.</summary>
-    private const float FrontArcDegrees = 110f;
+    /// <summary>How wide the blow sweeps in front of the Warrior. Everything inside is hit.</summary>
+    private const float ArcDegrees = 120f;
 
     private readonly AttackCycle _cycle = new();
 
@@ -225,27 +227,47 @@ public partial class PlayerCombat : Node
     }
 
     /// <summary>
-    /// The moment the blow lands: is the target still there to be hit?
+    /// The moment the blow lands: who is there to be hit?
     /// </summary>
     /// <remarks>
-    /// Reach, line of sight and life are checked now, not when the swing started. A target that
-    /// stepped out of reach or behind a wall during the windup is simply not hit — nothing is
+    /// Reach, line of sight and life are checked now, not when the swing started. The target is
+    /// hit if it is still in reach even when it has stepped a little out of the arc — it was
+    /// what the player aimed at — and every other enemy in the arc is hit with it. Whoever
+    /// stepped out of reach or behind a wall during the windup is simply not hit; nothing is
     /// shown, because nothing connected. "Miss" is only for a hit that connected and was evaded.
     /// </remarks>
     private void HitCheck()
     {
-        var victim = _swingTarget;
+        var aimed = _swingTarget;
 
         _swingTarget = null;
 
-        if (victim is null || !IsInstanceValid(victim) || !victim.IsAlive) return;
-
+        var origin = _motor.GlobalPosition;
         var reach = AttackRange + HitTolerance;
+        var victims = new System.Collections.Generic.List<Combatant>();
 
-        if (_motor.GlobalPosition.DistanceTo(victim.Body.GlobalPosition) > reach) return;
-        if (!LineOfSight(victim.Body)) return;
+        if (aimed is not null && IsInstanceValid(aimed) && aimed.IsAlive
+            && origin.DistanceTo(aimed.Body.GlobalPosition) <= reach)
+        {
+            victims.Add(aimed);
+        }
 
-        victim.TakeAttack(_self);
+        // Centred on the target when there is one: the character may still be turning to it.
+        var forward = victims.Count > 0
+            ? (victims[0].Body.GlobalPosition - origin) with { Y = 0 }
+            : _motor.Facing;
+
+        if (forward.LengthSquared() < 0.0001f) forward = _motor.Facing;
+
+        foreach (var other in AreaQuery.Cone(_motor, origin, forward.Normalized(), reach, ArcDegrees))
+        {
+            if (other.IsAlive && !victims.Contains(other)) victims.Add(other);
+        }
+
+        foreach (var victim in victims)
+        {
+            if (LineOfSight(victim.Body)) victim.TakeAttack(_self);
+        }
     }
 
     private bool LineOfSight(Node3D target)
@@ -259,13 +281,16 @@ public partial class PlayerCombat : Node
         return _motor.GetWorld3D().DirectSpaceState.IntersectRay(query).Count == 0;
     }
 
-    /// <summary>Space: one blow at the nearest enemy in front, without locking on to it.</summary>
+    /// <summary>
+    /// Space: one blow in front, without locking on. It turns to the nearest enemy in the arc,
+    /// if there is one, and the arc hits everything else there too.
+    /// </summary>
     private void StrikeInFront()
     {
         var origin = _motor.GlobalPosition;
         var facing = _motor.Facing;
 
-        var victim = AreaQuery.Cone(_motor, origin, facing, AttackRange + HitTolerance, FrontArcDegrees)
+        var victim = AreaQuery.Cone(_motor, origin, facing, AttackRange + HitTolerance, ArcDegrees)
             .Where(c => c.IsAlive)
             .OrderBy(c => origin.DistanceTo(c.Body.GlobalPosition))
             .FirstOrDefault();
