@@ -332,8 +332,9 @@ to open. Everything below is sized to that.
 - **Open for the end: a few targeted quests with unique rewards** — a quest that pays a unique
   piece of gear, or something else worth a detour. To be analysed once the whole loop is
   playable (roadmap QST-10), and only if the chain alone turns out not to carry it.
-- **Codex/Bestiary** stays, and is not a quest system: it fills as you kill and discover,
-  and replaces the wiki that MMO players rely on.
+- **Codex/Bestiary**: deferred to the end and probably dropped (2026-09-21). It would fill as
+  you kill and discover, but it is not judged worth building unless the finished game misses it
+  (roadmap QST-07).
 
 ---
 

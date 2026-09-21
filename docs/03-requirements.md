@@ -82,7 +82,7 @@ Every MUST is an MVP exit gate — the vertical slice is not done until all of t
 | FR-6.2 | Behaviour-tree AI with idle / patrol / chase / attack / reposition / flee states | MUST |
 | FR-6.3 | Spawn zones with density caps, respawn timers and distance-based activation | MUST |
 | FR-6.4 | 18 enemy types at MVP, ~55 at v1.0 | MUST |
-| FR-6.5 | Bestiary/codex filling on kills, revealing weaknesses and drop tables | SHOULD |
+| FR-6.5 | Bestiary/codex filling on kills, revealing weaknesses and drop tables | COULD — deferred to the end, probably dropped (2026-09-21) |
 
 ## FR-7 World and progression
 

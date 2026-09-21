@@ -278,7 +278,6 @@ told anything outside the game.
 | QST-04 | Current objective as one HUD line + one map marker | **[C]** | ✅ HUD panel top right: quest, count, and which map the creature lives in. On the map (M), every camp with the quarry is marked through the fog; in any other map, the border on the shortest road there is marked instead |
 | QST-05 | **The chain: about five main-progress quests**, village → fields → tower | **[C]** | ✅ six: reed hoppers, thornback boars, pale gnawers, corrupted wolves (opens the Broken Gate), gate breakers, then clear the catacombs. Rewards on the chain formula; a real-content test locks "mostly hunts, one is the tower" |
 | QST-06 | The NPCs the chain and the economy need (elder, smith, vendor) | **[C]** | ✅ Corwen (elder, talks), Hesk (smith, opens the workbench), Idra (merchant, opens the shop), from `data/npcs/`; F at close range, shown on the map. Placeholder capsules until real models |
-| QST-07 | Codex/bestiary filling on kills | **[C]** | Not a quest system; kept |
 | QST-08 | **Story and tone review** — names, writing, whether it lands | **[You]** | Taste call |
 | QST-09 | **Final naming pass** — replace `Kiln` and any placeholder names (IP hygiene) | **[Provide]** | Your call on the name |
 
@@ -310,6 +309,7 @@ escort and survive objectives, and faction reputation.
 | BAL-05 | Bug-fix sweep | **[C]** | |
 | BAL-06 | **Tower pass** — per-floor balance, bespoke catacomb monsters, boss phases (WLD-10), a visible exit door on floor 1 and a free "return to the entrance" at the floor-4 and floor-7 shrines | **[C→You]** | Deferred here on 2026-09-21 at your call: the tower works and is fine as it stands until then. The exit today is an unmarked sphere in floor 1's corner (hold Alt to see its sign) |
 | QST-10 | **To analyse at the end: targeted quests with unique rewards** — a few hand-placed quests that pay out a unique piece of gear (or something else worth the detour), if the finished game turns out to need them | **[C→You]** | Added 2026-09-21 at your call, after the main chain landed. Not a commitment: decide once the full loop is playable whether the chain alone carries it. Must stay few (doc 02 §9) |
+| QST-07 | **To analyse at the end, probably dropped: codex/bestiary** filling on kills | **[C→You]** | Moved here 2026-09-21 at your call: not seen as very useful. Only if the finished game turns out to miss it |
 | TST-01 | **Play the whole slice start to finish, 3 times, on 3 difficulties** | **[You]** | |
 | TST-02 | **Exit test: a stranger plays 60 min unattended, unassisted** | **[You]** | The gate to Tier B |
 
