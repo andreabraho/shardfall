@@ -224,4 +224,43 @@ public class VendorTests
         Assert.Equal(TradeResult.Done, vendor.Buy(offer, bag, factory));
         Assert.Equal(TradeResult.Gone, vendor.Buy(offer, bag, factory));
     }
+
+    [Fact]
+    public void Restore_PutsBackTheSameShelfMinusWhatWasBought()
+    {
+        var (before, bag, factory) = Setup();
+
+        before.Restock(9, 42, factory);
+        var shelf = before.Shelf.Select(o => o.ItemId).ToList();
+        before.Buy(before.Shelf[1], bag, factory);
+
+        var sword = factory.CreatePlain("wpn_blade_3");
+        bag.TryAdd(sword);
+        before.Sell(sword, bag);
+
+        var (after, _, factory2) = Setup();
+        after.Restore(before.StockedFor, 42, factory2, before.Bought, before.Buyback.Select(o => (o.Item!, o.Price)));
+
+        Assert.Equal(shelf.Where((_, i) => i != 1), after.Shelf.Select(o => o.ItemId));
+        Assert.Equal(before.Bought, after.Bought);
+        Assert.Same(sword, Assert.Single(after.Buyback).Item);
+        Assert.Equal(before.Buyback[0].Price, after.Buyback[0].Price);
+
+        // Still the same shelf: a restore is not a restock.
+        after.Restock(9, 42, factory2);
+        Assert.Equal(2, after.Shelf.Count);
+    }
+
+    [Fact]
+    public void BuyingBack_IsNotABuyFromTheShelf()
+    {
+        var (vendor, bag, factory) = Setup(yang: 0);
+        var sword = factory.CreatePlain("wpn_blade_9");
+
+        bag.TryAdd(sword);
+        vendor.Sell(sword, bag);
+        vendor.Buy(vendor.Buyback[0], bag, factory);
+
+        Assert.Empty(vendor.Bought);
+    }
 }

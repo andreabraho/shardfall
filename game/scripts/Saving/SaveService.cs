@@ -77,6 +77,15 @@ public partial class SaveService : Node
         ProcessMode = ProcessModeEnum.Always;
     }
 
+    /// <summary>The play clock: only in a map, only while not paused.</summary>
+    public override void _Process(double delta)
+    {
+        if (GameWorld.CurrentZoneId.Length > 0 && !GetTree().Paused && PlayerProfile.Exists)
+        {
+            PlayerProfile.PlayTime += delta;
+        }
+    }
+
     public override void _UnhandledInput(InputEvent @event)
     {
         // Only in a map: in the main menu there is nothing to save, and loading from there
@@ -220,6 +229,7 @@ public partial class SaveService : Node
             Label = label,
             Difficulty = GameSession.Difficulty.Tier.ToString(),
             Seed = GameSession.Seed,
+            PlayTime = PlayerProfile.PlayTime,
             CompletedQuests = PlayerProfile.Quests.Completed.ToList(),
             ActiveQuest = PlayerProfile.Quests.Active?.Id,
             QuestProgress = PlayerProfile.Quests.Progress.ToList(),
@@ -248,6 +258,10 @@ public partial class SaveService : Node
                 Anchor = GameWorld.Travel.Anchor,
                 Depths = PlayerProfile.AllDepths.ToDictionary(p => p.Key, p => p.Value, StringComparer.Ordinal),
                 Explored = PlayerProfile.Explored.ToDictionary(p => p.Key, p => p.Value.ToList(), StringComparer.Ordinal),
+                ShardRespawns = PlayerProfile.ShardRespawns
+                    .Where(p => p.Value > PlayerProfile.PlayTime)
+                    .ToDictionary(p => p.Key, p => p.Value - PlayerProfile.PlayTime, StringComparer.Ordinal),
+                Vendors = Vendors.Capture(),
             },
         };
     }
@@ -409,6 +423,16 @@ public partial class SaveService : Node
         }
 
         GameWorld.Travel.Load(save.World.DiscoveredShrines, save.World.Anchor);
+
+        PlayerProfile.PlayTime = Math.Max(0, save.PlayTime);
+
+        foreach (var (shard, remaining) in save.World.ShardRespawns)
+        {
+            PlayerProfile.ShardRespawns[shard] = PlayerProfile.PlayTime + remaining;
+        }
+
+        // After the factory is put back above: a merchant's shelf is stocked from it.
+        Vendors.Load(save.World.Vendors);
 
         _pendingPosition = save.World.Position is { Length: 3 } at
             ? new Vector3((float)at[0], (float)at[1], (float)at[2])

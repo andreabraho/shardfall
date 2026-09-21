@@ -179,4 +179,42 @@ public class SaveCodecTests
         Assert.NotNull(bag.Find(a));
         Assert.NotNull(bag.Find(b));
     }
+
+    [Fact]
+    public void ShardTimersAndMerchantsSurviveARoundTrip()
+    {
+        var save = Sample();
+
+        save.PlayTime = 1234.5;
+        save.World.ShardRespawns["zone_ridge:ShardSpine"] = 97.25;
+        save.World.Vendors["npc_idra"] = new SavedVendor
+        {
+            StockedFor = 9,
+            Bought = ["wpn_worn_blade"],
+            Buyback = [new SavedItem { Uid = 77, Def = "mat_iron_scrap", Count = 8 }],
+            BuybackPrices = [80],
+        };
+
+        var back = SaveCodec.Decode(SaveCodec.Encode(save)).Save!;
+
+        Assert.Equal(1234.5, back.PlayTime);
+        Assert.Equal(97.25, back.World.ShardRespawns["zone_ridge:ShardSpine"]);
+
+        var idra = back.World.Vendors["npc_idra"];
+        Assert.Equal(9, idra.StockedFor);
+        Assert.Equal(["wpn_worn_blade"], idra.Bought);
+        Assert.Equal(8, Assert.Single(idra.Buyback).Count);
+        Assert.Equal([80L], idra.BuybackPrices);
+    }
+
+    [Fact]
+    public void ASaveFromBeforeTheseFieldsLoadsWithNothingBrokenAndFullShelves()
+    {
+        var text = SaveCodec.Encode(Sample());
+        var back = SaveCodec.Decode(text).Save!;
+
+        Assert.Empty(back.World.ShardRespawns);
+        Assert.Empty(back.World.Vendors);
+        Assert.Equal(0, back.PlayTime);
+    }
 }

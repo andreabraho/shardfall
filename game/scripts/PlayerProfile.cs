@@ -84,6 +84,19 @@ public static class PlayerProfile
     /// </remarks>
     public static Dictionary<string, HashSet<long>> Explored { get; } = new(StringComparer.Ordinal);
 
+    /// <summary>Seconds played in a map, not counting menus and pauses.</summary>
+    public static double PlayTime { get; set; }
+
+    /// <summary>
+    /// "zone:node" of each broken shard → the <see cref="PlayTime"/> at which it stands again.
+    /// </summary>
+    /// <remarks>
+    /// Kept here, not on the shard, for the same reason as the explored map: the shard node is
+    /// rebuilt with its scene, and a shard that forgot it was broken the moment you walked
+    /// through a border could be farmed by stepping out and back in.
+    /// </remarks>
+    public static Dictionary<string, double> ShardRespawns { get; } = new(StringComparer.Ordinal);
+
     /// <summary>
     /// How far down each tower the player has reached (FR-7.20).
     /// </summary>
@@ -124,6 +137,8 @@ public static class PlayerProfile
         FlaskCharges = -1;
         _quests = null;
         Explored.Clear();
+        PlayTime = 0;
+        ShardRespawns.Clear();
         Depths.Clear();
         Items.Vendors.Reset();
     }

@@ -9,10 +9,10 @@ namespace Kiln.Core.Saving;
 /// flat record is something a migration can reason about field by field, and a live
 /// <c>ItemInstance</c> is not.
 /// <para>
-/// What is not here yet, on purpose: shard respawn timers and the codex. The first is minutes
-/// of state that is harmless to lose; the second does not exist at runtime yet. Quests were
-/// added without a version bump because the fields are new and default cleanly — a save from
-/// before them loads as a character with nothing finished, which is what it was.
+/// Fields added since version 1 — quests, play time, shard timers, merchants — came without a
+/// version bump because each is new and defaults cleanly: a save from before them loads as a
+/// character with nothing finished, every shard standing and every shelf full, which is what
+/// that save knew.
 /// </para>
 /// </remarks>
 public sealed class SaveGame
@@ -23,6 +23,9 @@ public sealed class SaveGame
 
     /// <summary><c>Wanderer</c>, <c>Disciple</c>, <c>Adept</c> or <c>Shardbound</c>.</summary>
     public string Difficulty { get; set; } = "Disciple";
+
+    /// <summary>Seconds played in a map, not counting menus and pauses. Shard timers run on it.</summary>
+    public double PlayTime { get; set; }
 
     public ulong Seed { get; set; }
 
@@ -126,4 +129,31 @@ public sealed class SavedWorld
 
     /// <summary>Zone id → explored map cells.</summary>
     public Dictionary<string, List<long>> Explored { get; set; } = new(StringComparer.Ordinal);
+
+    /// <summary>"zone:node" of each broken shard → seconds of play until it stands again.</summary>
+    public Dictionary<string, double> ShardRespawns { get; set; } = new(StringComparer.Ordinal);
+
+    /// <summary>Merchant id → what has been bought off the shelf and what can be bought back.</summary>
+    public Dictionary<string, SavedVendor> Vendors { get; set; } = new(StringComparer.Ordinal);
+}
+
+/// <summary>
+/// A merchant's memory.
+/// </summary>
+/// <remarks>
+/// The shelf itself is not saved: it is rebuilt from the seed and the level it was stocked for,
+/// and comes back identical. What is saved is what the player took off it, and the items they
+/// sold, which exist nowhere else.
+/// </remarks>
+public sealed class SavedVendor
+{
+    public int StockedFor { get; set; }
+
+    /// <summary>Item ids bought off the shelf since it was last stocked, one entry per piece.</summary>
+    public List<string> Bought { get; set; } = [];
+
+    public List<SavedItem> Buyback { get; set; } = [];
+
+    /// <summary>What each buyback item costs, in the same order.</summary>
+    public List<long> BuybackPrices { get; set; } = [];
 }

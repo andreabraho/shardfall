@@ -99,13 +99,37 @@ public partial class ShardNode : StaticBody3D
 
         AddChild(collision);
 
-        CallDeferred(nameof(Arm));
+        CallDeferred(nameof(Wake));
+    }
+
+    /// <summary>
+    /// Stands the shard up — unless it was broken not long ago, in this map or before a save,
+    /// in which case it stays down for the rest of its timer.
+    /// </summary>
+    private void Wake()
+    {
+        if (PlayerProfile.ShardRespawns.TryGetValue(Key, out var due) && due > PlayerProfile.PlayTime)
+        {
+            _broken = true;
+            _respawnIn = due - PlayerProfile.PlayTime;
+
+            if (_visual is not null) _visual.Visible = false;
+
+            _plate.Visible = false;
+
+            GD.Print($"[shard] {ShardId} still broken — back in {_respawnIn:F0} s");
+            return;
+        }
+
+        Arm();
     }
 
     /// <summary>Loads the tier, rolls the modifier and readies the node for a fresh fight.</summary>
     private void Arm()
     {
         if (!GameContent.IsLoaded) return;
+
+        PlayerProfile.ShardRespawns.Remove(Key);
 
         _tier = new Kiln.Data.Encounters.ShardCatalogue(GameContent.Database).Tier(ShardId);
 
@@ -331,11 +355,15 @@ public partial class ShardNode : StaticBody3D
 
     // ------------------------------------------------------------------ break
 
+    /// <summary>Which shard this is, across scenes and saves.</summary>
+    private string Key => $"{GameWorld.CurrentZoneId}:{Name}";
+
     private void Break()
     {
         Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndShardBreak, GlobalPosition);
         _broken = true;
         _respawnIn = RespawnSeconds;
+        PlayerProfile.ShardRespawns[Key] = PlayerProfile.PlayTime + RespawnSeconds;
         _telegraph.Cancel();
 
         GD.Print($"[shard] {ShardId} broken");

@@ -60,6 +60,7 @@ public sealed class Vendor
     private readonly IReadOnlyList<ItemSpec> _gear;
     private readonly List<VendorOffer> _shelf = [];
     private readonly List<VendorOffer> _buyback = [];
+    private readonly List<string> _bought = [];
 
     public Vendor(string id, IItemSpecs specs, IEnumerable<string> staples, IEnumerable<ItemSpec> gear,
         int rotating, Rarity maxRarity = Rarity.Fine)
@@ -87,6 +88,9 @@ public sealed class Vendor
     public IReadOnlyList<VendorOffer> Shelf => _shelf;
     public IReadOnlyList<VendorOffer> Buyback => _buyback;
 
+    /// <summary>Ids bought off the shelf since it was stocked. What a save needs to put the shelf back.</summary>
+    public IReadOnlyList<string> Bought => _bought;
+
     /// <summary>The level the shelf was last stocked for, or 0 before the first visit.</summary>
     public int StockedFor { get; private set; }
 
@@ -110,6 +114,7 @@ public sealed class Vendor
 
         StockedFor = level;
         _shelf.Clear();
+        _bought.Clear();
 
         var rng = new DeterministicRng(seed).Fork($"vendor:{Id}:{level}");
         var pool = EligibleAt(level).ToList();
@@ -144,7 +149,12 @@ public sealed class Vendor
         {
             if (!bag.CanTake(piece.DefId, piece.Count) || !bag.TryAdd(piece)) return TradeResult.NoRoom;
 
-            _shelf.Remove(offer);
+            if (shelved)
+            {
+                _shelf.Remove(offer);
+                _bought.Add(offer.ItemId);
+            }
+
             _buyback.Remove(offer);
         }
         else
@@ -157,6 +167,37 @@ public sealed class Vendor
         bag.TrySpendYang(cost);
 
         return TradeResult.Done;
+    }
+
+    /// <summary>
+    /// Puts a merchant back as a save left it: the shelf for that level, minus what was bought,
+    /// and the buyback list.
+    /// </summary>
+    /// <remarks>
+    /// The shelf is rebuilt from the seed rather than stored, so the same pieces with the same
+    /// rolls come back. A saved purchase that no longer matches anything on it — the item data
+    /// changed — is dropped, not an error.
+    /// </remarks>
+    public void Restore(int stockedFor, ulong seed, ItemFactory factory, IEnumerable<string> bought,
+        IEnumerable<(ItemInstance Item, long Price)> buyback)
+    {
+        StockedFor = 0;
+        Restock(stockedFor, seed, factory);
+
+        foreach (var id in bought)
+        {
+            if (_shelf.FirstOrDefault(o => o.ItemId == id) is not { } offer) continue;
+
+            _shelf.Remove(offer);
+            _bought.Add(id);
+        }
+
+        _buyback.Clear();
+
+        foreach (var (item, price) in buyback.Take(BuybackSlots))
+        {
+            _buyback.Add(new VendorOffer(item.DefId, item, price));
+        }
     }
 
     /// <summary>Sells a whole stack out of the bag.</summary>
