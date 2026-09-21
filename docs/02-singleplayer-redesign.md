@@ -320,8 +320,12 @@ to open. Everything below is sized to that.
 - **No side quests.** The old plan (~45, each with a mechanical reward) is dropped. Where a
   side quest would have unlocked a recipe or a vendor, that unlock comes from the world
   instead — a shard, a tower floor, a level.
-- **No kill counts as objectives.** Still true, and now easier: the chain only ever asks you
-  to *reach* somewhere, *break* something, or *talk* to someone.
+- **Mostly hunts.** Most quests ask for a number of one kind of creature — ten thornback
+  boars, twelve corrupted wolves — in the zone the player has just reached. It is the verb
+  the game is already about, and it sends the player to the camps they should be farming
+  anyway. The odd step asks you to *reach* a place or *break* a shard instead, for pace.
+- **One quest is the tower**: finish the catacombs, all nine floors. It is the act's
+  destination, and the chain should say so.
 - **Linear dialogue.** A few lines from an NPC, no branching choices, no ending variants.
 - **No journal screen.** The current objective is one line on the HUD and one marker on the
   map; there is never more than one active quest to track.

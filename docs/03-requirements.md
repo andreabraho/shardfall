@@ -130,14 +130,14 @@ Reshaped 2026-09-21: few quests, main progress only. Design in [02](02-singlepla
 
 | ID | Req | Pri |
 |---|---|---|
-| FR-8.1 | Data-driven quest system: objectives (reach / break / talk / collect), prerequisites, rewards, state machine | MUST |
+| FR-8.1 | Data-driven quest system: objectives (kill / reach / break / talk / clear a tower), prerequisites, rewards, state machine. **Most quests are kill quests**: N of one kind of creature. One quest is clearing the catacombs | MUST |
 | FR-8.2 | Linear dialogue: a few lines per NPC, no choices | MUST |
 | FR-8.3 | Current objective shown as one HUD line and one map marker; at most one active quest | MUST |
 | FR-8.4 | MVP: a main progress chain of about five quests, one per step of the road. **No side quests** | MUST |
 | FR-8.5 | v1.0: the chain continues through each act, a handful of quests per act | SHOULD |
 | FR-8.6 | Faction reputation with 3 factions unlocking vendors and gear lines | WON'T (dropped with side quests) |
 
-**No kill-count objectives, no quest journal screen, no branching dialogue.** Each was
+**No quest journal screen, no branching dialogue, no side quests.** Each was
 weighed and dropped on purpose: this is a game about the loop, not the log.
 
 ## FR-9 Companion, mounts, pets

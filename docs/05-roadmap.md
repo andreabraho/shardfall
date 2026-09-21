@@ -273,10 +273,10 @@ told anything outside the game.
 | ID | Task | Owner | Notes |
 |---|---|---|---|
 | QST-01 | Quest state machine: one active quest, objectives, prerequisites, rewards, saved with the game | **[C]** | Small on purpose: at most one active quest |
-| QST-02 | Objective types: reach / break / talk / collect | **[C]** | Escort and survive dropped; no kill counts |
+| QST-02 | Objective types: kill / reach / break / talk / clear a tower | **[C]** | Most quests are kill quests: N of one kind of creature. Escort and survive dropped |
 | QST-03 | Linear dialogue: a few lines per NPC, no choices | **[C]** | |
 | QST-04 | Current objective as one HUD line + one map marker | **[C]** | Replaces the journal screen |
-| QST-05 | **The chain: about five main-progress quests**, village → fields → tower | **[C]** | One per step of the road. Re-gates the Broken Gate border properly |
+| QST-05 | **The chain: about five main-progress quests**, village → fields → tower | **[C]** | One per step of the road, mostly hunts, ending with clearing the catacombs. Re-gates the Broken Gate border properly |
 | QST-06 | The NPCs the chain and the economy need (elder, smith, vendor) | **[C]** | Vendor also closes ITM-10 |
 | QST-07 | Codex/bestiary filling on kills | **[C]** | Not a quest system; kept |
 | QST-08 | **Story and tone review** — names, writing, whether it lands | **[You]** | Taste call |
