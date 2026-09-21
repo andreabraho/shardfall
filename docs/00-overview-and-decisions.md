@@ -139,7 +139,7 @@ Every task in [05-roadmap.md](05-roadmap.md) carries one of these:
 | Q1 | Engine | **Godot 4 + C#** | Confirms D1. I author `.tscn`/`.tres` directly. |
 | Q2 | Art pipeline | **Placeholder primitives for now** | D5 rewritten. Adds the art-swap boundary (Phase 1 task ENG-07) and defers all art tasks to a later phase. |
 | Q3 | Combat | **Faithful click-to-move** | D3/D4 rewritten, difficulty model rebuilt — redesign doc §1 and §2. |
-| Q4 | Scope commitment | **MVP vertical slice first** | Roadmap Phases 0–8 are detailed and committed; Phases 9–13 (Tier B) are a sketch we re-plan after the MVP exit test. |
+| Q4 | Scope commitment | **MVP vertical slice first** | Roadmap Phases 0–8 are detailed and committed; Phase 8.5 then takes every system to its final version, one at a time, together (added 2026-09-21); Phases 9–13 (Tier B) are a sketch we re-plan after that. |
 
 ### Still open
 

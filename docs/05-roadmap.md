@@ -296,7 +296,6 @@ escort and survive objectives, and faction reputation.
 | UIX-01 | Save system: 3 slots + 5-deep autosave ring, versioned, migratable, integrity-checked | **[C]** | ◐ 5-deep autosave ring (every shrine, every border, and on leaving), **3 manual slots** from the pause menu (a slot that holds something takes a second press to overwrite), quick save on **F10**, load newest on **F12**; SHA-256 checksum, version header with a migration table, atomic writes, damaged saves listed as damaged and never loaded. Open: shard timers and merchant purchases are not saved |
 | UIX-02 | Main menu, pause, settings (graphics, audio, controls, language, accessibility) | **[C]** | ◐ main menu (Continue shows where it goes, New game, Load, Settings, Quit); pause on **Esc** when no panel is open (Resume, Save, Load, Settings, Quit to menu or desktop — leaving autosaves); settings apply at once and live in `user://settings.cfg`, apart from saves: fullscreen, vsync, frame limit, 3D resolution, three volume buses, and the list of keys. Language picker added with UIX-06. Open: key rebinding, accessibility (UIX-04) |
 | UIX-03 | Difficulty selection, changeable any time | **[C]** | ✅ chosen on New game (four cards with the numbers), changeable from pause → Settings; saved with the game. A change applies to creatures spawned after it. Each new game also gets a fresh seed |
-| UIX-04 | Accessibility set per NFR-A.1 | **[C]** | |
 | UIX-05 | Full HUD polish pass | **[C]** | |
 | UIX-06 | Localisation infrastructure + EN strings extracted | **[C]** | ✅ one table per language in `game/data/strings/<code>.json`. Content names and villager lines are `$keys` with the English in `en.json` (176); interface text is English in the code wrapped in `L10n.T("…")` / `L10n.F("… {0} …", value)`, the English being its own key (374). A missing translation shows English, never a key. Numbers follow the language (12,000 / 12.000). `strings` in the tool reports coverage and fails the build on a content key with no English or an interpolated string handed to L10n; `strings --template it` lays out a file to translate. Language picker in Settings. Debug tools (F3, F5–F9) stay English |
 | UIX-07 | IT translation | **[C→You]** | ◐ draft done: `game/data/strings/it.json`, all 550 entries (names, villager lines, interface). Map and creature names translated (Conca delle Braci, Crinale, Saltacanne…); **yang** kept. `strings` fails the build if a translation drops or invents a `{0}`. Yours: read it in game (Settings → Lingua → Italiano) and correct the wording |
@@ -310,8 +309,37 @@ escort and survive objectives, and faction reputation.
 | BAL-06 | **Tower pass** — per-floor balance, bespoke catacomb monsters, boss phases (WLD-10), a visible exit door on floor 1 and a free "return to the entrance" at the floor-4 and floor-7 shrines | **[C→You]** | Deferred here on 2026-09-21 at your call: the tower works and is fine as it stands until then. The exit today is an unmarked sphere in floor 1's corner (hold Alt to see its sign) |
 | QST-10 | **To analyse at the end: targeted quests with unique rewards** — a few hand-placed quests that pay out a unique piece of gear (or something else worth the detour), if the finished game turns out to need them | **[C→You]** | Added 2026-09-21 at your call, after the main chain landed. Not a commitment: decide once the full loop is playable whether the chain alone carries it. Must stay few (doc 02 §9) |
 | QST-07 | **To analyse at the end, probably dropped: codex/bestiary** filling on kills | **[C→You]** | Moved here 2026-09-21 at your call: not seen as very useful. Only if the finished game turns out to miss it |
+| UIX-04 | **Deferred to the end: accessibility** set per NFR-A.1 (text size, colour-blind-safe markers, less shake and flash) | **[C]** | Moved here 2026-09-21 at your call. Done after the refine phase, together with REF-11 (interface) |
 | TST-01 | **Play the whole slice start to finish, 3 times, on 3 difficulties** | **[You]** | |
 | TST-02 | **Exit test: a stranger plays 60 min unattended, unassisted** | **[You]** | The gate to Tier B |
+
+---
+
+## Phase 8.5 — Refine: every system to its final version (added 2026-09-21)
+
+**Added at your call.** Once Phase 8 is finished — and before anything in Tier B — we stop
+adding and go back over what exists. One system at a time, together: I lay out how it works
+today, what the design docs promised, what playing it has shown, and the options; you decide;
+I build the final version. Nothing moves to the next system until the current one is signed off.
+
+**Goal:** every system in the game is in its final, decided form, not the first working one.
+**Exit:** every row below is ✅ with your sign-off.
+
+| ID | System | Owner | What gets decided |
+|---|---|---|---|
+| REF-01 | **Combat** — basic attack chain, hit feel, guard, stagger, status effects, telegraphs, enemy roles | **[C↔You]** | Feel, numbers, what each role asks of the player. Folds in the open CBT-14 feel review |
+| REF-02 | **Movement and camera** — click-to-move, WASD, pathing, camera angles and zoom | **[C↔You]** | Folds in the open MOV-08 feel review |
+| REF-03 | **Upgrade system** — anvil ladder, pity, materials, sockets and stones, rerolls, locking | **[C↔You]** | Costs, chances, what a +9 is worth, how sockets and rerolls fit together |
+| REF-04 | **Items and loot** — rarities, bonus lines, drop rates, bag, tooltips, vendor | **[C↔You]** | How often something good drops, what makes a piece exciting |
+| REF-05 | **Bosses** — every boss's phases, mechanics, arenas, rewards | **[C↔You]** | Folds in WLD-10 (boss phases) and the boss half of BAL-06 |
+| REF-06 | **Shards** — the metin-stone equivalent: tiers, waves, modifiers, anchors, respawn | **[C↔You]** | How they feel to fight, how often, what they pay |
+| REF-07 | **Progression** — levels, experience curve, attributes, skills and mastery | **[C↔You]** | Folds in PRG-11 (skill points: yes or no) |
+| REF-08 | **Tower** — the nine floors, tasks, checkpoints, exit | **[C↔You]** | Folds in the rest of BAL-06 |
+| REF-09 | **World** — maps, camps, shrines, borders, fast travel, safe zones | **[C↔You]** | Layout by feel, density, travel costs |
+| REF-10 | **Quests, villagers, economy** — the main chain, dialogue, merchant, yang sinks | **[C↔You]** | Folds in QST-10 (unique-reward quests) and QST-07 (bestiary) |
+| REF-11 | **Interface** — HUD, panels, menus, map, accessibility | **[C↔You]** | What stays on screen, what moves, what goes |
+
+Order is yours to change; combat first because every other system is felt through it.
 
 ---
 
