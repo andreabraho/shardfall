@@ -59,10 +59,13 @@ public partial class SkillSlot : Control
     public void Present(bool learned, double remaining, double total, bool affordable, bool active, MasteryRank rank)
     {
         // Rounded to a tenth before comparing, so a slot sitting still is not redrawn every
-        // frame just because a float moved by a microsecond.
+        // frame just because a float moved by a microsecond. Readiness is compared on its own:
+        // the last step of a cooldown goes from 0.04 to 0, both round to 0.0, and without this
+        // the slot stayed dark at "0.0" with the skill already usable.
         var tick = Math.Round(remaining, 1);
+        var cooling = remaining > 0;
 
-        if (learned == _learned && tick == Math.Round(_remaining, 1) && affordable == _affordable
+        if (learned == _learned && cooling == _remaining > 0 && tick == Math.Round(_remaining, 1) && affordable == _affordable
             && active == _active && rank == _rank && Math.Abs(total - _total) < 0.001)
         {
             return;
