@@ -71,6 +71,10 @@ public partial class MapPanel : CanvasLayer
 
     public override void _Process(double delta)
     {
+        // Every frame while open: the quest marker pulses, and a quarter-second redraw both
+        // stuttered it and left a finished quest's markers up for a beat after it changed.
+        if (Visible) _view.QueueRedraw();
+
         _since += delta;
 
         if (_since < SampleInterval) return;
@@ -78,8 +82,6 @@ public partial class MapPanel : CanvasLayer
         _since = 0;
 
         Remember();
-
-        if (Visible) _view.QueueRedraw();
     }
 
     /// <summary>Writes down the ground around the character.</summary>

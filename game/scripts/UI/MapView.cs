@@ -1,3 +1,4 @@
+using System.Linq;
 using Godot;
 using Kiln.Game.World;
 
@@ -37,6 +38,7 @@ public partial class MapView : Control
     private static readonly Color ShardTint = new(0.82f, 0.52f, 0.95f);
     private static readonly Color GateTint = new(0.62f, 0.82f, 1f);
     private static readonly Color PlayerTint = new(0.98f, 0.86f, 0.42f);
+    private static readonly Color QuestTint = new(1f, 0.74f, 0.2f);
     private static readonly Color Faint = new(0.48f, 0.53f, 0.58f);
 
     private float _scale = 1f;
@@ -58,6 +60,7 @@ public partial class MapView : Control
         DrawTerrain(seen);
         DrawRegions(seen);
         DrawMarkers(seen);
+        DrawQuest();
         DrawPlayer();
     }
 
@@ -170,13 +173,18 @@ public partial class MapView : Control
                 ? new Vector3((float)def.Size[0], (float)def.Size[1], (float)def.Size[2])
                 : Vector3.One;
 
-            if (def.Shape is "cylinder" or "sphere")
+            // By the collision shape, not the visual one. Since the kit became models every
+            // piece's shape reads "model", and the map drew the village gate as a solid wall —
+            // the same coupling that once sealed the gate in the world.
+            var form = def.Collision.Length > 0 ? def.Collision : def.Shape;
+
+            if (form is "cylinder" or "sphere")
             {
                 DrawCircle(At(piece.GlobalPosition), Mathf.Max(size.X * 0.5f * _scale, 1.5f), colour);
                 continue;
             }
 
-            if (def.Shape == "arch")
+            if (form == "arch")
             {
                 // Its two legs, not its outline. An arch drawn as a block is a wall on the
                 // map and a doorway in the world, which is the one thing a map must not do.
@@ -278,6 +286,86 @@ public partial class MapView : Control
         }
     }
 
+
+    // ------------------------------------------------------------------ the quest
+
+    /// <summary>
+    /// Where the active quest wants the player (FR-8.3).
+    /// </summary>
+    /// <remarks>
+    /// Two cases. If the goal can be done in this map, every place it can be done is marked:
+    /// each camp with the creature in it, or the shard itself. If it cannot, the border to walk
+    /// through is marked instead, on the shortest road to a map where it can.
+    /// <para>
+    /// Drawn through the fog. Every other marker waits until the player has been there, and
+    /// that is right for them — but a quest marker the player cannot see until they have
+    /// already found the place is not a marker.
+    /// </para>
+    /// </remarks>
+    private void DrawQuest()
+    {
+        if (Quests.QuestPlaces.CurrentGoal() is not { } goal) return;
+
+        var font = GetThemeDefaultFont();
+        var fontSize = GetThemeDefaultFontSize();
+        var here = GameWorld.CurrentZoneId;
+        var zones = Quests.QuestPlaces.ZonesFor(goal);
+
+        if (zones.Contains(here))
+        {
+            if (goal.Type == Kiln.Core.Foundation.ObjectiveType.Kill)
+            {
+                var label = Items.GameItems.NameOfEnemy(goal.Target);
+
+                foreach (var node in GetTree().GetNodesInGroup("spawn_fields"))
+                {
+                    if (node is not SpawnFieldNode field || field.Def is not { } def) continue;
+                    if (!def.Entries.Any(e => e.EnemyId == goal.Target)) continue;
+
+                    QuestMark(font, fontSize, field.GlobalPosition, (float)def.Radius, label);
+                }
+            }
+            else if (goal.Type == Kiln.Core.Foundation.ObjectiveType.Shard)
+            {
+                foreach (var node in GetTree().GetNodesInGroup("shards"))
+                {
+                    if (node is ShardNode shard && shard.ShardId == goal.Target)
+                    {
+                        QuestMark(font, fontSize, shard.GlobalPosition, 4f, NameOfShard(shard.ShardId));
+                    }
+                }
+            }
+
+            return;
+        }
+
+        var step = Quests.QuestPlaces.NextStep(here, zones);
+
+        if (step is null) return;
+
+        foreach (var node in GetTree().GetNodesInGroup("zone_gates"))
+        {
+            if (node is ZoneGate gate && gate.ToZone == step)
+            {
+                QuestMark(font, fontSize, gate.GlobalPosition, 4f, $"Quest: this way ({NameOfZone(step)})");
+            }
+        }
+    }
+
+    /// <summary>A pulsing ring and an exclamation mark, in a colour nothing else on the map uses.</summary>
+    private void QuestMark(Font font, int fontSize, Vector3 world, float radius, string text)
+    {
+        var at = At(world);
+        var pulse = 0.5f + (0.5f * Mathf.Sin((float)Time.GetTicksMsec() / 1000f * 4f));
+        var r = Mathf.Max(radius * _scale, 7f) + (pulse * 4f);
+
+        DrawArc(at, r, 0, Mathf.Tau, 40, QuestTint with { A = 0.55f + (0.4f * pulse) }, 2.5f);
+        DrawCircle(at + new Vector2(0, -r - 10), 8f, QuestTint);
+        DrawString(font, at + new Vector2(-2.5f, -r - 5), "!", HorizontalAlignment.Left, -1, 14, new Color(0.1f, 0.07f, 0.02f));
+
+        Caption(font, fontSize, at + new Vector2(r, -4), text, QuestTint);
+    }
+
     private static string NameOfZone(string id) =>
         GameWorld.Graph[id] is { } zone ? Items.GameItems.Localise(zone.Name) : id;
 
@@ -313,7 +401,9 @@ public partial class MapView : Control
         if (GetTree().GetFirstNodeInGroup("player") is not Node3D player) return;
 
         var at = At(player.GlobalPosition);
-        var forward = -player.GlobalBasis.Z;
+        // The model's facing, not the body's: the body never turns, only the model on it does,
+        // so reading the body pointed this arrow the same way for the whole game.
+        var forward = player is Player.PlayerMotor motor ? motor.Facing : -player.GlobalBasis.Z;
         var heading = new Vector2(forward.X, forward.Z);
 
         heading = heading.LengthSquared() < 0.0001f ? Vector2.Up : heading.Normalized();

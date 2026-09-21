@@ -131,26 +131,14 @@ public partial class QuestHud : CanvasLayer
     private static string Where(QuestGoal goal)
     {
         var here = GameWorld.CurrentZoneId;
-        var zones = goal.Type switch
-        {
-            ObjectiveType.Kill => ZonesWith(goal.Target),
-            ObjectiveType.ClearTower or ObjectiveType.Reach => [goal.Target],
-            _ => new List<string>(),
-        };
+        var zones = QuestPlaces.ZonesFor(goal);
 
-        if (zones.Count == 0 || zones.Contains(here)) return zones.Contains(here) ? "here" : "";
+        if (zones.Count == 0) return "";
 
-        return "in " + string.Join(" or ", zones.Select(ZoneName));
+        if (zones.Contains(here)) return "here  ·  marked on the map (M)";
+
+        return "in " + string.Join(" or ", zones.Select(ZoneName)) + "  ·  the way is on the map (M)";
     }
-
-    /// <summary>Maps whose camps or tower floors produce this creature.</summary>
-    private static List<string> ZonesWith(string enemyId) =>
-        GameContent.Database.Zones.Values
-            .Where(z => z.SpawnFields.Any(f => f.Entries.Any(e => e.Enemy == enemyId))
-                        || z.Floors.Any(f => f.Waves.Contains(enemyId) || f.Boss == enemyId))
-            .Select(z => z.Id)
-            .OrderBy(id => id, System.StringComparer.Ordinal)
-            .ToList();
 
     private static string ZoneName(string zoneId) =>
         GameWorld.Graph[zoneId] is { } zone ? GameItems.Localise(zone.Name) : zoneId;
