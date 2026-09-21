@@ -327,19 +327,29 @@ I build the final version. Nothing moves to the next system until the current on
 
 | ID | System | Owner | What gets decided |
 |---|---|---|---|
-| REF-01 | **Combat** — basic attack chain, hit feel, guard, stagger, status effects, telegraphs, enemy roles | **[C↔You]** | Feel, numbers, what each role asks of the player. Folds in the open CBT-14 feel review |
-| REF-02 | **Movement and camera** — click-to-move, WASD, pathing, camera angles and zoom | **[C↔You]** | Folds in the open MOV-08 feel review |
-| REF-03 | **Upgrade system** — anvil ladder, pity, materials, sockets and stones, rerolls, locking | **[C↔You]** | Costs, chances, what a +9 is worth, how sockets and rerolls fit together |
-| REF-04 | **Items and loot** — rarities, bonus lines, drop rates, bag, tooltips, vendor | **[C↔You]** | How often something good drops, what makes a piece exciting |
-| REF-05 | **Bosses** — every boss's phases, mechanics, arenas, rewards | **[C↔You]** | Folds in WLD-10 (boss phases) and the boss half of BAL-06 |
-| REF-06 | **Shards** — the metin-stone equivalent: tiers, waves, modifiers, anchors, respawn | **[C↔You]** | How they feel to fight, how often, what they pay |
-| REF-07 | **Progression** — levels, experience curve, attributes, skills and mastery | **[C↔You]** | Folds in PRG-11 (skill points: yes or no) |
-| REF-08 | **Tower** — the nine floors, tasks, checkpoints, exit | **[C↔You]** | Folds in the rest of BAL-06 |
-| REF-09 | **World** — maps, camps, shrines, borders, fast travel, safe zones | **[C↔You]** | Layout by feel, density, travel costs |
-| REF-10 | **Quests, villagers, economy** — the main chain, dialogue, merchant, yang sinks | **[C↔You]** | Folds in QST-10 (unique-reward quests) and QST-07 (bestiary) |
-| REF-11 | **Interface** — HUD, panels, menus, map, accessibility | **[C↔You]** | What stays on screen, what moves, what goes |
+| REF-01 | **Combat core** — basic attack chain, targeting, damage formula (crit, pierce, evasion, mitigation), hit feel (hit-stop, shake, numbers) | **[C↔You]** | ◐ **in progress, started 2026-09-21.** Folds in the CBT-14 feel review |
+| REF-02 | **Defence and survival** — guard, stagger, status effects on the player, health flask, death and respawn | **[C↔You]** | Stagger is in the data but not implemented yet |
+| REF-03 | **Skills** — the six Warrior skills, mana, cooldowns, mastery ranks, skill bar | **[C↔You]** | Folds in PRG-11 (skill points: yes or no) |
+| REF-04 | **Enemies and AI** — the five roles, aggro and leash, telegraphs, what each creature does | **[C↔You]** | |
+| REF-05 | **Bosses** — phases, mechanics, arenas, rewards | **[C↔You]** | Folds in WLD-10 (boss phases) |
+| REF-06 | **Shards** — the metin-stone equivalent: tiers, waves, modifiers, anchors, respawn, rewards | **[C↔You]** | |
+| REF-07 | **Movement and camera** — click-to-move, WASD, pathing, camera angles and zoom | **[C↔You]** | Folds in the MOV-08 feel review |
+| REF-08 | **Progression** — levels, experience curve, attributes and respec | **[C↔You]** | |
+| REF-09 | **Items and loot** — rarities, bonus lines, drop rates, ground loot, tooltips | **[C↔You]** | |
+| REF-10 | **Inventory and equipment** — bag grid, slots, locking, dropping, destroying | **[C↔You]** | |
+| REF-11 | **Upgrade and workbench** — anvil ladder, pity, materials, sockets and stones, rerolls | **[C↔You]** | |
+| REF-12 | **Economy and merchant** — yang income and sinks, prices, shop stock | **[C↔You]** | Folds in the "yang" naming question |
+| REF-13 | **World** — maps, camps and spawns, safe zones, borders | **[C↔You]** | |
+| REF-14 | **Shrines and travel** — shrines, fast travel, checkpoints | **[C↔You]** | |
+| REF-15 | **Tower** — the nine catacomb floors, tasks, checkpoints, exit | **[C↔You]** | Folds in BAL-06 |
+| REF-16 | **Quests and villagers** — the main chain, dialogue, NPCs | **[C↔You]** | Folds in QST-10 (unique-reward quests) and QST-07 (bestiary) |
+| REF-17 | **Difficulty** — the four tiers and what each changes | **[C↔You]** | Folds in BAL-02 |
+| REF-18 | **Saving** — slots, autosaves, what is kept | **[C↔You]** | |
+| REF-19 | **Interface** — HUD, panels, map, menus, settings | **[C↔You]** | Accessibility (UIX-04) stays at the very end |
+| REF-20 | **Audio** — which sound for what, music | **[C↔You]** | |
 
-Order is yours to change; combat first because every other system is felt through it.
+For each system: I lay out how it works today, you say how you want it, I build it, you
+test it, and only then do we move to the next. Order is yours to change.
 
 ---
 
