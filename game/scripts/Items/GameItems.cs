@@ -96,34 +96,8 @@ public static class GameItems
             ? Localise(def.Name)
             : enemyId;
 
-    /// <summary>
-    /// Stand-in for the localisation table (Phase 11). Turns "$item.wpn_iron_sword.name" into
-    /// "Iron Sword" so the UI is readable while the real strings do not exist yet.
-    /// </summary>
-    public static string Localise(string key)
-    {
-        if (string.IsNullOrEmpty(key)) return "";
-        if (!key.StartsWith('$')) return key;
-
-        var parts = key.Split('.');
-        var stem = parts.Length >= 2 ? parts[^2] : key.TrimStart('$');
-
-        // Ids read prefix_word_word; drop the prefix and title-case the rest.
-        var words = stem.Split('_');
-        var text = new System.Text.StringBuilder();
-
-        for (var i = 1; i < words.Length; i++)
-        {
-            if (words[i].Length == 0) continue;
-
-            if (text.Length > 0) text.Append(' ');
-
-            text.Append(char.ToUpperInvariant(words[i][0]));
-            text.Append(words[i][1..]);
-        }
-
-        return text.Length > 0 ? text.ToString() : stem;
-    }
+    /// <summary>A content name or line in the player's language (UIX-06). See <see cref="Kiln.Core.Foundation.L10n"/>.</summary>
+    public static string Localise(string key) => Kiln.Core.Foundation.L10n.Name(key);
 }
 
 /// <summary>What a kill produced.</summary>

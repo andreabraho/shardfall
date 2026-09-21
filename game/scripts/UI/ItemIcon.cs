@@ -72,8 +72,8 @@ public static class ItemIcon
     /// <summary>A slot's name as a person would write it.</summary>
     public static string NameOf(EquipSlot slot) => slot switch
     {
-        EquipSlot.Ring1 => "Ring 1",
-        EquipSlot.Ring2 => "Ring 2",
-        _ => slot.ToString(),
+        EquipSlot.Ring1 => L10n.T("Ring 1"),
+        EquipSlot.Ring2 => L10n.T("Ring 2"),
+        _ => Words.Of(slot),
     };
 }

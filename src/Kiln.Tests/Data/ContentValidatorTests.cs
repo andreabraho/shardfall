@@ -24,9 +24,13 @@ public class ContentValidatorTests
         IEnumerable<ShardDef>? shards = null,
         IEnumerable<ZoneDef>? zones = null,
         IEnumerable<KitPieceDef>? kit = null,
-        IEnumerable<NpcDef>? npcs = null) => new()
+        IEnumerable<NpcDef>? npcs = null,
+        Dictionary<string, string>? english = null) => new()
     {
         Npcs = Index(npcs),
+        Strings = english is null
+            ? new Dictionary<string, IReadOnlyDictionary<string, string>>()
+            : new Dictionary<string, IReadOnlyDictionary<string, string>> { ["en"] = english },
         Shards = Index(shards),
         Zones = Index(zones),
         KitPieces = Index(kit),
@@ -903,5 +907,29 @@ public class ContentValidatorTests
         var report = ContentValidator.Validate(VillageDb(lost));
 
         Assert.Equal(2, report.Findings.Count(f => f.Rule == "npc"));
+    }
+
+    // -- string tables -------------------------------------------------------
+
+    [Fact]
+    public void Flags_AContentKeyWithNoEnglish()
+    {
+        var items = new[] { new ItemDef { Id = "wpn_test_blade", Name = "$item.wpn_test_blade.name" } };
+
+        Assert.True(HasError(ContentValidator.Validate(Db(items: items, english: new())), "localisation"));
+        Assert.False(HasError(ContentValidator.Validate(
+            Db(items: items, english: new() { ["$item.wpn_test_blade.name"] = "Test Blade" })), "localisation"));
+    }
+
+    [Fact]
+    public void Flags_AVillagerLineWrittenAsPlainText()
+    {
+        var npc = new NpcDef
+        {
+            Id = "npc_test_plain", Name = "$npc.npc_test_plain.name", Role = NpcRole.Talk, Zone = "zone_test",
+            Visual = "mesh_test", Lines = ["Hello there."],
+        };
+
+        Assert.True(HasError(ContentValidator.Validate(VillageDb(npc)), "localisation"));
     }
 }

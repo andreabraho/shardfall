@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Kiln.Core.Foundation;
 using Kiln.Core.Items;
 using Kiln.Game.Items;
 
@@ -31,30 +32,26 @@ public static class ItemText
 
         if (spec is null) return text.ToString();
 
-        text.Append('\n').Append(spec.Rarity.ToString().ToLowerInvariant());
+        text.Append('\n').Append(Words.Of(spec.Rarity));
 
-        if (spec.Slot is { } slot) text.Append(" · ").Append(slot.ToString().ToLowerInvariant());
+        if (spec.Slot is { } slot) text.Append(" · ").Append(Words.Of(slot));
 
-        if (spec.LevelReq > 0) text.Append(" · level ").Append(spec.LevelReq);
+        if (spec.LevelReq > 0) text.Append(" · ").Append(L10n.F("level {0}", spec.LevelReq));
 
         // Frame numbers, already scaled by the upgrade level.
         if (spec.WeaponDamageMax > 0)
         {
-            text.Append("\n\nDamage ")
-                .Append(item.WeaponDamageMin(spec).ToString("0"))
-                .Append('–')
-                .Append(item.WeaponDamageMax(spec).ToString("0"));
+            text.Append("\n\n").Append(L10n.F("Damage {0:0}–{1:0}", item.WeaponDamageMin(spec), item.WeaponDamageMax(spec)));
         }
 
         if (spec.ArmorValue > 0)
         {
-            text.Append("\n\nArmour ").Append(item.ArmorValue(spec).ToString("0"));
+            text.Append("\n\n").Append(L10n.F("Armour {0:0}", item.ArmorValue(spec)));
         }
 
         if (item.UpgradeLevel > 0)
         {
-            text.Append("  (+").Append(UpgradeScaling.BonusPercent(item.UpgradeLevel).ToString("0")).Append("% from +")
-                .Append(item.UpgradeLevel).Append(')');
+            text.Append("  ").Append(L10n.F("(+{0:0}% from +{1})", UpgradeScaling.BonusPercent(item.UpgradeLevel), item.UpgradeLevel));
         }
 
         if (item.Bonuses.Count > 0)
@@ -77,13 +74,11 @@ public static class ItemText
             }
         }
 
-        if (item.Count > 1) text.Append("\n\n").Append(item.Count).Append(" held");
+        if (item.Count > 1) text.Append("\n\n").Append(L10n.F("{0} held", item.Count));
 
         if (spec.SellValue > 0)
         {
-            text.Append("\n\nSells for ")
-                .Append((long)(spec.SellValue * ItemEconomy.VendorBuybackRate))
-                .Append(" yang");
+            text.Append("\n\n").Append(L10n.F("Sells for {0:N0} yang", (long)(spec.SellValue * ItemEconomy.VendorBuybackRate)));
         }
 
         if (equipped is not null && !ReferenceEquals(equipped, item))
@@ -112,35 +107,35 @@ public static class ItemText
 
         var lines = new List<string>();
 
-        Line(lines, "damage", Average(item, spec), Average(equipped, wornSpec), "0");
-        Line(lines, "armour", item.ArmorValue(spec), equipped.ArmorValue(wornSpec), "0");
+        Line(lines, L10n.T("damage"), Average(item, spec), Average(equipped, wornSpec), "0");
+        Line(lines, L10n.T("armour"), item.ArmorValue(spec), equipped.ArmorValue(wornSpec), "0");
 
         var mine = item.ModifiersFor(spec, GameItems.Catalogue);
         var theirs = equipped.ModifiersFor(wornSpec, GameItems.Catalogue);
 
-        Line(lines, "damage %", mine.DamagePct * 100, theirs.DamagePct * 100, "0.#");
-        Line(lines, "skill damage %", mine.SkillDamagePct * 100, theirs.SkillDamagePct * 100, "0.#");
-        Line(lines, "crit %", mine.CritChance * 100, theirs.CritChance * 100, "0.#");
-        Line(lines, "pierce %", mine.PierceChance * 100, theirs.PierceChance * 100, "0.#");
-        Line(lines, "evasion %", mine.Evasion * 100, theirs.Evasion * 100, "0.#");
-        Line(lines, "max health", mine.MaxHpFlat, theirs.MaxHpFlat, "0");
-        Line(lines, "max mana", mine.MaxManaFlat, theirs.MaxManaFlat, "0");
-        Line(lines, "defence", mine.DefenseFlat, theirs.DefenseFlat, "0");
-        Line(lines, "attack power", mine.AttackPowerFlat, theirs.AttackPowerFlat, "0");
-        Line(lines, "attack speed", mine.AttackSpeedFlat, theirs.AttackSpeedFlat, "0.#");
-        Line(lines, "move speed %", mine.MoveSpeedPct * 100, theirs.MoveSpeedPct * 100, "0.#");
+        Line(lines, L10n.T("damage %"), mine.DamagePct * 100, theirs.DamagePct * 100, "0.#");
+        Line(lines, L10n.T("skill damage %"), mine.SkillDamagePct * 100, theirs.SkillDamagePct * 100, "0.#");
+        Line(lines, L10n.T("crit %"), mine.CritChance * 100, theirs.CritChance * 100, "0.#");
+        Line(lines, L10n.T("pierce %"), mine.PierceChance * 100, theirs.PierceChance * 100, "0.#");
+        Line(lines, L10n.T("evasion %"), mine.Evasion * 100, theirs.Evasion * 100, "0.#");
+        Line(lines, L10n.T("max health"), mine.MaxHpFlat, theirs.MaxHpFlat, "0");
+        Line(lines, L10n.T("max mana"), mine.MaxManaFlat, theirs.MaxManaFlat, "0");
+        Line(lines, L10n.T("defence"), mine.DefenseFlat, theirs.DefenseFlat, "0");
+        Line(lines, L10n.T("attack power"), mine.AttackPowerFlat, theirs.AttackPowerFlat, "0");
+        Line(lines, L10n.T("attack speed"), mine.AttackSpeedFlat, theirs.AttackSpeedFlat, "0.#");
+        Line(lines, L10n.T("move speed %"), mine.MoveSpeedPct * 100, theirs.MoveSpeedPct * 100, "0.#");
 
         foreach (var family in mine.VsFamily.Keys.Union(theirs.VsFamily.Keys))
         {
-            Line(lines, $"vs {family.ToString().ToLowerInvariant()}s %",
+            Line(lines, L10n.F("vs {0} %", BonusStat.FamilyName(family)),
                 mine.VsFamilyBonus(family) * 100, theirs.VsFamilyBonus(family) * 100, "0.#");
         }
 
-        text.Append("\n\n— compared to ").Append(GameItems.NameOf(equipped)).Append(" —");
+        text.Append("\n\n").Append(L10n.F("— compared to {0} —", GameItems.NameOf(equipped)));
 
         if (lines.Count == 0)
         {
-            text.Append("\nno difference");
+            text.Append('\n').Append(L10n.T("no difference"));
             return;
         }
 
@@ -157,13 +152,13 @@ public static class ItemText
         // Rounding noise would otherwise fill the panel with "+0" rows.
         if (Math.Abs(delta) < 0.05) return;
 
-        into.Add($"{(delta > 0 ? "+" : "−")}{Math.Abs(delta).ToString(format)} {label}");
+        into.Add($"{(delta > 0 ? "+" : "−")}{Math.Abs(delta).ToString(format, L10n.Culture)} {label}");
     }
 
     private static string DescribeSocket(Socket socket)
     {
-        if (!socket.IsOpen) return "◇ Sealed socket — needs a Boring Stone";
-        if (socket.StoneId is null) return "◆ Empty socket";
+        if (!socket.IsOpen) return "◇ " + L10n.T("Sealed socket — needs a Boring Stone");
+        if (socket.StoneId is null) return "◆ " + L10n.T("Empty socket");
 
         var stone = GameItems.Spec(socket.StoneId);
         var name = GameContent.IsLoaded && GameContent.Database.Items.TryGetValue(socket.StoneId, out var def)

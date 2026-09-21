@@ -108,7 +108,7 @@ public partial class TowerNode : Node3D
 
         if (_run.JustFailed)
         {
-            UI.WorldNotice.Show(GetTree(), "Out of time. The floor resets.");
+            UI.WorldNotice.Show(GetTree(), L10n.T("Out of time. The floor resets."));
             _here?.Activate();
         }
 
@@ -134,7 +134,7 @@ public partial class TowerNode : Node3D
 
         // Said out loud, because on a Carry or Race floor the only feedback otherwise is a
         // number in the corner the player is much too busy to read.
-        UI.WorldNotice.Show(GetTree(), $"{_run.Scored} of {_run.Floor.Targets}.");
+        UI.WorldNotice.Show(GetTree(), L10n.F("{0} of {1}.", _run.Scored, _run.Floor.Targets));
         EmitSignal(SignalName.FloorChanged);
     }
 
@@ -204,12 +204,12 @@ public partial class TowerNode : Node3D
     /// </remarks>
     public static string Brief(TowerFloor floor) => floor.Task switch
     {
-        FloorTask.Break => "Break the seal.",
-        FloorTask.Hold => $"Hold for {floor.Seconds:F0} seconds.",
-        FloorTask.Find => "One lantern is not breathing with the others. Break that one.",
-        FloorTask.Carry => $"Break all {floor.Targets} keystones.",
-        FloorTask.Race => $"Break {floor.Targets}. The clock starts with the first.",
-        FloorTask.Fight => "Kill what is waiting.",
+        FloorTask.Break => L10n.T("Break the seal."),
+        FloorTask.Hold => L10n.F("Hold for {0:F0} seconds.", floor.Seconds),
+        FloorTask.Find => L10n.T("One lantern is not breathing with the others. Break that one."),
+        FloorTask.Carry => L10n.F("Break all {0} keystones.", floor.Targets),
+        FloorTask.Race => L10n.F("Break {0}. The clock starts with the first.", floor.Targets),
+        FloorTask.Fight => L10n.T("Kill what is waiting."),
         _ => "",
     };
 
@@ -221,7 +221,7 @@ public partial class TowerNode : Node3D
 
         if (_run.Finished)
         {
-            UI.WorldNotice.Show(GetTree(), "The tower is finished.");
+            UI.WorldNotice.Show(GetTree(), L10n.T("The tower is finished."));
             GD.Print("[tower] cleared");
 
             Quests.QuestTracker.Report(GetTree(), ObjectiveType.ClearTower, GameWorld.CurrentZoneId);

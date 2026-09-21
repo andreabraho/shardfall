@@ -205,27 +205,48 @@ public readonly record struct BonusStat(BonusStatKind Kind, MonsterFamily Family
     /// </summary>
     public string Describe(double magnitude)
     {
-        var n = magnitude.ToString(magnitude % 1 == 0 ? "0" : "0.#");
+        var n = magnitude.ToString(magnitude % 1 == 0 ? "0" : "0.#", L10n.Culture);
 
         return Kind switch
         {
-            BonusStatKind.DamagePct => $"+{n}% damage",
-            BonusStatKind.SkillDamagePct => $"+{n}% skill damage",
-            BonusStatKind.CritChance => $"+{n}% critical hit chance",
-            BonusStatKind.CritDamage => $"+{n}% critical damage",
-            BonusStatKind.PierceChance => $"+{n}% chance to ignore armour",
-            BonusStatKind.Evasion => $"+{n}% chance to evade",
-            BonusStatKind.MaxHpFlat => $"+{n} maximum health",
-            BonusStatKind.MaxManaFlat => $"+{n} maximum mana",
-            BonusStatKind.DefenseFlat => $"+{n} defence",
-            BonusStatKind.AttackPowerFlat => $"+{n} attack power",
-            BonusStatKind.HpRegen => $"+{n} health regenerated per second",
-            BonusStatKind.AttackSpeed => $"+{n} attack speed",
-            BonusStatKind.MoveSpeedPct => $"+{n}% movement speed",
-            BonusStatKind.VsFamily => $"+{n}% damage against {Family.ToString().ToLowerInvariant()}s",
-            BonusStatKind.ResistElement => $"+{n}% {Element.ToString().ToLowerInvariant()} resistance",
-            BonusStatKind.ResistAll => $"+{n}% resistance to all elements",
+            BonusStatKind.DamagePct => L10n.F("+{0}% damage", n),
+            BonusStatKind.SkillDamagePct => L10n.F("+{0}% skill damage", n),
+            BonusStatKind.CritChance => L10n.F("+{0}% critical hit chance", n),
+            BonusStatKind.CritDamage => L10n.F("+{0}% critical damage", n),
+            BonusStatKind.PierceChance => L10n.F("+{0}% chance to ignore armour", n),
+            BonusStatKind.Evasion => L10n.F("+{0}% chance to evade", n),
+            BonusStatKind.MaxHpFlat => L10n.F("+{0} maximum health", n),
+            BonusStatKind.MaxManaFlat => L10n.F("+{0} maximum mana", n),
+            BonusStatKind.DefenseFlat => L10n.F("+{0} defence", n),
+            BonusStatKind.AttackPowerFlat => L10n.F("+{0} attack power", n),
+            BonusStatKind.HpRegen => L10n.F("+{0} health regenerated per second", n),
+            BonusStatKind.AttackSpeed => L10n.F("+{0} attack speed", n),
+            BonusStatKind.MoveSpeedPct => L10n.F("+{0}% movement speed", n),
+            BonusStatKind.VsFamily => L10n.F("+{0}% damage against {1}", n, FamilyName(Family)),
+            BonusStatKind.ResistElement => L10n.F("+{0}% {1} resistance", n, ElementName(Element)),
+            BonusStatKind.ResistAll => L10n.F("+{0}% resistance to all elements", n),
             _ => $"+{n} {Key}",
         };
     }
+
+    /// <summary>A family as it reads after "damage against": plural, lower case.</summary>
+    /// <remarks>Spelled out, not built from the enum name, so each one is a string a translator sees.</remarks>
+    public static string FamilyName(MonsterFamily family) => family switch
+    {
+        MonsterFamily.Animal => L10n.T("animals"),
+        MonsterFamily.Undead => L10n.T("the undead"),
+        MonsterFamily.Devil => L10n.T("devils"),
+        MonsterFamily.Orc => L10n.T("orcs"),
+        MonsterFamily.Human => L10n.T("humans"),
+        _ => L10n.T("mystic creatures"),
+    };
+
+    private static string ElementName(DamageElement element) => element switch
+    {
+        DamageElement.Fire => L10n.T("fire"),
+        DamageElement.Ice => L10n.T("ice"),
+        DamageElement.Lightning => L10n.T("lightning"),
+        DamageElement.Dark => L10n.T("dark"),
+        _ => L10n.T("physical"),
+    };
 }

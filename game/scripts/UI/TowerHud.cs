@@ -1,4 +1,5 @@
 using Godot;
+using Kiln.Core.Foundation;
 using Kiln.Core.World;
 using Kiln.Game.World;
 
@@ -96,7 +97,7 @@ public partial class TowerHud : CanvasLayer
 
         _panel.Visible = true;
 
-        _floor.Text = $"{Items.GameItems.Localise(run.Floor.Name)}   ·   {run.Depth} of {run.FloorCount}";
+        _floor.Text = L10n.F("{0}   ·   {1} of {2}", Items.GameItems.Localise(run.Floor.Name), run.Depth, run.FloorCount);
         _task.Text = TowerNode.Brief(run.Floor);
         _state.Text = State(run);
 
@@ -109,14 +110,14 @@ public partial class TowerHud : CanvasLayer
 
     private static string State(TowerRun run) => run.Phase switch
     {
-        FloorPhase.Open => "The stair is open.",
+        FloorPhase.Open => L10n.T("The stair is open."),
         _ => run.Floor.Task switch
         {
             FloorTask.Hold => $"{run.Remaining:F0}s",
-            FloorTask.Race => run.ClockRunning ? $"{run.Remaining:F0}s   ·   {run.Scored} of {run.Floor.Targets}" : "—",
+            FloorTask.Race => run.ClockRunning ? L10n.F("{0:F0}s   ·   {1} of {2}", run.Remaining, run.Scored, run.Floor.Targets) : "—",
             FloorTask.Fight => "",
             FloorTask.Find => "",
-            _ => $"{run.Scored} of {run.Floor.Targets}",
+            _ => L10n.F("{0} of {1}", run.Scored, run.Floor.Targets),
         },
     };
 }

@@ -62,7 +62,7 @@ public partial class MerchantPanel : CanvasLayer
         _vendor = vendor;
         _title.Text = string.IsNullOrEmpty(npc.Title)
             ? GameItems.Localise(npc.Name)
-            : $"{GameItems.Localise(npc.Name)}  ·  {npc.Title}";
+            : $"{GameItems.Localise(npc.Name)}  ·  {GameItems.Localise(npc.Title)}";
         _greeting.Text = greeting;
         _status.Text = "";
 
@@ -99,10 +99,10 @@ public partial class MerchantPanel : CanvasLayer
 
         Say(result switch
         {
-            TradeResult.Done => count > 1 ? $"Bought {count} × {name}." : $"Bought {name}.",
-            TradeResult.TooPoor => "Not enough yang.",
-            TradeResult.NoRoom => "No room in the bag.",
-            _ => "That is no longer for sale.",
+            TradeResult.Done => count > 1 ? L10n.F("Bought {0} × {1}.", count, name) : L10n.F("Bought {0}.", name),
+            TradeResult.TooPoor => L10n.T("Not enough yang."),
+            TradeResult.NoRoom => L10n.T("No room in the bag."),
+            _ => L10n.T("That is no longer for sale."),
         }, result == TradeResult.Done);
 
         Refresh();
@@ -118,10 +118,10 @@ public partial class MerchantPanel : CanvasLayer
 
         Say(result switch
         {
-            TradeResult.Done => $"Sold {name} for {_inventory.Bag.Yang - before:N0} yang. It can be bought back for a while.",
-            TradeResult.Locked => $"{name} is locked. Unlock it in the bag first.",
-            TradeResult.Worthless => $"Nobody pays for {name}.",
-            _ => $"{name} is not in the bag.",
+            TradeResult.Done => L10n.F("Sold {0} for {1:N0} yang. It can be bought back for a while.", name, _inventory.Bag.Yang - before),
+            TradeResult.Locked => L10n.F("{0} is locked. Unlock it in the bag first.", name),
+            TradeResult.Worthless => L10n.F("Nobody pays for {0}.", name),
+            _ => L10n.F("{0} is not in the bag.", name),
         }, result == TradeResult.Done);
 
         Refresh();
@@ -158,40 +158,40 @@ public partial class MerchantPanel : CanvasLayer
 
         var yang = _inventory.Bag.Yang;
 
-        _yang.Text = $"{yang:N0} yang";
+        _yang.Text = L10n.F("{0:N0} yang", yang);
 
         Clear(_stock);
 
-        Section(_stock, "Always in stock");
+        Section(_stock, L10n.T("Always in stock"));
 
         foreach (var offer in _vendor.Staples)
         {
-            var row = Row(_stock, offer.ItemId, null, $"{offer.Price:N0}", offer.Price <= yang ? Gold : Bad);
+            var row = Row(_stock, offer.ItemId, null, L10n.F("{0:N0}", offer.Price), offer.Price <= yang ? Gold : Bad);
 
-            Button(row, "Buy", offer.Price <= yang, () => Buy(offer, 1));
-            Button(row, "×10", offer.Price * 10 <= yang, () => Buy(offer, 10));
+            Button(row, L10n.T("Buy"), offer.Price <= yang, () => Buy(offer, 1));
+            Button(row, L10n.T("×10"), offer.Price * 10 <= yang, () => Buy(offer, 10));
         }
 
-        Section(_stock, $"On the shelf  ·  new stock every level");
+        Section(_stock, L10n.T("On the shelf  ·  new stock every level"));
 
-        if (_vendor.Shelf.Count == 0) Note(_stock, "Sold out until your next level.");
+        if (_vendor.Shelf.Count == 0) Note(_stock, L10n.T("Sold out until your next level."));
 
         foreach (var offer in _vendor.Shelf)
         {
-            var row = Row(_stock, offer.ItemId, offer.Item, $"{offer.Price:N0}", offer.Price <= yang ? Gold : Bad);
+            var row = Row(_stock, offer.ItemId, offer.Item, L10n.F("{0:N0}", offer.Price), offer.Price <= yang ? Gold : Bad);
 
-            Button(row, "Buy", offer.Price <= yang, () => Buy(offer, 1));
+            Button(row, L10n.T("Buy"), offer.Price <= yang, () => Buy(offer, 1));
         }
 
         if (_vendor.Buyback.Count > 0)
         {
-            Section(_stock, "Buy back");
+            Section(_stock, L10n.T("Buy back"));
 
             foreach (var offer in _vendor.Buyback)
             {
-                var row = Row(_stock, offer.ItemId, offer.Item, $"{offer.Price:N0}", offer.Price <= yang ? Gold : Bad);
+                var row = Row(_stock, offer.ItemId, offer.Item, L10n.F("{0:N0}", offer.Price), offer.Price <= yang ? Gold : Bad);
 
-                Button(row, "Buy back", offer.Price <= yang, () => Buy(offer, 1));
+                Button(row, L10n.T("Buy back"), offer.Price <= yang, () => Buy(offer, 1));
             }
         }
 
@@ -203,16 +203,16 @@ public partial class MerchantPanel : CanvasLayer
             .Select(p => p.Item)
             .ToList();
 
-        if (carried.Count == 0) Note(_bag, "The bag is empty. Worn gear is not for sale here.");
+        if (carried.Count == 0) Note(_bag, L10n.T("The bag is empty. Worn gear is not for sale here."));
 
         foreach (var item in carried)
         {
             var spec = GameItems.Spec(item.DefId);
             var price = spec is null ? 0 : Vendor.SellPrice(spec, item);
-            var row = Row(_bag, item.DefId, item, price > 0 ? $"{price:N0}" : "—", price > 0 ? Gold : Dim);
+            var row = Row(_bag, item.DefId, item, price > 0 ? L10n.F("{0:N0}", price) : "—", price > 0 ? Gold : Dim);
 
-            if (item.Locked) Note(row, "locked");
-            else Button(row, "Sell", price > 0, () => Sell(item));
+            if (item.Locked) Note(row, L10n.T("locked"));
+            else Button(row, L10n.T("Sell"), price > 0, () => Sell(item));
         }
     }
 
@@ -270,7 +270,7 @@ public partial class MerchantPanel : CanvasLayer
 
         if (spec is { LevelReq: > 1 } && spec.IsEquipment)
         {
-            var level = new Label { Text = $"Lv {spec.LevelReq}", CustomMinimumSize = new Vector2(44, 0) };
+            var level = new Label { Text = L10n.F("Lv {0}", spec.LevelReq), CustomMinimumSize = new Vector2(44, 0) };
             level.AddThemeFontSizeOverride("font_size", 12);
             level.AddThemeColorOverride("font_color",
                 spec.LevelReq > PlayerProfile.Progression.Level ? Bad : Dim);
@@ -373,14 +373,14 @@ public partial class MerchantPanel : CanvasLayer
         sides.AddThemeConstantOverride("separation", 24);
         column.AddChild(sides);
 
-        _stock = Side(sides, "For sale");
-        _bag = Side(sides, "Your bag  ·  sells for a quarter of its value");
+        _stock = Side(sides, L10n.T("For sale"));
+        _bag = Side(sides, L10n.T("Your bag  ·  sells for a quarter of its value"));
 
         _status = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart };
         _status.AddThemeFontSizeOverride("font_size", 13);
         column.AddChild(_status);
 
-        var hint = new Label { Text = "Hover a name for details   ·   Esc or F to close" };
+        var hint = new Label { Text = L10n.T("Hover a name for details   ·   Esc or F to close") };
         hint.AddThemeFontSizeOverride("font_size", 11);
         hint.AddThemeColorOverride("font_color", new Color(0.55f, 0.60f, 0.66f));
         column.AddChild(hint);

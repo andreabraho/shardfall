@@ -1,4 +1,6 @@
+using System.Linq;
 using Godot;
+using Kiln.Core.Foundation;
 
 namespace Kiln.Game.Settings;
 
@@ -36,6 +38,9 @@ public static class GameSettings
     public static float MusicVolume { get; set; } = 0.7f;
     public static float EffectsVolume { get; set; } = 0.8f;
 
+    /// <summary>Language code; a table in data/strings must exist for it.</summary>
+    public static string Language { get; set; } = Kiln.Core.Foundation.L10n.English;
+
     public static readonly int[] FpsCaps = [0, 30, 60, 120, 144, 240];
 
     private static string Path =>
@@ -54,6 +59,7 @@ public static class GameSettings
             MasterVolume = Mathf.Clamp((float)file.GetValue(Section, "master_volume", MasterVolume), 0f, 1f);
             MusicVolume = Mathf.Clamp((float)file.GetValue(Section, "music_volume", MusicVolume), 0f, 1f);
             EffectsVolume = Mathf.Clamp((float)file.GetValue(Section, "effects_volume", EffectsVolume), 0f, 1f);
+            Language = (string)file.GetValue(Section, "language", Language);
         }
 
         EnsureBuses();
@@ -71,6 +77,7 @@ public static class GameSettings
         file.SetValue(Section, "master_volume", MasterVolume);
         file.SetValue(Section, "music_volume", MusicVolume);
         file.SetValue(Section, "effects_volume", EffectsVolume);
+        file.SetValue(Section, "language", Language);
 
         if (file.Save(Path) != Error.Ok) GD.PushWarning($"[settings] could not write {Path}");
     }
@@ -92,6 +99,27 @@ public static class GameSettings
         Volume(MusicBus, MusicVolume);
         Volume(EffectsBus, EffectsVolume);
     }
+
+    /// <summary>
+    /// Puts the chosen language's tables in place (UIX-06). Needs content loaded, so it runs
+    /// after the rest of the settings; a language with no table falls back to English.
+    /// </summary>
+    public static void ApplyLanguage()
+    {
+        if (!GameContent.IsLoaded) return;
+
+        var db = GameContent.Database;
+
+        if (!db.Strings.ContainsKey(Language)) Language = Kiln.Core.Foundation.L10n.English;
+
+        Kiln.Core.Foundation.L10n.Use(Language, db.StringsFor(Language), db.StringsFor(Kiln.Core.Foundation.L10n.English));
+    }
+
+    /// <summary>The languages there are tables for, English first.</summary>
+    public static System.Collections.Generic.List<string> Languages() =>
+        !GameContent.IsLoaded
+            ? [Kiln.Core.Foundation.L10n.English]
+            : [.. GameContent.Database.Strings.Keys.OrderBy(k => k == Kiln.Core.Foundation.L10n.English ? "" : k)];
 
     /// <summary>
     /// Adds the music and effects buses under the master one.

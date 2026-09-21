@@ -1,4 +1,5 @@
 using Godot;
+using Kiln.Core.Foundation;
 using Kiln.Game.Input;
 using Kiln.Game.Saving;
 
@@ -24,6 +25,28 @@ public partial class PauseMenu : CanvasLayer
         ProcessMode = ProcessModeEnum.Always;
         Visible = false;
 
+        Build();
+        SettingsView.LanguageChanged += Relabel;
+    }
+
+    /// <summary>A new language: rebuild in it, and stay on the settings page it was chosen from.</summary>
+    private void Relabel() => CallDeferred(nameof(Rebuild));
+
+    /// <remarks>Deferred: the language picker that asked for this is one of the nodes it frees.</remarks>
+    private void Rebuild()
+    {
+        foreach (var child in GetChildren())
+        {
+            RemoveChild(child);
+            child.QueueFree();
+        }
+
+        Build();
+        Page(new SettingsView(inGame: true));
+    }
+
+    private void Build()
+    {
         var shade = new ColorRect
         {
             Color = new Color(0, 0, 0, 0.6f),
@@ -49,16 +72,16 @@ public partial class PauseMenu : CanvasLayer
         buttons.AddThemeConstantOverride("separation", 8);
         menu.AddChild(buttons);
 
-        buttons.AddChild(MenuStyle.Label("Paused", 24, MenuStyle.Gold));
+        buttons.AddChild(MenuStyle.Label(L10n.T("Paused"), 24, MenuStyle.Gold));
         buttons.AddChild(new Control { CustomMinimumSize = new Vector2(0, 8) });
-        buttons.AddChild(MenuStyle.Big("Resume", Close));
-        buttons.AddChild(MenuStyle.Big("Save game", () => Page(new SaveList(SaveList.Purpose.Save))));
-        buttons.AddChild(MenuStyle.Big("Load game", () => Page(new SaveList(SaveList.Purpose.Load))));
-        buttons.AddChild(MenuStyle.Big("Settings", () => Page(new SettingsView(inGame: true))));
+        buttons.AddChild(MenuStyle.Big(L10n.T("Resume"), Close));
+        buttons.AddChild(MenuStyle.Big(L10n.T("Save game"), () => Page(new SaveList(SaveList.Purpose.Save))));
+        buttons.AddChild(MenuStyle.Big(L10n.T("Load game"), () => Page(new SaveList(SaveList.Purpose.Load))));
+        buttons.AddChild(MenuStyle.Big(L10n.T("Settings"), () => Page(new SettingsView(inGame: true))));
         buttons.AddChild(new Control { CustomMinimumSize = new Vector2(0, 8) });
-        buttons.AddChild(MenuStyle.Big("Quit to menu", () => SaveService.Instance?.QuitToMenu()));
-        buttons.AddChild(MenuStyle.Big("Quit to desktop", () => SaveService.Instance?.QuitGame()));
-        buttons.AddChild(MenuStyle.Label("Leaving autosaves first.", 12, MenuStyle.Dim));
+        buttons.AddChild(MenuStyle.Big(L10n.T("Quit to menu"), () => SaveService.Instance?.QuitToMenu()));
+        buttons.AddChild(MenuStyle.Big(L10n.T("Quit to desktop"), () => SaveService.Instance?.QuitGame()));
+        buttons.AddChild(MenuStyle.Label(L10n.T("Leaving autosaves first."), 12, MenuStyle.Dim));
 
         _content = new PanelContainer { Visible = false };
         _content.AddThemeStyleboxOverride("panel", MenuStyle.Panel());
@@ -67,6 +90,7 @@ public partial class PauseMenu : CanvasLayer
 
     public override void _ExitTree()
     {
+        SettingsView.LanguageChanged -= Relabel;
         UiState.SetOpen(ref _counted, false);
 
         // A pause left on by a scene change would freeze the next map.

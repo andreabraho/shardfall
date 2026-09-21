@@ -47,7 +47,7 @@ public static class QuestTracker
             catch (System.Exception ex)
             {
                 GD.PushError($"[quest] paying {finished.Quest.Id} failed: {ex.Message}");
-                paid = "reward failed — see the log";
+                paid = L10n.T("reward failed — see the log");
             }
 
             GD.Print($"[quest] finished {finished.Quest.Id} — {paid}"
@@ -56,8 +56,8 @@ public static class QuestTracker
             // One line for both halves. Two notices in the same frame would overwrite each
             // other, and "what do I do now" is the half that must not be lost.
             UI.WorldNotice.Show(tree, next is null
-                ? $"Quest complete: {Name(finished.Quest)}  ({paid})"
-                : $"Quest complete: {Name(finished.Quest)}  ({paid})   ·   Next: {Name(next.Quest)}");
+                ? L10n.F("Quest complete: {0}  ({1})", Name(finished.Quest), paid)
+                : L10n.F("Quest complete: {0}  ({1})   ·   Next: {2}", Name(finished.Quest), paid, Name(next.Quest)));
 
             Saving.SaveService.Autosave($"Finished {finished.Quest.Id}");
         }
@@ -96,8 +96,8 @@ public static class QuestTracker
 
         var parts = new System.Collections.Generic.List<string>();
 
-        if (reward.Xp > 0) parts.Add($"+{reward.Xp:N0} xp");
-        if (reward.Yang > 0) parts.Add($"+{reward.Yang:N0} yang");
+        if (reward.Xp > 0) parts.Add(L10n.F("+{0:N0} xp", reward.Xp));
+        if (reward.Yang > 0) parts.Add(L10n.F("+{0:N0} yang", reward.Yang));
         if (reward.Items.Count > 0) parts.Add(string.Join(", ", reward.Items.Select(GameItems.NameOfId)));
 
         return string.Join("  ", parts);

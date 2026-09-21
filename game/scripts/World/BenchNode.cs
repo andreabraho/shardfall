@@ -1,4 +1,5 @@
 using Godot;
+using Kiln.Core.Foundation;
 using Kiln.Game.Input;
 
 namespace Kiln.Game.World;
@@ -44,7 +45,7 @@ public partial class BenchNode : Area3D
         };
 
         AddChild(_plate);
-        _plate.SetText("Workbench");
+        _plate.SetText(L10n.T("Workbench"));
 
         BodyEntered += body => { if (body.IsInGroup("player")) _playerInside = true; };
         BodyExited += body => { if (body.IsInGroup("player")) _playerInside = false; };

@@ -31,6 +31,7 @@ public static class Program
                 "codegen" => CodegenCommand.Run(rest),
                 "simulate" => SimulateCommand.Run(rest),
                 "economy" => EconomyCommand.Run(rest),
+                "strings" => StringsCommand.Run(rest),
                 _ => Unknown(command),
             };
         }
@@ -53,6 +54,10 @@ public static class Program
         kiln — project tooling
 
         Commands:
+          strings  [--seed-en] [--template <lang>]
+                                               Report text coverage per language (UIX-06);
+                                               seed English names, or lay out a translation.
+
           validate [--data <dir>]              Load and validate all game content.
                                                Exit code 1 if any error is found.
 

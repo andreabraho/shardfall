@@ -127,7 +127,7 @@ public partial class PlayerInventory : Node
             rejected.Add(item);
         }
 
-        if (rejected.Count > 0) EmitSignal(SignalName.PickedUp, "Bag full");
+        if (rejected.Count > 0) EmitSignal(SignalName.PickedUp, L10n.T("Bag full"));
 
         return rejected;
     }

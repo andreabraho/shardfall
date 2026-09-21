@@ -1,6 +1,6 @@
 using Kiln.Core.Combat;
-using Kiln.Core.Foundation;
 using Kiln.Core.Encounters;
+using Kiln.Core.Foundation;
 using Kiln.Core.Items;
 using Kiln.Core.World;
 using Kiln.Data.Definitions;
@@ -74,7 +74,73 @@ public static class ContentValidator
         foreach (var d in db.Enemies.Values) Check(d.SourceFile, d.Id, d.Name);
         foreach (var d in db.Skills.Values) Check(d.SourceFile, d.Id, d.Name);
         foreach (var d in db.Quests.Values) Check(d.SourceFile, d.Id, d.Name);
-        foreach (var d in db.Npcs.Values) Check(d.SourceFile, d.Id, d.Name);
+        foreach (var d in db.Npcs.Values)
+        {
+            Check(d.SourceFile, d.Id, d.Name);
+            Check(d.SourceFile, d.Id, d.Title);
+
+            foreach (var line in d.Lines.Concat(d.QuestLines.Values)) Check(d.SourceFile, d.Id, line);
+        }
+
+        // Every key has English. Checked only when an English table exists at all, so rule
+        // tests built from a handful of definitions need not carry one.
+        if (!db.Strings.TryGetValue(L10n.English, out var english)) return;
+
+        foreach (var def in db.All())
+        {
+            foreach (var key in KeysIn(def).Distinct(StringComparer.Ordinal).Where(k => !english.ContainsKey(k)))
+            {
+                report.Error("localisation", def.SourceFile,
+                    $"'{def.Id}' uses {key}, which data/strings/en.json does not define.",
+                    "Add the English, or run: dotnet run --project src/Kiln.Tools -- strings --seed-en");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Every <c>$key</c> anywhere inside a definition, however deeply nested.
+    /// </summary>
+    /// <remarks>
+    /// Walks the object rather than listing fields, so a new text field added to a definition
+    /// next month is checked without anyone remembering to add it here.
+    /// </remarks>
+    private static IEnumerable<string> KeysIn(object? value, int depth = 0)
+    {
+        if (value is null || depth > 8) yield break;
+
+        switch (value)
+        {
+            case string text:
+                if (text.StartsWith('$')) yield return text;
+                yield break;
+
+            case System.Collections.IDictionary map:
+                foreach (var entry in map.Values)
+                {
+                    foreach (var key in KeysIn(entry, depth + 1)) yield return key;
+                }
+
+                yield break;
+
+            case System.Collections.IEnumerable list:
+                foreach (var entry in list)
+                {
+                    foreach (var key in KeysIn(entry, depth + 1)) yield return key;
+                }
+
+                yield break;
+        }
+
+        var type = value.GetType();
+
+        if (type.Namespace != typeof(ItemDef).Namespace) yield break;
+
+        foreach (var property in type.GetProperties())
+        {
+            if (property.GetIndexParameters().Length > 0 || property.Name == nameof(IContentDef.SourceFile)) continue;
+
+            foreach (var key in KeysIn(property.GetValue(value), depth + 1)) yield return key;
+        }
     }
 
     // -- R3 -----------------------------------------------------------------

@@ -1,4 +1,5 @@
 using Godot;
+using Kiln.Core.Foundation;
 using Kiln.Game.Input;
 using Kiln.Game.World;
 
@@ -127,7 +128,7 @@ public partial class MapPanel : CanvasLayer
 
         _title.Text = zone is null
             ? "—"
-            : $"{Items.GameItems.Localise(zone.Name)}   ·   level {zone.Band.Min}–{zone.Band.Max}";
+            : L10n.F("{0}   ·   level {1}–{2}", Items.GameItems.Localise(zone.Name), zone.Band.Min, zone.Band.Max);
 
         _view.QueueRedraw();
     }
@@ -185,14 +186,14 @@ public partial class MapPanel : CanvasLayer
         var row = new HBoxContainer();
         row.AddThemeConstantOverride("separation", 18);
 
-        row.AddChild(Key("you", new Color(0.98f, 0.86f, 0.42f)));
-        row.AddChild(Key("border", new Color(0.62f, 0.82f, 1f)));
-        row.AddChild(Key("shrine", new Color(0.45f, 0.82f, 0.86f)));
-        row.AddChild(Key("shard", new Color(0.82f, 0.52f, 0.95f)));
-        row.AddChild(Key("camp", new Color(0.85f, 0.38f, 0.34f)));
-        row.AddChild(Key("safe", new Color(0.36f, 0.72f, 0.42f)));
+        row.AddChild(Key(L10n.T("you"), new Color(0.98f, 0.86f, 0.42f)));
+        row.AddChild(Key(L10n.T("border"), new Color(0.62f, 0.82f, 1f)));
+        row.AddChild(Key(L10n.T("shrine"), new Color(0.45f, 0.82f, 0.86f)));
+        row.AddChild(Key(L10n.T("shard"), new Color(0.82f, 0.52f, 0.95f)));
+        row.AddChild(Key(L10n.T("camp"), new Color(0.85f, 0.38f, 0.34f)));
+        row.AddChild(Key(L10n.T("safe"), new Color(0.36f, 0.72f, 0.42f)));
 
-        var hint = new Label { Text = "M or Esc to close" };
+        var hint = new Label { Text = L10n.T("M or Esc to close") };
         hint.AddThemeColorOverride("font_color", new Color(0.48f, 0.53f, 0.58f));
         row.AddChild(hint);
 

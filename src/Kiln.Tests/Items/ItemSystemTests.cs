@@ -65,7 +65,7 @@ public class BonusStatTests
     {
         Assert.Equal("+12% damage", BonusStat.Parse("damage_pct").Describe(12));
         Assert.Equal("+260 maximum health", BonusStat.Parse("max_hp_flat").Describe(260));
-        Assert.Equal("+25% damage against undeads", BonusStat.Parse("vs_family.undead").Describe(25));
+        Assert.Equal("+25% damage against the undead", BonusStat.Parse("vs_family.undead").Describe(25));
     }
 }
 

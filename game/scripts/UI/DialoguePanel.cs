@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Godot;
+using Kiln.Core.Foundation;
 using Kiln.Game.Input;
 
 namespace Kiln.Game.UI;
@@ -119,7 +120,7 @@ public partial class DialoguePanel : CanvasLayer
         }
 
         _text.Text = _lines.Dequeue();
-        _hint.Text = _lines.Count > 0 ? "F / click — more     Esc — close" : "F / click — close";
+        _hint.Text = _lines.Count > 0 ? L10n.T("F / click — more     Esc — close") : L10n.T("F / click — close");
     }
 
     public void Close()

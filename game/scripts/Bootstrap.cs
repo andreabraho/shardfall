@@ -39,6 +39,9 @@ public partial class Bootstrap : Node
         // content load and precede any scene that mints an item.
         Items.GameItems.Load();
 
+        // The language needs the string tables, so it follows the content.
+        Settings.GameSettings.ApplyLanguage();
+
         // The zone graph and the shrine network, before any zone scene enters the tree.
         World.GameWorld.Load();
 

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Godot;
+using Kiln.Core.Foundation;
 using Kiln.Core.World;
 
 namespace Kiln.Game.World;
@@ -174,10 +175,10 @@ public partial class TowerFloorNode : Node3D
 
     private static string LabelFor(FloorTask task) => task switch
     {
-        FloorTask.Carry => "Keystone",
-        FloorTask.Find => "Lantern",
-        FloorTask.Race => "Prop",
-        _ => "Seal",
+        FloorTask.Carry => L10n.T("Keystone"),
+        FloorTask.Find => L10n.T("Lantern"),
+        FloorTask.Race => L10n.T("Prop"),
+        _ => L10n.T("Seal"),
     };
 
     private void OnShattered(bool real)
@@ -186,7 +187,7 @@ public partial class TowerFloorNode : Node3D
         {
             // Nothing happens, and that is the point: a wrong lantern costs time, not health
             // and not the floor (FR-7.16).
-            UI.WorldNotice.Show(GetTree(), "Silent. Not this one.");
+            UI.WorldNotice.Show(GetTree(), L10n.T("Silent. Not this one."));
             return;
         }
 

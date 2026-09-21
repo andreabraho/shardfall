@@ -1,5 +1,6 @@
 using System;
 using Godot;
+using Kiln.Core.Foundation;
 using Kiln.Core.Progression;
 using Kiln.Game.Input;
 
@@ -52,8 +53,8 @@ public partial class SkillSlot : Control
         _tint = def.Tree == "mental" ? Mental : Body;
 
         TooltipText = $"{_name}   [{_key}]\n"
-            + $"{def.ManaCost:0} mana  ·  {def.Cooldown:0.#} s cooldown\n"
-            + $"Learned at level {def.UnlockLevel}";
+            + L10n.F("{0:0} mana  ·  {1:0.#} s cooldown", def.ManaCost, def.Cooldown) + "\n"
+            + L10n.F("Learned at level {0}", def.UnlockLevel);
     }
 
     public void Present(bool learned, double remaining, double total, bool affordable, bool active, MasteryRank rank)
@@ -118,7 +119,7 @@ public partial class SkillSlot : Control
 
         if (!_learned)
         {
-            DrawString(font, new Vector2(0, Side - 6), $"Lv {_unlockLevel}", HorizontalAlignment.Center, Side, 11,
+            DrawString(font, new Vector2(0, Side - 6), L10n.F("Lv {0}", _unlockLevel), HorizontalAlignment.Center, Side, 11,
                 new Color(0.75f, 0.75f, 0.78f));
         }
 

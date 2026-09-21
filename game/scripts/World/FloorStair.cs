@@ -1,4 +1,5 @@
 using Godot;
+using Kiln.Core.Foundation;
 
 namespace Kiln.Game.World;
 
@@ -83,7 +84,7 @@ public partial class FloorStair : Area3D
 
         Restyle();
 
-        UI.WorldNotice.Show(GetTree(), "The floor is finished. The stair is open.");
+        UI.WorldNotice.Show(GetTree(), L10n.T("The floor is finished. The stair is open."));
     }
 
     private void Restyle()
@@ -95,7 +96,7 @@ public partial class FloorStair : Area3D
         if (_plate is null) return;
 
         _plate.Tint = colour;
-        _plate.SetText(_open ? "Down" : "Sealed");
+        _plate.SetText(_open ? L10n.T("Down") : L10n.T("Sealed"));
     }
 
     private void OnBodyEntered(Node3D body)

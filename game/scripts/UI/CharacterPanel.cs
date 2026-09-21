@@ -132,7 +132,7 @@ public partial class CharacterPanel : CanvasLayer
         left.AddThemeConstantOverride("separation", 8);
         columns.AddChild(left);
 
-        _title = Heading("Character");
+        _title = Heading(L10n.T("Character"));
         left.AddChild(_title);
 
         _experience = new Label();
@@ -153,7 +153,7 @@ public partial class CharacterPanel : CanvasLayer
             row.AddThemeConstantOverride("separation", 8);
             left.AddChild(row);
 
-            var name = new Label { Text = kind.ToString().ToUpperInvariant(), CustomMinimumSize = new Vector2(44, 0) };
+            var name = new Label { Text = Words.Of(kind), CustomMinimumSize = new Vector2(44, 0) };
             name.AddThemeFontSizeOverride("font_size", 15);
             row.AddChild(name);
 
@@ -178,9 +178,8 @@ public partial class CharacterPanel : CanvasLayer
         _hint = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart };
         _hint.AddThemeFontSizeOverride("font_size", 11);
         _hint.AddThemeColorOverride("font_color", new Color(0.55f, 0.60f, 0.66f));
-        _hint.Text = "Points are yours to place however you like. The caps do the balancing: "
-            + "crit stops at 50%, evasion at 30%, mitigation at 75%.\n\n"
-            + "Your opening spread was assigned for you. Any shrine will refund it, free.";
+        _hint.Text = L10n.T("Points are yours to place however you like. The caps do the balancing: crit stops at 50%, evasion at 30%, mitigation at 75%.")
+            + "\n\n" + L10n.T("Your opening spread was assigned for you. Any shrine will refund it, free.");
         left.AddChild(_hint);
     }
 
@@ -190,7 +189,7 @@ public partial class CharacterPanel : CanvasLayer
         middle.AddThemeConstantOverride("separation", 4);
         columns.AddChild(middle);
 
-        middle.AddChild(Heading2("What it buys"));
+        middle.AddChild(Heading2(L10n.T("What it buys")));
 
         _derived = new VBoxContainer();
         _derived.AddThemeConstantOverride("separation", 3);
@@ -219,7 +218,7 @@ public partial class CharacterPanel : CanvasLayer
         right.AddThemeConstantOverride("separation", 4);
         columns.AddChild(right);
 
-        right.AddChild(Heading2("Skills"));
+        right.AddChild(Heading2(L10n.T("Skills")));
 
         _skills = new VBoxContainer();
         _skills.AddThemeConstantOverride("separation", 4);
@@ -227,7 +226,7 @@ public partial class CharacterPanel : CanvasLayer
 
         var note = new Label
         {
-            Text = "Skills unlock on their own at the level shown. Mastery comes from using them, not from points.",
+            Text = L10n.T("Skills unlock on their own at the level shown. Mastery comes from using them, not from points."),
             AutowrapMode = TextServer.AutowrapMode.WordSmart,
         };
 
@@ -238,12 +237,13 @@ public partial class CharacterPanel : CanvasLayer
 
     // ------------------------------------------------------------------ refresh
 
-    private static readonly (AttributeKind Kind, string Blurb)[] Blurbs =
+    /// <remarks>A property, so the words are read in whatever language is current.</remarks>
+    private static (AttributeKind Kind, string Blurb)[] Blurbs =>
     [
-        (AttributeKind.Str, "attack power"),
-        (AttributeKind.Dex, "crit, pierce, evasion, attack speed"),
-        (AttributeKind.Int, "mana pool and regeneration"),
-        (AttributeKind.Vit, "health, defence, regeneration"),
+        (AttributeKind.Str, L10n.T("attack power")),
+        (AttributeKind.Dex, L10n.T("crit, pierce, evasion, attack speed")),
+        (AttributeKind.Int, L10n.T("mana pool and regeneration")),
+        (AttributeKind.Vit, L10n.T("health, defence, regeneration")),
     ];
 
     private void Spend(AttributeKind kind)
@@ -261,14 +261,14 @@ public partial class CharacterPanel : CanvasLayer
         var attributes = progression.TotalAttributes;
         var points = progression.UnspentAttributePoints;
 
-        _title.Text = $"Character — level {progression.Level}";
+        _title.Text = L10n.F("Character — level {0}", progression.Level);
         _experience.Text = progression.IsMaxLevel
-            ? "Maximum level."
-            : $"{progression.Experience:N0} / {progression.ExperienceForNextLevel:N0} xp to level {progression.Level + 1}";
+            ? L10n.T("Maximum level.")
+            : L10n.F("{0:N0} / {1:N0} xp to level {2}", progression.Experience, progression.ExperienceForNextLevel, progression.Level + 1);
 
         _unspent.Text = points > 0
-            ? $"{points} attribute point{(points == 1 ? "" : "s")} to place"
-            : "No attribute points to place.";
+            ? (points == 1 ? L10n.T("1 attribute point to place") : L10n.F("{0} attribute points to place", points))
+            : L10n.T("No attribute points to place.");
 
         _unspent.AddThemeColorOverride("font_color",
             points > 0 ? new Color("8fd3a8") : new Color(0.55f, 0.60f, 0.66f));
@@ -301,20 +301,20 @@ public partial class CharacterPanel : CanvasLayer
 
         var s = _combatant.Stats;
 
-        Stat("Health", $"{s.MaxHp:N0}");
-        Stat("Mana", $"{s.MaxMana:N0}");
-        Stat("Attack power", $"{s.AttackPower:N0}");
-        Stat("Defence", $"{s.Defense:N0}");
-        Stat("Attacks / sec", $"{s.AttacksPerSecond:F2}");
+        Stat(L10n.T("Health"), L10n.F("{0:N0}", s.MaxHp));
+        Stat(L10n.T("Mana"), L10n.F("{0:N0}", s.MaxMana));
+        Stat(L10n.T("Attack power"), L10n.F("{0:N0}", s.AttackPower));
+        Stat(L10n.T("Defence"), L10n.F("{0:N0}", s.Defense));
+        Stat(L10n.T("Attacks / sec"), L10n.F("{0:F2}", s.AttacksPerSecond));
 
         // The capped ones say so once they are there, so the ceiling is discovered by
         // reading rather than by wasting ten points finding it.
-        Capped("Crit chance", s.CritChance, StatBlock.CritChanceCap);
-        Capped("Pierce", s.PierceChance, StatBlock.PierceChanceCap);
-        Capped("Evasion", s.Evasion, StatBlock.EvasionCap);
+        Capped(L10n.T("Crit chance"), s.CritChance, StatBlock.CritChanceCap);
+        Capped(L10n.T("Pierce"), s.PierceChance, StatBlock.PierceChanceCap);
+        Capped(L10n.T("Evasion"), s.Evasion, StatBlock.EvasionCap);
 
-        Stat("Health regen", $"{s.HpRegenPerSecond:F1} / s");
-        Stat("Mana regen", $"{s.ManaRegenPerSecond:F1} / s");
+        Stat(L10n.T("Health regen"), L10n.F("{0:F1} / s", s.HpRegenPerSecond));
+        Stat(L10n.T("Mana regen"), L10n.F("{0:F1} / s", s.ManaRegenPerSecond));
     }
 
     private void Stat(string name, string value)
@@ -337,7 +337,7 @@ public partial class CharacterPanel : CanvasLayer
     {
         var atCap = value >= cap - 0.0001;
 
-        Stat(name, atCap ? $"{value:P0}  (cap)" : $"{value:P1}");
+        Stat(name, atCap ? L10n.F("{0:P0}  (cap)", value) : L10n.F("{0:P1}", value));
 
         if (!atCap) return;
 
@@ -362,8 +362,8 @@ public partial class CharacterPanel : CanvasLayer
 
             var known = book.IsUnlocked(def.Id);
             var text = known
-                ? $"{GameItems.Localise(def.Name)}  ·  {book.RankOf(def.Id)}"
-                : $"{GameItems.Localise(def.Name)}  ·  level {def.UnlockLevel}";
+                ? $"{GameItems.Localise(def.Name)}  ·  {Words.Of(book.RankOf(def.Id))}"
+                : $"{GameItems.Localise(def.Name)}  ·  " + L10n.F("level {0}", def.UnlockLevel);
 
             var label = new Label { Text = text };
             label.AddThemeFontSizeOverride("font_size", 13);
@@ -377,7 +377,7 @@ public partial class CharacterPanel : CanvasLayer
 
             if (toNext <= 0) continue;
 
-            var progress = new Label { Text = $"      {toNext} more uses to rank up" };
+            var progress = new Label { Text = "      " + L10n.F("{0} more uses to rank up", toNext) };
             progress.AddThemeFontSizeOverride("font_size", 11);
             progress.AddThemeColorOverride("font_color", new Color(0.50f, 0.56f, 0.62f));
             _skills.AddChild(progress);

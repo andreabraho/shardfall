@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Godot;
+using Kiln.Core.Foundation;
 using Kiln.Game.Combat;
 using Kiln.Game.Player;
 
@@ -77,8 +78,8 @@ public partial class CombatHud : CanvasLayer
         var p = _character.Progression;
 
         _levelLabel.Text = p.IsMaxLevel
-            ? $"Level {p.Level} (max)"
-            : $"Level {p.Level}   {p.Experience:N0} / {p.ExperienceForNextLevel:N0} xp";
+            ? L10n.F("Level {0} (max)", p.Level)
+            : L10n.F("Level {0}   {1:N0} / {2:N0} xp", p.Level, p.Experience, p.ExperienceForNextLevel);
 
         _xpBar.Value = p.LevelProgress;
     }
@@ -88,7 +89,7 @@ public partial class CombatHud : CanvasLayer
         if (_flask is null) return;
 
         // Pips rather than a number: charge count has to be readable at a glance mid-fight.
-        _flaskLabel.Text = $"Flask  {new string('◆', _flask.Charges)}{new string('◇', Math.Max(0, _flask.MaxCharges - _flask.Charges))}";
+        _flaskLabel.Text = $"{L10n.T("Flask")}  {new string('◆', _flask.Charges)}{new string('◇', Math.Max(0, _flask.MaxCharges - _flask.Charges))}";
     }
 
     private void BuildPlayerFrame()
@@ -101,7 +102,7 @@ public partial class CombatHud : CanvasLayer
         var box = new VBoxContainer();
         box.AddThemeConstantOverride("separation", 3);
 
-        _playerLabel = new Label { Text = "Health" };
+        _playerLabel = new Label { Text = L10n.T("Health") };
         _playerBar = new ProgressBar { MinValue = 0, MaxValue = 1, Value = 1, ShowPercentage = false, CustomMinimumSize = new Vector2(320, 22) };
         _manaBar = new ProgressBar { MinValue = 0, MaxValue = 1, Value = 1, ShowPercentage = false, CustomMinimumSize = new Vector2(320, 14) };
 
@@ -110,13 +111,13 @@ public partial class CombatHud : CanvasLayer
         Tint(_playerBar, new Color("c0392b"));
         Tint(_manaBar, new Color("3f7fd0"));
 
-        _manaLabel = new Label { Text = "Mana" };
+        _manaLabel = new Label { Text = L10n.T("Mana") };
         _manaLabel.AddThemeFontSizeOverride("font_size", 12);
         _manaLabel.AddThemeColorOverride("font_color", new Color("8fb6e8"));
 
-        _flaskLabel = new Label { Text = "Flask" };
+        _flaskLabel = new Label { Text = L10n.T("Flask") };
         _statusLabel = new Label { Text = "" };
-        _levelLabel = new Label { Text = "Level 1" };
+        _levelLabel = new Label { Text = L10n.F("Level {0}", 1) };
         _xpBar = new ProgressBar { MinValue = 0, MaxValue = 1, Value = 0, ShowPercentage = false, CustomMinimumSize = new Vector2(320, 8) };
 
         box.AddChild(_statusLabel);
@@ -182,8 +183,8 @@ public partial class CombatHud : CanvasLayer
         _playerBar.Value = _player.Health.Fraction;
         _manaBar.Value = _player.Mana.Fraction;
         _playerLabel.Text = _player.IsAlive
-            ? $"Health  {_player.Health}"
-            : "Dead — respawning";
+            ? L10n.F("Health  {0}", _player.Health)
+            : L10n.T("Dead — respawning");
     }
 
     public override void _Process(double _)
@@ -192,7 +193,7 @@ public partial class CombatHud : CanvasLayer
         if (_player is not null)
         {
             _manaBar.Value = _player.Mana.Fraction;
-            _manaLabel.Text = $"Mana  {_player.Mana}";
+            _manaLabel.Text = L10n.F("Mana  {0}", _player.Mana);
         }
 
         // Guard used to be reported here too; it lives on the skill bar now, with every other
@@ -207,8 +208,8 @@ public partial class CombatHud : CanvasLayer
             foreach (var effect in _player.Statuses.Active)
             {
                 names.Add(effect.Stacks > 1
-                    ? $"{effect.Kind} x{effect.Stacks} ({effect.Remaining:F0}s)"
-                    : $"{effect.Kind} ({effect.Remaining:F0}s)");
+                    ? L10n.F("{0} x{1} ({2:F0}s)", Words.Of(effect.Kind), effect.Stacks, effect.Remaining)
+                    : L10n.F("{0} ({1:F0}s)", Words.Of(effect.Kind), effect.Remaining));
             }
 
             _statusLabel.Text = string.Join("  ", names);
@@ -227,18 +228,9 @@ public partial class CombatHud : CanvasLayer
         _targetPanel.Visible = true;
         _targetBar.Value = target.Health.Fraction;
 
-        // Definition names are localisation keys; strip the prefix until the string table
-        // lands with UIX-06 rather than showing "$mob.mob_corrupted_wolf.name" on screen.
         _targetLabel.Text = $"{Pretty(target.DisplayName)}   {target.Health}";
     }
 
-    private static string Pretty(string key)
-    {
-        if (string.IsNullOrEmpty(key)) return "Target";
-
-        var parts = key.TrimStart('$').Split('.');
-        var name = parts.Length >= 2 ? parts[^2] : parts[^1];
-
-        return name.Replace('_', ' ').Trim();
-    }
+    private static string Pretty(string key) =>
+        string.IsNullOrEmpty(key) ? L10n.T("Target") : Items.GameItems.Localise(key);
 }

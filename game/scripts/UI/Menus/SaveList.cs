@@ -1,5 +1,6 @@
 using System.Linq;
 using Godot;
+using Kiln.Core.Foundation;
 using Kiln.Game.Saving;
 
 namespace Kiln.Game.UI.Menus;
@@ -48,7 +49,7 @@ public partial class SaveList : ScrollContainer
         column.AddThemeConstantOverride("separation", 8);
         AddChild(column);
 
-        column.AddChild(MenuStyle.Label(_purpose == Purpose.Load ? "Load a game" : "Save the game", 17, MenuStyle.Heading));
+        column.AddChild(MenuStyle.Label(_purpose == Purpose.Load ? L10n.T("Load a game") : L10n.T("Save the game"), 17, MenuStyle.Heading));
 
         _rows = new VBoxContainer();
         _rows.AddThemeConstantOverride("separation", 6);
@@ -80,7 +81,7 @@ public partial class SaveList : ScrollContainer
 
         if (_purpose == Purpose.Load)
         {
-            _rows.AddChild(MenuStyle.Label("Autosaves are written at every shrine and every border; the oldest of five is replaced.",
+            _rows.AddChild(MenuStyle.Label(L10n.T("Autosaves are written at every shrine and every border; the oldest of five is replaced."),
                 12, MenuStyle.Dim, wrap: true));
         }
     }
@@ -99,14 +100,14 @@ public partial class SaveList : ScrollContainer
 
         if (_purpose == Purpose.Load)
         {
-            button = MenuStyle.Small("Load", () => Load(summary));
+            button = MenuStyle.Small(L10n.T("Load"), () => Load(summary));
             button.Disabled = !summary.Readable;
         }
         else
         {
             var armed = _armed == summary.Slot;
 
-            button = MenuStyle.Small(armed ? "Overwrite?" : "Save here", () => Save(summary));
+            button = MenuStyle.Small(armed ? L10n.T("Overwrite?") : L10n.T("Save here"), () => Save(summary));
 
             if (armed) button.AddThemeColorOverride("font_color", new Color(0.95f, 0.6f, 0.45f));
         }
@@ -121,7 +122,7 @@ public partial class SaveList : ScrollContainer
     {
         if (SaveService.Instance?.Load(summary.Slot) != true)
         {
-            _status.Text = "That save could not be loaded. The log says why.";
+            _status.Text = L10n.T("That save could not be loaded. The log says why.");
         }
     }
 
@@ -139,7 +140,7 @@ public partial class SaveList : ScrollContainer
 
         var saved = SaveService.Instance?.Save(summary.Slot, summary.Title) == true;
 
-        _status.Text = saved ? $"Saved to {summary.Title}." : "The game could not be saved here.";
+        _status.Text = saved ? L10n.F("Saved to {0}.", summary.Title) : L10n.T("The game could not be saved here.");
         CallDeferred(nameof(Refresh));
     }
 }

@@ -1,4 +1,5 @@
 using Godot;
+using Kiln.Core.Foundation;
 using Kiln.Core.World;
 
 namespace Kiln.Game.World;
@@ -102,15 +103,15 @@ public partial class ZoneGate : Area3D
             {
                 if (exit.To != ToZone) continue;
 
-                if (exit.RequiredLevel > 0) notes += $"  ·  level {exit.RequiredLevel}";
-                if (exit.RequiredQuest is not null) notes += "  ·  barred";
+                if (exit.RequiredLevel > 0) notes += "  ·  " + L10n.F("level {0}", exit.RequiredLevel);
+                if (exit.RequiredQuest is not null) notes += "  ·  " + L10n.T("barred");
             }
         }
 
         // Added alongside a level requirement rather than instead of it. A border that asks
         // for level fourteen and then turns out to lead nowhere is two facts, and the second
         // is the one worth knowing before walking there.
-        if (target.Scene.Length == 0) notes += "  ·  unbuilt";
+        if (target.Scene.Length == 0) notes += "  ·  " + L10n.T("unbuilt");
 
         return notes;
     }
@@ -173,22 +174,22 @@ public partial class ZoneGate : Area3D
         if (exit is null)
         {
             GD.PushError($"[gate] '{GameWorld.CurrentZoneId}' has no exit to '{ToZone}'.");
-            return "There is no way through here.";
+            return L10n.T("There is no way through here.");
         }
 
         if (level < exit.RequiredLevel)
         {
-            return $"The road ahead is beyond you. Return at level {exit.RequiredLevel}.";
+            return L10n.F("The road ahead is beyond you. Return at level {0}.", exit.RequiredLevel);
         }
 
         if (exit.RequiredQuest is not null && !PlayerProfile.Quests.IsComplete(exit.RequiredQuest))
         {
-            return "The way is barred. Something here is unfinished.";
+            return L10n.T("The way is barred. Something here is unfinished.");
         }
 
         if (GameWorld.Graph[ToZone]?.Scene is not { Length: > 0 })
         {
-            return "The road runs on, but nothing has been built along it yet.";
+            return L10n.T("The road runs on, but nothing has been built along it yet.");
         }
 
         return null;

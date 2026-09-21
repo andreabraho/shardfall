@@ -145,7 +145,7 @@ public partial class ShardNode : StaticBody3D
 
         // The modifier is part of the name, because it is the thing the player needs to know
         // before deciding whether to walk in.
-        _plate.SetText(_modifier == ShardModifier.None ? label : $"{label}  ·  {_modifier}");
+        _plate.SetText(_modifier == ShardModifier.None ? label : $"{label}  ·  {UI.Words.Of(_modifier)}");
         _plate.Tint = new Color(ModifierTint(_modifier));
         _plate.Visible = true;
 
@@ -281,7 +281,7 @@ public partial class ShardNode : StaticBody3D
                 add.Plate.Rank = NameRank.Elite;
                 add.Plate.Tint = new Color("ffd24f");
                 add.Plate.Offset = new Vector3(0, 2.7f, 0);
-                add.LabelPlate("ANCHOR");
+                add.LabelPlate(L10n.T("ANCHOR"));
             }
 
             index++;

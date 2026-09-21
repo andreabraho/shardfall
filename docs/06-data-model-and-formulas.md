@@ -361,7 +361,10 @@ The build fails if any of these is false:
 - Every id is unique within its type and matches `^[a-z]+_[a-z0-9_]+$`.
 - Every cross-reference resolves: drop tables, bonus pools, upgrade paths, dialogue ids,
   quest prerequisites, visual registry ids, telegraph shapes.
-- Every player-facing string is a `$localisation.key`, never a literal (NFR-L.1).
+- Every player-facing string in content is a `$localisation.key`, never a literal (NFR-L.1), and
+  every key has English in `data/strings/en.json`. Interface text in code is wrapped in
+  `L10n.T`/`L10n.F` with the English as its key; other languages map that English, and content
+  keys, to their own text in `data/strings/<code>.json` (UIX-06).
 - Every quest is reachable from the prologue via its prerequisite graph, and the graph is acyclic.
 - Every enemy's telegraphs pass the BAL-03 time-to-safety check at every difficulty.
 - Every item's `level_req` falls inside a zone band where it can actually drop.

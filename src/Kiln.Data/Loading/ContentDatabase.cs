@@ -31,6 +31,17 @@ public sealed class ContentDatabase
     /// <summary>Villagers (QST-06). Where they stand is the scene's; what they say and sell is here.</summary>
     public IReadOnlyDictionary<string, NpcDef> Npcs { get; init; } = new Dictionary<string, NpcDef>();
 
+    /// <summary>
+    /// Language code → its table (UIX-06): <c>$content.keys</c> and, for languages other than
+    /// English, English interface text → its translation. From <c>data/strings/&lt;code&gt;.json</c>.
+    /// </summary>
+    public IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> Strings { get; init; } =
+        new Dictionary<string, IReadOnlyDictionary<string, string>>();
+
+    /// <summary>The table for a language, or an empty one.</summary>
+    public IReadOnlyDictionary<string, string> StringsFor(string language) =>
+        Strings.TryGetValue(language, out var table) ? table : new Dictionary<string, string>();
+
     public int TotalDefinitions =>
         Items.Count + Enemies.Count + Skills.Count + Quests.Count +
         DropTables.Count + BonusPools.Count + UpgradePaths.Count + Visuals.Count + Shards.Count +

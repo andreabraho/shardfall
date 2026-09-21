@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Godot;
+using Kiln.Core.Foundation;
 
 namespace Kiln.Game.Combat;
 
@@ -75,7 +76,7 @@ public partial class CombatFeedback : Node3D
         => _instance?.SpawnYang(worldPosition, amount);
 
     private void SpawnYang(Vector3 worldPosition, long amount)
-        => SpawnText(worldPosition, $"+{amount:N0}", YangColor, NormalFontSize);
+        => SpawnText(worldPosition, L10n.F("+{0:N0}", amount), YangColor, NormalFontSize);
 
     /// <summary>
     /// Mana paid back by a kill. Shown because a resource that refills silently is a resource
@@ -85,7 +86,7 @@ public partial class CombatFeedback : Node3D
         => _instance?.SpawnMana(worldPosition, amount);
 
     private void SpawnMana(Vector3 worldPosition, double amount)
-        => SpawnText(worldPosition, $"+{amount:F0} mp", ManaColor, NormalFontSize - 6);
+        => SpawnText(worldPosition, L10n.F("+{0:F0} mp", amount), ManaColor, NormalFontSize - 6);
 
     private static readonly Color ManaColor = new("6fa8e8");
 
@@ -106,7 +107,7 @@ public partial class CombatFeedback : Node3D
 
     private void Spawn(Vector3 worldPosition, int amount, bool critical, bool evaded, bool onPlayer)
     {
-        var text = evaded ? "miss" : amount.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        var text = evaded ? L10n.T("miss") : amount.ToString(System.Globalization.CultureInfo.InvariantCulture);
         var colour = evaded
             ? new Color(0.75f, 0.78f, 0.82f)
             : onPlayer ? PlayerHurtColor : critical ? CritColor : NormalColor;

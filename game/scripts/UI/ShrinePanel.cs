@@ -1,5 +1,6 @@
 using System.Linq;
 using Godot;
+using Kiln.Core.Foundation;
 using Kiln.Core.World;
 using Kiln.Game.Input;
 using Kiln.Game.Items;
@@ -59,8 +60,8 @@ public partial class ShrinePanel : CanvasLayer
     public void Announce(string label, bool firstTime)
     {
         _toast.Text = firstTime
-            ? $"{label} — shrine discovered.  [F] to travel or respec"
-            : $"{label} — rested.  [F] to travel or respec";
+            ? L10n.F("{0} — shrine discovered.  [F] to travel or respec", label)
+            : L10n.F("{0} — rested.  [F] to travel or respec", label);
 
         _toast.Modulate = new Color(1, 1, 1, 1);
         _toastFor = 4.0;
@@ -159,7 +160,7 @@ public partial class ShrinePanel : CanvasLayer
         column.AddThemeConstantOverride("separation", 10);
         margin.AddChild(column);
 
-        _title = Heading("Shrine");
+        _title = Heading(L10n.T("Shrine"));
         column.AddChild(_title);
 
         _notice = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart };
@@ -168,20 +169,20 @@ public partial class ShrinePanel : CanvasLayer
         column.AddChild(_notice);
 
         column.AddChild(new HSeparator());
-        column.AddChild(Heading2("Travel"));
+        column.AddChild(Heading2(L10n.T("Travel")));
 
         _destinations = new VBoxContainer();
         _destinations.AddThemeConstantOverride("separation", 4);
         column.AddChild(_destinations);
 
         column.AddChild(new HSeparator());
-        column.AddChild(Heading2("Reconsider"));
+        column.AddChild(Heading2(L10n.T("Reconsider")));
 
         _respecCost = new Label();
         _respecCost.AddThemeFontSizeOverride("font_size", 13);
         column.AddChild(_respecCost);
 
-        _respec = new Button { Text = "Refund attribute points" };
+        _respec = new Button { Text = L10n.T("Refund attribute points") };
         _respec.Pressed += DoRespec;
         column.AddChild(_respec);
 
@@ -189,7 +190,7 @@ public partial class ShrinePanel : CanvasLayer
         _status.AddThemeFontSizeOverride("font_size", 13);
         column.AddChild(_status);
 
-        var close = new Button { Text = "Close  (Esc)" };
+        var close = new Button { Text = L10n.T("Close  (Esc)") };
         close.Pressed += Close;
         column.AddChild(close);
     }
@@ -208,8 +209,7 @@ public partial class ShrinePanel : CanvasLayer
         _title.Text = shrine is null ? _here : GameItems.Localise(shrine.Name);
         _notice.Text = zone is null
             ? ""
-            : $"{GameItems.Localise(zone.Name)} · level {zone.Band} · "
-              + $"{GameWorld.Travel.Discovered.Count} shrine(s) found";
+            : L10n.F("{0} · level {1} · {2} shrine(s) found", GameItems.Localise(zone.Name), zone.Band, GameWorld.Travel.Discovered.Count);
 
         RefreshTravel();
         RefreshRespec();
@@ -236,8 +236,8 @@ public partial class ShrinePanel : CanvasLayer
             var zone = GameWorld.Graph[shrine.Zone];
             var row = new Button
             {
-                Text = $"{GameItems.Localise(shrine.Name)}  —  {GameItems.Localise(zone?.Name ?? "")}"
-                    + $"   {quote.Cost:N0} yang",
+                Text = $"{GameItems.Localise(shrine.Name)}  —  {GameItems.Localise(zone?.Name ?? "")}   "
+                    + L10n.F("{0:N0} yang", quote.Cost),
                 Disabled = !quote.Allowed,
                 Alignment = HorizontalAlignment.Left,
             };
@@ -251,7 +251,7 @@ public partial class ShrinePanel : CanvasLayer
 
         var empty = new Label
         {
-            Text = "No other shrine found yet. They light up when you walk into them.",
+            Text = L10n.T("No other shrine found yet. They light up when you walk into them."),
             AutowrapMode = TextServer.AutowrapMode.WordSmart,
         };
 
@@ -271,9 +271,8 @@ public partial class ShrinePanel : CanvasLayer
             return;
         }
 
-        _respecCost.Text = "Free. Returns every attribute point you have placed, including the "
-            + $"opening spread the game assigned for you. Level {progression.Level}, "
-            + $"{progression.Assigned.Total} point(s) placed.";
+        _respecCost.Text = L10n.F("Free. Returns every attribute point you have placed, including the opening spread the game assigned for you. Level {0}, {1} point(s) placed.",
+            progression.Level, progression.Assigned.Total);
 
         _respec.Disabled = progression.Assigned.Total == 0;
     }
@@ -310,7 +309,7 @@ public partial class ShrinePanel : CanvasLayer
         {
             // The destination is in another zone's scene. Loading that scene is WLD-01's
             // remaining half; refusing is honest, and silently charging for nothing is not.
-            _status.Text = "That shrine is in another zone — zone loading is not wired up yet.";
+            _status.Text = L10n.T("That shrine is in another zone — zone loading is not wired up yet.");
             return;
         }
 
@@ -328,12 +327,12 @@ public partial class ShrinePanel : CanvasLayer
 
     private static string Explain(TravelRefusal refusal) => refusal switch
     {
-        TravelRefusal.InCombat => "Not while something is chasing you.",
-        TravelRefusal.NotEnoughYang => "Not enough yang.",
-        TravelRefusal.NotDiscovered => "You have not stood at that shrine yet.",
-        TravelRefusal.NotATravelPoint => "That is a checkpoint, not a shrine.",
-        TravelRefusal.AlreadyHere => "You are already here.",
-        _ => "You cannot travel there.",
+        TravelRefusal.InCombat => L10n.T("Not while something is chasing you."),
+        TravelRefusal.NotEnoughYang => L10n.T("Not enough yang."),
+        TravelRefusal.NotDiscovered => L10n.T("You have not stood at that shrine yet."),
+        TravelRefusal.NotATravelPoint => L10n.T("That is a checkpoint, not a shrine."),
+        TravelRefusal.AlreadyHere => L10n.T("You are already here."),
+        _ => L10n.T("You cannot travel there."),
     };
 
     /// <summary>
@@ -361,8 +360,7 @@ public partial class ShrinePanel : CanvasLayer
         _character.Progression.Respec();
         _character.RefreshStats();
 
-        _status.Text = $"Returned {returned} attribute point(s). Place them from the "
-            + "character sheet (C).";
+        _status.Text = L10n.F("Returned {0} attribute point(s). Place them from the character sheet (C).", returned);
 
         RefreshRespec();
     }

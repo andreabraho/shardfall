@@ -93,9 +93,9 @@ public partial class NpcNode : Area3D
     {
         if (_def is null) return;
 
-        var title = string.IsNullOrEmpty(_def.Title) ? "" : $"  ·  {_def.Title}";
+        var title = string.IsNullOrEmpty(_def.Title) ? "" : $"  ·  {GameItems.Localise(_def.Title)}";
 
-        _plate?.SetText(_playerInside ? $"{DisplayName}{title}   [F]" : $"{DisplayName}{title}");
+        _plate?.SetText(_playerInside ? $"{DisplayName}{title}   [{Input.GameActions.DescribeBinding(Input.GameActions.Interact)}]" : $"{DisplayName}{title}");
     }
 
     public override void _UnhandledInput(InputEvent @event)
@@ -126,7 +126,7 @@ public partial class NpcNode : Area3D
                 break;
 
             default:
-                session?.GetNodeOrNull<UI.DialoguePanel>("DialoguePanel")?.Say(DisplayName, _def.Title, Conversation());
+                session?.GetNodeOrNull<UI.DialoguePanel>("DialoguePanel")?.Say(DisplayName, GameItems.Localise(_def.Title), Conversation());
                 break;
         }
     }
@@ -147,7 +147,7 @@ public partial class NpcNode : Area3D
 
         if (PlayerProfile.Quests.Active is { } quest && _def.QuestLines.TryGetValue(quest.Id, out var about))
         {
-            lines.Add(about);
+            lines.Add(GameItems.Localise(about));
         }
 
         if (NextLine() is { Length: > 0 } line) lines.Add(line);
@@ -165,6 +165,6 @@ public partial class NpcNode : Area3D
 
         Said[_def.Id] = next + 1;
 
-        return _def.Lines[next % _def.Lines.Length];
+        return GameItems.Localise(_def.Lines[next % _def.Lines.Length]);
     }
 }

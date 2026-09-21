@@ -1,5 +1,6 @@
 using Godot;
 using Kiln.Core.Encounters;
+using Kiln.Core.Foundation;
 using Kiln.Game.World;
 
 namespace Kiln.Game.UI;
@@ -119,16 +120,16 @@ public partial class ShardHud : CanvasLayer
 
         _root.Visible = true;
 
-        var modifier = _shard.Modifier == ShardModifier.None ? "" : $"  ·  {_shard.Modifier}";
+        var modifier = _shard.Modifier == ShardModifier.None ? "" : $"  ·  {Words.Of(_shard.Modifier)}";
 
         _title.Text = $"{Items.GameItems.Localise("$shard." + _shard.ShardId + ".name")}{modifier}";
         _health.Value = _shard.Core.Health.Fraction;
 
         _phase.Text = _shard.Phase switch
         {
-            ShardPhase.One => "Phase 1  ·  walk out of the pulse",
-            ShardPhase.Two => "Phase 2  ·  two rings now",
-            ShardPhase.Three => "Phase 3  ·  kill the marked add",
+            ShardPhase.One => L10n.T("Phase 1  ·  walk out of the pulse"),
+            ShardPhase.Two => L10n.T("Phase 2  ·  two rings now"),
+            ShardPhase.Three => L10n.T("Phase 3  ·  kill the marked add"),
             _ => "",
         };
 
@@ -140,7 +141,7 @@ public partial class ShardHud : CanvasLayer
         if (!reclaiming) return;
 
         _cast.Value = _shard.ReclamationProgress;
-        _castLabel.Text = "Reclaiming — kill the marked add";
+        _castLabel.Text = L10n.T("Reclaiming — kill the marked add");
     }
 
     /// <summary>The engaged shard, if any. Only one fight can be active at a time in practice.</summary>

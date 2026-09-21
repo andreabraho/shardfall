@@ -1,5 +1,6 @@
 using System.Linq;
 using Godot;
+using Kiln.Core.Foundation;
 using Kiln.Game.World;
 
 namespace Kiln.Game.UI;
@@ -272,7 +273,7 @@ public partial class MapView : Control
             if (node is not NpcNode npc || npc.Def is null || !Known(seen, npc.GlobalPosition)) continue;
 
             DrawCircle(At(npc.GlobalPosition), 3.5f, VillagerTint);
-            Caption(font, fontSize, At(npc.GlobalPosition), npc.Def.Title.Length > 0 ? npc.Def.Title : npc.DisplayName, VillagerTint);
+            Caption(font, fontSize, At(npc.GlobalPosition), npc.Def.Title.Length > 0 ? Items.GameItems.Localise(npc.Def.Title) : npc.DisplayName, VillagerTint);
         }
 
         foreach (var node in GetTree().GetNodesInGroup("shards"))
@@ -357,7 +358,7 @@ public partial class MapView : Control
         {
             if (node is ZoneGate gate && gate.ToZone == step)
             {
-                QuestMark(font, fontSize, gate.GlobalPosition, 4f, $"Quest: this way ({NameOfZone(step)})");
+                QuestMark(font, fontSize, gate.GlobalPosition, 4f, L10n.F("Quest: this way ({0})", NameOfZone(step)));
             }
         }
     }

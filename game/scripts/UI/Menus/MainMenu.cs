@@ -18,8 +18,22 @@ public partial class MainMenu : Control
 {
     private PanelContainer _content = null!;
 
+    /// <summary>Set when the language changes, so the rebuilt menu opens where the player was.</summary>
+    private static bool _reopenSettings;
+
+    public override void _ExitTree() => SettingsView.LanguageChanged -= Relabel;
+
+    /// <summary>The whole menu is built in one language; a new one means building it again.</summary>
+    private void Relabel()
+    {
+        _reopenSettings = true;
+        GetTree().CallDeferred(SceneTree.MethodName.ReloadCurrentScene);
+    }
+
     public override void _Ready()
     {
+        SettingsView.LanguageChanged += Relabel;
+
         SetAnchorsPreset(LayoutPreset.FullRect);
 
         var backdrop = new TextureRect
@@ -53,7 +67,7 @@ public partial class MainMenu : Control
         frame.AddChild(left);
 
         left.AddChild(MenuStyle.Label("KILN", 76, MenuStyle.Gold));
-        left.AddChild(MenuStyle.Label("working title", 14, MenuStyle.Dim));
+        left.AddChild(MenuStyle.Label(L10n.T("working title"), 14, MenuStyle.Dim));
         left.AddChild(new Control { CustomMinimumSize = new Vector2(0, 40) });
 
         var newest = SaveService.Summaries()
@@ -61,16 +75,16 @@ public partial class MainMenu : Control
             .OrderByDescending(s => s.Written)
             .FirstOrDefault();
 
-        var resume = MenuStyle.Big("Continue", () => SaveService.Instance?.LoadLatest());
+        var resume = MenuStyle.Big(L10n.T("Continue"), () => SaveService.Instance?.LoadLatest());
         resume.Disabled = newest is null;
         left.AddChild(resume);
-        left.AddChild(MenuStyle.Label(newest is null ? "No saved game yet." : newest.Describe(), 12, MenuStyle.Dim));
+        left.AddChild(MenuStyle.Label(newest is null ? L10n.T("No saved game yet.") : newest.Describe(), 12, MenuStyle.Dim));
         left.AddChild(new Control { CustomMinimumSize = new Vector2(0, 6) });
 
-        left.AddChild(MenuStyle.Big("New game", () => Page(NewGamePage())));
-        left.AddChild(MenuStyle.Big("Load game", () => Page(new SaveList(SaveList.Purpose.Load))));
-        left.AddChild(MenuStyle.Big("Settings", () => Page(new SettingsView(inGame: false))));
-        left.AddChild(MenuStyle.Big("Quit", () => GetTree().Quit()));
+        left.AddChild(MenuStyle.Big(L10n.T("New game"), () => Page(NewGamePage())));
+        left.AddChild(MenuStyle.Big(L10n.T("Load game"), () => Page(new SaveList(SaveList.Purpose.Load))));
+        left.AddChild(MenuStyle.Big(L10n.T("Settings"), () => Page(new SettingsView(inGame: false))));
+        left.AddChild(MenuStyle.Big(L10n.T("Quit"), () => GetTree().Quit()));
 
         var spacer = new Control { SizeFlagsVertical = SizeFlags.ExpandFill };
         left.AddChild(spacer);
@@ -87,6 +101,12 @@ public partial class MainMenu : Control
         _content.AddThemeStyleboxOverride("panel", MenuStyle.Panel(0.92f));
         frame.AddChild(_content);
 
+        if (_reopenSettings)
+        {
+            _reopenSettings = false;
+            Page(new SettingsView(inGame: false));
+        }
+
         // Back on the menu means out of any map: nothing is paused and nothing owns the input.
         GetTree().Paused = false;
         UiState.Reset();
@@ -98,8 +118,8 @@ public partial class MainMenu : Control
         var column = new VBoxContainer { CustomMinimumSize = new Vector2(560, 0) };
         column.AddThemeConstantOverride("separation", 10);
 
-        column.AddChild(MenuStyle.Label("New game  ·  choose a difficulty", 17, MenuStyle.Heading));
-        column.AddChild(MenuStyle.Label("It can be changed at any time from the pause menu. Loot and experience are the same on every tier.",
+        column.AddChild(MenuStyle.Label(L10n.T("New game  ·  choose a difficulty"), 17, MenuStyle.Heading));
+        column.AddChild(MenuStyle.Label(L10n.T("It can be changed at any time from the pause menu. Loot and experience are the same on every tier."),
             12, MenuStyle.Dim, wrap: true));
 
         foreach (var tier in DifficultySettings.All)
@@ -117,7 +137,7 @@ public partial class MainMenu : Control
             text.OffsetTop = 8;
             text.OffsetRight = -14;
 
-            var name = tier.Tier == Difficulty.Disciple ? "Disciple  ·  recommended" : tier.Tier.ToString();
+            var name = tier.Tier == Difficulty.Disciple ? L10n.F("{0}  ·  recommended", Words.Of(tier.Tier)) : Words.Of(tier.Tier);
             var title = MenuStyle.Label(name, 17, MenuStyle.Gold);
             title.MouseFilter = MouseFilterEnum.Ignore;
 
@@ -136,7 +156,7 @@ public partial class MainMenu : Control
 
         if (SaveService.AnySave())
         {
-            column.AddChild(MenuStyle.Label("Your saves stay where they are. The first autosave of the new game replaces the oldest autosave.",
+            column.AddChild(MenuStyle.Label(L10n.T("Your saves stay where they are. The first autosave of the new game replaces the oldest autosave."),
                 12, MenuStyle.Dim, wrap: true));
         }
 

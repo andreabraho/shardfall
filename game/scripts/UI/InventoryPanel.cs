@@ -113,7 +113,7 @@ public partial class InventoryPanel : CanvasLayer
         left.AddThemeConstantOverride("separation", 6);
         columns.AddChild(left);
 
-        left.AddChild(Heading("Equipped"));
+        left.AddChild(Heading(L10n.T("Equipped")));
 
         _gearList = new VBoxContainer();
         _gearList.AddThemeConstantOverride("separation", 4);
@@ -133,13 +133,13 @@ public partial class InventoryPanel : CanvasLayer
         header.AddThemeConstantOverride("separation", 16);
         right.AddChild(header);
 
-        header.AddChild(Heading("Bag"));
+        header.AddChild(Heading(L10n.T("Bag")));
 
         _yangLabel = new Label();
         _yangLabel.AddThemeColorOverride("font_color", new Color("f0c96a"));
         header.AddChild(_yangLabel);
 
-        var sort = new Button { Text = "Sort" };
+        var sort = new Button { Text = L10n.T("Sort") };
         sort.Pressed += () =>
         {
             _inventory?.Bag.AutoSort();
@@ -153,9 +153,9 @@ public partial class InventoryPanel : CanvasLayer
 
         var hint = new Label
         {
-            Text = "Click to equip or unequip · right-click to drop on the ground\n"
-                + "Shift + right-click destroys it · Ctrl + right-click locks it against both\n"
-                + "I to close · U for the anvil",
+            Text = L10n.T("Click to equip or unequip · right-click to drop on the ground") + "\n"
+                + L10n.T("Shift + right-click destroys it · Ctrl + right-click locks it against both") + "\n"
+                + L10n.T("I to close · U for the anvil"),
             AutowrapMode = TextServer.AutowrapMode.WordSmart,
         };
 
@@ -211,7 +211,7 @@ public partial class InventoryPanel : CanvasLayer
     {
         if (_inventory is null || !Visible) return;
 
-        _yangLabel.Text = $"{_inventory.Bag.Yang:N0} yang";
+        _yangLabel.Text = L10n.F("{0:N0} yang", _inventory.Bag.Yang);
 
         RefreshGear();
         RefreshGrid();
@@ -228,7 +228,7 @@ public partial class InventoryPanel : CanvasLayer
 
             var button = new Button
             {
-                Text = $"{slot,-9} {(item is null ? "—" : GameItems.NameOf(item))}",
+                Text = $"{Words.Of(slot),-9} {(item is null ? "—" : GameItems.NameOf(item))}",
                 Alignment = HorizontalAlignment.Left,
                 Disabled = item is null,
                 TooltipText = item is null ? "" : ItemText.Tooltip(item),
@@ -361,7 +361,7 @@ public partial class InventoryPanel : CanvasLayer
 
         if (item.Locked)
         {
-            Notify($"{GameItems.NameOf(item)} is locked. Ctrl + right-click to unlock it.");
+            Notify(L10n.F("{0} is locked. Ctrl + right-click to unlock it.", GameItems.NameOf(item)));
             return;
         }
 
@@ -381,13 +381,13 @@ public partial class InventoryPanel : CanvasLayer
 
         if (GetTree().GetFirstNodeInGroup("player") is not Node3D player)
         {
-            Notify("Nowhere to drop it.");
+            Notify(L10n.T("Nowhere to drop it."));
             return;
         }
 
         if (!_inventory.Bag.Remove(item))
         {
-            Notify("That item is no longer in the bag.");
+            Notify(L10n.T("That item is no longer in the bag."));
             return;
         }
 
@@ -398,7 +398,7 @@ public partial class InventoryPanel : CanvasLayer
 
         World.LootDrop.Place(GetTree().CurrentScene, item, player.GlobalPosition + (offset * 1.8f));
 
-        Notify($"Dropped {GameItems.NameOf(item)}.");
+        Notify(L10n.F("Dropped {0}.", GameItems.NameOf(item)));
         Refresh();
     }
 
@@ -406,18 +406,18 @@ public partial class InventoryPanel : CanvasLayer
     {
         var dialog = new ConfirmationDialog
         {
-            Title = "Destroy item",
-            DialogText = $"Destroy {GameItems.NameOf(item)}"
-                + (item.Count > 1 ? $" x{item.Count}" : "")
-                + "?\n\nThis cannot be undone. To keep it but free the space, right-click to drop it instead.",
-            OkButtonText = "Destroy",
+            Title = L10n.T("Destroy item"),
+            DialogText = L10n.F("Destroy {0}?", GameItems.NameOf(item) + (item.Count > 1 ? $" x{item.Count}" : ""))
+                + "\n\n" + L10n.T("This cannot be undone. To keep it but free the space, right-click to drop it instead."),
+            OkButtonText = L10n.T("Destroy"),
+            CancelButtonText = L10n.T("Cancel"),
         };
 
         dialog.Confirmed += () =>
         {
             if (_inventory?.Bag.Remove(item) == true)
             {
-                Notify($"Destroyed {GameItems.NameOf(item)}.");
+                Notify(L10n.F("Destroyed {0}.", GameItems.NameOf(item)));
                 Refresh();
             }
 
@@ -476,9 +476,9 @@ public partial class InventoryPanel : CanvasLayer
         var stats = combatant.Stats;
 
         _statsLabel.Text =
-            $"\nAttack power {stats.AttackPower:0}\n"
-            + $"Defence {stats.Defense:0}\n"
-            + $"Health {stats.MaxHp:0}\n"
-            + $"Crit {stats.CritChance:P0} · pierce {stats.PierceChance:P0}";
+            "\n" + L10n.F("Attack power {0:0}", stats.AttackPower) + "\n"
+            + L10n.F("Defence {0:0}", stats.Defense) + "\n"
+            + L10n.F("Health {0:0}", stats.MaxHp) + "\n"
+            + L10n.F("Crit {0:P0} · pierce {1:P0}", stats.CritChance, stats.PierceChance);
     }
 }

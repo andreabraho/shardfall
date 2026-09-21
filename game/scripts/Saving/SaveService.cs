@@ -112,7 +112,7 @@ public partial class SaveService : Node
 
         if (!CanSave(tree, out var reason))
         {
-            if (!quiet) UI.WorldNotice.Show(tree, $"Cannot save: {reason}.");
+            if (!quiet) UI.WorldNotice.Show(tree, L10n.F("Cannot save: {0}.", reason));
             return false;
         }
 
@@ -127,14 +127,14 @@ public partial class SaveService : Node
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
             GD.PushError($"[save] could not write {path}: {ex.Message}");
-            UI.WorldNotice.Show(tree, "The save could not be written. See the log.");
+            UI.WorldNotice.Show(tree, L10n.T("The save could not be written. See the log."));
 
             return false;
         }
 
         GD.Print($"[save] wrote {slot} — {save.World.Zone}, level {save.Player.Level}");
 
-        if (!quiet) UI.WorldNotice.Show(tree, "Saved.");
+        if (!quiet) UI.WorldNotice.Show(tree, L10n.T("Saved."));
 
         return true;
     }
@@ -152,13 +152,13 @@ public partial class SaveService : Node
 
         if (!PlayerProfile.Exists || GameWorld.CurrentZoneId.Length == 0)
         {
-            reason = "nothing to save yet";
+            reason = L10n.T("nothing to save yet");
             return false;
         }
 
         if (tree.GetFirstNodeInGroup("player")?.GetNodeOrNull<Combat.Combatant>("Combatant") is { IsAlive: false })
         {
-            reason = "you are dead";
+            reason = L10n.T("you are dead");
             return false;
         }
 
@@ -271,7 +271,7 @@ public partial class SaveService : Node
             if (Load(slot)) return true;
         }
 
-        if (newest.Count == 0) UI.WorldNotice.Show(GetTree(), "There is no save to load.");
+        if (newest.Count == 0) UI.WorldNotice.Show(GetTree(), L10n.T("There is no save to load."));
 
         return false;
     }
@@ -298,7 +298,7 @@ public partial class SaveService : Node
             // FR-11.3: said plainly, and the file is left alone. Deleting a save the player
             // might still recover by hand would turn a warning into a loss.
             GD.PushWarning($"[save] {slot} was not loaded: {result.Message}");
-            UI.WorldNotice.Show(GetTree(), $"The save '{slot}' is damaged and was skipped.");
+            UI.WorldNotice.Show(GetTree(), L10n.F("The save '{0}' is damaged and was skipped.", slot));
 
             return false;
         }
@@ -569,13 +569,16 @@ public sealed record SaveSummary(
 {
     public string Title => Kind switch
     {
-        SlotKind.Manual => $"Slot {Slot["slot_".Length..]}",
-        SlotKind.Quick => "Quick save",
-        _ => "Autosave",
+        SlotKind.Manual => L10n.F("Slot {0}", Slot["slot_".Length..]),
+        SlotKind.Quick => L10n.T("Quick save"),
+        _ => L10n.T("Autosave"),
     };
 
     public string Describe() =>
-        !Exists ? "empty"
-        : !Readable ? "damaged — cannot be loaded"
-        : $"{Zone}  ·  level {Level}  ·  {Difficulty}  ·  {Written:d MMM HH:mm}";
+        !Exists ? L10n.T("empty")
+        : !Readable ? L10n.T("damaged — cannot be loaded")
+        : L10n.F("{0}  ·  level {1}  ·  {2}  ·  {3}", Zone, Level, TierName, Written.ToString("dd/MM  HH:mm"));
+
+    private string TierName =>
+        Enum.TryParse<Kiln.Core.Foundation.Difficulty>(Difficulty, out var tier) ? UI.Words.Of(tier) : Difficulty;
 }

@@ -145,7 +145,7 @@ public partial class LootDrop : Area3D
     {
         var name = GameItems.NameOf(_item);
 
-        return _item.Count > 1 ? $"{name} x{_item.Count}" : name;
+        return _item.Count > 1 ? L10n.F("{0} x{1}", name, _item.Count) : name;
     }
 
     public static Color RarityColour(Rarity rarity) => rarity switch

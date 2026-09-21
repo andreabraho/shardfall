@@ -46,7 +46,7 @@ public partial class QuestHud : CanvasLayer
         var box = new VBoxContainer { MouseFilter = Control.MouseFilterEnum.Ignore };
         box.AddThemeConstantOverride("separation", 3);
 
-        var heading = Line("QUEST", 11, Dim);
+        var heading = Line(L10n.T("QUEST"), 11, Dim);
         _name = Line("", 16, Title);
         _goals = new VBoxContainer { MouseFilter = Control.MouseFilterEnum.Ignore };
 
@@ -115,9 +115,9 @@ public partial class QuestHud : CanvasLayer
     private static string Describe(QuestGoal goal, int have) => goal.Type switch
     {
         ObjectiveType.Kill => $"{GameItems.NameOfEnemy(goal.Target)}   {have} / {goal.Count}",
-        ObjectiveType.ClearTower => $"Clear all {FloorsOf(goal.Target)} floors of {ZoneName(goal.Target)}",
-        ObjectiveType.Reach => $"Travel to {ZoneName(goal.Target)}",
-        ObjectiveType.Shard => $"Break {GameItems.Localise($"$shard.{goal.Target}.name")}",
+        ObjectiveType.ClearTower => L10n.F("Clear all {0} floors of {1}", FloorsOf(goal.Target), ZoneName(goal.Target)),
+        ObjectiveType.Reach => L10n.F("Travel to {0}", ZoneName(goal.Target)),
+        ObjectiveType.Shard => L10n.F("Break {0}", GameItems.Localise($"$shard.{goal.Target}.name")),
         _ => goal.Target,
     };
 
@@ -135,9 +135,9 @@ public partial class QuestHud : CanvasLayer
 
         if (zones.Count == 0) return "";
 
-        if (zones.Contains(here)) return "here  ·  marked on the map (M)";
+        if (zones.Contains(here)) return L10n.T("here  ·  marked on the map (M)");
 
-        return "in " + string.Join(" or ", zones.Select(ZoneName)) + "  ·  the way is on the map (M)";
+        return L10n.F("in {0}  ·  the way is on the map (M)", string.Join(L10n.T(" or "), zones.Select(ZoneName)));
     }
 
     private static string ZoneName(string zoneId) =>

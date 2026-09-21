@@ -145,7 +145,7 @@ public partial class WorkbenchPanel : CanvasLayer
         var left = new VBoxContainer { CustomMinimumSize = new Vector2(240, 380) };
         left.AddThemeConstantOverride("separation", 6);
         columns.AddChild(left);
-        left.AddChild(Heading("Workbench"));
+        left.AddChild(Heading(L10n.T("Workbench")));
 
         _itemList = new VBoxContainer();
         _itemList.AddThemeConstantOverride("separation", 4);
@@ -170,7 +170,7 @@ public partial class WorkbenchPanel : CanvasLayer
         right.AddChild(_detail);
 
         right.AddChild(Separator());
-        right.AddChild(Heading2("Upgrade"));
+        right.AddChild(Heading2(L10n.T("Upgrade")));
 
         _chance = new Label();
         _chance.AddThemeFontSizeOverride("font_size", 15);
@@ -184,13 +184,13 @@ public partial class WorkbenchPanel : CanvasLayer
         _cost.AddThemeFontSizeOverride("font_size", 13);
         right.AddChild(_cost);
 
-        _upgrade = new Button { Text = "Upgrade" };
+        _upgrade = new Button { Text = L10n.T("Upgrade") };
         _upgrade.Pressed += DoUpgrade;
         right.AddChild(_upgrade);
 
         var safety = new Label
         {
-            Text = "Failure costs the materials. It never destroys or downgrades the item.",
+            Text = L10n.T("Failure costs the materials. It never destroys or downgrades the item."),
             AutowrapMode = TextServer.AutowrapMode.WordSmart,
         };
 
@@ -199,9 +199,9 @@ public partial class WorkbenchPanel : CanvasLayer
         right.AddChild(safety);
 
         right.AddChild(Separator());
-        right.AddChild(Heading2("Sockets"));
+        right.AddChild(Heading2(L10n.T("Sockets")));
 
-        _bore = new Button { Text = "Open a socket" };
+        _bore = new Button { Text = L10n.T("Open a socket") };
         _bore.Pressed += DoBore;
         right.AddChild(_bore);
 
@@ -210,7 +210,7 @@ public partial class WorkbenchPanel : CanvasLayer
         right.AddChild(_stoneList);
 
         right.AddChild(Separator());
-        right.AddChild(Heading2("Bonus lines"));
+        right.AddChild(Heading2(L10n.T("Bonus lines")));
 
         _lockList = new VBoxContainer();
         _lockList.AddThemeConstantOverride("separation", 3);
@@ -220,7 +220,7 @@ public partial class WorkbenchPanel : CanvasLayer
         _rerollCost.AddThemeFontSizeOverride("font_size", 13);
         right.AddChild(_rerollCost);
 
-        _reroll = new Button { Text = "Reroll" };
+        _reroll = new Button { Text = L10n.T("Reroll") };
         _reroll.Pressed += DoReroll;
         right.AddChild(_reroll);
 
@@ -228,7 +228,7 @@ public partial class WorkbenchPanel : CanvasLayer
         _status.AddThemeFontSizeOverride("font_size", 13);
         right.AddChild(_status);
 
-        var hint = new Label { Text = "U to close" };
+        var hint = new Label { Text = L10n.T("U to close") };
         hint.AddThemeFontSizeOverride("font_size", 12);
         hint.AddThemeColorOverride("font_color", new Color(0.55f, 0.60f, 0.66f));
         right.AddChild(hint);
@@ -280,12 +280,12 @@ public partial class WorkbenchPanel : CanvasLayer
 
         _status.Text = result.Outcome switch
         {
-            UpgradeOutcome.Success when result.WasGuaranteed => $"Guaranteed success — now +{result.Level}.",
-            UpgradeOutcome.Success => $"Success — now +{result.Level}.",
-            UpgradeOutcome.Failed => $"Failed. Still +{before}, and the next attempt is closer to guaranteed.",
-            UpgradeOutcome.CannotAfford => "Not enough yang or materials.",
-            UpgradeOutcome.AtMaxLevel => "Already at the highest level.",
-            _ => "This item cannot be upgraded.",
+            UpgradeOutcome.Success when result.WasGuaranteed => L10n.F("Guaranteed success — now +{0}.", result.Level),
+            UpgradeOutcome.Success => L10n.F("Success — now +{0}.", result.Level),
+            UpgradeOutcome.Failed => L10n.F("Failed. Still +{0}, and the next attempt is closer to guaranteed.", before),
+            UpgradeOutcome.CannotAfford => L10n.T("Not enough yang or materials."),
+            UpgradeOutcome.AtMaxLevel => L10n.T("Already at the highest level."),
+            _ => L10n.T("This item cannot be upgraded."),
         };
 
         _status.AddThemeColorOverride("font_color", result.Outcome switch
@@ -307,9 +307,9 @@ public partial class WorkbenchPanel : CanvasLayer
 
         _status.Text = outcome switch
         {
-            SocketOutcome.Success => "A socket is open.",
-            SocketOutcome.NoSocketsLeft => "Every socket on this item is already open.",
-            SocketOutcome.CannotAfford => "Needs a Boring Stone and yang.",
+            SocketOutcome.Success => L10n.T("A socket is open."),
+            SocketOutcome.NoSocketsLeft => L10n.T("Every socket on this item is already open."),
+            SocketOutcome.CannotAfford => L10n.T("Needs a Boring Stone and yang."),
             _ => outcome.ToString(),
         };
 
@@ -323,7 +323,7 @@ public partial class WorkbenchPanel : CanvasLayer
 
         var outcome = SocketBench.TrySlot(_selected, socketIndex, stoneId, GameItems.Catalogue, _inventory.Bag);
 
-        _status.Text = outcome == SocketOutcome.Success ? "Stone set." : outcome.ToString();
+        _status.Text = outcome == SocketOutcome.Success ? L10n.T("Stone set.") : L10n.T("The stone could not be set.");
 
         _inventory.ApplyToStats();
         Refresh();
@@ -337,9 +337,9 @@ public partial class WorkbenchPanel : CanvasLayer
 
         _status.Text = outcome switch
         {
-            SocketOutcome.Success => "Stone recovered, intact.",
-            SocketOutcome.NoRoomForStone => "No room in the bag for the stone.",
-            SocketOutcome.CannotAfford => $"Removal costs {ItemEconomy.SocketRemoveYang:N0} yang.",
+            SocketOutcome.Success => L10n.T("Stone recovered, intact."),
+            SocketOutcome.NoRoomForStone => L10n.T("No room in the bag for the stone."),
+            SocketOutcome.CannotAfford => L10n.F("Removal costs {0:N0} yang.", ItemEconomy.SocketRemoveYang),
             _ => outcome.ToString(),
         };
 
@@ -360,11 +360,11 @@ public partial class WorkbenchPanel : CanvasLayer
 
         _status.Text = outcome switch
         {
-            RerollOutcome.Success => "Rerolled.",
-            RerollOutcome.CannotAfford => "Needs Mutation Ink and yang.",
-            RerollOutcome.NothingToReroll => "Nothing left to reroll — unlock a line first.",
-            RerollOutcome.TooManyLocked => "Too many locked lines for this item's rarity.",
-            _ => "This item has no bonus pool.",
+            RerollOutcome.Success => L10n.T("Rerolled."),
+            RerollOutcome.CannotAfford => L10n.T("Needs Mutation Ink and yang."),
+            RerollOutcome.NothingToReroll => L10n.T("Nothing left to reroll — unlock a line first."),
+            RerollOutcome.TooManyLocked => L10n.T("Too many locked lines for this item's rarity."),
+            _ => L10n.T("This item has no bonus pool."),
         };
 
         _inventory.ApplyToStats();
@@ -381,7 +381,7 @@ public partial class WorkbenchPanel : CanvasLayer
 
         if (_selected is null)
         {
-            _title.Text = "Nothing to work on";
+            _title.Text = L10n.T("Nothing to work on");
             _detail.Text = "";
             _upgrade.Disabled = true;
             _bore.Disabled = true;
@@ -462,7 +462,7 @@ public partial class WorkbenchPanel : CanvasLayer
 
         if (quote is null)
         {
-            _chance.Text = ladder is null ? "This item does not upgrade." : "Already at the highest level.";
+            _chance.Text = ladder is null ? L10n.T("This item does not upgrade.") : L10n.T("Already at the highest level.");
             _pity.Text = "";
             _cost.Text = "";
             _upgrade.Disabled = true;
@@ -470,17 +470,17 @@ public partial class WorkbenchPanel : CanvasLayer
             return;
         }
 
-        _chance.Text = $"+{_selected!.UpgradeLevel} → +{quote.Step.To}   {quote.DisplayedChance:P0}"
-            + (quote.Guaranteed ? "  (guaranteed)" : "");
+        _chance.Text = L10n.F("+{0} → +{1}   {2:P0}", _selected!.UpgradeLevel, quote.Step.To, quote.DisplayedChance)
+            + (quote.Guaranteed ? "  " + L10n.T("(guaranteed)") : "");
 
         // The counter is the whole point: the player can always see the ladder converging.
         _pity.Text = quote.Guaranteed
-            ? "Pity reached — this attempt cannot fail."
+            ? L10n.T("Pity reached — this attempt cannot fail.")
             : quote.Step.Pity > 0
-                ? $"Failed {quote.FailuresSoFar} in a row · guaranteed after {quote.AttemptsToGuarantee} more"
+                ? L10n.F("Failed {0} in a row · guaranteed after {1} more", quote.FailuresSoFar, quote.AttemptsToGuarantee)
                 : "";
 
-        _cost.Text = $"Cost: {quote.Step.Yang:N0} yang{DescribeMaterials(quote.Step.Materials)}";
+        _cost.Text = L10n.F("Cost: {0:N0} yang", quote.Step.Yang) + DescribeMaterials(quote.Step.Materials);
         _upgrade.Disabled = !quote.Affordable;
     }
 
@@ -512,8 +512,8 @@ public partial class WorkbenchPanel : CanvasLayer
                 new Dictionary<string, int> { [SocketBench.BoringStoneId] = 1 });
 
         _bore.Text = item.Sockets.Count == 0
-            ? "This item has no sockets"
-            : $"Open a socket — {ItemEconomy.SocketBoreYang:N0} yang + 1 Boring Stone";
+            ? L10n.T("This item has no sockets")
+            : L10n.F("Open a socket — {0:N0} yang + 1 Boring Stone", ItemEconomy.SocketBoreYang);
 
         for (var i = 0; i < item.Sockets.Count; i++)
         {
@@ -522,7 +522,7 @@ public partial class WorkbenchPanel : CanvasLayer
 
             if (!socket.IsOpen)
             {
-                _stoneList.AddChild(Muted($"Socket {i + 1}: sealed"));
+                _stoneList.AddChild(Muted(L10n.F("Socket {0}: sealed", i + 1)));
                 continue;
             }
 
@@ -530,7 +530,7 @@ public partial class WorkbenchPanel : CanvasLayer
             {
                 var remove = new Button
                 {
-                    Text = $"Socket {i + 1}: {NameOfItem(stoneId)} — remove for {ItemEconomy.SocketRemoveYang:N0} yang",
+                    Text = L10n.F("Socket {0}: {1} — remove for {2:N0} yang", i + 1, NameOfItem(stoneId), ItemEconomy.SocketRemoveYang),
                     Alignment = HorizontalAlignment.Left,
                 };
 
@@ -548,7 +548,7 @@ public partial class WorkbenchPanel : CanvasLayer
 
             if (stones.Count == 0)
             {
-                _stoneList.AddChild(Muted($"Socket {i + 1}: empty — no stones in the bag"));
+                _stoneList.AddChild(Muted(L10n.F("Socket {0}: empty — no stones in the bag", i + 1)));
                 continue;
             }
 
@@ -556,7 +556,7 @@ public partial class WorkbenchPanel : CanvasLayer
             {
                 var button = new Button
                 {
-                    Text = $"Socket {i + 1}: set {NameOfItem(candidate)}",
+                    Text = L10n.F("Socket {0}: set {1}", i + 1, NameOfItem(candidate)),
                     Alignment = HorizontalAlignment.Left,
                 };
 
@@ -576,7 +576,7 @@ public partial class WorkbenchPanel : CanvasLayer
 
         if (spec is null || item.Bonuses.Count == 0)
         {
-            _rerollCost.Text = "This item has no bonus lines.";
+            _rerollCost.Text = L10n.T("This item has no bonus lines.");
             _reroll.Disabled = true;
 
             return;
@@ -608,7 +608,8 @@ public partial class WorkbenchPanel : CanvasLayer
         var quote = RerollTable.Quote(item, spec, _inventory!.Bag);
 
         _rerollCost.Text =
-            $"Lock up to {max} line{(max == 1 ? "" : "s")} · cost {quote.Yang:N0} yang{DescribeMaterials(quote.Materials)}";
+            (max == 1 ? L10n.T("Lock up to 1 line") : L10n.F("Lock up to {0} lines", max))
+            + " · " + L10n.F("cost {0:N0} yang", quote.Yang) + DescribeMaterials(quote.Materials);
 
         _reroll.Disabled = !quote.Affordable || item.LockedLineCount >= item.Bonuses.Count;
     }

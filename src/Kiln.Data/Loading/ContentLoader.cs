@@ -74,8 +74,17 @@ public static class ContentLoader
             }
         }
 
+        if (source.DirectoryExists("strings"))
+        {
+            foreach (var file in source.EnumerateJsonFiles("strings"))
+            {
+                LoadStrings(source, file, ctx);
+            }
+        }
+
         var db = new ContentDatabase
         {
+            Strings = ctx.Strings.ToDictionary(p => p.Key, p => (IReadOnlyDictionary<string, string>)p.Value, StringComparer.Ordinal),
             Items = ctx.Items,
             Enemies = ctx.Enemies,
             Skills = ctx.Skills,
@@ -108,6 +117,7 @@ public static class ContentLoader
         public readonly Dictionary<string, ZoneDef> Zones = new(StringComparer.Ordinal);
         public readonly Dictionary<string, KitPieceDef> KitPieces = new(StringComparer.Ordinal);
         public readonly Dictionary<string, NpcDef> Npcs = new(StringComparer.Ordinal);
+        public readonly Dictionary<string, Dictionary<string, string>> Strings = new(StringComparer.Ordinal);
     }
 
     private static void LoadFile(IContentFileSource source, string file, Type type, LoadContext ctx)
@@ -169,6 +179,30 @@ public static class ContentLoader
         {
             // Must name the file and position, or a designer cannot act on it.
             ctx.Errors.Add($"{file}: invalid JSON — {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// One language's table. The file name is the language: <c>strings/it.json</c> is Italian.
+    /// </summary>
+    private static void LoadStrings(IContentFileSource source, string file, LoadContext ctx)
+    {
+        var language = Path.GetFileNameWithoutExtension(file);
+
+        try
+        {
+            var table = JsonSerializer.Deserialize<Dictionary<string, string>>(source.ReadAllText(file), JsonOptions)
+                        ?? [];
+
+            ctx.Strings[language] = new Dictionary<string, string>(table, StringComparer.Ordinal);
+        }
+        catch (JsonException ex)
+        {
+            ctx.Errors.Add($"{file}: invalid JSON — {ex.Message}");
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            ctx.Errors.Add($"{file}: could not be read — {ex.Message}");
         }
     }
 

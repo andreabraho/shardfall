@@ -1,5 +1,6 @@
 using Godot;
 using Kiln.Core.Combat;
+using Kiln.Core.Foundation;
 
 namespace Kiln.Game.UI.Menus;
 
@@ -69,11 +70,12 @@ public static class MenuStyle
     /// <summary>What a difficulty tier means, in the words the choice is made in.</summary>
     public static string Describe(DifficultySettings d) => d.Tier switch
     {
-        Core.Foundation.Difficulty.Wanderer => "For the world and the story. ",
-        Core.Foundation.Difficulty.Disciple => "The game as designed. ",
-        Core.Foundation.Difficulty.Adept => "For players who know the genre. ",
-        _ => "Nightmare. No checkpoints inside the catacombs. ",
-    } + $"Enemies have ×{d.EnemyHpMultiplier:0.##} health and deal ×{d.EnemyDamageMultiplier:0.##} damage; "
-      + $"{d.AoeTelegraphSeconds:0.0#} s to step out of an attack; {d.FlaskCharges} flask charges; "
-      + (d.YangLossOnDeath > 0 ? $"dying costs {d.YangLossOnDeath:P0} of carried yang." : "dying costs nothing.");
+        Core.Foundation.Difficulty.Wanderer => L10n.T("For the world and the story."),
+        Core.Foundation.Difficulty.Disciple => L10n.T("The game as designed."),
+        Core.Foundation.Difficulty.Adept => L10n.T("For players who know the genre."),
+        _ => L10n.T("Nightmare. No checkpoints inside the catacombs."),
+    } + " "
+      + L10n.F("Enemies have ×{0:0.##} health and deal ×{1:0.##} damage; {2:0.0#} s to step out of an attack; {3} flask charges;",
+          d.EnemyHpMultiplier, d.EnemyDamageMultiplier, d.AoeTelegraphSeconds, d.FlaskCharges) + " "
+      + (d.YangLossOnDeath > 0 ? L10n.F("dying costs {0:P0} of carried yang.", d.YangLossOnDeath) : L10n.T("dying costs nothing."));
 }
