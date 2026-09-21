@@ -14,8 +14,11 @@ namespace Kiln.Game.World;
 /// bad. The rarity filter of FR-5.8 lands with the settings screen; until then everything is
 /// collected, which is the right default while bags are large and vendors do not exist.
 /// <para>
-/// The drop is labelled, coloured by rarity, and never despawns. Nothing in a single-player
-/// game is served by loot that expires while the player is reading its name.
+/// The drop is labelled, coloured by rarity, and lies there for a minute. It used to stay
+/// forever, on the reasoning that nothing expiring serves a single-player game — but a farmed
+/// camp then leaves a carpet of junk nobody wanted, and the one drop worth picking up is lost
+/// among forty that were not. It blinks for its last ten seconds, so it never vanishes while
+/// the player is looking at it without having said so first.
 /// </para>
 /// </remarks>
 public partial class LootDrop : Area3D
@@ -30,6 +33,12 @@ public partial class LootDrop : Area3D
     [Export] public double ArmDelay { get; set; } = 0.35;
 
     [Export] public float PickupRadius { get; set; } = 1.6f;
+
+    /// <summary>Seconds on the ground before the drop is gone.</summary>
+    [Export] public double Lifetime { get; set; } = 60.0;
+
+    /// <summary>How long before the end it starts blinking.</summary>
+    [Export] public double WarningSeconds { get; set; } = 10.0;
 
     /// <summary>
     /// Set for an item the player threw away themselves: it will not be collected again
@@ -151,6 +160,25 @@ public partial class LootDrop : Area3D
     public override void _Process(double delta)
     {
         _age += delta;
+
+        if (_age >= Lifetime)
+        {
+            QueueFree();
+            return;
+        }
+
+        // Blinks faster as it runs out. Visibility rather than fading, because a label half as
+        // bright reads as a worse item, and the rarity colour is the one thing it must not lose.
+        var left = Lifetime - _age;
+
+        if (left < WarningSeconds)
+        {
+            var rate = left < 3 ? 8.0 : 3.0;
+            var shown = Mathf.Sin(_age * rate * Mathf.Tau) > -0.3;
+
+            _mesh.Visible = shown;
+            _label.Visible = shown;
+        }
 
         // A slow bob and spin so a drop reads as an object to collect rather than scenery.
         _mesh.Rotation = new Vector3(0, (float)(_age * 1.6), 0);

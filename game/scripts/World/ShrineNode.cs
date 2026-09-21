@@ -93,6 +93,10 @@ public partial class ShrineNode : Area3D
         Restyle();
         Restore(body);
 
+        // A shrine is the save point (WLD-02). Written after the restore, so the save holds
+        // the rested character rather than the one who walked up.
+        Saving.SaveService.Autosave($"Rested at {ShrineId}");
+
         GD.Print(first
             ? $"[shrine] discovered {ShrineId}"
             : $"[shrine] rested at {ShrineId}");

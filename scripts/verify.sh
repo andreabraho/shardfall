@@ -25,7 +25,11 @@ echo "== godot project builds =="
 dotnet build game/Kiln.Game.csproj --nologo
 
 echo "== godot import =="
-scripts/godot.sh --headless --path game --import --quit-after 400 >/dev/null
+# A throwaway save folder: the autoload runs here too, and it must neither read nor write the
+# player's own saves.
+save_dir="$(mktemp -d)"
+command -v cygpath >/dev/null && save_dir="$(cygpath -w "$save_dir")"
+KILN_SAVE_DIR="$save_dir" scripts/godot.sh --headless --path game --import --quit-after 400 >/dev/null
 
 echo
 echo "All checks passed."

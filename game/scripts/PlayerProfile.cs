@@ -15,9 +15,9 @@ namespace Kiln.Game;
 /// owns the live <c>Kiln.Core</c> objects and each new scene's nodes adopt them — so there is
 /// no copy to keep in step, and nothing to forget to copy.
 /// <para>
-/// This is not the save file (Phase 8). It lives only as long as the process; what it does is
-/// make the save file a matter of serialising three objects that already exist in one place,
-/// rather than gathering them from across a scene tree.
+/// This is not the save file; <see cref="Saving.SaveService"/> is. What this does is make the
+/// save a matter of serialising objects that already exist in one place, rather than
+/// gathering them from across a scene tree.
 /// </para>
 /// </remarks>
 public static class PlayerProfile
@@ -91,11 +91,19 @@ public static class PlayerProfile
     /// </remarks>
     private static readonly Dictionary<string, int> Depths = new(StringComparer.Ordinal);
 
+    /// <summary>Every tower and its deepest checkpoint, for the save file.</summary>
+    public static IReadOnlyDictionary<string, int> AllDepths => Depths;
+
     /// <summary>The floor to resume on, or the first.</summary>
     public static int DepthIn(string zoneId) => Depths.GetValueOrDefault(zoneId, 1);
 
     public static void ReachedDepth(string zoneId, int depth) =>
         Depths[zoneId] = System.Math.Max(DepthIn(zoneId), depth);
+
+    /// <summary>The bag, if a scene has made one yet. For the save file, which must not create one.</summary>
+    public static Inventory? Bag => _bag;
+
+    public static Equipment? Gear => _gear;
 
     public static Inventory AdoptBag(System.Func<Inventory> create) => _bag ??= create();
 

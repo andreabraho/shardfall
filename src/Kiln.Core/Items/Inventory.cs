@@ -280,6 +280,48 @@ public sealed class Inventory : IResourceStore
         }
     }
 
+    /// <summary>
+    /// Replaces the whole contents with a saved state (UIX-01).
+    /// </summary>
+    /// <remarks>
+    /// Returns the items that could not be put back where they were. That should never happen
+    /// with a save this build wrote, but an item that grew a size in a patch would otherwise
+    /// vanish; the caller decides where it goes instead, and the player keeps it.
+    /// </remarks>
+    public List<ItemInstance> Restore(long yang, long nextGrantUid, IEnumerable<(ItemInstance Item, int X, int Y)> items)
+    {
+        _placed.Clear();
+        Array.Clear(_occupied);
+
+        Yang = Math.Max(0, yang);
+        NextGrantUid = Math.Min(-1, nextGrantUid);
+
+        var homeless = new List<ItemInstance>();
+
+        foreach (var (item, x, y) in items)
+        {
+            var spec = Spec(item);
+
+            if (Fits(x, y, spec.Width, spec.Height))
+            {
+                Occupy(new PlacedItem(item, x, y, spec.Width, spec.Height), true);
+            }
+            else
+            {
+                homeless.Add(item);
+            }
+        }
+
+        foreach (var item in homeless.ToList())
+        {
+            if (TryAdd(item)) homeless.Remove(item);
+        }
+
+        Changed?.Invoke();
+
+        return homeless;
+    }
+
     public bool TryGrant(string itemId, int count)
     {
         var spec = _specs.TryGet(itemId, out var found) ? found : null;

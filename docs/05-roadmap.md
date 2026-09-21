@@ -287,7 +287,7 @@ is what proves the structure rather than decorating it.
 
 | ID | Task | Owner | Notes |
 |---|---|---|---|
-| UIX-01 | Save system: 3 slots + 5-deep autosave ring, versioned, migratable, integrity-checked | **[C]** | FR-11.1–3 |
+| UIX-01 | Save system: 3 slots + 5-deep autosave ring, versioned, migratable, integrity-checked | **[C]** | ◐ brought forward from Phase 8 because the tower made testing without it impractical. Done: 5-deep autosave ring (every shrine, every border), a quick save on **F10**, load newest on **F12**, new game on **Shift+F12**, continue on launch; SHA-256 checksum, version header with a migration table, atomic writes, damaged saves skipped rather than trusted. Open: **one** manual slot rather than three (needs a menu), and shard timers are not saved |
 | UIX-02 | Main menu, pause, settings (graphics, audio, controls, language, accessibility) | **[C]** | |
 | UIX-03 | Difficulty selection, changeable any time | **[C]** | |
 | UIX-04 | Accessibility set per NFR-A.1 | **[C]** | |

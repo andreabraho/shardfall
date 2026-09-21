@@ -33,6 +33,10 @@ public partial class ZoneRoot : Node3D
         PlaceArrivingPlayer();
         Audit();
 
+        // Every border is a checkpoint. Deferred so a tower has already put the player on their
+        // floor, and the save records where they actually are.
+        Callable.From(() => Saving.SaveService.Autosave($"Entered {ZoneId}")).CallDeferred();
+
         Debug.DebugOverlay.Register("zone", this, () =>
         {
             var zone = GameWorld.CurrentZone;
@@ -59,6 +63,16 @@ public partial class ZoneRoot : Node3D
     /// </remarks>
     private void PlaceArrivingPlayer()
     {
+        // A load puts the player exactly where they saved, which beats any arrival point.
+        if (Saving.SaveService.TakePendingPosition() is { } saved)
+        {
+            ZoneTransition.TakeArrival();
+
+            if (GetTree().GetFirstNodeInGroup("player") is Node3D loaded) loaded.GlobalPosition = saved;
+
+            return;
+        }
+
         var from = ZoneTransition.TakeArrival();
 
         if (from.Length == 0) return;

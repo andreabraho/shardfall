@@ -63,6 +63,11 @@ public static class GameActions
     public const string DebugGrantResources = "debug_grant_resources";
     public const string DebugCompleteQuests = "debug_complete_quests";
 
+    // Saving (UIX-01).
+    public const string QuickSave = "quick_save";
+    public const string QuickLoad = "quick_load";
+    public const string NewGame = "new_game";
+
     private static readonly Dictionary<string, InputEvent[]> Defaults = new()
     {
         [MoveCommand] = [Mouse(MouseButton.Left)],
@@ -107,6 +112,9 @@ public static class GameActions
         [DebugToggleRespawn] = [Key(Godot.Key.F7)],
         [DebugGrantResources] = [Key(Godot.Key.F8)],
         [DebugCompleteQuests] = [Key(Godot.Key.F9)],
+        [QuickSave] = [Key(Godot.Key.F10)],
+        [QuickLoad] = [Key(Godot.Key.F12)],
+        [NewGame] = [new InputEventKey { PhysicalKeycode = Godot.Key.F12, ShiftPressed = true }],
     };
 
     private static InputEvent Key(Key key) => new InputEventKey { PhysicalKeycode = key };
