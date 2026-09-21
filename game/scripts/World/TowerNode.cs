@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
+using Kiln.Core.Foundation;
 using Kiln.Core.World;
 
 namespace Kiln.Game.World;
@@ -222,6 +223,8 @@ public partial class TowerNode : Node3D
         {
             UI.WorldNotice.Show(GetTree(), "The tower is finished.");
             GD.Print("[tower] cleared");
+
+            Quests.QuestTracker.Report(GetTree(), ObjectiveType.ClearTower, GameWorld.CurrentZoneId);
         }
 
         EmitSignal(SignalName.FloorChanged);

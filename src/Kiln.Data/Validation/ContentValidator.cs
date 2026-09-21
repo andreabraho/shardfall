@@ -29,7 +29,7 @@ public static class ContentValidator
         CrossReferences(db, report);
         UpgradeSafety(db, report);
         QuestGraph(db, report);
-        SideQuestRewards(db, report);
+        QuestChainRules(db, report);
         TelegraphEscape(db, report);
         Weights(db, report);
         LevelRanges(db, report);
@@ -280,24 +280,134 @@ public static class ContentValidator
     }
 
     // -- R6 -----------------------------------------------------------------
-    private static void SideQuestRewards(ContentDatabase db, ValidationReport report)
+
+    /// <summary>
+    /// The main quest chain (FR-8, doc 02 §9): a line, mostly hunts, every quest finishable.
+    /// </summary>
+    /// <remarks>
+    /// Each rule here is something that loads and runs fine and then strands a player hours in.
+    /// A kill quest for a creature no map spawns can never be finished, and on a chain that is
+    /// the whole rest of the game. Two quests sharing a prerequisite means two active quests,
+    /// which the HUD has no room for and the design has no place for.
+    /// </remarks>
+    private static void QuestChainRules(ContentDatabase db, ValidationReport report)
     {
-        foreach (var quest in db.Quests.Values)
+        if (db.Quests.Count == 0) return;
+
+        var spawned = Spawnable(db);
+        var allowed = new[] { ObjectiveType.Kill, ObjectiveType.Reach, ObjectiveType.Shard, ObjectiveType.ClearTower };
+        var followers = new Dictionary<string, string>(StringComparer.Ordinal);
+
+        foreach (var quest in db.Quests.Values.OrderBy(q => q.Id, StringComparer.Ordinal))
         {
-            if (quest.Type != QuestType.Side) continue;
-
-            var hasMechanicalReward =
-                !string.IsNullOrEmpty(quest.Rewards.Unlock) || quest.Rewards.Items.Length > 0;
-
-            if (!hasMechanicalReward)
+            if (quest.Type == QuestType.Side)
             {
-                // FR-8.4: no pure "kill 20 wolves for xp and gold" filler.
-                report.Error("side-quest-reward", quest.SourceFile,
-                    $"'{quest.Id}' rewards only xp/yang.",
-                    "Every side quest must grant a mechanical reward: an unlock (recipe, feature, "
-                    + "vendor, companion ability) or an item. Otherwise it is MMO filler.");
+                report.Error("quest-chain", quest.SourceFile,
+                    $"'{quest.Id}' is a side quest.",
+                    "There are no side quests (FR-8.4). Put it on the main chain or drop it.");
+            }
+
+            if (quest.Prerequisites.Length > 1)
+            {
+                report.Error("quest-chain", quest.SourceFile,
+                    $"'{quest.Id}' has {quest.Prerequisites.Length} prerequisites.",
+                    "The chain is a line: each quest follows exactly one other, or none for the first.");
+            }
+
+            foreach (var prereq in quest.Prerequisites)
+            {
+                if (followers.TryGetValue(prereq, out var other))
+                {
+                    report.Error("quest-chain", quest.SourceFile,
+                        $"'{quest.Id}' and '{other}' both follow '{prereq}'.",
+                        "Finishing one quest must start exactly one more (FR-8.3: one active quest).");
+                }
+                else
+                {
+                    followers[prereq] = quest.Id;
+                }
+            }
+
+            if (quest.Objectives.Length == 0)
+            {
+                report.Error("quest-chain", quest.SourceFile, $"'{quest.Id}' has no objectives.",
+                    "A quest with nothing to do can never finish, and the chain stops there.");
+            }
+
+            foreach (var objective in quest.Objectives)
+            {
+                QuestObjective(db, quest, objective, allowed, spawned, report);
             }
         }
+    }
+
+    private static void QuestObjective(
+        ContentDatabase db, QuestDef quest, ObjectiveDef objective, ObjectiveType[] allowed,
+        HashSet<string> spawned, ValidationReport report)
+    {
+        var where = $"'{quest.Id}'";
+
+        if (!allowed.Contains(objective.Type))
+        {
+            report.Error("quest-chain", quest.SourceFile,
+                $"{where} uses objective '{objective.Type}'.",
+                "The chain uses kill, reach, shard and clear_tower. The rest went with the side quests (doc 02 §9).");
+            return;
+        }
+
+        if (objective.Count < 1 || (objective.Type != ObjectiveType.Kill && objective.Count != 1))
+        {
+            report.Error("quest-chain", quest.SourceFile,
+                $"{where} asks for {objective.Count} of a '{objective.Type}' objective.",
+                "Kills take a count of one or more; everything else is done once.");
+        }
+
+        switch (objective.Type)
+        {
+            case ObjectiveType.Kill when db.Enemies.ContainsKey(objective.Target) && !spawned.Contains(objective.Target):
+                report.Error("quest-chain", quest.SourceFile,
+                    $"{where} hunts '{objective.Target}', which no camp or tower floor ever spawns.",
+                    "Add it to a spawn field or a floor's waves, or hunt something that exists in the world.");
+                break;
+
+            case ObjectiveType.Reach when !db.Zones.ContainsKey(objective.Target):
+                report.Error("cross-ref", quest.SourceFile, $"{where} sends the player to unknown zone '{objective.Target}'.");
+                break;
+
+            case ObjectiveType.Shard when !db.Shards.ContainsKey(objective.Target):
+                report.Error("cross-ref", quest.SourceFile, $"{where} asks for unknown shard '{objective.Target}'.");
+                break;
+
+            case ObjectiveType.ClearTower when !db.Zones.TryGetValue(objective.Target, out var tower) || tower.Floors.Length == 0:
+                report.Error("quest-chain", quest.SourceFile,
+                    $"{where} asks to clear '{objective.Target}', which is not a tower.",
+                    "clear_tower names a dungeon zone that declares floors.");
+                break;
+        }
+    }
+
+    /// <summary>Every creature the world can put in front of the player: camps and tower waves.</summary>
+    /// <remarks>Bosses count — a floor's boss is as findable as a camp.</remarks>
+    private static HashSet<string> Spawnable(ContentDatabase db)
+    {
+        var found = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach (var zone in db.Zones.Values)
+        {
+            foreach (var field in zone.SpawnFields)
+            {
+                foreach (var entry in field.Entries) found.Add(entry.Enemy);
+            }
+
+            foreach (var floor in zone.Floors)
+            {
+                foreach (var enemy in floor.Waves) found.Add(enemy);
+
+                if (floor.Boss.Length > 0) found.Add(floor.Boss);
+            }
+        }
+
+        return found;
     }
 
     // -- R7: BAL-03 ---------------------------------------------------------

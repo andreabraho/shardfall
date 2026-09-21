@@ -203,12 +203,25 @@ public partial class PlayerCharacter : Node
         // a character at the level cap must still be paid for killing things.
         RestoreManaForKill(enemyLevel);
 
-        if (baseXp <= 0 || Progression.IsMaxLevel) return;
+        if (baseXp <= 0) return;
 
-        var scaled = (long)System.Math.Round(
-            baseXp * ExperienceTable.CatchUpMultiplier(Progression.Level, enemyLevel));
+        GrantExperience((long)System.Math.Round(
+            baseXp * ExperienceTable.CatchUpMultiplier(Progression.Level, enemyLevel)));
+    }
 
-        var levels = Progression.Grant(scaled);
+    /// <summary>
+    /// Adds experience and handles any levels it crosses. Shared by kills and quests.
+    /// </summary>
+    /// <remarks>
+    /// Quest experience is not scaled by the level gap the way a kill is: a quest is the game
+    /// telling the player "this step is done", and paying less because they were strong
+    /// enough to do it quickly would read as a punishment.
+    /// </remarks>
+    public void GrantExperience(long amount)
+    {
+        if (amount <= 0 || Progression.IsMaxLevel) return;
+
+        var levels = Progression.Grant(amount);
 
         EmitSignal(SignalName.ExperienceChanged);
 

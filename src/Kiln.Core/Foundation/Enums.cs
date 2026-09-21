@@ -91,16 +91,32 @@ public enum SkillTargeting
     Line,
 }
 
+/// <summary>
+/// What a quest asks for (FR-8.1).
+/// </summary>
+/// <remarks>
+/// The chain uses four: <see cref="Kill"/> (most of them), <see cref="Reach"/>, <see cref="Shard"/>
+/// and <see cref="ClearTower"/>. The rest are kept so older data still parses, and the validator
+/// rejects them — they belonged to the side-quest plan that was dropped (doc 02 §9).
+/// </remarks>
 public enum ObjectiveType
 {
+    /// <summary>N of one kind of creature. The target is an enemy id.</summary>
     Kill,
     Collect,
+
+    /// <summary>Arrive in a zone. The target is a zone id.</summary>
     Reach,
     Interact,
     Talk,
+
+    /// <summary>Break a shard. The target is a shard id.</summary>
     Shard,
     Escort,
     Survive,
+
+    /// <summary>Finish every floor of a tower. The target is the tower's zone id.</summary>
+    ClearTower,
 }
 
 public enum QuestType

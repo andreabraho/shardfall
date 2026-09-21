@@ -361,6 +361,7 @@ public partial class ShardNode : StaticBody3D
         EmitSignal(SignalName.EncounterChanged);
 
         GrantRewards();
+        Quests.QuestTracker.Report(GetTree(), ObjectiveType.Shard, ShardId);
     }
 
     private void GrantRewards()

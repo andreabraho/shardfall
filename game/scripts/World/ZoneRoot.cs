@@ -37,6 +37,9 @@ public partial class ZoneRoot : Node3D
         // floor, and the save records where they actually are.
         Callable.From(() => Saving.SaveService.Autosave($"Entered {ZoneId}")).CallDeferred();
 
+        Quests.QuestTracker.Report(GetTree(), Kiln.Core.Foundation.ObjectiveType.Reach, ZoneId);
+        Quests.QuestTracker.Touch();
+
         Debug.DebugOverlay.Register("zone", this, () =>
         {
             var zone = GameWorld.CurrentZone;

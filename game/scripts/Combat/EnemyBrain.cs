@@ -235,6 +235,11 @@ public partial class EnemyBrain : CharacterBody3D
         AwardExperience();
         DropLoot();
 
+        // Last, after the loot: a quest completing pays out into the bag, and if that ever
+        // threw it must not take the drop down with it — a death that half-happened is how
+        // the Hollow Bloom once stayed on the map with its loot uncollectable.
+        Quests.QuestTracker.Report(GetTree(), Kiln.Core.Foundation.ObjectiveType.Kill, EnemyId);
+
         if (_bar is not null) _bar.Visible = false;
 
         // Immune to hit-stop. The freeze drives Engine.TimeScale to a ten-thousandth, and a

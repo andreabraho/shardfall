@@ -84,6 +84,12 @@ public static class GameItems
         return item.UpgradeLevel > 0 ? $"{name} +{item.UpgradeLevel}" : name;
     }
 
+    /// <summary>Display name for an item definition, when there is no instance to name.</summary>
+    public static string NameOfId(string itemId) =>
+        GameContent.IsLoaded && GameContent.Database.Items.TryGetValue(itemId, out var def)
+            ? Localise(def.Name)
+            : itemId;
+
     /// <summary>Display name for an enemy definition.</summary>
     public static string NameOfEnemy(string enemyId) =>
         GameContent.IsLoaded && GameContent.Database.Enemies.TryGetValue(enemyId, out var def)

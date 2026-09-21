@@ -40,10 +40,8 @@ public partial class DebugPassage : Node
 
         GetViewport().SetInputAsHandled();
 
-        foreach (var id in Kiln.Data.Ids.Quests.All)
-        {
-            PlayerProfile.CompletedQuests.Add(id);
-        }
+        PlayerProfile.Quests.Load(Kiln.Data.Ids.Quests.All, null, null);
+        Quests.QuestTracker.Touch();
 
         var notice = $"{Kiln.Data.Ids.Quests.All.Length} quests marked finished.";
 

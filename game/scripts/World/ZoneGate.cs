@@ -181,7 +181,7 @@ public partial class ZoneGate : Area3D
             return $"The road ahead is beyond you. Return at level {exit.RequiredLevel}.";
         }
 
-        if (exit.RequiredQuest is not null && !PlayerProfile.CompletedQuests.Contains(exit.RequiredQuest))
+        if (exit.RequiredQuest is not null && !PlayerProfile.Quests.IsComplete(exit.RequiredQuest))
         {
             return "The way is barred. Something here is unfinished.";
         }

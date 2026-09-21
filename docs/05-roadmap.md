@@ -272,11 +272,11 @@ told anything outside the game.
 
 | ID | Task | Owner | Notes |
 |---|---|---|---|
-| QST-01 | Quest state machine: one active quest, objectives, prerequisites, rewards, saved with the game | **[C]** | Small on purpose: at most one active quest |
-| QST-02 | Objective types: kill / reach / break / talk / clear a tower | **[C]** | Most quests are kill quests: N of one kind of creature. Escort and survive dropped |
+| QST-01 | Quest state machine: one active quest, objectives, prerequisites, rewards, saved with the game | **[C]** | ✅ `QuestChain` in Core: progress only counts while its quest is active, a save naming a renamed quest recomputes where it is, loaded progress stops one short so a lowered count can never strand a finished quest |
+| QST-02 | Objective types: kill / reach / break / talk / clear a tower | **[C]** | ✅ kill, reach, shard, clear_tower live; talk waits on NPCs. The validator rejects a hunt for anything no camp or floor spawns, and any second active quest |
 | QST-03 | Linear dialogue: a few lines per NPC, no choices | **[C]** | |
-| QST-04 | Current objective as one HUD line + one map marker | **[C]** | Replaces the journal screen |
-| QST-05 | **The chain: about five main-progress quests**, village → fields → tower | **[C]** | One per step of the road, mostly hunts, ending with clearing the catacombs. Re-gates the Broken Gate border properly |
+| QST-04 | Current objective as one HUD line + one map marker | **[C]** | ◐ HUD panel top right: quest, count, and which map the creature lives in when you are not there. Map marker still open |
+| QST-05 | **The chain: about five main-progress quests**, village → fields → tower | **[C]** | ✅ six: reed hoppers, thornback boars, pale gnawers, corrupted wolves (opens the Broken Gate), gate breakers, then clear the catacombs. Rewards on the chain formula; a real-content test locks "mostly hunts, one is the tower" |
 | QST-06 | The NPCs the chain and the economy need (elder, smith, vendor) | **[C]** | Vendor also closes ITM-10 |
 | QST-07 | Codex/bestiary filling on kills | **[C]** | Not a quest system; kept |
 | QST-08 | **Story and tone review** — names, writing, whether it lands | **[You]** | Taste call |

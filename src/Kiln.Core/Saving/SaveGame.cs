@@ -9,9 +9,10 @@ namespace Kiln.Core.Saving;
 /// flat record is something a migration can reason about field by field, and a live
 /// <c>ItemInstance</c> is not.
 /// <para>
-/// What is not here yet, on purpose: shard respawn timers, active quests and the codex. The
-/// first is minutes of state that is harmless to lose; the other two do not exist at runtime
-/// yet. Each arrives with the system that owns it, and with a version bump.
+/// What is not here yet, on purpose: shard respawn timers and the codex. The first is minutes
+/// of state that is harmless to lose; the second does not exist at runtime yet. Quests were
+/// added without a version bump because the fields are new and default cleanly — a save from
+/// before them loads as a character with nothing finished, which is what it was.
 /// </para>
 /// </remarks>
 public sealed class SaveGame
@@ -28,6 +29,16 @@ public sealed class SaveGame
     public SavedPlayer Player { get; set; } = new();
     public SavedWorld World { get; set; } = new();
     public List<string> CompletedQuests { get; set; } = [];
+
+    /// <summary>The quest being pursued when the game was saved, or null.</summary>
+    /// <remarks>
+    /// Advisory: the chain works out which quest is active from what is finished, and uses
+    /// this only to decide whether <see cref="QuestProgress"/> still applies.
+    /// </remarks>
+    public string? ActiveQuest { get; set; }
+
+    /// <summary>Progress on each goal of the active quest, in goal order.</summary>
+    public List<int> QuestProgress { get; set; } = [];
 }
 
 public sealed class SavedPlayer

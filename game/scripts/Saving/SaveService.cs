@@ -217,7 +217,9 @@ public partial class SaveService : Node
             Label = label,
             Difficulty = GameSession.Difficulty.Tier.ToString(),
             Seed = GameSession.Seed,
-            CompletedQuests = PlayerProfile.CompletedQuests.ToList(),
+            CompletedQuests = PlayerProfile.Quests.Completed.ToList(),
+            ActiveQuest = PlayerProfile.Quests.Active?.Id,
+            QuestProgress = PlayerProfile.Quests.Progress.ToList(),
             Player = new SavedPlayer
             {
                 Level = progression.Level,
@@ -394,7 +396,7 @@ public partial class SaveService : Node
 
         PlayerProfile.MarkCreated();
 
-        foreach (var quest in save.CompletedQuests) PlayerProfile.CompletedQuests.Add(quest);
+        PlayerProfile.Quests.Load(save.CompletedQuests, save.ActiveQuest, save.QuestProgress);
 
         foreach (var (zone, depth) in save.World.Depths) PlayerProfile.ReachedDepth(zone, depth);
 

@@ -183,7 +183,7 @@
     "scene": "res://scenes/arena.tscn",
     "exits": [
       { "to": "zone_vale_floor" },
-      { "to": "zone_broken_gate", "required_level": 14 }
+      { "to": "zone_broken_gate", "required_level": 14, "required_quest": "qst_wolves_of_the_ridge" }
     ],
     "shrines": [
       { "id": "shr_ridge_watch", "name": "$shrine.shr_ridge_watch.name", "fast_travel": true },

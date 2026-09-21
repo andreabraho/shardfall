@@ -103,4 +103,29 @@ public class RealContentTests
             }
         }
     }
+
+    /// <summary>
+    /// The shape the user asked for (doc 02 §9, 2026-09-21): a short chain, mostly hunts, one
+    /// of which is clearing the catacombs. Written as a test so a content edit that quietly
+    /// turns the chain into something else fails the build instead of shipping.
+    /// </summary>
+    [Fact]
+    public void TheQuestChainIsShortMostlyHuntsAndEndsInTheTower()
+    {
+        var db = ContentLoader.LoadFromDirectory(DataRoot()).Database;
+        var chain = Kiln.Data.Quests.QuestCatalogue.Chain(db);
+
+        Assert.InRange(chain.Count, 3, 8);
+
+        var hunts = chain.Count(q => q.Goals.All(g => g.Type == Kiln.Core.Foundation.ObjectiveType.Kill));
+        Assert.True(hunts * 2 > chain.Count, $"only {hunts} of {chain.Count} quests are hunts");
+
+        Assert.Single(chain, q => q.Goals.Any(g =>
+            g.Type == Kiln.Core.Foundation.ObjectiveType.ClearTower && g.Target == "zone_catacombs"));
+
+        // The first quest has no prerequisite and each later one follows the one before it.
+        Assert.Null(chain[0].Prerequisite);
+
+        for (var i = 1; i < chain.Count; i++) Assert.Equal(chain[i - 1].Id, chain[i].Prerequisite);
+    }
 }

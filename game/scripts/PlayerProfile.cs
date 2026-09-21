@@ -59,15 +59,17 @@ public static class PlayerProfile
 
     public static double ManaFraction { get; set; } = 1.0;
 
+    private static Kiln.Core.Quests.QuestChain? _quests;
+
     /// <summary>
-    /// Quests the character has finished, for the gates that ask.
+    /// The main quest chain (FR-8): what is finished, what is active, how far along it is.
     /// </summary>
     /// <remarks>
-    /// Empty until the quest runtime lands in Phase 7. A story-gated exit therefore refuses
-    /// everybody, which is the correct answer to "is this quest done" while no quest can be
-    /// done — and far better than a gate that quietly ignores its own requirement.
+    /// The one record of quests. It used to be a set of finished ids beside nothing that could
+    /// finish them; now the gates, the save and the HUD all ask the same object.
     /// </remarks>
-    public static HashSet<string> CompletedQuests { get; } = new(StringComparer.Ordinal);
+    public static Kiln.Core.Quests.QuestChain Quests =>
+        _quests ??= new Kiln.Core.Quests.QuestChain(Kiln.Data.Quests.QuestCatalogue.Chain(GameContent.Database));
 
     /// <summary>Flask charges carried across. Refilled at a shrine, not at a border.</summary>
     public static int FlaskCharges { get; set; } = -1;
@@ -120,7 +122,7 @@ public static class PlayerProfile
         HealthFraction = 1.0;
         ManaFraction = 1.0;
         FlaskCharges = -1;
-        CompletedQuests.Clear();
+        _quests = null;
         Explored.Clear();
         Depths.Clear();
     }

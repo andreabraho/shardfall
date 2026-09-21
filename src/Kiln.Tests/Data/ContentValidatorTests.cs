@@ -219,36 +219,121 @@ public class ContentValidatorTests
         Assert.False(HasError(report, "quest-graph"));
     }
 
-    // -- side quest rewards (FR-8.4) ----------------------------------------
+    // -- the main chain (FR-8, doc 02 §9) ------------------------------------
+
+    /// <summary>A hub with one camp of <c>mob_boar</c>, so a boar hunt is finishable.</summary>
+    private static ContentDatabase ChainWorld(params QuestDef[] quests)
+    {
+        var hub = Zone("zone_hub", "hub", 1, 3);
+
+        var camped = new ZoneDef
+        {
+            Id = hub.Id, Name = hub.Name, Kind = hub.Kind, LevelBand = hub.LevelBand,
+            Scene = hub.Scene, Shrines = hub.Shrines, SafeRegions = hub.SafeRegions,
+            SpawnFields =
+            [
+                new SpawnFieldDef
+                {
+                    Id = "spf_boars", Count = 4, RespawnSeconds = 20, ActivationRadius = 50, Radius = 8,
+                    Entries = [new SpawnEntryDef { Enemy = "mob_boar", Weight = 1 }],
+                },
+            ],
+        };
+
+        return Db(
+            enemies:
+            [
+                new EnemyDef { Id = "mob_boar", Name = "$m", Level = 2 },
+                new EnemyDef { Id = "mob_nowhere", Name = "$m", Level = 2 },
+            ],
+            quests: quests,
+            zones: [camped]);
+    }
+
+    private static QuestDef Hunt(string id, string enemy, int count = 5, string[]? after = null,
+        QuestType type = QuestType.Story) => new()
+    {
+        Id = id,
+        Name = $"$quest.{id}.name",
+        Type = type,
+        Prerequisites = after ?? [],
+        Objectives = [new ObjectiveDef { Type = ObjectiveType.Kill, Target = enemy, Count = count }],
+    };
 
     [Fact]
-    public void Flags_SideQuestWithOnlyXpAndYang()
+    public void Accepts_AHuntForACreatureTheWorldSpawns()
     {
-        var report = ContentValidator.Validate(Db(quests:
-        [
-            new QuestDef
-            {
-                Id = "qst_filler", Name = "$f", Type = QuestType.Side, Prerequisites = [],
-                Rewards = new QuestRewardsDef { Xp = 500, Yang = 300 },
-            },
-        ]));
+        var report = ContentValidator.Validate(ChainWorld(Hunt("qst_a", "mob_boar")));
 
-        Assert.True(HasError(report, "side-quest-reward"));
+        Assert.False(HasError(report, "quest-chain"));
+    }
+
+    /// <summary>
+    /// The one that strands a player hours in: a hunt for something no camp ever produces loads,
+    /// runs, shows on the HUD, and can never be finished.
+    /// </summary>
+    [Fact]
+    public void Flags_AHuntForACreatureNothingSpawns()
+    {
+        var report = ContentValidator.Validate(ChainWorld(Hunt("qst_a", "mob_nowhere")));
+
+        Assert.True(HasError(report, "quest-chain"));
     }
 
     [Fact]
-    public void Accepts_SideQuestWithAnUnlock()
+    public void Flags_ASideQuest()
     {
-        var report = ContentValidator.Validate(Db(quests:
-        [
-            new QuestDef
-            {
-                Id = "qst_good", Name = "$g", Type = QuestType.Side, Prerequisites = [],
-                Rewards = new QuestRewardsDef { Xp = 500, Yang = 300, Unlock = "recipe_x" },
-            },
-        ]));
+        var report = ContentValidator.Validate(ChainWorld(Hunt("qst_a", "mob_boar", type: QuestType.Side)));
 
-        Assert.False(HasError(report, "side-quest-reward"));
+        Assert.True(HasError(report, "quest-chain"));
+    }
+
+    [Fact]
+    public void Flags_TwoQuestsFollowingTheSameOne()
+    {
+        // Two quests active at once, which the design has no room for (FR-8.3).
+        var report = ContentValidator.Validate(ChainWorld(
+            Hunt("qst_a", "mob_boar"),
+            Hunt("qst_b", "mob_boar", after: ["qst_a"]),
+            Hunt("qst_c", "mob_boar", after: ["qst_a"])));
+
+        Assert.True(HasError(report, "quest-chain"));
+    }
+
+    [Fact]
+    public void Flags_AQuestWithTwoPrerequisites()
+    {
+        var report = ContentValidator.Validate(ChainWorld(
+            Hunt("qst_a", "mob_boar"),
+            Hunt("qst_b", "mob_boar", after: ["qst_a"]),
+            Hunt("qst_c", "mob_boar", after: ["qst_a", "qst_b"])));
+
+        Assert.True(HasError(report, "quest-chain"));
+    }
+
+    [Fact]
+    public void Flags_AnObjectiveTheChainDoesNotUse()
+    {
+        var quest = Hunt("qst_a", "mob_boar");
+        var escort = new QuestDef
+        {
+            Id = quest.Id, Name = quest.Name, Type = quest.Type, Prerequisites = [],
+            Objectives = [new ObjectiveDef { Type = ObjectiveType.Escort, Target = "npc_x", Count = 1 }],
+        };
+
+        Assert.True(HasError(ContentValidator.Validate(ChainWorld(escort)), "quest-chain"));
+    }
+
+    [Fact]
+    public void Flags_ClearingSomethingThatIsNotATower()
+    {
+        var quest = new QuestDef
+        {
+            Id = "qst_a", Name = "$quest.qst_a.name", Type = QuestType.Story, Prerequisites = [],
+            Objectives = [new ObjectiveDef { Type = ObjectiveType.ClearTower, Target = "zone_hub", Count = 1 }],
+        };
+
+        Assert.True(HasError(ContentValidator.Validate(ChainWorld(quest)), "quest-chain"));
     }
 
     // -- BAL-03 telegraph escape --------------------------------------------

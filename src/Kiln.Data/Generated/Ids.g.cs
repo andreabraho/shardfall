@@ -129,12 +129,14 @@ public static class Ids
 
     public static class Quests
     {
-        public const string QstA100Prologue = "qst_a1_00_prologue";
-        public const string QstA101TheBrokenGate = "qst_a1_01_the_broken_gate";
-        public const string QstA102TheFirstShard = "qst_a1_02_the_first_shard";
-        public const string QstS1WolvesAtTheFord = "qst_s1_wolves_at_the_ford";
+        public const string QstBreakersAtTheGate = "qst_breakers_at_the_gate";
+        public const string QstIntoTheCatacombs = "qst_into_the_catacombs";
+        public const string QstReedsInTheHollow = "qst_reeds_in_the_hollow";
+        public const string QstTheGnawingBarrows = "qst_the_gnawing_barrows";
+        public const string QstThornbacksOnTheRoad = "qst_thornbacks_on_the_road";
+        public const string QstWolvesOfTheRidge = "qst_wolves_of_the_ridge";
 
-        public static readonly string[] All = ["qst_a1_00_prologue", "qst_a1_01_the_broken_gate", "qst_a1_02_the_first_shard", "qst_s1_wolves_at_the_ford"];
+        public static readonly string[] All = ["qst_breakers_at_the_gate", "qst_into_the_catacombs", "qst_reeds_in_the_hollow", "qst_the_gnawing_barrows", "qst_thornbacks_on_the_road", "qst_wolves_of_the_ridge"];
     }
 
     public static class DropTables

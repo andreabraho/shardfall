@@ -1,59 +1,41 @@
 [
-  {
-    "id": "qst_a1_00_prologue",
-    "name": "$quest.qst_a1_00_prologue.name",
-    "act": 1,
-    "type": "tutorial",
-    "level_req": 0,
-    "prerequisites": [],
-    "objectives": [
-      { "type": "reach",  "target": "loc_valley_shrine", "count": 1 },
-      { "type": "kill",   "target": "mob_corrupted_wolf", "count": 3 }
-    ],
-    "rewards": { "xp": 200, "yang": 150, "items": ["wpn_iron_sword"], "unlock": "feature_hotbar" },
-    "dialogue": "dlg_a1_00"
-  },
-  {
-    "id": "qst_a1_01_the_broken_gate",
-    "name": "$quest.qst_a1_01_the_broken_gate.name",
-    "act": 1,
-    "type": "story",
-    "level_req": 4,
-    "prerequisites": ["qst_a1_00_prologue"],
-    "objectives": [
-      { "type": "talk",   "target": "npc_elder_hwan", "count": 1 },
-      { "type": "reach",  "target": "loc_broken_gate", "count": 1 }
-    ],
-    "rewards": { "xp": 900, "yang": 400, "items": [], "unlock": "feature_fast_travel" },
-    "dialogue": "dlg_a1_01"
-  },
-  {
-    "id": "qst_a1_02_the_first_shard",
-    "name": "$quest.qst_a1_02_the_first_shard.name",
-    "act": 1,
-    "type": "story",
-    "level_req": 6,
-    "prerequisites": ["qst_a1_01_the_broken_gate"],
-    "objectives": [
-      { "type": "reach", "target": "loc_valley_ridge", "count": 1 },
-      { "type": "shard", "target": "shard_node_valley_01", "count": 1 },
-      { "type": "talk",  "target": "npc_elder_hwan", "count": 1 }
-    ],
-    "rewards": { "xp": 2400, "yang": 900, "items": ["arm_leather_vest"], "unlock": "feature_upgrading" },
-    "dialogue": "dlg_a1_02"
-  },
-  {
-    "id": "qst_s1_wolves_at_the_ford",
-    "name": "$quest.qst_s1_wolves_at_the_ford.name",
-    "act": 1,
-    "type": "side",
-    "level_req": 5,
-    "prerequisites": ["qst_a1_00_prologue"],
-    "objectives": [
-      { "type": "kill",    "target": "mob_corrupted_wolf", "count": 8 },
-      { "type": "collect", "target": "mat_iron_scrap", "count": 4 }
-    ],
-    "rewards": { "xp": 600, "yang": 350, "items": [], "unlock": "recipe_tempering_oil" },
-    "dialogue": "dlg_s1_ford"
-  }
+  // The main road (doc 02 §9, FR-8). One quest per step, in order, and most of them are hunts:
+  // a number of one kind of creature in the map the player has just reached. They exist to say
+  // where to go next and to pay for getting there — not to fill a journal.
+  //
+  // Rewards follow the chain formulas: xp = 140 · band^1.85 and yang = 260 · band^1.25 at the
+  // band of the map the quest is in. The pacing simulation assumes exactly those numbers, so a
+  // reward changed here without changing them there is a level curve that no longer holds.
+
+  { "id": "qst_reeds_in_the_hollow", "name": "$quest.qst_reeds_in_the_hollow.name",
+    "act": 1, "type": "story", "level_req": 1, "prerequisites": [],
+    "objectives": [ { "type": "kill", "target": "mob_reed_hopper", "count": 8 } ],
+    "rewards": { "xp": 140, "yang": 260, "items": [] } },
+
+  { "id": "qst_thornbacks_on_the_road", "name": "$quest.qst_thornbacks_on_the_road.name",
+    "act": 1, "type": "story", "level_req": 4, "prerequisites": ["qst_reeds_in_the_hollow"],
+    "objectives": [ { "type": "kill", "target": "mob_thornback_boar", "count": 10 } ],
+    "rewards": { "xp": 1819, "yang": 1471, "items": [] } },
+
+  { "id": "qst_the_gnawing_barrows", "name": "$quest.qst_the_gnawing_barrows.name",
+    "act": 1, "type": "story", "level_req": 8, "prerequisites": ["qst_thornbacks_on_the_road"],
+    "objectives": [ { "type": "kill", "target": "mob_pale_gnawer", "count": 12 } ],
+    "rewards": { "xp": 6559, "yang": 3498, "items": [] } },
+
+  // Finishing this one is what opens the road to the Broken Gate.
+  { "id": "qst_wolves_of_the_ridge", "name": "$quest.qst_wolves_of_the_ridge.name",
+    "act": 1, "type": "story", "level_req": 12, "prerequisites": ["qst_the_gnawing_barrows"],
+    "objectives": [ { "type": "kill", "target": "mob_corrupted_wolf", "count": 12 } ],
+    "rewards": { "xp": 13887, "yang": 5807, "items": [] } },
+
+  { "id": "qst_breakers_at_the_gate", "name": "$quest.qst_breakers_at_the_gate.name",
+    "act": 1, "type": "story", "level_req": 16, "prerequisites": ["qst_wolves_of_the_ridge"],
+    "objectives": [ { "type": "kill", "target": "mob_gate_breaker", "count": 12 } ],
+    "rewards": { "xp": 23646, "yang": 8320, "items": [] } },
+
+  // The act's destination: all nine floors.
+  { "id": "qst_into_the_catacombs", "name": "$quest.qst_into_the_catacombs.name",
+    "act": 1, "type": "story", "level_req": 19, "prerequisites": ["qst_breakers_at_the_gate"],
+    "objectives": [ { "type": "clear_tower", "target": "zone_catacombs", "count": 1 } ],
+    "rewards": { "xp": 35730, "yang": 10997, "items": [] } }
 ]
