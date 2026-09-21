@@ -72,6 +72,44 @@ public partial class VisualRoot : Node3D
         _lunge = _lungeDuration;
     }
 
+    /// <summary>
+    /// The attack animation, in place (REF-01): the character stands still while it strikes.
+    /// A model plays its swing; a primitive, which has none, gives a small nod forward so the
+    /// blow is still visible.
+    /// </summary>
+    public void Swing(Vector3 direction)
+    {
+        if (_animator is { Ready: true })
+        {
+            _animator.Attack();
+            return;
+        }
+
+        Lunge(direction, 0.12f, 0.16);
+    }
+
+    /// <summary>Cuts the swing animation short when the player walks off mid-follow-through.</summary>
+    public void CancelSwing() => _animator?.CancelAttack();
+
+    /// <summary>
+    /// The flinch of being hit (REF-01): a short recoil away from the blow, and the model's own
+    /// hit reaction when it has one. Visual only — the creature keeps acting; this is not a stun
+    /// and not knockback.
+    /// </summary>
+    public void Flinch(Vector3 away)
+    {
+        var flat = away with { Y = 0 };
+
+        if (flat.LengthSquared() < 0.0001f) return;
+
+        _animator?.Hit();
+
+        _lungeDirection = flat.Normalized();
+        _lungeDistance = 0.14f;
+        _lungeDuration = 0.16;
+        _lunge = _lungeDuration;
+    }
+
     private StandardMaterial3D? _flashMaterial;
     private Color _baseColor;
     private double _flash;

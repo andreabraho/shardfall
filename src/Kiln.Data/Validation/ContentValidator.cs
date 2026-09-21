@@ -40,6 +40,7 @@ public static class ContentValidator
         GreyboxKit(db, report);
         Villagers(db, report);
         Sounds(db, report);
+        StunRules(db, report);
 
         return report;
     }
@@ -1463,6 +1464,52 @@ public static class ContentValidator
             {
                 report.Error("sound", zone.SourceFile, $"'{zone.Id}' plays '{zone.Music}', which is not a looping track.",
                     "Point music at a sound with \"loop\": true on the music bus.");
+            }
+        }
+    }
+
+    // -- stuns and skill effects (REF-01) --------------------------------------
+
+    /// <summary>
+    /// Skill effects are statuses the game knows, with a real chance; stun resistance is a
+    /// fraction; and every tower boss is immune to stun — decided 2026-09-21.
+    /// </summary>
+    private static void StunRules(ContentDatabase db, ValidationReport report)
+    {
+        string[] kinds = ["poison", "bleed", "stun", "slow", "weaken", "vulnerability"];
+
+        foreach (var skill in db.Skills.Values.Where(s => s.Applies is not null))
+        {
+            var applies = skill.Applies!;
+
+            if (!kinds.Contains(applies.Kind))
+            {
+                report.Error("skill-effect", skill.SourceFile, $"'{skill.Id}' applies '{applies.Kind}'.",
+                    $"Use one of: {string.Join(", ", kinds)}.");
+            }
+
+            if (applies.Chance is <= 0 or > 1 || applies.Duration <= 0)
+            {
+                report.Error("skill-effect", skill.SourceFile, $"'{skill.Id}' applies {applies.Kind} with chance {applies.Chance} for {applies.Duration} s.",
+                    "Chance is above 0 and at most 1; duration is above 0.");
+            }
+        }
+
+        foreach (var enemy in db.Enemies.Values.Where(e => e.StunResist is < 0 or > 1))
+        {
+            report.Error("stun", enemy.SourceFile, $"'{enemy.Id}' has stun_resist {enemy.StunResist}.",
+                "A fraction from 0 (no resistance) to 1 (immune).");
+        }
+
+        foreach (var zone in db.Zones.Values)
+        {
+            foreach (var floor in zone.Floors.Where(f => f.Boss.Length > 0))
+            {
+                if (db.Enemies.TryGetValue(floor.Boss, out var boss) && boss.StunResist < 1)
+                {
+                    report.Error("stun", boss.SourceFile, $"'{boss.Id}' is the boss of {floor.Id} and can be stunned.",
+                        "Tower bosses are immune: set \"stun_resist\": 1.0.");
+                }
             }
         }
     }

@@ -66,6 +66,10 @@ public partial class EnemyBrain : CharacterBody3D
 
     [Export] public string EnemyId { get; set; } = "mob_corrupted_wolf";
 
+    /// <summary>0..1 off any chance to stun this creature; 1 is immune (REF-01).</summary>
+    public double StunResist =>
+        GameContent.IsLoaded && GameContent.Database.Enemies.TryGetValue(EnemyId, out var def) ? def.StunResist : 0;
+
     [Export] public float AggroRadius { get; set; } = 12f;
     [Export] public float LeashRadius { get; set; } = 35f;
     [Export] public float AttackRange { get; set; } = 2.2f;
@@ -219,8 +223,15 @@ public partial class EnemyBrain : CharacterBody3D
 
         if (!evaded)
         {
-            CombatFeedback.HitStop(critical ? 0.075 : 0.04);
+            // A flinch where it stands (REF-01): no frame freeze, no knockback, and the creature
+            // goes on acting. The recoil points away from whoever is hitting it.
             (_visual as VisualRoot)?.Flash();
+
+            var away = GetTree().GetFirstNodeInGroup("player") is Node3D player
+                ? GlobalPosition - player.GlobalPosition
+                : Vector3.Zero;
+
+            (_visual as VisualRoot)?.Flinch(away);
         }
 
         // Being hit pulls an enemy into the fight from outside aggro range — but not while
@@ -785,30 +796,8 @@ public partial class EnemyBrain : CharacterBody3D
     }
 
     /// <summary>Inflicts the ability's status, if it has one and the roll lands.</summary>
-    private void ApplyStatus(AbilityDef ability, Combatant victim)
-    {
-        if (ability.Applies is not { } spec || !victim.IsAlive) return;
-        if (!GameSession.CombatRng.Chance(spec.Chance)) return;
-
-        var effect = spec.Kind switch
-        {
-            "poison" => StatusEffectSet.Poison(spec.Magnitude, spec.Duration),
-            "bleed" => StatusEffectSet.Bleed(spec.Magnitude, spec.Duration),
-            "stun" => StatusEffectSet.Stun(spec.Duration),
-            "slow" => StatusEffectSet.Slow(spec.Magnitude, spec.Duration),
-            "weaken" => StatusEffectSet.Weaken(spec.Magnitude, spec.Duration),
-            "vulnerability" => StatusEffectSet.Vulnerability(spec.Magnitude, spec.Duration),
-            _ => null,
-        };
-
-        if (effect is null)
-        {
-            GD.PushWarning($"EnemyBrain '{EnemyId}': unknown status kind '{spec.Kind}'.");
-            return;
-        }
-
-        victim.Statuses.Apply(effect);
-    }
+    private static void ApplyStatus(AbilityDef ability, Combatant victim) =>
+        StatusApplication.Try(ability.Applies, victim);
 
     // -- Role-specific actions ---------------------------------------------
 

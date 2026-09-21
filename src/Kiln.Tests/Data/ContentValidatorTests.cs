@@ -654,7 +654,7 @@ public class ContentValidatorTests
     ];
 
     private static ValidationReport Validate(ZoneDef tower) => ContentValidator.Validate(Db(
-        enemies: [new EnemyDef { Id = "mob_boss", Name = "$m", Level = 5 }],
+        enemies: [new EnemyDef { Id = "mob_boss", Name = "$m", Level = 5, StunResist = 1.0 }],
         zones: [Zone("zone_hub", "hub", 1, 3, [tower.Id]), tower]));
 
     [Fact]
@@ -819,7 +819,7 @@ public class ContentValidatorTests
     {
         var wilds = Zone("zone_field", "wilds", 3, 6);
         var report = ContentValidator.Validate(Db(
-            enemies: [new EnemyDef { Id = "mob_boss", Name = "$m", Level = 5 }],
+            enemies: [new EnemyDef { Id = "mob_boss", Name = "$m", Level = 5, StunResist = 1.0 }],
             zones:
             [
                 Zone("zone_hub", "hub", 1, 3, ["zone_field"]),
@@ -931,5 +931,35 @@ public class ContentValidatorTests
         };
 
         Assert.True(HasError(ContentValidator.Validate(VillageDb(npc)), "localisation"));
+    }
+
+    // -- stuns (REF-01) ------------------------------------------------------
+
+    [Fact]
+    public void Flags_ATowerBossThatCanBeStunned()
+    {
+        var report = ContentValidator.Validate(Db(
+            enemies: [new EnemyDef { Id = "mob_boss", Name = "$m", Level = 5, StunResist = 0.5 }],
+            zones:
+            [
+                new ZoneDef
+                {
+                    Id = "zone_t", Name = "$z", Kind = "dungeon",
+                    Floors = [new FloorDef { Id = "flr_x", Name = "$f", Task = "fight", Boss = "mob_boss" }],
+                },
+            ]));
+
+        Assert.True(HasError(report, "stun"));
+    }
+
+    [Fact]
+    public void Flags_ASkillEffectThatIsNotAStatus()
+    {
+        var skill = new SkillDef
+        {
+            Id = "skl_test", Name = "$s", Applies = new StatusApplicationDef { Kind = "freeze", Duration = 1, Chance = 0.5 },
+        };
+
+        Assert.True(HasError(ContentValidator.Validate(Db(skills: [skill])), "skill-effect"));
     }
 }

@@ -271,8 +271,20 @@ public partial class SkillCaster : Node
         var origin = _motor.GlobalPosition;
         var aim = AimDirection(origin);
 
-        // Ground areas are placed once, at cast. Self-centred areas follow the caster, so a
-        // spin keeps hitting what is around you as you drift.
+        // A single-target skill turns to its target, not to the cursor.
+        if (skill.Targeting == SkillTargeting.SingleTarget
+            && GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat")?.Target is { IsAlive: true } target)
+        {
+            aim = (target.Body.GlobalPosition - origin) with { Y = 0 };
+        }
+
+        // The Warrior stands still while a skill plays out (REF-01): held for every pulse it
+        // fires, turned to where it is aimed, and an area centred on where it was used.
+        _motor.Stop();
+        _motor.HoldFor(CastHold(skill));
+        _motor.FaceTowards(aim);
+        _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Swing(aim);
+
         var center = skill.Targeting == SkillTargeting.GroundAoe
             ? GroundPoint(origin, aim, (float)skill.Radius)
             : origin;
@@ -282,7 +294,7 @@ public partial class SkillCaster : Node
             Skill = skill,
             Center = center,
             Aim = aim,
-            FollowsCaster = skill.Targeting is SkillTargeting.SelfAoe or SkillTargeting.Cone,
+            FollowsCaster = false,
             Remaining = System.Math.Max(1, skill.Hits),
             Timer = 0,
         };
@@ -295,6 +307,10 @@ public partial class SkillCaster : Node
             _pulses.Add(pulse);
         }
     }
+
+    /// <summary>How long a skill holds the character: every pulse, and a beat after the last.</summary>
+    private static double CastHold(ResolvedSkill skill) =>
+        (System.Math.Max(1, skill.Hits) - 1) * PulseInterval + 0.35;
 
     private void FirePulse(Pulse pulse)
     {
@@ -337,12 +353,14 @@ public partial class SkillCaster : Node
         foreach (var target in targets)
         {
             if (!target.IsAlive) continue;
-            target.TakeAttack(_self, skillCoef: skill.DamageCoef);
-        }
 
-        // One hit-stop per pulse, not per target — otherwise an area attack into a pack
-        // freezes the game solid.
-        CombatFeedback.HitStop(0.05);
+            target.TakeAttack(_self, skillCoef: skill.DamageCoef);
+
+            // What is not a creature — a shard — cannot be stunned, but can be weakened.
+            var resist = (target.Body as EnemyBrain)?.StunResist ?? 1.0;
+
+            StatusApplication.Try(skill.Applies, target, resist);
+        }
     }
 
     private void ProcessPulses(double delta)

@@ -54,6 +54,17 @@ public partial class PlayerMotor : CharacterBody3D
     /// </summary>
     public bool MovementLocked { get; set; }
 
+    private double _heldFor;
+
+    /// <summary>
+    /// Holds the character in place for a moment: a windup, a skill (REF-01). Orders given
+    /// meanwhile are kept and carried out once it ends, so a click during a swing is not lost.
+    /// </summary>
+    public void HoldFor(double seconds) => _heldFor = System.Math.Max(_heldFor, seconds);
+
+    /// <summary>True while a windup or a skill holds the character still.</summary>
+    public bool IsHeld => _heldFor > 0;
+
     public bool IsMoving => Velocity with { Y = 0 } != Vector3.Zero;
 
     public Vector3 Destination => _agent.TargetPosition;
@@ -112,7 +123,9 @@ public partial class PlayerMotor : CharacterBody3D
 
     public override void _PhysicsProcess(double delta)
     {
-        var desired = MovementLocked
+        _heldFor = System.Math.Max(0, _heldFor - delta);
+
+        var desired = MovementLocked || _heldFor > 0
             ? Vector3.Zero
             : Mode == MoveMode.Direction
                 ? _directionInput
@@ -126,6 +139,9 @@ public partial class PlayerMotor : CharacterBody3D
             : Deceleration;
 
         horizontal = horizontal.MoveToward(targetVelocity, rate * (float)delta);
+
+        // Held for a windup or a skill: planted at once, not braking into place (REF-01).
+        if (_heldFor > 0) horizontal = Vector3.Zero;
 
         var vertical = IsOnFloor() ? 0f : Velocity.Y - (Gravity * (float)delta);
         Velocity = horizontal with { Y = vertical };

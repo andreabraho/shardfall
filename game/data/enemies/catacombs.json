@@ -112,6 +112,7 @@
   },
   {
     "id": "mob_gallery_warden",
+    "stun_resist": 1.0,
     "name": "$mob.mob_gallery_warden.name",
     "family": "devil",
     "role": "bruiser",
@@ -139,6 +140,7 @@
   },
   {
     "id": "mob_vault_chorister",
+    "stun_resist": 1.0,
     "name": "$mob.mob_vault_chorister.name",
     "family": "devil",
     "role": "archer",
@@ -164,6 +166,7 @@
   },
   {
     "id": "mob_heart_keeper",
+    "stun_resist": 1.0,
     "name": "$mob.mob_heart_keeper.name",
     "family": "devil",
     "role": "bruiser",

@@ -111,21 +111,8 @@ public partial class PlayerCharacter : Node
 
         Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndPlayerHurt);
 
+        // A flash and nothing more (REF-01): no frame freeze, no camera shake on hits.
         _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Flash();
-
-        // Weight the feedback by how much the hit actually mattered. A scratch gets a flash
-        // and nothing more; only a real blow freezes the frame or moves the camera.
-        var severity = (float)(amount / System.Math.Max(1.0, _combatant.Stats.MaxHp));
-
-        if (severity >= 0.05f || critical)
-        {
-            Combat.CombatFeedback.HitStop(critical ? 0.06 : 0.04);
-        }
-
-        // Pushed away from whatever hit us, so the kick carries information rather than
-        // just being motion. Only the player being hit moves the camera — reacting to every
-        // blow the player lands would be constant noise.
-        Camera.CameraRig.Kick(LastHitDirection(), critical ? severity * 1.4f : severity);
     }
 
     /// <summary>

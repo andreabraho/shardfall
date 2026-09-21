@@ -23,7 +23,8 @@ public readonly record struct ResolvedSkill(
     double Stagger,
     double Duration,
     double Magnitude,
-    MasteryRank Rank)
+    MasteryRank Rank,
+    StatusApplicationDef? Applies = null)
 {
     public static ResolvedSkill For(SkillDef def, MasteryRank rank)
     {
@@ -57,6 +58,6 @@ public readonly record struct ResolvedSkill(
             if (rank >= MasteryRank.Perfect) Apply(mastery.Perfect);
         }
 
-        return new ResolvedSkill(def.Id, def.Targeting, radius, cooldown, mana, damage, hits, stagger, duration, magnitude, rank);
+        return new ResolvedSkill(def.Id, def.Targeting, radius, cooldown, mana, damage, hits, stagger, duration, magnitude, rank, def.Applies);
     }
 }

@@ -101,6 +101,12 @@ public sealed class EnemyDef : ContentDefBase
     public string? Visual { get; init; }
     public double VisualScale { get; init; } = 1.0;
     public string? VisualTint { get; init; }
+
+    /// <summary>
+    /// 0..1, taken off any chance to stun this creature (REF-01). 1 is immune: every boss at
+    /// the end of a tower is, so a boss fight is never won by stun-locking it.
+    /// </summary>
+    public double StunResist { get; init; }
 }
 
 public sealed class EnemyStatsDef
@@ -200,6 +206,12 @@ public sealed class SkillDef : ContentDefBase
 
     /// <summary>What each mastery rank changes, if anything.</summary>
     public SkillMasteryDef? Mastery { get; init; }
+
+    /// <summary>
+    /// A status the skill puts on what it hits (REF-01): Ground Slam's stun, Shield Bash's
+    /// defence debuff. Physical skills control, mental skills weaken.
+    /// </summary>
+    public StatusApplicationDef? Applies { get; init; }
 }
 
 /// <summary>

@@ -109,6 +109,26 @@ public partial class ModelAnimator : Node
         return _attackFor;
     }
 
+    /// <summary>Stops a swing early so the body can run or idle again. The attack timer is not ours.</summary>
+    public void CancelAttack() => _attackFor = 0;
+
+    /// <summary>
+    /// The model's hit reaction, if it carries one — but never over its own attack: a creature
+    /// mid-swing that flinched would look as if the hit had interrupted it, and it has not.
+    /// </summary>
+    public void Hit()
+    {
+        if (_player is null || _attackFor > 0) return;
+
+        var names = _player.GetAnimationList();
+        var clip = Pick(names, "Hit_A", "Hit_B");
+
+        if (clip.Length == 0) return;
+
+        _player.Play(clip);
+        _attackFor = System.Math.Min(_player.GetAnimation(clip).Length, 0.4);
+    }
+
     public override void _Process(double delta)
     {
         if (_player is null) return;

@@ -22,6 +22,7 @@
     } },
 
   { "id": "skl_shield_bash",   "name": "$skill.skl_shield_bash.name",   "class": "warrior", "tree": "mental", "unlock_level": 8,  "mana_cost": 18, "cooldown": 7.0,  "cast_type": "instant", "targeting": "single_target", "radius": 0,   "damage_coef": 0.90, "hits": 1, "stagger": 70,
+    "applies": { "kind": "vulnerability", "magnitude": 0.20, "duration": 5.0, "chance": 1.0 },
     "mastery": {
       "master":       { "stagger": 95, "note": "$skill.skl_shield_bash.m" },
       "grand_master": { "cooldown": 5.5, "note": "$skill.skl_shield_bash.g" },
@@ -38,6 +39,7 @@
     } },
 
   { "id": "skl_ground_slam",   "name": "$skill.skl_ground_slam.name",   "class": "warrior", "tree": "body",   "unlock_level": 20, "mana_cost": 40, "cooldown": 14.0, "cast_type": "instant", "targeting": "ground_aoe",    "radius": 5.0, "damage_coef": 2.10, "hits": 1, "stagger": 90,
+    "applies": { "kind": "stun", "duration": 1.5, "chance": 0.30 },
     "mastery": {
       "master":       { "damage_coef": 2.40, "note": "$skill.skl_ground_slam.m" },
       "grand_master": { "radius": 6.0, "note": "$skill.skl_ground_slam.g" },
