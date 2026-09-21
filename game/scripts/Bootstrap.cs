@@ -19,6 +19,9 @@ public partial class Bootstrap : Node
         // Before anything can query an action. Scenes assume these exist.
         GameActions.Install();
 
+        // The window, the frame cap and the volumes, before anything is drawn.
+        Settings.GameSettings.Load();
+
         if (!GameContent.Load())
         {
             GD.PushError("Startup aborted: content failed to load. See errors above.");

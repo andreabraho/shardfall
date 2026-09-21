@@ -46,6 +46,16 @@ public partial class SaveService : Node
     public const string QuickSlot = "quick";
     public const int AutosaveRing = 5;
 
+    /// <summary>The player's own slots, written only when they choose to (UIX-01).</summary>
+    public const int ManualSlots = 3;
+
+    /// <summary>The first map of a new game.</summary>
+    public const string StartScene = "res://scenes/ember_hollow.tscn";
+
+    public const string MenuScene = "res://scenes/main_menu.tscn";
+
+    public static SaveService? Instance => _instance;
+
     /// <summary>Set by a load, consumed by the zone that arrives: where to put the player.</summary>
     private static Vector3? _pendingPosition;
 
@@ -65,22 +75,15 @@ public partial class SaveService : Node
     {
         _instance = this;
         ProcessMode = ProcessModeEnum.Always;
-
-        // Deferred so the main scene has started loading. Continuing replaces it, and doing
-        // that from inside the autoload's own _Ready races the engine's first scene change.
-        CallDeferred(nameof(ContinueOnBoot));
     }
 
     public override void _UnhandledInput(InputEvent @event)
     {
-        // New game first: plain F12 also matches Shift+F12, and the other order would load a
-        // save when the player asked to throw the session away.
-        if (@event.IsActionPressed(GameActions.NewGame))
-        {
-            NewGame();
-            GetViewport().SetInputAsHandled();
-        }
-        else if (@event.IsActionPressed(GameActions.QuickSave))
+        // Only in a map: in the main menu there is nothing to save, and loading from there
+        // has its own list.
+        if (GameWorld.CurrentZoneId.Length == 0) return;
+
+        if (@event.IsActionPressed(GameActions.QuickSave))
         {
             Save(QuickSlot, "Quick save");
             GetViewport().SetInputAsHandled();
@@ -425,46 +428,110 @@ public partial class SaveService : Node
         return at;
     }
 
-    // ------------------------------------------------------------------ boot and new game
+    // ------------------------------------------------------------------ new game and leaving
 
     /// <summary>
-    /// Picks up where the last session left off.
+    /// Starts a new character in the village, on the chosen difficulty. Saves on disk are left
+    /// alone.
     /// </summary>
     /// <remarks>
-    /// Automatic, because the thing a tester wants on launch is to be back where they were;
-    /// a fresh start is one key away and says so on the way in.
+    /// A fresh seed each time, so a second character does not meet the first one's merchant
+    /// shelves and loot rolls in the same order.
     /// </remarks>
-    private void ContinueOnBoot()
-    {
-        if (!Slots().Any(slot => File.Exists(PathOf(slot)))) return;
-
-        if (LoadLatest())
-        {
-            GetTree().CreateTimer(1.2).Timeout += () =>
-                UI.WorldNotice.Show(GetTree(), "Continued from your last save.  F10 save · F12 load · Shift+F12 new game");
-        }
-    }
-
-    /// <summary>
-    /// Starts a new character in the village. Saves on disk are left alone.
-    /// </summary>
-    private void NewGame()
+    public void NewGame(Difficulty tier)
     {
         PlayerProfile.Reset();
         GameWorld.Travel.Load([], null);
+        GameSession.SetDifficulty(DifficultySettings.For(tier));
+        GameSession.SetSeed((ulong)DateTime.UtcNow.Ticks ^ 0x9E3779B97F4A7C15UL);
         _pendingPosition = null;
+        _loading = false;
 
-        GD.Print("[save] new game");
+        GD.Print($"[save] new game — {tier}, seed {GameSession.Seed}");
 
         GetTree().Paused = false;
-        GetTree().CallDeferred(SceneTree.MethodName.ChangeSceneToFile,
-            (string)ProjectSettings.GetSetting("application/run/main_scene"));
+        GetTree().CallDeferred(SceneTree.MethodName.ChangeSceneToFile, StartScene);
+    }
+
+    /// <summary>
+    /// Back to the main menu, with an autosave on the way out.
+    /// </summary>
+    /// <remarks>
+    /// The autosave is why there is no "you will lose unsaved progress" question: leaving
+    /// never loses more than the moment it took to press the button.
+    /// </remarks>
+    public void QuitToMenu()
+    {
+        Autosave("Quit to menu");
+        GameWorld.Leave();
+
+        GetTree().Paused = false;
+        GetTree().CallDeferred(SceneTree.MethodName.ChangeSceneToFile, MenuScene);
+    }
+
+    /// <summary>Closes the game, autosaving first when there is a game to save.</summary>
+    public void QuitGame()
+    {
+        if (GameWorld.CurrentZoneId.Length > 0) Autosave("Quit");
+
+        GetTree().Quit();
     }
 
     // ------------------------------------------------------------------ slots
 
+    public static string ManualSlot(int number) => $"slot_{number}";
+
     private static IEnumerable<string> Slots() =>
-        Enumerable.Range(0, AutosaveRing).Select(i => $"auto_{i}").Prepend(QuickSlot);
+        Enumerable.Range(1, ManualSlots).Select(ManualSlot)
+            .Append(QuickSlot)
+            .Concat(Enumerable.Range(0, AutosaveRing).Select(i => $"auto_{i}"));
+
+    /// <summary>True when any save exists, damaged or not: whether "Continue" means anything.</summary>
+    public static bool AnySave() => Slots().Any(slot => File.Exists(PathOf(slot)));
+
+    /// <summary>
+    /// What is in every slot, for the load and save lists.
+    /// </summary>
+    /// <remarks>
+    /// Each file is decoded in full. They are a few kilobytes each and there are nine; a
+    /// separate header cache would be one more thing that can disagree with the file.
+    /// </remarks>
+    public static List<SaveSummary> Summaries()
+    {
+        var list = new List<SaveSummary>();
+
+        foreach (var slot in Slots())
+        {
+            var file = new FileInfo(PathOf(slot));
+            var kind = slot.StartsWith("slot_") ? SlotKind.Manual : slot == QuickSlot ? SlotKind.Quick : SlotKind.Auto;
+
+            if (!file.Exists)
+            {
+                list.Add(new SaveSummary(slot, kind, false, false, "", "", 0, "", DateTime.MinValue));
+                continue;
+            }
+
+            SaveGame? save = null;
+
+            try
+            {
+                var decoded = SaveCodec.Decode(File.ReadAllText(file.FullName));
+
+                if (decoded.Ok) save = decoded.Save;
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                GD.PushWarning($"[save] could not read {file.FullName}: {ex.Message}");
+            }
+
+            var zone = save is null ? "" : GameWorld.Graph[save.World.Zone] is { } z ? GameItems.Localise(z.Name) : save.World.Zone;
+
+            list.Add(new SaveSummary(slot, kind, true, save is not null, save?.Label ?? "", zone,
+                save?.Player.Level ?? 0, save?.Difficulty ?? "", file.LastWriteTime));
+        }
+
+        return list;
+    }
 
     private static string PathOf(string slot) => System.IO.Path.Combine(Folder, $"{slot}.sav");
 
@@ -478,4 +545,37 @@ public partial class SaveService : Node
                 return file.Exists ? file.LastWriteTimeUtc : DateTime.MinValue;
             })
             .First();
+}
+
+public enum SlotKind
+{
+    Manual,
+    Quick,
+    Auto,
+}
+
+/// <summary>One row of the load or save list.</summary>
+/// <param name="Readable">False for a file that exists but failed its checksum or version check.</param>
+public sealed record SaveSummary(
+    string Slot,
+    SlotKind Kind,
+    bool Exists,
+    bool Readable,
+    string Label,
+    string Zone,
+    int Level,
+    string Difficulty,
+    DateTime Written)
+{
+    public string Title => Kind switch
+    {
+        SlotKind.Manual => $"Slot {Slot["slot_".Length..]}",
+        SlotKind.Quick => "Quick save",
+        _ => "Autosave",
+    };
+
+    public string Describe() =>
+        !Exists ? "empty"
+        : !Readable ? "damaged — cannot be loaded"
+        : $"{Zone}  ·  level {Level}  ·  {Difficulty}  ·  {Written:d MMM HH:mm}";
 }

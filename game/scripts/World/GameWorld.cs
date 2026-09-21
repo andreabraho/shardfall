@@ -84,6 +84,9 @@ public static class GameWorld
         }
     }
 
+    /// <summary>Out of every map, into the main menu. Nothing is "here" any more.</summary>
+    public static void Leave() => CurrentZoneId = "";
+
     /// <summary>How many more creatures the world will accept right now.</summary>
     public static int Headroom(SceneTree tree) =>
         Mathf.Max(0, PopulationCap - LivingEnemies(tree));

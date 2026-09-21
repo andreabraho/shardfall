@@ -293,9 +293,9 @@ escort and survive objectives, and faction reputation.
 
 | ID | Task | Owner | Notes |
 |---|---|---|---|
-| UIX-01 | Save system: 3 slots + 5-deep autosave ring, versioned, migratable, integrity-checked | **[C]** | ◐ brought forward from Phase 8 because the tower made testing without it impractical. Done: 5-deep autosave ring (every shrine, every border), a quick save on **F10**, load newest on **F12**, new game on **Shift+F12**, continue on launch; SHA-256 checksum, version header with a migration table, atomic writes, damaged saves skipped rather than trusted. Open: **one** manual slot rather than three (needs a menu), and shard timers are not saved |
-| UIX-02 | Main menu, pause, settings (graphics, audio, controls, language, accessibility) | **[C]** | |
-| UIX-03 | Difficulty selection, changeable any time | **[C]** | |
+| UIX-01 | Save system: 3 slots + 5-deep autosave ring, versioned, migratable, integrity-checked | **[C]** | ◐ 5-deep autosave ring (every shrine, every border, and on leaving), **3 manual slots** from the pause menu (a slot that holds something takes a second press to overwrite), quick save on **F10**, load newest on **F12**; SHA-256 checksum, version header with a migration table, atomic writes, damaged saves listed as damaged and never loaded. Open: shard timers and merchant purchases are not saved |
+| UIX-02 | Main menu, pause, settings (graphics, audio, controls, language, accessibility) | **[C]** | ◐ main menu (Continue shows where it goes, New game, Load, Settings, Quit); pause on **Esc** when no panel is open (Resume, Save, Load, Settings, Quit to menu or desktop — leaving autosaves); settings apply at once and live in `user://settings.cfg`, apart from saves: fullscreen, vsync, frame limit, 3D resolution, three volume buses, and the list of keys. Open: key rebinding, language (UIX-06/07), accessibility (UIX-04) |
+| UIX-03 | Difficulty selection, changeable any time | **[C]** | ✅ chosen on New game (four cards with the numbers), changeable from pause → Settings; saved with the game. A change applies to creatures spawned after it. Each new game also gets a fresh seed |
 | UIX-04 | Accessibility set per NFR-A.1 | **[C]** | |
 | UIX-05 | Full HUD polish pass | **[C]** | |
 | UIX-06 | Localisation infrastructure + EN strings extracted | **[C]** | |

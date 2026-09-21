@@ -66,7 +66,6 @@ public static class GameActions
     // Saving (UIX-01).
     public const string QuickSave = "quick_save";
     public const string QuickLoad = "quick_load";
-    public const string NewGame = "new_game";
 
     private static readonly Dictionary<string, InputEvent[]> Defaults = new()
     {
@@ -114,7 +113,6 @@ public static class GameActions
         [DebugCompleteQuests] = [Key(Godot.Key.F9)],
         [QuickSave] = [Key(Godot.Key.F10)],
         [QuickLoad] = [Key(Godot.Key.F12)],
-        [NewGame] = [new InputEventKey { PhysicalKeycode = Godot.Key.F12, ShiftPressed = true }],
     };
 
     private static InputEvent Key(Key key) => new InputEventKey { PhysicalKeycode = key };

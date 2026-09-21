@@ -26,18 +26,24 @@ public partial class DisplaySettings : Node
         GetViewport().SetInputAsHandled();
     }
 
+    /// <summary>The key toggle. Remembered, like the same choice made in the settings.</summary>
     public static void ToggleFullscreen()
     {
-        var mode = DisplayServer.WindowGetMode();
+        Settings.GameSettings.Fullscreen = !IsFullscreen;
+        SetFullscreen(Settings.GameSettings.Fullscreen);
+        Settings.GameSettings.Save();
+    }
 
-        var goingWindowed = mode is DisplayServer.WindowMode.Fullscreen
-            or DisplayServer.WindowMode.ExclusiveFullscreen;
+    public static bool IsFullscreen => DisplayServer.WindowGetMode()
+        is DisplayServer.WindowMode.Fullscreen or DisplayServer.WindowMode.ExclusiveFullscreen;
 
-        DisplayServer.WindowSetMode(goingWindowed
-            ? DisplayServer.WindowMode.Windowed
-            : DisplayServer.WindowMode.Fullscreen);
+    public static void SetFullscreen(bool fullscreen)
+    {
+        if (fullscreen == IsFullscreen) return;
 
-        if (goingWindowed) CentreWindow();
+        DisplayServer.WindowSetMode(fullscreen ? DisplayServer.WindowMode.Fullscreen : DisplayServer.WindowMode.Windowed);
+
+        if (!fullscreen) CentreWindow();
     }
 
     /// <summary>Puts the restored window in the middle of the screen it is on.</summary>
