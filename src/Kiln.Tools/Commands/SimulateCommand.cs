@@ -108,7 +108,6 @@ public static class SimulateCommand
         {
             case Source.Quest:
                 for (var i = 0; i < zone.StoryQuests; i++) Give(ExperienceTable.QuestXp(zone.Band));
-                for (var i = 0; i < zone.SideQuests; i++) Give(ExperienceTable.QuestXp(zone.Band) / 2);
                 break;
 
             case Source.Shard:

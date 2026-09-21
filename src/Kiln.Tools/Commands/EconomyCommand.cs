@@ -116,7 +116,7 @@ public static class EconomyCommand
             if (verbose)
             {
                 Console.WriteLine($"      trash {zone.TrashKills} kills, {zone.Shards} shards, "
-                    + $"{zone.StoryQuests + zone.SideQuests} quests");
+                    + $"{zone.StoryQuests} quests");
             }
         }
 
@@ -184,7 +184,7 @@ public static class EconomyCommand
 
         var trash = zone.TrashKills * perKill;
         var shards = zone.Shards * perKill * ShardYangMultiplier;
-        var quests = (zone.StoryQuests * QuestYang(zone.Band)) + (zone.SideQuests * QuestYang(zone.Band) / 2);
+        var quests = zone.StoryQuests * QuestYang(zone.Band);
 
         return (long)Math.Round(trash + shards + quests);
     }

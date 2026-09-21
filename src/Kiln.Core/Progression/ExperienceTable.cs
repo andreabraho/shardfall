@@ -44,7 +44,12 @@ public static class ExperienceTable
             MidpointRounding.AwayFromZero);
 
     /// <summary>
-    /// Experience for a story quest. Side quests are worth half.
+    /// Experience for a main-chain quest.
+    /// <para>
+    /// Worth about three and a half of the old story quests, because the chain is short on
+    /// purpose (doc 02 §9): one quest per step of the road now carries the share of experience
+    /// that thirty did. Tuned so the pacing simulation still lands every zone on its band.
+    /// </para>
     /// <para>
     /// All three sources share the same exponent on purpose. With different exponents the
     /// mix between questing, shard-breaking and killing drifts as the player levels, so a
@@ -52,7 +57,7 @@ public static class ExperienceTable
     /// </para>
     /// </summary>
     public static long QuestXp(int level) =>
-        (long)Math.Round(41 * Math.Pow(Math.Max(1, level), 1.85), MidpointRounding.AwayFromZero);
+        (long)Math.Round(140 * Math.Pow(Math.Max(1, level), 1.85), MidpointRounding.AwayFromZero);
 
     /// <summary>
     /// Adjusts a reward for the gap between the player and the zone they are in (FR-2.7).

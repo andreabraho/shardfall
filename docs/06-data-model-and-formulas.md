@@ -83,7 +83,7 @@ The campaign must reach level 60 **without any farming**. Budget:
 
 | Source | Share of total XP |
 |---|---|
-| Quests (story + side) | **45%** |
+| Quests (the main chain, ~1 per zone) | **45%** |
 | Shard breaks | **35%** |
 | Trash kills along the way | **20%** |
 
@@ -94,7 +94,7 @@ CI** — this is how "no grinding required" stops being a wish.
 ```
 TrashMobXP(n)   = round(1.1 * n^1.85)
 ShardXP(tier,n) = round(11  * n^1.85 * tierMult)   // tierMult = 1 + 0.25*(tier-1)
-QuestXP(n)      = round(41  * n^1.85)             // side quests are worth half
+QuestXP(n)      = round(140 * n^1.85)             // one main-chain quest per step of the road
 ```
 
 **All three share the same exponent on purpose.** With different exponents the mix between
