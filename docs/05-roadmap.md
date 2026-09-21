@@ -309,6 +309,7 @@ escort and survive objectives, and faction reputation.
 | BAL-04 | Performance pass to NFR-P.1 on the low-end machine | **[C→You]** | You run it on the 1060-class box |
 | BAL-05 | Bug-fix sweep | **[C]** | |
 | BAL-06 | **Tower pass** — per-floor balance, bespoke catacomb monsters, boss phases (WLD-10), a visible exit door on floor 1 and a free "return to the entrance" at the floor-4 and floor-7 shrines | **[C→You]** | Deferred here on 2026-09-21 at your call: the tower works and is fine as it stands until then. The exit today is an unmarked sphere in floor 1's corner (hold Alt to see its sign) |
+| QST-10 | **To analyse at the end: targeted quests with unique rewards** — a few hand-placed quests that pay out a unique piece of gear (or something else worth the detour), if the finished game turns out to need them | **[C→You]** | Added 2026-09-21 at your call, after the main chain landed. Not a commitment: decide once the full loop is playable whether the chain alone carries it. Must stay few (doc 02 §9) |
 | TST-01 | **Play the whole slice start to finish, 3 times, on 3 difficulties** | **[You]** | |
 | TST-02 | **Exit test: a stranger plays 60 min unattended, unassisted** | **[You]** | The gate to Tier B |
 

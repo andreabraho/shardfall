@@ -329,6 +329,9 @@ to open. Everything below is sized to that.
 - **Linear dialogue.** A few lines from an NPC, no branching choices, no ending variants.
 - **No journal screen.** The current objective is one line on the HUD and one marker on the
   map; there is never more than one active quest to track.
+- **Open for the end: a few targeted quests with unique rewards** — a quest that pays a unique
+  piece of gear, or something else worth a detour. To be analysed once the whole loop is
+  playable (roadmap QST-10), and only if the chain alone turns out not to carry it.
 - **Codex/Bestiary** stays, and is not a quest system: it fills as you kill and discover,
   and replaces the wiki that MMO players rely on.
 
