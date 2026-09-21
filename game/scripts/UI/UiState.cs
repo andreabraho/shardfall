@@ -35,6 +35,8 @@ public static class UiState
 
         tracked = open;
 
+        Audio.AudioDirector.Play(open ? Kiln.Data.Ids.Sounds.SndUiOpen : Kiln.Data.Ids.Sounds.SndUiClose);
+
         if (open) Push();
         else Pop();
     }

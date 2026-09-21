@@ -250,4 +250,41 @@ public static class Ids
         public static readonly string[] All = ["npc_corwen", "npc_hesk", "npc_idra"];
     }
 
+    public static class Sounds
+    {
+        public const string MusCatacombs = "mus_catacombs";
+        public const string MusMenu = "mus_menu";
+        public const string MusVillage = "mus_village";
+        public const string MusWilds = "mus_wilds";
+        public const string SndEnemyDeath = "snd_enemy_death";
+        public const string SndFlask = "snd_flask";
+        public const string SndGuard = "snd_guard";
+        public const string SndHit = "snd_hit";
+        public const string SndHitCrit = "snd_hit_crit";
+        public const string SndLevelUp = "snd_level_up";
+        public const string SndPickup = "snd_pickup";
+        public const string SndPlayerDeath = "snd_player_death";
+        public const string SndPlayerHurt = "snd_player_hurt";
+        public const string SndQuestComplete = "snd_quest_complete";
+        public const string SndRareDrop = "snd_rare_drop";
+        public const string SndRefused = "snd_refused";
+        public const string SndReroll = "snd_reroll";
+        public const string SndShardBreak = "snd_shard_break";
+        public const string SndShrine = "snd_shrine";
+        public const string SndSkill = "snd_skill";
+        public const string SndSocket = "snd_socket";
+        public const string SndStairOpen = "snd_stair_open";
+        public const string SndSwing = "snd_swing";
+        public const string SndTelegraph = "snd_telegraph";
+        public const string SndTrade = "snd_trade";
+        public const string SndUiClick = "snd_ui_click";
+        public const string SndUiClose = "snd_ui_close";
+        public const string SndUiOpen = "snd_ui_open";
+        public const string SndUpgradeFail = "snd_upgrade_fail";
+        public const string SndUpgradeSuccess = "snd_upgrade_success";
+        public const string SndYang = "snd_yang";
+
+        public static readonly string[] All = ["mus_catacombs", "mus_menu", "mus_village", "mus_wilds", "snd_enemy_death", "snd_flask", "snd_guard", "snd_hit", "snd_hit_crit", "snd_level_up", "snd_pickup", "snd_player_death", "snd_player_hurt", "snd_quest_complete", "snd_rare_drop", "snd_refused", "snd_reroll", "snd_shard_break", "snd_shrine", "snd_skill", "snd_socket", "snd_stair_open", "snd_swing", "snd_telegraph", "snd_trade", "snd_ui_click", "snd_ui_close", "snd_ui_open", "snd_upgrade_fail", "snd_upgrade_success", "snd_yang"];
+    }
+
 }

@@ -73,6 +73,12 @@ public partial class CombatFeedback : Node3D
     /// part of the fight rather than as a line in a log the player never opens.
     /// </summary>
     public static void Yang(Vector3 worldPosition, long amount)
+    {
+        Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndYang);
+        YangText(worldPosition, amount);
+    }
+
+    private static void YangText(Vector3 worldPosition, long amount)
         => _instance?.SpawnYang(worldPosition, amount);
 
     private void SpawnYang(Vector3 worldPosition, long amount)

@@ -95,6 +95,9 @@ public partial class LootDrop : Area3D
         parent.CallDeferred(Node.MethodName.AddChild, drop);
         drop.SetDeferred(Node3D.PropertyName.GlobalPosition, at + offset + (Vector3.Up * 0.25f));
 
+        // A rare or better drop is announced: the sound is how the player hears it over a fight.
+        if (GameItems.Spec(item.DefId)?.Rarity >= Rarity.Rare) Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndRareDrop, at);
+
         return drop;
     }
 

@@ -333,6 +333,7 @@ public partial class ShardNode : StaticBody3D
 
     private void Break()
     {
+        Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndShardBreak, GlobalPosition);
         _broken = true;
         _respawnIn = RespawnSeconds;
         _telegraph.Cancel();

@@ -48,6 +48,7 @@ public partial class Bootstrap : Node
         AddChild(new DebugOverlay { Name = "DebugOverlay" });
         AddChild(new DisplaySettings { Name = "DisplaySettings" });
         AddChild(new Saving.SaveService { Name = "SaveService" });
+        AddChild(new Audio.AudioDirector { Name = "AudioDirector" });
 
         DebugOverlay.Register("content", () =>
             GameContent.IsLoaded ? $"{GameContent.Database.TotalDefinitions} defs" : "not loaded");

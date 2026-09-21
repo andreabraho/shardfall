@@ -49,6 +49,7 @@ public static class ZoneTransition
     public static void Announce(SceneTree tree, string message)
     {
         GD.Print($"[gate] refused: {message}");
+        Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndRefused);
         UI.WorldNotice.Show(tree, message);
     }
 }

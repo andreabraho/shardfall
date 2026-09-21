@@ -215,6 +215,8 @@ public partial class EnemyBrain : CharacterBody3D
     {
         CombatFeedback.Number(GlobalPosition + (Vector3.Up * 1.6f), amount, critical, evaded);
 
+        if (!evaded) Audio.AudioDirector.Play(critical ? Kiln.Data.Ids.Sounds.SndHitCrit : Kiln.Data.Ids.Sounds.SndHit, GlobalPosition);
+
         if (!evaded)
         {
             CombatFeedback.HitStop(critical ? 0.075 : 0.04);
@@ -234,6 +236,7 @@ public partial class EnemyBrain : CharacterBody3D
         ReleaseShields();
         AwardExperience();
         DropLoot();
+        Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndEnemyDeath, GlobalPosition);
 
         // Last, after the loot: a quest completing pays out into the bag, and if that ever
         // threw it must not take the drop down with it — a death that half-happened is how
@@ -693,6 +696,9 @@ public partial class EnemyBrain : CharacterBody3D
         // Difficulty stretches the reaction window (doc 02 §1); the content validator
         // guarantees it stays escapable at every tier.
         _phaseTimer = ability.Windup * GameSession.Difficulty.TelegraphScale;
+
+        // Only a telegraphed attack warns out loud: that is the one the player must walk out of.
+        if (ability.Telegraph is not null) Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndTelegraph, GlobalPosition);
 
         if (Target is not null)
         {

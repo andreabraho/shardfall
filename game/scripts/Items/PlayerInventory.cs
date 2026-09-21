@@ -77,6 +77,13 @@ public partial class PlayerInventory : Node
 
     private void OnBagChanged() => EmitSignal(SignalName.Changed);
 
+    /// <summary>Every pickup makes the same small sound, whatever path it came in by.</summary>
+    private void Picked(string description)
+    {
+        Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndPickup);
+        EmitSignal(SignalName.PickedUp, description);
+    }
+
     private void OnGearChanged()
     {
         ApplyToStats();
@@ -127,7 +134,7 @@ public partial class PlayerInventory : Node
         {
             if (Bag.TryAdd(item))
             {
-                EmitSignal(SignalName.PickedUp, GameItems.NameOf(item));
+                Picked(GameItems.NameOf(item));
                 continue;
             }
 
@@ -143,7 +150,7 @@ public partial class PlayerInventory : Node
     {
         if (!Bag.TryAdd(item)) return false;
 
-        EmitSignal(SignalName.PickedUp, GameItems.NameOf(item));
+        Picked(GameItems.NameOf(item));
         return true;
     }
 

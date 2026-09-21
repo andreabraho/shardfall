@@ -278,6 +278,11 @@ public partial class WorkbenchPanel : CanvasLayer
 
         var result = UpgradeAnvil.Attempt(_selected, ladder, _inventory.Bag, GameItems.CraftRng);
 
+        if (result.Attempted)
+        {
+            Audio.AudioDirector.Play(result.Outcome == UpgradeOutcome.Success ? Kiln.Data.Ids.Sounds.SndUpgradeSuccess : Kiln.Data.Ids.Sounds.SndUpgradeFail);
+        }
+
         _status.Text = result.Outcome switch
         {
             UpgradeOutcome.Success when result.WasGuaranteed => L10n.F("Guaranteed success — now +{0}.", result.Level),
@@ -305,6 +310,8 @@ public partial class WorkbenchPanel : CanvasLayer
 
         var outcome = SocketBench.TryBore(_selected, _inventory.Bag);
 
+        if (outcome == SocketOutcome.Success) Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndSocket);
+
         _status.Text = outcome switch
         {
             SocketOutcome.Success => L10n.T("A socket is open."),
@@ -323,6 +330,8 @@ public partial class WorkbenchPanel : CanvasLayer
 
         var outcome = SocketBench.TrySlot(_selected, socketIndex, stoneId, GameItems.Catalogue, _inventory.Bag);
 
+        if (outcome == SocketOutcome.Success) Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndSocket);
+
         _status.Text = outcome == SocketOutcome.Success ? L10n.T("Stone set.") : L10n.T("The stone could not be set.");
 
         _inventory.ApplyToStats();
@@ -334,6 +343,8 @@ public partial class WorkbenchPanel : CanvasLayer
         if (_inventory is null || _selected is null) return;
 
         var outcome = SocketBench.TryRemove(_selected, socketIndex, _inventory.Bag);
+
+        if (outcome == SocketOutcome.Success) Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndSocket);
 
         _status.Text = outcome switch
         {
@@ -357,6 +368,8 @@ public partial class WorkbenchPanel : CanvasLayer
 
         var pool = GameItems.Catalogue.Pool(spec.BonusPoolId);
         var outcome = RerollTable.TryReroll(_selected, spec, pool, _inventory.Bag, GameItems.CraftRng);
+
+        if (outcome == RerollOutcome.Success) Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndReroll);
 
         _status.Text = outcome switch
         {

@@ -109,6 +109,8 @@ public partial class PlayerCharacter : Node
 
         if (evaded) return;
 
+        Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndPlayerHurt);
+
         _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Flash();
 
         // Weight the feedback by how much the hit actually mattered. A scratch gets a flash
@@ -239,6 +241,7 @@ public partial class PlayerCharacter : Node
         }
 
         // Level-up restores and is announced loudly: it is the reward beat of the loop.
+        Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndLevelUp);
         Combat.CombatFeedback.Number(
             _motor.GlobalPosition + (Vector3.Up * 2.6f), Progression.Level, critical: true, evaded: false);
     }
@@ -318,6 +321,8 @@ public partial class PlayerCharacter : Node
     private async void OnDied()
     {
         var at = RespawnPoint();
+
+        Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndPlayerDeath);
 
         GD.Print($"[combat] player died — respawning at {(World.GameWorld.IsLoaded ? World.GameWorld.Travel.Anchor ?? "start" : "start")}");
         _motor.Stop();

@@ -109,6 +109,8 @@ public partial class DefensiveAbility : Node
             return;
         }
 
+        Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndGuard);
+
         _active = values.Duration;
         _cooldown = values.Cooldown;
         CooldownTotal = System.Math.Max(0.01, values.Cooldown);

@@ -39,6 +39,7 @@ public static class ContentValidator
         WorldGraph(db, report);
         GreyboxKit(db, report);
         Villagers(db, report);
+        Sounds(db, report);
 
         return report;
     }
@@ -1410,6 +1411,58 @@ public static class ContentValidator
             {
                 report.Error("npc-stock", at, $"'{npc.Id}' can stock {stock.MaxRarity} gear.",
                     "Merchants carry common and fine at most: the best things in the game are found, not bought.");
+            }
+        }
+    }
+
+    // -- sounds (AUD-01) ------------------------------------------------------
+
+    /// <summary>
+    /// Every sound is on a real bus with room for at least one voice, lists only audio files the
+    /// engine can play from under <c>game/audio/</c>, and every map's music is a looping track.
+    /// </summary>
+    private static void Sounds(ContentDatabase db, ValidationReport report)
+    {
+        string[] buses = ["effects", "ui", "music"];
+        string[] kinds = [".ogg", ".wav", ".mp3"];
+
+        foreach (var sound in db.Sounds.Values.OrderBy(s => s.Id, StringComparer.Ordinal))
+        {
+            if (!buses.Contains(sound.Bus))
+            {
+                report.Error("sound", sound.SourceFile, $"'{sound.Id}' is on bus '{sound.Bus}'.",
+                    $"Use one of: {string.Join(", ", buses)}.");
+            }
+
+            if (sound.MaxVoices < 1)
+            {
+                report.Error("sound", sound.SourceFile, $"'{sound.Id}' allows {sound.MaxVoices} voices.",
+                    "At least one, or it can never play.");
+            }
+
+            if (sound.Loop != (sound.Bus == "music"))
+            {
+                report.Error("sound", sound.SourceFile, $"'{sound.Id}' loops on the {sound.Bus} bus, or is music that does not loop.",
+                    "Music loops and lives on the music bus; nothing else does either.");
+            }
+
+            foreach (var file in sound.Files)
+            {
+                if (!file.StartsWith("res://audio/", StringComparison.Ordinal)
+                    || !kinds.Any(k => file.EndsWith(k, StringComparison.OrdinalIgnoreCase)))
+                {
+                    report.Error("sound", sound.SourceFile, $"'{sound.Id}' lists '{file}'.",
+                        "Sound files live under res://audio/ and are .ogg, .wav or .mp3.");
+                }
+            }
+        }
+
+        foreach (var zone in db.Zones.Values.Where(z => z.Music.Length > 0))
+        {
+            if (!db.Sounds.TryGetValue(zone.Music, out var music) || !music.Loop)
+            {
+                report.Error("sound", zone.SourceFile, $"'{zone.Id}' plays '{zone.Music}', which is not a looping track.",
+                    "Point music at a sound with \"loop\": true on the music bus.");
             }
         }
     }

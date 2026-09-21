@@ -203,6 +203,7 @@ public partial class SkillCaster : Node
         if (_self.Statuses.IsStunned) return;
 
         _self.Mana.TrySpend(skill.ManaCost);
+        Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndSkill, _motor.GlobalPosition);
         _cooldowns[skillId] = skill.Cooldown;
         _cooldownTotals[skillId] = System.Math.Max(0.01, skill.Cooldown);
 

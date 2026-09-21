@@ -59,6 +59,7 @@ public static class QuestTracker
                 ? L10n.F("Quest complete: {0}  ({1})", Name(finished.Quest), paid)
                 : L10n.F("Quest complete: {0}  ({1})   ·   Next: {2}", Name(finished.Quest), paid, Name(next.Quest)));
 
+            Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndQuestComplete);
             Saving.SaveService.Autosave($"Finished {finished.Quest.Id}");
         }
 

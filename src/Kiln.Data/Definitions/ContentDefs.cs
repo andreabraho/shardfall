@@ -379,6 +379,45 @@ public sealed class StockDef
 }
 
 // ---------------------------------------------------------------------------
+// Sounds (AUD-01)
+// ---------------------------------------------------------------------------
+
+/// <summary>
+/// One sound the game can make, by what it means rather than which file it is.
+/// </summary>
+/// <remarks>
+/// Code says "a hit landed" (<c>snd_hit</c>); this row says which files that is today. The
+/// same split as visuals: sourcing sounds (AUD-02) is a data edit, never a code edit, and a
+/// sound with no files yet is simply silent.
+/// </remarks>
+public sealed class SoundDef : ContentDefBase
+{
+    /// <summary>res:// paths. One is picked at random each time, so repeats do not grate.</summary>
+    public string[] Files { get; init; } = [];
+
+    /// <summary>music | effects | ui</summary>
+    public string Bus { get; init; } = "effects";
+
+    /// <summary>Loudness relative to the bus, in decibels.</summary>
+    public double VolumeDb { get; init; }
+
+    /// <summary>Random pitch either side of normal, as a fraction: 0.08 is ±8%.</summary>
+    public double PitchJitter { get; init; }
+
+    /// <summary>How many copies may play at once; the oldest is cut off to make room.</summary>
+    public int MaxVoices { get; init; } = 4;
+
+    /// <summary>Heard from where it happens, fading with distance, rather than flat.</summary>
+    public bool Positional { get; init; }
+
+    /// <summary>Metres at which a positional sound is no longer heard.</summary>
+    public double MaxDistance { get; init; } = 30;
+
+    /// <summary>Music only: loops until something else is asked for.</summary>
+    public bool Loop { get; init; }
+}
+
+// ---------------------------------------------------------------------------
 // Visuals — the art-swap boundary (ENG-07, NFR-M.4)
 // ---------------------------------------------------------------------------
 
@@ -477,6 +516,9 @@ public sealed class ZoneDef : ContentDefBase
     /// table would have to reconstruct that grouping before it could check anything.
     /// </remarks>
     public FloorDef[] Floors { get; init; } = [];
+
+    /// <summary>The music that plays here: a sound id with <c>loop</c> set. Empty for silence.</summary>
+    public string Music { get; init; } = string.Empty;
 }
 
 /// <summary>

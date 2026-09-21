@@ -28,6 +28,23 @@ public static class ValidateCommand
 
         var db = load.Database;
         var report = ContentValidator.Validate(db);
+
+        // The one check that needs the disk: a sound file named in data but not there. A
+        // warning, not an error — a missing sound is silence, and AUD-02 lands files a few at
+        // a time.
+        var gameRoot = Path.GetFullPath(Path.Combine(dataRoot, ".."));
+
+        foreach (var sound in db.Sounds.Values)
+        {
+            foreach (var file in sound.Files.Where(f => f.StartsWith("res://", StringComparison.Ordinal)))
+            {
+                if (!File.Exists(Path.Combine(gameRoot, file["res://".Length..])))
+                {
+                    report.Warn("sound-file", sound.SourceFile, $"'{sound.Id}' lists {file}, which is not on disk.",
+                        "Add the file under game/audio/, or remove it from the list.");
+                }
+            }
+        }
         sw.Stop();
 
         Console.WriteLine(
@@ -37,7 +54,7 @@ public static class ValidateCommand
             $"{db.UpgradePaths.Count} upgrade paths, {db.Visuals.Count} visuals, "
             + $"{db.Shards.Count} shards, {db.Zones.Count} zones, "
             + $"{db.Zones.Values.Sum(z => z.SafeRegions.Length)} safe regions, "
-            + $"{db.KitPieces.Count} kit pieces, {db.Npcs.Count} villagers) "
+            + $"{db.KitPieces.Count} kit pieces, {db.Npcs.Count} villagers, {db.Sounds.Count} sounds) "
             + $"in {sw.ElapsedMilliseconds} ms\n");
 
         if (report.Findings.Count > 0)

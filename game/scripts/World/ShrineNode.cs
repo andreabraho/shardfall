@@ -90,6 +90,8 @@ public partial class ShrineNode : Area3D
 
         var first = GameWorld.Travel.Discover(ShrineId);
 
+        Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndShrine);
+
         Restyle();
         Restore(body);
 

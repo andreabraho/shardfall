@@ -40,6 +40,7 @@ public static class ContentLoader
         ("tables/upgrade_paths.json", typeof(UpgradePathDef)),
         ("tables/visuals.json", typeof(VisualDef)),
         ("tables/world_kit.json", typeof(KitPieceDef)),
+        ("tables/sounds.json", typeof(SoundDef)),
     ];
 
     public static ContentLoadResult LoadFromDirectory(string dataRoot)
@@ -97,6 +98,7 @@ public static class ContentLoader
             Zones = ctx.Zones,
             KitPieces = ctx.KitPieces,
             Npcs = ctx.Npcs,
+            Sounds = ctx.Sounds,
         };
 
         return new ContentLoadResult(db, ctx.Errors);
@@ -117,6 +119,7 @@ public static class ContentLoader
         public readonly Dictionary<string, ZoneDef> Zones = new(StringComparer.Ordinal);
         public readonly Dictionary<string, KitPieceDef> KitPieces = new(StringComparer.Ordinal);
         public readonly Dictionary<string, NpcDef> Npcs = new(StringComparer.Ordinal);
+        public readonly Dictionary<string, SoundDef> Sounds = new(StringComparer.Ordinal);
         public readonly Dictionary<string, Dictionary<string, string>> Strings = new(StringComparer.Ordinal);
     }
 
@@ -169,6 +172,9 @@ public static class ContentLoader
                     break;
                 case var t when t == typeof(KitPieceDef):
                     Add(Deserialize<KitPieceDef>(json), file, ctx.KitPieces, ctx.Errors);
+                    break;
+                case var t when t == typeof(SoundDef):
+                    Add(Deserialize<SoundDef>(json), file, ctx.Sounds, ctx.Errors);
                     break;
                 case var t when t == typeof(NpcDef):
                     Add(Deserialize<NpcDef>(json), file, ctx.Npcs, ctx.Errors);

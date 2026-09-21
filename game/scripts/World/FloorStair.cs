@@ -81,6 +81,7 @@ public partial class FloorStair : Area3D
         if (_open) return;
 
         _open = true;
+        Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndStairOpen);
 
         Restyle();
 

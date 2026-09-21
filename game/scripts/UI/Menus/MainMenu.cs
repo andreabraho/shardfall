@@ -111,6 +111,7 @@ public partial class MainMenu : Control
         GetTree().Paused = false;
         UiState.Reset();
         World.GameWorld.Leave();
+        Audio.AudioDirector.Music(Kiln.Data.Ids.Sounds.MusMenu);
     }
 
     private Control NewGamePage()

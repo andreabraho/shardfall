@@ -1,0 +1,50 @@
+[
+  // Every sound the game makes, by meaning (AUD-01). Code asks for "snd_hit"; this table says
+  // which files that is. Files go under game/audio/ and every one needs an ASSET-LICENSES.md
+  // entry first (AUD-02). A sound with no files is silent, never an error — that is where
+  // all of them start.
+  //
+  // bus: effects | ui | music.  positional: heard from where it happens.  max_voices: how many
+  // copies at once before the oldest is cut.  pitch_jitter: ±fraction, so repeats do not grate.
+
+  // -- combat
+  { "id": "snd_swing",          "files": [], "bus": "effects", "volume_db": -6,  "pitch_jitter": 0.08, "max_voices": 3, "positional": true },
+  { "id": "snd_hit",            "files": [], "bus": "effects", "volume_db": -3,  "pitch_jitter": 0.10, "max_voices": 6, "positional": true },
+  { "id": "snd_hit_crit",       "files": [], "bus": "effects", "volume_db": 0,   "pitch_jitter": 0.05, "max_voices": 3, "positional": true },
+  { "id": "snd_player_hurt",    "files": [], "bus": "effects", "volume_db": -4,  "pitch_jitter": 0.08, "max_voices": 2 },
+  { "id": "snd_guard",          "files": [], "bus": "effects", "volume_db": -4,  "pitch_jitter": 0.05, "max_voices": 2 },
+  { "id": "snd_skill",          "files": [], "bus": "effects", "volume_db": -4,  "pitch_jitter": 0.05, "max_voices": 3, "positional": true },
+  { "id": "snd_telegraph",      "files": [], "bus": "effects", "volume_db": -6,  "pitch_jitter": 0.03, "max_voices": 4, "positional": true, "max_distance": 40 },
+  { "id": "snd_enemy_death",    "files": [], "bus": "effects", "volume_db": -4,  "pitch_jitter": 0.10, "max_voices": 4, "positional": true },
+  { "id": "snd_player_death",   "files": [], "bus": "effects", "volume_db": 0,   "max_voices": 1 },
+  { "id": "snd_flask",          "files": [], "bus": "effects", "volume_db": -4,  "max_voices": 1 },
+  { "id": "snd_level_up",       "files": [], "bus": "effects", "volume_db": 0,   "max_voices": 1 },
+
+  // -- world
+  { "id": "snd_pickup",         "files": [], "bus": "effects", "volume_db": -8,  "pitch_jitter": 0.06, "max_voices": 3 },
+  { "id": "snd_yang",           "files": [], "bus": "effects", "volume_db": -10, "pitch_jitter": 0.10, "max_voices": 3 },
+  { "id": "snd_rare_drop",      "files": [], "bus": "effects", "volume_db": -2,  "max_voices": 2, "positional": true, "max_distance": 45 },
+  { "id": "snd_shard_break",    "files": [], "bus": "effects", "volume_db": 0,   "max_voices": 1, "positional": true, "max_distance": 60 },
+  { "id": "snd_shrine",         "files": [], "bus": "effects", "volume_db": -4,  "max_voices": 1 },
+  { "id": "snd_quest_complete", "files": [], "bus": "effects", "volume_db": -2,  "max_voices": 1 },
+  { "id": "snd_stair_open",     "files": [], "bus": "effects", "volume_db": -3,  "max_voices": 1 },
+  { "id": "snd_refused",        "files": [], "bus": "ui",      "volume_db": -8,  "max_voices": 1 },
+
+  // -- workbench and shop
+  { "id": "snd_upgrade_success","files": [], "bus": "effects", "volume_db": -2,  "max_voices": 1 },
+  { "id": "snd_upgrade_fail",   "files": [], "bus": "effects", "volume_db": -4,  "max_voices": 1 },
+  { "id": "snd_socket",         "files": [], "bus": "effects", "volume_db": -4,  "max_voices": 1 },
+  { "id": "snd_reroll",         "files": [], "bus": "effects", "volume_db": -4,  "max_voices": 1 },
+  { "id": "snd_trade",          "files": [], "bus": "ui",      "volume_db": -6,  "pitch_jitter": 0.05, "max_voices": 2 },
+
+  // -- interface
+  { "id": "snd_ui_click",       "files": [], "bus": "ui",      "volume_db": -12, "pitch_jitter": 0.04, "max_voices": 2 },
+  { "id": "snd_ui_open",        "files": [], "bus": "ui",      "volume_db": -10, "max_voices": 1 },
+  { "id": "snd_ui_close",       "files": [], "bus": "ui",      "volume_db": -12, "max_voices": 1 },
+
+  // -- music: one track per kind of place, crossfaded at the border
+  { "id": "mus_menu",           "files": [], "bus": "music",   "volume_db": -6,  "loop": true },
+  { "id": "mus_village",        "files": [], "bus": "music",   "volume_db": -6,  "loop": true },
+  { "id": "mus_wilds",          "files": [], "bus": "music",   "volume_db": -8,  "loop": true },
+  { "id": "mus_catacombs",      "files": [], "bus": "music",   "volume_db": -8,  "loop": true }
+]

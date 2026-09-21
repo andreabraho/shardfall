@@ -297,6 +297,7 @@ public partial class PlayerCombat : Node
     /// </summary>
     private Combatant? Strike(Vector3 direction, Combatant? primary, Kiln.Core.Combat.ChainSwing swing)
     {
+        Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndSwing, _motor.GlobalPosition);
         var arc = (float)swing.ArcDegrees;
         var range = (float)swing.Range;
 

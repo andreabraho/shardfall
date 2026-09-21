@@ -105,6 +105,8 @@ public partial class MerchantPanel : CanvasLayer
             _ => L10n.T("That is no longer for sale."),
         }, result == TradeResult.Done);
 
+        if (result == TradeResult.Done) Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndTrade);
+
         Refresh();
     }
 
@@ -123,6 +125,8 @@ public partial class MerchantPanel : CanvasLayer
             TradeResult.Worthless => L10n.F("Nobody pays for {0}.", name),
             _ => L10n.F("{0} is not in the bag.", name),
         }, result == TradeResult.Done);
+
+        if (result == TradeResult.Done) Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndTrade);
 
         Refresh();
     }

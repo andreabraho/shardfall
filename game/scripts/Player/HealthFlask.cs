@@ -94,6 +94,7 @@ public partial class HealthFlask : Node
 
         _charges--;
         _casting = CastSeconds;
+        Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndFlask);
 
         EmitSignal(SignalName.ChargesChanged, _charges, MaxCharges);
     }
