@@ -13,11 +13,19 @@ attribution is required in-game.
 | KayKit Dungeon Remastered 1.0 — 14 models (walls, floor, stairs, pillar, column, rubble, banner, torches) | `game/assets/kaykit/dungeon/` | [github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0](https://github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0) | **CC0 1.0** | No | 2026-09-20 |
 | KayKit Character Pack: Adventurers 1.0 — Knight (the player), Barbarian (heavy enemies) | `game/assets/kaykit/characters/` | [github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0](https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0) | **CC0 1.0** | No | 2026-09-20 |
 | KayKit Character Pack: Skeletons 1.0 — Warrior (humanoid enemies), Minion (small enemies), Rogue (the Heart Keeper), Mage (the Vault Chorister) | `game/assets/kaykit/characters/` | [github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0](https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0) | **CC0 1.0** | No | 2026-09-20 |
+| Kenney RPG Audio 1.0 — 21 of its 50 sounds (knife slices, chop, blade draw, leather, cloth, coins, door, metal click/latch, book flips) | `game/audio/kenney/rpg/` | [kenney.nl/assets/rpg-audio](https://kenney.nl/assets/rpg-audio) | **CC0 1.0** | No | 2026-09-21 |
+| Kenney Impact Sounds — 50 of its 130 sounds (punch, plate, metal, soft, bell, glass and tin impacts) | `game/audio/kenney/impact/` | [kenney.nl/assets/impact-sounds](https://kenney.nl/assets/impact-sounds) | **CC0 1.0** | No | 2026-09-21 |
+| Kenney Interface Sounds — 43 of its 100 sounds (click, open, close, confirmation, error, maximize, glass, pluck, bong) | `game/audio/kenney/interface/` | [kenney.nl/assets/interface-sounds](https://kenney.nl/assets/interface-sounds) | **CC0 1.0** | No | 2026-09-21 |
 
 All three are by Kay Lousberg (www.kaylousberg.com). The packs' own `LICENSE.txt` files are
 kept verbatim beside the models, in `game/assets/kaykit/`, and each states Creative Commons
 Zero with a link to the deed, explicitly permitting commercial use and explicitly making
 credit optional.
+
+The three Kenney sound packs are by Kenney Vleugels (www.kenney.nl). Each pack's own
+`License.txt` is kept verbatim in its folder under `game/audio/kenney/` and states Creative
+Commons Zero, permitting personal and commercial use, credit not mandatory. Only the sounds the
+game uses were copied in; which sound plays for what is in `game/data/tables/sounds.json`.
 
 **The licence text was read before anything was committed, not the download page.** GitHub's
 own licence detector reports `NOASSERTION` for all three repositories, which means only that
