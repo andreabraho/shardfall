@@ -84,4 +84,13 @@ public class L10nTests
 
         Assert.Equal([2], StringScanner.InterpolatedCalls(code));
     }
+
+    [Fact]
+    public void Placeholders_MustSurviveTranslation()
+    {
+        Assert.True(StringScanner.SamePlaceholders("Sold {0} for {1:N0} yang.", "Venduto {0} per {1:N0} yang."));
+        Assert.True(StringScanner.SamePlaceholders("{0} of {1}", "{1}: {0}"));
+        Assert.False(StringScanner.SamePlaceholders("Sold {0} for {1:N0} yang.", "Venduto {0}."));
+        Assert.False(StringScanner.SamePlaceholders("{0:N0} yang", "{0} yang"));
+    }
 }

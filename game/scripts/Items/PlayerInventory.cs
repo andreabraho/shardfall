@@ -91,8 +91,15 @@ public partial class PlayerInventory : Node
     {
         var rng = GameItems.LootRng.Fork("starting-gear");
 
-        Equip(GameItems.Factory.Create("wpn_iron_sword", rng));
-        Equip(GameItems.Factory.Create("arm_leather_vest", rng));
+        // Level-one pieces. The iron sword and leather vest this used to hand out became level 8
+        // and 6 in the item pass, so a new character's equip was refused and both vanished.
+        // Anything that cannot be worn now goes in the bag instead of nowhere.
+        foreach (var id in new[] { "wpn_worn_blade", "arm_padded_coat" })
+        {
+            var piece = GameItems.Factory.Create(id, rng);
+
+            if (Equip(piece) != EquipOutcome.Equipped) Bag.TryAdd(piece);
+        }
 
         Bag.TryAdd(GameItems.Factory.CreatePlain("mat_iron_scrap", 30));
         Bag.TryAdd(GameItems.Factory.CreatePlain("mat_tempering_oil", 4));

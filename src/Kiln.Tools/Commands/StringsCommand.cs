@@ -103,6 +103,14 @@ public static class StringsCommand
             var done = all.Count(k => table.GetValueOrDefault(k, "").Length > 0);
             var stale = table.Keys.Count(k => !contentKeys.Contains(k) && !interfaceText.Contains(k));
 
+            foreach (var (source, text) in table.Where(p => !p.Key.StartsWith('$') && p.Value.Length > 0))
+            {
+                if (!StringScanner.SamePlaceholders(source, text))
+                {
+                    problems.Add($"{code}.json: \"{text}\" does not keep the placeholders of \"{source}\"");
+                }
+            }
+
             Console.WriteLine($"  {code}: {done}/{all.Count} translated ({100.0 * done / Math.Max(1, all.Count):0}%)"
                               + (stale > 0 ? $", {stale} no longer used" : ""));
         }

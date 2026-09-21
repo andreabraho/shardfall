@@ -53,6 +53,18 @@ public static partial class StringScanner
         }
     }
 
+    [GeneratedRegex(@"\{\d+[^}]*\}")]
+    private static partial Regex Placeholder();
+
+    /// <summary>
+    /// True when a translation asks for the same values as its English: <c>{0}</c> and
+    /// <c>{1:N0}</c> in any order. A translation that drops or invents one throws when the game
+    /// formats it, so this is checked before the build, not discovered in play.
+    /// </summary>
+    public static bool SamePlaceholders(string english, string translation) =>
+        Placeholder().Matches(english).Select(m => m.Value).Order(StringComparer.Ordinal)
+            .SequenceEqual(Placeholder().Matches(translation).Select(m => m.Value).Order(StringComparer.Ordinal));
+
     private static string Unescape(string text) =>
         text.Replace("\\\"", "\"").Replace("\\n", "\n").Replace("\\t", "\t").Replace("\\\\", "\\");
 }

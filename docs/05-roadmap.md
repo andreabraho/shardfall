@@ -299,7 +299,7 @@ escort and survive objectives, and faction reputation.
 | UIX-04 | Accessibility set per NFR-A.1 | **[C]** | |
 | UIX-05 | Full HUD polish pass | **[C]** | |
 | UIX-06 | Localisation infrastructure + EN strings extracted | **[C]** | ✅ one table per language in `game/data/strings/<code>.json`. Content names and villager lines are `$keys` with the English in `en.json` (176); interface text is English in the code wrapped in `L10n.T("…")` / `L10n.F("… {0} …", value)`, the English being its own key (374). A missing translation shows English, never a key. Numbers follow the language (12,000 / 12.000). `strings` in the tool reports coverage and fails the build on a content key with no English or an interpolated string handed to L10n; `strings --template it` lays out a file to translate. Language picker in Settings. Debug tools (F3, F5–F9) stay English |
-| UIX-07 | IT translation | **[C→You]** | I draft, you correct — you're the native speaker |
+| UIX-07 | IT translation | **[C→You]** | ◐ draft done: `game/data/strings/it.json`, all 550 entries (names, villager lines, interface). Map and creature names translated (Conca delle Braci, Crinale, Saltacanne…); **yang** kept. `strings` fails the build if a translation drops or invents a `{0}`. Yours: read it in game (Settings → Lingua → Italiano) and correct the wording |
 | AUD-01 | Audio buses, mixing, 3D positional SFX, music transitions | **[C]** | |
 | AUD-02 | Source ~40 CC0 SFX + 3 music tracks | **[You]** | Taste + licence check; I'll wire them up |
 | BAL-01 | Balance pass using the simulators (XP, yang, DPS, TTK) | **[C]** | |
