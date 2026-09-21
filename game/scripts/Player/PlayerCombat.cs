@@ -100,16 +100,10 @@ public partial class PlayerCombat : Node
         _motor = GetParent<PlayerMotor>();
         _self = GetParent().GetNode<Combatant>("Combatant");
 
-        Debug.DebugOverlay.Register("combat", this, () =>
-        {
-            var chain = _chain.Open
-                ? $"  chain [color=#e0b356]{_chain.Step}[/color]/{Kiln.Core.Combat.AttackChain.Length}"
-                : "";
-
-            return (_target is { IsAlive: true }
-                ? $"target={_target.DisplayName} hp={_target.Health}"
-                : "no target") + chain;
-        });
+        // The chain only: the target and its health are already on the target frame.
+        Debug.DebugOverlay.Register("combat", this, () => _chain.Open
+            ? $"chain [color=#e0b356]{_chain.Step}[/color]/{Kiln.Core.Combat.AttackChain.Length}"
+            : "chain —");
     }
 
     /// <summary>Called by PlayerController when the click landed on an enemy.</summary>

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Kiln.Game.Input;
 using Godot;
 using Kiln.Game.Combat;
 using Kiln.Game.Player;
@@ -27,7 +26,6 @@ public partial class CombatHud : CanvasLayer
     private Combatant? _player;
     private PlayerCombat? _combat;
     private HealthFlask? _flask;
-    private DefensiveAbility? _guard;
     private Label _flaskLabel = null!;
     private Label _manaLabel = null!;
     private Label _statusLabel = null!;
@@ -51,7 +49,6 @@ public partial class CombatHud : CanvasLayer
         _player = playerBody.GetNodeOrNull<Combatant>("Combatant");
         _combat = playerBody.GetNodeOrNull<PlayerCombat>("PlayerCombat");
         _flask = playerBody.GetNodeOrNull<HealthFlask>("HealthFlask");
-        _guard = playerBody.GetNodeOrNull<DefensiveAbility>("DefensiveAbility");
         _character = playerBody.GetNodeOrNull<PlayerCharacter>("PlayerCharacter");
 
         if (_character is not null)
@@ -198,15 +195,9 @@ public partial class CombatHud : CanvasLayer
             _manaLabel.Text = $"Mana  {_player.Mana}";
         }
 
-        _statusLabel.Text = _guard switch
-        {
-            { IsGuarding: true } => "GUARDING",
-            { CooldownRemaining: > 0 } g => $"Guard ready in {g.CooldownRemaining:F1}s",
-            // Read from the binding rather than written in: a hint that names the wrong key
-            // is worse than no hint, and this one named Space for an hour after Space became
-            // the attack.
-            _ => $"Guard ready  [{GameActions.DescribeBinding(GameActions.DefensiveAbility)}]",
-        };
+        // Guard used to be reported here too; it lives on the skill bar now, with every other
+        // ability that has a key and a cooldown.
+        _statusLabel.Text = "";
 
         // Status effects must be visible or they read as unexplained damage and sluggishness.
         if (_player is not null && _player.Statuses.Count > 0)
@@ -220,7 +211,7 @@ public partial class CombatHud : CanvasLayer
                     : $"{effect.Kind} ({effect.Remaining:F0}s)");
             }
 
-            _statusLabel.Text += "     " + string.Join("  ", names);
+            _statusLabel.Text = string.Join("  ", names);
         }
 
         if (_combat is null) return;

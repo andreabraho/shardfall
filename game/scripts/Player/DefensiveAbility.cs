@@ -37,6 +37,12 @@ public partial class DefensiveAbility : Node
 
     public double CooldownRemaining => System.Math.Max(0, _cooldown);
 
+    /// <summary>The length of the cooldown now running, so a bar can show how far through it is.</summary>
+    public double CooldownTotal { get; private set; } = 1;
+
+    /// <summary>Whether the player has the mana for it right now.</summary>
+    public bool Affordable => _self.Mana.CanAfford(Values().Mana);
+
     [Signal] public delegate void GuardChangedEventHandler(bool guarding);
 
     private GuardVisual _visual = null!;
@@ -61,8 +67,6 @@ public partial class DefensiveAbility : Node
             if (IsGuarding && !evaded) _visual.Flash();
         };
 
-        Debug.DebugOverlay.Register("guard", this, () =>
-            IsGuarding ? $"GUARDING {_active:F1}s" : _cooldown > 0 ? $"cd {_cooldown:F1}s" : "ready");
     }
 
     public override void _UnhandledInput(InputEvent @event)
@@ -107,6 +111,7 @@ public partial class DefensiveAbility : Node
 
         _active = values.Duration;
         _cooldown = values.Cooldown;
+        CooldownTotal = System.Math.Max(0.01, values.Cooldown);
 
         GetParent().GetNodeOrNull<PlayerCharacter>("PlayerCharacter")?.Skills.RecordUse(SkillId);
 

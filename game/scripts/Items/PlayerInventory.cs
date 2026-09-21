@@ -52,8 +52,6 @@ public partial class PlayerInventory : Node
         // Worn gear survives the journey, but the stat block it feeds is rebuilt with the
         // scene, so it has to be re-applied on arrival rather than only when gear changes.
         CallDeferred(nameof(ApplyToStats));
-
-        Debug.DebugOverlay.Register("yang", this, () => $"{Bag.Yang:N0} ({Bag.FreeCells} free cells)");
     }
 
     /// <summary>

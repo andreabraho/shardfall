@@ -100,11 +100,6 @@ public partial class ShardNode : StaticBody3D
         AddChild(collision);
 
         CallDeferred(nameof(Arm));
-
-        Debug.DebugOverlay.Register("shard", this, () => _fight is null
-            ? "none"
-            : $"{ShardId} {_fight.Phase} {_self.Health.Fraction:P0} {_modifier}"
-              + (_fight.IsReclaiming ? $" reclaim {_fight.ReclamationRemaining:F1}s" : ""));
     }
 
     /// <summary>Loads the tier, rolls the modifier and readies the node for a fresh fight.</summary>

@@ -25,6 +25,7 @@ public partial class SkillCaster : Node
     private const float ConeAngleDegrees = 100f;
 
     private readonly Dictionary<string, double> _cooldowns = new(System.StringComparer.Ordinal);
+    private readonly Dictionary<string, double> _cooldownTotals = new(System.StringComparer.Ordinal);
 
     private PlayerMotor _motor = null!;
     private Combatant _self = null!;
@@ -62,35 +63,31 @@ public partial class SkillCaster : Node
         var character = GetParent().GetNodeOrNull<PlayerCharacter>("PlayerCharacter");
         _book = character?.Skills;
         _progression = character?.Progression;
-
-        Debug.DebugOverlay.Register("skills", this, () =>
-        {
-            var parts = new List<string>();
-            for (var i = 0; i < Hotbar.Length; i++)
-            {
-                if (string.IsNullOrEmpty(Hotbar[i])) continue;
-
-                var id = Hotbar[i];
-
-                if (_book is null || !_book.IsUnlocked(id))
-                {
-                    parts.Add($"{i + 1}:locked");
-                    continue;
-                }
-
-                var cd = CooldownRemaining(id);
-                var rank = _book.RankOf(id);
-                var suffix = rank == MasteryRank.Normal ? "" : $" [{rank}]";
-
-                parts.Add(cd > 0 ? $"{i + 1}:{cd:F1}s{suffix}" : $"{i + 1}:ready{suffix}");
-            }
-
-            return string.Join("  ", parts);
-        });
     }
 
     public double CooldownRemaining(string skillId) =>
         _cooldowns.TryGetValue(skillId, out var remaining) ? System.Math.Max(0, remaining) : 0;
+
+    /// <summary>
+    /// The length of the cooldown now running, as it was when cast.
+    /// </summary>
+    /// <remarks>
+    /// Recorded at the cast rather than read back from the skill, because mastery shortens
+    /// cooldowns and a rank reached mid-cooldown would otherwise make the sweep jump.
+    /// </remarks>
+    public double CooldownTotal(string skillId) =>
+        _cooldownTotals.TryGetValue(skillId, out var total) ? total : 1;
+
+    public bool IsLearned(string skillId) => _book?.IsUnlocked(skillId) == true;
+
+    public MasteryRank RankOf(string skillId) => _book?.RankOf(skillId) ?? MasteryRank.Normal;
+
+    /// <summary>Whether the player has the mana for it right now, at its current rank.</summary>
+    public bool Affordable(string skillId) =>
+        _book is not null
+        && GameContent.IsLoaded
+        && GameContent.Database.Skills.TryGetValue(skillId, out var def)
+        && _self.Mana.CanAfford(ResolvedSkill.For(def, _book.RankOf(skillId)).ManaCost);
 
     /// <summary>Skill currently being aimed, if any. Ground areas aim before they commit.</summary>
     private string? _aiming;
@@ -207,6 +204,7 @@ public partial class SkillCaster : Node
 
         _self.Mana.TrySpend(skill.ManaCost);
         _cooldowns[skillId] = skill.Cooldown;
+        _cooldownTotals[skillId] = System.Math.Max(0.01, skill.Cooldown);
 
         // Mastery is earned by casting, so it is recorded on the cast rather than on a hit —
         // otherwise a skill used to reposition or to break a shard would never improve.

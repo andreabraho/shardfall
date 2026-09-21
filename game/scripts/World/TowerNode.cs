@@ -48,12 +48,6 @@ public partial class TowerNode : Node3D
         // root has not entered its zone yet and GameWorld still names the map the player just
         // left. Asking for "the current zone" here reads the previous scene.
         CallDeferred(nameof(Begin));
-
-        Debug.DebugOverlay.Register("tower", this, () => _run is null
-            ? "—"
-            : $"{_run.Depth}/{_run.FloorCount} {_run.Floor.Task} {_run.Phase} "
-              + $"{_run.Scored}/{_run.Floor.Targets}"
-              + (_run.Floor.Seconds > 0 ? $" {_run.Remaining:F1}s" : ""));
     }
 
     /// <summary>Reads the zone, matches its floors to the rooms, and opens the first one.</summary>

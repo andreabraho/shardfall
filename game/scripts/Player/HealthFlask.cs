@@ -72,8 +72,6 @@ public partial class HealthFlask : Node
             _casting = 0;
             GD.Print("[flask] interrupted");
         };
-
-        Debug.DebugOverlay.Register("flask", this, () => $"{_charges}/{MaxCharges}{(IsCasting ? " drinking" : "")}");
     }
 
     public override void _UnhandledInput(InputEvent @event)
