@@ -125,5 +125,6 @@ public static class PlayerProfile
         _quests = null;
         Explored.Clear();
         Depths.Clear();
+        Items.Vendors.Reset();
     }
 }

@@ -329,6 +329,56 @@ public sealed class QuestRewardsDef
 }
 
 // ---------------------------------------------------------------------------
+// Villagers (QST-06)
+// ---------------------------------------------------------------------------
+
+/// <summary>
+/// Someone standing in a village who can be talked to.
+/// </summary>
+/// <remarks>
+/// Where they stand is the scene's business, like a shrine or a camp: the scene places an
+/// <c>NpcNode</c> and names this id. What they say and sell is here.
+/// </remarks>
+public sealed class NpcDef : ContentDefBase
+{
+    public string Name { get; init; } = string.Empty;
+
+    /// <summary>Shown under the name: "Elder", "Smith", "Merchant".</summary>
+    public string Title { get; init; } = string.Empty;
+
+    public NpcRole Role { get; init; }
+    public string Zone { get; init; } = string.Empty;
+    public string Visual { get; init; } = string.Empty;
+    public string? Tint { get; init; }
+
+    /// <summary>
+    /// What they say, in order, one line per press of the key (FR-8.2). No choices.
+    /// </summary>
+    public string[] Lines { get; init; } = [];
+
+    /// <summary>
+    /// Quest id → what they say while that quest is the active one, before the usual lines.
+    /// </summary>
+    /// <remarks>How the elder points down the road without a journal.</remarks>
+    public Dictionary<string, string> QuestLines { get; init; } = new(StringComparer.Ordinal);
+
+    /// <summary>What a merchant sells. Null for everyone else.</summary>
+    public StockDef? Stock { get; init; }
+}
+
+public sealed class StockDef
+{
+    /// <summary>Always on the shelf, in any quantity: the materials the benches eat.</summary>
+    public string[] Staples { get; init; } = [];
+
+    /// <summary>How many pieces of gear are on the shelf at once. They change on level-up.</summary>
+    public int Rotating { get; init; }
+
+    /// <summary>The best rarity the shelf ever carries. Better than this has to be found.</summary>
+    public Rarity MaxRarity { get; init; } = Rarity.Fine;
+}
+
+// ---------------------------------------------------------------------------
 // Visuals — the art-swap boundary (ENG-07, NFR-M.4)
 // ---------------------------------------------------------------------------
 

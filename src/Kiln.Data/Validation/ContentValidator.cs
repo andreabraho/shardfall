@@ -38,6 +38,7 @@ public static class ContentValidator
         ShardEncounters(db, report);
         WorldGraph(db, report);
         GreyboxKit(db, report);
+        Villagers(db, report);
 
         return report;
     }
@@ -73,6 +74,7 @@ public static class ContentValidator
         foreach (var d in db.Enemies.Values) Check(d.SourceFile, d.Id, d.Name);
         foreach (var d in db.Skills.Values) Check(d.SourceFile, d.Id, d.Name);
         foreach (var d in db.Quests.Values) Check(d.SourceFile, d.Id, d.Name);
+        foreach (var d in db.Npcs.Values) Check(d.SourceFile, d.Id, d.Name);
     }
 
     // -- R3 -----------------------------------------------------------------
@@ -1261,6 +1263,87 @@ public static class ContentValidator
                 report.Error("kit-colour", piece.SourceFile,
                     $"'{piece.Id}' has colour \"{piece.Color}\".",
                     "Use #rgb or #rrggbb.");
+            }
+        }
+    }
+
+    // -- villagers (QST-06) ---------------------------------------------------
+
+    /// <summary>
+    /// A villager stands somewhere real, says something, and — if a merchant — sells things
+    /// that exist and are not better than what the world hands out.
+    /// </summary>
+    private static void Villagers(ContentDatabase db, ValidationReport report)
+    {
+        foreach (var npc in db.Npcs.Values.OrderBy(n => n.Id, StringComparer.Ordinal))
+        {
+            var at = npc.SourceFile;
+
+            if (!db.Zones.ContainsKey(npc.Zone))
+            {
+                report.Error("npc", at, $"'{npc.Id}' stands in zone '{npc.Zone}', which does not exist.",
+                    "Name the zone whose scene places this villager.");
+            }
+
+            if (!db.Visuals.ContainsKey(npc.Visual))
+            {
+                report.Error("npc", at, $"'{npc.Id}' uses visual '{npc.Visual}', which does not exist.",
+                    "Add it to tables/visuals.json or pick an existing one.");
+            }
+
+            if (npc.Lines.Length == 0)
+            {
+                report.Error("npc", at, $"'{npc.Id}' has nothing to say.",
+                    "Give every villager at least one line (FR-8.2).");
+            }
+
+            foreach (var quest in npc.QuestLines.Keys.Where(q => !db.Quests.ContainsKey(q)))
+            {
+                report.Error("npc", at, $"'{npc.Id}' has a line for quest '{quest}', which does not exist.",
+                    "Correct the quest id or drop the line.");
+            }
+
+            if (npc.Role != NpcRole.Merchant)
+            {
+                if (npc.Stock is not null)
+                {
+                    report.Error("npc-stock", at, $"'{npc.Id}' has stock but is not a merchant.",
+                        "Set role to merchant, or remove the stock.");
+                }
+
+                continue;
+            }
+
+            if (npc.Stock is not { } stock || (stock.Staples.Length == 0 && stock.Rotating <= 0))
+            {
+                report.Error("npc-stock", at, $"'{npc.Id}' is a merchant with nothing to sell.",
+                    "Give it staples, a rotating shelf, or both.");
+                continue;
+            }
+
+            foreach (var staple in stock.Staples)
+            {
+                if (!db.Items.TryGetValue(staple, out var item))
+                {
+                    report.Error("npc-stock", at, $"'{npc.Id}' sells '{staple}', which does not exist.",
+                        "Correct the item id.");
+                }
+                else if (item.Slot is not null)
+                {
+                    report.Error("npc-stock", at, $"'{npc.Id}' sells '{staple}' as a staple, but it is equipment.",
+                        "Staples are sold unrolled and in any number; gear belongs on the rotating shelf.");
+                }
+                else if (item.SellValue <= 0)
+                {
+                    report.Error("npc-stock", at, $"'{npc.Id}' sells '{staple}', which has no sell_value to price it by.",
+                        "Give the item a sell_value.");
+                }
+            }
+
+            if (stock.MaxRarity > Rarity.Fine)
+            {
+                report.Error("npc-stock", at, $"'{npc.Id}' can stock {stock.MaxRarity} gear.",
+                    "Merchants carry common and fine at most: the best things in the game are found, not bought.");
             }
         }
     }

@@ -1,0 +1,46 @@
+[
+  // The three people Ember Hollow needs (QST-06, FR-7.2). Where each one stands is the
+  // village scene's business; this is what they say and sell.
+  //
+  // Dialogue is linear (FR-8.2): one line per press of the key, no choices, and then they
+  // start again. The elder's quest lines come first while that quest is the active one — it
+  // is how the road gets pointed at without a journal.
+  //
+  // Lines are plain text for now. They move to the localisation table with everything else
+  // in Phase 11; names already use keys.
+
+  { "id": "npc_corwen", "name": "$npc.npc_corwen.name", "title": "Elder",
+    "role": "talk", "zone": "zone_ember_hollow", "visual": "mesh_placeholder_villager", "tint": "#8a7fb0",
+    "quest_lines": {
+      "qst_reeds_in_the_hollow":    "The reed hoppers have crept right up to the wall. Thin them out before they get into the stores — east and south of the gate.",
+      "qst_thornbacks_on_the_road": "The road out of the Hollow is ours again, but the thornbacks on the Approach charge anything that walks it. Make it walkable.",
+      "qst_the_gnawing_barrows":    "Something is chewing its way out of the barrows on the Vale Floor. Pale things. Go and count how many fewer there are when you are done.",
+      "qst_wolves_of_the_ridge":    "The wolves up on the Ridge have gone wrong — the shards have had them. The road to the Gate is closed until the pack is broken.",
+      "qst_breakers_at_the_gate":   "The Gate was built to hold something in. The breakers are working at it from our side. Stop them.",
+      "qst_into_the_catacombs":     "Below the Gate are the catacombs, nine floors down. Whatever is feeding the shards is at the bottom. Rest at the shrines on the way."
+    },
+    "lines": [
+      "The Hollow was a kiln-town once. We fired the stone that built the Gate.",
+      "The shards started glowing the year the kilns went cold. Nobody here thinks that is a coincidence.",
+      "Break every shard you find. They grow back, but slower each time — or so I tell myself."
+    ] },
+
+  { "id": "npc_hesk", "name": "$npc.npc_hesk.name", "title": "Smith",
+    "role": "smith", "zone": "zone_ember_hollow", "visual": "mesh_placeholder_villager", "tint": "#b0703c",
+    "lines": [
+      "Bring me iron and yang and I will make that blade worth carrying.",
+      "A failed temper costs you the materials. Never the item. I do not break what people bring me."
+    ] },
+
+  { "id": "npc_idra", "name": "$npc.npc_idra.name", "title": "Merchant",
+    "role": "merchant", "zone": "zone_ember_hollow", "visual": "mesh_placeholder_villager", "tint": "#5f9a6a",
+    "lines": [
+      "Scrap, oil, stones, ink — always. The rest depends on what the carts bring.",
+      "I buy anything, at a price. Sold something by mistake? I keep it on the side for a while."
+    ],
+    "stock": {
+      "staples": ["mat_iron_scrap", "mat_tempering_oil", "mat_boring_stone", "mat_mutation_ink"],
+      "rotating": 5,
+      "max_rarity": "fine"
+    } }
+]

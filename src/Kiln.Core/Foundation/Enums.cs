@@ -126,6 +126,19 @@ public enum QuestType
     Tutorial,
 }
 
+/// <summary>What talking to a villager does (QST-06).</summary>
+public enum NpcRole
+{
+    /// <summary>Talks, and that is all. The elder says where the road goes next.</summary>
+    Talk,
+
+    /// <summary>Opens the workbench, with a line of their own.</summary>
+    Smith,
+
+    /// <summary>Opens the shop (FR-10.3), with a line of their own at the top.</summary>
+    Merchant,
+}
+
 /// <summary>Telegraph shapes. The library is shared so BAL-03 can validate every one.</summary>
 public enum TelegraphShape
 {

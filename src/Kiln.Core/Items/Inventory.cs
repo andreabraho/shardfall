@@ -133,6 +133,40 @@ public sealed class Inventory : IResourceStore
         return false;
     }
 
+    /// <summary>
+    /// True when <see cref="TryAdd"/> would take <paramref name="count"/> of this whole —
+    /// into the stacks already here and, for what is left, one free spot.
+    /// </summary>
+    /// <remarks>
+    /// Asked before a purchase. <see cref="TryAdd"/> tops up existing stacks before it looks
+    /// for a spot, so a failed add can leave half a purchase behind; asking first cannot.
+    /// </remarks>
+    public bool CanTake(string itemId, int count)
+    {
+        if (!_specs.TryGet(itemId, out var spec)) return false;
+
+        var remaining = count;
+
+        if (spec.IsStackable)
+        {
+            remaining -= _placed.Where(p => p.Item.DefId == itemId)
+                .Sum(p => Math.Max(0, spec.MaxStack - p.Item.Count));
+        }
+
+        if (remaining <= 0) return true;
+        if (remaining > Math.Max(1, spec.MaxStack)) return false;
+
+        for (var y = 0; y <= Height - spec.Height; y++)
+        {
+            for (var x = 0; x <= Width - spec.Width; x++)
+            {
+                if (Fits(x, y, spec.Width, spec.Height)) return true;
+            }
+        }
+
+        return false;
+    }
+
     private bool StackInto(ItemInstance item, ItemSpec spec)
     {
         var remaining = item.Count;

@@ -37,7 +37,7 @@ public static class ValidateCommand
             $"{db.UpgradePaths.Count} upgrade paths, {db.Visuals.Count} visuals, "
             + $"{db.Shards.Count} shards, {db.Zones.Count} zones, "
             + $"{db.Zones.Values.Sum(z => z.SafeRegions.Length)} safe regions, "
-            + $"{db.KitPieces.Count} kit pieces) "
+            + $"{db.KitPieces.Count} kit pieces, {db.Npcs.Count} villagers) "
             + $"in {sw.ElapsedMilliseconds} ms\n");
 
         if (report.Findings.Count > 0)

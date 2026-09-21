@@ -184,13 +184,14 @@ public static class Ids
         public const string MeshPlaceholderQuadruped = "mesh_placeholder_quadruped";
         public const string MeshPlaceholderRogue = "mesh_placeholder_rogue";
         public const string MeshPlaceholderShrine = "mesh_placeholder_shrine";
+        public const string MeshPlaceholderVillager = "mesh_placeholder_villager";
         public const string MeshShieldA = "mesh_shield_a";
         public const string MeshSpearA = "mesh_spear_a";
         public const string MeshStoneA = "mesh_stone_a";
         public const string MeshSwordA = "mesh_sword_a";
         public const string MeshTrinketA = "mesh_trinket_a";
 
-        public static readonly string[] All = ["mesh_armor_a", "mesh_axe_a", "mesh_boots_a", "mesh_helmet_a", "mesh_placeholder_caster", "mesh_placeholder_heavy", "mesh_placeholder_humanoid", "mesh_placeholder_monolith", "mesh_placeholder_player", "mesh_placeholder_quadruped", "mesh_placeholder_rogue", "mesh_placeholder_shrine", "mesh_shield_a", "mesh_spear_a", "mesh_stone_a", "mesh_sword_a", "mesh_trinket_a"];
+        public static readonly string[] All = ["mesh_armor_a", "mesh_axe_a", "mesh_boots_a", "mesh_helmet_a", "mesh_placeholder_caster", "mesh_placeholder_heavy", "mesh_placeholder_humanoid", "mesh_placeholder_monolith", "mesh_placeholder_player", "mesh_placeholder_quadruped", "mesh_placeholder_rogue", "mesh_placeholder_shrine", "mesh_placeholder_villager", "mesh_shield_a", "mesh_spear_a", "mesh_stone_a", "mesh_sword_a", "mesh_trinket_a"];
     }
 
     public static class Shards
@@ -238,6 +239,15 @@ public static class Ids
         public const string KitWallLow4 = "kit_wall_low_4";
 
         public static readonly string[] All = ["kit_banner", "kit_boulder", "kit_brazier", "kit_cliff_8", "kit_floor_4", "kit_floor_8", "kit_gate", "kit_marker_post", "kit_path_4", "kit_pillar", "kit_ramp_4", "kit_ruin_rubble", "kit_ruin_wall", "kit_shrub", "kit_tower", "kit_wall_4", "kit_wall_8", "kit_wall_low_4"];
+    }
+
+    public static class Npcs
+    {
+        public const string NpcCorwen = "npc_corwen";
+        public const string NpcHesk = "npc_hesk";
+        public const string NpcIdra = "npc_idra";
+
+        public static readonly string[] All = ["npc_corwen", "npc_hesk", "npc_idra"];
     }
 
 }

@@ -35,6 +35,7 @@ public partial class MapView : Control
     private static readonly Color SafeTint = new(0.36f, 0.72f, 0.42f);
     private static readonly Color CampTint = new(0.85f, 0.38f, 0.34f);
     private static readonly Color ShrineTint = new(0.45f, 0.82f, 0.86f);
+    private static readonly Color VillagerTint = new(0.9f, 0.84f, 0.66f);
     private static readonly Color ShardTint = new(0.82f, 0.52f, 0.95f);
     private static readonly Color GateTint = new(0.62f, 0.82f, 1f);
     private static readonly Color PlayerTint = new(0.98f, 0.86f, 0.42f);
@@ -263,6 +264,15 @@ public partial class MapView : Control
 
             Diamond(At(shrine.GlobalPosition), 5f, ShrineTint);
             Caption(font, fontSize, At(shrine.GlobalPosition), NameOfShrine(shrine.ShrineId), ShrineTint);
+        }
+
+        // Villagers by what they do, not who they are: "where do I sell this" is the question.
+        foreach (var node in GetTree().GetNodesInGroup("npcs"))
+        {
+            if (node is not NpcNode npc || npc.Def is null || !Known(seen, npc.GlobalPosition)) continue;
+
+            DrawCircle(At(npc.GlobalPosition), 3.5f, VillagerTint);
+            Caption(font, fontSize, At(npc.GlobalPosition), npc.Def.Title.Length > 0 ? npc.Def.Title : npc.DisplayName, VillagerTint);
         }
 
         foreach (var node in GetTree().GetNodesInGroup("shards"))

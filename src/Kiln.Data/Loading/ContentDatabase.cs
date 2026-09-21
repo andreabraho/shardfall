@@ -28,10 +28,13 @@ public sealed class ContentDatabase
     /// <summary>The greybox kit (WLD-04): logical piece id → what currently renders it.</summary>
     public required IReadOnlyDictionary<string, KitPieceDef> KitPieces { get; init; }
 
+    /// <summary>Villagers (QST-06). Where they stand is the scene's; what they say and sell is here.</summary>
+    public IReadOnlyDictionary<string, NpcDef> Npcs { get; init; } = new Dictionary<string, NpcDef>();
+
     public int TotalDefinitions =>
         Items.Count + Enemies.Count + Skills.Count + Quests.Count +
         DropTables.Count + BonusPools.Count + UpgradePaths.Count + Visuals.Count + Shards.Count +
-        Zones.Count + KitPieces.Count;
+        Zones.Count + KitPieces.Count + Npcs.Count;
 
     /// <summary>All definitions, for rules that apply across every type (id format, uniqueness).</summary>
     public IEnumerable<IContentDef> All()
@@ -47,6 +50,7 @@ public sealed class ContentDatabase
         foreach (var d in Shards.Values) yield return d;
         foreach (var d in Zones.Values) yield return d;
         foreach (var d in KitPieces.Values) yield return d;
+        foreach (var d in Npcs.Values) yield return d;
     }
 
     /// <summary>True when the id exists in any registry — used by cross-reference checks.</summary>
@@ -54,7 +58,7 @@ public sealed class ContentDatabase
         Items.ContainsKey(id) || Enemies.ContainsKey(id) || Skills.ContainsKey(id) ||
         Quests.ContainsKey(id) || DropTables.ContainsKey(id) || BonusPools.ContainsKey(id) ||
         UpgradePaths.ContainsKey(id) || Visuals.ContainsKey(id) || Shards.ContainsKey(id) ||
-        Zones.ContainsKey(id) || KitPieces.ContainsKey(id);
+        Zones.ContainsKey(id) || KitPieces.ContainsKey(id) || Npcs.ContainsKey(id);
 
     public static ContentDatabase Empty() => new()
     {

@@ -23,8 +23,10 @@ public class ContentValidatorTests
         IEnumerable<VisualDef>? visuals = null,
         IEnumerable<ShardDef>? shards = null,
         IEnumerable<ZoneDef>? zones = null,
-        IEnumerable<KitPieceDef>? kit = null) => new()
+        IEnumerable<KitPieceDef>? kit = null,
+        IEnumerable<NpcDef>? npcs = null) => new()
     {
+        Npcs = Index(npcs),
         Shards = Index(shards),
         Zones = Index(zones),
         KitPieces = Index(kit),
@@ -826,5 +828,80 @@ public class ContentValidatorTests
             ]));
 
         Assert.True(HasError(report, "world-floors"));
+    }
+
+    // -- villagers ----------------------------------------------------------
+
+    private static NpcDef Merchant(StockDef? stock) => new()
+    {
+        Id = "npc_test_idra",
+        Name = "$npc.npc_test_idra.name",
+        Role = NpcRole.Merchant,
+        Zone = "zone_test",
+        Visual = "mesh_test",
+        Lines = ["Buying or selling?"],
+        Stock = stock,
+    };
+
+    private static ContentDatabase VillageDb(params NpcDef[] npcs) => Db(
+        items:
+        [
+            new ItemDef { Id = "mat_test_scrap", Name = "$x", SellValue = 40 },
+            new ItemDef { Id = "wpn_test_blade", Name = "$x", Slot = EquipSlot.Weapon, SellValue = 100 },
+        ],
+        visuals: [new VisualDef { Id = "mesh_test" }],
+        zones: [new ZoneDef { Id = "zone_test" }],
+        npcs: npcs);
+
+    [Fact]
+    public void Accepts_AMerchantSellingMaterialsAndARotatingShelf()
+    {
+        var report = ContentValidator.Validate(VillageDb(Merchant(new StockDef { Staples = ["mat_test_scrap"], Rotating = 4 })));
+
+        Assert.False(HasError(report, "npc"));
+        Assert.False(HasError(report, "npc-stock"));
+    }
+
+    [Fact]
+    public void Flags_AMerchantSellingGearAsAStapleOrSomethingMissing()
+    {
+        Assert.True(HasError(ContentValidator.Validate(
+            VillageDb(Merchant(new StockDef { Staples = ["wpn_test_blade"] }))), "npc-stock"));
+
+        Assert.True(HasError(ContentValidator.Validate(
+            VillageDb(Merchant(new StockDef { Staples = ["mat_nothing"] }))), "npc-stock"));
+    }
+
+    [Fact]
+    public void Flags_AMerchantThatCouldSellRareGear()
+    {
+        var stock = new StockDef { Rotating = 3, MaxRarity = Rarity.Rare };
+
+        Assert.True(HasError(ContentValidator.Validate(VillageDb(Merchant(stock))), "npc-stock"));
+    }
+
+    [Fact]
+    public void Flags_AMerchantWithNothingAndAVillagerWithNothingToSay()
+    {
+        Assert.True(HasError(ContentValidator.Validate(VillageDb(Merchant(null))), "npc-stock"));
+
+        var mute = Merchant(new StockDef { Rotating = 2 });
+        mute = new NpcDef { Id = mute.Id, Name = mute.Name, Role = NpcRole.Talk, Zone = "zone_test", Visual = "mesh_test" };
+
+        Assert.True(HasError(ContentValidator.Validate(VillageDb(mute)), "npc"));
+    }
+
+    [Fact]
+    public void Flags_AVillagerInAZoneThatDoesNotExist()
+    {
+        var lost = new NpcDef
+        {
+            Id = "npc_test_lost", Name = "$x", Role = NpcRole.Talk, Zone = "zone_nowhere", Visual = "mesh_test",
+            Lines = ["Hello."], QuestLines = new() { ["qst_nothing"] = "Go." },
+        };
+
+        var report = ContentValidator.Validate(VillageDb(lost));
+
+        Assert.Equal(2, report.Findings.Count(f => f.Rule == "npc"));
     }
 }
