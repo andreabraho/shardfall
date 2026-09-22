@@ -98,6 +98,16 @@ public sealed class CharacterProgression
         return lost;
     }
 
+    /// <summary>
+    /// Hands the player points outside a level-up: a quest that rewards one, and the debug
+    /// tools that need a rank without the campaign behind it.
+    /// </summary>
+    public void GrantPoints(int attributePoints = 0, int skillPoints = 0)
+    {
+        UnspentAttributePoints += Math.Max(0, attributePoints);
+        UnspentSkillPoints += Math.Max(0, skillPoints);
+    }
+
     /// <summary>Spends one attribute point. False when there are none left.</summary>
     public bool SpendAttributePoint(AttributeKind kind)
     {

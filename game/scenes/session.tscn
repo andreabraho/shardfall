@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3]
+[gd_scene load_steps=26 format=3]
 
 ; Everything a zone scene needs and no zone scene decides: the camera, the cursor, the combat
 ; feedback layers, the HUD and the panels.
@@ -35,6 +35,7 @@
 [ext_resource type="Script" path="res://scripts/UI/MerchantPanel.cs" id="22_merchant"]
 [ext_resource type="Script" path="res://scripts/UI/Menus/PauseMenu.cs" id="23_pause"]
 [ext_resource type="Script" path="res://scripts/UI/SkillPanel.cs" id="24_skillui"]
+[ext_resource type="Script" path="res://scripts/Debug/DebugSkills.cs" id="25_dbgskill"]
 
 [node name="Session" type="Node3D"]
 
@@ -96,6 +97,9 @@ script = ExtResource("13_shardhud")
 
 [node name="DebugGrants" type="Node" parent="."]
 script = ExtResource("14_grants")
+
+[node name="DebugSkills" type="Node" parent="."]
+script = ExtResource("25_dbgskill")
 
 [node name="DebugSpawner" type="Node" parent="."]
 script = ExtResource("15_spawner")
