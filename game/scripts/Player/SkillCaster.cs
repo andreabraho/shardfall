@@ -35,22 +35,44 @@ public partial class SkillCaster : Node
     private SkillBook? _book;
     private CharacterProgression? _progression;
 
-    /// <summary>Hotbar slots 1-7, by skill id.</summary>
-    [Export]
+    /// <summary>
+    /// Which skill sits on each numbered key. The player arranges it from the skill screen;
+    /// it lives on the profile so it survives the scene change at every zone border.
+    /// </summary>
+    public string[] Hotbar => PlayerProfile.Hotbar;
+
+    /// <summary>How many numbered keys there are.</summary>
+    public static int Slots => SlotActions.Length;
+
+    [Signal] public delegate void HotbarChangedEventHandler();
+
+    /// <summary>
+    /// Puts a skill on a key (REF-03).
+    /// </summary>
     /// <remarks>
-    /// Ordered so the early slots are usable at the starting level and the later ones light
-    /// up as the player levels — the hotbar itself shows progression.
+    /// A skill can only be in one place, so assigning one that is already on another key
+    /// swaps the two rather than leaving a duplicate: two keys casting the same thing is
+    /// never what was meant, and is one of those states a player has to undo by hand.
     /// </remarks>
-    public string[] Hotbar { get; set; } =
-    [
-        "skl_heavy_strike",
-        "skl_cleave",
-        "skl_shield_bash",
-        "skl_whirlwind",
-        "skl_ground_slam",
-        "skl_iron_skin",
-        "skl_blade_aura",
-    ];
+    public void Assign(int slot, string skillId)
+    {
+        if (slot < 0 || slot >= Hotbar.Length) return;
+
+        var bar = Hotbar;
+        var existing = System.Array.IndexOf(bar, skillId);
+
+        if (skillId.Length > 0 && existing >= 0 && existing != slot)
+        {
+            bar[existing] = bar[slot];
+        }
+
+        bar[slot] = skillId;
+
+        EmitSignal(SignalName.HotbarChanged);
+    }
+
+    /// <summary>The key a skill sits on, or -1 when it is not on the bar.</summary>
+    public int SlotOf(string skillId) => System.Array.IndexOf(Hotbar, skillId);
 
     private static readonly string[] SlotActions =
     [
@@ -197,7 +219,7 @@ public partial class SkillCaster : Node
 
         if (_book is null || !_book.IsUnlocked(skillId))
         {
-            GD.Print($"[skill] {skillId} not learned (unlocks at level {def.UnlockLevel})");
+            GD.Print($"[skill] {skillId} not learned — spend a point on it with V");
             return;
         }
 
@@ -231,16 +253,16 @@ public partial class SkillCaster : Node
     }
 
     /// <summary>
-    /// Whether a point can go into this skill now (REF-03): the player has one, the level
-    /// allows it, and the skill is not already full.
+    /// Whether a point can go into this skill now (REF-03): the player has one and the skill
+    /// is not already full. Level does not come into it — every skill is open from the start,
+    /// and what a character can do is decided by where the points went, not by waiting.
     /// </summary>
     public bool CanInvest(string skillId) =>
         _book is not null
         && _progression is not null
         && _progression.UnspentSkillPoints > 0
         && GameContent.IsLoaded
-        && GameContent.Database.Skills.TryGetValue(skillId, out var def)
-        && def.UnlockLevel <= _progression.Level
+        && GameContent.Database.Skills.ContainsKey(skillId)
         && !_book.IsFullyInvested(skillId);
 
     /// <summary>

@@ -12,19 +12,19 @@ namespace Kiln.Game.UI;
 /// The skill screen, on V (REF-03): where skill points are spent.
 /// </summary>
 /// <remarks>
-/// Skills are no longer learned on their own. A level makes one eligible; a point learns it,
-/// six more master it, and there are never enough points for all eight — which is what makes
-/// the screen a decision rather than a list of buttons to click through.
+/// Skills are no longer learned on their own, and no longer gated on level: a point learns
+/// any of them, six more master it, and there are never enough points for all eight — which is
+/// what makes the screen a decision rather than a list of buttons to click through.
 /// <para>
-/// Every skill is listed from the first visit, including the ones still too high to touch, so
-/// the player can plan for Ground Slam at 20 instead of discovering it exists on the level it
-/// arrives. Each row states what the skill actually does at the investment it has now, so the
-/// cost of a point is read against what the point buys.
+/// Each row states what the skill does at the investment it has now, so the cost of a point is
+/// read against what the point buys, and carries the key it is cast with. Putting the key
+/// beside the skill rather than on the bar keeps both halves of the decision — what to be good
+/// at, and what to reach for — in the same place.
 /// </para>
 /// </remarks>
 public partial class SkillPanel : CanvasLayer
 {
-    private sealed record Row(SkillDef Def, Label Title, Label Detail, Button Plus);
+    private sealed record Row(SkillDef Def, Label Title, Label Detail, Button Plus, OptionButton Key);
 
     private readonly List<Row> _rows = [];
 
@@ -169,12 +169,47 @@ public partial class SkillPanel : CanvasLayer
             detail.AddThemeColorOverride("font_color", new Color(0.66f, 0.72f, 0.80f));
             text.AddChild(detail);
 
-            var plus = new Button { Text = "+", CustomMinimumSize = new Vector2(38, 32) };
             var id = def.Id;
+
+            // Which key casts it. A skill can sit on any key, and the picker is beside the
+            // skill rather than on the bar because this is where the player is already
+            // deciding what the character is for.
+            var key = new OptionButton { CustomMinimumSize = new Vector2(76, 32) };
+
+            key.AddItem(L10n.T("none"), 0);
+
+            for (var slot = 0; slot < Player.SkillCaster.Slots; slot++)
+            {
+                key.AddItem(L10n.F("Key {0}", slot + 1), slot + 1);
+            }
+
+            key.ItemSelected += index => Assign(id, (int)index - 1);
+            row.AddChild(key);
+
+            var plus = new Button { Text = "+", CustomMinimumSize = new Vector2(38, 32) };
             plus.Pressed += () => Invest(id);
             row.AddChild(plus);
 
-            _rows.Add(new Row(def, title, detail, plus));
+            _rows.Add(new Row(def, title, detail, plus, key));
+        }
+
+        Refresh();
+    }
+
+    /// <summary>Moves a skill onto a key, or off the bar entirely.</summary>
+    private void Assign(string skillId, int slot)
+    {
+        if (_caster is null) return;
+
+        if (slot < 0)
+        {
+            var was = _caster.SlotOf(skillId);
+
+            if (was >= 0) _caster.Assign(was, "");
+        }
+        else
+        {
+            _caster.Assign(slot, skillId);
         }
 
         Refresh();
@@ -194,7 +229,6 @@ public partial class SkillPanel : CanvasLayer
 
         var book = _character.Skills;
         var points = _character.Progression.UnspentSkillPoints;
-        var level = _character.Progression.Level;
 
         _unspent.Text = points > 0
             ? L10n.F("{0} skill point(s) to spend", points)
@@ -203,23 +237,35 @@ public partial class SkillPanel : CanvasLayer
         foreach (var row in _rows)
         {
             var spent = book.PointsIn(row.Def.Id);
-            var locked = row.Def.UnlockLevel > level;
 
             row.Title.Text = SkillText.Title(row.Def, book);
             row.Title.AddThemeColorOverride("font_color", spent > 0
                 ? new Color(0.92f, 0.94f, 0.98f)
-                : locked ? new Color(0.42f, 0.46f, 0.52f) : new Color(0.72f, 0.78f, 0.86f));
+                : new Color(0.72f, 0.78f, 0.86f));
 
-            row.Detail.Text = locked
-                ? L10n.F("Available at level {0}.", row.Def.UnlockLevel)
-                : SkillText.Describe(row.Def, book);
+            row.Detail.Text = SkillText.Describe(row.Def, book)
+                + (spent > 0 ? "" : "\n" + L10n.F("Not learned. Written for about level {0}.", row.Def.SuggestedLevel));
 
             row.Plus.Disabled = _caster?.CanInvest(row.Def.Id) != true;
-            row.Plus.TooltipText = locked
-                ? L10n.F("Available at level {0}.", row.Def.UnlockLevel)
-                : book.IsFullyInvested(row.Def.Id)
-                    ? L10n.T("Fully invested. It ranks up from here by being used.")
-                    : L10n.T("Spend a skill point.");
+            row.Plus.TooltipText = book.IsFullyInvested(row.Def.Id)
+                ? L10n.T("Fully invested. It ranks up from here by being used.")
+                : points > 0
+                    ? L10n.T("Spend a skill point.")
+                    : L10n.T("No skill points left.");
+
+            // Guard Stance has its own key and is not on the numbered bar.
+            var onBar = row.Def.CastType != "channel";
+
+            row.Key.Visible = onBar;
+            row.Key.Disabled = !onBar;
+
+            if (!onBar) continue;
+
+            var slot = _caster?.SlotOf(row.Def.Id) ?? -1;
+
+            // Selected rather than by index-changed: setting Selected does not raise
+            // ItemSelected, so refreshing the panel never re-assigns anything.
+            row.Key.Selected = slot + 1;
         }
     }
 }

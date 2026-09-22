@@ -26,7 +26,7 @@ public static class SkillText
             ? []
             : GameContent.Database.Skills.Values
                 .Where(s => s.Class == CharacterClass.Warrior)
-                .OrderBy(s => s.UnlockLevel)
+                .OrderBy(s => s.SuggestedLevel)
                 .ThenBy(s => s.Id, System.StringComparer.Ordinal);
 
     /// <summary>Name, rank and points: the one line that says how far a skill has come.</summary>

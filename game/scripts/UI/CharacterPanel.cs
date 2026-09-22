@@ -364,7 +364,7 @@ public partial class CharacterPanel : CanvasLayer
             var text = known
                 ? $"{GameItems.Localise(def.Name)}  ·  {Words.Of(book.RankOf(def.Id))}"
                     + $"  ·  {book.PointsIn(def.Id)}/{SkillBook.MaxPoints}"
-                : $"{GameItems.Localise(def.Name)}  ·  " + L10n.F("level {0}", def.UnlockLevel);
+                : $"{GameItems.Localise(def.Name)}  ·  " + L10n.T("not learned");
 
             var label = new Label { Text = text };
             label.AddThemeFontSizeOverride("font_size", 13);

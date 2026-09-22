@@ -572,10 +572,10 @@ public static class ContentValidator
                 $"'{enemy.Id}' has level {enemy.Level}, outside 1..{MaxLevel + 5}.");
         }
 
-        foreach (var skill in db.Skills.Values.Where(s => s.UnlockLevel is < 1 or > MaxLevel))
+        foreach (var skill in db.Skills.Values.Where(s => s.SuggestedLevel is < 1 or > MaxLevel))
         {
             report.Error("level-range", skill.SourceFile,
-                $"'{skill.Id}' unlocks at level {skill.UnlockLevel}, outside 1..{MaxLevel}.");
+                $"'{skill.Id}' is suggested at level {skill.SuggestedLevel}, outside 1..{MaxLevel}.");
         }
 
         foreach (var quest in db.Quests.Values.Where(q => q.LevelReq is < 0 or > MaxLevel))

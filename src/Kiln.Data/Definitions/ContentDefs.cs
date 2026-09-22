@@ -187,7 +187,12 @@ public sealed class SkillDef : ContentDefBase
     public string Name { get; init; } = string.Empty;
     public CharacterClass Class { get; init; }
     public string Tree { get; init; } = string.Empty;
-    public int UnlockLevel { get; init; }
+    /// <summary>
+    /// Roughly where this skill is meant to come in. It orders the skill screen and tells
+    /// the player what it was written for — it gates nothing (REF-03): every skill can be
+    /// bought at any level, and the points are the only thing standing between them.
+    /// </summary>
+    public int SuggestedLevel { get; init; }
     public double ManaCost { get; init; }
     public double Cooldown { get; init; }
     public string CastType { get; init; } = "instant";

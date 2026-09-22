@@ -75,6 +75,40 @@ public static class PlayerProfile
     public static int FlaskCharges { get; set; } = -1;
 
     /// <summary>
+    /// Which skill sits on each numbered key (REF-03). Empty means the key does nothing.
+    /// </summary>
+    /// <remarks>
+    /// Here rather than on the caster because the caster dies with every scene, and a bar the
+    /// player arranged would be back to its defaults on the far side of the first gate.
+    /// </remarks>
+    public static string[] Hotbar { get; private set; } = DefaultHotbar();
+
+    /// <summary>
+    /// What a new character's bar holds: the skills whose suggested levels come first, so the
+    /// keys are not blank before the first point is spent.
+    /// </summary>
+    public static string[] DefaultHotbar() =>
+    [
+        "skl_heavy_strike", "skl_cleave", "skl_shield_bash", "skl_whirlwind",
+        "skl_ground_slam", "skl_iron_skin", "skl_blade_aura",
+    ];
+
+    /// <summary>Restores a saved bar, padded or trimmed to the number of keys there are.</summary>
+    public static void LoadHotbar(IReadOnlyList<string>? saved)
+    {
+        var bar = DefaultHotbar();
+
+        if (saved is null || saved.Count == 0) { Hotbar = bar; return; }
+
+        for (var i = 0; i < bar.Length; i++)
+        {
+            bar[i] = i < saved.Count ? saved[i] ?? "" : "";
+        }
+
+        Hotbar = bar;
+    }
+
+    /// <summary>
     /// Ground the character has walked, per zone, as a coarse grid of cells (WLD-08).
     /// </summary>
     /// <remarks>
@@ -135,6 +169,7 @@ public static class PlayerProfile
         HealthFraction = 1.0;
         ManaFraction = 1.0;
         FlaskCharges = -1;
+        Hotbar = DefaultHotbar();
         _quests = null;
         Explored.Clear();
         PlayTime = 0;

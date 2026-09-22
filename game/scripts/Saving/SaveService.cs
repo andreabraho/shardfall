@@ -242,6 +242,7 @@ public partial class SaveService : Node
                 Assigned = [assigned.Str, assigned.Dex, assigned.Int, assigned.Vit],
                 Skills = PlayerProfile.Skills.Save(),
                 SkillPointsSpent = PlayerProfile.Skills.SavePoints(),
+                Hotbar = [.. PlayerProfile.Hotbar],
                 Health = PlayerProfile.HealthFraction,
                 Mana = PlayerProfile.ManaFraction,
                 FlaskCharges = PlayerProfile.FlaskCharges,
@@ -357,6 +358,7 @@ public partial class SaveService : Node
 
         PlayerProfile.Progression.Load(p.Level, p.Experience, p.AttributePoints, p.SkillPoints, assigned);
         PlayerProfile.Skills.Load(p.Skills, p.SkillPointsSpent);
+        PlayerProfile.LoadHotbar(p.Hotbar);
 
         // A save taken at a sliver of health loads at a sliver. A save somehow taken at none
         // loads at full, rather than as a corpse.

@@ -293,7 +293,7 @@ many small ones. Shrink the radius if you want a faster attack.
 ```jsonc
 {
   "id": "skl_whirlwind",
-  "class": "warrior", "tree": "body", "unlock_level": 14,
+  "class": "warrior", "tree": "body", "suggested_level": 14,   // a suggestion for the skill screen's order; it gates nothing
   "mana_cost": 32, "cooldown": 9.0, "cast_type": "instant",
   "targeting": "self_aoe", "radius": 4.5,
   "damage_coef": 1.35, "hits": 3,

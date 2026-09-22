@@ -58,6 +58,18 @@ public partial class SkillBar : CanvasLayer
 
         if (_caster is null) return;
 
+        // Rebuilt when the player rearranges the bar from the skill screen (REF-03).
+        _caster.HotbarChanged += Rebuild;
+
+        Rebuild();
+    }
+
+    private void Rebuild()
+    {
+        if (_caster is null) return;
+
+        foreach (var child in _row.GetChildren()) child.QueueFree();
+
         var count = Math.Min(SlotActions.Length, _caster.Hotbar.Length);
         _slots = new SkillSlot[count + (_guard is null ? 0 : 1)];
 

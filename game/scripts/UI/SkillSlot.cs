@@ -24,7 +24,6 @@ public partial class SkillSlot : Control
 
     private string _name = "";
     private string _key = "";
-    private int _unlockLevel;
     private Color _tint = Frame;
 
     public string SkillId { get; set; } = "";
@@ -49,7 +48,6 @@ public partial class SkillSlot : Control
         }
 
         _name = Items.GameItems.Localise(def.Name);
-        _unlockLevel = def.UnlockLevel;
         _tint = def.Tree == "mental" ? Mental : Body;
 
         Retitle();
@@ -78,8 +76,7 @@ public partial class SkillSlot : Control
 
         TooltipText = book.IsUnlocked(SkillId)
             ? $"{SkillText.Title(def, book)}   [{_key}]\n" + SkillText.Describe(def, book)
-            : $"{_name}   [{_key}]\n"
-                + L10n.F("Not learned. Available at level {0} — spend a point with V.", def.UnlockLevel);
+            : $"{_name}   [{_key}]\n" + L10n.T("Not learned. Spend a skill point on it with V.");
     }
 
     public void Present(bool learned, double remaining, double total, bool affordable, bool active, MasteryRank rank)
@@ -144,7 +141,7 @@ public partial class SkillSlot : Control
 
         if (!_learned)
         {
-            DrawString(font, new Vector2(0, Side - 6), L10n.F("Lv {0}", _unlockLevel), HorizontalAlignment.Center, Side, 11,
+            DrawString(font, new Vector2(0, Side - 6), L10n.T("unlearned"), HorizontalAlignment.Center, Side, 11,
                 new Color(0.75f, 0.75f, 0.78f));
         }
 
