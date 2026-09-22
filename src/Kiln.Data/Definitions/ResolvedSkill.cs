@@ -20,7 +20,6 @@ public readonly record struct ResolvedSkill(
     double ManaCost,
     double DamageCoef,
     int Hits,
-    double Stagger,
     double Duration,
     double Magnitude,
     MasteryRank Rank,
@@ -33,7 +32,6 @@ public readonly record struct ResolvedSkill(
         var mana = def.ManaCost;
         var damage = def.DamageCoef;
         var hits = Math.Max(1, def.Hits);
-        var stagger = def.Stagger;
         var duration = def.Duration;
         var magnitude = def.Magnitude;
 
@@ -46,7 +44,6 @@ public readonly record struct ResolvedSkill(
             mana = tier.ManaCost ?? mana;
             damage = tier.DamageCoef ?? damage;
             hits = tier.Hits ?? hits;
-            stagger = tier.Stagger ?? stagger;
             duration = tier.Duration ?? duration;
             magnitude = tier.Magnitude ?? magnitude;
         }
@@ -58,6 +55,6 @@ public readonly record struct ResolvedSkill(
             if (rank >= MasteryRank.Perfect) Apply(mastery.Perfect);
         }
 
-        return new ResolvedSkill(def.Id, def.Targeting, radius, cooldown, mana, damage, hits, stagger, duration, magnitude, rank, def.Applies);
+        return new ResolvedSkill(def.Id, def.Targeting, radius, cooldown, mana, damage, hits, duration, magnitude, rank, def.Applies);
     }
 }

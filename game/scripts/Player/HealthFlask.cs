@@ -11,7 +11,14 @@ namespace Kiln.Game.Player;
 /// This is the single most important change to the original's resource model. While a
 /// player can carry hundreds of potions, no encounter can threaten them, and every
 /// difficulty lever in the design is void — so the flask is finite, has a cast time, and is
-/// interrupted by damage. Charges come from the difficulty tier (doc 02 §1).
+/// interrupted by damage. How many charges it holds comes from the difficulty tier (doc 02 §1).
+/// </para>
+/// <para>
+/// Refilling costs money (REF-02). Charges do not come back on their own, at a shrine or on
+/// death: they are poured in from draughts bought at a merchant, one draught per charge. That
+/// is what keeps yang worth earning after the gear you want is bought, and what makes going
+/// back to the village a decision rather than a formality — the flask is the one thing in the
+/// game you can genuinely run out of.
 /// </para>
 /// </summary>
 public partial class HealthFlask : Node
@@ -38,16 +45,8 @@ public partial class HealthFlask : Node
     /// <summary>Cast time. Long enough that drinking mid-telegraph is a real gamble.</summary>
     [Export] public double CastSeconds { get; set; } = 0.8;
 
-    /// <summary>
-    /// Seconds out of combat before charges refill.
-    /// <para>
-    /// A stand-in for shrines, which arrive in Phase 6 (WLD-02). Until there is somewhere to
-    /// refill, an empty flask would simply end the test session.
-    /// </para>
-    /// </summary>
-    [Export] public double RefillAfterSeconds { get; set; } = 8.0;
-
-    private double _outOfCombat;
+    /// <summary>The material a charge is poured from. Bought at a merchant, one for one.</summary>
+    public const string DraughtId = "mat_flask_draught";
 
     public int Charges => _charges;
 
@@ -60,13 +59,18 @@ public partial class HealthFlask : Node
     public override void _Ready()
     {
         _self = GetParent().GetNode<Combatant>("Combatant");
-        _charges = MaxCharges;
+
+        // A new character starts with a full flask; a loaded one keeps what it had left, since
+        // nothing refills it for free any more.
+        _charges = PlayerProfile.FlaskCharges < 0
+            ? MaxCharges
+            : System.Math.Clamp(PlayerProfile.FlaskCharges, 0, MaxCharges);
+
+        PlayerProfile.FlaskCharges = _charges;
 
         // Taking damage interrupts the drink — the cost of using it at the wrong moment.
         _self.Damaged += (_, _, evaded) =>
         {
-            ResetRefillTimer();
-
             if (evaded || !IsCasting) return;
 
             _casting = 0;
@@ -87,7 +91,17 @@ public partial class HealthFlask : Node
 
     private void TryDrink()
     {
-        if (IsCasting || _charges <= 0 || !_self.IsAlive || _self.Statuses.IsStunned) return;
+        if (IsCasting || !_self.IsAlive || _self.Statuses.IsStunned) return;
+
+        // Said out loud, because an empty flask is now a thing to go and fix rather than a
+        // thing to wait out, and a silent key press reads as a broken button.
+        if (_charges <= 0)
+        {
+            UI.WorldNotice.Show(GetTree(),
+                Kiln.Core.Foundation.L10n.T("The flask is empty. Draughts to fill it are sold by merchants."));
+
+            return;
+        }
 
         // Now that it restores both, a charge is worth spending when either pool is short.
         if (_self.Health.IsFull && _self.Mana.IsFull) return;
@@ -95,6 +109,27 @@ public partial class HealthFlask : Node
         _charges--;
         _casting = CastSeconds;
         Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndFlask);
+
+        Changed();
+    }
+
+    /// <summary>
+    /// Pours one draught in. False when the flask is already full, so the draught is not
+    /// quietly wasted.
+    /// </summary>
+    public bool AddCharge()
+    {
+        if (_charges >= MaxCharges) return false;
+
+        _charges++;
+        Changed();
+
+        return true;
+    }
+
+    private void Changed()
+    {
+        PlayerProfile.FlaskCharges = _charges;
 
         EmitSignal(SignalName.ChargesChanged, _charges, MaxCharges);
     }
@@ -111,37 +146,16 @@ public partial class HealthFlask : Node
                 _self.Mana.Add(_self.Stats.MaxMana * ManaFraction);
             }
         }
-
-        TrackRefill(delta);
     }
 
-    private void TrackRefill(double delta)
-    {
-        if (_charges >= MaxCharges)
-        {
-            _outOfCombat = 0;
-            return;
-        }
-
-        // Any damage taken resets the timer; full health is the proxy for "the fight is over"
-        // until shrines exist.
-        _outOfCombat += delta;
-
-        if (_outOfCombat < RefillAfterSeconds) return;
-
-        _outOfCombat = 0;
-        _charges = MaxCharges;
-        EmitSignal(SignalName.ChargesChanged, _charges, MaxCharges);
-        GD.Print("[flask] refilled");
-    }
-
-    public void ResetRefillTimer() => _outOfCombat = 0;
-
-    /// <summary>Restores all charges. Used on respawn, and by shrines once they exist.</summary>
+    /// <summary>
+    /// Fills the flask outright. Only for a new character and for the debug console — nothing
+    /// in play refills for free.
+    /// </summary>
     public void Refill()
     {
         _charges = MaxCharges;
         _casting = 0;
-        EmitSignal(SignalName.ChargesChanged, _charges, MaxCharges);
+        Changed();
     }
 }

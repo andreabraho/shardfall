@@ -6,7 +6,6 @@
     "role": "bruiser",
     "level": 8,
     "stats": { "hp": 415, "attack_power": 45, "defense": 26, "move_speed": 5.6 },
-    "stagger_pool": 80,
     "abilities": [
       { "id": "abl_gnaw", "cooldown": 2.3, "windup": 0.55, "damage_coef": 1.00 },
       { "id": "abl_gnawer_leap", "cooldown": 7.5, "windup": 1.55, "damage_coef": 1.50,
@@ -28,7 +27,6 @@
     "role": "archer",
     "level": 9,
     "stats": { "hp": 300, "attack_power": 52, "defense": 20, "move_speed": 4.6 },
-    "stagger_pool": 50,
     "abilities": [
       { "id": "abl_bone_shard", "cooldown": 2.1, "windup": 0.80, "damage_coef": 1.10, "range": 12.0 },
       { "id": "abl_bone_scatter", "cooldown": 9.0, "windup": 1.75, "damage_coef": 1.30, "range": 11.0,
@@ -51,7 +49,6 @@
     "role": "shielder",
     "level": 10,
     "stats": { "hp": 760, "attack_power": 40, "defense": 56, "move_speed": 3.8 },
-    "stagger_pool": 155,
     "abilities": [
       { "id": "abl_barrow_slam", "cooldown": 3.2, "windup": 0.90, "damage_coef": 1.15,
         "applies": { "kind": "stun", "duration": 0.8, "chance": 0.30 } },
@@ -73,7 +70,6 @@
     "role": "mender",
     "level": 10,
     "stats": { "hp": 430, "attack_power": 34, "defense": 24, "move_speed": 4.1 },
-    "stagger_pool": 65,
     "abilities": [
       { "id": "abl_stitch_ally", "cooldown": 7.0, "windup": 1.45, "damage_coef": 0.00, "range": 10.0 },
       { "id": "abl_stitch_bolt", "cooldown": 3.0, "windup": 0.85, "damage_coef": 0.90, "range": 9.5 }
@@ -94,7 +90,6 @@
     "role": "bomber",
     "level": 11,
     "stats": { "hp": 375, "attack_power": 70, "defense": 18, "move_speed": 4.9 },
-    "stagger_pool": 45,
     "abilities": [
       { "id": "abl_bloat_rupture", "cooldown": 1.0, "windup": 1.95, "damage_coef": 1.95,
         "applies": { "kind": "poison", "magnitude": 9, "duration": 5.0 },

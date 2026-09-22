@@ -77,5 +77,7 @@ public static class MenuStyle
     } + " "
       + L10n.F("Enemies have ×{0:0.##} health and deal ×{1:0.##} damage; {2:0.0#} s to step out of an attack; {3} flask charges;",
           d.EnemyHpMultiplier, d.EnemyDamageMultiplier, d.AoeTelegraphSeconds, d.FlaskCharges) + " "
-      + (d.YangLossOnDeath > 0 ? L10n.F("dying costs {0:P0} of carried yang.", d.YangLossOnDeath) : L10n.T("dying costs nothing."));
+      + (d.ExperienceLossOnDeath > 0
+          ? L10n.F("dying costs {0:P0} of the experience toward the next level.", d.ExperienceLossOnDeath)
+          : L10n.T("dying costs nothing."));
 }

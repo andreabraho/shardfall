@@ -13,7 +13,7 @@ Every MUST is an MVP exit gate — the vertical slice is not done until all of t
 | FR-1.2 | Click-to-attack: click an enemy to close distance and begin auto-attack on an attack-speed timer, each blow hitting everything in a frontal arc (REF-01); keeps attacking until the target dies, is out of range, or a new order is given | MUST |
 | FR-1.3 | 6 hotbar slots (1–6) for skills, 2 for consumables (Q/E), 1 defensive ability (Space) | MUST |
 | FR-1.4 | Per-class defensive ability on 8–12 s cooldown (design §2.2) | MUST |
-| FR-1.5 | Healing flask: finite charges, refills at shrines/zone entry, cast time interruptible by damage | MUST |
+| FR-1.5 | Healing flask: finite charges, refilled only by draughts bought from merchants, cast time interruptible by damage | MUST |
 | FR-1.6 | Camera: fixed-pitch third-person follow, mouse-wheel zoom range, Z/C or middle-drag rotate | MUST |
 | FR-1.6a | **Camera distance stays constant.** Obstructions between camera and player fade out; the camera never pulls in. Pull-in changes the screen-to-world mapping the player aims with, which directly costs click accuracy under click-to-move. | MUST |
 | FR-1.7 | Alternative WASD control scheme in options, feeding the same destination-move core | SHOULD |
@@ -90,7 +90,7 @@ Every MUST is an MVP exit gate — the vertical slice is not done until all of t
 |---|---|---|
 | FR-7.1 | Zone streaming/loading with a loading screen; zone level bands | MUST |
 | FR-7.2 | Hub village with blacksmith, merchant, trainer, storage, shrine | MUST |
-| FR-7.3 | Shrines: save point, respawn point, fast-travel node, flask refill, respec | MUST |
+| FR-7.3 | Shrines: save point, respawn point, fast-travel node, respec | MUST |
 | FR-7.4 | Fast travel between discovered shrines with a yang cost | MUST |
 | FR-7.5 | Map with fog of war, markers and custom pins; minimap | MUST |
 | FR-7.6 | One dungeon at MVP (25–45 min, 2 mini-bosses, 3-phase boss, checkpoints) | MUST |
@@ -147,7 +147,7 @@ weighed and dropped on purpose: this is a game about the loop, not the log.
 | FR-9.1 | One AI companion, 3 swappable archetypes, levelling, 3 gear slots, 4 abilities | SHOULD |
 | FR-9.2 | Companion damage capped at ~30% of player DPS; cannot revive the player; retreats 45 s on death | SHOULD |
 | FR-9.3 | Command wheel: aggro here / fall back / use ability | SHOULD |
-| FR-9.4 | Mount with +80% move speed and a staggering charge; dismount on heavy hit | SHOULD |
+| FR-9.4 | Mount with +80% move speed and a charge that knocks enemies aside; dismount on heavy hit | SHOULD |
 | FR-9.5 | 6 pets with passive effects | COULD |
 
 ## FR-10 Economy and vendors

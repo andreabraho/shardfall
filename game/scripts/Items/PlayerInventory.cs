@@ -108,6 +108,10 @@ public partial class PlayerInventory : Node
             if (Equip(piece) != EquipOutcome.Equipped) Bag.TryAdd(piece);
         }
 
+        // Enough draughts to learn what they are for before the first walk back to the
+        // merchant (REF-02).
+        Bag.TryAdd(GameItems.Factory.CreatePlain(Player.HealthFlask.DraughtId, 3));
+
         Bag.TryAdd(GameItems.Factory.CreatePlain("mat_iron_scrap", 30));
         Bag.TryAdd(GameItems.Factory.CreatePlain("mat_tempering_oil", 4));
         Bag.TryAdd(GameItems.Factory.CreatePlain("mat_boring_stone", 2));

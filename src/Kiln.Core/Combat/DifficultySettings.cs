@@ -9,6 +9,16 @@ namespace Kiln.Core.Combat;
 /// difficulty never changes drop tables or XP, and it never changes enemy count in the
 /// campaign (count scaling belongs to the endgame tower affixes only).
 /// </para>
+/// <para>
+/// <see cref="ExperienceLossOnDeath"/> is what dying costs (REF-02): a share of the experience
+/// earned toward the current level. Experience rather than yang, as in the original. Yang is
+/// spent the moment it is earned — on upgrades, on flask draughts — so a yang penalty falls
+/// hardest on the player who has just bought something and not at all on the one who is
+/// saving for nothing. The experience bar always holds something, so the cost lands the same
+/// way every time, and it is paid back by playing rather than by walking to a merchant. It
+/// never takes a level: the bar stops at empty, because losing a level would take back
+/// attribute and skill points already spent.
+/// </para>
 /// </summary>
 public sealed record DifficultySettings(
     Difficulty Tier,
@@ -16,7 +26,7 @@ public sealed record DifficultySettings(
     double EnemyDamageMultiplier,
     double AoeTelegraphSeconds,
     int FlaskCharges,
-    double YangLossOnDeath,
+    double ExperienceLossOnDeath,
     bool MidDungeonCheckpoints)
 {
     /// <summary>

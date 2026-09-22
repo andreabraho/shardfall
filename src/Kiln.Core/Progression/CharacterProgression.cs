@@ -72,6 +72,26 @@ public sealed class CharacterProgression
         return _pending;
     }
 
+    /// <summary>
+    /// Takes back a share of the experience toward the current level — what dying costs
+    /// (REF-02). Returns how much was actually lost, which is what the player is told.
+    /// </summary>
+    /// <remarks>
+    /// The share is of the whole level, not of what has been earned so far, so the loss is the
+    /// same however far along the bar is. It stops at empty: a death never takes a level, and
+    /// never touches points already spent.
+    /// </remarks>
+    public long LoseExperience(double fraction)
+    {
+        if (fraction <= 0 || Experience <= 0) return 0;
+
+        var lost = Math.Min(Experience, (long)Math.Round(ExperienceForNextLevel * Math.Clamp(fraction, 0, 1)));
+
+        Experience -= lost;
+
+        return lost;
+    }
+
     /// <summary>Spends one attribute point. False when there are none left.</summary>
     public bool SpendAttributePoint(AttributeKind kind)
     {

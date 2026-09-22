@@ -38,7 +38,7 @@
       "$npc.npc_idra.line_2"
     ],
     "stock": {
-      "staples": ["mat_iron_scrap", "mat_tempering_oil", "mat_boring_stone", "mat_mutation_ink"],
+      "staples": ["mat_flask_draught", "mat_iron_scrap", "mat_tempering_oil", "mat_boring_stone", "mat_mutation_ink"],
       "rotating": 5,
       "max_rarity": "fine"
     } }

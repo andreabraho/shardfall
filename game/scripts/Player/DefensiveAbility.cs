@@ -29,7 +29,7 @@ public partial class DefensiveAbility : Node
 
     // Fallbacks, used only if the definition is missing.
     [Export] public double DamageReduction { get; set; } = 0.70;
-    [Export] public double Duration { get; set; } = 2.0;
+    [Export] public double Duration { get; set; } = 1.2;
     [Export] public double CooldownSeconds { get; set; } = 10.0;
     [Export] public double ManaCost { get; set; } = 10;
 

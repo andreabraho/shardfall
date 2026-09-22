@@ -299,6 +299,21 @@ public sealed class Inventory : IResourceStore
         return true;
     }
 
+    /// <summary>
+    /// Takes <paramref name="count"/> of a stacking item out of the bag — a flask draught
+    /// drunk, a material used by something that is not the workbench. False, and nothing
+    /// taken, when there are not that many.
+    /// </summary>
+    public bool TryConsume(string itemId, int count = 1)
+    {
+        if (count <= 0 || CountOf(itemId) < count) return false;
+
+        Consume(itemId, count);
+        Changed?.Invoke();
+
+        return true;
+    }
+
     private void Consume(string itemId, int count)
     {
         var remaining = count;

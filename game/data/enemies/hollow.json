@@ -6,7 +6,6 @@
     "role": "bruiser",
     "level": 1,
     "stats": { "hp": 85, "attack_power": 15, "defense": 4, "move_speed": 4.6 },
-    "stagger_pool": 25,
     "abilities": [
       { "id": "abl_hopper_nip", "cooldown": 2.4, "windup": 0.45, "damage_coef": 0.85 }
     ],
@@ -26,7 +25,6 @@
     "role": "bruiser",
     "level": 2,
     "stats": { "hp": 135, "attack_power": 21, "defense": 8, "move_speed": 4.4 },
-    "stagger_pool": 45,
     "abilities": [
       { "id": "abl_lurker_bite", "cooldown": 2.6, "windup": 0.55, "damage_coef": 1.00 },
       { "id": "abl_lurker_lunge", "cooldown": 9.0, "windup": 1.55, "damage_coef": 1.20,
@@ -48,7 +46,6 @@
     "role": "archer",
     "level": 3,
     "stats": { "hp": 110, "attack_power": 24, "defense": 6, "move_speed": 4.8 },
-    "stagger_pool": 30,
     "abilities": [
       { "id": "abl_sprite_dart", "cooldown": 2.4, "windup": 0.70, "damage_coef": 0.95, "range": 10.0 }
     ],

@@ -153,7 +153,8 @@ public partial class InventoryPanel : CanvasLayer
 
         var hint = new Label
         {
-            Text = L10n.T("Click to equip or unequip · right-click to drop on the ground") + "\n"
+            Text = L10n.T("Click to equip or unequip, or to pour a draught into the flask") + "\n"
+                + L10n.T("Right-click to drop on the ground") + "\n"
                 + L10n.T("Shift + right-click destroys it · Ctrl + right-click locks it against both") + "\n"
                 + L10n.T("I to close · U for the anvil"),
             AutowrapMode = TextServer.AutowrapMode.WordSmart,
@@ -318,6 +319,7 @@ public partial class InventoryPanel : CanvasLayer
             button.Pressed += () =>
             {
                 if (spec?.IsEquipment == true) _inventory.Equip(item);
+                else if (item.DefId == Player.HealthFlask.DraughtId) PourDraught();
 
                 Refresh();
             };
@@ -327,6 +329,38 @@ public partial class InventoryPanel : CanvasLayer
             _gridRoot.AddChild(button);
             _itemNodes.Add(button);
         }
+    }
+
+    // ------------------------------------------------------------------ filling the flask
+
+    /// <summary>
+    /// Pours one draught into the flask (REF-02) — the only thing that refills it, and the
+    /// reason yang is still worth carrying once the gear is bought.
+    /// </summary>
+    /// <remarks>
+    /// Refused while the flask is full, so a mis-click never costs a draught.
+    /// </remarks>
+    private void PourDraught()
+    {
+        if (_inventory is null) return;
+
+        if (GetTree().GetFirstNodeInGroup("player") is not Node3D player
+            || player.GetNodeOrNull<Player.HealthFlask>("HealthFlask") is not { } flask)
+        {
+            return;
+        }
+
+        if (flask.Charges >= flask.MaxCharges)
+        {
+            Notify(L10n.T("The flask is already full."));
+            return;
+        }
+
+        if (!_inventory.Bag.TryConsume(Player.HealthFlask.DraughtId)) return;
+
+        flask.AddCharge();
+
+        Notify(L10n.F("Flask filled — {0} of {1} charges.", flask.Charges, flask.MaxCharges));
     }
 
     // ------------------------------------------------------------------ throwing things away

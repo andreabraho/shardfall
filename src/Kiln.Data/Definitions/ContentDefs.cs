@@ -91,7 +91,6 @@ public sealed class EnemyDef : ContentDefBase
     public EnemyRole Role { get; init; }
     public int Level { get; init; }
     public EnemyStatsDef Stats { get; init; } = new();
-    public double StaggerPool { get; init; }
     public AbilityDef[] Abilities { get; init; } = [];
     public string Ai { get; init; } = string.Empty;
     public double AggroRadius { get; init; }
@@ -196,7 +195,6 @@ public sealed class SkillDef : ContentDefBase
     public double Radius { get; init; }
     public double DamageCoef { get; init; }
     public int Hits { get; init; } = 1;
-    public double Stagger { get; init; }
 
     /// <summary>Seconds a buff or channel lasts. Zero for instant effects.</summary>
     public double Duration { get; init; }
@@ -237,7 +235,6 @@ public sealed class SkillRankDef
     public double? ManaCost { get; init; }
     public double? DamageCoef { get; init; }
     public int? Hits { get; init; }
-    public double? Stagger { get; init; }
     public double? Duration { get; init; }
     public double? Magnitude { get; init; }
 

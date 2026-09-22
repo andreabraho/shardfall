@@ -6,7 +6,6 @@
     "role": "bruiser",
     "level": 12,
     "stats": { "hp": 640, "attack_power": 58, "defense": 40, "move_speed": 6.1 },
-    "stagger_pool": 100,
     "abilities": [
       { "id": "abl_wolf_bite",  "cooldown": 2.4, "windup": 0.55, "damage_coef": 1.00 },
       { "id": "abl_wolf_lunge", "cooldown": 7.0, "windup": 1.50, "damage_coef": 1.60,
@@ -29,7 +28,6 @@
     "role": "archer",
     "level": 13,
     "stats": { "hp": 420, "attack_power": 66, "defense": 28, "move_speed": 4.8 },
-    "stagger_pool": 60,
     "abilities": [
       { "id": "abl_arrow_shot",  "cooldown": 2.0, "windup": 0.80, "damage_coef": 1.10, "range": 12.0 },
       { "id": "abl_arrow_volley","cooldown": 9.0, "windup": 1.60, "damage_coef": 1.40, "range": 11.0,
@@ -52,7 +50,6 @@
     "role": "shielder",
     "level": 14,
     "stats": { "hp": 980, "attack_power": 48, "defense": 72, "move_speed": 3.9 },
-    "stagger_pool": 180,
     "abilities": [
       { "id": "abl_warden_slam",  "cooldown": 3.2, "windup": 0.90, "damage_coef": 1.15,
         "applies": { "kind": "stun", "duration": 0.9, "chance": 0.35 } },
@@ -74,7 +71,6 @@
     "role": "mender",
     "level": 14,
     "stats": { "hp": 390, "attack_power": 34, "defense": 26, "move_speed": 4.4 },
-    "stagger_pool": 45,
     "abilities": [
       { "id": "abl_mend_ally",  "cooldown": 8.0, "windup": 1.40, "damage_coef": 0.00 },
       { "id": "abl_rot_bolt",   "cooldown": 5.5, "windup": 0.85, "damage_coef": 0.55, "range": 10.0,
@@ -96,7 +92,6 @@
     "role": "bomber",
     "level": 15,
     "stats": { "hp": 300, "attack_power": 120, "defense": 18, "move_speed": 6.6 },
-    "stagger_pool": 30,
     "abilities": [
       { "id": "abl_blight_detonate", "cooldown": 99.0, "windup": 2.40, "damage_coef": 3.20,
         "applies": { "kind": "poison", "magnitude": 12, "duration": 6.0 },

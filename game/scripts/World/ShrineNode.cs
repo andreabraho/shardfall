@@ -114,15 +114,21 @@ public partial class ShrineNode : Area3D
         if (body.IsInGroup("player")) _playerInside = false;
     }
 
-    /// <summary>Full health and a full flask. A shrine you have to heal at is not a rest point.</summary>
+    /// <summary>
+    /// Full health and mana. A shrine you have to heal at is not a rest point.
+    /// <para>
+    /// It does not touch the flask (REF-02): charges are poured from draughts bought at a
+    /// merchant, and a shrine that filled it for free would make the draughts pointless
+    /// everywhere a shrine is within walking distance — which is everywhere.
+    /// </para>
+    /// </summary>
     private static void Restore(Node3D player)
     {
         if (player.GetNodeOrNull<Combat.Combatant>("Combatant") is { } combatant)
         {
             combatant.Heal((int)combatant.Health.Max);
+            combatant.Mana.Fill();
         }
-
-        player.GetNodeOrNull<Player.HealthFlask>("HealthFlask")?.Refill();
     }
 
     public override void _UnhandledInput(InputEvent @event)

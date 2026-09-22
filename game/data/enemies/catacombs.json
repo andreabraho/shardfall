@@ -6,7 +6,6 @@
     "role": "bruiser",
     "level": 20,
     "stats": { "hp": 1360, "attack_power": 96, "defense": 74, "move_speed": 5.8 },
-    "stagger_pool": 160,
     "abilities": [
       { "id": "abl_stalker_rend", "cooldown": 2.2, "windup": 0.55, "damage_coef": 1.05,
         "applies": { "kind": "bleed", "magnitude": 14, "duration": 4.0 } },
@@ -29,7 +28,6 @@
     "role": "archer",
     "level": 21,
     "stats": { "hp": 930, "attack_power": 116, "defense": 50, "move_speed": 4.8 },
-    "stagger_pool": 85,
     "abilities": [
       { "id": "abl_void_lance", "cooldown": 2.0, "windup": 0.85, "damage_coef": 1.15, "range": 14.0 },
       { "id": "abl_void_collapse", "cooldown": 10.0, "windup": 2.10, "damage_coef": 1.55, "range": 13.0,
@@ -52,7 +50,6 @@
     "role": "shielder",
     "level": 22,
     "stats": { "hp": 2340, "attack_power": 84, "defense": 138, "move_speed": 3.6 },
-    "stagger_pool": 290,
     "abilities": [
       { "id": "abl_obsidian_slam", "cooldown": 3.4, "windup": 1.00, "damage_coef": 1.20,
         "applies": { "kind": "stun", "duration": 1.1, "chance": 0.35 } },
@@ -74,7 +71,6 @@
     "role": "mender",
     "level": 22,
     "stats": { "hp": 1250, "attack_power": 76, "defense": 58, "move_speed": 4.2 },
-    "stagger_pool": 105,
     "abilities": [
       { "id": "abl_choir_restore", "cooldown": 6.0, "windup": 1.55, "damage_coef": 0.00, "range": 12.0 },
       { "id": "abl_choir_wail", "cooldown": 3.0, "windup": 0.90, "damage_coef": 1.00, "range": 10.5 }
@@ -95,7 +91,6 @@
     "role": "bomber",
     "level": 23,
     "stats": { "hp": 1090, "attack_power": 160, "defense": 44, "move_speed": 5.2 },
-    "stagger_pool": 70,
     "abilities": [
       { "id": "abl_rift_collapse", "cooldown": 1.0, "windup": 2.45, "damage_coef": 2.20,
         "applies": { "kind": "poison", "magnitude": 22, "duration": 5.0 },
@@ -118,7 +113,6 @@
     "role": "bruiser",
     "level": 21,
     "stats": { "hp": 7400, "attack_power": 138, "defense": 96, "move_speed": 5.4 },
-    "stagger_pool": 620,
     "abilities": [
       { "id": "abl_warden_cleave", "cooldown": 4.5, "windup": 2.05, "damage_coef": 1.35,
         "telegraph": { "shape": "cone", "radius": 4.0, "angle": 100 } },
@@ -146,7 +140,6 @@
     "role": "archer",
     "level": 22,
     "stats": { "hp": 6100, "attack_power": 156, "defense": 72, "move_speed": 6.0 },
-    "stagger_pool": 460,
     "abilities": [
       { "id": "abl_chorister_lance", "cooldown": 2.4, "windup": 0.90, "damage_coef": 1.25, "range": 16.0 },
       { "id": "abl_chorister_descant", "cooldown": 8.0, "windup": 2.10, "damage_coef": 1.70, "range": 15.0,
@@ -172,7 +165,6 @@
     "role": "bruiser",
     "level": 23,
     "stats": { "hp": 11200, "attack_power": 172, "defense": 108, "move_speed": 5.9 },
-    "stagger_pool": 900,
     "abilities": [
       { "id": "abl_keeper_rend", "cooldown": 3.2, "windup": 1.70, "damage_coef": 1.30,
         "applies": { "kind": "bleed", "magnitude": 26, "duration": 5.0 },

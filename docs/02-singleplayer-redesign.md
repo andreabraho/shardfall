@@ -30,8 +30,8 @@ AoE), enemy damage, healing throughput, and enemy behaviour complexity.
 | Tier | Enemy HP | Enemy damage | AoE telegraph | Flask charges | Death penalty | Target player |
 |---|---|---|---|---|---|---|
 | **Wanderer** (story) | ×0.70 | ×0.55 | 2.0 s | 7 | none, respawn at shrine | wants the world and the story |
-| **Disciple** (normal) | ×1.00 | ×1.00 | 1.5 s | 5 | lose 10% carried yang | default |
-| **Adept** (hard) | ×1.45 | ×1.60 | 1.1 s | 4 | lose 25% yang, gear durability −15% | knows ARPGs |
+| **Disciple** (normal) | ×1.00 | ×1.00 | 1.5 s | 5 | lose 10% of the level's experience | default |
+| **Adept** (hard) | ×1.45 | ×1.60 | 1.1 s | 4 | lose 25% of the level's experience | knows ARPGs |
 | **Shardbound** (nightmare) | ×2.10 | ×2.40 | 0.85 s | 3 | above + no mid-dungeon checkpoints | post-campaign / NG+ |
 
 The telegraph column is the single most important number in the game. It must always be
@@ -104,10 +104,13 @@ Short cooldown (8–12 s), so it is a *reaction*, not a rotation filler. This re
 
 ### 2.3 Resource management replaces potion spam
 
-- **5-charge flask** (count per difficulty above), refilled at shrines and on zone entry,
-  instead of the original's stack-of-500 potions. This is the single most important change:
-  while a player can carry 500 potions, no encounter can ever threaten them, and every
-  difficulty lever we build is void.
+- **5-charge flask** (count per difficulty above), instead of the original's stack-of-500
+  potions. This is the single most important change: while a player can carry 500 potions, no
+  encounter can ever threaten them, and every difficulty lever we build is void.
+- **Charges are bought, not regained** (REF-02). Nothing refills the flask on its own — not
+  time out of combat, not a shrine, not dying. One *flask draught*, sold by any merchant,
+  pours one charge. This is what keeps yang worth earning after the gear you wanted is
+  bought, and it makes the flask the one resource the player can genuinely run out of.
 - Mana matters: skills cost real mana, and regeneration in combat is deliberately too slow to
   fund a rotation, so casting has an opportunity cost.
 - **Kills pay the mana back** (10% of the pool, nothing from enemies far below you). This is
@@ -407,7 +410,7 @@ same building twice.
 
 ## 11. Mounts, pets, cosmetics
 
-- **Mount**: unlocked mid Act 2; +80% move speed, a charge attack that staggers, dismounts on
+- **Mount**: unlocked mid Act 2; +80% move speed, a charge attack that knocks enemies aside, dismounts on
   heavy hit. Two more mounts as rewards.
 - **Pets**: 6, each a passive (loot magnet / +XP / +material find / auto-revive once per zone).
 - **Cosmetics**: full transmog, always cosmetic-only, earned from bosses, achievements,

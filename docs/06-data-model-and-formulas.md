@@ -160,11 +160,12 @@ reduction rather than to delete the stat.
 Every cap is enforced in `StatBlock` and covered by tests, so a bonus line with an absurd
 roll cannot quietly break the curve.
 
-### Stagger
+### Stagger — removed
 
-Enemies have `StaggerPool` (regenerates 8%/s out of combat). Designated skills apply stagger
-damage; filling the pool interrupts the current action and opens a **1.5 s vulnerable
-window** at ×1.35 damage. This is the melee goal that replaces dodge-punish timing.
+Stagger was cut in REF-02 (2026-09-22). Enemies no longer carry a stagger pool and skills no
+longer deal stagger damage. Control over a fight comes from Ground Slam's stun, Shield Bash's
+vulnerability and the sweeping fourth blow of the basic attack (REF-01) — one readable rule
+each, instead of an invisible bar the player has to infer.
 
 ---
 
@@ -261,7 +262,6 @@ meant to still be out of reach when the credits roll.
   "role": "bruiser",                   // bruiser|archer|shielder|mender|bomber
   "level": 12,
   "stats": { "hp": 640, "attack_power": 58, "defense": 40, "move_speed": 6.1 },
-  "stagger_pool": 100,
   "abilities": [
     { "id": "abl_bite",  "cooldown": 2.4, "windup": 0.55, "damage_coef": 1.0 },
     { "id": "abl_lunge", "cooldown": 7.0, "windup": 1.50, "damage_coef": 1.6,
@@ -296,7 +296,7 @@ many small ones. Shrink the radius if you want a faster attack.
   "class": "warrior", "tree": "body", "unlock_level": 14,
   "mana_cost": 32, "cooldown": 9.0, "cast_type": "instant",
   "targeting": "self_aoe", "radius": 4.5,
-  "damage_coef": 1.35, "hits": 3, "stagger": 25,
+  "damage_coef": 1.35, "hits": 3,
   "mastery": {
     "master":       { "hits": 4, "note": "$skill.whirlwind.m" },
     "grand_master": { "pull_enemies": true, "note": "$skill.whirlwind.g" },

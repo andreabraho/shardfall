@@ -311,6 +311,8 @@ public partial class PlayerCharacter : Node
 
         Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndPlayerDeath);
 
+        PayDeathCost();
+
         GD.Print($"[combat] player died — respawning at {(World.GameWorld.IsLoaded ? World.GameWorld.Travel.Anchor ?? "start" : "start")}");
         _motor.Stop();
 
@@ -322,8 +324,24 @@ public partial class PlayerCharacter : Node
         _motor.MovementLocked = false;
         _motor.Stop();
         _combatant.Revive();
+    }
 
-        // Respawning with an empty flask would just feed the next death.
-        GetParent().GetNodeOrNull<HealthFlask>("HealthFlask")?.Refill();
+    /// <summary>
+    /// What dying costs (REF-02): experience toward the current level, by difficulty. The
+    /// flask is not refilled — charges are bought, and a free refill would make dying the
+    /// cheapest way to fill it.
+    /// </summary>
+    private void PayDeathCost()
+    {
+        var share = GameSession.Difficulty.ExperienceLossOnDeath;
+        var lost = Progression.LoseExperience(share);
+
+        if (lost <= 0) return;
+
+        EmitSignal(SignalName.ExperienceChanged);
+
+        GD.Print($"[progression] death cost {lost} experience ({share:P0} of level {Progression.Level})");
+
+        UI.WorldNotice.Show(GetTree(), Kiln.Core.Foundation.L10n.F("Dying cost you {0} experience.", lost));
     }
 }

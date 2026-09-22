@@ -100,6 +100,49 @@ public class CharacterProgressionTests
     }
 
     [Fact]
+    public void Death_TakesAShareOfTheLevel()
+    {
+        // REF-02: the share is of the whole level, so the cost does not depend on how far
+        // along the bar happens to be.
+        var p = new CharacterProgression();
+        var level = ExperienceTable.ToNextLevel(1);
+
+        p.Grant(level - 1);
+
+        var lost = p.LoseExperience(0.10);
+
+        Assert.Equal((long)Math.Round(level * 0.10), lost);
+        Assert.Equal(level - 1 - lost, p.Experience);
+        Assert.Equal(1, p.Level);
+    }
+
+    [Fact]
+    public void Death_NeverTakesALevel()
+    {
+        var p = new CharacterProgression();
+
+        p.Grant(ExperienceTable.ToNextLevel(1));
+
+        // Straight after levelling the bar is empty: there is nothing to take, and the level
+        // just earned stays earned.
+        Assert.Equal(0, p.LoseExperience(0.25));
+        Assert.Equal(2, p.Level);
+        Assert.Equal(0, p.Experience);
+    }
+
+    [Fact]
+    public void Death_CostsNothingOnTheGentlestTier()
+    {
+        var p = new CharacterProgression();
+        p.Grant(ExperienceTable.ToNextLevel(1) / 2);
+
+        var before = p.Experience;
+
+        Assert.Equal(0, p.LoseExperience(DifficultySettings.Wanderer.ExperienceLossOnDeath));
+        Assert.Equal(before, p.Experience);
+    }
+
+    [Fact]
     public void Grant_KeepsTheRemainder()
     {
         var p = new CharacterProgression();
