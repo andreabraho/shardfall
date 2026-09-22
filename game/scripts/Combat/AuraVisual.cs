@@ -27,6 +27,7 @@ public partial class AuraVisual : Node3D
     private MeshInstance3D? _inner;
     private MeshInstance3D? _outer;
     private MeshInstance3D? _column;
+    private GpuParticles3D? _motes;
     private StandardMaterial3D? _ringMaterial;
     private StandardMaterial3D? _columnMaterial;
 
@@ -71,11 +72,90 @@ public partial class AuraVisual : Node3D
             Position = new Vector3(0, 1.05f, 0),
         };
 
+        _motes = Motes(colour);
+
         AddChild(_inner);
         AddChild(_outer);
         AddChild(_column);
+        AddChild(_motes);
 
         Visible = false;
+    }
+
+    /// <summary>
+    /// The embers that rise out of the ring.
+    /// </summary>
+    /// <remarks>
+    /// What turns two rings and a cylinder into an aura. Rings alone are geometry — they turn
+    /// at a constant rate and the eye stops reading them after a second. Something leaving the
+    /// ground at a slightly different time and speed each cycle is what makes the effect look
+    /// alive rather than drawn on.
+    /// </remarks>
+    private GpuParticles3D Motes(Color colour)
+    {
+        var process = new ParticleProcessMaterial
+        {
+            EmissionShape = ParticleProcessMaterial.EmissionShapeEnum.Ring,
+            EmissionRingRadius = Radius,
+            EmissionRingInnerRadius = Radius * 0.55f,
+            EmissionRingHeight = 0.05f,
+            EmissionRingAxis = Vector3.Up,
+            Direction = Vector3.Up,
+            Spread = 8f,
+            Gravity = new Vector3(0, 0.35f, 0),
+            InitialVelocityMin = 0.45f,
+            InitialVelocityMax = 1.0f,
+
+            // A slow turn around the character, so the motes spiral with the rings rather
+            // than rising in straight lines beside them.
+            OrbitVelocityMin = 0.12f,
+            OrbitVelocityMax = 0.28f,
+
+            ScaleMin = 0.5f,
+            ScaleMax = 1.0f,
+            Color = colour,
+        };
+
+        // Fades out as it climbs: a mote that vanished at full brightness would pop.
+        var fade = new Gradient();
+        fade.SetColor(0, colour with { A = 0f });
+        fade.SetColor(1, colour with { A = 0f });
+        fade.AddPoint(0.25f, colour with { A = 0.9f });
+
+        process.ColorRamp = new GradientTexture1D { Gradient = fade };
+
+        var scale = new Curve();
+        scale.AddPoint(new Vector2(0, 0.4f));
+        scale.AddPoint(new Vector2(0.3f, 1f));
+        scale.AddPoint(new Vector2(1, 0.1f));
+
+        process.ScaleCurve = new CurveTexture { Curve = scale };
+
+        return new GpuParticles3D
+        {
+            Name = "Motes",
+            Amount = 26,
+            Lifetime = 1.7,
+            Randomness = 0.6f,
+            ProcessMaterial = process,
+            DrawPass1 = new QuadMesh
+            {
+                Size = new Vector2(0.11f, 0.11f),
+                Material = new StandardMaterial3D
+                {
+                    ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
+                    Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
+                    BlendMode = BaseMaterial3D.BlendModeEnum.Add,
+                    BillboardMode = BaseMaterial3D.BillboardModeEnum.Enabled,
+                    VertexColorUseAsAlbedo = true,
+                    AlbedoColor = colour,
+                    CullMode = BaseMaterial3D.CullModeEnum.Disabled,
+                },
+            },
+            CastShadow = GeometryInstance3D.ShadowCastingSetting.Off,
+            Position = new Vector3(0, 0.05f, 0),
+            Emitting = false,
+        };
     }
 
     private static StandardMaterial3D Glow(Color colour, float alpha) => new()
@@ -111,6 +191,10 @@ public partial class AuraVisual : Node3D
         var wanted = _self.IsAlive && _self.Statuses.Has(Kind) ? 1f : 0f;
 
         _strength = Mathf.MoveToward(_strength, wanted, (float)delta * 3.2f);
+
+        // Emission stops the moment the buff does, so the last motes finish their climb
+        // instead of being cut off with the rings.
+        if (_motes is not null) _motes.Emitting = wanted > 0;
 
         if (_strength <= 0.01f)
         {
