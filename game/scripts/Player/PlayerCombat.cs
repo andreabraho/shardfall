@@ -30,9 +30,9 @@ namespace Kiln.Game.Player;
 /// keeps striking on the same timer.
 /// </para>
 /// <para>
-/// Every fourth blow sweeps: the same damage, but everything it catches is thrown back, and the
-/// arc is drawn on the ground so the sweep can be seen coming. A boss is too heavy to move and
-/// only takes the hit.
+/// Every fourth blow sweeps: the same damage, but everything it catches is thrown back. It is
+/// read from the creatures flying, not from a shape on the ground. A boss is too heavy to move
+/// and only takes the hit.
 /// </para>
 /// </remarks>
 public partial class PlayerCombat : Node
@@ -295,8 +295,6 @@ public partial class PlayerCombat : Node
         _blow++;
 
         var sweeps = _blow % SweepEvery == 0;
-
-        if (sweeps) AoeVisual.Cone(origin, forward.Normalized(), reach, ArcDegrees);
 
         var landed = 0;
         var thrown = 0;
