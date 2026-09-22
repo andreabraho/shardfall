@@ -64,6 +64,7 @@ public static class GameActions
     public const string DebugToggleRespawn = "debug_toggle_respawn";
     public const string DebugGrantResources = "debug_grant_resources";
     public const string DebugCompleteQuests = "debug_complete_quests";
+    public const string DebugGrantLevel = "debug_grant_level";
     public const string DebugGrantSkillPoints = "debug_grant_skill_points";
     public const string DebugCycleMastery = "debug_cycle_mastery";
 
@@ -117,6 +118,7 @@ public static class GameActions
         [DebugToggleRespawn] = [Key(Godot.Key.F7)],
         [DebugGrantResources] = [Key(Godot.Key.F8)],
         [DebugCompleteQuests] = [Key(Godot.Key.F9)],
+        [DebugGrantLevel] = [Key(Godot.Key.F1)],
         [DebugGrantSkillPoints] = [Key(Godot.Key.F2)],
         [DebugCycleMastery] = [Key(Godot.Key.F4)],
         [QuickSave] = [Key(Godot.Key.F10)],

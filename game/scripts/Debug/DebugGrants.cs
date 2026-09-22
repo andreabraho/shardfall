@@ -5,7 +5,8 @@ using Kiln.Game.Items;
 namespace Kiln.Game.Debug;
 
 /// <summary>
-/// Hands the player the yang and materials a system needs to be exercised (F8).
+/// Hands the player what a system needs to be exercised: yang and materials (F8), and a
+/// level at a time (F1).
 /// </summary>
 /// <remarks>
 /// The upgrade ladder cannot be judged on a starting purse: reaching the first fallible rung
@@ -45,11 +46,18 @@ public partial class DebugGrants : Node
             return;
         }
 
-        GD.Print("[debug] F8 grants test yang and crafting materials");
+        GD.Print("[debug] F1 grants a level · F8 grants test yang and crafting materials");
     }
 
     public override void _UnhandledInput(InputEvent @event)
     {
+        if (@event.IsActionPressed(GameActions.DebugGrantLevel))
+        {
+            GetViewport().SetInputAsHandled();
+            GrantLevel();
+            return;
+        }
+
         if (!@event.IsActionPressed(GameActions.DebugGrantResources)) return;
 
         GetViewport().SetInputAsHandled();
@@ -73,5 +81,37 @@ public partial class DebugGrants : Node
 
         GD.Print($"[debug] granted {Yang:N0} yang and {Kit.Length - refused}/{Kit.Length} material stacks"
             + (refused > 0 ? " — bag is full" : ""));
+    }
+
+    /// <summary>
+    /// Exactly the experience the next level still wants, so one press is one level.
+    /// </summary>
+    /// <remarks>
+    /// Granted through the character rather than written onto the progression, so everything a
+    /// real level-up does happens too: the stat block is rebuilt, health and mana fill, the
+    /// points land and the level-up is announced. A level that skipped all that would be a
+    /// level the game has never actually seen.
+    /// </remarks>
+    private void GrantLevel()
+    {
+        if (GetTree().GetFirstNodeInGroup("player") is not Node player) return;
+
+        var character = player.GetNodeOrNull<Player.PlayerCharacter>("PlayerCharacter");
+
+        if (character is null) return;
+
+        if (character.Progression.IsMaxLevel)
+        {
+            GD.Print($"[debug] already at the cap (level {character.Progression.Level})");
+            return;
+        }
+
+        var owed = character.Progression.ExperienceForNextLevel - character.Progression.Experience;
+
+        character.GrantExperience(System.Math.Max(1, owed));
+
+        GD.Print($"[debug] level {character.Progression.Level}"
+            + $" — {character.Progression.UnspentAttributePoints} attribute and"
+            + $" {character.Progression.UnspentSkillPoints} skill points unspent");
     }
 }
