@@ -128,7 +128,10 @@ public partial class AoeVisual : Node3D
         // A mastered skill burns in its rank's colour, and a little brighter with it: the
         // work that went into a skill should be visible in what it does, not only in its
         // tooltip (REF-03).
-        var color = Visual.MasteryStyle.Tint(hostile ? HostileColor : FriendlyColor, rank);
+        // Warmed toward the rank's second colour, so a Perfect skill throws a violet flash
+        // with gold in it rather than the flat violet of Grand Master.
+        var own = hostile ? HostileColor : FriendlyColor;
+        var color = Visual.MasteryStyle.Tint(own, rank).Lerp(Visual.MasteryStyle.Accent(own, rank), 0.3f);
         var material = (StandardMaterial3D)mesh.MaterialOverride;
         material.AlbedoColor = color;
 

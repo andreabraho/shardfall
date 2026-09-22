@@ -68,6 +68,9 @@ public partial class AuraVisual : Node3D
 
     private Color Tint => MasteryStyle.Tint(Base, Rank);
 
+    /// <summary>What the gear burns: the same colour, except at Perfect, where it is gold.</summary>
+    private Color GearTint => MasteryStyle.Accent(Base, Rank);
+
     public override void _Ready()
     {
         _self = GetParent().GetNodeOrNull<Combatant>("Combatant");
@@ -257,7 +260,7 @@ public partial class AuraVisual : Node3D
     {
         if (_glowMaterial is null) return;
 
-        _glowMaterial.AlbedoColor = Tint with { A = alpha };
+        _glowMaterial.AlbedoColor = GearTint with { A = alpha };
 
         for (var i = _lit.Count - 1; i >= 0; i--)
         {
