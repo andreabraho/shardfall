@@ -226,7 +226,7 @@ public partial class CharacterPanel : CanvasLayer
 
         var note = new Label
         {
-            Text = L10n.T("Skill points are spent from the skill screen (V). A skill masters at seven points and ranks up further by being used."),
+            Text = L10n.T("Skill points are spent from the skill screen (K). A skill masters at seven points and ranks up further by being used."),
             AutowrapMode = TextServer.AutowrapMode.WordSmart,
         };
 
@@ -381,7 +381,7 @@ public partial class CharacterPanel : CanvasLayer
             var progress = new Label
             {
                 Text = "      " + (book.NextRankCostsPoints(def.Id)
-                    ? L10n.F("{0} more points to master it (V)", toNext)
+                    ? L10n.F("{0} more points to master it (K)", toNext)
                     : L10n.F("{0} more uses to rank up", toNext)),
             };
             progress.AddThemeFontSizeOverride("font_size", 11);

@@ -219,7 +219,7 @@ public partial class SkillCaster : Node
 
         if (_book is null || !_book.IsUnlocked(skillId))
         {
-            GD.Print($"[skill] {skillId} not learned — spend a point on it with V");
+            GD.Print($"[skill] {skillId} not learned — spend a point on it with K");
             return;
         }
 

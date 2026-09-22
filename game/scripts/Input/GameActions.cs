@@ -106,7 +106,7 @@ public static class GameActions
         [ToggleInventory] = [Key(Godot.Key.I)],
         [ToggleUpgradeBench] = [Key(Godot.Key.U)],
         [ToggleCharacter] = [Key(Godot.Key.C)],
-        [ToggleSkills] = [Key(Godot.Key.V)],
+        [ToggleSkills] = [Key(Godot.Key.K)],
         [ToggleMap] = [Key(Godot.Key.M)],
         [Interact] = [Key(Godot.Key.F)],
         [RevealLabels] = [Key(Godot.Key.Alt)],

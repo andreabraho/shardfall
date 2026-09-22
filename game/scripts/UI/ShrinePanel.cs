@@ -363,7 +363,7 @@ public partial class ShrinePanel : CanvasLayer
         _character.Progression.Respec(skills);
         _character.RefreshStats();
 
-        _status.Text = L10n.F("Returned {0} attribute point(s) and {1} skill point(s). Place them from the character sheet (C) and the skill screen (V).",
+        _status.Text = L10n.F("Returned {0} attribute point(s) and {1} skill point(s). Place them from the character sheet (C) and the skill screen (K).",
             attributes, skills);
 
         RefreshRespec();

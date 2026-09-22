@@ -76,7 +76,7 @@ public partial class SkillSlot : Control
 
         TooltipText = book.IsUnlocked(SkillId)
             ? $"{SkillText.Title(def, book)}   [{_key}]\n" + SkillText.Describe(def, book)
-            : $"{_name}   [{_key}]\n" + L10n.T("Not learned. Spend a skill point on it with V.");
+            : $"{_name}   [{_key}]\n" + L10n.T("Not learned. Spend a skill point on it with K.");
     }
 
     public void Present(bool learned, double remaining, double total, bool affordable, bool active, MasteryRank rank)
