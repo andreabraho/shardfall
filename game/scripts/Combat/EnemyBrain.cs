@@ -986,11 +986,11 @@ public partial class EnemyBrain : CharacterBody3D
     /// </summary>
     /// <remarks>
     /// Low on purpose. At full strength a walking player bulldozes a pack around the field —
-    /// a fight where the enemies can be herded by running at them is not a fight. At a fifth
-    /// the player still oozes out of anything standing inside them, over about a second, but
-    /// cannot move a creature that is not already overlapping them.
+    /// a fight where the enemies can be herded by running at them is not a fight. At a twelfth the
+    /// player still works their way out of anything standing inside them, but a creature being
+    /// walked at holds its ground.
     /// </remarks>
-    [Export] public float PlayerPushShare { get; set; } = 0.2f;
+    [Export] public float PlayerPushShare { get; set; } = 0.08f;
 
     private Vector3 _separation;
     private int _separationTick;
