@@ -29,6 +29,11 @@ namespace Kiln.Game.Player;
 /// Space, with no click, strikes in front of the character once, without locking on. Held, it
 /// keeps striking on the same timer.
 /// </para>
+/// <para>
+/// Every fourth blow sweeps: the same damage, but everything it catches is thrown back, and the
+/// arc is drawn on the ground so the sweep can be seen coming. A boss is too heavy to move and
+/// only takes the hit.
+/// </para>
 /// </remarks>
 public partial class PlayerCombat : Node
 {
@@ -40,6 +45,22 @@ public partial class PlayerCombat : Node
 
     /// <summary>How wide the blow sweeps in front of the Warrior. Everything inside is hit.</summary>
     private const float ArcDegrees = 120f;
+
+    /// <summary>One blow in four throws back what it hits.</summary>
+    private const int SweepEvery = 4;
+
+    [Export] public float SweepSpeed { get; set; } = 11f;
+
+    [Export] public double SweepSeconds { get; set; } = 0.35;
+
+    /// <summary>Blows thrown in this fight. Every fourth one sweeps.</summary>
+    private int _blow;
+
+    /// <summary>Seconds since the last blow. Long enough, and the count starts again.</summary>
+    private double _idleFor;
+
+    /// <summary>A pause this long means the next blow opens a new fight, and a new count.</summary>
+    private const double ForgetAfter = 2.5;
 
     private readonly AttackCycle _cycle = new();
 
@@ -158,6 +179,8 @@ public partial class PlayerCombat : Node
             return;
         }
 
+        _idleFor += delta;
+
         FollowTarget();
     }
 
@@ -204,6 +227,11 @@ public partial class PlayerCombat : Node
 
         if (windup <= 0) return;
 
+        // A fresh fight starts its count at one, so the sweep never lands on the first blow
+        // just because of how the last fight happened to end.
+        if (_idleFor > ForgetAfter) _blow = 0;
+
+        _idleFor = 0;
         _swingTarget = victim;
 
         _motor.Stop();
@@ -264,9 +292,36 @@ public partial class PlayerCombat : Node
             if (other.IsAlive && !victims.Contains(other)) victims.Add(other);
         }
 
+        _blow++;
+
+        var sweeps = _blow % SweepEvery == 0;
+
+        if (sweeps) AoeVisual.Cone(origin, forward.Normalized(), reach, ArcDegrees);
+
+        var landed = 0;
+        var thrown = 0;
+
         foreach (var victim in victims)
         {
-            if (LineOfSight(victim.Body)) victim.TakeAttack(_self);
+            if (!LineOfSight(victim.Body)) continue;
+
+            landed++;
+            victim.TakeAttack(_self);
+
+            // Thrown back, unless it is a boss: the sweep is crowd control, not a way to
+            // shove a boss out of its own arena.
+            if (sweeps && victim.Body is EnemyBrain brain && brain.StunResist < 1)
+            {
+                brain.Shove(origin, SweepSpeed, SweepSeconds);
+                thrown++;
+            }
+        }
+
+        // Debug builds only: enough to see the rhythm and the sweep in the console while playing.
+        if (OS.IsDebugBuild())
+        {
+            GD.Print($"[combat] blow {_blow}{(sweeps ? " — sweep" : "")}: {landed} hit"
+                + (sweeps ? $", {thrown} thrown back" : ""));
         }
     }
 
