@@ -981,6 +981,17 @@ public partial class EnemyBrain : CharacterBody3D
     /// <summary>The hardest a crowded creature is pushed, in metres per second.</summary>
     [Export] public float SeparationPush { get; set; } = 2.0f;
 
+    /// <summary>
+    /// How much of that push the player is worth, against a creature's own kind.
+    /// </summary>
+    /// <remarks>
+    /// Low on purpose. At full strength a walking player bulldozes a pack around the field —
+    /// a fight where the enemies can be herded by running at them is not a fight. At a fifth
+    /// the player still oozes out of anything standing inside them, over about a second, but
+    /// cannot move a creature that is not already overlapping them.
+    /// </remarks>
+    [Export] public float PlayerPushShare { get; set; } = 0.2f;
+
     private Vector3 _separation;
     private int _separationTick;
 
@@ -1019,8 +1030,9 @@ public partial class EnemyBrain : CharacterBody3D
 
     private Vector3 CrowdPush()
     {
-        // The player counts as a neighbour. Creatures do not collide with them either, so
-        // without this a whole pack stands inside the player's own capsule.
+        // The player counts as a neighbour, but barely: creatures do not collide with them
+        // either, so without this a whole pack stands inside the player's own capsule — and
+        // with it at full strength the player shoves the pack around by walking.
         var crowd = AreaQuery.Sphere(this, GlobalPosition, SeparationRadius,
             Foundation.Layers.Enemy | Foundation.Layers.Player);
 
@@ -1035,6 +1047,8 @@ public partial class EnemyBrain : CharacterBody3D
 
             if (distance >= SeparationRadius) continue;
 
+            var weight = other.Body.IsInGroup("player") ? PlayerPushShare : 1f;
+
             if (distance < 0.05f)
             {
                 // Exactly on top of each other gives no direction to push along. Derived
@@ -1042,12 +1056,12 @@ public partial class EnemyBrain : CharacterBody3D
                 // their own way out instead of both choosing the same one every frame.
                 var angle = (GetInstanceId() % 360) * Mathf.Pi / 180f;
 
-                push += new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle));
+                push += new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) * weight;
                 continue;
             }
 
             // Nothing at the edge of the radius, everything at the centre of it.
-            push += away / distance * (1f - (distance / SeparationRadius));
+            push += away / distance * (1f - (distance / SeparationRadius)) * weight;
         }
 
         return push == Vector3.Zero ? Vector3.Zero : push.LimitLength(1f) * SeparationPush;
