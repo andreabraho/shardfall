@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Godot;
 using Kiln.Core.Combat;
+using Kiln.Core.Progression;
+using Kiln.Game.Visual;
 
 namespace Kiln.Game.Combat;
 
@@ -14,6 +16,11 @@ namespace Kiln.Game.Combat;
 /// for Iron Skin, with a low ring and a few embers at the feet to say where it comes from. The
 /// colour says which buff it is, gold for the blade and steel-blue for the skin, and both can
 /// be worn at once, which is why it is one node per status rather than one that switches.
+/// <para>
+/// Mastery is written into it. The rank shifts the colour — amber at Master, violet at Grand
+/// Master, a white-gold at Perfect — and adds embers, width and brightness with it, so a skill
+/// six hundred casts deep does not look like the one bought this morning.
+/// </para>
 /// <para>
 /// It watches the status set instead of being switched on by the cast. A buff that expired,
 /// was cleansed or was overwritten then takes its aura with it without anything having to
@@ -37,8 +44,12 @@ public partial class AuraVisual : Node3D
 
     private readonly List<GeometryInstance3D> _lit = [];
 
+    /// <summary>Embers an unranked aura throws off. Mastery adds to this.</summary>
+    private const int BaseEmbers = 22;
+
     private Combatant? _self;
     private Node3D? _model;
+    private MasteryRank? _shown;
     private double _spin;
     private float _strength;
 
@@ -47,7 +58,15 @@ public partial class AuraVisual : Node3D
 
     [Export] public float Radius { get; set; } = 0.85f;
 
-    private Color Tint => Kind == StatusKind.Fortify ? Skin : Blade;
+    /// <summary>
+    /// The rank of the skill that put this buff up, set by the caster at the moment of the
+    /// cast. It decides the colour and how loud the whole thing is (REF-03).
+    /// </summary>
+    public MasteryRank Rank { get; set; } = MasteryRank.Normal;
+
+    private Color Base => Kind == StatusKind.Fortify ? Skin : Blade;
+
+    private Color Tint => MasteryStyle.Tint(Base, Rank);
 
     public override void _Ready()
     {
@@ -156,7 +175,7 @@ public partial class AuraVisual : Node3D
         return new GpuParticles3D
         {
             Name = "Motes",
-            Amount = 22,
+            Amount = BaseEmbers,
             Lifetime = 1.3,
             Randomness = 0.6f,
             ProcessMaterial = process,
@@ -254,9 +273,62 @@ public partial class AuraVisual : Node3D
         }
     }
 
+    /// <summary>
+    /// Re-colours everything for the rank now in force.
+    /// </summary>
+    /// <remarks>
+    /// Called when the rank changes rather than every frame: the particle material is shared
+    /// by every mote alive, and rewriting it each frame would restate the same colour sixty
+    /// times a second for a value that changes twice a campaign.
+    /// </remarks>
+    private void Restyle()
+    {
+        if (_shown == Rank) return;
+
+        _shown = Rank;
+
+        var colour = Tint;
+
+        if (_ringMaterial is not null) _ringMaterial.AlbedoColor = colour with { A = 0.5f };
+
+        if (_motes?.ProcessMaterial is ParticleProcessMaterial process)
+        {
+            process.Color = colour;
+
+            // Three stops, in the order the gradient sorts them: dark off the ground, bright
+            // at a third of the way up, gone by the end.
+            if (process.ColorRamp is GradientTexture1D ramp && ramp.Gradient is { } gradient && gradient.Offsets.Length == 3)
+            {
+                gradient.SetColor(0, colour with { A = 0f });
+                gradient.SetColor(1, colour with { A = 0.85f });
+                gradient.SetColor(2, colour with { A = 0f });
+            }
+        }
+
+        if (_motes?.DrawPass1 is QuadMesh quad && quad.Material is StandardMaterial3D mote)
+        {
+            mote.AlbedoColor = colour;
+        }
+
+        // A mastered aura throws off more of everything: more embers, further out, and the
+        // rings sit wider. This is the part the player reads across a field.
+        if (_motes is not null)
+        {
+            _motes.Amount = BaseEmbers + MasteryStyle.Embers(Rank);
+            _motes.Lifetime = 1.3 + (MasteryStyle.Brightness(Rank) - 1f) * 0.5;
+        }
+
+        var spread = MasteryStyle.Flourish(Rank);
+
+        if (_inner is not null) _inner.Scale = Vector3.One * spread;
+        if (_outer is not null) _outer.Scale = Vector3.One * spread;
+    }
+
     public override void _Process(double delta)
     {
         if (_self is null || _inner is null || _outer is null) return;
+
+        Restyle();
 
         // Fades in and out rather than snapping, so the end of a buff is something the eye
         // catches instead of a frame where it was simply gone.
@@ -287,17 +359,22 @@ public partial class AuraVisual : Node3D
 
         var pulse = 1f + (Mathf.Sin((float)_spin * 3.0f) * 0.05f);
 
-        _inner.Scale = Vector3.One * pulse * _strength;
-        _outer.Scale = Vector3.One * (2f - pulse) * _strength;
+        var spread = MasteryStyle.Flourish(Rank);
+
+        _inner.Scale = Vector3.One * pulse * _strength * spread;
+        _outer.Scale = Vector3.One * (2f - pulse) * _strength * spread;
+
+        var glow = MasteryStyle.Brightness(Rank);
 
         if (_ringMaterial is not null)
         {
-            _ringMaterial.AlbedoColor = Tint with { A = 0.5f * _strength };
+            _ringMaterial.AlbedoColor = Tint with { A = Mathf.Min(0.95f, 0.5f * glow) * _strength };
         }
 
         // The gear breathes a little harder than the rings: it is the part being looked at.
+        // A Perfect skill breathes hardest, and never quite goes dim between beats.
         var breath = 0.5f + (Mathf.Sin((float)_spin * 3.4f) * 0.16f);
 
-        Light(breath * _strength * (Kind == StatusKind.Fortify ? 0.5f : 1f));
+        Light(Mathf.Min(1f, breath * glow) * _strength * (Kind == StatusKind.Fortify ? 0.5f : 1f));
     }
 }

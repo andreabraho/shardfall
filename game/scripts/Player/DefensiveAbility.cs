@@ -111,6 +111,10 @@ public partial class DefensiveAbility : Node
 
         Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndGuard);
 
+        // The dome wears the rank the guard is held at (REF-03).
+        _visual.Rank = GetParent().GetNodeOrNull<PlayerCharacter>("PlayerCharacter")?.Skills.RankOf(SkillId)
+            ?? Kiln.Core.Progression.MasteryRank.Normal;
+
         _active = values.Duration;
         _cooldown = values.Cooldown;
         CooldownTotal = System.Math.Max(0.01, values.Cooldown);

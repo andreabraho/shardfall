@@ -22,6 +22,14 @@ public partial class GuardVisual : Node3D
     private bool _active;
 
     [Export] public Color Color { get; set; } = new(0.45f, 0.75f, 1f);
+
+    /// <summary>
+    /// The rank Guard Stance is held at. It colours the dome and brightens it, so a mastered
+    /// guard is visibly a mastered guard (REF-03).
+    /// </summary>
+    public Kiln.Core.Progression.MasteryRank Rank { get; set; } = Kiln.Core.Progression.MasteryRank.Normal;
+
+    private Color Tint => Visual.MasteryStyle.Tint(Color, Rank);
     [Export] public float Radius { get; set; } = 1.05f;
 
     /// <summary>Resting opacity. Low: it must read clearly without hiding the fight.</summary>
@@ -31,7 +39,7 @@ public partial class GuardVisual : Node3D
     {
         _material = new StandardMaterial3D
         {
-            AlbedoColor = Color with { A = 0f },
+            AlbedoColor = Tint with { A = 0f },
             ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
             Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
             // Both faces: the player stands inside the dome and must still see the far side.
@@ -86,7 +94,7 @@ public partial class GuardVisual : Node3D
         if (!_active && _scale <= 0.01f)
         {
             Visible = false;
-            _material.AlbedoColor = Color with { A = 0f };
+            _material.AlbedoColor = Tint with { A = 0f };
             return;
         }
 
@@ -95,6 +103,8 @@ public partial class GuardVisual : Node3D
         var pulse = BaseAlpha + (0.05f * (float)Mathf.Sin(_pulse));
         var flash = _flash > 0 ? 0.45f * (float)(_flash / 0.18) : 0f;
 
-        _material.AlbedoColor = Color with { A = (pulse + flash) * _scale };
+        var glow = Visual.MasteryStyle.Brightness(Rank);
+
+        _material.AlbedoColor = Tint with { A = Mathf.Min(0.85f, (pulse + flash) * glow) * _scale };
     }
 }

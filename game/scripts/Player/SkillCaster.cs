@@ -389,6 +389,13 @@ public partial class SkillCaster : Node
             return;
         }
 
+        // The aura wears the rank of the cast that raised it, so a mastered buff is a
+        // different colour on the ground and on the blade (REF-03).
+        if (_motor.GetNodeOrNull<Combat.AuraVisual>($"Aura{effect.Kind}") is { } aura)
+        {
+            aura.Rank = skill.Rank;
+        }
+
         _self.Statuses.Apply(effect);
     }
 
@@ -412,22 +419,30 @@ public partial class SkillCaster : Node
         {
             case SkillTargeting.SelfAoe:
                 targets = AreaQuery.Sphere(_motor, center, (float)skill.Radius);
-                AoeVisual.Circle(center, (float)skill.Radius);
+                AoeVisual.Circle(center, (float)skill.Radius, hostile: false, skill.Rank);
                 break;
 
             case SkillTargeting.Cone:
                 targets = AreaQuery.Cone(_motor, center, pulse.Aim, (float)skill.Radius, (float)skill.ConeAngle);
-                AoeVisual.Cone(center, pulse.Aim, (float)skill.Radius, (float)skill.ConeAngle);
+                AoeVisual.Cone(center, pulse.Aim, (float)skill.Radius, (float)skill.ConeAngle, hostile: false, skill.Rank);
                 break;
 
             case SkillTargeting.GroundAoe:
                 targets = AreaQuery.Sphere(_motor, center, (float)skill.Radius);
-                AoeVisual.Circle(center, (float)skill.Radius);
+                AoeVisual.Circle(center, (float)skill.Radius, hostile: false, skill.Rank);
                 break;
 
             case SkillTargeting.SingleTarget:
                 var single = GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat")?.Target;
                 targets = single is { IsAlive: true } ? [single] : [];
+
+                // A ring under the one target it lands on. Small, but it is what carries the
+                // rank colour for the skills that cover no ground (REF-03).
+                if (targets.Count > 0)
+                {
+                    AoeVisual.Circle(targets[0].Body.GlobalPosition, 0.9f, hostile: false, skill.Rank);
+                }
+
                 break;
 
             default:

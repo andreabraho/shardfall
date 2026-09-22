@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Godot;
+using Kiln.Core.Progression;
 
 namespace Kiln.Game.Combat;
 
@@ -21,6 +22,9 @@ public partial class AoeVisual : Node3D
         public required MeshInstance3D Mesh { get; init; }
         public required StandardMaterial3D Material { get; init; }
         public required Color Color { get; init; }
+
+        /// <summary>Rank multiplier on how solid the flash is drawn.</summary>
+        public float Brightness { get; init; } = 1f;
         public required float Radius { get; init; }
         public double Elapsed { get; set; }
     }
@@ -93,14 +97,17 @@ public partial class AoeVisual : Node3D
     }
 
     /// <summary>A filled circle centred on a point.</summary>
-    public static void Circle(Vector3 center, float radius, bool hostile = false)
-        => _instance?.Spawn(center, radius, Vector3.Zero, 360f, hostile);
+    public static void Circle(Vector3 center, float radius, bool hostile = false,
+        MasteryRank rank = MasteryRank.Normal)
+        => _instance?.Spawn(center, radius, Vector3.Zero, 360f, hostile, rank);
 
     /// <summary>A wedge opening along <paramref name="forward"/>.</summary>
-    public static void Cone(Vector3 origin, Vector3 forward, float radius, float angleDegrees, bool hostile = false)
-        => _instance?.Spawn(origin, radius, forward, angleDegrees, hostile);
+    public static void Cone(Vector3 origin, Vector3 forward, float radius, float angleDegrees,
+        bool hostile = false, MasteryRank rank = MasteryRank.Normal)
+        => _instance?.Spawn(origin, radius, forward, angleDegrees, hostile, rank);
 
-    private void Spawn(Vector3 origin, float radius, Vector3 forward, float angleDegrees, bool hostile)
+    private void Spawn(Vector3 origin, float radius, Vector3 forward, float angleDegrees, bool hostile,
+        MasteryRank rank)
     {
         var mesh = Rent();
 
@@ -118,12 +125,23 @@ public partial class AoeVisual : Node3D
             mesh.Rotation = Vector3.Zero;
         }
 
-        var color = hostile ? HostileColor : FriendlyColor;
+        // A mastered skill burns in its rank's colour, and a little brighter with it: the
+        // work that went into a skill should be visible in what it does, not only in its
+        // tooltip (REF-03).
+        var color = Visual.MasteryStyle.Tint(hostile ? HostileColor : FriendlyColor, rank);
         var material = (StandardMaterial3D)mesh.MaterialOverride;
         material.AlbedoColor = color;
 
         mesh.Visible = true;
-        _active.Add(new Flash { Mesh = mesh, Material = material, Color = color, Radius = radius });
+
+        _active.Add(new Flash
+        {
+            Mesh = mesh,
+            Material = material,
+            Color = color,
+            Radius = radius,
+            Brightness = Visual.MasteryStyle.Brightness(rank),
+        });
     }
 
     private MeshInstance3D Rent()
@@ -174,7 +192,10 @@ public partial class AoeVisual : Node3D
             // at the moment of the hit, not watch it grow afterwards.
             var scale = Mathf.Lerp(0.85f, 1.05f, t);
             flash.Mesh.Scale = new Vector3(scale, 1, scale);
-            flash.Material.AlbedoColor = flash.Color with { A = 0.45f * (1f - t) };
+            flash.Material.AlbedoColor = flash.Color with
+            {
+                A = Mathf.Min(0.9f, 0.45f * flash.Brightness) * (1f - t),
+            };
         }
     }
 }
