@@ -336,7 +336,7 @@ public partial class ShrinePanel : CanvasLayer
     };
 
     /// <summary>
-    /// Refunds attribute points, and only attribute points.
+    /// Refunds every point the player has placed: attributes, and since REF-03 skills too.
     /// </summary>
     /// <remarks>
     /// Free, per FR-2.6 and the reasoning already recorded on
@@ -344,23 +344,27 @@ public partial class ShrinePanel : CanvasLayer
     /// build is fixed by rolling another character, but offline it is a ruined save, so a
     /// price on respec only taxes the experimenting the build system exists to invite.
     /// <para>
-    /// Skills are left alone. They unlock automatically at their level and the curve grants
-    /// far more points than the tree can absorb, so wiping them would refund a currency with
-    /// nothing to buy and leave the player skill-less until their next level-up.
+    /// Skills come back with them now that points buy skills rather than levels handing them
+    /// out: a build that went seven points deep into Whirlwind is exactly the kind of decision
+    /// a player should be able to take back, and it is the same decision as an attribute
+    /// spread. The character walks away from the shrine with no skills at all until the points
+    /// are placed again, which is why it is worded plainly before it happens.
     /// </para>
     /// </remarks>
     private void DoRespec()
     {
         if (_character is null) return;
 
-        var returned = _character.Progression.Assigned.Total;
+        var attributes = _character.Progression.Assigned.Total;
+        var skills = _character.Skills.Refund();
 
-        if (returned == 0) return;
+        if (attributes == 0 && skills == 0) return;
 
-        _character.Progression.Respec();
+        _character.Progression.Respec(skills);
         _character.RefreshStats();
 
-        _status.Text = L10n.F("Returned {0} attribute point(s). Place them from the character sheet (C).", returned);
+        _status.Text = L10n.F("Returned {0} attribute point(s) and {1} skill point(s). Place them from the character sheet (C) and the skill screen (V).",
+            attributes, skills);
 
         RefreshRespec();
     }

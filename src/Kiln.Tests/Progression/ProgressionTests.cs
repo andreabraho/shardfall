@@ -85,7 +85,8 @@ public class CharacterProgressionTests
         Assert.Single(levels);
         Assert.Equal(2, p.Level);
         Assert.Equal(CharacterProgression.AttributePointsPerLevel, p.UnspentAttributePoints);
-        Assert.Equal(CharacterProgression.SkillPointsPerLevel, p.UnspentSkillPoints);
+        Assert.Equal(CharacterProgression.StartingSkillPoints + CharacterProgression.SkillPointsPerLevel,
+            p.UnspentSkillPoints);
     }
 
     [Fact]
@@ -194,6 +195,9 @@ public class CharacterProgressionTests
     public void CannotSpendPointsYouDoNotHave()
     {
         var p = new CharacterProgression();
+
+        // A new character holds one skill point and no attribute points (REF-03).
+        Assert.True(p.SpendSkillPoint());
 
         Assert.False(p.SpendAttributePoint(AttributeKind.Str));
         Assert.False(p.SpendSkillPoint());

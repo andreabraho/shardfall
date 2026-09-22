@@ -116,16 +116,16 @@ public static class Ids
 
     public static class Skills
     {
+        public const string SklBladeAura = "skl_blade_aura";
         public const string SklCleave = "skl_cleave";
         public const string SklGroundSlam = "skl_ground_slam";
         public const string SklGuardStance = "skl_guard_stance";
         public const string SklHeavyStrike = "skl_heavy_strike";
         public const string SklIronSkin = "skl_iron_skin";
-        public const string SklRallyCry = "skl_rally_cry";
         public const string SklShieldBash = "skl_shield_bash";
         public const string SklWhirlwind = "skl_whirlwind";
 
-        public static readonly string[] All = ["skl_cleave", "skl_ground_slam", "skl_guard_stance", "skl_heavy_strike", "skl_iron_skin", "skl_rally_cry", "skl_shield_bash", "skl_whirlwind"];
+        public static readonly string[] All = ["skl_blade_aura", "skl_cleave", "skl_ground_slam", "skl_guard_stance", "skl_heavy_strike", "skl_iron_skin", "skl_shield_bash", "skl_whirlwind"];
     }
 
     public static class Quests

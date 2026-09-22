@@ -32,6 +32,7 @@ public static class GameActions
     public const string Skill4 = "skill_4";
     public const string Skill5 = "skill_5";
     public const string Skill6 = "skill_6";
+    public const string Skill7 = "skill_7";
     public const string HealthFlask = "health_flask";
 
     // Camera
@@ -48,6 +49,7 @@ public static class GameActions
     public const string ToggleInventory = "toggle_inventory";
     public const string ToggleUpgradeBench = "toggle_upgrade_bench";
     public const string ToggleCharacter = "toggle_character";
+    public const string ToggleSkills = "toggle_skills";
     public const string ToggleMap = "toggle_map";
 
     /// <summary>Shrines, and later NPCs and doors. One key for "use the thing I am standing at".</summary>
@@ -85,6 +87,7 @@ public static class GameActions
         [Skill4] = [Key(Godot.Key.Key4)],
         [Skill5] = [Key(Godot.Key.Key5)],
         [Skill6] = [Key(Godot.Key.Key6)],
+        [Skill7] = [Key(Godot.Key.Key7)],
         [HealthFlask] = [Key(Godot.Key.Q)],
 
         // Z/X rather than Z/C: C is the near-universal key for the character sheet, and a
@@ -103,6 +106,7 @@ public static class GameActions
         [ToggleInventory] = [Key(Godot.Key.I)],
         [ToggleUpgradeBench] = [Key(Godot.Key.U)],
         [ToggleCharacter] = [Key(Godot.Key.C)],
+        [ToggleSkills] = [Key(Godot.Key.V)],
         [ToggleMap] = [Key(Godot.Key.M)],
         [Interact] = [Key(Godot.Key.F)],
         [RevealLabels] = [Key(Godot.Key.Alt)],

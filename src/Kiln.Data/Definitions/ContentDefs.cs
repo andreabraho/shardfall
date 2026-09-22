@@ -193,6 +193,9 @@ public sealed class SkillDef : ContentDefBase
     public string CastType { get; init; } = "instant";
     public SkillTargeting Targeting { get; init; }
     public double Radius { get; init; }
+
+    /// <summary>How wide a cone-targeted skill opens, in degrees. Ignored by every other shape.</summary>
+    public double ConeAngle { get; init; } = 100;
     public double DamageCoef { get; init; }
     public int Hits { get; init; } = 1;
 
@@ -231,6 +234,7 @@ public sealed class SkillMasteryDef
 public sealed class SkillRankDef
 {
     public double? Radius { get; init; }
+    public double? ConeAngle { get; init; }
     public double? Cooldown { get; init; }
     public double? ManaCost { get; init; }
     public double? DamageCoef { get; init; }

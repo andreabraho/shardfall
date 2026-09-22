@@ -24,7 +24,7 @@ public partial class SkillBar : CanvasLayer
     private static readonly string[] SlotActions =
     [
         GameActions.Skill1, GameActions.Skill2, GameActions.Skill3,
-        GameActions.Skill4, GameActions.Skill5, GameActions.Skill6,
+        GameActions.Skill4, GameActions.Skill5, GameActions.Skill6, GameActions.Skill7,
     ];
 
     private SkillCaster? _caster;
@@ -85,9 +85,27 @@ public partial class SkillBar : CanvasLayer
         return slot;
     }
 
+    /// <summary>Seconds between tooltip rebuilds. A tooltip is read, not watched.</summary>
+    private const double RetitleEvery = 1.0;
+
+    private double _retitleIn;
+
     public override void _Process(double delta)
     {
         if (_caster is null || !IsInstanceValid(_caster)) return;
+
+        // Points and ranks change while the bar is on screen, and the tooltip quotes both.
+        _retitleIn -= delta;
+
+        if (_retitleIn <= 0)
+        {
+            _retitleIn = RetitleEvery;
+
+            foreach (var slot in _slots)
+            {
+                if (slot.SkillId.Length > 0) slot.Retitle();
+            }
+        }
 
         for (var i = 0; i < _slots.Length; i++)
         {

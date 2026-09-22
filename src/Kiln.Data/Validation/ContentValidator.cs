@@ -1476,7 +1476,7 @@ public static class ContentValidator
     /// </summary>
     private static void StunRules(ContentDatabase db, ValidationReport report)
     {
-        string[] kinds = ["poison", "bleed", "stun", "slow", "weaken", "vulnerability"];
+        string[] kinds = ["poison", "bleed", "stun", "slow", "weaken", "vulnerability", "fortify", "empower"];
 
         foreach (var skill in db.Skills.Values.Where(s => s.Applies is not null))
         {
@@ -1492,6 +1492,30 @@ public static class ContentValidator
             {
                 report.Error("skill-effect", skill.SourceFile, $"'{skill.Id}' applies {applies.Kind} with chance {applies.Chance} for {applies.Duration} s.",
                     "Chance is above 0 and at most 1; duration is above 0.");
+            }
+        }
+
+        // REF-03: Iron Skin and Rally Cry sat in the data for two phases with no duration, no
+        // magnitude and no effect - castable in principle and doing nothing in fact. A skill
+        // that only touches its caster has exactly one way to matter, so it is required to
+        // name it.
+        // A channel is held rather than applied - Guard Stance is its own ability, with its
+        // own key and its own visual, and it reads its numbers straight from the definition.
+        foreach (var skill in db.Skills.Values.Where(s => s.Targeting == SkillTargeting.Self && s.CastType != "channel"))
+        {
+            if (skill.Applies is not { Kind: "fortify" or "empower" })
+            {
+                report.Error("skill-effect", skill.SourceFile, $"'{skill.Id}' targets the caster and applies nothing.",
+                    "A self skill applies fortify (less damage taken) or empower (more damage dealt).");
+
+                continue;
+            }
+
+            if (skill.Duration <= 0 || skill.Magnitude <= 0)
+            {
+                report.Error("skill-effect", skill.SourceFile,
+                    $"'{skill.Id}' buffs for {skill.Duration} s at {skill.Magnitude}.",
+                    "Duration and magnitude are both above zero: investment scales them, and scaling nothing gives nothing.");
             }
         }
 

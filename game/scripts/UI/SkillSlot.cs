@@ -52,9 +52,34 @@ public partial class SkillSlot : Control
         _unlockLevel = def.UnlockLevel;
         _tint = def.Tree == "mental" ? Mental : Body;
 
-        TooltipText = $"{_name}   [{_key}]\n"
-            + L10n.F("{0:0} mana  ·  {1:0.#} s cooldown", def.ManaCost, def.Cooldown) + "\n"
-            + L10n.F("Learned at level {0}", def.UnlockLevel);
+        Retitle();
+    }
+
+    /// <summary>
+    /// Rewrites the tooltip from what the player has invested (REF-03), so hovering a slot
+    /// says what this cast will do rather than what the skill does on paper.
+    /// </summary>
+    public void Retitle()
+    {
+        if (SkillId.Length == 0 || !GameContent.IsLoaded
+            || !GameContent.Database.Skills.TryGetValue(SkillId, out var def))
+        {
+            return;
+        }
+
+        var book = GetTree().GetFirstNodeInGroup("player")
+            ?.GetNodeOrNull<Player.PlayerCharacter>("PlayerCharacter")?.Skills;
+
+        if (book is null)
+        {
+            TooltipText = $"{_name}   [{_key}]";
+            return;
+        }
+
+        TooltipText = book.IsUnlocked(SkillId)
+            ? $"{SkillText.Title(def, book)}   [{_key}]\n" + SkillText.Describe(def, book)
+            : $"{_name}   [{_key}]\n"
+                + L10n.F("Not learned. Available at level {0} — spend a point with V.", def.UnlockLevel);
     }
 
     public void Present(bool learned, double remaining, double total, bool affordable, bool active, MasteryRank rank)

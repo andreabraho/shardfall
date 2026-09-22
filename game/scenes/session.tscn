@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3]
+[gd_scene load_steps=25 format=3]
 
 ; Everything a zone scene needs and no zone scene decides: the camera, the cursor, the combat
 ; feedback layers, the HUD and the panels.
@@ -34,6 +34,7 @@
 [ext_resource type="Script" path="res://scripts/UI/DialoguePanel.cs" id="21_dialogue"]
 [ext_resource type="Script" path="res://scripts/UI/MerchantPanel.cs" id="22_merchant"]
 [ext_resource type="Script" path="res://scripts/UI/Menus/PauseMenu.cs" id="23_pause"]
+[ext_resource type="Script" path="res://scripts/UI/SkillPanel.cs" id="24_skillui"]
 
 [node name="Session" type="Node3D"]
 
@@ -83,6 +84,9 @@ script = ExtResource("10_bench")
 
 [node name="CharacterPanel" type="CanvasLayer" parent="."]
 script = ExtResource("11_charui")
+
+[node name="SkillPanel" type="CanvasLayer" parent="."]
+script = ExtResource("24_skillui")
 
 [node name="ShrinePanel" type="CanvasLayer" parent="."]
 script = ExtResource("12_shrineui")

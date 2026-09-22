@@ -226,7 +226,7 @@ public partial class CharacterPanel : CanvasLayer
 
         var note = new Label
         {
-            Text = L10n.T("Skills unlock on their own at the level shown. Mastery comes from using them, not from points."),
+            Text = L10n.T("Skill points are spent from the skill screen (V). A skill masters at seven points and ranks up further by being used."),
             AutowrapMode = TextServer.AutowrapMode.WordSmart,
         };
 
@@ -363,6 +363,7 @@ public partial class CharacterPanel : CanvasLayer
             var known = book.IsUnlocked(def.Id);
             var text = known
                 ? $"{GameItems.Localise(def.Name)}  ·  {Words.Of(book.RankOf(def.Id))}"
+                    + $"  ·  {book.PointsIn(def.Id)}/{SkillBook.MaxPoints}"
                 : $"{GameItems.Localise(def.Name)}  ·  " + L10n.F("level {0}", def.UnlockLevel);
 
             var label = new Label { Text = text };
@@ -373,11 +374,16 @@ public partial class CharacterPanel : CanvasLayer
 
             if (!known) continue;
 
-            var toNext = book.UsesToNextRank(def.Id);
+            var toNext = book.ToNextRank(def.Id);
 
             if (toNext <= 0) continue;
 
-            var progress = new Label { Text = "      " + L10n.F("{0} more uses to rank up", toNext) };
+            var progress = new Label
+            {
+                Text = "      " + (book.NextRankCostsPoints(def.Id)
+                    ? L10n.F("{0} more points to master it (V)", toNext)
+                    : L10n.F("{0} more uses to rank up", toNext)),
+            };
             progress.AddThemeFontSizeOverride("font_size", 11);
             progress.AddThemeColorOverride("font_color", new Color(0.50f, 0.56f, 0.62f));
             _skills.AddChild(progress);

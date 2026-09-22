@@ -253,9 +253,13 @@ public partial class PlayerCharacter : Node
         }
     }
 
-    /// <summary>Learns whatever the current level unlocks.</summary>
-    private void LearnSkills() =>
-        GetParent().GetNodeOrNull<SkillCaster>("SkillCaster")?.LearnAvailable(Progression.Level);
+    /// <summary>
+    /// Nothing is learned on a level-up any more (REF-03): the level only makes a skill
+    /// eligible, and the point is spent by the player from the skill screen.
+    /// </summary>
+    private void LearnSkills()
+    {
+    }
 
     /// <summary>
     /// Direction away from the nearest living enemy, as a stand-in for the true hit

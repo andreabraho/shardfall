@@ -109,6 +109,24 @@ public partial class ModelAnimator : Node
         return _attackFor;
     }
 
+    /// <summary>
+    /// The raised-weapon flourish a self-buff is cast with (REF-03). Falls back to a swing on
+    /// a model that has no such clip, so the cast is never silent-looking.
+    /// </summary>
+    public double Flourish()
+    {
+        if (_player is null) return 0;
+
+        var clip = Pick(_player.GetAnimationList(), "Cheer", "Spellcast_Raise", "Taunt", "Block");
+
+        if (clip.Length == 0) return Attack();
+
+        _player.Play(clip);
+        _attackFor = System.Math.Min(_player.GetAnimation(clip).Length, 0.9);
+
+        return _attackFor;
+    }
+
     /// <summary>Stops a swing early so the body can run or idle again. The attack timer is not ours.</summary>
     public void CancelAttack() => _attackFor = 0;
 

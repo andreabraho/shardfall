@@ -31,7 +31,7 @@ public sealed class CharacterProgression
     public bool IsMaxLevel => Level >= ExperienceTable.MaxLevel;
 
     public int UnspentAttributePoints { get; private set; }
-    public int UnspentSkillPoints { get; private set; }
+    public int UnspentSkillPoints { get; private set; } = StartingSkillPoints;
 
     /// <summary>Points assigned by the player, on top of the starting values.</summary>
     public Attributes Assigned { get; private set; }
@@ -41,6 +41,12 @@ public sealed class CharacterProgression
 
     /// <summary>Skill points granted per level.</summary>
     public const int SkillPointsPerLevel = 1;
+
+    /// <summary>
+    /// Points a new character starts with, so the first skill can be bought before the first
+    /// level-up rather than after it (REF-03).
+    /// </summary>
+    public const int StartingSkillPoints = 1;
 
     /// <summary>
     /// Grants experience, already adjusted for zone band by the caller. Returns every level

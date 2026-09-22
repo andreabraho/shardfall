@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Godot;
+using Kiln.Core.Combat;
 using Kiln.Core.Foundation;
 using Kiln.Core.Progression;
 using Kiln.Data.Definitions;
@@ -21,8 +22,9 @@ namespace Kiln.Game.Player;
 /// </remarks>
 public partial class SkillCaster : Node
 {
-    /// <summary>Cone spread for cone-targeted skills.</summary>
-    private const float ConeAngleDegrees = 100f;
+    /// <summary>The skill as the player has it: mastery rank and points invested (REF-03).</summary>
+    public ResolvedSkill Resolve(SkillDef def) =>
+        ResolvedSkill.For(def, _book?.RankOf(def.Id) ?? MasteryRank.Normal, _book?.PointsIn(def.Id) ?? 1);
 
     private readonly Dictionary<string, double> _cooldowns = new(System.StringComparer.Ordinal);
     private readonly Dictionary<string, double> _cooldownTotals = new(System.StringComparer.Ordinal);
@@ -33,7 +35,7 @@ public partial class SkillCaster : Node
     private SkillBook? _book;
     private CharacterProgression? _progression;
 
-    /// <summary>Hotbar slots 1-6, by skill id.</summary>
+    /// <summary>Hotbar slots 1-7, by skill id.</summary>
     [Export]
     /// <remarks>
     /// Ordered so the early slots are usable at the starting level and the later ones light
@@ -46,13 +48,14 @@ public partial class SkillCaster : Node
         "skl_shield_bash",
         "skl_whirlwind",
         "skl_ground_slam",
-        "",
+        "skl_iron_skin",
+        "skl_blade_aura",
     ];
 
     private static readonly string[] SlotActions =
     [
         GameActions.Skill1, GameActions.Skill2, GameActions.Skill3,
-        GameActions.Skill4, GameActions.Skill5, GameActions.Skill6,
+        GameActions.Skill4, GameActions.Skill5, GameActions.Skill6, GameActions.Skill7,
     ];
 
     public override void _Ready()
@@ -63,6 +66,14 @@ public partial class SkillCaster : Node
         var character = GetParent().GetNodeOrNull<PlayerCharacter>("PlayerCharacter");
         _book = character?.Skills;
         _progression = character?.Progression;
+
+        // One aura per buff, so both can be worn at once. They belong to the skills rather
+        // than to the scene, so they are built here instead of being placed in player.tscn.
+        foreach (var kind in new[] { StatusKind.Empower, StatusKind.Fortify })
+        {
+            _motor.CallDeferred(Node.MethodName.AddChild,
+                new Combat.AuraVisual { Name = $"Aura{kind}", Kind = kind });
+        }
     }
 
     public double CooldownRemaining(string skillId) =>
@@ -87,7 +98,7 @@ public partial class SkillCaster : Node
         _book is not null
         && GameContent.IsLoaded
         && GameContent.Database.Skills.TryGetValue(skillId, out var def)
-        && _self.Mana.CanAfford(ResolvedSkill.For(def, _book.RankOf(skillId)).ManaCost);
+        && _self.Mana.CanAfford(Resolve(def).ManaCost);
 
     /// <summary>Skill currently being aimed, if any. Ground areas aim before they commit.</summary>
     private string? _aiming;
@@ -190,7 +201,7 @@ public partial class SkillCaster : Node
             return;
         }
 
-        var skill = ResolvedSkill.For(def, _book.RankOf(skillId));
+        var skill = Resolve(def);
 
         if (CooldownRemaining(skillId) > 0) return;
 
@@ -220,26 +231,36 @@ public partial class SkillCaster : Node
     }
 
     /// <summary>
-    /// Learns every skill the current level allows, spending skill points.
-    /// <para>
-    /// Automatic for now. The real choice — which tree to invest in — needs the skill
-    /// screen that arrives in Phase 8; until then, gating on level is what matters, so the
-    /// player is not casting Ground Slam at level 10.
-    /// </para>
+    /// Whether a point can go into this skill now (REF-03): the player has one, the level
+    /// allows it, and the skill is not already full.
     /// </summary>
-    public void LearnAvailable(int level)
+    public bool CanInvest(string skillId) =>
+        _book is not null
+        && _progression is not null
+        && _progression.UnspentSkillPoints > 0
+        && GameContent.IsLoaded
+        && GameContent.Database.Skills.TryGetValue(skillId, out var def)
+        && def.UnlockLevel <= _progression.Level
+        && !_book.IsFullyInvested(skillId);
+
+    /// <summary>
+    /// Spends one skill point on a skill. The first point learns it, the seventh masters it.
+    /// </summary>
+    /// <remarks>
+    /// Nothing is learned automatically any more. Which five of the eight a character ends up
+    /// good at is the build, and a game that hands out every skill at its level has no build
+    /// to speak of.
+    /// </remarks>
+    public bool Invest(string skillId)
     {
-        if (_book is null || _progression is null || !GameContent.IsLoaded) return;
+        if (!CanInvest(skillId) || _book is null || _progression is null) return false;
+        if (!_book.Invest(skillId)) return false;
 
-        foreach (var def in GameContent.Database.Skills.Values)
-        {
-            if (def.Class != CharacterClass.Warrior) continue;
-            if (def.UnlockLevel > level || _book.IsUnlocked(def.Id)) continue;
-            if (!_progression.SpendSkillPoint()) return;
+        _progression.SpendSkillPoint();
 
-            _book.Unlock(def.Id);
-            GD.Print($"[skill] learned {def.Id}");
-        }
+        GD.Print($"[skill] {skillId} at {_book.PointsIn(skillId)}/{SkillBook.MaxPoints} points, {_book.RankOf(skillId)}");
+
+        return true;
     }
 
     /// <summary>A multi-hit skill still owing pulses.</summary>
@@ -269,6 +290,15 @@ public partial class SkillCaster : Node
     private void Execute(ResolvedSkill skill)
     {
         var origin = _motor.GlobalPosition;
+
+        // A skill that only touches its caster has nothing to aim at: it is cast where the
+        // Warrior already faces, with a raised-weapon flourish instead of a swing.
+        if (skill.Targeting == SkillTargeting.Self)
+        {
+            Empower(skill);
+            return;
+        }
+
         var aim = AimDirection(origin);
 
         // A single-target skill turns to its target, not to the cursor.
@@ -308,6 +338,41 @@ public partial class SkillCaster : Node
         }
     }
 
+    /// <summary>
+    /// A self-buff: Iron Skin, the Blade Aura (REF-03).
+    /// </summary>
+    /// <remarks>
+    /// The status is built from the resolved skill rather than from the <c>applies</c> block,
+    /// so mastery and the points spent reach the buff — an aura that stayed at its authored
+    /// 25% however far it was ranked up would make investing in it pointless.
+    /// </remarks>
+    private void Empower(ResolvedSkill skill)
+    {
+        var kind = skill.Applies?.Kind ?? "";
+
+        _motor.Stop();
+        _motor.HoldFor(SelfCastHold);
+        _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Flourish();
+
+        var effect = kind switch
+        {
+            "fortify" => StatusEffectSet.Fortify(skill.Magnitude, skill.Duration),
+            "empower" => StatusEffectSet.Empower(skill.Magnitude, skill.Duration),
+            _ => null,
+        };
+
+        if (effect is null)
+        {
+            GD.PushWarning($"SkillCaster: self skill '{skill.Id}' applies nothing usable ('{kind}').");
+            return;
+        }
+
+        _self.Statuses.Apply(effect);
+    }
+
+    /// <summary>How long a self-buff plants the character. Long enough to read as a cast.</summary>
+    private const double SelfCastHold = 0.6;
+
     /// <summary>How long a skill holds the character: every pulse, and a beat after the last.</summary>
     private static double CastHold(ResolvedSkill skill) =>
         (System.Math.Max(1, skill.Hits) - 1) * PulseInterval + 0.35;
@@ -329,8 +394,8 @@ public partial class SkillCaster : Node
                 break;
 
             case SkillTargeting.Cone:
-                targets = AreaQuery.Cone(_motor, center, pulse.Aim, (float)skill.Radius, ConeAngleDegrees);
-                AoeVisual.Cone(center, pulse.Aim, (float)skill.Radius, ConeAngleDegrees);
+                targets = AreaQuery.Cone(_motor, center, pulse.Aim, (float)skill.Radius, (float)skill.ConeAngle);
+                AoeVisual.Cone(center, pulse.Aim, (float)skill.Radius, (float)skill.ConeAngle);
                 break;
 
             case SkillTargeting.GroundAoe:

@@ -236,10 +236,13 @@ No premium currency. No cash shop. Cosmetics drop, or are bought with **Shard Es
 - **Skill unlock:** skill points on level-up, no random books. Books still exist as *items*,
   but they grant a skill point or unlock a tree node deterministically when found —
   keeping the "I found a skill book!" moment without the RNG gate.
-- **Mastery:** using a skill accrues mastery toward M/G/P ranks, which add a **mechanical
-  change**, not just +damage (e.g. at Master, Whirlwind gains a second rotation; at Grand
-  Master it pulls enemies in). This preserves the original's long-tail skill progression
-  while making it feel like growth rather than a lottery.
+- **Points buy a skill up to Master** (REF-03): seven points each, the first learning it and
+  every one after adding 6% to what it does. The campaign grants roughly twenty-five points
+  against the fifty-six all eight skills would take, so the points are the build.
+- **Mastery:** beyond Master, casting a skill carries it to Grand Master and then Perfect, and
+  each rank adds a **mechanical change** rather than just +damage (e.g. Whirlwind gains a
+  fourth turn, Cleave a second strike). This preserves the original's long-tail skill
+  progression while making it feel like growth rather than a lottery.
 - **Free respec at any shrine.** In an MMO you reroll a character; offline, a bad build is
   just a ruined save. Respec is free and instant.
 - Build identity comes from: tree choice + socket/bonus focus + companion archetype.

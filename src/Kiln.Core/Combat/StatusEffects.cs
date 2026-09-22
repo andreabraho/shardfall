@@ -20,6 +20,12 @@ public enum StatusKind
 
     /// <summary>Increased damage taken. Applied by Striker companions and some skills.</summary>
     Vulnerability,
+
+    /// <summary>Reduced damage taken. Iron Skin, and anything else that armours its caster.</summary>
+    Fortify,
+
+    /// <summary>Increased damage dealt. The Blade Aura, and anything else that sharpens its caster.</summary>
+    Empower,
 }
 
 /// <summary>How repeated applications of the same status combine.</summary>
@@ -79,6 +85,8 @@ public sealed class StatusEffectSet
         [StatusKind.Slow] = StackRule.Strongest,
         [StatusKind.Weaken] = StackRule.Strongest,
         [StatusKind.Vulnerability] = StackRule.Strongest,
+        [StatusKind.Fortify] = StackRule.Strongest,
+        [StatusKind.Empower] = StackRule.Strongest,
     };
 
     /// <summary>Tolerance for float drift when scheduling damage-over-time ticks.</summary>
@@ -100,13 +108,15 @@ public sealed class StatusEffectSet
     public double MoveSpeedMultiplier =>
         Has(StatusKind.Slow) ? Math.Max(0.2, 1 - _effects[StatusKind.Slow].Magnitude) : 1.0;
 
-    /// <summary>Outgoing damage multiplier from weaken.</summary>
+    /// <summary>Outgoing damage multiplier: weaken down, the aura up.</summary>
     public double DamageDealtMultiplier =>
-        Has(StatusKind.Weaken) ? Math.Max(0.1, 1 - _effects[StatusKind.Weaken].Magnitude) : 1.0;
+        (Has(StatusKind.Weaken) ? Math.Max(0.1, 1 - _effects[StatusKind.Weaken].Magnitude) : 1.0)
+        * (Has(StatusKind.Empower) ? 1 + _effects[StatusKind.Empower].Magnitude : 1.0);
 
-    /// <summary>Incoming damage multiplier from vulnerability.</summary>
+    /// <summary>Incoming damage multiplier: vulnerability up, fortify down.</summary>
     public double DamageTakenMultiplier =>
-        Has(StatusKind.Vulnerability) ? 1 + _effects[StatusKind.Vulnerability].Magnitude : 1.0;
+        (Has(StatusKind.Vulnerability) ? 1 + _effects[StatusKind.Vulnerability].Magnitude : 1.0)
+        * (Has(StatusKind.Fortify) ? Math.Max(0.1, 1 - _effects[StatusKind.Fortify].Magnitude) : 1.0);
 
     public void Apply(StatusEffect effect)
     {
@@ -223,4 +233,10 @@ public sealed class StatusEffectSet
 
     public static StatusEffect Vulnerability(double fraction, double duration = 4) =>
         new() { Kind = StatusKind.Vulnerability, Magnitude = fraction, Duration = duration };
+
+    public static StatusEffect Fortify(double fraction, double duration = 12) =>
+        new() { Kind = StatusKind.Fortify, Magnitude = fraction, Duration = duration };
+
+    public static StatusEffect Empower(double fraction, double duration = 30) =>
+        new() { Kind = StatusKind.Empower, Magnitude = fraction, Duration = duration };
 }

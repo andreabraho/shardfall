@@ -56,6 +56,9 @@ public sealed class SavedPlayer
 
     public Dictionary<string, int> Skills { get; set; } = new(StringComparer.Ordinal);
 
+    /// <summary>Points spent per skill (REF-03). Absent in a save written before points existed.</summary>
+    public Dictionary<string, int> SkillPointsSpent { get; set; } = new(StringComparer.Ordinal);
+
     public double Health { get; set; } = 1.0;
     public double Mana { get; set; } = 1.0;
     public int FlaskCharges { get; set; } = -1;

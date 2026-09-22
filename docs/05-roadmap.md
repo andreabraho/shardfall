@@ -136,27 +136,18 @@ presses more than everything else combined.
 | PRG-02 | XP curve, levelling, attribute + skill point award | **[C]** | ✅ |
 | PRG-03 | Skill system: definitions, cooldowns, mana costs, cast types, targeting modes | **[C]** | ✅ |
 | PRG-04 | 8 Warrior skills across the two trees | **[C]** | ✅ data + level gating; 3 are passive/self and land with their effects |
-| PRG-05 | Skill mastery accrual + rank-up mechanical changes | **[C]** | ✅ ranks change behaviour, not just numbers |
+| PRG-05 | Skill mastery accrual + rank-up mechanical changes | **[C]** | ✅ ranks change behaviour, not just numbers; Master is bought with points since REF-03 |
 | PRG-06 | Free respec at shrines | **[C]** | ✅ (WLD-02) — free, per FR-2.6; refunds attributes only, as skills have nothing to respec |
 | PRG-07 | Catch-up XP curve + low-level enemy floor (FR-2.7) | **[C]** | ✅ |
 | PRG-08 | Skill VFX with primitives + Godot particles | **[C→You]** | You call readability |
 | PRG-09 | **Balance simulator v1** — walks the XP table, reports level-vs-zone-band deltas | **[C]** | ✅ runs in CI; found the first draft gave quests 88% of all XP |
-| PRG-10 | **Character sheet** (C): spend attribute points, derived stats live, skill list | **[C]** | ✅ added 2026-09-19 — the phase awarded points and nothing could spend them |
-| PRG-11 | **Skill points have no sink** — decide whether they become a real choice | **[Provide]** | ⬜ 8 skills vs ~24 points by level 24; see the note below |
+| PRG-10 | **Character sheet** (C): spend attribute points, derived stats live, skill list | **[C]** | ✅ added 2026-09-19 — the phase awarded points and nothing could spend them. Skill points are spent on their own screen (V) since REF-03 |
+| PRG-11 | **Skill points have no sink** — decide whether they become a real choice | **[Provide]** | ✅ answered in REF-03: option 2. Points buy a skill up to Master (7 each, 56 for all eight against ~25 earned), and use carries it from there |
 
-**PRG-11, the open question.** Attribute points now have a home; skill points do not. The
-Warrior has 8 skills, unlocking at levels 1/3/6/8/12/14/20/24, and the curve grants one point
-per level — so the tree absorbs a third of what the player earns and the rest is dead weight.
-Three ways out, none of them chosen yet:
-
-1. **Leave it a gate.** Points stop existing; skills simply unlock at their level. Honest, and
-   one less number on the sheet.
-2. **Buy mastery ranks with points**, instead of (or alongside) earning them by use. Gives
-   points a deep sink and lets a player specialise early.
-3. **Make the two trees compete** — a shared budget that cannot unlock everything, so Body and
-   Mental are a real fork rather than a reading order.
-
-Option 2 is the one that adds a build decision without adding a system. Your call.
+**PRG-11, answered (REF-03, 2026-09-22).** Points buy ranks. A skill takes seven, the seventh
+masters it, and the campaign grants about twenty-five in total — so the eight skills cost more
+than twice what the player will ever hold, and which of them a character is actually good at
+is the build. Grand Master and Perfect stay earned by casting, so the long tail survives.
 
 ---
 
@@ -329,7 +320,7 @@ I build the final version. Nothing moves to the next system until the current on
 |---|---|---|---|
 | REF-01 | **Combat core** — basic attack, targeting, damage formula (crit, pierce, evasion, mitigation), hit feel | **[C↔You]** | ✅ **signed off by you 2026-09-22.** Decided: the Metin2 model. Auto-attack as a state machine (approach → windup → hit check for reach, line of sight and life → damage or miss → recovery), timed by attack speed alone (`AttackCycle`); every blow hits the target and every enemy in a 120° arc in front, within reach, at full damage; every fourth blow of a fight also throws back what it catches (bosses excepted), with no arc drawn; moving cuts the recovery animation, never the timer. Standing still during the windup and every skill, turning to follow. Space strikes the nearest enemy in front once, no lock-on; held, it repeats. No knockback: hits make the enemy flinch in place. Hit-stop and camera shake on hits removed. Stuns only from Ground Slam (30%, 1.5 s); tower bosses immune (`stun_resist`, enforced by the validator). Shield Bash puts −20% defence on the target for 5 s. Replaces the four-swing chain (CBT-17) |
 | REF-02 | **Defence and survival** — guard, status effects on the player, health flask, death and respawn | **[C↔You]** | ✅ **signed off by you 2026-09-22.** Decided: Guard Stance stays an active 70% block with the character rooted, shortened to **1.2 s** (1.6 s at Grand Master). **Stagger removed** — the pool is gone from every enemy, the value from every skill, and the two mastery notes that promised more of it now promise damage; control comes from Ground Slam's stun, Shield Bash's vulnerability and the sweeping fourth blow. **The flask is refilled only by buying draughts** (`mat_flask_draught`, 250 yang, sold by every merchant, one per charge, poured by clicking it in the bag): no refill out of combat, at a shrine, or on death; charges are saved. **Dying costs experience, not yang** — 10% of the level on Disciple, 25% on Adept and Shardbound, nothing on Wanderer, never taking a level. Statuses on the player are unchanged |
-| REF-03 | **Skills** — the six Warrior skills, mana, cooldowns, mastery ranks, skill bar | **[C↔You]** | Folds in PRG-11 (skill points: yes or no). Open from REF-01: Ground Slam is still aimed at the cursor rather than centred on the Warrior |
+| REF-03 | **Skills** — the eight Warrior skills, mana, cooldowns, mastery ranks, skill bar | **[C↔You]** | ✅ **signed off by you 2026-09-22.** Decided: **skill points are spent by the player** — V opens the skill screen, nothing is learned automatically, a new character starts with one point, the first point learns a skill and the seventh masters it, and each point adds 6% to its damage (or to its duration when it deals none). **Grand Master and Perfect are earned by casting a mastered skill** (200 and 600 casts). **Iron Skin became a real buff** (−35% damage taken for 10 s) and **Rally Cry became the Blade Aura** (+25% damage dealt for 20 s); both wear a turning ground-ring aura, are cast with a raised weapon, and sit on slots 6 and 7. **Whirlwind is now a 160° cone 6 m deep** in front of the Warrior, two and a half times the basic attack's reach. **Ground Slam is centred on the Warrior** instead of aimed at the cursor. Hovering a slot, or a row in the skill screen, states the damage, the shape, the effect and what the next rank costs. A shrine refunds skill points along with attribute points. Closes PRG-11 |
 | REF-04 | **Enemies and AI** — the five roles, aggro and leash, telegraphs, what each creature does | **[C↔You]** | |
 | REF-05 | **Bosses** — phases, mechanics, arenas, rewards | **[C↔You]** | Folds in WLD-10 (boss phases) |
 | REF-06 | **Shards** — the metin-stone equivalent: tiers, waves, modifiers, anchors, respawn, rewards | **[C↔You]** | |

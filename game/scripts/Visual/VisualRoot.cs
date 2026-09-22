@@ -88,6 +88,21 @@ public partial class VisualRoot : Node3D
         Lunge(direction, 0.12f, 0.16);
     }
 
+    /// <summary>
+    /// The flourish a self-buff is cast with: weapon raised rather than swung, so Iron Skin
+    /// and the Blade Aura do not look like another attack (REF-03).
+    /// </summary>
+    public void Flourish()
+    {
+        if (_animator is { Ready: true })
+        {
+            _animator.Flourish();
+            return;
+        }
+
+        Lunge(Vector3.Up, 0.18f, 0.35);
+    }
+
     /// <summary>Cuts the swing animation short when the player walks off mid-follow-through.</summary>
     public void CancelSwing() => _animator?.CancelAttack();
 
