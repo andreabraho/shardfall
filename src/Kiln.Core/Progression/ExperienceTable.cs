@@ -67,12 +67,31 @@ public static class ExperienceTable
     /// exist to keep the player inside the content, not to punish.
     /// </para>
     /// </summary>
+    /// <remarks>
+    /// Falls with every level the player stands above what they kill (2026-09-23). It used to
+    /// be a step — full experience up to four levels over, a quarter from five — which made
+    /// the creatures a few levels under the player the best farm in the game: quick to kill
+    /// and paying in full. Now each level over costs a share, and eight over (where a creature
+    /// stops being a fight, <see cref="TrivialLevelGap"/>) pays nothing.
+    /// </remarks>
     public static double CatchUpMultiplier(int playerLevel, int zoneBand)
     {
-        if (playerLevel <= zoneBand - 3) return 1.35;
-        if (playerLevel >= zoneBand + 5) return 0.25;
+        var over = playerLevel - zoneBand;
 
-        return 1.0;
+        if (over <= -3) return 1.35;
+        if (over <= 0) return 1.0;
+
+        return over switch
+        {
+            1 => 0.85,
+            2 => 0.65,
+            3 => 0.45,
+            4 => 0.30,
+            5 => 0.18,
+            6 => 0.10,
+            7 => 0.05,
+            _ => 0.0,
+        };
     }
 
     /// <summary>
