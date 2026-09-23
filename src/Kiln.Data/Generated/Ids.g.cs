@@ -247,6 +247,7 @@ public static class Ids
         public const string KitNatTree = "kit_nat_tree";
         public const string KitPath4 = "kit_path_4";
         public const string KitPillar = "kit_pillar";
+        public const string KitPortalStone = "kit_portal_stone";
         public const string KitRamp4 = "kit_ramp_4";
         public const string KitRuinRubble = "kit_ruin_rubble";
         public const string KitRuinWall = "kit_ruin_wall";
@@ -269,7 +270,7 @@ public static class Ids
         public const string KitWall8 = "kit_wall_8";
         public const string KitWallLow4 = "kit_wall_low_4";
 
-        public static readonly string[] All = ["kit_banner", "kit_boulder", "kit_brazier", "kit_cliff_8", "kit_floor_4", "kit_floor_8", "kit_gate", "kit_marker_post", "kit_nat_bush", "kit_nat_crag", "kit_nat_fern", "kit_nat_flowers", "kit_nat_grass", "kit_nat_pine", "kit_nat_rock", "kit_nat_tree", "kit_path_4", "kit_pillar", "kit_ramp_4", "kit_ruin_rubble", "kit_ruin_wall", "kit_shrub", "kit_tower", "kit_vil_corner", "kit_vil_crate", "kit_vil_fence_4", "kit_vil_gate", "kit_vil_house_cottage", "kit_vil_house_long", "kit_vil_house_small", "kit_vil_house_stone", "kit_vil_path_4", "kit_vil_square_8", "kit_vil_wagon", "kit_vil_wall_4", "kit_vil_wall_8", "kit_wall_4", "kit_wall_8", "kit_wall_low_4"];
+        public static readonly string[] All = ["kit_banner", "kit_boulder", "kit_brazier", "kit_cliff_8", "kit_floor_4", "kit_floor_8", "kit_gate", "kit_marker_post", "kit_nat_bush", "kit_nat_crag", "kit_nat_fern", "kit_nat_flowers", "kit_nat_grass", "kit_nat_pine", "kit_nat_rock", "kit_nat_tree", "kit_path_4", "kit_pillar", "kit_portal_stone", "kit_ramp_4", "kit_ruin_rubble", "kit_ruin_wall", "kit_shrub", "kit_tower", "kit_vil_corner", "kit_vil_crate", "kit_vil_fence_4", "kit_vil_gate", "kit_vil_house_cottage", "kit_vil_house_long", "kit_vil_house_small", "kit_vil_house_stone", "kit_vil_path_4", "kit_vil_square_8", "kit_vil_wagon", "kit_vil_wall_4", "kit_vil_wall_8", "kit_wall_4", "kit_wall_8", "kit_wall_low_4"];
     }
 
     public static class Npcs
