@@ -32,8 +32,18 @@ public partial class SkillCaster : Node
     private PlayerMotor _motor = null!;
     private Combatant _self = null!;
     private Camera3D? _camera;
-    private SkillBook? _book;
-    private CharacterProgression? _progression;
+    /// <summary>
+    /// The book and the points, read from the profile every time rather than kept.
+    /// </summary>
+    /// <remarks>
+    /// A reference taken at _Ready belongs to whichever profile existed then. Loading a save,
+    /// or starting a new game, replaces the profile's objects — and a caster still holding the
+    /// old ones reads a book nobody writes to any more: skills that will not cast and points
+    /// that will not spend, while the screen, which reads the profile, says they are there.
+    /// </remarks>
+    private SkillBook? _book => PlayerProfile.Skills;
+
+    private CharacterProgression? _progression => PlayerProfile.Progression;
 
     /// <summary>
     /// Which skill sits on each numbered key. The player arranges it from the skill screen;
@@ -84,10 +94,6 @@ public partial class SkillCaster : Node
     {
         _motor = GetParent<PlayerMotor>();
         _self = GetParent().GetNode<Combatant>("Combatant");
-
-        var character = GetParent().GetNodeOrNull<PlayerCharacter>("PlayerCharacter");
-        _book = character?.Skills;
-        _progression = character?.Progression;
 
         // One aura per buff, so both can be worn at once. They belong to the skills rather
         // than to the scene, so they are built here instead of being placed in player.tscn.
@@ -252,6 +258,14 @@ public partial class SkillCaster : Node
         Execute(skill);
     }
 
+    /// <summary>Why <see cref="CanInvest"/> said no, in words, for the console.</summary>
+    public string WhyNot(string skillId) =>
+        _book is null || _progression is null ? "no character"
+        : _progression.UnspentSkillPoints <= 0 ? "no skill points left"
+        : !GameContent.IsLoaded || !GameContent.Database.Skills.ContainsKey(skillId) ? "unknown skill"
+        : _book.IsFullyInvested(skillId) ? $"already at {SkillBook.MaxPoints} points"
+        : "allowed";
+
     /// <summary>
     /// Whether a point can go into this skill now (REF-03): the player has one and the skill
     /// is not already full. Level does not come into it — every skill is open from the start,
@@ -275,7 +289,11 @@ public partial class SkillCaster : Node
     /// </remarks>
     public bool Invest(string skillId)
     {
-        if (!CanInvest(skillId) || _book is null || _progression is null) return false;
+        if (!CanInvest(skillId) || _book is null || _progression is null)
+        {
+            GD.Print($"[skill] no point spent on {skillId}: {WhyNot(skillId)}");
+            return false;
+        }
         if (!_book.Invest(skillId)) return false;
 
         _progression.SpendSkillPoint();

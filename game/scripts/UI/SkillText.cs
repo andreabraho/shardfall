@@ -71,6 +71,40 @@ public static class SkillText
         return string.Join("\n", lines);
     }
 
+    /// <summary>
+    /// One line: the numbers that decide whether a skill is worth a point, for the compact
+    /// skill screen. The full text is a hover away.
+    /// </summary>
+    public static string Summary(SkillDef def, SkillBook book)
+    {
+        var skill = ResolvedSkill.For(def, book.RankOf(def.Id), System.Math.Max(1, book.PointsIn(def.Id)));
+        var parts = new List<string>();
+
+        if (skill.DamageCoef > 0)
+        {
+            parts.Add(skill.Hits > 1
+                ? L10n.F("{0:P0} ×{1}", skill.DamageCoef, skill.Hits)
+                : L10n.F("{0:P0}", skill.DamageCoef));
+        }
+        else if (skill.Applies is { Kind: "fortify" })
+        {
+            parts.Add(L10n.F("−{0:P0} damage taken", skill.Magnitude));
+        }
+        else if (skill.Applies is { Kind: "empower" })
+        {
+            parts.Add(L10n.F("+{0:P0} damage", skill.Magnitude));
+        }
+        else if (skill.Magnitude > 0)
+        {
+            parts.Add(L10n.F("blocks {0:P0}", skill.Magnitude));
+        }
+
+        parts.Add(L10n.F("{0:0} mana", skill.ManaCost));
+        parts.Add(L10n.F("{0:0.#} s", skill.Cooldown));
+
+        return string.Join("  ·  ", parts);
+    }
+
     private static string Shape(ResolvedSkill skill) => skill.Targeting switch
     {
         SkillTargeting.Self => L10n.T("On yourself."),
