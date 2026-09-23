@@ -324,7 +324,10 @@ public partial class PlayerCharacter : Node
 
         if (!IsInstanceValid(this)) return;
 
-        _motor.GlobalPosition = at;
+        // Inside the tower the tower decides where the player comes back, and puts them there.
+        if (GetTree().GetFirstNodeInGroup("tower") is World.TowerNode tower) tower.RespawnPlayer();
+        else _motor.GlobalPosition = at;
+
         _motor.MovementLocked = false;
         _motor.Stop();
         _combatant.Revive();

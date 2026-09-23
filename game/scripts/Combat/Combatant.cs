@@ -33,7 +33,17 @@ public partial class Combatant : Node
     public Pool Mana { get; private set; } = new(100);
     public StatusEffectSet Statuses { get; } = new();
 
-    public bool IsAlive => !Health.IsEmpty;
+    /// <summary>
+    /// Alive while at least one whole hit point is left.
+    /// </summary>
+    /// <remarks>
+    /// Health is fractional — regeneration and the proportional rescale on a level-up both
+    /// leave fractions — and the bar shows whole numbers. A player on 0.4 read "0" on the bar
+    /// and was still standing and fighting, because death waited for exactly zero.
+    /// </remarks>
+    public bool IsAlive => Health.Current >= 1;
+
+    private bool _deathSignalled;
 
     /// <summary>The body this component belongs to — used for positioning effects.</summary>
     public Node3D Body => GetParent<Node3D>();
@@ -65,6 +75,12 @@ public partial class Combatant : Node
         DisplayName = displayName;
         Health = new Pool(stats.MaxHp);
         Mana = new Pool(stats.MaxMana);
+
+        // A shard or pylon configured again for its next life may die again. The player never
+        // comes back through here — a level-up reconfigures a living character, and clearing
+        // the flag mid-respawn would kill them twice.
+        if (!IsPlayer) _deathSignalled = false;
+
         EmitSignal(SignalName.HealthChanged, (float)Health.Fraction);
     }
 
@@ -158,10 +174,7 @@ public partial class Combatant : Node
         EmitSignal(SignalName.Damaged, amount, critical, false);
         EmitSignal(SignalName.HealthChanged, (float)Health.Fraction);
 
-        if (Health.IsEmpty)
-        {
-            EmitSignal(SignalName.Died);
-        }
+        if (Health.Current < 1) Die();
     }
 
     public void Heal(int amount)
@@ -172,8 +185,30 @@ public partial class Combatant : Node
         EmitSignal(SignalName.HealthChanged, (float)Health.Fraction);
     }
 
+    /// <summary>
+    /// Empties the pool and says so, once.
+    /// </summary>
+    /// <remarks>
+    /// The one way a death is announced. A stat refresh that sets health straight to zero — a
+    /// level-up or a gear change landing at the wrong moment — used to leave the player at
+    /// nothing without a death ever being raised: not alive, never respawned. The watchdog in
+    /// <see cref="_Process"/> sends such a player through here too.
+    /// </remarks>
+    private void Die()
+    {
+        if (_deathSignalled) return;
+
+        _deathSignalled = true;
+        Health.SetCurrent(0);
+
+        if (IsPlayer) GD.Print($"[combat] player health reached zero ({Health.Max:0} max)");
+
+        EmitSignal(SignalName.Died);
+    }
+
     public void Revive()
     {
+        _deathSignalled = false;
         Health.Fill();
         Mana.Fill();
         Statuses.Clear();
@@ -182,7 +217,13 @@ public partial class Combatant : Node
 
     public override void _Process(double delta)
     {
-        if (!IsAlive) return;
+        if (!IsAlive)
+        {
+            // Nothing left, and no death was ever raised for it: raise it now.
+            if (IsPlayer && !_deathSignalled) Die();
+
+            return;
+        }
 
         // Statuses tick at 10 Hz rather than per frame: damage-over-time does not need
         // frame precision and this keeps the cost flat as enemy counts grow.

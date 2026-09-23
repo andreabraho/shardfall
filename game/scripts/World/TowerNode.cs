@@ -64,9 +64,13 @@ public partial class TowerNode : Node3D
 
         Index(zone);
 
-        // Resuming where the player left off (FR-7.20). A tower re-entered from the top after
-        // eight floors is a tower nobody re-enters.
-        _run = new TowerRun(zone.Floors, PlayerProfile.DepthIn(zone.Id));
+        // Walking in through the gate starts the climb at the bottom (2026-09-23: resuming at
+        // the deepest checkpoint ever reached dropped a returning player on floor seven). A save
+        // loaded inside the tower puts the player back on the floor they saved on, which is
+        // the floor their body is standing on now.
+        _run = new TowerRun(zone.Floors, DepthUnderPlayer(zone));
+
+        GD.Print($"[tower] entered at floor {_run.Depth}");
 
         Arrive();
     }
@@ -96,6 +100,52 @@ public partial class TowerNode : Node3D
 
             GD.PushError($"[tower] the scene lays out room '{id}', which '{zone.Id}' does not declare.");
         }
+    }
+
+    /// <summary>Which floor the player's body is on, by height; the bottom when it is on none.</summary>
+    private int DepthUnderPlayer(Zone zone)
+    {
+        if (GetTree().GetFirstNodeInGroup("player") is not Node3D player) return 1;
+
+        for (var i = 0; i < zone.Floors.Count; i++)
+        {
+            if (_rooms.TryGetValue(zone.Floors[i].Id, out var room)
+                && Mathf.Abs(room.GlobalPosition.Y - player.GlobalPosition.Y) < 6f)
+            {
+                return i + 1;
+            }
+        }
+
+        return 1;
+    }
+
+    /// <summary>
+    /// Where a death inside the tower sends the player: the last floor with a shrine at or
+    /// below the one they died on, begun again.
+    /// </summary>
+    /// <remarks>
+    /// Death used to send the player to the last shrine they touched, wherever it stood — on
+    /// a floor that was switched off, while the floor they died on went on running without
+    /// them. Called by the player when the respawn timer ends; the player is placed at the
+    /// checkpoint floor's entry, beside its shrine.
+    /// </remarks>
+    public void RespawnPlayer()
+    {
+        var zone = GameWorld.Graph[GameWorld.CurrentZoneId];
+
+        if (_run is null || zone is null) return;
+
+        var checkpoint = 1;
+
+        for (var i = 0; i < _run.Depth; i++)
+        {
+            if (zone.Floors[i].Shrine.Length > 0) checkpoint = i + 1;
+        }
+
+        GD.Print($"[tower] player died on floor {_run.Depth} — back to floor {checkpoint}");
+
+        _run = new TowerRun(zone.Floors, checkpoint);
+        Arrive();
     }
 
     public override void _Process(double delta)
