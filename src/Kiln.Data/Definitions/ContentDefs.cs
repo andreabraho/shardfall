@@ -201,6 +201,19 @@ public sealed class SkillDef : ContentDefBase
 
     /// <summary>How wide a cone-targeted skill opens, in degrees. Ignored by every other shape.</summary>
     public double ConeAngle { get; init; } = 100;
+
+    /// <summary>
+    /// Seconds between the hits of a multi-hit skill. Short by default, so a flurry reads as
+    /// one blow landing several times; long for a skill whose hits should each be felt.
+    /// </summary>
+    public double HitInterval { get; init; } = 0.17;
+
+    /// <summary>
+    /// How the Warrior moves while casting it: empty for a swing, "spin" for a turn on the
+    /// spot every hit. Named rather than keyed to a clip, so a model without the clip still
+    /// has something to fall back to.
+    /// </summary>
+    public string Motion { get; init; } = "";
     public double DamageCoef { get; init; }
     public int Hits { get; init; } = 1;
 

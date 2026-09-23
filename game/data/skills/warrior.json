@@ -39,6 +39,7 @@
     } },
 
   { "id": "skl_whirlwind",     "name": "$skill.skl_whirlwind.name",     "class": "warrior", "tree": "body",   "suggested_level": 14, "mana_cost": 32, "cooldown": 9.0,  "cast_type": "instant", "targeting": "cone",          "radius": 6.0, "cone_angle": 160, "damage_coef": 1.35, "hits": 3,
+    "hit_interval": 0.42, "motion": "spin",
     "mastery": {
       "master":       { "hits": 4, "note": "$skill.skl_whirlwind.m" },
       "grand_master": { "radius": 6.8, "note": "$skill.skl_whirlwind.g" },

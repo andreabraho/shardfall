@@ -114,6 +114,12 @@ public partial class SkillBar : CanvasLayer
             _tip.Hide();
         };
 
+        slot.SkillRemoved += at =>
+        {
+            _caster?.Assign(at, "");
+            _tip.Hide();
+        };
+
         return slot;
     }
 

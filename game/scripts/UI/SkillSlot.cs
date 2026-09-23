@@ -44,6 +44,12 @@ public partial class SkillSlot : Control
     /// <summary>Told when the mouse comes to rest here, or leaves.</summary>
     [Signal] public delegate void HoveredEventHandler(bool entered);
 
+    /// <summary>Told when the skill on this slot is taken off the bar.</summary>
+    [Signal] public delegate void SkillRemovedEventHandler(int slot);
+
+    /// <summary>True while a drag this slot started is in the air.</summary>
+    private bool _dragging;
+
     public override void _Ready()
     {
         CustomMinimumSize = new Vector2(Side, Side);
@@ -64,8 +70,37 @@ public partial class SkillSlot : Control
         if (Slot < 0 || SkillId.Length == 0) return default;
 
         SetDragPreview(SkillDrag.Preview(_name));
+        _dragging = true;
 
         return SkillDrag.Data(SkillId);
+    }
+
+    /// <summary>
+    /// A skill dragged off the bar and let go anywhere that does not take it is removed from
+    /// the bar (REF-03) — the way the original clears a slot, and the way a player tries first.
+    /// Let go on another slot and it moves there instead; that drop counts as a success, so
+    /// this never fires for it.
+    /// </summary>
+    public override void _Notification(int what)
+    {
+        if (what != NotificationDragEnd || !_dragging) return;
+
+        _dragging = false;
+
+        if (!GetViewport().GuiIsDragSuccessful() && Slot >= 0 && SkillId.Length > 0)
+        {
+            EmitSignal(SignalName.SkillRemoved, Slot);
+        }
+    }
+
+    /// <summary>Right-click empties the slot: the same thing, for anyone who does not drag.</summary>
+    public override void _GuiInput(InputEvent @event)
+    {
+        if (@event is not InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Right }) return;
+        if (Slot < 0 || SkillId.Length == 0) return;
+
+        AcceptEvent();
+        EmitSignal(SignalName.SkillRemoved, Slot);
     }
 
     public override bool _CanDropData(Vector2 atPosition, Variant data) =>
@@ -121,9 +156,10 @@ public partial class SkillSlot : Control
 
         // Kept as text rather than as a TooltipText: the bar draws its own card above the
         // slot, because the engine's tooltip follows the cursor and lands on top of the bar.
-        Description = book.IsUnlocked(SkillId)
-            ? $"{SkillText.Title(def, book)}   [{_key}]\n" + SkillText.Describe(def, book)
-            : $"{_name}   [{_key}]\n" + L10n.T("Not learned. Spend a skill point on it with K.");
+        Description = (book.IsUnlocked(SkillId)
+                ? $"{SkillText.Title(def, book)}   [{_key}]\n" + SkillText.Describe(def, book)
+                : $"{_name}   [{_key}]\n" + L10n.T("Not learned. Spend a skill point on it with K."))
+            + (Slot >= 0 ? "\n" + L10n.T("Right-click, or drag it off the bar, to remove it.") : "");
     }
 
     public void Present(bool learned, double remaining, double total, bool affordable, bool active, MasteryRank rank)

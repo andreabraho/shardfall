@@ -127,6 +127,29 @@ public partial class ModelAnimator : Node
         return _attackFor;
     }
 
+    /// <summary>
+    /// The two-handed spin, for Whirlwind (REF-03). Returns false on a model that has no such
+    /// clip, so the caller can turn the body itself instead.
+    /// </summary>
+    public bool Spin(double seconds)
+    {
+        if (_player is null) return false;
+
+        var clip = Pick(_player.GetAnimationList(), "2H_Melee_Attack_Spin", "2H_Melee_Attack_Spinning");
+
+        if (clip.Length == 0) return false;
+
+        // Stretched or squeezed to fill the gap between hits, so each hit is one whole turn
+        // however slow or fast the skill has been tuned.
+        var length = _player.GetAnimation(clip).Length;
+        var speed = seconds > 0.01 ? (float)(length / seconds) : 1f;
+
+        _player.Play(clip, customSpeed: speed);
+        _attackFor = seconds;
+
+        return true;
+    }
+
     /// <summary>Stops a swing early so the body can run or idle again. The attack timer is not ours.</summary>
     public void CancelAttack() => _attackFor = 0;
 

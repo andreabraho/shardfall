@@ -16,7 +16,7 @@ namespace Kiln.Game.Player;
 /// from data, so tuning a skill never touches code.
 /// </summary>
 /// <remarks>
-/// Skills must be learned before they can be cast, and learning is gated on level. Mastery
+/// Skills must be learned before they can be cast, with a skill point from the skill screen. Mastery
 /// accrues by casting and resolves through <see cref="ResolvedSkill"/>, so nothing ever uses
 /// a skill.s base numbers once it has ranked up.
 /// </remarks>
@@ -312,18 +312,21 @@ public partial class SkillCaster : Node
         public required bool FollowsCaster { get; init; }
         public int Remaining { get; set; }
         public double Timer { get; set; }
+
+        /// <summary>Which hit this is, from zero.</summary>
+        public int Index => Math.Max(1, Skill.Hits) - Remaining - 1;
     }
 
     /// <summary>
-    /// Gap between hits of a multi-hit skill.
-    /// <para>
-    /// Applying every hit on one frame made Whirlwind's three hits land on top of each
-    /// other — identical numbers at the same spot in the same instant, so it read as a
-    /// single hit. Spreading them out is what makes a multi-hit skill legible, and it is
-    /// also what a spin should look like.
-    /// </para>
+    /// How far each hit of a spinning skill swings round from the last, in degrees.
     /// </summary>
-    private const double PulseInterval = 0.17;
+    /// <remarks>
+    /// A spin whose every hit landed on exactly the same wedge would look like one swing
+    /// repeated. Each hit instead sweeps the arc a little further round and back — left,
+    /// right, left — so the flashes on the ground trace the turn the body is making. The hit
+    /// area turns with the flash: the effect never shows a reach the blow does not have.
+    /// </remarks>
+    private const float SpinSweep = 22f;
 
     private readonly List<Pulse> _pulses = [];
 
@@ -373,7 +376,7 @@ public partial class SkillCaster : Node
 
         if (pulse.Remaining > 0)
         {
-            pulse.Timer = PulseInterval;
+            pulse.Timer = skill.HitInterval;
             _pulses.Add(pulse);
         }
     }
@@ -422,7 +425,7 @@ public partial class SkillCaster : Node
 
     /// <summary>How long a skill holds the character: every pulse, and a beat after the last.</summary>
     private static double CastHold(ResolvedSkill skill) =>
-        (System.Math.Max(1, skill.Hits) - 1) * PulseInterval + 0.35;
+        (System.Math.Max(1, skill.Hits) - 1) * skill.HitInterval + 0.35;
 
     private void FirePulse(Pulse pulse)
     {
@@ -430,6 +433,18 @@ public partial class SkillCaster : Node
 
         var skill = pulse.Skill;
         var center = pulse.FollowsCaster ? _motor.GlobalPosition : pulse.Center;
+        var aim = pulse.Aim;
+
+        // A spinning skill turns the body on every hit, and sweeps its arc round with it.
+        if (skill.Motion == "spin")
+        {
+            _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Spin(skill.HitInterval, pulse.Index);
+
+            var side = pulse.Index % 2 == 0 ? -1f : 1f;
+            var turn = Mathf.DegToRad(SpinSweep * side * Mathf.Min(pulse.Index, 1));
+
+            aim = aim.Rotated(Vector3.Up, turn);
+        }
 
         List<Combatant> targets;
 
@@ -441,8 +456,8 @@ public partial class SkillCaster : Node
                 break;
 
             case SkillTargeting.Cone:
-                targets = AreaQuery.Cone(_motor, center, pulse.Aim, (float)skill.Radius, (float)skill.ConeAngle);
-                AoeVisual.Cone(center, pulse.Aim, (float)skill.Radius, (float)skill.ConeAngle, hostile: false, skill.Rank);
+                targets = AreaQuery.Cone(_motor, center, aim, (float)skill.Radius, (float)skill.ConeAngle);
+                AoeVisual.Cone(center, aim, (float)skill.Radius, (float)skill.ConeAngle, hostile: false, skill.Rank);
                 break;
 
             case SkillTargeting.GroundAoe:
@@ -500,7 +515,7 @@ public partial class SkillCaster : Node
             }
             else
             {
-                pulse.Timer += PulseInterval;
+                pulse.Timer += pulse.Skill.HitInterval;
             }
         }
     }

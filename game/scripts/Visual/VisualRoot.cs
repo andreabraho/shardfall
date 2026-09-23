@@ -103,6 +103,56 @@ public partial class VisualRoot : Node3D
         Lunge(Vector3.Up, 0.18f, 0.35);
     }
 
+    /// <summary>
+    /// One turn on the spot, lasting <paramref name="seconds"/> (Whirlwind, REF-03).
+    /// </summary>
+    /// <remarks>
+    /// The model's own spin when it has one. Otherwise the whole visual is turned a full
+    /// revolution — the direction alternating hit to hit, so a flurry winds and unwinds rather
+    /// than drilling one way — which is what a primitive can show of a spin.
+    /// </remarks>
+    public void Spin(double seconds, int hit)
+    {
+        if (_animator is { Ready: true } && _animator.Spin(seconds)) return;
+
+        _spinFor = System.Math.Max(0.05, seconds);
+        _spinLeft = _spinFor;
+        _spinWay = hit % 2 == 0 ? 1f : -1f;
+    }
+
+    private double _spinFor;
+    private double _spinLeft;
+    private float _spinWay = 1f;
+    private float? _restYaw;
+
+    /// <summary>
+    /// Turns the model inside this root, not the root: the root is what the motor points at
+    /// the target, and it would snap the spin back on the next frame it faced something.
+    /// </summary>
+    private void TurnModel(double delta)
+    {
+        if (_current is null || (_spinLeft <= 0 && _restYaw is null)) return;
+
+        _restYaw ??= _current.Rotation.Y;
+
+        _spinLeft -= delta;
+
+        if (_spinLeft <= 0)
+        {
+            _current.Rotation = _current.Rotation with { Y = _restYaw.Value };
+            _restYaw = null;
+            _spinLeft = 0;
+            return;
+        }
+
+        var done = 1.0 - (_spinLeft / _spinFor);
+
+        _current.Rotation = _current.Rotation with
+        {
+            Y = _restYaw.Value + (Mathf.Tau * (float)done * _spinWay),
+        };
+    }
+
     /// <summary>Cuts the swing animation short when the player walks off mid-follow-through.</summary>
     public void CancelSwing() => _animator?.CancelAttack();
 
@@ -168,6 +218,8 @@ public partial class VisualRoot : Node3D
                 ? _baseColor.Lerp(Colors.White, 0.75f)
                 : _baseColor;
         }
+
+        TurnModel(delta);
 
         if (_lunge <= 0) return;
 
