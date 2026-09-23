@@ -42,6 +42,12 @@ public partial class ShardNode : StaticBody3D
     /// </remarks>
     [Export] public bool Persistent { get; set; } = true;
 
+    /// <summary>
+    /// Whether walking out of the zone abandons the fight and heals the stone. Off on a tower
+    /// floor: the room is the zone, and a race between four stones is walking away from three.
+    /// </summary>
+    [Export] public bool Abandons { get; set; } = true;
+
     /// <summary>Whether the adds go straight for the player wherever they land (tower floors).</summary>
     [Export] public bool HuntingAdds { get; set; }
 
@@ -238,7 +244,7 @@ public partial class ShardNode : StaticBody3D
 
         // Walking out abandons the fight. Without this a shard could be whittled down over
         // many visits, which turns the encounter into a chore rather than a fight.
-        if (_fight.IsActive && !inZone)
+        if (_fight.IsActive && !inZone && Abandons)
         {
             Disengage();
             return;

@@ -419,10 +419,13 @@ public partial class EnemyBrain : CharacterBody3D
     /// </remarks>
     public void Hunt()
     {
+        _hunting = true;
         AggroRadius = 9999f;
         LeashRadius = 9999f;
         AcquireTarget(force: true);
     }
+
+    private bool _hunting;
 
     private void RefreshTarget()
     {
@@ -499,7 +502,10 @@ public partial class EnemyBrain : CharacterBody3D
 
         // Trivially low-level enemies ignore the player entirely, so a cleared zone is quiet
         // to walk back through rather than a chore (FR-2.7).
-        if (combatant is not null && ExperienceTable.IsTrivial(combatant.Stats.Level, Self.Stats.Level)) return;
+        //
+        // A hunter is exempt: it was sent for the player, and a tower that goes quiet because
+        // the player out-levelled it by eight is a tower with nothing in it.
+        if (!_hunting && combatant is not null && ExperienceTable.IsTrivial(combatant.Stats.Level, Self.Stats.Level)) return;
 
         Target = player;
         TargetCombatant = combatant;

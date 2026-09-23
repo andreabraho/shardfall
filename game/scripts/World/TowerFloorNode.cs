@@ -201,6 +201,7 @@ public partial class TowerFloorNode : Node3D
             ShardId = _floor.Stone,
             Persistent = false,
             HuntingAdds = true,
+            Abandons = false,
         };
 
         stone.AddChild(new VisualRoot { Name = "VisualRoot", VisualId = look, Position = new Vector3(0, height / 2, 0) });
