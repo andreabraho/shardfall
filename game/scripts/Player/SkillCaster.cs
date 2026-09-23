@@ -317,17 +317,6 @@ public partial class SkillCaster : Node
         public int Index => Math.Max(1, Skill.Hits) - Remaining - 1;
     }
 
-    /// <summary>
-    /// How far each hit of a spinning skill swings round from the last, in degrees.
-    /// </summary>
-    /// <remarks>
-    /// A spin whose every hit landed on exactly the same wedge would look like one swing
-    /// repeated. Each hit instead sweeps the arc a little further round and back — left,
-    /// right, left — so the flashes on the ground trace the turn the body is making. The hit
-    /// area turns with the flash: the effect never shows a reach the blow does not have.
-    /// </remarks>
-    private const float SpinSweep = 22f;
-
     private readonly List<Pulse> _pulses = [];
 
     private void Execute(ResolvedSkill skill)
@@ -342,13 +331,19 @@ public partial class SkillCaster : Node
             return;
         }
 
-        var aim = AimDirection(origin);
+        // Where a skill goes: at the target when there is one, otherwise straight ahead of the
+        // Warrior. Never at the cursor — the cursor is wherever the last click to walk left it,
+        // which is as often behind the character as in front, and a Whirlwind that opened
+        // behind the Warrior's back read as the skill misfiring. Only a ground skill, which is
+        // placed rather than swung, still goes where the cursor points.
+        var aim = skill.Targeting == SkillTargeting.GroundAoe ? AimDirection(origin) : _motor.Facing;
 
-        // A single-target skill turns to its target, not to the cursor.
-        if (skill.Targeting == SkillTargeting.SingleTarget
-            && GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat")?.Target is { IsAlive: true } target)
+        if (GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat")?.Target is { IsAlive: true } target
+            && skill.Targeting is SkillTargeting.SingleTarget or SkillTargeting.Cone)
         {
-            aim = (target.Body.GlobalPosition - origin) with { Y = 0 };
+            var toTarget = (target.Body.GlobalPosition - origin) with { Y = 0 };
+
+            if (toTarget.LengthSquared() > 0.0001f) aim = toTarget.Normalized();
         }
 
         // The Warrior stands still while a skill plays out (REF-01): held for every pulse it
@@ -435,15 +430,11 @@ public partial class SkillCaster : Node
         var center = pulse.FollowsCaster ? _motor.GlobalPosition : pulse.Center;
         var aim = pulse.Aim;
 
-        // A spinning skill turns the body on every hit, and sweeps its arc round with it.
+        // A spinning skill turns the body on every hit. Only the body: the arc stays where the
+        // skill was aimed, in front of the Warrior.
         if (skill.Motion == "spin")
         {
             _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Spin(skill.HitInterval, pulse.Index);
-
-            var side = pulse.Index % 2 == 0 ? -1f : 1f;
-            var turn = Mathf.DegToRad(SpinSweep * side * Mathf.Min(pulse.Index, 1));
-
-            aim = aim.Rotated(Vector3.Up, turn);
         }
 
         List<Combatant> targets;
