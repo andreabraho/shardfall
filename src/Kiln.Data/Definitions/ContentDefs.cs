@@ -483,8 +483,18 @@ public sealed class VisualDef : ContentDefBase
     public double Height { get; init; } = 1.8;
     public double Radius { get; init; } = 0.4;
 
-    /// <summary>Hex colour used for the placeholder material; ignored once a model is set.</summary>
+    /// <summary>
+    /// Hex colour used for the placeholder material. Once a model is set, it is the colour the
+    /// model glows in where something draws a glow — a shard's veins.
+    /// </summary>
     public string Color { get; init; } = "#c0c0c0";
+
+    /// <summary>
+    /// "height" scales a model evenly to <see cref="Height"/> — right for anything with a body.
+    /// "stretch" fills a column <see cref="Radius"/> wide and <see cref="Height"/> tall, for a
+    /// rock that has to stand on end as a shard.
+    /// </summary>
+    public string Fit { get; init; } = "height";
 }
 
 // ---------------------------------------------------------------------------

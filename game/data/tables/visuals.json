@@ -17,8 +17,9 @@
   { "id": "mesh_q_stag",  "primitive": "model", "height": 1.90, "radius": 0.55, "color": "#8a6040", "model_yaw": 180, "model_path": "res://assets/quaternius/animals/Stag.glb" },
   { "id": "mesh_q_bull",  "primitive": "model", "height": 1.70, "radius": 0.70, "color": "#5a4030", "model_yaw": 180, "model_path": "res://assets/quaternius/animals/Bull.glb" },
 
-  // Map-one shard: a moss-grown boulder, stood on end.
-  { "id": "mesh_shard_moss", "primitive": "model", "height": 3.20, "radius": 0.90, "color": "#5f7d4a", "model_yaw": 0, "model_path": "res://assets/quaternius/nature/Rock_Medium_3.gltf" },
+  // Map-one shard: a boulder stood on end as a menhir. Its colour is the colour its veins glow
+  // (ShardGlow) — moss green for the woods.
+  { "id": "mesh_shard_moss", "primitive": "model", "fit": "stretch", "height": 3.80, "radius": 1.10, "color": "#8cff6a", "model_yaw": 0, "model_path": "res://assets/quaternius/nature/Rock_Medium_3.gltf" },
 
   { "id": "mesh_sword_a",               "primitive": "box",      "height": 1.10, "radius": 0.06, "color": "#d9dde2" },
   { "id": "mesh_axe_a",                 "primitive": "box",      "height": 1.00, "radius": 0.12, "color": "#c9b08a" },

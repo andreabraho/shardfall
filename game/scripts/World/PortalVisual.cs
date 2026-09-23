@@ -6,11 +6,14 @@ namespace Kiln.Game.World;
 /// What a border looks like: two standing stones and a turning disc of light between them.
 /// </summary>
 /// <remarks>
+/// Kept see-through on purpose — the disc is a haze the road is seen through, not a door.
+/// <para>
 /// The crossing to the next map used to be an invisible sphere on the road, with a sign that
 /// appeared only while Alt was held. A player walking the road had nothing to aim for, and the
 /// end of a map read as the road simply stopping. This is built by every <see cref="ZoneGate"/>
 /// rather than placed in each scene, so every border in the game looks like one, including the
 /// ones not yet dressed.
+/// </para>
 /// <para>
 /// It says whether the way is open. Blue and turning briskly when the player may cross; a slow,
 /// dim red when the next map asks for a level or a quest the player does not have yet — read
@@ -43,7 +46,7 @@ public partial class PortalVisual : Node3D
                 float rim = smoothstep(0.72, 0.9, r) * (1.0 - smoothstep(0.9, 1.0, r));
                 float body = (1.0 - smoothstep(0.85, 1.0, r)) * (0.25 + 0.45 * spiral);
 
-                float glow = clamp(body + core * 0.35 + rim * 0.9, 0.0, 1.0);
+                float glow = clamp(body * 0.7 + core * 0.3 + rim * 0.25, 0.0, 1.0);
 
                 ALBEDO = tint.rgb * (0.5 + glow);
                 ALPHA = glow * strength;
@@ -52,7 +55,6 @@ public partial class PortalVisual : Node3D
     };
 
     private ShaderMaterial? _disc;
-    private StandardMaterial3D? _ring;
     private OmniLight3D? _light;
     private MeshInstance3D? _discMesh;
     private bool _open = true;
@@ -103,24 +105,6 @@ public partial class PortalVisual : Node3D
         // The quad faces +Z; turn it to face along the road, so it is walked into, not past.
         _discMesh.LookAt(_discMesh.GlobalPosition + along, Vector3.Up);
 
-        _ring = new StandardMaterial3D
-        {
-            ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
-            Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
-            BlendMode = BaseMaterial3D.BlendModeEnum.Add,
-            CullMode = BaseMaterial3D.CullModeEnum.Disabled,
-        };
-
-        AddChild(new MeshInstance3D
-        {
-            Name = "Ring",
-            Mesh = new TorusMesh { InnerRadius = 2.7f, OuterRadius = 3.0f, Rings = 32, RingSegments = 6 },
-            MaterialOverride = _ring,
-            CastShadow = GeometryInstance3D.ShadowCastingSetting.Off,
-            Position = new Vector3(0, 0.05f, 0),
-            Scale = new Vector3(1, 0.2f, 1),
-        });
-
         _light = new OmniLight3D
         {
             Name = "Glow",
@@ -135,7 +119,7 @@ public partial class PortalVisual : Node3D
 
     public override void _Process(double delta)
     {
-        if (_disc is null || _ring is null || _light is null) return;
+        if (_disc is null || _light is null) return;
 
         // Eased between the two states, so a portal that opens on a level-up is seen to open.
         _shown = Mathf.MoveToward(_shown, _open ? 1f : 0f, (float)delta * 1.5f);
@@ -145,9 +129,8 @@ public partial class PortalVisual : Node3D
 
         _disc.SetShaderParameter("tint", colour);
         _disc.SetShaderParameter("speed", Mathf.Lerp(0.25f, 1.0f, _shown));
-        _disc.SetShaderParameter("strength", Mathf.Lerp(0.55f, 1.0f, _shown));
+        _disc.SetShaderParameter("strength", Mathf.Lerp(0.3f, 0.55f, _shown));
 
-        _ring.AlbedoColor = colour with { A = 0.55f * pulse };
         _light.LightColor = colour;
         _light.LightEnergy = Mathf.Lerp(0.7f, 1.6f, _shown) * pulse;
     }

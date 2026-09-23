@@ -4,9 +4,9 @@
 ; themes, 2026-09-23: village and woods with animals).
 ;
 ; A walled village that is safe ground, two gates, and six camps of animals ringed around it,
-; with the old alpha's den in the north-west woods and a moss-grown shard in a grove to the
-; north-east. The distances are not taste — ZoneRoot.Audit measures each camp against the leash
-; of the creatures it produces, so the rat camps sit nearest and the wolf camps furthest.
+; with the old alpha's den in the north-west woods and three moss-veined shards in the woods.
+; The distances are not taste — ZoneRoot.Audit measures each camp against the leash of the
+; creatures it produces, so the rat camps sit nearest and the wolf camps furthest.
 ;
 ; Everything the player walks on or into is a kit piece naming an id, and the woods are
 ; ScatterNodes: a ring, a count and the places to keep clear, seeded so the wood is the same on
@@ -431,7 +431,7 @@ InnerRadius = 64.0
 OuterRadius = 88.0
 Spacing = 5
 Seed = 11
-Clearings = PackedVector3Array(50, 0, 7, 60, 0, 7, 70, 0, 8, 80, 0, 8, 90, 0, 8, -54, -54, 11)
+Clearings = PackedVector3Array(50, 0, 7, 60, 0, 7, 70, 0, 8, 80, 0, 8, 90, 0, 8, -54, -54, 11, -14, -54, 13)
 
 ; Copses in the four corners, where the ring does not reach.
 
@@ -499,7 +499,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -47, 1.1, -59)
 script = ExtResource("3_kit")
 PieceId = "kit_nat_rock"
 
-; A grove around the moss stone in the north-east, with a gap on the village side.
+; Three moss stones, each in its own ring of trees or rocks with a gap facing the village:
+; north-east, south-west, and north beyond the crags.
 
 [node name="ShardGrove" type="Node3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 0, -34)
@@ -512,17 +513,27 @@ Spacing = 4.5
 Seed = 41
 Clearings = PackedVector3Array(38, -26, 6)
 
-; A copse in the south-west field, somewhere to walk round rather than across.
-
-[node name="GroveSW" type="Node3D" parent="NavigationRegion3D"]
+[node name="ShardGroveSW" type="Node3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 0, 32)
 script = ExtResource("13_scatter")
 Pieces = PackedStringArray("kit_nat_tree", "kit_nat_pine")
-Count = 9
-InnerRadius = 0.0
-OuterRadius = 8.0
+Count = 12
+InnerRadius = 7.0
+OuterRadius = 12.0
 Spacing = 4.5
 Seed = 51
+Clearings = PackedVector3Array(-31, 25, 6)
+
+[node name="ShardRingNorth" type="Node3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, -54)
+script = ExtResource("13_scatter")
+Pieces = PackedStringArray("kit_nat_rock", "kit_nat_pine", "kit_nat_rock")
+Count = 10
+InnerRadius = 7.0
+OuterRadius = 12.0
+Spacing = 4.5
+Seed = 81
+Clearings = PackedVector3Array(-10, -45, 6)
 
 ; Undergrowth and grass: walked through, never baked. Kept off the roads so the way out
 ; stays readable.
@@ -628,15 +639,35 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -54, 0, -54)
 script = ExtResource("5_spawnfield")
 FieldId = "spf_hollow_den"
 
-; The map's shard, in the grove to the north-east.
+; The map's three shards. Each respawns two minutes after it breaks.
 
-[node name="Shard" type="StaticBody3D" parent="."]
+[node name="ShardNorthEast" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 0.1, -34)
 script = ExtResource("14_shard")
 ShardId = "shd_mossbound_stone"
 
-[node name="VisualRoot" type="Node3D" parent="Shard"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+[node name="VisualRoot" type="Node3D" parent="ShardNorthEast"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9, 0)
+script = ExtResource("7_visualroot")
+VisualId = "mesh_shard_moss"
+
+[node name="ShardSouthWest" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 0.1, 32)
+script = ExtResource("14_shard")
+ShardId = "shd_mossbound_stone"
+
+[node name="VisualRoot" type="Node3D" parent="ShardSouthWest"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9, 0)
+script = ExtResource("7_visualroot")
+VisualId = "mesh_shard_moss"
+
+[node name="ShardNorth" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0.1, -54)
+script = ExtResource("14_shard")
+ShardId = "shd_mossbound_stone"
+
+[node name="VisualRoot" type="Node3D" parent="ShardNorth"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9, 0)
 script = ExtResource("7_visualroot")
 VisualId = "mesh_shard_moss"
 

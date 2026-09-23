@@ -1,26 +1,28 @@
 [
-  // Ember Hollow: a moss-grown boulder in the woods, woken by the first map's animals (map
-  // themes, 2026-09-23). The gentlest shard in the game — bruisers only, the roster this map has.
+  // Ember Hollow: a moss-veined standing stone in the woods, woken by the first map's animals
+  // (map themes, 2026-09-23). Three of them stand in the map, two minutes apart. Meant to be a
+  // real fight for a character at the top of the map's band: a long stone to break, and the
+  // animals come in numbers — bruisers only, the roster this map has.
   {
     "id": "shd_mossbound_stone",
     "name": "$shard.shd_mossbound_stone.name",
     "tier": 1,
     "level": 2,
-    "hp": 600,
+    "hp": 2600,
     "pulse_interval": 10.0,
     "pulse_windup": 3.0,
     "pulse_radius": 6.0,
-    "pulse_damage_coef": 0.6,
+    "pulse_damage_coef": 0.8,
     "reclamation_seconds": 18.0,
     "reclamation_heal": 0.20,
-    "essence": 1,
+    "essence": 2,
     "drop_table": "dt_valley_animal_t1",
     "visual": "mesh_shard_moss",
     "modifiers": [],
     "waves": [
-      { "phase": "one",   "slots": [ { "role": "bruiser", "count": 3 } ] },
-      { "phase": "two",   "slots": [ { "role": "bruiser", "count": 4 } ] },
-      { "phase": "three", "slots": [ { "role": "bruiser", "count": 3 }, { "role": "bruiser", "count": 1, "anchor": true } ] }
+      { "phase": "one",   "slots": [ { "role": "bruiser", "count": 5 } ] },
+      { "phase": "two",   "slots": [ { "role": "bruiser", "count": 7 } ] },
+      { "phase": "three", "slots": [ { "role": "bruiser", "count": 6 }, { "role": "bruiser", "count": 1, "anchor": true } ] }
     ]
   },
   {

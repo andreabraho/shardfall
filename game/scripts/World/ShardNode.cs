@@ -27,7 +27,11 @@ public partial class ShardNode : StaticBody3D
     [Export] public float ZoneRadius { get; set; } = 18f;
 
     /// <summary>Seconds before a broken node returns (doc 02 §3).</summary>
-    [Export] public double RespawnSeconds { get; set; } = 240.0;
+    /// <summary>
+    /// Two minutes, since the map themes (2026-09-23): three shards to a map and a short wait
+    /// make them the map's recurring fight rather than a once-an-hour landmark.
+    /// </summary>
+    [Export] public double RespawnSeconds { get; set; } = 120.0;
 
     /// <summary>Where adds appear, as a ring around the shard.</summary>
     [Export] public float SpawnRing { get; set; } = 7f;
@@ -37,6 +41,7 @@ public partial class ShardNode : StaticBody3D
     private ShardModifier _modifier;
     private Combatant _self = null!;
     private VisualRoot? _visual;
+    private ShardGlow? _glow;
     private TelegraphVisual _telegraph = null!;
     private Node3D _addsRoot = null!;
     private NamePlate _plate = null!;
@@ -73,6 +78,10 @@ public partial class ShardNode : StaticBody3D
         AddChild(_self);
 
         _visual = GetNodeOrNull<VisualRoot>("VisualRoot");
+
+        // Veins, orbiting crystals and a light: what makes a rock read as a shard.
+        _glow = new ShardGlow { Name = "Glow" };
+        AddChild(_glow);
         _enemyScene = GD.Load<PackedScene>("res://scenes/enemy.tscn");
 
         _telegraph = new TelegraphVisual { Name = "Telegraph" };
@@ -114,6 +123,7 @@ public partial class ShardNode : StaticBody3D
             _respawnIn = due - PlayerProfile.PlayTime;
 
             if (_visual is not null) _visual.Visible = false;
+            if (_glow is not null) _glow.Visible = false;
 
             _plate.Visible = false;
 
@@ -160,7 +170,15 @@ public partial class ShardNode : StaticBody3D
         if (_visual is not null)
         {
             _visual.Visible = true;
-            _visual.Apply("mesh_placeholder_monolith", ModifierTint(_modifier), 1.0);
+
+            // The shard's own look from its definition — a themed stone per map. The modifier
+            // no longer repaints the stone; it colours the veins, below, and the name.
+            var look = GameContent.Database.Shards.TryGetValue(ShardId, out var shardDef)
+                ? shardDef.Visual
+                : "mesh_placeholder_monolith";
+
+            _visual.Apply(look, ModifierTint(_modifier), 1.0);
+            _glow?.Dress(look, _modifier == ShardModifier.None ? null : new Color(ModifierTint(_modifier)));
         }
 
         var label = GameContent.Database.Shards.TryGetValue(ShardId, out var def)
@@ -384,6 +402,7 @@ public partial class ShardNode : StaticBody3D
         // standing there at zero health with its name still floating over it — beaten, and
         // still on the map. Whether the shard is gone is the shard's own business.
         if (_visual is not null) _visual.Visible = false;
+            if (_glow is not null) _glow.Visible = false;
 
         _plate.Visible = false;
 

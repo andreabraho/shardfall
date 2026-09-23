@@ -42,7 +42,15 @@ public static class VisualRegistry
                 // Scaled to the height the data declares, not to the size its author worked
                 // in, and then the per-creature scale on top. Without this a model lands at
                 // whatever metre-per-unit its pack used and a wolf stands taller than a wall.
-                ModelFit.ByHeight(instance, (float)(def.Height * scale));
+                if (def.Fit == "stretch")
+                {
+                    var width = (float)(def.Radius * 2 * scale);
+                    ModelFit.Stretch(instance, new Vector3(width, (float)(def.Height * scale), width * 0.9f));
+                }
+                else
+                {
+                    ModelFit.ByHeight(instance, (float)(def.Height * scale));
+                }
 
                 return instance;
             }
