@@ -304,6 +304,12 @@ public partial class TowerFloorNode : Node3D
         // The middle of the room, not near the entry: walking in and seeing it is the point.
         boss.PlaceAt(GlobalPosition);
 
+        // A boss comes for the player however far they out-level it, and is never deleted in one
+        // blow: the trivial-level rule (FR-2.7) is for clearing a field, not for skipping the
+        // fight a floor exists for.
+        boss.Self.IsEncounter = true;
+        boss.Hunt();
+
         boss.Self.Died += () => _tower?.Scored();
         boss.Self.HealthChanged += OnBossHealth;
 
