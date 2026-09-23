@@ -60,8 +60,10 @@ public partial class ModelAnimator : Node
 
         var names = _player.GetAnimationList();
 
-        _idle = Pick(names, "Idle");
-        _run = Pick(names, "Running_A", "Running_B", "Walking_A", "Idle");
+        _idle = Find(names, Idle);
+        _run = Find(names, Move);
+
+        if (_run.Length == 0) _run = _idle;
 
         // Looping is a property of the imported clip, and glTF does not carry one. Without
         // this every animation plays once and the character freezes on its last frame.
@@ -71,6 +73,39 @@ public partial class ModelAnimator : Node
         }
 
         Play(_idle);
+    }
+
+    // What each role is called across the packs in use. KayKit names clips "Running_A";
+    // Quaternius "Gallop", "Rat_Run" or "CharacterArmature|Run". The part after the last "|"
+    // is compared, and the first list entry any clip matches wins, so the best-looking clip
+    // for a role is listed first.
+    private static readonly string[] Idle = ["Idle", "Rat_Idle", "Spider_Idle", "Snake_Idle", "Flying_Idle", "Idle_2"];
+
+    private static readonly string[] Move =
+        ["Running_A", "Running_B", "Run", "Gallop", "Rat_Run", "Fast_Flying", "Walking_A", "Walk",
+         "Spider_Walk", "Snake_Walk", "Rat_Walk", "Wasp_Flying"];
+
+    private static readonly string[] Strike =
+        ["Attack", "Attack_Headbutt", "Attack_Kick", "Punch", "Bite_Front", "Headbutt",
+         "Rat_Attack", "Spider_Attack", "Snake_Attack", "Wasp_Attack", "Weapon"];
+
+    private static readonly string[] Hurt =
+        ["Hit_A", "Hit_B", "HitReact", "HitRecieve", "Idle_HitReact_Left", "Idle_HitReact_Right"];
+
+    /// <summary>The first clip playing <paramref name="role"/>, matched on the clip's own name.</summary>
+    private static string Find(string[] names, string[] role)
+    {
+        foreach (var want in role)
+        {
+            foreach (var name in names)
+            {
+                var own = name[(name.LastIndexOf('|') + 1)..];
+
+                if (string.Equals(own, want, System.StringComparison.OrdinalIgnoreCase)) return name;
+            }
+        }
+
+        return "";
     }
 
     private static string Pick(string[] names, params string[] wanted)
@@ -100,6 +135,9 @@ public partial class ModelAnimator : Node
         }
 
         _swing = (_swing + 1) % Swings.Length;
+
+        // A creature from another pack has one attack under its own name.
+        if (clip.Length == 0) clip = Find(names, Strike);
 
         if (clip.Length == 0) return 0;
 
@@ -162,7 +200,7 @@ public partial class ModelAnimator : Node
         if (_player is null || _attackFor > 0) return;
 
         var names = _player.GetAnimationList();
-        var clip = Pick(names, "Hit_A", "Hit_B");
+        var clip = Find(names, Hurt);
 
         if (clip.Length == 0) return;
 

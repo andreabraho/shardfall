@@ -1304,10 +1304,29 @@ public static class ContentValidator
                     $"Use one of: {string.Join(", ", shapes)}.");
             }
 
-            if (piece.Shape == "model" && string.IsNullOrEmpty(piece.ModelPath))
+            if (piece.Shape == "model" && string.IsNullOrEmpty(piece.ModelPath) && piece.Models.Length == 0)
             {
                 report.Error("kit-shape", piece.SourceFile,
-                    $"'{piece.Id}' is a model with no model_path.");
+                    $"'{piece.Id}' is a model with no model_path and no models.");
+            }
+
+            if (piece.Fit is not ("stretch" or "height"))
+            {
+                report.Error("kit-shape", piece.SourceFile, $"'{piece.Id}' has fit '{piece.Fit}'.",
+                    "Use stretch (fill the box, for things that tile) or height (keep proportions).");
+            }
+
+            if (piece.Tile < 1)
+            {
+                report.Error("kit-shape", piece.SourceFile, $"'{piece.Id}' tiles {piece.Tile} times.",
+                    "A piece is at least one copy of its model.");
+            }
+
+            if (piece.CollisionSize.Length is not (0 or 3) || piece.CollisionSize.Any(v => v <= 0))
+            {
+                report.Error("kit-size", piece.SourceFile,
+                    $"'{piece.Id}' has collision_size [{string.Join(", ", piece.CollisionSize)}].",
+                    "Leave it out, or give three positive dimensions in metres.");
             }
 
             if (piece.Size.Length != 3 || piece.Size.Any(v => v <= 0))

@@ -1,0 +1,16 @@
+Wolf, Fox, Deer, Stag, Bull — Quaternius, "Ultimate Animated Animal Pack"
+Rat — Quaternius, "LowPoly Animated Easy Enemies" (Animated Enemies bundle)
+
+Downloaded 2026-09-23 as single .glb files from Poly Pizza (https://poly.pizza), each model page
+marked "Public Domain (CC0)" and credited to Quaternius:
+  Wolf  https://poly.pizza/m/P1gU3Qkr9r
+  Fox   https://poly.pizza/m/Bc97C66HKi
+  Deer  https://poly.pizza/m/T6Cs7tmMHJ
+  Stag  https://poly.pizza/m/tQdzbZ1Cmw
+  Bull  https://poly.pizza/m/a8PIIYwF7r
+  Rat   https://poly.pizza/m/iltq5bVNaV
+
+Quaternius publishes both packs under CC0 1.0 Universal:
+  https://quaternius.com/packs/ultimateanimatedanimals.html
+  https://quaternius.itch.io/animated-easy-enemies
+  https://creativecommons.org/publicdomain/zero/1.0/

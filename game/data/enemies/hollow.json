@@ -1,33 +1,39 @@
 [
+  // Ember Hollow — the village and woods, animals only (map themes, 2026-09-23). Everything
+  // here fights up close: the first map teaches the swing, the arc and the fourth-blow sweep
+  // against creatures that come straight at the player. Ranged enemies arrive in map two.
+  //
+  // Models: Quaternius Ultimate Animated Animals and Easy Enemies (CC0; ASSET-LICENSES.md).
+
   {
-    "id": "mob_reed_hopper",
-    "name": "$mob.mob_reed_hopper.name",
+    "id": "mob_field_rat",
+    "name": "$mob.mob_field_rat.name",
     "family": "animal",
     "role": "bruiser",
     "level": 1,
-    "stats": { "hp": 85, "attack_power": 15, "defense": 4, "move_speed": 4.6 },
+    "stats": { "hp": 80, "attack_power": 14, "defense": 4, "move_speed": 4.8 },
     "abilities": [
-      { "id": "abl_hopper_nip", "cooldown": 2.4, "windup": 0.45, "damage_coef": 0.85 }
+      { "id": "abl_rat_nip", "cooldown": 2.3, "windup": 0.45, "damage_coef": 0.85 }
     ],
     "ai": "bt_melee_chaser",
     "aggro_radius": 10,
     "leash_radius": 12,
     "xp": 24,
     "drop_table": "dt_valley_animal_t1",
-    "visual": "mesh_placeholder_quadruped",
-    "visual_scale": 0.75,
-    "visual_tint": "#8f9a6b"
+    "visual": "mesh_q_rat",
+    "visual_scale": 1.0,
+    "visual_tint": "#8a7a68"
   },
   {
-    "id": "mob_ditch_lurker",
-    "name": "$mob.mob_ditch_lurker.name",
+    "id": "mob_red_fox",
+    "name": "$mob.mob_red_fox.name",
     "family": "animal",
     "role": "bruiser",
     "level": 2,
-    "stats": { "hp": 135, "attack_power": 21, "defense": 8, "move_speed": 4.4 },
+    "stats": { "hp": 125, "attack_power": 20, "defense": 7, "move_speed": 5.0 },
     "abilities": [
-      { "id": "abl_lurker_bite", "cooldown": 2.6, "windup": 0.55, "damage_coef": 1.00 },
-      { "id": "abl_lurker_lunge", "cooldown": 9.0, "windup": 1.55, "damage_coef": 1.20,
+      { "id": "abl_fox_bite", "cooldown": 2.5, "windup": 0.50, "damage_coef": 1.00 },
+      { "id": "abl_fox_pounce", "cooldown": 9.0, "windup": 1.55, "damage_coef": 1.20,
         "telegraph": { "shape": "circle", "radius": 2.5 } }
     ],
     "ai": "bt_melee_chaser",
@@ -35,27 +41,57 @@
     "leash_radius": 14,
     "xp": 38,
     "drop_table": "dt_valley_animal_t1",
-    "visual": "mesh_placeholder_quadruped",
-    "visual_scale": 0.85,
-    "visual_tint": "#6f7a5a"
+    "visual": "mesh_q_fox",
+    "visual_scale": 1.0,
+    "visual_tint": "#c06a2a"
   },
   {
-    "id": "mob_thistle_sprite",
-    "name": "$mob.mob_thistle_sprite.name",
-    "family": "mystic",
-    "role": "archer",
+    "id": "mob_grey_wolf",
+    "name": "$mob.mob_grey_wolf.name",
+    "family": "animal",
+    "role": "bruiser",
     "level": 3,
-    "stats": { "hp": 110, "attack_power": 24, "defense": 6, "move_speed": 4.8 },
+    "stats": { "hp": 150, "attack_power": 25, "defense": 9, "move_speed": 5.2 },
     "abilities": [
-      { "id": "abl_sprite_dart", "cooldown": 2.4, "windup": 0.70, "damage_coef": 0.95, "range": 10.0 }
+      { "id": "abl_wolf_bite", "cooldown": 2.4, "windup": 0.50, "damage_coef": 1.00 },
+      { "id": "abl_wolf_lunge", "cooldown": 8.0, "windup": 1.50, "damage_coef": 1.30,
+        "telegraph": { "shape": "cone", "radius": 2.5, "angle": 60 } }
     ],
-    "ai": "bt_ranged_kiter",
+    "ai": "bt_melee_chaser",
     "aggro_radius": 13,
     "leash_radius": 16,
     "xp": 52,
     "drop_table": "dt_valley_animal_t1",
-    "visual": "mesh_placeholder_humanoid",
-    "visual_scale": 0.8,
-    "visual_tint": "#9d7fb8"
+    "visual": "mesh_q_wolf",
+    "visual_scale": 1.0,
+    "visual_tint": "#8a8a8a"
+  },
+
+  // The map's boss: the old alpha of the wolves, alone in a den in the north-west woods. A
+  // single wolf, larger, with the whole pack's tricks and a pounce the size of a clearing.
+  {
+    "id": "mob_greymane",
+    "stun_resist": 0.5,
+    "name": "$mob.mob_greymane.name",
+    "family": "animal",
+    "role": "bruiser",
+    "level": 4,
+    "stats": { "hp": 1400, "attack_power": 40, "defense": 16, "move_speed": 5.4 },
+    "abilities": [
+      { "id": "abl_greymane_bite", "cooldown": 2.2, "windup": 0.60, "damage_coef": 1.10 },
+      { "id": "abl_greymane_rend", "cooldown": 6.0, "windup": 1.70, "damage_coef": 1.40,
+        "applies": { "kind": "bleed", "magnitude": 6, "duration": 4.0 },
+        "telegraph": { "shape": "cone", "radius": 3.0, "angle": 80 } },
+      { "id": "abl_greymane_pounce", "cooldown": 11.0, "windup": 2.10, "damage_coef": 1.80,
+        "telegraph": { "shape": "circle", "radius": 4.0 } }
+    ],
+    "ai": "bt_melee_chaser",
+    "aggro_radius": 14,
+    "leash_radius": 22,
+    "xp": 600,
+    "drop_table": "dt_valley_animal_t2",
+    "visual": "mesh_q_wolf",
+    "visual_scale": 1.7,
+    "visual_tint": "#4a4a50"
   }
 ]

@@ -17,26 +17,30 @@
     ],
     "spawn_fields": [
       {
-        "id": "spf_hollow_reeds_east",
-        "entries": [{ "enemy": "mob_reed_hopper", "weight": 1.0 }],
-        "count": 4,
-        "respawn_seconds": 20,
-        "activation_radius": 60,
-        "radius": 7
-      },
-      {
-        "id": "spf_hollow_reeds_south",
-        "entries": [{ "enemy": "mob_reed_hopper", "weight": 1.0 }],
-        "count": 4,
-        "respawn_seconds": 20,
-        "activation_radius": 60,
-        "radius": 7
-      },
-      {
-        "id": "spf_hollow_ditch_north",
+        "id": "spf_hollow_rats_east",
         "entries": [
-          { "enemy": "mob_ditch_lurker", "weight": 1.0 },
-          { "enemy": "mob_reed_hopper", "weight": 2.0 }
+          { "enemy": "mob_field_rat", "weight": 1.0 }
+        ],
+        "count": 4,
+        "respawn_seconds": 20,
+        "activation_radius": 60,
+        "radius": 7
+      },
+      {
+        "id": "spf_hollow_rats_south",
+        "entries": [
+          { "enemy": "mob_field_rat", "weight": 1.0 }
+        ],
+        "count": 4,
+        "respawn_seconds": 20,
+        "activation_radius": 60,
+        "radius": 7
+      },
+      {
+        "id": "spf_hollow_foxes_north",
+        "entries": [
+          { "enemy": "mob_red_fox", "weight": 1.0 },
+          { "enemy": "mob_field_rat", "weight": 2.0 }
         ],
         "count": 4,
         "respawn_seconds": 24,
@@ -44,10 +48,10 @@
         "radius": 8
       },
       {
-        "id": "spf_hollow_ditch_west",
+        "id": "spf_hollow_foxes_west",
         "entries": [
-          { "enemy": "mob_ditch_lurker", "weight": 1.0 },
-          { "enemy": "mob_reed_hopper", "weight": 2.0 }
+          { "enemy": "mob_red_fox", "weight": 1.0 },
+          { "enemy": "mob_field_rat", "weight": 2.0 }
         ],
         "count": 4,
         "respawn_seconds": 24,
@@ -55,10 +59,10 @@
         "radius": 8
       },
       {
-        "id": "spf_hollow_thicket_nw",
+        "id": "spf_hollow_wolves_nw",
         "entries": [
-          { "enemy": "mob_thistle_sprite", "weight": 1.0 },
-          { "enemy": "mob_ditch_lurker", "weight": 1.5 }
+          { "enemy": "mob_grey_wolf", "weight": 1.0 },
+          { "enemy": "mob_red_fox", "weight": 1.5 }
         ],
         "count": 4,
         "respawn_seconds": 26,
@@ -66,18 +70,28 @@
         "radius": 8
       },
       {
-        "id": "spf_hollow_thicket_se",
+        "id": "spf_hollow_wolves_se",
         "entries": [
-          { "enemy": "mob_thistle_sprite", "weight": 1.0 },
-          { "enemy": "mob_ditch_lurker", "weight": 1.5 }
+          { "enemy": "mob_grey_wolf", "weight": 1.0 },
+          { "enemy": "mob_red_fox", "weight": 1.5 }
         ],
         "count": 4,
         "respawn_seconds": 26,
         "activation_radius": 60,
         "radius": 8
+      },
+      {
+        "id": "spf_hollow_den",
+        "entries": [
+          { "enemy": "mob_greymane", "weight": 1.0 }
+        ],
+        "count": 1,
+        "respawn_seconds": 300,
+        "activation_radius": 60,
+        "radius": 3
       }
     ],
-    "shards": []
+    "shards": ["shd_mossbound_stone"]
   },
   {
     "id": "zone_vale_approach",

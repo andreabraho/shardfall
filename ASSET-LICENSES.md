@@ -16,6 +16,9 @@ attribution is required in-game.
 | Kenney RPG Audio 1.0 — 21 of its 50 sounds (knife slices, chop, blade draw, leather, cloth, coins, door, metal click/latch, book flips) | `game/audio/kenney/rpg/` | [kenney.nl/assets/rpg-audio](https://kenney.nl/assets/rpg-audio) | **CC0 1.0** | No | 2026-09-21 |
 | Kenney Impact Sounds — 50 of its 130 sounds (punch, plate, metal, soft, bell, glass and tin impacts) | `game/audio/kenney/impact/` | [kenney.nl/assets/impact-sounds](https://kenney.nl/assets/impact-sounds) | **CC0 1.0** | No | 2026-09-21 |
 | Kenney Interface Sounds — 43 of its 100 sounds (click, open, close, confirmation, error, maximize, glass, pluck, bong) | `game/audio/kenney/interface/` | [kenney.nl/assets/interface-sounds](https://kenney.nl/assets/interface-sounds) | **CC0 1.0** | No | 2026-09-21 |
+| Quaternius Medieval Village MegaKit (Standard, free tier) — 18 models (uneven-brick and plaster walls with doors and windows, corners, three round-tile roofs, chimney, wagon, crate, wooden fences, brick floor); textures halved to 1024 px | `game/assets/quaternius/village/` | [quaternius.itch.io/medieval-village-megakit](https://quaternius.itch.io/medieval-village-megakit) | **CC0 1.0** | No | 2026-09-23 |
+| Quaternius Stylized Nature MegaKit (Standard, free tier) — 24 models (five common trees, five pines, three rocks, bushes, grass, flowers, fern, plant, mushroom, rock paths); textures halved to 1024 px | `game/assets/quaternius/nature/` | [quaternius.itch.io/stylized-nature-megakit](https://quaternius.itch.io/stylized-nature-megakit) | **CC0 1.0** | No | 2026-09-23 |
+| Quaternius Ultimate Animated Animals — Wolf, Fox, Deer, Stag, Bull; and Easy Enemies — Rat (animated, single .glb each) | `game/assets/quaternius/animals/` | [poly.pizza](https://poly.pizza) pages listed in `LICENSE-SOURCE.txt`; packs at [quaternius.com](https://quaternius.com/packs/ultimateanimatedanimals.html) | **CC0 1.0** | No | 2026-09-23 |
 
 All three are by Kay Lousberg (www.kaylousberg.com). The packs' own `LICENSE.txt` files are
 kept verbatim beside the models, in `game/assets/kaykit/`, and each states Creative Commons
@@ -34,6 +37,8 @@ its matcher did not recognise the file's wording — the files themselves name C
 Crediting is not required, and we will do it anyway in the credits screen when there is one:
 an author who gives work away for nothing is the cheapest possible thing to be generous
 about.
+
+The Quaternius assets (the map themes, decided 2026-09-23) are by Quaternius (quaternius.com). The two MegaKits' own `License_Standard.txt` files are kept verbatim as `game/assets/quaternius/License-*.txt` and state CC0 1.0 Universal; the animals came as single files from Poly Pizza, so `animals/LICENSE-SOURCE.txt` records each model page and the pack's licence. Textures were halved from 2048 to 1024 px on import, which CC0 permits — the models are otherwise unchanged.
 
 **Only the models actually used are in the repo.** The packs together hold over two hundred
 models; carrying the rest would be paying repository weight for things no scene references.

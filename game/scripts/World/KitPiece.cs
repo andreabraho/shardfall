@@ -107,17 +107,9 @@ public partial class KitPiece : StaticBody3D
     {
         var size = Size(def);
 
-        if (def.Shape == "model" && !string.IsNullOrEmpty(def.ModelPath))
+        if (def.Shape == "model" && ModelFor(def) is { Length: > 0 } path)
         {
-            if (ResourceLoader.Load<PackedScene>(def.ModelPath)?.Instantiate<Node3D>() is { } instance)
-            {
-                AddChild(instance);
-                Visual.ModelFit.Stretch(instance, size);
-            }
-            else
-            {
-                GD.PushWarning($"[kit] model '{def.ModelPath}' for '{def.Id}' failed to load.");
-            }
+            BuildModel(def, path, size);
         }
         else
         {
@@ -138,7 +130,18 @@ public partial class KitPiece : StaticBody3D
             CollisionLayer = Foundation.Layers.World;
             CollisionMask = 0;
 
-            foreach (var shape in CollisionFor(def, size)) AddChild(shape);
+            // A tree is stopped by its trunk, not its crown: the collider can be smaller than
+            // what is drawn, and is then centred at the foot of the piece rather than its middle.
+            var collider = def.CollisionSize.Length == 3
+                ? new Vector3((float)def.CollisionSize[0], (float)def.CollisionSize[1], (float)def.CollisionSize[2])
+                : size;
+
+            foreach (var shape in CollisionFor(def, collider))
+            {
+                if (def.CollisionSize.Length == 3) shape.Position += new Vector3(0, (collider.Y - size.Y) * 0.5f, 0);
+
+                AddChild(shape);
+            }
         }
         else
         {
@@ -154,6 +157,75 @@ public partial class KitPiece : StaticBody3D
         // nodes the zone is built from. A map drawn from a second description of the level
         // is a map that goes stale the first time somebody moves a wall.
         AddToGroup("kit");
+    }
+
+    /// <summary>
+    /// A number that belongs to where this piece stands, the same on every load and every
+    /// machine. Picks the variant and the turn; .NET's own string hashes are salted per run
+    /// and would give a different wood every time the scene opened.
+    /// </summary>
+    private int Placement()
+    {
+        var at = Position;
+        var x = (int)Mathf.Round(at.X * 10f);
+        var z = (int)Mathf.Round(at.Z * 10f);
+
+        unchecked
+        {
+            var h = (x * 73856093) ^ (z * 19349663) ^ ((int)Mathf.Round(at.Y * 10f) * 83492791);
+            return h & 0x7fffffff;
+        }
+    }
+
+    private string ModelFor(KitPieceDef def)
+    {
+        if (def.Models.Length == 0) return def.ModelPath ?? "";
+
+        return def.Models[Placement() % def.Models.Length];
+    }
+
+    /// <summary>
+    /// Puts the model in the box: stretched to fill it, tiled along it, or stood up to its
+    /// height in proportion — whichever the piece asks for.
+    /// </summary>
+    private void BuildModel(KitPieceDef def, string path, Vector3 size)
+    {
+        var scene = ResourceLoader.Load<PackedScene>(path);
+
+        if (scene is null)
+        {
+            GD.PushWarning($"[kit] model '{path}' for '{def.Id}' failed to load.");
+            return;
+        }
+
+        var copies = System.Math.Max(1, def.Tile);
+        var step = size.X / copies;
+
+        for (var i = 0; i < copies; i++)
+        {
+            var instance = scene.Instantiate<Node3D>();
+
+            if (def.RandomYaw)
+            {
+                // Quarter-turns and the angles between, but never the same for two neighbours.
+                instance.Rotation = new Vector3(0, ((Placement() + (i * 97)) % 360) * Mathf.Pi / 180f, 0);
+            }
+
+            AddChild(instance);
+
+            if (def.Fit == "height")
+            {
+                Visual.ModelFit.ByHeight(instance, size.Y);
+            }
+            else
+            {
+                Visual.ModelFit.Stretch(instance, new Vector3(step, size.Y, size.Z));
+            }
+
+            // Side by side along the piece's length, the run centred on the node like every
+            // other piece.
+            if (copies > 1) instance.Position += new Vector3((-size.X * 0.5f) + (step * (i + 0.5f)), 0, 0);
+        }
     }
 
     private static Vector3 Size(KitPieceDef def) => def.Size.Length == 3

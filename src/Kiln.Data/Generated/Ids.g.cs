@@ -87,12 +87,14 @@ public static class Ids
         public const string MobCinderBearer = "mob_cinder_bearer";
         public const string MobCorruptedWolf = "mob_corrupted_wolf";
         public const string MobCryptStalker = "mob_crypt_stalker";
-        public const string MobDitchLurker = "mob_ditch_lurker";
         public const string MobEmberChanter = "mob_ember_chanter";
+        public const string MobFieldRat = "mob_field_rat";
         public const string MobGalleryWarden = "mob_gallery_warden";
         public const string MobGateBreaker = "mob_gate_breaker";
         public const string MobGraveStitcher = "mob_grave_stitcher";
         public const string MobGraveWarden = "mob_grave_warden";
+        public const string MobGreyWolf = "mob_grey_wolf";
+        public const string MobGreymane = "mob_greymane";
         public const string MobHeartKeeper = "mob_heart_keeper";
         public const string MobHollowChoir = "mob_hollow_choir";
         public const string MobHuskSentinel = "mob_husk_sentinel";
@@ -100,18 +102,17 @@ public static class Ids
         public const string MobMossTender = "mob_moss_tender";
         public const string MobObsidianWard = "mob_obsidian_ward";
         public const string MobPaleGnawer = "mob_pale_gnawer";
-        public const string MobReedHopper = "mob_reed_hopper";
+        public const string MobRedFox = "mob_red_fox";
         public const string MobRiftSeed = "mob_rift_seed";
         public const string MobRotMender = "mob_rot_mender";
         public const string MobShardArcher = "mob_shard_archer";
         public const string MobSlingScavenger = "mob_sling_scavenger";
         public const string MobSporePod = "mob_spore_pod";
-        public const string MobThistleSprite = "mob_thistle_sprite";
         public const string MobThornbackBoar = "mob_thornback_boar";
         public const string MobVaultChorister = "mob_vault_chorister";
         public const string MobVoidCaster = "mob_void_caster";
 
-        public static readonly string[] All = ["mob_ash_slinger", "mob_barrow_shield", "mob_blight_bomber", "mob_bone_flinger", "mob_carrion_bloat", "mob_cinder_bearer", "mob_corrupted_wolf", "mob_crypt_stalker", "mob_ditch_lurker", "mob_ember_chanter", "mob_gallery_warden", "mob_gate_breaker", "mob_grave_stitcher", "mob_grave_warden", "mob_heart_keeper", "mob_hollow_choir", "mob_husk_sentinel", "mob_iron_bulwark", "mob_moss_tender", "mob_obsidian_ward", "mob_pale_gnawer", "mob_reed_hopper", "mob_rift_seed", "mob_rot_mender", "mob_shard_archer", "mob_sling_scavenger", "mob_spore_pod", "mob_thistle_sprite", "mob_thornback_boar", "mob_vault_chorister", "mob_void_caster"];
+        public static readonly string[] All = ["mob_ash_slinger", "mob_barrow_shield", "mob_blight_bomber", "mob_bone_flinger", "mob_carrion_bloat", "mob_cinder_bearer", "mob_corrupted_wolf", "mob_crypt_stalker", "mob_ember_chanter", "mob_field_rat", "mob_gallery_warden", "mob_gate_breaker", "mob_grave_stitcher", "mob_grave_warden", "mob_grey_wolf", "mob_greymane", "mob_heart_keeper", "mob_hollow_choir", "mob_husk_sentinel", "mob_iron_bulwark", "mob_moss_tender", "mob_obsidian_ward", "mob_pale_gnawer", "mob_red_fox", "mob_rift_seed", "mob_rot_mender", "mob_shard_archer", "mob_sling_scavenger", "mob_spore_pod", "mob_thornback_boar", "mob_vault_chorister", "mob_void_caster"];
     }
 
     public static class Skills
@@ -186,13 +187,20 @@ public static class Ids
         public const string MeshPlaceholderRogue = "mesh_placeholder_rogue";
         public const string MeshPlaceholderShrine = "mesh_placeholder_shrine";
         public const string MeshPlaceholderVillager = "mesh_placeholder_villager";
+        public const string MeshQBull = "mesh_q_bull";
+        public const string MeshQDeer = "mesh_q_deer";
+        public const string MeshQFox = "mesh_q_fox";
+        public const string MeshQRat = "mesh_q_rat";
+        public const string MeshQStag = "mesh_q_stag";
+        public const string MeshQWolf = "mesh_q_wolf";
+        public const string MeshShardMoss = "mesh_shard_moss";
         public const string MeshShieldA = "mesh_shield_a";
         public const string MeshSpearA = "mesh_spear_a";
         public const string MeshStoneA = "mesh_stone_a";
         public const string MeshSwordA = "mesh_sword_a";
         public const string MeshTrinketA = "mesh_trinket_a";
 
-        public static readonly string[] All = ["mesh_armor_a", "mesh_axe_a", "mesh_boots_a", "mesh_helmet_a", "mesh_placeholder_caster", "mesh_placeholder_heavy", "mesh_placeholder_humanoid", "mesh_placeholder_monolith", "mesh_placeholder_player", "mesh_placeholder_quadruped", "mesh_placeholder_rogue", "mesh_placeholder_shrine", "mesh_placeholder_villager", "mesh_shield_a", "mesh_spear_a", "mesh_stone_a", "mesh_sword_a", "mesh_trinket_a"];
+        public static readonly string[] All = ["mesh_armor_a", "mesh_axe_a", "mesh_boots_a", "mesh_helmet_a", "mesh_placeholder_caster", "mesh_placeholder_heavy", "mesh_placeholder_humanoid", "mesh_placeholder_monolith", "mesh_placeholder_player", "mesh_placeholder_quadruped", "mesh_placeholder_rogue", "mesh_placeholder_shrine", "mesh_placeholder_villager", "mesh_q_bull", "mesh_q_deer", "mesh_q_fox", "mesh_q_rat", "mesh_q_stag", "mesh_q_wolf", "mesh_shard_moss", "mesh_shield_a", "mesh_spear_a", "mesh_stone_a", "mesh_sword_a", "mesh_trinket_a"];
     }
 
     public static class Shards
@@ -201,9 +209,10 @@ public static class Ids
         public const string ShdCrackedSeed = "shd_cracked_seed";
         public const string ShdGateWarden = "shd_gate_warden";
         public const string ShdHollowBloom = "shd_hollow_bloom";
+        public const string ShdMossboundStone = "shd_mossbound_stone";
         public const string ShdRidgeSpine = "shd_ridge_spine";
 
-        public static readonly string[] All = ["shd_catacomb_heart", "shd_cracked_seed", "shd_gate_warden", "shd_hollow_bloom", "shd_ridge_spine"];
+        public static readonly string[] All = ["shd_catacomb_heart", "shd_cracked_seed", "shd_gate_warden", "shd_hollow_bloom", "shd_mossbound_stone", "shd_ridge_spine"];
     }
 
     public static class Zones
@@ -228,6 +237,14 @@ public static class Ids
         public const string KitFloor8 = "kit_floor_8";
         public const string KitGate = "kit_gate";
         public const string KitMarkerPost = "kit_marker_post";
+        public const string KitNatBush = "kit_nat_bush";
+        public const string KitNatCrag = "kit_nat_crag";
+        public const string KitNatFern = "kit_nat_fern";
+        public const string KitNatFlowers = "kit_nat_flowers";
+        public const string KitNatGrass = "kit_nat_grass";
+        public const string KitNatPine = "kit_nat_pine";
+        public const string KitNatRock = "kit_nat_rock";
+        public const string KitNatTree = "kit_nat_tree";
         public const string KitPath4 = "kit_path_4";
         public const string KitPillar = "kit_pillar";
         public const string KitRamp4 = "kit_ramp_4";
@@ -235,11 +252,24 @@ public static class Ids
         public const string KitRuinWall = "kit_ruin_wall";
         public const string KitShrub = "kit_shrub";
         public const string KitTower = "kit_tower";
+        public const string KitVilCorner = "kit_vil_corner";
+        public const string KitVilCrate = "kit_vil_crate";
+        public const string KitVilFence4 = "kit_vil_fence_4";
+        public const string KitVilGate = "kit_vil_gate";
+        public const string KitVilHouseCottage = "kit_vil_house_cottage";
+        public const string KitVilHouseLong = "kit_vil_house_long";
+        public const string KitVilHouseSmall = "kit_vil_house_small";
+        public const string KitVilHouseStone = "kit_vil_house_stone";
+        public const string KitVilPath4 = "kit_vil_path_4";
+        public const string KitVilSquare8 = "kit_vil_square_8";
+        public const string KitVilWagon = "kit_vil_wagon";
+        public const string KitVilWall4 = "kit_vil_wall_4";
+        public const string KitVilWall8 = "kit_vil_wall_8";
         public const string KitWall4 = "kit_wall_4";
         public const string KitWall8 = "kit_wall_8";
         public const string KitWallLow4 = "kit_wall_low_4";
 
-        public static readonly string[] All = ["kit_banner", "kit_boulder", "kit_brazier", "kit_cliff_8", "kit_floor_4", "kit_floor_8", "kit_gate", "kit_marker_post", "kit_path_4", "kit_pillar", "kit_ramp_4", "kit_ruin_rubble", "kit_ruin_wall", "kit_shrub", "kit_tower", "kit_wall_4", "kit_wall_8", "kit_wall_low_4"];
+        public static readonly string[] All = ["kit_banner", "kit_boulder", "kit_brazier", "kit_cliff_8", "kit_floor_4", "kit_floor_8", "kit_gate", "kit_marker_post", "kit_nat_bush", "kit_nat_crag", "kit_nat_fern", "kit_nat_flowers", "kit_nat_grass", "kit_nat_pine", "kit_nat_rock", "kit_nat_tree", "kit_path_4", "kit_pillar", "kit_ramp_4", "kit_ruin_rubble", "kit_ruin_wall", "kit_shrub", "kit_tower", "kit_vil_corner", "kit_vil_crate", "kit_vil_fence_4", "kit_vil_gate", "kit_vil_house_cottage", "kit_vil_house_long", "kit_vil_house_small", "kit_vil_house_stone", "kit_vil_path_4", "kit_vil_square_8", "kit_vil_wagon", "kit_vil_wall_4", "kit_vil_wall_8", "kit_wall_4", "kit_wall_8", "kit_wall_low_4"];
     }
 
     public static class Npcs

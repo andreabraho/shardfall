@@ -1,14 +1,16 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene load_steps=20 format=3]
 
-; zone_ember_hollow — the first village and the ground around it (WLD-06).
+; zone_ember_hollow — the first village and the woods around it (WLD-06; rebuilt for the map
+; themes, 2026-09-23: village and woods with animals).
 ;
-; The layout the whole world is built on: a walled village that is safe ground, two gates, and
-; six camps ringed around it. The distances are not taste — ZoneRoot.Audit measures each camp
-; against the leash of the creatures it produces, so the hopper camps sit nearest because a
-; hopper gives up soonest, and the sprite camps furthest because a sprite follows longest.
+; A walled village that is safe ground, two gates, and six camps of animals ringed around it,
+; with the old alpha's den in the north-west woods and a moss-grown shard in a grove to the
+; north-east. The distances are not taste — ZoneRoot.Audit measures each camp against the leash
+; of the creatures it produces, so the rat camps sit nearest and the wolf camps furthest.
 ;
-; Everything the player walks on or into is a kit piece naming an id and nothing else, and
-; every creature here is tuning in game/data/zones/act1.json. This file is coordinates.
+; Everything the player walks on or into is a kit piece naming an id, and the woods are
+; ScatterNodes: a ring, a count and the places to keep clear, seeded so the wood is the same on
+; every load. Every creature is tuning in game/data/zones/act1.json. This file is coordinates.
 
 [ext_resource type="Script" path="res://scripts/World/ZoneRoot.cs" id="1_zoneroot"]
 [ext_resource type="Script" path="res://scripts/World/NavBaker.cs" id="2_navbaker"]
@@ -22,6 +24,8 @@
 [ext_resource type="Script" path="res://scripts/World/ZoneGate.cs" id="10_gate"]
 [ext_resource type="Script" path="res://scripts/World/ZoneArrival.cs" id="11_arrival"]
 [ext_resource type="Script" path="res://scripts/World/NpcNode.cs" id="12_npc"]
+[ext_resource type="Script" path="res://scripts/World/ScatterNode.cs" id="13_scatter"]
+[ext_resource type="Script" path="res://scripts/World/ShardNode.cs" id="14_shard"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_hollow"]
 vertices = PackedVector3Array()
@@ -39,8 +43,9 @@ geometry_source_group_name = "navsource"
 [sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
 size = Vector2(180, 180)
 
+; Meadow green rather than the greybox's slate: the woods and the grass are the map now.
 [sub_resource type="StandardMaterial3D" id="Material_ground"]
-albedo_color = Color(0.26, 0.29, 0.24, 1)
+albedo_color = Color(0.31, 0.41, 0.22, 1)
 roughness = 0.95
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
@@ -48,10 +53,10 @@ size = Vector3(180, 1, 180)
 
 [sub_resource type="Environment" id="Environment_hollow"]
 background_mode = 1
-background_color = Color(0.11, 0.13, 0.15, 1)
+background_color = Color(0.46, 0.6, 0.72, 1)
 ambient_light_source = 2
-ambient_light_color = Color(0.52, 0.54, 0.58, 1)
-ambient_light_energy = 0.45
+ambient_light_color = Color(0.62, 0.64, 0.58, 1)
+ambient_light_energy = 0.55
 
 [node name="EmberHollow" type="Node3D"]
 script = ExtResource("1_zoneroot")
@@ -62,6 +67,7 @@ environment = SubResource("Environment_hollow")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.8660254, -0.25, 0.4330127, 0, 0.8660254, 0.5, -0.5, -0.4330127, 0.75, 0, 14, 0)
+light_color = Color(1, 0.96, 0.88, 1)
 shadow_enabled = true
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
@@ -80,182 +86,251 @@ surface_material_override/0 = SubResource("Material_ground")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 shape = SubResource("BoxShape3D_ground")
 
-; -- The village ---------------------------------------------------------------
-; A 36 m square with two gates, east towards the road to the Vale and north towards the ditch.
-; One gate made three quarters of the ground around the village a place nobody had a reason to
-; walk to, which is most of what an empty-feeling map is.
+; -- The village --------------------------------------------------------------
+; A 36 m square of town wall with two gates, east towards the road to the Vale and north towards
+; the woods. Four houses fill the corners; the square, the shrine and the three villagers keep
+; the middle.
 
 [node name="Village" type="Node3D" parent="NavigationRegion3D"]
 
 [node name="WallN_A" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 1.5, -18)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 1.56, -18)
 script = ExtResource("3_kit")
-PieceId = "kit_wall_8"
+PieceId = "kit_vil_wall_8"
 
 [node name="WallN_B" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5, 1.5, -18)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5, 1.56, -18)
 script = ExtResource("3_kit")
-PieceId = "kit_wall_8"
+PieceId = "kit_vil_wall_8"
 
-; A second way out. One gate made three quarters of the village a dead end, and the camps
-; behind it may as well not have existed.
 [node name="GateNorth" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -18)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1, -18)
 script = ExtResource("3_kit")
-PieceId = "kit_gate"
+PieceId = "kit_vil_gate"
 
 [node name="WallN_C" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 1.5, -18)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 1.56, -18)
 script = ExtResource("3_kit")
-PieceId = "kit_wall_8"
+PieceId = "kit_vil_wall_8"
 
 [node name="WallN_D" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 1.5, -18)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 1.56, -18)
 script = ExtResource("3_kit")
-PieceId = "kit_wall_8"
+PieceId = "kit_vil_wall_8"
 
 [node name="WallS_A" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 1.5, 18)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 1.56, 18)
 script = ExtResource("3_kit")
-PieceId = "kit_wall_8"
+PieceId = "kit_vil_wall_8"
 
 [node name="WallS_B" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1.5, 18)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1.56, 18)
 script = ExtResource("3_kit")
-PieceId = "kit_wall_8"
+PieceId = "kit_vil_wall_8"
 
 [node name="WallS_C" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1.5, 18)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1.56, 18)
 script = ExtResource("3_kit")
-PieceId = "kit_wall_8"
+PieceId = "kit_vil_wall_8"
 
 [node name="WallS_D" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1.5, 18)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1.56, 18)
 script = ExtResource("3_kit")
-PieceId = "kit_wall_8"
+PieceId = "kit_vil_wall_8"
 
 [node name="WallS_E" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 1.5, 18)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 1.56, 18)
 script = ExtResource("3_kit")
-PieceId = "kit_wall_4"
+PieceId = "kit_vil_wall_4"
 
 [node name="WallW_A" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -18, 1.5, -14)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -18, 1.56, -14)
 script = ExtResource("3_kit")
-PieceId = "kit_wall_8"
+PieceId = "kit_vil_wall_8"
 
 [node name="WallW_B" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -18, 1.5, -6)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -18, 1.56, -6)
 script = ExtResource("3_kit")
-PieceId = "kit_wall_8"
+PieceId = "kit_vil_wall_8"
 
 [node name="WallW_C" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -18, 1.5, 2)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -18, 1.56, 2)
 script = ExtResource("3_kit")
-PieceId = "kit_wall_8"
+PieceId = "kit_vil_wall_8"
 
 [node name="WallW_D" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -18, 1.5, 10)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -18, 1.56, 10)
 script = ExtResource("3_kit")
-PieceId = "kit_wall_8"
+PieceId = "kit_vil_wall_8"
 
 [node name="WallW_E" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -18, 1.5, 16)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -18, 1.56, 16)
 script = ExtResource("3_kit")
-PieceId = "kit_wall_4"
+PieceId = "kit_vil_wall_4"
 
 [node name="WallE_N2" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 18, 1.5, -14)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 18, 1.56, -14)
 script = ExtResource("3_kit")
-PieceId = "kit_wall_8"
+PieceId = "kit_vil_wall_8"
 
 [node name="WallE_N1" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 18, 1.5, -6.5)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 18, 1.56, -6.5)
 script = ExtResource("3_kit")
-PieceId = "kit_wall_8"
+PieceId = "kit_vil_wall_8"
+
+[node name="Gate" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 18, 2.1, 0)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_gate"
 
 [node name="WallE_S1" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 18, 1.5, 6.5)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 18, 1.56, 6.5)
 script = ExtResource("3_kit")
-PieceId = "kit_wall_8"
+PieceId = "kit_vil_wall_8"
 
 [node name="WallE_S2" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 18, 1.5, 14)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 18, 1.56, 14)
 script = ExtResource("3_kit")
-PieceId = "kit_wall_8"
+PieceId = "kit_vil_wall_8"
 
-; The one way in. An arch, so it is walked through rather than around.
-[node name="Gate" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 18, 0, 0)
+; Posts where the walls meet, where the greybox had towers.
+
+[node name="CornerNW" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 1.7, -18)
 script = ExtResource("3_kit")
-PieceId = "kit_gate"
+PieceId = "kit_vil_corner"
 
-[node name="TowerNW" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 2.75, -18)
+[node name="CornerNE" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 1.7, -18)
 script = ExtResource("3_kit")
-PieceId = "kit_tower"
+PieceId = "kit_vil_corner"
 
-[node name="TowerNE" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 2.75, -18)
+[node name="CornerSW" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 1.7, 18)
 script = ExtResource("3_kit")
-PieceId = "kit_tower"
+PieceId = "kit_vil_corner"
 
-[node name="TowerSW" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 2.75, 18)
+[node name="CornerSE" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 1.7, 18)
 script = ExtResource("3_kit")
-PieceId = "kit_tower"
+PieceId = "kit_vil_corner"
 
-[node name="TowerSE" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 2.75, 18)
+; Houses, one to a corner, doors turned towards the square. Solid, and baked around: the
+; villagers stand between them, not inside them.
+
+[node name="HouseNW" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.5, 4, -12.5)
 script = ExtResource("3_kit")
-PieceId = "kit_tower"
+PieceId = "kit_vil_house_small"
 
-; The square, and the road running out through the gate. A floor the player can see they are
-; standing on is what separates "inside the village" from "near the village".
+[node name="HouseSW" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -12.5, 4, 12.3)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_house_long"
+
+[node name="HouseNE" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 3.4, -12.5)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_house_cottage"
+
+[node name="HouseSE" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 12.5, 4, 12.3)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_house_stone"
+
+; The square, and the roads running out through the two gates.
+
 [node name="SquareA" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.12, -4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.06, -4)
 script = ExtResource("3_kit")
-PieceId = "kit_floor_8"
+PieceId = "kit_vil_square_8"
 
 [node name="SquareB" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.12, -4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.06, -4)
 script = ExtResource("3_kit")
-PieceId = "kit_floor_8"
+PieceId = "kit_vil_square_8"
 
 [node name="SquareC" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.12, 4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.06, 4)
 script = ExtResource("3_kit")
-PieceId = "kit_floor_8"
+PieceId = "kit_vil_square_8"
 
 [node name="SquareD" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.12, 4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.06, 4)
 script = ExtResource("3_kit")
-PieceId = "kit_floor_8"
+PieceId = "kit_vil_square_8"
 
 [node name="RoadA" type="StaticBody3D" parent="NavigationRegion3D/Village"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.06, 0)
 script = ExtResource("3_kit")
-PieceId = "kit_path_4"
+PieceId = "kit_vil_path_4"
 
 [node name="RoadB" type="StaticBody3D" parent="NavigationRegion3D/Village"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0.06, 0)
 script = ExtResource("3_kit")
-PieceId = "kit_path_4"
+PieceId = "kit_vil_path_4"
 
 [node name="RoadC" type="StaticBody3D" parent="NavigationRegion3D/Village"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0.06, 0)
 script = ExtResource("3_kit")
-PieceId = "kit_path_4"
+PieceId = "kit_vil_path_4"
 
 [node name="RoadD" type="StaticBody3D" parent="NavigationRegion3D/Village"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0.06, 0)
 script = ExtResource("3_kit")
-PieceId = "kit_path_4"
+PieceId = "kit_vil_path_4"
 
 [node name="RoadE" type="StaticBody3D" parent="NavigationRegion3D/Village"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0.06, 0)
 script = ExtResource("3_kit")
-PieceId = "kit_path_4"
+PieceId = "kit_vil_path_4"
+
+[node name="RoadN_A" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0.06, -12)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="RoadN_B" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0.06, -16)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="RoadN_C" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0.06, -20)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="RoadN_D" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0.06, -24)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+; Village clutter: a wagon by the west wall, crates by the merchant, a garden fence.
+
+[node name="Wagon" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.5, 0.78, 0)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_wagon"
+
+[node name="CrateA" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.2, 0.55, -4.2)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_crate"
+
+[node name="CrateB" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.4, 0.55, -3.4)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_crate"
+
+[node name="FenceGardenA" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0.45, -6.5)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_fence_4"
+
+[node name="FenceGardenB" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0.45, 6.5)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_fence_4"
 
 [node name="BrazierGateN" type="StaticBody3D" parent="NavigationRegion3D/Village"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.55, -3)
@@ -264,6 +339,16 @@ PieceId = "kit_brazier"
 
 [node name="BrazierGateS" type="StaticBody3D" parent="NavigationRegion3D/Village"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.55, 3)
+script = ExtResource("3_kit")
+PieceId = "kit_brazier"
+
+[node name="BrazierNGateW" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.55, -16)
+script = ExtResource("3_kit")
+PieceId = "kit_brazier"
+
+[node name="BrazierNGateE" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.55, -16)
 script = ExtResource("3_kit")
 PieceId = "kit_brazier"
 
@@ -277,54 +362,192 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.5, 2.4, -4)
 script = ExtResource("3_kit")
 PieceId = "kit_banner"
 
-[node name="ShrubA" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0.5, 11)
-script = ExtResource("3_kit")
-PieceId = "kit_shrub"
+; Green inside the walls: bushes and flowers along them, never on the square.
 
-[node name="ShrubB" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0.5, -12)
-script = ExtResource("3_kit")
-PieceId = "kit_shrub"
+[node name="VillageGreen" type="Node3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+script = ExtResource("13_scatter")
+Pieces = PackedStringArray("kit_nat_bush", "kit_nat_flowers", "kit_nat_flowers")
+Count = 14
+InnerRadius = 11.0
+OuterRadius = 16.0
+Spacing = 2.5
+Seed = 3
+Clearings = PackedVector3Array(0, 0, 10, 18, 0, 5, 0, -18, 5, -12.5, -12.5, 5.5, -12.5, 12.3, 6, 13, -12.5, 5, 12.5, 12.3, 6, -14.5, 0, 3)
 
 ; The promise itself. The walls are decoration around this circle, not the other way round.
+
 [node name="SafeGround" type="Node3D" parent="NavigationRegion3D/Village"]
 script = ExtResource("4_safe")
 RegionId = "saf_ember_hollow"
 
 ; -- Outside the wall ----------------------------------------------------------
-; Landmarks on the way to each camp, so the ground between village and creatures is a route
-; rather than an empty plane with monsters at the end of it.
+; Landmarks on the way to each camp: crags to the north, rocks by the roads, and groves.
 
-[node name="CliffNorth" type="StaticBody3D" parent="NavigationRegion3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 3, -34)
+[node name="CragNorth" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 2.75, -34)
 script = ExtResource("3_kit")
-PieceId = "kit_cliff_8"
+PieceId = "kit_nat_crag"
 
-[node name="CliffNorthB" type="StaticBody3D" parent="NavigationRegion3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 3, -34)
+[node name="CragNorthB" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 2.75, -35)
 script = ExtResource("3_kit")
-PieceId = "kit_cliff_8"
+PieceId = "kit_nat_crag"
 
-[node name="BoulderRoad" type="StaticBody3D" parent="NavigationRegion3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0.95, -6)
+[node name="RockRoad" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 1.1, -6)
 script = ExtResource("3_kit")
-PieceId = "kit_boulder"
+PieceId = "kit_nat_rock"
 
-[node name="MarkerRoad" type="StaticBody3D" parent="NavigationRegion3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29, 1.1, 2)
+[node name="RockNW" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26, 1.1, -30)
 script = ExtResource("3_kit")
-PieceId = "kit_marker_post"
+PieceId = "kit_nat_rock"
 
-[node name="RuinWest" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 0.9, -8)
+[node name="RockSE" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 1.1, 30)
 script = ExtResource("3_kit")
-PieceId = "kit_ruin_wall"
+PieceId = "kit_nat_rock"
 
-[node name="RubbleWest" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32, 0.35, -5)
+[node name="RockWest" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 1.1, -8)
 script = ExtResource("3_kit")
-PieceId = "kit_ruin_rubble"
+PieceId = "kit_nat_rock"
+
+[node name="RockWestB" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32.5, 1.1, -4.5)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+; The wood that closes the map in. A ring rather than a wall: gaps between the trunks, a
+; corridor kept clear for the east road, and a clearing for the den.
+
+[node name="WoodRing" type="Node3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+script = ExtResource("13_scatter")
+Pieces = PackedStringArray("kit_nat_tree", "kit_nat_pine", "kit_nat_tree")
+Count = 170
+InnerRadius = 64.0
+OuterRadius = 88.0
+Spacing = 5
+Seed = 11
+Clearings = PackedVector3Array(50, 0, 7, 60, 0, 7, 70, 0, 8, 80, 0, 8, 90, 0, 8, -54, -54, 11)
+
+; Copses in the four corners, where the ring does not reach.
+
+[node name="CopseNE" type="Node3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 80, 0, -80)
+script = ExtResource("13_scatter")
+Pieces = PackedStringArray("kit_nat_pine", "kit_nat_tree")
+Count = 14
+InnerRadius = 0.0
+OuterRadius = 14.0
+Spacing = 5
+Seed = 21
+
+[node name="CopseNW" type="Node3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -80, 0, -80)
+script = ExtResource("13_scatter")
+Pieces = PackedStringArray("kit_nat_pine", "kit_nat_tree")
+Count = 14
+InnerRadius = 0.0
+OuterRadius = 14.0
+Spacing = 5
+Seed = 22
+
+[node name="CopseSE" type="Node3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 80, 0, 80)
+script = ExtResource("13_scatter")
+Pieces = PackedStringArray("kit_nat_pine", "kit_nat_tree")
+Count = 14
+InnerRadius = 0.0
+OuterRadius = 14.0
+Spacing = 5
+Seed = 23
+
+[node name="CopseSW" type="Node3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -80, 0, 80)
+script = ExtResource("13_scatter")
+Pieces = PackedStringArray("kit_nat_pine", "kit_nat_tree")
+Count = 14
+InnerRadius = 0.0
+OuterRadius = 14.0
+Spacing = 5
+Seed = 24
+
+; The den: a ring of pines around a clearing, open towards the wolves' camp — the way in is
+; past the pack.
+
+[node name="DenWood" type="Node3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -54, 0, -54)
+script = ExtResource("13_scatter")
+Pieces = PackedStringArray("kit_nat_pine", "kit_nat_pine", "kit_nat_tree")
+Count = 20
+InnerRadius = 11.0
+OuterRadius = 18.0
+Spacing = 4.5
+Seed = 31
+Clearings = PackedVector3Array(-42, -44, 6)
+
+[node name="DenRockA" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58, 1.1, -47)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+[node name="DenRockB" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -47, 1.1, -59)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+; A grove around the moss stone in the north-east, with a gap on the village side.
+
+[node name="ShardGrove" type="Node3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 0, -34)
+script = ExtResource("13_scatter")
+Pieces = PackedStringArray("kit_nat_tree", "kit_nat_tree", "kit_nat_pine")
+Count = 12
+InnerRadius = 8.0
+OuterRadius = 14.0
+Spacing = 4.5
+Seed = 41
+Clearings = PackedVector3Array(38, -26, 6)
+
+; A copse in the south-west field, somewhere to walk round rather than across.
+
+[node name="GroveSW" type="Node3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 0, 32)
+script = ExtResource("13_scatter")
+Pieces = PackedStringArray("kit_nat_tree", "kit_nat_pine")
+Count = 9
+InnerRadius = 0.0
+OuterRadius = 8.0
+Spacing = 4.5
+Seed = 51
+
+; Undergrowth and grass: walked through, never baked. Kept off the roads so the way out
+; stays readable.
+
+[node name="Undergrowth" type="Node3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+script = ExtResource("13_scatter")
+Pieces = PackedStringArray("kit_nat_bush", "kit_nat_fern", "kit_nat_bush")
+Count = 70
+InnerRadius = 24.0
+OuterRadius = 62.0
+Spacing = 4
+Seed = 61
+Clearings = PackedVector3Array(24, 0, 3, 34, 0, 3, 44, 0, 3, 54, 0, 3, 0, -24, 3, 0, -30, 3)
+
+[node name="Meadow" type="Node3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+script = ExtResource("13_scatter")
+Pieces = PackedStringArray("kit_nat_grass", "kit_nat_grass", "kit_nat_flowers")
+Count = 170
+InnerRadius = 21.0
+OuterRadius = 64.0
+Spacing = 2.2
+Seed = 71
+Clearings = PackedVector3Array(24, 0, 3, 34, 0, 3, 44, 0, 3, 54, 0, 3, 0, -24, 3, 0, -30, 3)
 
 ; -- Session, player and population --------------------------------------------
 
@@ -336,6 +559,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 6)
 [node name="Enemies" type="Node3D" parent="."]
 
 ; The village shrine: where the game starts and where death returns the player.
+
 [node name="ShrineFlame" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -6)
 script = ExtResource("6_shrine")
@@ -346,9 +570,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
 script = ExtResource("7_visualroot")
 VisualId = "mesh_placeholder_shrine"
 
-; The three people the village needs (QST-06). What they say and sell is in data/npcs; where
-; they stand is here. The elder is by the shrine, where a new character starts and every death
-; returns, so the next step of the road is always a few metres away. The smith and the
+; The three people the village needs (QST-06). The elder is by the shrine; the smith and the
 ; merchant take the two corners of the square nearest the gate, one each side of the road.
 
 [node name="ElderCorwen" type="Area3D" parent="."]
@@ -366,47 +588,59 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0.1, -7)
 script = ExtResource("12_npc")
 NpcId = "npc_idra"
 
-; Six camps ringed around the village rather than three on one side. Three camps meant that
-; leaving by the only gate showed you one of them and the other two were behind the walls,
-; which reads as an empty map however many creatures are actually standing in it.
-;
-; Distances are the minimum the audit allows for each roster: the hopper camps are nearest
-; because a hopper gives up soonest, and the sprite camps are furthest because a sprite
-; follows longest. Composition and respawn are data; these coordinates are the level design.
+; Six camps ringed around the village: rats nearest, foxes next, wolves furthest, as the
+; leashes require. Composition and respawn are data; these coordinates are the level design.
 
-[node name="ReedCampEast" type="Node3D" parent="."]
+[node name="RatCampEast" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0, 4)
 script = ExtResource("5_spawnfield")
-FieldId = "spf_hollow_reeds_east"
+FieldId = "spf_hollow_rats_east"
 
-[node name="ReedCampSouth" type="Node3D" parent="."]
+[node name="RatCampSouth" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 44)
 script = ExtResource("5_spawnfield")
-FieldId = "spf_hollow_reeds_south"
+FieldId = "spf_hollow_rats_south"
 
-[node name="DitchCampNorth" type="Node3D" parent="."]
+[node name="FoxCampNorth" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, -44)
 script = ExtResource("5_spawnfield")
-FieldId = "spf_hollow_ditch_north"
+FieldId = "spf_hollow_foxes_north"
 
-[node name="DitchCampWest" type="Node3D" parent="."]
+[node name="FoxCampWest" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 0, 6)
 script = ExtResource("5_spawnfield")
-FieldId = "spf_hollow_ditch_west"
+FieldId = "spf_hollow_foxes_west"
 
-[node name="ThicketCampNW" type="Node3D" parent="."]
+[node name="WolfCampNW" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -34, 0, -40)
 script = ExtResource("5_spawnfield")
-FieldId = "spf_hollow_thicket_nw"
+FieldId = "spf_hollow_wolves_nw"
 
-[node name="ThicketCampSE" type="Node3D" parent="."]
+[node name="WolfCampSE" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34, 0, 40)
 script = ExtResource("5_spawnfield")
-FieldId = "spf_hollow_thicket_se"
+FieldId = "spf_hollow_wolves_se"
 
-; Posts on the ground between the gates and the camps. Forty metres of identical grass gives
-; the player nothing to steer by, and a map with nothing to steer by feels empty even when it
-; is not — which is most of what "I cannot find the camps" actually means.
+; The den of Greymane, the map's boss: one wolf, and five minutes before it returns.
+
+[node name="Den" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -54, 0, -54)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_hollow_den"
+
+; The map's shard, in the grove to the north-east.
+
+[node name="Shard" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 0.1, -34)
+script = ExtResource("14_shard")
+ShardId = "shd_mossbound_stone"
+
+[node name="VisualRoot" type="Node3D" parent="Shard"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+script = ExtResource("7_visualroot")
+VisualId = "mesh_shard_moss"
+
+; Posts on the ground between the gates and the camps, to steer by.
 
 [node name="PostEast" type="StaticBody3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 1.1, 2)
@@ -428,48 +662,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1.1, 30)
 script = ExtResource("3_kit")
 PieceId = "kit_marker_post"
 
-[node name="BoulderNW" type="StaticBody3D" parent="NavigationRegion3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26, 0.95, -30)
-script = ExtResource("3_kit")
-PieceId = "kit_boulder"
-
-[node name="BoulderSE" type="StaticBody3D" parent="NavigationRegion3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0.95, 30)
-script = ExtResource("3_kit")
-PieceId = "kit_boulder"
-
-[node name="RoadN_A" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0.06, -12)
-script = ExtResource("3_kit")
-PieceId = "kit_path_4"
-
-[node name="RoadN_B" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0.06, -16)
-script = ExtResource("3_kit")
-PieceId = "kit_path_4"
-
-[node name="RoadN_C" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0.06, -20)
-script = ExtResource("3_kit")
-PieceId = "kit_path_4"
-
-[node name="RoadN_D" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0.06, -24)
-script = ExtResource("3_kit")
-PieceId = "kit_path_4"
-
-[node name="BrazierNGateW" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.55, -16)
-script = ExtResource("3_kit")
-PieceId = "kit_brazier"
-
-[node name="BrazierNGateE" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.55, -16)
-script = ExtResource("3_kit")
-PieceId = "kit_brazier"
-
 ; The border, out along the east road. The village exits to exactly one place, so there is
 ; exactly one of these, and the audit says so if that ever stops being true.
+
 [node name="GateToApproach" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70, 0, 0)
 script = ExtResource("10_gate")
@@ -483,17 +678,17 @@ FromZone = "zone_vale_approach"
 [node name="RoadOutA" type="StaticBody3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58, 0.06, 0)
 script = ExtResource("3_kit")
-PieceId = "kit_path_4"
+PieceId = "kit_vil_path_4"
 
 [node name="RoadOutB" type="StaticBody3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 62, 0.06, 0)
 script = ExtResource("3_kit")
-PieceId = "kit_path_4"
+PieceId = "kit_vil_path_4"
 
 [node name="RoadOutC" type="StaticBody3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66, 0.06, 0)
 script = ExtResource("3_kit")
-PieceId = "kit_path_4"
+PieceId = "kit_vil_path_4"
 
 [node name="PostBorder" type="StaticBody3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64, 1.1, 4)

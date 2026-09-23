@@ -1,4 +1,28 @@
 [
+  // Ember Hollow: a moss-grown boulder in the woods, woken by the first map's animals (map
+  // themes, 2026-09-23). The gentlest shard in the game — bruisers only, the roster this map has.
+  {
+    "id": "shd_mossbound_stone",
+    "name": "$shard.shd_mossbound_stone.name",
+    "tier": 1,
+    "level": 2,
+    "hp": 600,
+    "pulse_interval": 10.0,
+    "pulse_windup": 3.0,
+    "pulse_radius": 6.0,
+    "pulse_damage_coef": 0.6,
+    "reclamation_seconds": 18.0,
+    "reclamation_heal": 0.20,
+    "essence": 1,
+    "drop_table": "dt_valley_animal_t1",
+    "visual": "mesh_shard_moss",
+    "modifiers": [],
+    "waves": [
+      { "phase": "one",   "slots": [ { "role": "bruiser", "count": 3 } ] },
+      { "phase": "two",   "slots": [ { "role": "bruiser", "count": 4 } ] },
+      { "phase": "three", "slots": [ { "role": "bruiser", "count": 3 }, { "role": "bruiser", "count": 1, "anchor": true } ] }
+    ]
+  },
   {
     "id": "shd_cracked_seed",
     "name": "$shard.shd_cracked_seed.name",

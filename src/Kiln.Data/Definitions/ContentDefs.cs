@@ -708,4 +708,37 @@ public sealed class KitPieceDef : ContentDefBase
     /// anything placed after the bake; navigation-but-not-solid makes no sense and is rejected.
     /// </summary>
     public bool Navigation { get; init; } = true;
+
+    /// <summary>
+    /// How a model fills the piece's box: "stretch" to fill it exactly (walls, floors —
+    /// anything that tiles), or "height" to scale evenly until it stands the box's height and
+    /// keep its own proportions (trees, rocks, houses — anything a stretch would visibly bend).
+    /// </summary>
+    public string Fit { get; init; } = "stretch";
+
+    /// <summary>
+    /// Alternatives to <see cref="ModelPath"/>, one picked per placed piece. A tree line of
+    /// five different trees is a wood; of one tree repeated, it is a pattern.
+    /// </summary>
+    /// <remarks>
+    /// The pick comes from where the piece stands, never from a random number: the same scene
+    /// must look the same every time it is loaded, and on everyone's machine.
+    /// </remarks>
+    public string[] Models { get; init; } = [];
+
+    /// <summary>
+    /// How many copies of the model make up the piece's length, side by side along X. A kit
+    /// drawn on a two-metre grid fills an eight-metre wall with four modules rather than one
+    /// module stretched four times as wide.
+    /// </summary>
+    public int Tile { get; init; } = 1;
+
+    /// <summary>Turns each placed copy a different way about its own axis, again from where it stands.</summary>
+    public bool RandomYaw { get; init; }
+
+    /// <summary>
+    /// The collider's size, when it should differ from the drawn box — a tree is stopped by
+    /// its trunk, not by its crown. Empty means the box itself.
+    /// </summary>
+    public double[] CollisionSize { get; init; } = [];
 }

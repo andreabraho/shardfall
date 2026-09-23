@@ -9,6 +9,17 @@
   { "id": "mesh_placeholder_shrine",    "primitive": "cylinder", "height": 1.70, "radius": 0.45, "color": "#55606b" },
   { "id": "mesh_placeholder_villager",  "primitive": "capsule",  "height": 1.75, "radius": 0.34, "color": "#a89a86" },
 
+  // Map-one animals: Quaternius Ultimate Animated Animals and Easy Enemies (CC0).
+  { "id": "mesh_q_rat",   "primitive": "model", "height": 0.55, "radius": 0.35, "color": "#8a7a68", "model_yaw": 180, "model_path": "res://assets/quaternius/animals/Rat.glb" },
+  { "id": "mesh_q_fox",   "primitive": "model", "height": 0.85, "radius": 0.40, "color": "#c06a2a", "model_yaw": 180, "model_path": "res://assets/quaternius/animals/Fox.glb" },
+  { "id": "mesh_q_wolf",  "primitive": "model", "height": 1.05, "radius": 0.45, "color": "#8a8a8a", "model_yaw": 180, "model_path": "res://assets/quaternius/animals/Wolf.glb" },
+  { "id": "mesh_q_deer",  "primitive": "model", "height": 1.50, "radius": 0.50, "color": "#a07850", "model_yaw": 180, "model_path": "res://assets/quaternius/animals/Deer.glb" },
+  { "id": "mesh_q_stag",  "primitive": "model", "height": 1.90, "radius": 0.55, "color": "#8a6040", "model_yaw": 180, "model_path": "res://assets/quaternius/animals/Stag.glb" },
+  { "id": "mesh_q_bull",  "primitive": "model", "height": 1.70, "radius": 0.70, "color": "#5a4030", "model_yaw": 180, "model_path": "res://assets/quaternius/animals/Bull.glb" },
+
+  // Map-one shard: a moss-grown boulder, stood on end.
+  { "id": "mesh_shard_moss", "primitive": "model", "height": 3.20, "radius": 0.90, "color": "#5f7d4a", "model_yaw": 0, "model_path": "res://assets/quaternius/nature/Rock_Medium_3.gltf" },
+
   { "id": "mesh_sword_a",               "primitive": "box",      "height": 1.10, "radius": 0.06, "color": "#d9dde2" },
   { "id": "mesh_axe_a",                 "primitive": "box",      "height": 1.00, "radius": 0.12, "color": "#c9b08a" },
   { "id": "mesh_spear_a",               "primitive": "cylinder", "height": 1.60, "radius": 0.05, "color": "#b9c2cc" },

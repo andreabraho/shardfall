@@ -9,7 +9,7 @@
 
   { "id": "qst_reeds_in_the_hollow", "name": "$quest.qst_reeds_in_the_hollow.name",
     "act": 1, "type": "story", "level_req": 1, "prerequisites": [],
-    "objectives": [ { "type": "kill", "target": "mob_reed_hopper", "count": 8 } ],
+    "objectives": [ { "type": "kill", "target": "mob_field_rat", "count": 8 } ],
     "rewards": { "xp": 140, "yang": 260, "items": [] } },
 
   { "id": "qst_thornbacks_on_the_road", "name": "$quest.qst_thornbacks_on_the_road.name",
