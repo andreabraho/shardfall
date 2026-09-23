@@ -291,7 +291,7 @@ public partial class VisualRoot : Node3D
     /// stone is placed by its scene at its centre on purpose, and keeps that.
     /// </para>
     /// </remarks>
-    private void StandOnGround(VisualDef def)
+    private void StandOnGround(Kiln.Data.Definitions.VisualDef def)
     {
         if (_current is null || def.Primitive != "model" || def.Fit == "stretch") return;
         if (GetParent() is not CharacterBody3D) return;
