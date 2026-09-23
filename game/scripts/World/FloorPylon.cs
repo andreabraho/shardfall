@@ -54,6 +54,20 @@ public partial class FloorPylon : StaticBody3D
 
     [Export] public string Label { get; set; } = "Seal";
 
+    /// <summary>What it looks like: a visual id from visuals.json. A lantern, a keystone, a seal.</summary>
+    [Export] public string VisualId { get; set; } = "mesh_placeholder_monolith";
+
+    /// <summary>
+    /// Whether it starts behind a barrier nothing can hit through (keystones, the Demon Tower).
+    /// </summary>
+    /// <remarks>
+    /// The floor lifts it once the monsters guarding it are dead. Until then it cannot even be
+    /// targeted, so there is no chipping at it past the guards.
+    /// </remarks>
+    [Export] public bool Shielded { get; set; }
+
+    private MeshInstance3D? _barrier;
+
     /// <summary>True once it has been broken.</summary>
     public bool Spent => _spent;
 
@@ -93,11 +107,52 @@ public partial class FloorPylon : StaticBody3D
 
         _visual = new VisualRoot { Name = "VisualRoot", Position = new Vector3(0, 1.3f, 0) };
         AddChild(_visual);
-        _visual.Apply("mesh_placeholder_monolith", Chants ? "#6a5fa8" : "#8f6ad2", 0.8);
+        _visual.Apply(VisualId, null, 1.0);
 
         _plate = new NamePlate { Name = "NamePlate", Rank = NameRank.Elite, Offset = new Vector3(0, 3.0f, 0) };
         AddChild(_plate);
         _plate.SetText(Label);
+
+        if (Shielded) Raise();
+    }
+
+    /// <summary>Puts the barrier up: untargetable, and seen to be.</summary>
+    private void Raise()
+    {
+        CollisionLayer = 0;
+
+        _barrier = new MeshInstance3D
+        {
+            Name = "Barrier",
+            Mesh = new SphereMesh { Radius = 1.9f, Height = 3.8f },
+            Position = new Vector3(0, 1.4f, 0),
+            CastShadow = GeometryInstance3D.ShadowCastingSetting.Off,
+            MaterialOverride = new StandardMaterial3D
+            {
+                ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
+                Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
+                BlendMode = BaseMaterial3D.BlendModeEnum.Add,
+                AlbedoColor = new Color(0.75f, 0.2f, 0.9f, 0.22f),
+                RimEnabled = true,
+            },
+        };
+
+        AddChild(_barrier);
+        _plate.SetText($"{Label}  ·  {L10n.T("Sealed")}");
+    }
+
+    /// <summary>Takes the barrier down: the guards are dead and it can be broken.</summary>
+    public void Lower()
+    {
+        if (!Shielded || _spent) return;
+
+        Shielded = false;
+        CollisionLayer = Foundation.Layers.Enemy;
+        _barrier?.QueueFree();
+        _barrier = null;
+        _plate.SetText(Label);
+
+        AoeVisual.Circle(GlobalPosition, 2.5f, hostile: false);
     }
 
     /// <summary>

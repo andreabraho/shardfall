@@ -1,0 +1,49 @@
+[gd_scene load_steps=6 format=3]
+
+; DemonStone — the Demon Tower's shard: a black standing stone with bone horns, chained, skulls
+; and candles at its foot. ShardGlow burns the "Stone" in violet. Symmetric. Stylized Nature rock,
+; Fantasy Props chains, KayKit Halloween Bits bones and candles (CC0). Visual mesh_shard_demon.
+
+[ext_resource type="PackedScene" path="res://assets/quaternius/nature/Rock_Medium_3.gltf" id="1_rock_medium_3glt"]
+[ext_resource type="PackedScene" path="res://assets/kaykit/halloween/bone_C.gltf" id="2_bone_cgltf"]
+[ext_resource type="PackedScene" path="res://assets/quaternius/props/Chain_Coil.gltf" id="3_chain_coilgltf"]
+[ext_resource type="PackedScene" path="res://assets/kaykit/halloween/skull.gltf" id="4_skullgltf"]
+[ext_resource type="PackedScene" path="res://assets/kaykit/halloween/candle_triple.gltf" id="5_candle_tripleglt"]
+
+[node name="DemonStone" type="Node3D"]
+
+[node name="Stone" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Rock" parent="Stone" instance=ExtResource("1_rock_medium_3glt")]
+transform = Transform3D(0.35, 0, 0.60622, 0, 1.55, 0, -0.60622, 0, 0.35, 0.2, 0.55, -0.2)
+
+[node name="HornL" parent="." instance=ExtResource("2_bone_cgltf")]
+transform = Transform3D(0.65, -1.12583, 0, 1.12583, 0.65, 0, 0, 0, 1.3, -0.75, 3.55, 0)
+
+[node name="HornR" parent="." instance=ExtResource("2_bone_cgltf")]
+transform = Transform3D(0.65, 1.12583, 0, -1.12583, 0.65, 0, 0, 0, 1.3, 0.75, 3.55, 0)
+
+[node name="ChainHigh" parent="." instance=ExtResource("3_chain_coilgltf")]
+transform = Transform3D(1.37888, 1.00201, 0.57851, 0, 0.9, -1.55885, -1.15702, 1.19415, 0.68944, 0, 2.4, 0)
+
+[node name="ChainLow" parent="." instance=ExtResource("3_chain_coilgltf")]
+transform = Transform3D(-1.73205, 0.81915, -0.57358, 0, 1.14715, 1.6383, 1, 1.41881, -0.99346, 0, 1.2, 0)
+
+[node name="Skull0" parent="." instance=ExtResource("4_skullgltf")]
+transform = Transform3D(0.39467, 0, 0.14365, 0, 0.42, 0, -0.14365, 0, 0.39467, 1.4, 0.1, 1)
+
+[node name="Skull1" parent="." instance=ExtResource("4_skullgltf")]
+transform = Transform3D(-0.39467, 0, -0.14365, 0, 0.42, 0, 0.14365, 0, -0.39467, -1.4, 0.1, -1)
+
+[node name="Skull2" parent="." instance=ExtResource("4_skullgltf")]
+transform = Transform3D(-0.14365, 0, 0.39467, 0, 0.42, 0, -0.39467, 0, -0.14365, 1.2, 0.1, -1.3)
+
+[node name="Skull3" parent="." instance=ExtResource("4_skullgltf")]
+transform = Transform3D(0.14365, 0, -0.39467, 0, 0.42, 0, 0.39467, 0, 0.14365, -1.3, 0.1, 1.2)
+
+[node name="CandlesA" parent="." instance=ExtResource("5_candle_tripleglt")]
+transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 1.7, 0, 0)
+
+[node name="CandlesB" parent="." instance=ExtResource("5_candle_tripleglt")]
+transform = Transform3D(-0.8, 0, 0, 0, 0.8, 0, 0, 0, -0.8, -1.7, 0, 0)

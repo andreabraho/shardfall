@@ -204,11 +204,17 @@ public partial class TowerNode : Node3D
     /// </remarks>
     public static string Brief(TowerFloor floor) => floor.Task switch
     {
-        FloorTask.Break => L10n.T("Break the seal."),
+        FloorTask.Break => floor.Stone.Length > 0 ? L10n.T("Break the demon stone.") : L10n.T("Break the seal."),
         FloorTask.Hold => L10n.F("Hold for {0:F0} seconds.", floor.Seconds),
-        FloorTask.Find => L10n.T("One lantern is not breathing with the others. Break that one."),
-        FloorTask.Carry => L10n.F("Break all {0} keystones.", floor.Targets),
-        FloorTask.Race => L10n.F("Break {0}. The clock starts with the first.", floor.Targets),
+        FloorTask.Find => floor.Burst > 0
+            ? L10n.T("One lantern is the true one. Every lantern you break lets out what it holds.")
+            : L10n.T("One lantern is not breathing with the others. Break that one."),
+        FloorTask.Carry => floor.Guard > 0
+            ? L10n.F("Kill each keystone's guard, then break all {0}.", floor.Targets)
+            : L10n.F("Break all {0} keystones.", floor.Targets),
+        FloorTask.Race => floor.Stone.Length > 0
+            ? L10n.F("Break {0} demon stones. The clock starts with the first.", floor.Targets)
+            : L10n.F("Break {0}. The clock starts with the first.", floor.Targets),
         FloorTask.Fight => L10n.T("Kill what is waiting."),
         _ => "",
     };

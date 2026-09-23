@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3]
+
+; TowerLantern — floor four's lantern: a lamp on a stone pedestal, lit. Every one is the same;
+; which is the true one is luck. KayKit Halloween Bits pillar and lantern (CC0). ~2.6 m.
+; Visual mesh_tower_lantern.
+
+[ext_resource type="PackedScene" path="res://assets/kaykit/halloween/pillar.gltf" id="1_pillargltf"]
+[ext_resource type="PackedScene" path="res://assets/kaykit/halloween/lantern_standing.gltf" id="2_lantern_standing"]
+
+[node name="TowerLantern" type="Node3D"]
+
+[node name="Pedestal" parent="." instance=ExtResource("1_pillargltf")]
+transform = Transform3D(0.8, 0, 0, 0, 0.34, 0, 0, 0, 0.8, 0, 0, 0)
+
+[node name="Lamp" parent="." instance=ExtResource("2_lantern_standing")]
+transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0, 1.5, 0)
+
+[node name="Light" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+light_color = Color(1, 0.55, 0.25, 1)
+light_energy = 1.6
+omni_range = 6.0

@@ -781,8 +781,10 @@ public class ContentValidatorTests
     }
 
     [Fact]
-    public void Flags_ABossFloorThatAlsoSendsWaves()
+    public void Accepts_ABossFloorThatAlsoSendsWaves()
     {
+        // Boss floors send waves since the Demon Tower pass (2026-09-23): a boss room with
+        // nothing else in it was the quietest room in the dungeon.
         var crowded = Floor("flr_c", "fight", boss: "mob_boss");
         var report = Validate(Tower(
             Floor("flr_a", "break"),
@@ -792,6 +794,25 @@ public class ContentValidatorTests
                 Id = crowded.Id, Name = crowded.Name, Task = crowded.Task, Boss = crowded.Boss,
                 Waves = ["mob_boss"],
             },
+            Floor("flr_d", "find", decoys: 4, shrine: "shr_zone_tower", bench: true, refuge: true),
+            Floor("flr_e", "carry", targets: 3),
+            Floor("flr_f", "fight", boss: "mob_boss")));
+
+        Assert.False(HasError(report, "world-floors"));
+    }
+
+    [Fact]
+    public void Flags_ALanternBurstOnAFloorWithNoLanterns()
+    {
+        var hold = Floor("flr_b", "hold", seconds: 60);
+        var report = Validate(Tower(
+            Floor("flr_a", "break"),
+            new FloorDef
+            {
+                Id = hold.Id, Name = hold.Name, Task = hold.Task, Seconds = hold.Seconds,
+                Waves = ["mob_boss"], Burst = 6,
+            },
+            Floor("flr_c", "fight", boss: "mob_boss"),
             Floor("flr_d", "find", decoys: 4, shrine: "shr_zone_tower", bench: true, refuge: true),
             Floor("flr_e", "carry", targets: 3),
             Floor("flr_f", "fight", boss: "mob_boss")));

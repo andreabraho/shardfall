@@ -56,6 +56,19 @@
   { "id": "mesh_shard_web",   "primitive": "model", "height": 4.90, "radius": 1.30, "color": "#5affc8", "model_yaw": 0, "model_path": "res://assets/prefabs/desert/WebStone.tscn" },
   { "id": "mesh_shard_frost", "primitive": "model", "height": 4.00, "radius": 1.30, "color": "#7fd8ff", "model_yaw": 0, "model_path": "res://assets/prefabs/undead/FrostStone.tscn" },
 
+  // The Demon Tower: Quaternius Zombie Apocalypse Kit and Ultimate Monsters demons (CC0), and
+  // the tower's props (prefabs): lantern, keystone, demon stone.
+  { "id": "mesh_z_ghoul",      "primitive": "model", "height": 1.85, "radius": 0.40, "color": "#7a8a6a", "model_yaw": 180, "model_path": "res://assets/quaternius/zombies/Zombie_Basic.gltf" },
+  { "id": "mesh_z_crawler",    "primitive": "model", "height": 1.80, "radius": 0.40, "color": "#6a7a5a", "model_yaw": 180, "model_path": "res://assets/quaternius/zombies/Zombie_Arm.gltf" },
+  { "id": "mesh_z_brute",      "primitive": "model", "height": 2.10, "radius": 0.60, "color": "#6a7a5a", "model_yaw": 180, "model_path": "res://assets/quaternius/zombies/Zombie_Chubby.gltf" },
+  { "id": "mesh_z_ribcage",    "primitive": "model", "height": 1.80, "radius": 0.38, "color": "#c8c0a8", "model_yaw": 180, "model_path": "res://assets/quaternius/zombies/Zombie_Ribcage.gltf" },
+  { "id": "mesh_q_demon",      "primitive": "model", "height": 2.10, "radius": 0.60, "color": "#8a2a22", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Demon_b.glb" },
+  { "id": "mesh_q_imp",        "primitive": "model", "height": 1.40, "radius": 0.45, "color": "#c83a2a", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Demon_a.glb" },
+  { "id": "mesh_q_blue_demon", "primitive": "model", "height": 2.00, "radius": 0.55, "color": "#4a5ab8", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Blue_Demon.glb" },
+  { "id": "mesh_tower_lantern",  "primitive": "model", "height": 2.60, "radius": 0.60, "color": "#ff8a3a", "model_yaw": 0, "model_path": "res://assets/prefabs/tower/TowerLantern.tscn" },
+  { "id": "mesh_tower_keystone", "primitive": "model", "height": 2.60, "radius": 0.90, "color": "#c05aff", "model_yaw": 0, "model_path": "res://assets/prefabs/tower/TowerKeystone.tscn" },
+  { "id": "mesh_shard_demon",    "primitive": "model", "height": 4.30, "radius": 1.30, "color": "#b04aff", "model_yaw": 0, "model_path": "res://assets/prefabs/tower/DemonStone.tscn" },
+
   { "id": "mesh_sword_a",             "primitive": "box",      "height": 1.10, "radius": 0.06, "color": "#d9dde2" },
   { "id": "mesh_axe_a",                 "primitive": "box",      "height": 1.00, "radius": 0.12, "color": "#c9b08a" },
   { "id": "mesh_spear_a",               "primitive": "cylinder", "height": 1.60, "radius": 0.05, "color": "#b9c2cc" },

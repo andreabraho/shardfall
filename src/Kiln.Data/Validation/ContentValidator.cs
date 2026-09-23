@@ -1148,18 +1148,54 @@ public static class ContentValidator
                     $"{where} is a boss floor whose boss '{floor.Boss}' does not exist.");
             }
 
-            // FR-7.13 says alone on an otherwise empty floor. Adds would make it a hold.
-            if (floor.Waves.Length > 0)
-            {
-                report.Error("world-floors", zone.SourceFile,
-                    $"{where} is a boss floor that also sends waves.",
-                    "FR-7.13: the boss stands alone.");
-            }
+            // FR-7.13 once said the boss stands alone. Playtesting the tower said otherwise
+            // (2026-09-23): a boss room with nothing else in it was the quietest place in the
+            // dungeon, so boss floors may send waves. They still may not be a hold — the boss
+            // is the task, and the waves never finish the floor.
         }
         else if (!string.IsNullOrEmpty(floor.Boss))
         {
             report.Error("world-floors", zone.SourceFile,
                 $"{where} names a boss but its task is \"{floor.Task}\".");
+        }
+        else if (floor.BossAdds > 0 || floor.Enrage)
+        {
+            report.Error("world-floors", zone.SourceFile,
+                $"{where} gives boss adds or an enrage to a \"{floor.Task}\" floor, which has no boss.");
+        }
+
+        if (!string.IsNullOrEmpty(floor.Stone))
+        {
+            if (floor.Task is not ("break" or "race"))
+            {
+                report.Error("world-floors", zone.SourceFile,
+                    $"{where} sets a stone on a \"{floor.Task}\" floor.",
+                    "Stones are the targets of break and race floors.");
+            }
+
+            if (!db.Shards.ContainsKey(floor.Stone))
+            {
+                report.Error("cross-ref", zone.SourceFile,
+                    $"{where} names stone '{floor.Stone}', which is not a shard.");
+            }
+        }
+
+        if (floor.Burst > 0 && floor.Task != "find")
+        {
+            report.Error("world-floors", zone.SourceFile,
+                $"{where} sets a lantern burst on a \"{floor.Task}\" floor.");
+        }
+
+        if (floor.Guard > 0 && floor.Task != "carry")
+        {
+            report.Error("world-floors", zone.SourceFile,
+                $"{where} sets keystone guards on a \"{floor.Task}\" floor.");
+        }
+
+        if ((floor.Pack > 0 || floor.Burst > 0 || floor.Guard > 0 || floor.BossAdds > 0) && floor.Waves.Length == 0)
+        {
+            report.Error("world-floors", zone.SourceFile,
+                $"{where} asks for monsters but lists no waves to draw them from.");
         }
 
         foreach (var enemy in floor.Waves)

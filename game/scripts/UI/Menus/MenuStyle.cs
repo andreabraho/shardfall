@@ -73,7 +73,7 @@ public static class MenuStyle
         Core.Foundation.Difficulty.Wanderer => L10n.T("For the world and the story."),
         Core.Foundation.Difficulty.Disciple => L10n.T("The game as designed."),
         Core.Foundation.Difficulty.Adept => L10n.T("For players who know the genre."),
-        _ => L10n.T("Nightmare. No checkpoints inside the catacombs."),
+        _ => L10n.T("Nightmare. No checkpoints inside the Demon Tower."),
     } + " "
       + L10n.F("Enemies have ×{0:0.##} health and deal ×{1:0.##} damage; {2:0.0#} s to step out of an attack; {3} flask charges;",
           d.EnemyHpMultiplier, d.EnemyDamageMultiplier, d.AoeTelegraphSeconds, d.FlaskCharges) + " "

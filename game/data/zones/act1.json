@@ -510,40 +510,24 @@
       { "id": "shr_catacombs_vault", "name": "$shrine.shr_catacombs_vault.name", "fast_travel": false }
     ],
     "spawn_fields": [],
-    "shards": ["shd_catacomb_heart"],
+    "shards": ["shd_demon_stone", "shd_demon_shard"],
     "floors": [
-      { "id": "flr_the_mouth", "name": "$floor.flr_the_mouth.name", "task": "break",
-        "targets": 1, "shrine": "shr_catacombs_mouth",
-        "waves": ["mob_crypt_stalker"], "wave_size": 3, "wave_seconds": 20 },
-
-      { "id": "flr_the_cistern", "name": "$floor.flr_the_cistern.name", "task": "hold",
-        "seconds": 75,
-        "waves": ["mob_crypt_stalker", "mob_void_caster"], "wave_size": 4, "wave_seconds": 14 },
-
-      { "id": "flr_the_gallery", "name": "$floor.flr_the_gallery.name", "task": "fight",
-        "boss": "mob_gallery_warden" },
-
-      { "id": "flr_the_lantern_walk", "name": "$floor.flr_the_lantern_walk.name", "task": "find",
-        "targets": 1, "decoys": 4, "shrine": "shr_catacombs_gallery", "bench": true,
-        "waves": ["mob_void_caster"], "wave_size": 2, "wave_seconds": 22 },
-
-      { "id": "flr_the_sealed_crossing", "name": "$floor.flr_the_sealed_crossing.name", "task": "carry",
-        "targets": 3, "refuge": true,
-        "waves": ["mob_obsidian_ward", "mob_hollow_choir"], "wave_size": 3, "wave_seconds": 16 },
-
-      { "id": "flr_the_choir_vault", "name": "$floor.flr_the_choir_vault.name", "task": "fight",
-        "boss": "mob_vault_chorister" },
-
-      { "id": "flr_the_falling_stair", "name": "$floor.flr_the_falling_stair.name", "task": "race",
-        "targets": 4, "seconds": 90, "shrine": "shr_catacombs_vault", "bench": true,
-        "waves": ["mob_crypt_stalker", "mob_rift_seed"], "wave_size": 3, "wave_seconds": 12 },
-
-      { "id": "flr_the_black_cloister", "name": "$floor.flr_the_black_cloister.name", "task": "hold",
-        "seconds": 90,
-        "waves": ["mob_obsidian_ward", "mob_void_caster", "mob_hollow_choir"], "wave_size": 5, "wave_seconds": 12 },
-
-      { "id": "flr_the_heart", "name": "$floor.flr_the_heart.name", "task": "fight",
-        "boss": "mob_heart_keeper" }
+      // Floor 1: break the demon stone. Its own waves are the fight; a few crawlers wander in.
+      { "id": "flr_the_mouth", "name": "$floor.flr_the_mouth.name", "task": "break", "targets": 1, "stone": "shd_demon_stone", "shrine": "shr_catacombs_mouth", "waves": ["mob_zombie_crawler", "mob_zombie_ghoul"], "wave_size": 2, "wave_seconds": 22 },
+      // From here up everything the floor sends hunts the player, and a pack is kept at strength.
+      { "id": "flr_the_cistern", "name": "$floor.flr_the_cistern.name", "task": "hold", "seconds": 90, "waves": ["mob_zombie_crawler", "mob_zombie_ghoul", "mob_ribcage_spitter"], "wave_size": 4, "wave_seconds": 12, "pack": 6 },
+      { "id": "flr_the_gallery", "name": "$floor.flr_the_gallery.name", "task": "fight", "boss": "mob_rotting_colossus", "waves": ["mob_zombie_crawler", "mob_zombie_ghoul"], "wave_size": 3, "wave_seconds": 20 },
+      // Every lantern lets out a crowd when it breaks. The true one ends the floor once all of them are dead.
+      { "id": "flr_the_lantern_walk", "name": "$floor.flr_the_lantern_walk.name", "task": "find", "targets": 1, "decoys": 4, "burst": 7, "shrine": "shr_catacombs_gallery", "bench": true, "waves": ["mob_zombie_ghoul", "mob_ribcage_spitter", "mob_zombie_crawler"], "wave_size": 2, "wave_seconds": 28 },
+      // Each keystone is sealed until the guard that rises round it is dead.
+      { "id": "flr_the_sealed_crossing", "name": "$floor.flr_the_sealed_crossing.name", "task": "carry", "targets": 3, "guard": 8, "refuge": true, "waves": ["mob_zombie_brute", "mob_blue_demon_hexer", "mob_zombie_ghoul"], "wave_size": 2, "wave_seconds": 26 },
+      { "id": "flr_the_choir_vault", "name": "$floor.flr_the_choir_vault.name", "task": "fight", "boss": "mob_blue_demon_sorcerer", "waves": ["mob_demon_warrior", "mob_hell_imp"], "wave_size": 3, "wave_seconds": 18 },
+      // Four demon stones against the clock, which starts with the first.
+      { "id": "flr_the_falling_stair", "name": "$floor.flr_the_falling_stair.name", "task": "race", "targets": 4, "seconds": 150, "stone": "shd_demon_shard", "shrine": "shr_catacombs_vault", "bench": true, "waves": ["mob_demon_warrior", "mob_hell_imp"], "wave_size": 2, "wave_seconds": 16 },
+      // The second floor again, harder: a bigger pack, heavier waves, a longer clock.
+      { "id": "flr_the_black_cloister", "name": "$floor.flr_the_black_cloister.name", "task": "hold", "seconds": 110, "waves": ["mob_demon_warrior", "mob_blue_demon_hexer", "mob_hell_imp", "mob_zombie_brute"], "wave_size": 5, "wave_seconds": 11, "pack": 9 },
+      // The Demon Lord: help at 75, 50 and 25 per cent, an enrage at half, and the tower's creatures on the side.
+      { "id": "flr_the_heart", "name": "$floor.flr_the_heart.name", "task": "fight", "boss": "mob_demon_lord", "boss_adds": 6, "enrage": true, "waves": ["mob_demon_warrior", "mob_hell_imp"], "wave_size": 3, "wave_seconds": 22 }
     ]
   }
 ]

@@ -407,6 +407,23 @@ public partial class EnemyBrain : CharacterBody3D
         }
     }
 
+    /// <summary>
+    /// Sends the creature straight at the player from wherever it stands, and never lets it go
+    /// home (the Demon Tower, 2026-09-23).
+    /// </summary>
+    /// <remarks>
+    /// A tower floor spawns its waves at the walls, and with field aggro radii most of them
+    /// stood where they landed while the player fought in the middle of the room — the floor
+    /// was quiet when it was meant to be under siege. A hunter's aggro and leash reach across
+    /// any room, so it comes, and keeps coming.
+    /// </remarks>
+    public void Hunt()
+    {
+        AggroRadius = 9999f;
+        LeashRadius = 9999f;
+        AcquireTarget(force: true);
+    }
+
     private void RefreshTarget()
     {
         // Whatever brought it here — a camp placed too close, a shove, a future bug — nothing

@@ -1,0 +1,55 @@
+[gd_scene load_steps=6 format=3]
+
+; DemonFire — an iron fire basket on a stone post, burning red into violet. Kenney Graveyard Kit
+; (CC0); the flame is particles. Kit piece kit_demon_fire.
+
+[ext_resource type="PackedScene" path="res://assets/kenney/graveyard/pillar-large.glb" id="1_pillarlargeglb"]
+[ext_resource type="PackedScene" path="res://assets/kenney/graveyard/fire-basket.glb" id="2_firebasketglb"]
+
+[sub_resource type="StandardMaterial3D" id="FlameFlame"]
+shading_mode = 0
+transparency = 1
+blend_mode = 1
+vertex_color_use_as_albedo = true
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="FlameSpark"]
+material = SubResource("FlameFlame")
+size = Vector2(0.45, 0.45)
+
+[sub_resource type="Gradient" id="FlameHeat"]
+offsets = PackedFloat32Array(0, 0.35, 1)
+colors = PackedColorArray(1, 0.45, 0.2, 1, 0.75, 0.15, 0.85, 0.8, 0.3, 0.06, 0.34, 0)
+
+[node name="DemonFire" type="Node3D"]
+
+[node name="Post" parent="." instance=ExtResource("1_pillarlargeglb")]
+transform = Transform3D(2.6, 0, 0, 0, 1, 0, 0, 0, 2.6, 0, 0, 0)
+
+[node name="Basket" parent="." instance=ExtResource("2_firebasketglb")]
+transform = Transform3D(2.2, 0, 0, 0, 2.2, 0, 0, 0, 2.2, 0, 1.12, 0)
+
+[node name="Flame" type="CPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, 0)
+amount = 26
+lifetime = 0.9
+mesh = SubResource("FlameSpark")
+emission_shape = 1
+emission_sphere_radius = 0.29
+direction = Vector3(0, 1, 0)
+spread = 12.0
+gravity = Vector3(0, 1.6, 0)
+initial_velocity_min = 0.4
+initial_velocity_max = 0.9
+scale_amount_min = 0.6
+scale_amount_max = 1.2
+color_ramp = SubResource("FlameHeat")
+
+[node name="FlameLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.25, 0)
+light_color = Color(1, 0.35, 0.45, 1)
+light_energy = 2.4
+omni_range = 8.0

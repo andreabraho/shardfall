@@ -97,7 +97,7 @@ public partial class FloorStair : Area3D
         if (_plate is null) return;
 
         _plate.Tint = colour;
-        _plate.SetText(_open ? L10n.T("Down") : L10n.T("Sealed"));
+        _plate.SetText(_open ? L10n.T("Up") : L10n.T("Sealed"));
     }
 
     private void OnBodyEntered(Node3D body)

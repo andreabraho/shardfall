@@ -101,6 +101,12 @@ public sealed class WorldCatalogue
         Waves = def.Waves,
         WaveSize = def.WaveSize,
         WaveSeconds = def.WaveSeconds,
+        Stone = def.Stone,
+        Pack = def.Pack,
+        Burst = def.Burst,
+        Guard = def.Guard,
+        BossAdds = def.BossAdds,
+        Enrage = def.Enrage,
     };
 
     /// <summary>

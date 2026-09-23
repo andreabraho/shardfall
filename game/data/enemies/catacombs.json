@@ -1,187 +1,218 @@
 [
+  // The Demon Tower (map themes, 2026-09-23). Zombies hold the lower floors — crawlers in numbers,
+  // ghouls, ribcage spitters, bloated brutes — and demons the upper: warriors, blue hexers who keep
+  // the others standing, and imps that dive in and burst. A colossal zombie on floor three, a blue
+  // demon sorcerer on floor six, and the Demon Lord at the top.
+  //
+  // The numbers are the old catacombs roster's, role for role. Models: Quaternius Zombie Apocalypse
+  // Kit and Ultimate Monsters (CC0; ASSET-LICENSES.md).
+
   {
-    "id": "mob_crypt_stalker",
-    "name": "$mob.mob_crypt_stalker.name",
-    "family": "devil",
+    "id": "mob_zombie_crawler",
+    "name": "$mob.mob_zombie_crawler.name",
+    "family": "undead",
+    "role": "bruiser",
+    "level": 20,
+    "stats": { "hp": 680, "attack_power": 72, "defense": 74, "move_speed": 6.2 },
+    "abilities": [
+      { "id": "abl_crawler_claw", "cooldown": 2.2, "windup": 0.55, "damage_coef": 1.05, "applies": { "kind": "bleed", "magnitude": 14, "duration": 4 } }
+    ],
+    "ai": "bt_melee_chaser",
+    "aggro_radius": 14,
+    "leash_radius": 22,
+    "xp": 400,
+    "drop_table": "dt_catacombs_t5",
+    "visual": "mesh_z_crawler",
+    "visual_scale": 1,
+    "visual_tint": "#6a7a5a"
+  },
+  {
+    "id": "mob_zombie_ghoul",
+    "name": "$mob.mob_zombie_ghoul.name",
+    "family": "undead",
     "role": "bruiser",
     "level": 20,
     "stats": { "hp": 1360, "attack_power": 96, "defense": 74, "move_speed": 5.8 },
     "abilities": [
-      { "id": "abl_stalker_rend", "cooldown": 2.2, "windup": 0.55, "damage_coef": 1.05,
-        "applies": { "kind": "bleed", "magnitude": 14, "duration": 4.0 } },
-      { "id": "abl_stalker_pounce", "cooldown": 7.0, "windup": 1.70, "damage_coef": 1.65,
-        "telegraph": { "shape": "cone", "radius": 3.0, "angle": 70 } }
+      { "id": "abl_ghoul_rend", "cooldown": 2.2, "windup": 0.55, "damage_coef": 1.05, "applies": { "kind": "bleed", "magnitude": 14, "duration": 4 } },
+      { "id": "abl_ghoul_pounce", "cooldown": 7, "windup": 1.7, "damage_coef": 1.65, "telegraph": { "shape": "cone", "radius": 3, "angle": 70 } }
     ],
     "ai": "bt_melee_chaser",
     "aggro_radius": 14,
     "leash_radius": 22,
     "xp": 800,
     "drop_table": "dt_catacombs_t5",
-    "visual": "mesh_placeholder_quadruped",
-    "visual_scale": 1.15,
-    "visual_tint": "#4b3a58"
+    "visual": "mesh_z_ghoul",
+    "visual_scale": 1,
+    "visual_tint": "#7a8a6a"
   },
   {
-    "id": "mob_void_caster",
-    "name": "$mob.mob_void_caster.name",
-    "family": "devil",
+    "id": "mob_ribcage_spitter",
+    "name": "$mob.mob_ribcage_spitter.name",
+    "family": "undead",
     "role": "archer",
     "level": 21,
     "stats": { "hp": 930, "attack_power": 116, "defense": 50, "move_speed": 4.8 },
     "abilities": [
-      { "id": "abl_void_lance", "cooldown": 2.0, "windup": 0.85, "damage_coef": 1.15, "range": 14.0 },
-      { "id": "abl_void_collapse", "cooldown": 10.0, "windup": 2.10, "damage_coef": 1.55, "range": 13.0,
-        "placement": "target",
-        "telegraph": { "shape": "circle", "radius": 4.0 } }
+      { "id": "abl_bone_spit", "cooldown": 2, "windup": 0.85, "damage_coef": 1.15, "range": 14 },
+      { "id": "abl_bone_hail", "cooldown": 10, "windup": 2.1, "damage_coef": 1.55, "range": 13, "placement": "target", "telegraph": { "shape": "circle", "radius": 4 } }
     ],
     "ai": "bt_ranged_kiter",
     "aggro_radius": 17,
     "leash_radius": 26,
     "xp": 855,
     "drop_table": "dt_catacombs_t5",
-    "visual": "mesh_placeholder_humanoid",
-    "visual_scale": 1.05,
-    "visual_tint": "#6b4a8c"
+    "visual": "mesh_z_ribcage",
+    "visual_scale": 1,
+    "visual_tint": "#c8c0a8"
   },
   {
-    "id": "mob_obsidian_ward",
-    "name": "$mob.mob_obsidian_ward.name",
-    "family": "devil",
+    "id": "mob_zombie_brute",
+    "name": "$mob.mob_zombie_brute.name",
+    "family": "undead",
     "role": "shielder",
     "level": 22,
     "stats": { "hp": 2340, "attack_power": 84, "defense": 138, "move_speed": 3.6 },
     "abilities": [
-      { "id": "abl_obsidian_slam", "cooldown": 3.4, "windup": 1.00, "damage_coef": 1.20,
-        "applies": { "kind": "stun", "duration": 1.1, "chance": 0.35 } },
-      { "id": "abl_obsidian_aegis", "cooldown": 13.0, "windup": 2.00, "damage_coef": 0.00 }
+      { "id": "abl_brute_slam", "cooldown": 3.4, "windup": 1, "damage_coef": 1.2, "applies": { "kind": "stun", "duration": 1.1, "chance": 0.35 } },
+      { "id": "abl_brute_aegis", "cooldown": 13, "windup": 2, "damage_coef": 0 }
     ],
     "ai": "bt_support_shielder",
     "aggro_radius": 12,
     "leash_radius": 19,
     "xp": 990,
     "drop_table": "dt_catacombs_t5",
-    "visual": "mesh_placeholder_heavy",
-    "visual_scale": 1.25,
-    "visual_tint": "#3d3a46"
+    "visual": "mesh_z_brute",
+    "visual_scale": 1.1,
+    "visual_tint": "#6a7a5a"
   },
   {
-    "id": "mob_hollow_choir",
-    "name": "$mob.mob_hollow_choir.name",
+    "id": "mob_blue_demon_hexer",
+    "name": "$mob.mob_blue_demon_hexer.name",
     "family": "devil",
     "role": "mender",
     "level": 22,
     "stats": { "hp": 1250, "attack_power": 76, "defense": 58, "move_speed": 4.2 },
     "abilities": [
-      { "id": "abl_choir_restore", "cooldown": 6.0, "windup": 1.55, "damage_coef": 0.00, "range": 12.0 },
-      { "id": "abl_choir_wail", "cooldown": 3.0, "windup": 0.90, "damage_coef": 1.00, "range": 10.5 }
+      { "id": "abl_hexer_restore", "cooldown": 6, "windup": 1.55, "damage_coef": 0, "range": 12 },
+      { "id": "abl_hexer_wail", "cooldown": 3, "windup": 0.9, "damage_coef": 1, "range": 10.5 }
     ],
     "ai": "bt_support_healer",
     "aggro_radius": 15,
     "leash_radius": 22,
     "xp": 1000,
     "drop_table": "dt_catacombs_t5",
-    "visual": "mesh_placeholder_humanoid",
-    "visual_scale": 1.05,
-    "visual_tint": "#7a6aa0"
+    "visual": "mesh_q_blue_demon",
+    "visual_scale": 1,
+    "visual_tint": "#4a5ab8"
   },
   {
-    "id": "mob_rift_seed",
-    "name": "$mob.mob_rift_seed.name",
+    "id": "mob_hell_imp",
+    "name": "$mob.mob_hell_imp.name",
     "family": "devil",
     "role": "bomber",
     "level": 23,
     "stats": { "hp": 1090, "attack_power": 160, "defense": 44, "move_speed": 5.2 },
     "abilities": [
-      { "id": "abl_rift_collapse", "cooldown": 1.0, "windup": 2.45, "damage_coef": 2.20,
-        "applies": { "kind": "poison", "magnitude": 22, "duration": 5.0 },
-        "telegraph": { "shape": "circle", "radius": 5.0 } }
+      { "id": "abl_imp_burst", "cooldown": 1, "windup": 2.45, "damage_coef": 2.2, "applies": { "kind": "poison", "magnitude": 22, "duration": 5 }, "telegraph": { "shape": "circle", "radius": 5 } }
     ],
     "ai": "bt_suicide_charger",
     "aggro_radius": 15,
     "leash_radius": 24,
     "xp": 1090,
     "drop_table": "dt_catacombs_t5",
-    "visual": "mesh_placeholder_quadruped",
-    "visual_scale": 1.05,
-    "visual_tint": "#5a3f6e"
+    "visual": "mesh_q_imp",
+    "visual_scale": 0.8,
+    "visual_tint": "#c83a2a"
   },
   {
-    "id": "mob_gallery_warden",
-    "stun_resist": 1.0,
-    "name": "$mob.mob_gallery_warden.name",
+    "id": "mob_demon_warrior",
+    "name": "$mob.mob_demon_warrior.name",
     "family": "devil",
+    "role": "bruiser",
+    "level": 22,
+    "stats": { "hp": 1700, "attack_power": 108, "defense": 74, "move_speed": 5.8 },
+    "abilities": [
+      { "id": "abl_demon_cleave", "cooldown": 2.2, "windup": 0.55, "damage_coef": 1.05, "applies": { "kind": "bleed", "magnitude": 14, "duration": 4 } },
+      { "id": "abl_demon_leap", "cooldown": 7, "windup": 1.7, "damage_coef": 1.65, "telegraph": { "shape": "cone", "radius": 3, "angle": 70 } }
+    ],
+    "ai": "bt_melee_chaser",
+    "aggro_radius": 14,
+    "leash_radius": 22,
+    "xp": 1040,
+    "drop_table": "dt_catacombs_t5",
+    "visual": "mesh_q_demon",
+    "visual_scale": 1,
+    "visual_tint": "#8a2a22"
+  },
+  // Floor three's boss: a zombie grown enormous on what the tower feeds it.
+  {
+    "id": "mob_rotting_colossus",
+    "stun_resist": 1,
+    "name": "$mob.mob_rotting_colossus.name",
+    "family": "undead",
     "role": "bruiser",
     "level": 21,
     "stats": { "hp": 7400, "attack_power": 138, "defense": 96, "move_speed": 5.4 },
     "abilities": [
-      { "id": "abl_warden_cleave", "cooldown": 4.5, "windup": 2.05, "damage_coef": 1.35,
-        "telegraph": { "shape": "cone", "radius": 4.0, "angle": 100 } },
-      { "id": "abl_warden_sunder", "cooldown": 9.0, "windup": 2.20, "damage_coef": 1.90,
-        "applies": { "kind": "weaken", "magnitude": 18, "duration": 6.0 },
-        "telegraph": { "shape": "line", "radius": 4.5, "angle": 14 } },
-      { "id": "abl_warden_quake", "cooldown": 15.0, "windup": 2.45, "damage_coef": 1.60,
-        "applies": { "kind": "stun", "magnitude": 1, "duration": 1.2 },
-        "telegraph": { "shape": "circle", "radius": 5.0 } }
+      { "id": "abl_colossus_cleave", "cooldown": 4.5, "windup": 2.05, "damage_coef": 1.35, "telegraph": { "shape": "cone", "radius": 4, "angle": 100 } },
+      { "id": "abl_colossus_sunder", "cooldown": 9, "windup": 2.2, "damage_coef": 1.9, "applies": { "kind": "weaken", "magnitude": 18, "duration": 6 }, "telegraph": { "shape": "line", "radius": 4.5, "angle": 14 } },
+      { "id": "abl_colossus_quake", "cooldown": 15, "windup": 2.45, "damage_coef": 1.6, "applies": { "kind": "stun", "magnitude": 1, "duration": 1.2 }, "telegraph": { "shape": "circle", "radius": 5 } }
     ],
     "ai": "bt_melee_chaser",
     "aggro_radius": 26,
     "leash_radius": 40,
     "xp": 6200,
     "drop_table": "dt_catacombs_t5",
-    "visual": "mesh_placeholder_heavy",
-    "visual_scale": 1.45,
-    "visual_tint": "#6b4f86"
+    "visual": "mesh_z_brute",
+    "visual_scale": 2.2,
+    "visual_tint": "#5a6a4a"
   },
+  // Floor six's boss: the blue demon who keeps the tower's middle floors.
   {
-    "id": "mob_vault_chorister",
-    "stun_resist": 1.0,
-    "name": "$mob.mob_vault_chorister.name",
+    "id": "mob_blue_demon_sorcerer",
+    "stun_resist": 1,
+    "name": "$mob.mob_blue_demon_sorcerer.name",
     "family": "devil",
     "role": "archer",
     "level": 22,
-    "stats": { "hp": 6100, "attack_power": 156, "defense": 72, "move_speed": 6.0 },
+    "stats": { "hp": 6100, "attack_power": 156, "defense": 72, "move_speed": 6 },
     "abilities": [
-      { "id": "abl_chorister_lance", "cooldown": 2.4, "windup": 0.90, "damage_coef": 1.25, "range": 16.0 },
-      { "id": "abl_chorister_descant", "cooldown": 8.0, "windup": 2.10, "damage_coef": 1.70, "range": 15.0,
-        "applies": { "kind": "burn", "magnitude": 24, "duration": 5.0 },
-        "telegraph": { "shape": "circle", "radius": 4.0 } },
-      { "id": "abl_chorister_hush", "cooldown": 17.0, "windup": 2.20, "damage_coef": 2.10, "range": 14.0,
-        "telegraph": { "shape": "line", "radius": 4.5, "angle": 10 } }
+      { "id": "abl_sorcerer_lance", "cooldown": 2.4, "windup": 0.9, "damage_coef": 1.25, "range": 16 },
+      { "id": "abl_sorcerer_rain", "cooldown": 8, "windup": 2.1, "damage_coef": 1.7, "range": 15, "applies": { "kind": "burn", "magnitude": 24, "duration": 5 }, "telegraph": { "shape": "circle", "radius": 4 } },
+      { "id": "abl_sorcerer_hush", "cooldown": 17, "windup": 2.2, "damage_coef": 2.1, "range": 14, "telegraph": { "shape": "line", "radius": 4.5, "angle": 10 } }
     ],
     "ai": "bt_ranged_kiter",
     "aggro_radius": 28,
     "leash_radius": 42,
     "xp": 7400,
     "drop_table": "dt_catacombs_t5",
-    "visual": "mesh_placeholder_caster",
-    "visual_scale": 1.35,
-    "visual_tint": "#8f6ad2"
+    "visual": "mesh_q_blue_demon",
+    "visual_scale": 1.9,
+    "visual_tint": "#3a4aa8"
   },
+  // The tower's lord, on the top floor: nearly three metres of demon. He calls the tower's
+  // creatures to him at three quarters, half and a quarter of his health, and enrages at half.
   {
-    "id": "mob_heart_keeper",
-    "stun_resist": 1.0,
-    "name": "$mob.mob_heart_keeper.name",
+    "id": "mob_demon_lord",
+    "stun_resist": 1,
+    "name": "$mob.mob_demon_lord.name",
     "family": "devil",
     "role": "bruiser",
     "level": 23,
-    "stats": { "hp": 11200, "attack_power": 172, "defense": 108, "move_speed": 5.9 },
+    "stats": { "hp": 17920, "attack_power": 189, "defense": 108, "move_speed": 5.9 },
     "abilities": [
-      { "id": "abl_keeper_rend", "cooldown": 3.2, "windup": 1.70, "damage_coef": 1.30,
-        "applies": { "kind": "bleed", "magnitude": 26, "duration": 5.0 },
-        "telegraph": { "shape": "cone", "radius": 3.0, "angle": 80 } },
-      { "id": "abl_keeper_sever", "cooldown": 8.0, "windup": 2.20, "damage_coef": 2.00,
-        "telegraph": { "shape": "line", "radius": 4.5, "angle": 12 } },
-      { "id": "abl_keeper_collapse", "cooldown": 14.0, "windup": 2.45, "damage_coef": 2.40,
-        "applies": { "kind": "poison", "magnitude": 30, "duration": 6.0 },
-        "telegraph": { "shape": "circle", "radius": 5.0 } }
+      { "id": "abl_lord_rend", "cooldown": 3.2, "windup": 1.7, "damage_coef": 1.3, "applies": { "kind": "bleed", "magnitude": 26, "duration": 5 }, "telegraph": { "shape": "cone", "radius": 3, "angle": 80 } },
+      { "id": "abl_lord_sever", "cooldown": 8, "windup": 2.2, "damage_coef": 2, "telegraph": { "shape": "line", "radius": 4.5, "angle": 12 } },
+      { "id": "abl_lord_cataclysm", "cooldown": 14, "windup": 2.45, "damage_coef": 2.4, "applies": { "kind": "poison", "magnitude": 30, "duration": 6 }, "telegraph": { "shape": "circle", "radius": 5 } }
     ],
     "ai": "bt_melee_chaser",
     "aggro_radius": 30,
     "leash_radius": 46,
-    "xp": 11000,
+    "xp": 16500,
     "drop_table": "dt_catacombs_t5",
-    "visual": "mesh_placeholder_rogue",
-    "visual_scale": 1.55,
-    "visual_tint": "#4a2f63"
+    "visual": "mesh_q_demon",
+    "visual_scale": 2.8,
+    "visual_tint": "#5a1010"
   }
 ]

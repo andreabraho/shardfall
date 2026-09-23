@@ -1,0 +1,55 @@
+[gd_scene load_steps=5 format=3]
+
+; TowerKeystone — floor five's keystone: a rune obelisk between candles. Kenney Graveyard Kit
+; obelisk, KayKit Halloween Bits candles (CC0). ~2.6 m. Visual mesh_tower_keystone.
+
+[ext_resource type="PackedScene" path="res://assets/kenney/graveyard/pillar-obelisk.glb" id="1_pillarobeliskglb"]
+[ext_resource type="PackedScene" path="res://assets/kaykit/halloween/candle_triple.gltf" id="2_candle_tripleglt"]
+
+[sub_resource type="BoxMesh" id="Rune"]
+size = Vector3(0.3, 0.45, 0.02)
+
+[sub_resource type="StandardMaterial3D" id="Glow"]
+shading_mode = 0
+albedo_color = Color(0.85, 0.35, 1, 1)
+
+[node name="TowerKeystone" type="Node3D"]
+
+[node name="Obelisk" parent="." instance=ExtResource("1_pillarobeliskglb")]
+transform = Transform3D(2.6, 0, 0, 0, 2.6, 0, 0, 0, 2.6, 0, 0, 0)
+
+[node name="Rune0" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0.47)
+mesh = SubResource("Rune")
+surface_material_override/0 = SubResource("Glow")
+cast_shadow = 0
+
+[node name="Rune1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0.47, 1.25, 0)
+mesh = SubResource("Rune")
+surface_material_override/0 = SubResource("Glow")
+cast_shadow = 0
+
+[node name="Rune2" type="MeshInstance3D" parent="."]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 1.25, -0.47)
+mesh = SubResource("Rune")
+surface_material_override/0 = SubResource("Glow")
+cast_shadow = 0
+
+[node name="Rune3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -0.47, 1.25, 0)
+mesh = SubResource("Rune")
+surface_material_override/0 = SubResource("Glow")
+cast_shadow = 0
+
+[node name="CandlesA" parent="." instance=ExtResource("2_candle_tripleglt")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0.8, 0, 0.6)
+
+[node name="CandlesB" parent="." instance=ExtResource("2_candle_tripleglt")]
+transform = Transform3D(-0.7, 0, 0, 0, 0.7, 0, 0, 0, -0.7, -0.8, 0, -0.6)
+
+[node name="Light" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
+light_color = Color(0.8, 0.35, 1, 1)
+light_energy = 1.2
+omni_range = 5.0

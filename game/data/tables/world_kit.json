@@ -177,5 +177,8 @@
   { "id": "kit_hb_candles",           "shape": "model", "fit": "height", "size": [1.1, 1.8, 1.1], "collision": "cylinder", "navigation": false, "color": "#7a6a5a", "model_path": "res://assets/kaykit/halloween/shrine_candles.gltf" },
   { "id": "kit_hb_arch",              "shape": "model", "size": [4.22, 4.41, 0.77], "collision": "arch", "color": "#6a6a70", "model_path": "res://assets/kaykit/halloween/arch_gate.gltf" },
   { "id": "kit_kn_altar",             "shape": "model", "fit": "height", "size": [2.1, 1.0, 1.3], "navigation": false, "color": "#7a7a80", "model_path": "res://assets/kenney/graveyard/altar-stone.glb" },
-  { "id": "kit_kn_cross",             "shape": "model", "fit": "height", "size": [0.7, 2.2, 0.7], "solid": false, "navigation": false, "color": "#7a7a80", "model_path": "res://assets/kenney/graveyard/cross-column.glb" }
+  { "id": "kit_kn_cross",             "shape": "model", "fit": "height", "size": [0.7, 2.2, 0.7], "solid": false, "navigation": false, "color": "#7a7a80", "model_path": "res://assets/kenney/graveyard/cross-column.glb" },
+
+  // -- The Demon Tower: a brazier burning red into violet (prefab).
+  { "id": "kit_demon_fire",           "shape": "model", "fit": "height", "size": [1.2, 1.9, 1.2], "collision": "cylinder", "navigation": false, "color": "#c03a6a", "model_path": "res://assets/prefabs/tower/DemonFire.tscn" }
 ]

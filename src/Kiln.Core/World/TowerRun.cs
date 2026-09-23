@@ -71,6 +71,31 @@ public sealed record TowerFloor(
 
     /// <summary>Seconds between waves.</summary>
     public double WaveSeconds { get; init; } = 14.0;
+
+    /// <summary>A shard id: the targets are that stone, fought like one in the field. Empty for a seal.</summary>
+    public string Stone { get; init; } = "";
+
+    /// <summary>
+    /// How many hunters the floor keeps alive at all times, on top of the timed waves.
+    /// </summary>
+    /// <remarks>
+    /// The waves alone left gaps: a player fast enough emptied the room between two of them and
+    /// stood in silence on a floor that was meant to be under pressure. The pack is topped up
+    /// as it dies, so there is always something coming.
+    /// </remarks>
+    public int Pack { get; init; }
+
+    /// <summary>How many monsters each lantern lets out when it breaks — real or not.</summary>
+    public int Burst { get; init; }
+
+    /// <summary>How many monsters guard each keystone. It cannot be broken until they are dead.</summary>
+    public int Guard { get; init; }
+
+    /// <summary>How many the boss calls at 75, 50 and 25 per cent of its health.</summary>
+    public int BossAdds { get; init; }
+
+    /// <summary>Whether the boss enrages at half health.</summary>
+    public bool Enrage { get; init; }
 }
 
 /// <summary>Where a floor currently is.</summary>

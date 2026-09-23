@@ -33,6 +33,21 @@ public partial class ShardNode : StaticBody3D
     /// </summary>
     [Export] public double RespawnSeconds { get; set; } = 120.0;
 
+    /// <summary>
+    /// Whether a break is remembered across loads and the stone comes back on a timer.
+    /// </summary>
+    /// <remarks>
+    /// False for a stone a tower floor puts out: the floor is its lifetime, and a stone still
+    /// "broken" from the last visit would leave a floor with nothing to break.
+    /// </remarks>
+    [Export] public bool Persistent { get; set; } = true;
+
+    /// <summary>Whether the adds go straight for the player wherever they land (tower floors).</summary>
+    [Export] public bool HuntingAdds { get; set; }
+
+    /// <summary>Raised once when the stone breaks.</summary>
+    public event System.Action? Broken;
+
     /// <summary>Where adds appear, as a ring around the shard.</summary>
     [Export] public float SpawnRing { get; set; } = 7f;
 
@@ -117,7 +132,7 @@ public partial class ShardNode : StaticBody3D
     /// </summary>
     private void Wake()
     {
-        if (PlayerProfile.ShardRespawns.TryGetValue(Key, out var due) && due > PlayerProfile.PlayTime)
+        if (Persistent && PlayerProfile.ShardRespawns.TryGetValue(Key, out var due) && due > PlayerProfile.PlayTime)
         {
             _broken = true;
             _respawnIn = due - PlayerProfile.PlayTime;
@@ -313,10 +328,17 @@ public partial class ShardNode : StaticBody3D
 
             _adds.Add(add);
 
+            if (HuntingAdds) add.Hunt();
+
             if (entry.IsAnchor)
             {
                 _anchor = add;
-                add.GetNodeOrNull<VisualRoot>("VisualRoot")?.Apply("mesh_placeholder_humanoid", "#ffd24f", 1.15);
+                // Its own body, larger and gilded: a gold skeleton standing in for a wolf or an
+                // orc read as a different creature altogether.
+                if (GameContent.Database.Enemies.TryGetValue(entry.EnemyId, out var anchorDef))
+                {
+                    add.GetNodeOrNull<VisualRoot>("VisualRoot")?.Apply(anchorDef.Visual, "#ffd24f", anchorDef.VisualScale * 1.2);
+                }
 
                 // The one add the player has to find in a crowd, so it gets a louder plate
                 // and says why it matters.
@@ -380,8 +402,9 @@ public partial class ShardNode : StaticBody3D
     {
         Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndShardBreak, GlobalPosition);
         _broken = true;
-        _respawnIn = RespawnSeconds;
-        PlayerProfile.ShardRespawns[Key] = PlayerProfile.PlayTime + RespawnSeconds;
+        _respawnIn = Persistent ? RespawnSeconds : double.MaxValue;
+
+        if (Persistent) PlayerProfile.ShardRespawns[Key] = PlayerProfile.PlayTime + RespawnSeconds;
         _telegraph.Cancel();
 
         GD.Print($"[shard] {ShardId} broken");
@@ -410,6 +433,8 @@ public partial class ShardNode : StaticBody3D
 
         GrantRewards();
         Quests.QuestTracker.Report(GetTree(), ObjectiveType.Shard, ShardId);
+
+        Broken?.Invoke();
     }
 
     private void GrantRewards()

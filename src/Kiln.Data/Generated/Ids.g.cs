@@ -82,44 +82,46 @@ public static class Ids
         public const string MobBanditBulwark = "mob_bandit_bulwark";
         public const string MobBanditChief = "mob_bandit_chief";
         public const string MobBlisterWasp = "mob_blister_wasp";
+        public const string MobBlueDemonHexer = "mob_blue_demon_hexer";
+        public const string MobBlueDemonSorcerer = "mob_blue_demon_sorcerer";
         public const string MobBoneMinion = "mob_bone_minion";
         public const string MobCactoroBloomcaller = "mob_cactoro_bloomcaller";
         public const string MobCactoroThornguard = "mob_cactoro_thornguard";
-        public const string MobCryptStalker = "mob_crypt_stalker";
+        public const string MobDemonLord = "mob_demon_lord";
+        public const string MobDemonWarrior = "mob_demon_warrior";
         public const string MobFieldRat = "mob_field_rat";
         public const string MobFirebrandMask = "mob_firebrand_mask";
         public const string MobFrostCaster = "mob_frost_caster";
         public const string MobFrostLich = "mob_frost_lich";
         public const string MobFrostboneWarrior = "mob_frostbone_warrior";
-        public const string MobGalleryWarden = "mob_gallery_warden";
         public const string MobGolelingBulwark = "mob_goleling_bulwark";
         public const string MobGreyWolf = "mob_grey_wolf";
         public const string MobGreymane = "mob_greymane";
-        public const string MobHeartKeeper = "mob_heart_keeper";
         public const string MobHedgeWizard = "mob_hedge_wizard";
-        public const string MobHollowChoir = "mob_hollow_choir";
+        public const string MobHellImp = "mob_hell_imp";
         public const string MobMountainYeti = "mob_mountain_yeti";
         public const string MobMushnubMystic = "mob_mushnub_mystic";
         public const string MobNinjaCutthroat = "mob_ninja_cutthroat";
         public const string MobNinjaThrower = "mob_ninja_thrower";
-        public const string MobObsidianWard = "mob_obsidian_ward";
         public const string MobOrcGrunt = "mob_orc_grunt";
         public const string MobOrcSkirmisher = "mob_orc_skirmisher";
         public const string MobOrcWarlord = "mob_orc_warlord";
         public const string MobRedFox = "mob_red_fox";
-        public const string MobRiftSeed = "mob_rift_seed";
+        public const string MobRibcageSpitter = "mob_ribcage_spitter";
         public const string MobRockburstGoleling = "mob_rockburst_goleling";
+        public const string MobRottingColossus = "mob_rotting_colossus";
         public const string MobSandSpider = "mob_sand_spider";
         public const string MobScreamingSkull = "mob_screaming_skull";
         public const string MobSpiderQueen = "mob_spider_queen";
         public const string MobSpiderling = "mob_spiderling";
         public const string MobSpittingAdder = "mob_spitting_adder";
         public const string MobTribalRaider = "mob_tribal_raider";
-        public const string MobVaultChorister = "mob_vault_chorister";
-        public const string MobVoidCaster = "mob_void_caster";
         public const string MobWailingGhost = "mob_wailing_ghost";
+        public const string MobZombieBrute = "mob_zombie_brute";
+        public const string MobZombieCrawler = "mob_zombie_crawler";
+        public const string MobZombieGhoul = "mob_zombie_ghoul";
 
-        public static readonly string[] All = ["mob_bandit_bulwark", "mob_bandit_chief", "mob_blister_wasp", "mob_bone_minion", "mob_cactoro_bloomcaller", "mob_cactoro_thornguard", "mob_crypt_stalker", "mob_field_rat", "mob_firebrand_mask", "mob_frost_caster", "mob_frost_lich", "mob_frostbone_warrior", "mob_gallery_warden", "mob_goleling_bulwark", "mob_grey_wolf", "mob_greymane", "mob_heart_keeper", "mob_hedge_wizard", "mob_hollow_choir", "mob_mountain_yeti", "mob_mushnub_mystic", "mob_ninja_cutthroat", "mob_ninja_thrower", "mob_obsidian_ward", "mob_orc_grunt", "mob_orc_skirmisher", "mob_orc_warlord", "mob_red_fox", "mob_rift_seed", "mob_rockburst_goleling", "mob_sand_spider", "mob_screaming_skull", "mob_spider_queen", "mob_spiderling", "mob_spitting_adder", "mob_tribal_raider", "mob_vault_chorister", "mob_void_caster", "mob_wailing_ghost"];
+        public static readonly string[] All = ["mob_bandit_bulwark", "mob_bandit_chief", "mob_blister_wasp", "mob_blue_demon_hexer", "mob_blue_demon_sorcerer", "mob_bone_minion", "mob_cactoro_bloomcaller", "mob_cactoro_thornguard", "mob_demon_lord", "mob_demon_warrior", "mob_field_rat", "mob_firebrand_mask", "mob_frost_caster", "mob_frost_lich", "mob_frostbone_warrior", "mob_goleling_bulwark", "mob_grey_wolf", "mob_greymane", "mob_hedge_wizard", "mob_hell_imp", "mob_mountain_yeti", "mob_mushnub_mystic", "mob_ninja_cutthroat", "mob_ninja_thrower", "mob_orc_grunt", "mob_orc_skirmisher", "mob_orc_warlord", "mob_red_fox", "mob_ribcage_spitter", "mob_rockburst_goleling", "mob_rotting_colossus", "mob_sand_spider", "mob_screaming_skull", "mob_spider_queen", "mob_spiderling", "mob_spitting_adder", "mob_tribal_raider", "mob_wailing_ghost", "mob_zombie_brute", "mob_zombie_crawler", "mob_zombie_ghoul"];
     }
 
     public static class Skills
@@ -194,15 +196,18 @@ public static class Ids
         public const string MeshPlaceholderRogue = "mesh_placeholder_rogue";
         public const string MeshPlaceholderShrine = "mesh_placeholder_shrine";
         public const string MeshPlaceholderVillager = "mesh_placeholder_villager";
+        public const string MeshQBlueDemon = "mesh_q_blue_demon";
         public const string MeshQBull = "mesh_q_bull";
         public const string MeshQCactoro = "mesh_q_cactoro";
         public const string MeshQCactoroB = "mesh_q_cactoro_b";
         public const string MeshQDeer = "mesh_q_deer";
+        public const string MeshQDemon = "mesh_q_demon";
         public const string MeshQFox = "mesh_q_fox";
         public const string MeshQGhost = "mesh_q_ghost";
         public const string MeshQGhostSkull = "mesh_q_ghost_skull";
         public const string MeshQGoleling = "mesh_q_goleling";
         public const string MeshQGolelingEvo = "mesh_q_goleling_evo";
+        public const string MeshQImp = "mesh_q_imp";
         public const string MeshQMushnub = "mesh_q_mushnub";
         public const string MeshQNinja = "mesh_q_ninja";
         public const string MeshQNinjaB = "mesh_q_ninja_b";
@@ -218,6 +223,7 @@ public static class Ids
         public const string MeshQWolf = "mesh_q_wolf";
         public const string MeshQYeti = "mesh_q_yeti";
         public const string MeshShardBanner = "mesh_shard_banner";
+        public const string MeshShardDemon = "mesh_shard_demon";
         public const string MeshShardFrost = "mesh_shard_frost";
         public const string MeshShardMoss = "mesh_shard_moss";
         public const string MeshShardTotem = "mesh_shard_totem";
@@ -226,21 +232,28 @@ public static class Ids
         public const string MeshSpearA = "mesh_spear_a";
         public const string MeshStoneA = "mesh_stone_a";
         public const string MeshSwordA = "mesh_sword_a";
+        public const string MeshTowerKeystone = "mesh_tower_keystone";
+        public const string MeshTowerLantern = "mesh_tower_lantern";
         public const string MeshTrinketA = "mesh_trinket_a";
+        public const string MeshZBrute = "mesh_z_brute";
+        public const string MeshZCrawler = "mesh_z_crawler";
+        public const string MeshZGhoul = "mesh_z_ghoul";
+        public const string MeshZRibcage = "mesh_z_ribcage";
 
-        public static readonly string[] All = ["mesh_armor_a", "mesh_axe_a", "mesh_boots_a", "mesh_helmet_a", "mesh_placeholder_caster", "mesh_placeholder_heavy", "mesh_placeholder_humanoid", "mesh_placeholder_monolith", "mesh_placeholder_player", "mesh_placeholder_quadruped", "mesh_placeholder_rogue", "mesh_placeholder_shrine", "mesh_placeholder_villager", "mesh_q_bull", "mesh_q_cactoro", "mesh_q_cactoro_b", "mesh_q_deer", "mesh_q_fox", "mesh_q_ghost", "mesh_q_ghost_skull", "mesh_q_goleling", "mesh_q_goleling_evo", "mesh_q_mushnub", "mesh_q_ninja", "mesh_q_ninja_b", "mesh_q_orc", "mesh_q_orc_enemy", "mesh_q_rat", "mesh_q_snake", "mesh_q_spider", "mesh_q_stag", "mesh_q_tribal", "mesh_q_wasp", "mesh_q_wizard", "mesh_q_wolf", "mesh_q_yeti", "mesh_shard_banner", "mesh_shard_frost", "mesh_shard_moss", "mesh_shard_totem", "mesh_shard_web", "mesh_shield_a", "mesh_spear_a", "mesh_stone_a", "mesh_sword_a", "mesh_trinket_a"];
+        public static readonly string[] All = ["mesh_armor_a", "mesh_axe_a", "mesh_boots_a", "mesh_helmet_a", "mesh_placeholder_caster", "mesh_placeholder_heavy", "mesh_placeholder_humanoid", "mesh_placeholder_monolith", "mesh_placeholder_player", "mesh_placeholder_quadruped", "mesh_placeholder_rogue", "mesh_placeholder_shrine", "mesh_placeholder_villager", "mesh_q_blue_demon", "mesh_q_bull", "mesh_q_cactoro", "mesh_q_cactoro_b", "mesh_q_deer", "mesh_q_demon", "mesh_q_fox", "mesh_q_ghost", "mesh_q_ghost_skull", "mesh_q_goleling", "mesh_q_goleling_evo", "mesh_q_imp", "mesh_q_mushnub", "mesh_q_ninja", "mesh_q_ninja_b", "mesh_q_orc", "mesh_q_orc_enemy", "mesh_q_rat", "mesh_q_snake", "mesh_q_spider", "mesh_q_stag", "mesh_q_tribal", "mesh_q_wasp", "mesh_q_wizard", "mesh_q_wolf", "mesh_q_yeti", "mesh_shard_banner", "mesh_shard_demon", "mesh_shard_frost", "mesh_shard_moss", "mesh_shard_totem", "mesh_shard_web", "mesh_shield_a", "mesh_spear_a", "mesh_stone_a", "mesh_sword_a", "mesh_tower_keystone", "mesh_tower_lantern", "mesh_trinket_a", "mesh_z_brute", "mesh_z_crawler", "mesh_z_ghoul", "mesh_z_ribcage"];
     }
 
     public static class Shards
     {
-        public const string ShdCatacombHeart = "shd_catacomb_heart";
+        public const string ShdDemonShard = "shd_demon_shard";
+        public const string ShdDemonStone = "shd_demon_stone";
         public const string ShdFrostRune = "shd_frost_rune";
         public const string ShdMossboundStone = "shd_mossbound_stone";
         public const string ShdRaiderStandard = "shd_raider_standard";
         public const string ShdWarTotem = "shd_war_totem";
         public const string ShdWebbedStone = "shd_webbed_stone";
 
-        public static readonly string[] All = ["shd_catacomb_heart", "shd_frost_rune", "shd_mossbound_stone", "shd_raider_standard", "shd_war_totem", "shd_webbed_stone"];
+        public static readonly string[] All = ["shd_demon_shard", "shd_demon_stone", "shd_frost_rune", "shd_mossbound_stone", "shd_raider_standard", "shd_war_totem", "shd_webbed_stone"];
     }
 
     public static class Zones
@@ -283,6 +296,7 @@ public static class Ids
         public const string KitCampTorch = "kit_camp_torch";
         public const string KitCampWeapons = "kit_camp_weapons";
         public const string KitCliff8 = "kit_cliff_8";
+        public const string KitDemonFire = "kit_demon_fire";
         public const string KitFloor4 = "kit_floor_4";
         public const string KitFloor8 = "kit_floor_8";
         public const string KitGate = "kit_gate";
@@ -377,7 +391,7 @@ public static class Ids
         public const string KitWallLow4 = "kit_wall_low_4";
         public const string KitWeb = "kit_web";
 
-        public static readonly string[] All = ["kit_banner", "kit_bones", "kit_boulder", "kit_brazier", "kit_camp_anvil", "kit_camp_banner", "kit_camp_barrel", "kit_camp_barrel_rack", "kit_camp_bench", "kit_camp_cage", "kit_camp_cauldron", "kit_camp_chains", "kit_camp_chest", "kit_camp_crate", "kit_camp_crate_iron", "kit_camp_dummy", "kit_camp_fire", "kit_camp_palisade_4", "kit_camp_rope", "kit_camp_shelter", "kit_camp_stall", "kit_camp_stall_cart", "kit_camp_table", "kit_camp_torch", "kit_camp_weapons", "kit_cliff_8", "kit_floor_4", "kit_floor_8", "kit_gate", "kit_ghost_fire", "kit_hb_arch", "kit_hb_candles", "kit_hb_coffin", "kit_hb_dead_tree", "kit_hb_fence", "kit_hb_grave", "kit_hb_marker", "kit_hb_post_lantern", "kit_kk_boulder", "kit_kk_bush", "kit_kk_cliff", "kit_kk_grass", "kit_kk_pebbles", "kit_kk_tree", "kit_kk_tree_bare", "kit_kn_altar", "kit_kn_cross", "kit_kn_crypt", "kit_kn_crypt_large", "kit_kn_fence", "kit_kn_fence_broken", "kit_kn_gravestone", "kit_kn_lamp", "kit_kn_obelisk", "kit_kn_pine_crooked", "kit_kn_stone_wall", "kit_kn_stone_wall_broken", "kit_marker_post", "kit_nat_bush", "kit_nat_crag", "kit_nat_fern", "kit_nat_flowers", "kit_nat_grass", "kit_nat_pine", "kit_nat_rock", "kit_nat_tree", "kit_oasis", "kit_orc_hut", "kit_orc_spikes", "kit_orc_totem", "kit_path_4", "kit_pillar", "kit_portal_stone", "kit_ramp_4", "kit_ruin_beam", "kit_ruin_fence", "kit_ruin_house_cottage", "kit_ruin_house_long", "kit_ruin_house_small", "kit_ruin_pile", "kit_ruin_rubble", "kit_ruin_vine", "kit_ruin_wall", "kit_shrub", "kit_skull_post", "kit_spider_eggs", "kit_tower", "kit_un_cactus", "kit_un_cactus_small", "kit_un_dead_tree", "kit_un_grass", "kit_un_log", "kit_un_mesa", "kit_un_palm", "kit_un_rock", "kit_un_snow_bush", "kit_un_snow_crag", "kit_un_snow_dead", "kit_un_snow_log", "kit_un_snow_pine", "kit_un_snow_rock", "kit_un_stump", "kit_vil_corner", "kit_vil_crate", "kit_vil_fence_4", "kit_vil_gate", "kit_vil_house_cottage", "kit_vil_house_long", "kit_vil_house_small", "kit_vil_house_stone", "kit_vil_path_4", "kit_vil_square_8", "kit_vil_wagon", "kit_vil_wall_4", "kit_vil_wall_8", "kit_wall_4", "kit_wall_8", "kit_wall_low_4", "kit_web"];
+        public static readonly string[] All = ["kit_banner", "kit_bones", "kit_boulder", "kit_brazier", "kit_camp_anvil", "kit_camp_banner", "kit_camp_barrel", "kit_camp_barrel_rack", "kit_camp_bench", "kit_camp_cage", "kit_camp_cauldron", "kit_camp_chains", "kit_camp_chest", "kit_camp_crate", "kit_camp_crate_iron", "kit_camp_dummy", "kit_camp_fire", "kit_camp_palisade_4", "kit_camp_rope", "kit_camp_shelter", "kit_camp_stall", "kit_camp_stall_cart", "kit_camp_table", "kit_camp_torch", "kit_camp_weapons", "kit_cliff_8", "kit_demon_fire", "kit_floor_4", "kit_floor_8", "kit_gate", "kit_ghost_fire", "kit_hb_arch", "kit_hb_candles", "kit_hb_coffin", "kit_hb_dead_tree", "kit_hb_fence", "kit_hb_grave", "kit_hb_marker", "kit_hb_post_lantern", "kit_kk_boulder", "kit_kk_bush", "kit_kk_cliff", "kit_kk_grass", "kit_kk_pebbles", "kit_kk_tree", "kit_kk_tree_bare", "kit_kn_altar", "kit_kn_cross", "kit_kn_crypt", "kit_kn_crypt_large", "kit_kn_fence", "kit_kn_fence_broken", "kit_kn_gravestone", "kit_kn_lamp", "kit_kn_obelisk", "kit_kn_pine_crooked", "kit_kn_stone_wall", "kit_kn_stone_wall_broken", "kit_marker_post", "kit_nat_bush", "kit_nat_crag", "kit_nat_fern", "kit_nat_flowers", "kit_nat_grass", "kit_nat_pine", "kit_nat_rock", "kit_nat_tree", "kit_oasis", "kit_orc_hut", "kit_orc_spikes", "kit_orc_totem", "kit_path_4", "kit_pillar", "kit_portal_stone", "kit_ramp_4", "kit_ruin_beam", "kit_ruin_fence", "kit_ruin_house_cottage", "kit_ruin_house_long", "kit_ruin_house_small", "kit_ruin_pile", "kit_ruin_rubble", "kit_ruin_vine", "kit_ruin_wall", "kit_shrub", "kit_skull_post", "kit_spider_eggs", "kit_tower", "kit_un_cactus", "kit_un_cactus_small", "kit_un_dead_tree", "kit_un_grass", "kit_un_log", "kit_un_mesa", "kit_un_palm", "kit_un_rock", "kit_un_snow_bush", "kit_un_snow_crag", "kit_un_snow_dead", "kit_un_snow_log", "kit_un_snow_pine", "kit_un_snow_rock", "kit_un_stump", "kit_vil_corner", "kit_vil_crate", "kit_vil_fence_4", "kit_vil_gate", "kit_vil_house_cottage", "kit_vil_house_long", "kit_vil_house_small", "kit_vil_house_stone", "kit_vil_path_4", "kit_vil_square_8", "kit_vil_wagon", "kit_vil_wall_4", "kit_vil_wall_8", "kit_wall_4", "kit_wall_8", "kit_wall_low_4", "kit_web"];
     }
 
     public static class Npcs

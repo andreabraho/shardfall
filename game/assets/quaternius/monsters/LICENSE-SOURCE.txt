@@ -1,5 +1,5 @@
 Tribal, Ninja (two variants), Wizard, Orc, Orc Enemy, Goleling, Goleling Evolved, Mushnub,
-Cactoro (two variants), Ghost, Ghost Skull, Yeti — Quaternius, "Ultimate Monsters"
+Cactoro (two variants), Ghost, Ghost Skull, Yeti, Demon (two variants), Blue Demon — Quaternius, "Ultimate Monsters"
 Spider, Snake, Wasp — Quaternius, "LowPoly Animated Easy Enemies" (Animated Enemies bundle)
 
 Downloaded 2026-09-23 as single .glb files from Poly Pizza (https://poly.pizza), each model page
@@ -18,6 +18,9 @@ marked "Public Domain (CC0)" and credited to Quaternius:
   Ghost             https://poly.pizza/m/Iip30bDHmu
   Ghost_Skull       https://poly.pizza/m/TX8r9WBXpe
   Yeti_b            https://poly.pizza/m/ceRHrn8HHE
+  Demon_a           https://poly.pizza/m/Mo2ky6vkf8
+  Demon_b           https://poly.pizza/m/LnfIziKv4o
+  Blue_Demon        https://poly.pizza/m/S7jYW6Amye
   Spider            https://poly.pizza/m/yRYJiAJyiM
   Snake             https://poly.pizza/m/x9x0viZs8V
   Wasp              https://poly.pizza/m/3aQgc75sUR

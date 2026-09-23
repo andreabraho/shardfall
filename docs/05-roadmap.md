@@ -268,7 +268,12 @@ Themes are generic genre settings; no names, layouts or assets from any existing
 **Built so far (2026-09-23):** maps one to five, each with its roster, a boss in its own
 stronghold, and three themed shards on two-minute respawns. Bosses: Greymane (the alpha wolf),
 Garrow the Sacker (bandit chief), Gorthak the Warlord (orc), the Spider Queen, and Vaelith the
-Frost Lich. The catacombs are next.
+Frost Lich. The sixth, the catacombs, became the **Demon Tower** (2026-09-23): zombies below, demons
+above, red and purple flagstones, and floors that fight back — everything a floor sends hunts the
+player, hold floors keep a pack at strength, the first and seventh floors are real demon stones,
+each lantern lets out a wave, each keystone is sealed until its guard dies, boss floors send
+waves too (FR-7.13 relaxed), and the Demon Lord calls help at 75/50/25 per cent and enrages at
+half.
 
 Fire land was dropped: there is no free lava kit, and it would have been a seventh map. The
 downloads (about 450 MB, all CC0, licence files checked) sit outside the repository; a model

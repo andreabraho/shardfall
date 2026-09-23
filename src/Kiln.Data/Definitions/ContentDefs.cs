@@ -590,8 +590,29 @@ public sealed class FloorDef
     /// <summary>Enemy id for <c>fight</c>.</summary>
     public string Boss { get; init; } = string.Empty;
 
-    /// <summary>What the floor keeps sending while its task runs. Empty on a boss floor.</summary>
+    /// <summary>What the floor keeps sending while its task runs.</summary>
     public string[] Waves { get; init; } = [];
+
+    /// <summary>
+    /// A shard id: the floor's targets are that stone rather than a seal (REF, Demon Tower).
+    /// <c>break</c> and <c>race</c> only.
+    /// </summary>
+    public string Stone { get; init; } = string.Empty;
+
+    /// <summary>How many hunters the floor keeps alive at all times, on top of its waves.</summary>
+    public int Pack { get; init; }
+
+    /// <summary>How many monsters each lantern lets out when it breaks. <c>find</c> only.</summary>
+    public int Burst { get; init; }
+
+    /// <summary>How many monsters guard each keystone; it cannot be broken until they are dead. <c>carry</c> only.</summary>
+    public int Guard { get; init; }
+
+    /// <summary>How many monsters the boss calls at 75, 50 and 25 per cent health. <c>fight</c> only.</summary>
+    public int BossAdds { get; init; }
+
+    /// <summary>Whether the boss enrages at half health — faster, harder. <c>fight</c> only.</summary>
+    public bool Enrage { get; init; }
 
     /// <summary>How many arrive per wave.</summary>
     public int WaveSize { get; init; } = 3;
