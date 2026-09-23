@@ -64,7 +64,7 @@ public partial class EnemyBrain : CharacterBody3D
     private bool _evicted;
     private int _deadFrames;
 
-    [Export] public string EnemyId { get; set; } = "mob_corrupted_wolf";
+    [Export] public string EnemyId { get; set; } = "mob_field_rat";
 
     /// <summary>0..1 off any chance to stun this creature; 1 is immune (REF-01).</summary>
     public double StunResist =>

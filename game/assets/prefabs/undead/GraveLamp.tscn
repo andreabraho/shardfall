@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3]
+
+; GraveLamp — a cemetery lamp post with a cold light. Kenney Graveyard Kit (CC0).
+; Kit piece kit_kn_lamp.
+
+[ext_resource type="PackedScene" path="res://assets/kenney/graveyard/lightpost-single.glb" id="1_lightpostsingleg"]
+
+[node name="GraveLamp" type="Node3D"]
+
+[node name="Post" parent="." instance=ExtResource("1_lightpostsingleg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Light" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.15, 0.2)
+light_color = Color(0.7, 0.85, 1, 1)
+light_energy = 0.9
+omni_range = 3.0

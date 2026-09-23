@@ -79,42 +79,47 @@ public static class Ids
 
     public static class Enemies
     {
-        public const string MobAshSlinger = "mob_ash_slinger";
         public const string MobBanditBulwark = "mob_bandit_bulwark";
         public const string MobBanditChief = "mob_bandit_chief";
-        public const string MobBarrowShield = "mob_barrow_shield";
-        public const string MobBlightBomber = "mob_blight_bomber";
-        public const string MobBoneFlinger = "mob_bone_flinger";
-        public const string MobCarrionBloat = "mob_carrion_bloat";
-        public const string MobCinderBearer = "mob_cinder_bearer";
-        public const string MobCorruptedWolf = "mob_corrupted_wolf";
+        public const string MobBlisterWasp = "mob_blister_wasp";
+        public const string MobBoneMinion = "mob_bone_minion";
+        public const string MobCactoroBloomcaller = "mob_cactoro_bloomcaller";
+        public const string MobCactoroThornguard = "mob_cactoro_thornguard";
         public const string MobCryptStalker = "mob_crypt_stalker";
-        public const string MobEmberChanter = "mob_ember_chanter";
         public const string MobFieldRat = "mob_field_rat";
         public const string MobFirebrandMask = "mob_firebrand_mask";
+        public const string MobFrostCaster = "mob_frost_caster";
+        public const string MobFrostLich = "mob_frost_lich";
+        public const string MobFrostboneWarrior = "mob_frostbone_warrior";
         public const string MobGalleryWarden = "mob_gallery_warden";
-        public const string MobGateBreaker = "mob_gate_breaker";
-        public const string MobGraveStitcher = "mob_grave_stitcher";
-        public const string MobGraveWarden = "mob_grave_warden";
+        public const string MobGolelingBulwark = "mob_goleling_bulwark";
         public const string MobGreyWolf = "mob_grey_wolf";
         public const string MobGreymane = "mob_greymane";
         public const string MobHeartKeeper = "mob_heart_keeper";
         public const string MobHedgeWizard = "mob_hedge_wizard";
         public const string MobHollowChoir = "mob_hollow_choir";
-        public const string MobIronBulwark = "mob_iron_bulwark";
+        public const string MobMountainYeti = "mob_mountain_yeti";
+        public const string MobMushnubMystic = "mob_mushnub_mystic";
         public const string MobNinjaCutthroat = "mob_ninja_cutthroat";
         public const string MobNinjaThrower = "mob_ninja_thrower";
         public const string MobObsidianWard = "mob_obsidian_ward";
-        public const string MobPaleGnawer = "mob_pale_gnawer";
+        public const string MobOrcGrunt = "mob_orc_grunt";
+        public const string MobOrcSkirmisher = "mob_orc_skirmisher";
+        public const string MobOrcWarlord = "mob_orc_warlord";
         public const string MobRedFox = "mob_red_fox";
         public const string MobRiftSeed = "mob_rift_seed";
-        public const string MobRotMender = "mob_rot_mender";
-        public const string MobShardArcher = "mob_shard_archer";
+        public const string MobRockburstGoleling = "mob_rockburst_goleling";
+        public const string MobSandSpider = "mob_sand_spider";
+        public const string MobScreamingSkull = "mob_screaming_skull";
+        public const string MobSpiderQueen = "mob_spider_queen";
+        public const string MobSpiderling = "mob_spiderling";
+        public const string MobSpittingAdder = "mob_spitting_adder";
         public const string MobTribalRaider = "mob_tribal_raider";
         public const string MobVaultChorister = "mob_vault_chorister";
         public const string MobVoidCaster = "mob_void_caster";
+        public const string MobWailingGhost = "mob_wailing_ghost";
 
-        public static readonly string[] All = ["mob_ash_slinger", "mob_bandit_bulwark", "mob_bandit_chief", "mob_barrow_shield", "mob_blight_bomber", "mob_bone_flinger", "mob_carrion_bloat", "mob_cinder_bearer", "mob_corrupted_wolf", "mob_crypt_stalker", "mob_ember_chanter", "mob_field_rat", "mob_firebrand_mask", "mob_gallery_warden", "mob_gate_breaker", "mob_grave_stitcher", "mob_grave_warden", "mob_grey_wolf", "mob_greymane", "mob_heart_keeper", "mob_hedge_wizard", "mob_hollow_choir", "mob_iron_bulwark", "mob_ninja_cutthroat", "mob_ninja_thrower", "mob_obsidian_ward", "mob_pale_gnawer", "mob_red_fox", "mob_rift_seed", "mob_rot_mender", "mob_shard_archer", "mob_tribal_raider", "mob_vault_chorister", "mob_void_caster"];
+        public static readonly string[] All = ["mob_bandit_bulwark", "mob_bandit_chief", "mob_blister_wasp", "mob_bone_minion", "mob_cactoro_bloomcaller", "mob_cactoro_thornguard", "mob_crypt_stalker", "mob_field_rat", "mob_firebrand_mask", "mob_frost_caster", "mob_frost_lich", "mob_frostbone_warrior", "mob_gallery_warden", "mob_goleling_bulwark", "mob_grey_wolf", "mob_greymane", "mob_heart_keeper", "mob_hedge_wizard", "mob_hollow_choir", "mob_mountain_yeti", "mob_mushnub_mystic", "mob_ninja_cutthroat", "mob_ninja_thrower", "mob_obsidian_ward", "mob_orc_grunt", "mob_orc_skirmisher", "mob_orc_warlord", "mob_red_fox", "mob_rift_seed", "mob_rockburst_goleling", "mob_sand_spider", "mob_screaming_skull", "mob_spider_queen", "mob_spiderling", "mob_spitting_adder", "mob_tribal_raider", "mob_vault_chorister", "mob_void_caster", "mob_wailing_ghost"];
     }
 
     public static class Skills
@@ -190,36 +195,52 @@ public static class Ids
         public const string MeshPlaceholderShrine = "mesh_placeholder_shrine";
         public const string MeshPlaceholderVillager = "mesh_placeholder_villager";
         public const string MeshQBull = "mesh_q_bull";
+        public const string MeshQCactoro = "mesh_q_cactoro";
+        public const string MeshQCactoroB = "mesh_q_cactoro_b";
         public const string MeshQDeer = "mesh_q_deer";
         public const string MeshQFox = "mesh_q_fox";
+        public const string MeshQGhost = "mesh_q_ghost";
+        public const string MeshQGhostSkull = "mesh_q_ghost_skull";
+        public const string MeshQGoleling = "mesh_q_goleling";
+        public const string MeshQGolelingEvo = "mesh_q_goleling_evo";
+        public const string MeshQMushnub = "mesh_q_mushnub";
         public const string MeshQNinja = "mesh_q_ninja";
         public const string MeshQNinjaB = "mesh_q_ninja_b";
+        public const string MeshQOrc = "mesh_q_orc";
+        public const string MeshQOrcEnemy = "mesh_q_orc_enemy";
         public const string MeshQRat = "mesh_q_rat";
+        public const string MeshQSnake = "mesh_q_snake";
+        public const string MeshQSpider = "mesh_q_spider";
         public const string MeshQStag = "mesh_q_stag";
         public const string MeshQTribal = "mesh_q_tribal";
+        public const string MeshQWasp = "mesh_q_wasp";
         public const string MeshQWizard = "mesh_q_wizard";
         public const string MeshQWolf = "mesh_q_wolf";
+        public const string MeshQYeti = "mesh_q_yeti";
         public const string MeshShardBanner = "mesh_shard_banner";
+        public const string MeshShardFrost = "mesh_shard_frost";
         public const string MeshShardMoss = "mesh_shard_moss";
+        public const string MeshShardTotem = "mesh_shard_totem";
+        public const string MeshShardWeb = "mesh_shard_web";
         public const string MeshShieldA = "mesh_shield_a";
         public const string MeshSpearA = "mesh_spear_a";
         public const string MeshStoneA = "mesh_stone_a";
         public const string MeshSwordA = "mesh_sword_a";
         public const string MeshTrinketA = "mesh_trinket_a";
 
-        public static readonly string[] All = ["mesh_armor_a", "mesh_axe_a", "mesh_boots_a", "mesh_helmet_a", "mesh_placeholder_caster", "mesh_placeholder_heavy", "mesh_placeholder_humanoid", "mesh_placeholder_monolith", "mesh_placeholder_player", "mesh_placeholder_quadruped", "mesh_placeholder_rogue", "mesh_placeholder_shrine", "mesh_placeholder_villager", "mesh_q_bull", "mesh_q_deer", "mesh_q_fox", "mesh_q_ninja", "mesh_q_ninja_b", "mesh_q_rat", "mesh_q_stag", "mesh_q_tribal", "mesh_q_wizard", "mesh_q_wolf", "mesh_shard_banner", "mesh_shard_moss", "mesh_shield_a", "mesh_spear_a", "mesh_stone_a", "mesh_sword_a", "mesh_trinket_a"];
+        public static readonly string[] All = ["mesh_armor_a", "mesh_axe_a", "mesh_boots_a", "mesh_helmet_a", "mesh_placeholder_caster", "mesh_placeholder_heavy", "mesh_placeholder_humanoid", "mesh_placeholder_monolith", "mesh_placeholder_player", "mesh_placeholder_quadruped", "mesh_placeholder_rogue", "mesh_placeholder_shrine", "mesh_placeholder_villager", "mesh_q_bull", "mesh_q_cactoro", "mesh_q_cactoro_b", "mesh_q_deer", "mesh_q_fox", "mesh_q_ghost", "mesh_q_ghost_skull", "mesh_q_goleling", "mesh_q_goleling_evo", "mesh_q_mushnub", "mesh_q_ninja", "mesh_q_ninja_b", "mesh_q_orc", "mesh_q_orc_enemy", "mesh_q_rat", "mesh_q_snake", "mesh_q_spider", "mesh_q_stag", "mesh_q_tribal", "mesh_q_wasp", "mesh_q_wizard", "mesh_q_wolf", "mesh_q_yeti", "mesh_shard_banner", "mesh_shard_frost", "mesh_shard_moss", "mesh_shard_totem", "mesh_shard_web", "mesh_shield_a", "mesh_spear_a", "mesh_stone_a", "mesh_sword_a", "mesh_trinket_a"];
     }
 
     public static class Shards
     {
         public const string ShdCatacombHeart = "shd_catacomb_heart";
-        public const string ShdGateWarden = "shd_gate_warden";
-        public const string ShdHollowBloom = "shd_hollow_bloom";
+        public const string ShdFrostRune = "shd_frost_rune";
         public const string ShdMossboundStone = "shd_mossbound_stone";
         public const string ShdRaiderStandard = "shd_raider_standard";
-        public const string ShdRidgeSpine = "shd_ridge_spine";
+        public const string ShdWarTotem = "shd_war_totem";
+        public const string ShdWebbedStone = "shd_webbed_stone";
 
-        public static readonly string[] All = ["shd_catacomb_heart", "shd_gate_warden", "shd_hollow_bloom", "shd_mossbound_stone", "shd_raider_standard", "shd_ridge_spine"];
+        public static readonly string[] All = ["shd_catacomb_heart", "shd_frost_rune", "shd_mossbound_stone", "shd_raider_standard", "shd_war_totem", "shd_webbed_stone"];
     }
 
     public static class Zones
@@ -237,6 +258,7 @@ public static class Ids
     public static class KitPieces
     {
         public const string KitBanner = "kit_banner";
+        public const string KitBones = "kit_bones";
         public const string KitBoulder = "kit_boulder";
         public const string KitBrazier = "kit_brazier";
         public const string KitCampAnvil = "kit_camp_anvil";
@@ -264,6 +286,34 @@ public static class Ids
         public const string KitFloor4 = "kit_floor_4";
         public const string KitFloor8 = "kit_floor_8";
         public const string KitGate = "kit_gate";
+        public const string KitGhostFire = "kit_ghost_fire";
+        public const string KitHbArch = "kit_hb_arch";
+        public const string KitHbCandles = "kit_hb_candles";
+        public const string KitHbCoffin = "kit_hb_coffin";
+        public const string KitHbDeadTree = "kit_hb_dead_tree";
+        public const string KitHbFence = "kit_hb_fence";
+        public const string KitHbGrave = "kit_hb_grave";
+        public const string KitHbMarker = "kit_hb_marker";
+        public const string KitHbPostLantern = "kit_hb_post_lantern";
+        public const string KitKkBoulder = "kit_kk_boulder";
+        public const string KitKkBush = "kit_kk_bush";
+        public const string KitKkCliff = "kit_kk_cliff";
+        public const string KitKkGrass = "kit_kk_grass";
+        public const string KitKkPebbles = "kit_kk_pebbles";
+        public const string KitKkTree = "kit_kk_tree";
+        public const string KitKkTreeBare = "kit_kk_tree_bare";
+        public const string KitKnAltar = "kit_kn_altar";
+        public const string KitKnCross = "kit_kn_cross";
+        public const string KitKnCrypt = "kit_kn_crypt";
+        public const string KitKnCryptLarge = "kit_kn_crypt_large";
+        public const string KitKnFence = "kit_kn_fence";
+        public const string KitKnFenceBroken = "kit_kn_fence_broken";
+        public const string KitKnGravestone = "kit_kn_gravestone";
+        public const string KitKnLamp = "kit_kn_lamp";
+        public const string KitKnObelisk = "kit_kn_obelisk";
+        public const string KitKnPineCrooked = "kit_kn_pine_crooked";
+        public const string KitKnStoneWall = "kit_kn_stone_wall";
+        public const string KitKnStoneWallBroken = "kit_kn_stone_wall_broken";
         public const string KitMarkerPost = "kit_marker_post";
         public const string KitNatBush = "kit_nat_bush";
         public const string KitNatCrag = "kit_nat_crag";
@@ -273,6 +323,10 @@ public static class Ids
         public const string KitNatPine = "kit_nat_pine";
         public const string KitNatRock = "kit_nat_rock";
         public const string KitNatTree = "kit_nat_tree";
+        public const string KitOasis = "kit_oasis";
+        public const string KitOrcHut = "kit_orc_hut";
+        public const string KitOrcSpikes = "kit_orc_spikes";
+        public const string KitOrcTotem = "kit_orc_totem";
         public const string KitPath4 = "kit_path_4";
         public const string KitPillar = "kit_pillar";
         public const string KitPortalStone = "kit_portal_stone";
@@ -287,7 +341,24 @@ public static class Ids
         public const string KitRuinVine = "kit_ruin_vine";
         public const string KitRuinWall = "kit_ruin_wall";
         public const string KitShrub = "kit_shrub";
+        public const string KitSkullPost = "kit_skull_post";
+        public const string KitSpiderEggs = "kit_spider_eggs";
         public const string KitTower = "kit_tower";
+        public const string KitUnCactus = "kit_un_cactus";
+        public const string KitUnCactusSmall = "kit_un_cactus_small";
+        public const string KitUnDeadTree = "kit_un_dead_tree";
+        public const string KitUnGrass = "kit_un_grass";
+        public const string KitUnLog = "kit_un_log";
+        public const string KitUnMesa = "kit_un_mesa";
+        public const string KitUnPalm = "kit_un_palm";
+        public const string KitUnRock = "kit_un_rock";
+        public const string KitUnSnowBush = "kit_un_snow_bush";
+        public const string KitUnSnowCrag = "kit_un_snow_crag";
+        public const string KitUnSnowDead = "kit_un_snow_dead";
+        public const string KitUnSnowLog = "kit_un_snow_log";
+        public const string KitUnSnowPine = "kit_un_snow_pine";
+        public const string KitUnSnowRock = "kit_un_snow_rock";
+        public const string KitUnStump = "kit_un_stump";
         public const string KitVilCorner = "kit_vil_corner";
         public const string KitVilCrate = "kit_vil_crate";
         public const string KitVilFence4 = "kit_vil_fence_4";
@@ -304,8 +375,9 @@ public static class Ids
         public const string KitWall4 = "kit_wall_4";
         public const string KitWall8 = "kit_wall_8";
         public const string KitWallLow4 = "kit_wall_low_4";
+        public const string KitWeb = "kit_web";
 
-        public static readonly string[] All = ["kit_banner", "kit_boulder", "kit_brazier", "kit_camp_anvil", "kit_camp_banner", "kit_camp_barrel", "kit_camp_barrel_rack", "kit_camp_bench", "kit_camp_cage", "kit_camp_cauldron", "kit_camp_chains", "kit_camp_chest", "kit_camp_crate", "kit_camp_crate_iron", "kit_camp_dummy", "kit_camp_fire", "kit_camp_palisade_4", "kit_camp_rope", "kit_camp_shelter", "kit_camp_stall", "kit_camp_stall_cart", "kit_camp_table", "kit_camp_torch", "kit_camp_weapons", "kit_cliff_8", "kit_floor_4", "kit_floor_8", "kit_gate", "kit_marker_post", "kit_nat_bush", "kit_nat_crag", "kit_nat_fern", "kit_nat_flowers", "kit_nat_grass", "kit_nat_pine", "kit_nat_rock", "kit_nat_tree", "kit_path_4", "kit_pillar", "kit_portal_stone", "kit_ramp_4", "kit_ruin_beam", "kit_ruin_fence", "kit_ruin_house_cottage", "kit_ruin_house_long", "kit_ruin_house_small", "kit_ruin_pile", "kit_ruin_rubble", "kit_ruin_vine", "kit_ruin_wall", "kit_shrub", "kit_tower", "kit_vil_corner", "kit_vil_crate", "kit_vil_fence_4", "kit_vil_gate", "kit_vil_house_cottage", "kit_vil_house_long", "kit_vil_house_small", "kit_vil_house_stone", "kit_vil_path_4", "kit_vil_square_8", "kit_vil_wagon", "kit_vil_wall_4", "kit_vil_wall_8", "kit_wall_4", "kit_wall_8", "kit_wall_low_4"];
+        public static readonly string[] All = ["kit_banner", "kit_bones", "kit_boulder", "kit_brazier", "kit_camp_anvil", "kit_camp_banner", "kit_camp_barrel", "kit_camp_barrel_rack", "kit_camp_bench", "kit_camp_cage", "kit_camp_cauldron", "kit_camp_chains", "kit_camp_chest", "kit_camp_crate", "kit_camp_crate_iron", "kit_camp_dummy", "kit_camp_fire", "kit_camp_palisade_4", "kit_camp_rope", "kit_camp_shelter", "kit_camp_stall", "kit_camp_stall_cart", "kit_camp_table", "kit_camp_torch", "kit_camp_weapons", "kit_cliff_8", "kit_floor_4", "kit_floor_8", "kit_gate", "kit_ghost_fire", "kit_hb_arch", "kit_hb_candles", "kit_hb_coffin", "kit_hb_dead_tree", "kit_hb_fence", "kit_hb_grave", "kit_hb_marker", "kit_hb_post_lantern", "kit_kk_boulder", "kit_kk_bush", "kit_kk_cliff", "kit_kk_grass", "kit_kk_pebbles", "kit_kk_tree", "kit_kk_tree_bare", "kit_kn_altar", "kit_kn_cross", "kit_kn_crypt", "kit_kn_crypt_large", "kit_kn_fence", "kit_kn_fence_broken", "kit_kn_gravestone", "kit_kn_lamp", "kit_kn_obelisk", "kit_kn_pine_crooked", "kit_kn_stone_wall", "kit_kn_stone_wall_broken", "kit_marker_post", "kit_nat_bush", "kit_nat_crag", "kit_nat_fern", "kit_nat_flowers", "kit_nat_grass", "kit_nat_pine", "kit_nat_rock", "kit_nat_tree", "kit_oasis", "kit_orc_hut", "kit_orc_spikes", "kit_orc_totem", "kit_path_4", "kit_pillar", "kit_portal_stone", "kit_ramp_4", "kit_ruin_beam", "kit_ruin_fence", "kit_ruin_house_cottage", "kit_ruin_house_long", "kit_ruin_house_small", "kit_ruin_pile", "kit_ruin_rubble", "kit_ruin_vine", "kit_ruin_wall", "kit_shrub", "kit_skull_post", "kit_spider_eggs", "kit_tower", "kit_un_cactus", "kit_un_cactus_small", "kit_un_dead_tree", "kit_un_grass", "kit_un_log", "kit_un_mesa", "kit_un_palm", "kit_un_rock", "kit_un_snow_bush", "kit_un_snow_crag", "kit_un_snow_dead", "kit_un_snow_log", "kit_un_snow_pine", "kit_un_snow_rock", "kit_un_stump", "kit_vil_corner", "kit_vil_crate", "kit_vil_fence_4", "kit_vil_gate", "kit_vil_house_cottage", "kit_vil_house_long", "kit_vil_house_small", "kit_vil_house_stone", "kit_vil_path_4", "kit_vil_square_8", "kit_vil_wagon", "kit_vil_wall_4", "kit_vil_wall_8", "kit_wall_4", "kit_wall_8", "kit_wall_low_4", "kit_web"];
     }
 
     public static class Npcs

@@ -1,109 +1,152 @@
 [
+  // The Ridge — the spider desert (map themes, 2026-09-23). Spiders in three sizes: spiderlings
+  // that come in numbers, sand spiders, and the queen in her lair. Spitting adders cover them from
+  // range, cactoro thornguards shield them and bloomcallers heal them; blister wasps dive in and
+  // burst.
+  //
+  // The numbers are the old Ridge roster's, role for role. Models: Quaternius Ultimate Monsters
+  // and Animated Enemies (CC0; ASSET-LICENSES.md).
+
   {
-    "id": "mob_corrupted_wolf",
-    "name": "$mob.mob_corrupted_wolf.name",
+    "id": "mob_spiderling",
+    "name": "$mob.mob_spiderling.name",
+    "family": "animal",
+    "role": "bruiser",
+    "level": 12,
+    "stats": { "hp": 320, "attack_power": 44, "defense": 40, "move_speed": 6.5 },
+    "abilities": [
+      { "id": "abl_spiderling_bite", "cooldown": 2.4, "windup": 0.55, "damage_coef": 1 }
+    ],
+    "ai": "bt_melee_chaser",
+    "aggro_radius": 12,
+    "leash_radius": 20,
+    "xp": 155,
+    "drop_table": "dt_valley_animal_t2",
+    "visual": "mesh_q_spider",
+    "visual_scale": 0.55,
+    "visual_tint": "#8a6a4a"
+  },
+  {
+    "id": "mob_sand_spider",
+    "name": "$mob.mob_sand_spider.name",
     "family": "animal",
     "role": "bruiser",
     "level": 12,
     "stats": { "hp": 640, "attack_power": 58, "defense": 40, "move_speed": 6.1 },
     "abilities": [
-      { "id": "abl_wolf_bite",  "cooldown": 2.4, "windup": 0.55, "damage_coef": 1.00 },
-      { "id": "abl_wolf_lunge", "cooldown": 7.0, "windup": 1.50, "damage_coef": 1.60,
-        "applies": { "kind": "bleed", "magnitude": 7, "duration": 4.0 },
-        "telegraph": { "shape": "cone", "radius": 2.5, "angle": 60 } }
+      { "id": "abl_spider_bite", "cooldown": 2.4, "windup": 0.55, "damage_coef": 1 },
+      { "id": "abl_spider_lunge", "cooldown": 7, "windup": 1.5, "damage_coef": 1.6, "applies": { "kind": "poison", "magnitude": 7, "duration": 4 }, "telegraph": { "shape": "cone", "radius": 2.5, "angle": 60 } }
     ],
     "ai": "bt_melee_chaser",
     "aggro_radius": 12,
     "leash_radius": 20,
     "xp": 310,
     "drop_table": "dt_valley_animal_t2",
-    "visual": "mesh_placeholder_quadruped",
-    "visual_scale": 1.1,
-    "visual_tint": "#8a6b4f"
+    "visual": "mesh_q_spider",
+    "visual_scale": 1,
+    "visual_tint": "#6a4a3a"
   },
   {
-    "id": "mob_shard_archer",
-    "name": "$mob.mob_shard_archer.name",
-    "family": "human",
+    "id": "mob_spitting_adder",
+    "name": "$mob.mob_spitting_adder.name",
+    "family": "animal",
     "role": "archer",
     "level": 13,
     "stats": { "hp": 420, "attack_power": 66, "defense": 28, "move_speed": 4.8 },
     "abilities": [
-      { "id": "abl_arrow_shot",  "cooldown": 2.0, "windup": 0.80, "damage_coef": 1.10, "range": 12.0 },
-      { "id": "abl_arrow_volley","cooldown": 9.0, "windup": 1.60, "damage_coef": 1.40, "range": 11.0,
-        "placement": "target",
-        "telegraph": { "shape": "circle", "radius": 2.8 } }
+      { "id": "abl_venom_spit", "cooldown": 2, "windup": 0.8, "damage_coef": 1.1, "range": 12 },
+      { "id": "abl_venom_rain", "cooldown": 9, "windup": 1.6, "damage_coef": 1.4, "range": 11, "placement": "target", "telegraph": { "shape": "circle", "radius": 2.8 } }
     ],
     "ai": "bt_ranged_kiter",
     "aggro_radius": 16,
     "leash_radius": 24,
     "xp": 340,
     "drop_table": "dt_valley_animal_t2",
-    "visual": "mesh_placeholder_humanoid",
-    "visual_scale": 1.0,
-    "visual_tint": "#9c6b3f"
+    "visual": "mesh_q_snake",
+    "visual_scale": 1,
+    "visual_tint": "#8a7a3a"
   },
   {
-    "id": "mob_grave_warden",
-    "name": "$mob.mob_grave_warden.name",
-    "family": "undead",
+    "id": "mob_cactoro_thornguard",
+    "name": "$mob.mob_cactoro_thornguard.name",
+    "family": "mystic",
     "role": "shielder",
     "level": 14,
     "stats": { "hp": 980, "attack_power": 48, "defense": 72, "move_speed": 3.9 },
     "abilities": [
-      { "id": "abl_warden_slam",  "cooldown": 3.2, "windup": 0.90, "damage_coef": 1.15,
-        "applies": { "kind": "stun", "duration": 0.9, "chance": 0.35 } },
-      { "id": "abl_warden_aegis", "cooldown": 14.0,"windup": 2.00, "damage_coef": 0.00 }
+      { "id": "abl_thorn_slam", "cooldown": 3.2, "windup": 0.9, "damage_coef": 1.15, "applies": { "kind": "stun", "duration": 0.9, "chance": 0.35 } },
+      { "id": "abl_thorn_aegis", "cooldown": 14, "windup": 2, "damage_coef": 0 }
     ],
     "ai": "bt_support_shielder",
     "aggro_radius": 13,
     "leash_radius": 20,
     "xp": 480,
     "drop_table": "dt_valley_undead_t2",
-    "visual": "mesh_placeholder_heavy",
-    "visual_scale": 1.15,
-    "visual_tint": "#6d7a86"
+    "visual": "mesh_q_cactoro_b",
+    "visual_scale": 1,
+    "visual_tint": "#4a7a3a"
   },
   {
-    "id": "mob_rot_mender",
-    "name": "$mob.mob_rot_mender.name",
-    "family": "undead",
+    "id": "mob_cactoro_bloomcaller",
+    "name": "$mob.mob_cactoro_bloomcaller.name",
+    "family": "mystic",
     "role": "mender",
     "level": 14,
     "stats": { "hp": 390, "attack_power": 34, "defense": 26, "move_speed": 4.4 },
     "abilities": [
-      { "id": "abl_mend_ally",  "cooldown": 8.0, "windup": 1.40, "damage_coef": 0.00 },
-      { "id": "abl_rot_bolt",   "cooldown": 5.5, "windup": 0.85, "damage_coef": 0.55, "range": 10.0,
-        "applies": { "kind": "weaken", "magnitude": 0.15, "duration": 2.5, "chance": 0.30 } }
+      { "id": "abl_bloom_mend", "cooldown": 8, "windup": 1.4, "damage_coef": 0 },
+      { "id": "abl_bloom_bolt", "cooldown": 5.5, "windup": 0.85, "damage_coef": 0.55, "range": 10, "applies": { "kind": "weaken", "magnitude": 0.15, "duration": 2.5, "chance": 0.3 } }
     ],
     "ai": "bt_support_healer",
     "aggro_radius": 14,
     "leash_radius": 22,
     "xp": 455,
     "drop_table": "dt_valley_undead_t2",
-    "visual": "mesh_placeholder_humanoid",
-    "visual_scale": 0.95,
-    "visual_tint": "#5f7a5a"
+    "visual": "mesh_q_cactoro",
+    "visual_scale": 1,
+    "visual_tint": "#5a8a3a"
   },
   {
-    "id": "mob_blight_bomber",
-    "name": "$mob.mob_blight_bomber.name",
-    "family": "devil",
+    "id": "mob_blister_wasp",
+    "name": "$mob.mob_blister_wasp.name",
+    "family": "animal",
     "role": "bomber",
     "level": 15,
     "stats": { "hp": 300, "attack_power": 120, "defense": 18, "move_speed": 6.6 },
     "abilities": [
-      { "id": "abl_blight_detonate", "cooldown": 99.0, "windup": 2.40, "damage_coef": 3.20,
-        "applies": { "kind": "poison", "magnitude": 12, "duration": 6.0 },
-        "telegraph": { "shape": "circle", "radius": 5.0 } }
+      { "id": "abl_wasp_burst", "cooldown": 99, "windup": 2.4, "damage_coef": 3.2, "applies": { "kind": "poison", "magnitude": 12, "duration": 6 }, "telegraph": { "shape": "circle", "radius": 5 } }
     ],
     "ai": "bt_suicide_charger",
     "aggro_radius": 18,
     "leash_radius": 26,
     "xp": 520,
     "drop_table": "dt_valley_undead_t2",
-    "visual": "mesh_placeholder_humanoid",
-    "visual_scale": 1.05,
-    "visual_tint": "#a33b3b"
+    "visual": "mesh_q_wasp",
+    "visual_scale": 1,
+    "visual_tint": "#c0a03a"
+  },
+  // The map's boss: the spider queen, in the lair among the rocks at the desert's heart. Three
+  // metres of spider: a bite, a venom spray that poisons everything in front of her, and a leap.
+  {
+    "id": "mob_spider_queen",
+    "stun_resist": 0.6,
+    "name": "$mob.mob_spider_queen.name",
+    "family": "animal",
+    "role": "bruiser",
+    "level": 15,
+    "stats": { "hp": 8200, "attack_power": 96, "defense": 44, "move_speed": 5 },
+    "abilities": [
+      { "id": "abl_queen_bite", "cooldown": 2.3, "windup": 0.7, "damage_coef": 1.15 },
+      { "id": "abl_queen_spray", "cooldown": 7.5, "windup": 2.35, "damage_coef": 1.5, "applies": { "kind": "poison", "magnitude": 16, "duration": 5 }, "telegraph": { "shape": "cone", "radius": 5, "angle": 70 } },
+      { "id": "abl_queen_leap", "cooldown": 12, "windup": 2.4, "damage_coef": 2, "applies": { "kind": "stun", "duration": 0.9, "chance": 0.5 }, "telegraph": { "shape": "circle", "radius": 4.5 } }
+    ],
+    "ai": "bt_melee_chaser",
+    "aggro_radius": 11,
+    "leash_radius": 22,
+    "xp": 5200,
+    "drop_table": "dt_valley_animal_t2",
+    "visual": "mesh_q_spider",
+    "visual_scale": 3,
+    "visual_tint": "#2a1a2a"
   }
 ]

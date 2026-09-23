@@ -1,0 +1,186 @@
+[gd_scene load_steps=9 format=3]
+
+; OrcStone — map three's shard: a standing stone the orcs worship, a war totem either side and a
+; ring of stakes round its foot, skulls heaped against it. ShardGlow burns the "Stone" only.
+; Symmetric about the stone. Visual mesh_shard_totem, about 4.4 m.
+
+[ext_resource type="PackedScene" path="res://assets/quaternius/nature/Rock_Medium_3.gltf" id="1_rock_medium_3glt"]
+[ext_resource type="PackedScene" path="res://assets/prefabs/orc/OrcTotem.tscn" id="2_orctotemtscn"]
+[ext_resource type="PackedScene" path="res://assets/kaykit/halloween/skull.gltf" id="3_skullgltf"]
+[ext_resource type="PackedScene" path="res://assets/kaykit/halloween/ribcage.gltf" id="4_ribcagegltf"]
+
+[sub_resource type="CylinderMesh" id="Stake"]
+top_radius = 0.1
+bottom_radius = 0.12
+height = 1.0
+radial_segments = 7
+
+[sub_resource type="CylinderMesh" id="Tip"]
+top_radius = 0.0
+bottom_radius = 0.1
+height = 0.4
+radial_segments = 7
+
+[sub_resource type="StandardMaterial3D" id="Wood"]
+albedo_color = Color(0.34, 0.24, 0.15, 1)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="Pale"]
+albedo_color = Color(0.66, 0.56, 0.4, 1)
+roughness = 0.9
+
+[node name="OrcStone" type="Node3D"]
+
+[node name="Stone" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Rock" parent="Stone" instance=ExtResource("1_rock_medium_3glt")]
+transform = Transform3D(0, 0, 0.72, 0, 1.62, 0, -0.72, 0, 0, 0.2, 0.55, -0.2)
+
+[node name="TotemL" parent="." instance=ExtResource("2_orctotemtscn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3, 0, 0)
+
+[node name="TotemR" parent="." instance=ExtResource("2_orctotemtscn")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 2.3, 0, 0)
+
+[node name="Ring0" type="Node3D" parent="."]
+transform = Transform3D(0.30902, 0.5455, 0.77906, 0, 0.81915, -0.57358, -0.95106, 0.17724, 0.25313, 1.617, 0, 0.525)
+
+[node name="Body" type="MeshInstance3D" parent="Ring0"]
+transform = Transform3D(1, 0, 0, 0, 1.2, 0, 0, 0, 1, 0, 0.6, 0)
+mesh = SubResource("Stake")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Tip" type="MeshInstance3D" parent="Ring0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
+mesh = SubResource("Tip")
+surface_material_override/0 = SubResource("Pale")
+
+[node name="Ring1" type="Node3D" parent="."]
+transform = Transform3D(0.80902, 0.33714, 0.48149, 0, 0.81915, -0.57358, -0.58779, 0.46403, 0.66271, 0.999, 0, 1.375)
+
+[node name="Body" type="MeshInstance3D" parent="Ring1"]
+transform = Transform3D(1, 0, 0, 0, 1.2, 0, 0, 0, 1, 0, 0.6, 0)
+mesh = SubResource("Stake")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Tip" type="MeshInstance3D" parent="Ring1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
+mesh = SubResource("Tip")
+surface_material_override/0 = SubResource("Pale")
+
+[node name="Ring2" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.81915, -0.57358, 0, 0.57358, 0.81915, 0, 0, 1.7)
+
+[node name="Body" type="MeshInstance3D" parent="Ring2"]
+transform = Transform3D(1, 0, 0, 0, 1.2, 0, 0, 0, 1, 0, 0.6, 0)
+mesh = SubResource("Stake")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Tip" type="MeshInstance3D" parent="Ring2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
+mesh = SubResource("Tip")
+surface_material_override/0 = SubResource("Pale")
+
+[node name="Ring3" type="Node3D" parent="."]
+transform = Transform3D(0.80902, -0.33714, -0.48149, 0, 0.81915, -0.57358, 0.58779, 0.46403, 0.66271, -0.999, 0, 1.375)
+
+[node name="Body" type="MeshInstance3D" parent="Ring3"]
+transform = Transform3D(1, 0, 0, 0, 1.2, 0, 0, 0, 1, 0, 0.6, 0)
+mesh = SubResource("Stake")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Tip" type="MeshInstance3D" parent="Ring3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
+mesh = SubResource("Tip")
+surface_material_override/0 = SubResource("Pale")
+
+[node name="Ring4" type="Node3D" parent="."]
+transform = Transform3D(0.30902, -0.5455, -0.77906, 0, 0.81915, -0.57358, 0.95106, 0.17724, 0.25313, -1.617, 0, 0.525)
+
+[node name="Body" type="MeshInstance3D" parent="Ring4"]
+transform = Transform3D(1, 0, 0, 0, 1.2, 0, 0, 0, 1, 0, 0.6, 0)
+mesh = SubResource("Stake")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Tip" type="MeshInstance3D" parent="Ring4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
+mesh = SubResource("Tip")
+surface_material_override/0 = SubResource("Pale")
+
+[node name="Ring5" type="Node3D" parent="."]
+transform = Transform3D(-0.30902, -0.5455, -0.77906, 0, 0.81915, -0.57358, 0.95106, -0.17724, -0.25313, -1.617, 0, -0.525)
+
+[node name="Body" type="MeshInstance3D" parent="Ring5"]
+transform = Transform3D(1, 0, 0, 0, 1.2, 0, 0, 0, 1, 0, 0.6, 0)
+mesh = SubResource("Stake")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Tip" type="MeshInstance3D" parent="Ring5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
+mesh = SubResource("Tip")
+surface_material_override/0 = SubResource("Pale")
+
+[node name="Ring6" type="Node3D" parent="."]
+transform = Transform3D(-0.80902, -0.33714, -0.48149, 0, 0.81915, -0.57358, 0.58779, -0.46403, -0.66271, -0.999, 0, -1.375)
+
+[node name="Body" type="MeshInstance3D" parent="Ring6"]
+transform = Transform3D(1, 0, 0, 0, 1.2, 0, 0, 0, 1, 0, 0.6, 0)
+mesh = SubResource("Stake")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Tip" type="MeshInstance3D" parent="Ring6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
+mesh = SubResource("Tip")
+surface_material_override/0 = SubResource("Pale")
+
+[node name="Ring7" type="Node3D" parent="."]
+transform = Transform3D(-1, 0, 0, 0, 0.81915, -0.57358, 0, -0.57358, -0.81915, 0, 0, -1.7)
+
+[node name="Body" type="MeshInstance3D" parent="Ring7"]
+transform = Transform3D(1, 0, 0, 0, 1.2, 0, 0, 0, 1, 0, 0.6, 0)
+mesh = SubResource("Stake")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Tip" type="MeshInstance3D" parent="Ring7"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
+mesh = SubResource("Tip")
+surface_material_override/0 = SubResource("Pale")
+
+[node name="Ring8" type="Node3D" parent="."]
+transform = Transform3D(-0.80902, 0.33714, 0.48149, 0, 0.81915, -0.57358, -0.58779, -0.46403, -0.66271, 0.999, 0, -1.375)
+
+[node name="Body" type="MeshInstance3D" parent="Ring8"]
+transform = Transform3D(1, 0, 0, 0, 1.2, 0, 0, 0, 1, 0, 0.6, 0)
+mesh = SubResource("Stake")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Tip" type="MeshInstance3D" parent="Ring8"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
+mesh = SubResource("Tip")
+surface_material_override/0 = SubResource("Pale")
+
+[node name="Ring9" type="Node3D" parent="."]
+transform = Transform3D(-0.30902, 0.5455, 0.77906, 0, 0.81915, -0.57358, -0.95106, -0.17724, -0.25313, 1.617, 0, -0.525)
+
+[node name="Body" type="MeshInstance3D" parent="Ring9"]
+transform = Transform3D(1, 0, 0, 0, 1.2, 0, 0, 0, 1, 0, 0.6, 0)
+mesh = SubResource("Stake")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Tip" type="MeshInstance3D" parent="Ring9"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
+mesh = SubResource("Tip")
+surface_material_override/0 = SubResource("Pale")
+
+[node name="Skull0" parent="." instance=ExtResource("3_skullgltf")]
+transform = Transform3D(0.39467, 0, 0.14365, 0, 0.42, 0, -0.14365, 0, 0.39467, 0.9, 0.15, 1.3)
+
+[node name="Skull1" parent="." instance=ExtResource("3_skullgltf")]
+transform = Transform3D(-0.39467, 0, -0.14365, 0, 0.42, 0, 0.14365, 0, -0.39467, -1.1, 0.15, 0.9)
+
+[node name="Skull2" parent="." instance=ExtResource("3_skullgltf")]
+transform = Transform3D(-0.21, 0, 0.36373, 0, 0.42, 0, -0.36373, 0, -0.21, 0.2, 0.15, -1.4)
+
+[node name="Bones" parent="." instance=ExtResource("4_ribcagegltf")]
+transform = Transform3D(0.61284, 0, 0.51423, 0, 0.8, 0, -0.51423, 0, 0.61284, -0.9, 0.35, -1.1)

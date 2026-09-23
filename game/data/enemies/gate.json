@@ -1,107 +1,152 @@
 [
+  // The Broken Gate — the undead mountain in the snow (map themes, 2026-09-23). Skeletons rise from
+  // the graveyards on the pass, frost casters cover them, a yeti stands in the way, ghosts keep the
+  // dead standing and screaming skulls fly in and burst. The lich who raised them waits at the
+  // mouth of the catacombs.
+  //
+  // The numbers are the old Broken Gate roster's, role for role. Models: KayKit Skeletons, Quaternius
+  // Ultimate Monsters (CC0; ASSET-LICENSES.md).
+
   {
-    "id": "mob_gate_breaker",
-    "name": "$mob.mob_gate_breaker.name",
-    "family": "orc",
+    "id": "mob_bone_minion",
+    "name": "$mob.mob_bone_minion.name",
+    "family": "undead",
+    "role": "bruiser",
+    "level": 16,
+    "stats": { "hp": 510, "attack_power": 59, "defense": 58, "move_speed": 5.9 },
+    "abilities": [
+      { "id": "abl_minion_claw", "cooldown": 2.6, "windup": 0.6, "damage_coef": 1.05 }
+    ],
+    "ai": "bt_melee_chaser",
+    "aggro_radius": 13,
+    "leash_radius": 21,
+    "xp": 253,
+    "drop_table": "dt_gate_t4",
+    "visual": "mesh_placeholder_quadruped",
+    "visual_scale": 1,
+    "visual_tint": "#d8dce0"
+  },
+  {
+    "id": "mob_frostbone_warrior",
+    "name": "$mob.mob_frostbone_warrior.name",
+    "family": "undead",
     "role": "bruiser",
     "level": 16,
     "stats": { "hp": 1020, "attack_power": 78, "defense": 58, "move_speed": 5.5 },
     "abilities": [
-      { "id": "abl_breaker_cleave", "cooldown": 2.6, "windup": 0.60, "damage_coef": 1.05 },
-      { "id": "abl_breaker_sweep", "cooldown": 8.5, "windup": 2.05, "damage_coef": 1.70,
-        "telegraph": { "shape": "cone", "radius": 4.0, "angle": 110 } }
+      { "id": "abl_frostbone_cleave", "cooldown": 2.6, "windup": 0.6, "damage_coef": 1.05 },
+      { "id": "abl_frostbone_sweep", "cooldown": 8.5, "windup": 2.05, "damage_coef": 1.7, "telegraph": { "shape": "cone", "radius": 4, "angle": 110 } }
     ],
     "ai": "bt_melee_chaser",
     "aggro_radius": 13,
     "leash_radius": 21,
     "xp": 505,
     "drop_table": "dt_gate_t4",
-    "visual": "mesh_placeholder_heavy",
-    "visual_scale": 1.15,
-    "visual_tint": "#6d5a43"
+    "visual": "mesh_placeholder_humanoid",
+    "visual_scale": 1.05,
+    "visual_tint": "#cfd8e0"
   },
   {
-    "id": "mob_ash_slinger",
-    "name": "$mob.mob_ash_slinger.name",
-    "family": "orc",
+    "id": "mob_frost_caster",
+    "name": "$mob.mob_frost_caster.name",
+    "family": "undead",
     "role": "archer",
     "level": 17,
     "stats": { "hp": 700, "attack_power": 92, "defense": 40, "move_speed": 4.9 },
     "abilities": [
-      { "id": "abl_ash_bolt", "cooldown": 2.0, "windup": 0.80, "damage_coef": 1.10, "range": 13.0 },
-      { "id": "abl_ash_rain", "cooldown": 9.0, "windup": 2.10, "damage_coef": 1.45, "range": 12.0,
-        "placement": "target",
-        "telegraph": { "shape": "circle", "radius": 4.0 } }
+      { "id": "abl_frost_bolt", "cooldown": 2, "windup": 0.8, "damage_coef": 1.1, "range": 13 },
+      { "id": "abl_frost_rain", "cooldown": 9, "windup": 2.1, "damage_coef": 1.45, "range": 12, "placement": "target", "telegraph": { "shape": "circle", "radius": 4 } }
     ],
     "ai": "bt_ranged_kiter",
     "aggro_radius": 16,
     "leash_radius": 25,
     "xp": 548,
     "drop_table": "dt_gate_t4",
-    "visual": "mesh_placeholder_humanoid",
-    "visual_scale": 1.05,
-    "visual_tint": "#8c5c3a"
+    "visual": "mesh_placeholder_caster",
+    "visual_scale": 1,
+    "visual_tint": "#a8c8e8"
   },
   {
-    "id": "mob_iron_bulwark",
-    "name": "$mob.mob_iron_bulwark.name",
-    "family": "orc",
+    "id": "mob_mountain_yeti",
+    "name": "$mob.mob_mountain_yeti.name",
+    "family": "animal",
     "role": "shielder",
     "level": 18,
     "stats": { "hp": 1780, "attack_power": 66, "defense": 108, "move_speed": 3.7 },
     "abilities": [
-      { "id": "abl_bulwark_slam", "cooldown": 3.4, "windup": 0.95, "damage_coef": 1.20,
-        "applies": { "kind": "stun", "duration": 1.0, "chance": 0.35 } },
-      { "id": "abl_bulwark_aegis", "cooldown": 14.0, "windup": 2.00, "damage_coef": 0.00 }
+      { "id": "abl_yeti_slam", "cooldown": 3.4, "windup": 0.95, "damage_coef": 1.2, "applies": { "kind": "stun", "duration": 1, "chance": 0.35 } },
+      { "id": "abl_yeti_roar", "cooldown": 14, "windup": 2, "damage_coef": 0 }
     ],
     "ai": "bt_support_shielder",
     "aggro_radius": 12,
     "leash_radius": 19,
     "xp": 660,
     "drop_table": "dt_gate_t4",
-    "visual": "mesh_placeholder_heavy",
-    "visual_scale": 1.2,
-    "visual_tint": "#59616b"
+    "visual": "mesh_q_yeti",
+    "visual_scale": 1,
+    "visual_tint": "#dfe8ee"
   },
   {
-    "id": "mob_ember_chanter",
-    "name": "$mob.mob_ember_chanter.name",
-    "family": "orc",
+    "id": "mob_wailing_ghost",
+    "name": "$mob.mob_wailing_ghost.name",
+    "family": "undead",
     "role": "mender",
     "level": 18,
     "stats": { "hp": 950, "attack_power": 60, "defense": 46, "move_speed": 4.2 },
     "abilities": [
-      { "id": "abl_ember_mend", "cooldown": 6.5, "windup": 1.50, "damage_coef": 0.00, "range": 11.0 },
-      { "id": "abl_ember_spit", "cooldown": 3.0, "windup": 0.85, "damage_coef": 0.95, "range": 10.0 }
+      { "id": "abl_ghost_mend", "cooldown": 6.5, "windup": 1.5, "damage_coef": 0, "range": 11 },
+      { "id": "abl_ghost_wail", "cooldown": 3, "windup": 0.85, "damage_coef": 0.95, "range": 10 }
     ],
     "ai": "bt_support_healer",
     "aggro_radius": 14,
     "leash_radius": 21,
     "xp": 668,
     "drop_table": "dt_gate_t4",
-    "visual": "mesh_placeholder_humanoid",
-    "visual_scale": 1.0,
-    "visual_tint": "#a8642f"
+    "visual": "mesh_q_ghost",
+    "visual_scale": 1,
+    "visual_tint": "#c8d8e8"
   },
   {
-    "id": "mob_cinder_bearer",
-    "name": "$mob.mob_cinder_bearer.name",
-    "family": "orc",
+    "id": "mob_screaming_skull",
+    "name": "$mob.mob_screaming_skull.name",
+    "family": "undead",
     "role": "bomber",
     "level": 19,
     "stats": { "hp": 820, "attack_power": 125, "defense": 36, "move_speed": 5.1 },
     "abilities": [
-      { "id": "abl_cinder_detonate", "cooldown": 1.0, "windup": 2.45, "damage_coef": 2.10,
-        "applies": { "kind": "burn", "magnitude": 16, "duration": 4.0 },
-        "telegraph": { "shape": "circle", "radius": 5.0 } }
+      { "id": "abl_skull_burst", "cooldown": 1, "windup": 2.45, "damage_coef": 2.1, "applies": { "kind": "burn", "magnitude": 16, "duration": 4 }, "telegraph": { "shape": "circle", "radius": 5 } }
     ],
     "ai": "bt_suicide_charger",
     "aggro_radius": 14,
     "leash_radius": 23,
     "xp": 730,
     "drop_table": "dt_gate_t4",
-    "visual": "mesh_placeholder_quadruped",
-    "visual_scale": 1.0,
-    "visual_tint": "#b0522a"
+    "visual": "mesh_q_ghost_skull",
+    "visual_scale": 1,
+    "visual_tint": "#e8e0c8"
+  },
+  // The map's boss: the lich who raised the mountain's dead, at the gate of the catacombs. A cold
+  // touch, a cone of frost that weakens, and a nova that can freeze the player where they stand.
+  {
+    "id": "mob_frost_lich",
+    "stun_resist": 0.6,
+    "name": "$mob.mob_frost_lich.name",
+    "family": "undead",
+    "role": "bruiser",
+    "level": 19,
+    "stats": { "hp": 14000, "attack_power": 124, "defense": 52, "move_speed": 4.6 },
+    "abilities": [
+      { "id": "abl_lich_touch", "cooldown": 2.4, "windup": 0.75, "damage_coef": 1.15 },
+      { "id": "abl_lich_frost", "cooldown": 7, "windup": 2.35, "damage_coef": 1.5, "applies": { "kind": "weaken", "magnitude": 20, "duration": 5 }, "telegraph": { "shape": "cone", "radius": 5, "angle": 70 } },
+      { "id": "abl_lich_nova", "cooldown": 13, "windup": 2.5, "damage_coef": 2, "applies": { "kind": "stun", "duration": 1, "chance": 0.5 }, "telegraph": { "shape": "circle", "radius": 5 } }
+    ],
+    "ai": "bt_melee_chaser",
+    "aggro_radius": 11,
+    "leash_radius": 22,
+    "xp": 9000,
+    "drop_table": "dt_gate_t4",
+    "visual": "mesh_placeholder_caster",
+    "visual_scale": 1.7,
+    "visual_tint": "#8ab8e8"
   }
 ]

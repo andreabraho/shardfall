@@ -1,0 +1,90 @@
+[gd_scene load_steps=10 format=3]
+
+; WebStone — map four's shard: a standing stone half-buried in a drift of sand and wrapped in
+; webs, bones at its foot. ShardGlow burns the "Stone" only. Visual mesh_shard_web, ~4.2 m.
+
+[ext_resource type="PackedScene" path="res://assets/quaternius/nature/Rock_Medium_3.gltf" id="1_rock_medium_3glt"]
+[ext_resource type="PackedScene" path="res://assets/kaykit/halloween/skull.gltf" id="2_skullgltf"]
+[ext_resource type="PackedScene" path="res://assets/kaykit/halloween/ribcage.gltf" id="3_ribcagegltf"]
+[ext_resource type="PackedScene" path="res://assets/kaykit/halloween/bone_C.gltf" id="4_bone_cgltf"]
+
+[sub_resource type="Shader" id="WebShader"]
+code = "shader_type spatial;
+render_mode unshaded, cull_disabled, blend_mix, depth_draw_never, shadows_disabled;
+
+uniform vec4 tint : source_color = vec4(0.93, 0.93, 0.96, 0.85);
+
+void fragment() {
+	vec2 p = UV * 2.0 - 1.0;
+	float r = length(p);
+	float a = atan(p.y, p.x);
+	float spokes = 11.0;
+	float seg = fract(a / 6.2831853 * spokes + 0.5) - 0.5;
+	float spoke = 1.0 - smoothstep(0.0, 0.018, abs(seg) * r * 6.2831853 / spokes);
+	float ring = 0.5 - abs(fract(r * 8.0 + 0.12 * sin(a * spokes)) - 0.5);
+	float thread = 1.0 - smoothstep(0.0, 0.07, ring);
+	float mask = 1.0 - smoothstep(0.82, 1.0, r);
+	ALBEDO = tint.rgb;
+	ALPHA = max(spoke, thread * step(0.08, r)) * mask * tint.a;
+}"
+
+[sub_resource type="ShaderMaterial" id="Web"]
+render_priority = 1
+shader = SubResource("WebShader")
+
+[sub_resource type="QuadMesh" id="Sheet"]
+size = Vector2(1, 1)
+
+[sub_resource type="SphereMesh" id="Mound"]
+radius = 1.0
+height = 1.0
+
+[sub_resource type="StandardMaterial3D" id="Sand"]
+albedo_color = Color(0.8, 0.68, 0.46, 1)
+roughness = 0.9
+
+[node name="WebStone" type="Node3D"]
+
+[node name="Stone" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Rock" parent="Stone" instance=ExtResource("1_rock_medium_3glt")]
+transform = Transform3D(0.62354, 0, 0.36, 0, 1.62, 0, -0.36, 0, 0.62354, 0.2, 0.45, -0.2)
+
+[node name="Drift" type="MeshInstance3D" parent="."]
+transform = Transform3D(2.6, 0, 0, 0, 0.9, 0, 0, 0, 2.4, 0, 0.05, 0)
+mesh = SubResource("Mound")
+surface_material_override/0 = SubResource("Sand")
+
+[node name="Web0" type="MeshInstance3D" parent="."]
+transform = Transform3D(3.2, 0, 0, 0, 3.2, 0, 0, 0, 1, 0, 2.1, 1.35)
+mesh = SubResource("Sheet")
+surface_material_override/0 = SubResource("Web")
+cast_shadow = 0
+
+[node name="Web1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0, 0, 1, 0.62374, 2.93444, 0, -2.93444, 0.62374, 0, 1.3, 2.4, 0)
+mesh = SubResource("Sheet")
+surface_material_override/0 = SubResource("Web")
+cast_shadow = 0
+
+[node name="Web2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.84573, 0.27479, 0.93969, -0.80344, 2.47275, 0, -2.32362, -0.75499, 0.34202, -1.25, 1.6, -0.3)
+mesh = SubResource("Sheet")
+surface_material_override/0 = SubResource("Web")
+cast_shadow = 0
+
+[node name="Web3" type="MeshInstance3D" parent="."]
+transform = Transform3D(-2.77275, 0.38968, 0, 0.38968, 2.77275, 0, 0, 0, -1, 0, 2.9, -1.2)
+mesh = SubResource("Sheet")
+surface_material_override/0 = SubResource("Web")
+cast_shadow = 0
+
+[node name="Skull" parent="." instance=ExtResource("2_skullgltf")]
+transform = Transform3D(0.34641, 0, 0.2, 0, 0.4, 0, -0.2, 0, 0.34641, 1.5, 0.3, 1.2)
+
+[node name="Ribs" parent="." instance=ExtResource("3_ribcagegltf")]
+transform = Transform3D(-0.4, 0, 0.69282, 0, 0.8, 0, -0.69282, 0, -0.4, -1.6, 0.3, 0.8)
+
+[node name="Bone" parent="." instance=ExtResource("4_bone_cgltf")]
+transform = Transform3D(0.27362, 0, 0.75175, 0, 0.8, 0, -0.75175, 0, 0.27362, 0.4, 0.12, -1.7)

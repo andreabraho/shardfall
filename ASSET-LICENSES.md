@@ -20,12 +20,18 @@ attribution is required in-game.
 | Quaternius Stylized Nature MegaKit (Standard, free tier) — 24 models (five common trees, five pines, three rocks, bushes, grass, flowers, fern, plant, mushroom, rock paths); textures halved to 1024 px | `game/assets/quaternius/nature/` | [quaternius.itch.io/stylized-nature-megakit](https://quaternius.itch.io/stylized-nature-megakit) | **CC0 1.0** | No | 2026-09-23 |
 | Quaternius Ultimate Animated Animals — Wolf, Fox, Deer, Stag, Bull; and Easy Enemies — Rat (animated, single .glb each) | `game/assets/quaternius/animals/` | [poly.pizza](https://poly.pizza) pages listed in `LICENSE-SOURCE.txt`; packs at [quaternius.com](https://quaternius.com/packs/ultimateanimatedanimals.html) | **CC0 1.0** | No | 2026-09-23 |
 | Quaternius Fantasy Props MegaKit (Standard, free tier) — 19 models (banners, barrels, crates, cage, chain coil, weapon stand, torch, market stalls, cauldron, training dummy, anvil, chest, bench, table, barrel rack, rope); textures halved to 1024 px | `game/assets/quaternius/props/` | [quaternius.itch.io/fantasy-props-megakit](https://quaternius.itch.io/fantasy-props-megakit) | **CC0 1.0** | No | 2026-09-23 |
-| Quaternius Ultimate Monsters — Tribal, Ninja (two variants), Wizard (animated, single .glb each) | `game/assets/quaternius/monsters/` | [poly.pizza](https://poly.pizza) pages listed in `LICENSE-SOURCE.txt`; pack at [quaternius.com](https://quaternius.com/packs/ultimatemonsters.html) | **CC0 1.0** | No | 2026-09-23 |
+| Quaternius Ultimate Monsters — Tribal, Ninja (two variants), Wizard, Orc, Orc Enemy, Goleling, Goleling Evolved, Mushnub, Cactoro (two variants), Ghost, Ghost Skull, Yeti; and Animated Enemies — Spider, Snake, Wasp (animated, single .glb each) | `game/assets/quaternius/monsters/` | [poly.pizza](https://poly.pizza) pages listed in `LICENSE-SOURCE.txt`; pack at [quaternius.com](https://quaternius.com/packs/ultimatemonsters.html) | **CC0 1.0** | No | 2026-09-23 |
+| Quaternius Ultimate Nature Pack — 45 models (cacti, palms, dead and snowy trees, snowy pines, rocks and snowy rocks, stumps, logs, bushes, short grass), FBX | `game/assets/quaternius/nature_ultimate/` | [quaternius.itch.io/150-lowpoly-nature-models](https://quaternius.itch.io/150-lowpoly-nature-models) | **CC0 1.0** | No | 2026-09-23 |
+| KayKit Forest Nature Pack 1.0 (free tier) — 17 models (trees, bare trees, rocks, bushes, grass) and the shared texture | `game/assets/kaykit/forest/` | [kaylousberg.itch.io/kaykit-forest](https://kaylousberg.itch.io/kaykit-forest) | **CC0 1.0** | No | 2026-09-23 |
+| KayKit Halloween Bits 1.0 (free tier) — 27 models (skulls, bones, ribcage, graves, grave markers, coffins, lanterns, dead trees, fences, candle shrine, crypt, arch, pillar) and the shared texture | `game/assets/kaykit/halloween/` | [kaylousberg.itch.io/halloween-bits](https://kaylousberg.itch.io/halloween-bits) | **CC0 1.0** | No | 2026-09-23 |
+| Kenney Graveyard Kit 5.0 — 28 models (gravestones, crypts, iron fences, lamp post, obelisk, pillars, stone walls, fire basket, crooked pine, urn, coffin, altar, rocks) and the shared colour map | `game/assets/kenney/graveyard/` | [kenney.nl/assets/graveyard-kit](https://kenney.nl/assets/graveyard-kit) | **CC0 1.0** | No | 2026-09-23 |
 
 All three are by Kay Lousberg (www.kaylousberg.com). The packs' own `LICENSE.txt` files are
 kept verbatim beside the models, in `game/assets/kaykit/`, and each states Creative Commons
 Zero with a link to the deed, explicitly permitting commercial use and explicitly making
 credit optional.
+
+The KayKit Forest Nature Pack and Halloween Bits licence files are kept verbatim as `game/assets/kaykit/LICENSE-forest-nature.txt` and `LICENSE-halloween-bits.txt`, and the Kenney Graveyard Kit's as `game/assets/kenney/graveyard/License.txt`; all three state CC0.
 
 The three Kenney sound packs are by Kenney Vleugels (www.kenney.nl). Each pack's own
 `License.txt` is kept verbatim in its folder under `game/audio/kenney/` and states Creative
@@ -40,7 +46,7 @@ Crediting is not required, and we will do it anyway in the credits screen when t
 an author who gives work away for nothing is the cheapest possible thing to be generous
 about.
 
-The Quaternius assets (the map themes, decided 2026-09-23) are by Quaternius (quaternius.com). The three MegaKits' own `License_Standard.txt` files are kept verbatim as `game/assets/quaternius/License-*.txt` and state CC0 1.0 Universal; the animals came as single files from Poly Pizza, so `animals/LICENSE-SOURCE.txt` records each model page and the pack's licence. Textures were halved from 2048 to 1024 px on import, which CC0 permits — the models are otherwise unchanged.
+The Quaternius assets (the map themes, decided 2026-09-23) are by Quaternius (quaternius.com). The three MegaKits' and the Ultimate Nature Pack's own licence files are kept verbatim as `game/assets/quaternius/License-*.txt` and state CC0 1.0 Universal; the animals came as single files from Poly Pizza, so `animals/LICENSE-SOURCE.txt` records each model page and the pack's licence. Textures were halved from 2048 to 1024 px on import, which CC0 permits — the models are otherwise unchanged.
 
 **Only the models actually used are in the repo.** The packs together hold over two hundred
 models; carrying the rest would be paying repository weight for things no scene references.

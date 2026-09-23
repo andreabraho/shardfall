@@ -32,7 +32,31 @@
   // (a prefab; the veins glow on the rock only). Ember red, the colour of the burnt village.
   { "id": "mesh_shard_banner", "primitive": "model", "height": 5.20, "radius": 1.30, "color": "#ff5a2a", "model_yaw": 0, "model_path": "res://assets/quaternius/props/prefabs/BanditStone.tscn" },
 
-  { "id": "mesh_sword_a",              "primitive": "box",      "height": 1.10, "radius": 0.06, "color": "#d9dde2" },
+  // Map three, the orc valley: Quaternius Ultimate Monsters (CC0).
+  { "id": "mesh_q_orc",          "primitive": "model", "height": 1.90, "radius": 0.50, "color": "#4a7a3a", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Orc.glb" },
+  { "id": "mesh_q_orc_enemy",    "primitive": "model", "height": 1.55, "radius": 0.42, "color": "#6a8a3a", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Orc_Enemy.glb" },
+  { "id": "mesh_q_goleling",     "primitive": "model", "height": 1.50, "radius": 0.50, "color": "#8a8a7a", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Goleling.glb" },
+  { "id": "mesh_q_goleling_evo", "primitive": "model", "height": 2.10, "radius": 0.65, "color": "#7a7a6a", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Goleling_Evolved.glb" },
+  { "id": "mesh_q_mushnub",      "primitive": "model", "height": 1.35, "radius": 0.45, "color": "#b05a4a", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Mushnub.glb" },
+
+  // Map four, the spider desert: Ultimate Monsters and Animated Enemies (CC0).
+  { "id": "mesh_q_spider",    "primitive": "model", "height": 1.00, "radius": 0.75, "color": "#4a3a3a", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Spider.glb" },
+  { "id": "mesh_q_snake",     "primitive": "model", "height": 0.80, "radius": 0.50, "color": "#8a7a3a", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Snake.glb" },
+  { "id": "mesh_q_cactoro",   "primitive": "model", "height": 1.50, "radius": 0.45, "color": "#5a8a3a", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Cactoro_a.glb" },
+  { "id": "mesh_q_cactoro_b", "primitive": "model", "height": 2.00, "radius": 0.60, "color": "#4a7a3a", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Cactoro_b.glb" },
+  { "id": "mesh_q_wasp",      "primitive": "model", "height": 1.10, "radius": 0.45, "color": "#c0a03a", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Wasp.glb" },
+
+  // Map five, the undead mountain: Ultimate Monsters (CC0); the skeletons are KayKit's, above.
+  { "id": "mesh_q_ghost",       "primitive": "model", "height": 1.70, "radius": 0.45, "color": "#c8d8e8", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Ghost.glb" },
+  { "id": "mesh_q_ghost_skull", "primitive": "model", "height": 1.20, "radius": 0.40, "color": "#e8e0c8", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Ghost_Skull.glb" },
+  { "id": "mesh_q_yeti",        "primitive": "model", "height": 2.50, "radius": 0.80, "color": "#dfe8ee", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Yeti_b.glb" },
+
+  // Shards of maps three to five: prefabs, the veins on the rock only.
+  { "id": "mesh_shard_totem", "primitive": "model", "height": 4.40, "radius": 1.30, "color": "#ffa21f", "model_yaw": 0, "model_path": "res://assets/prefabs/orc/OrcStone.tscn" },
+  { "id": "mesh_shard_web",   "primitive": "model", "height": 4.90, "radius": 1.30, "color": "#5affc8", "model_yaw": 0, "model_path": "res://assets/prefabs/desert/WebStone.tscn" },
+  { "id": "mesh_shard_frost", "primitive": "model", "height": 4.00, "radius": 1.30, "color": "#7fd8ff", "model_yaw": 0, "model_path": "res://assets/prefabs/undead/FrostStone.tscn" },
+
+  { "id": "mesh_sword_a",             "primitive": "box",      "height": 1.10, "radius": 0.06, "color": "#d9dde2" },
   { "id": "mesh_axe_a",                 "primitive": "box",      "height": 1.00, "radius": 0.12, "color": "#c9b08a" },
   { "id": "mesh_spear_a",               "primitive": "cylinder", "height": 1.60, "radius": 0.05, "color": "#b9c2cc" },
   { "id": "mesh_armor_a",               "primitive": "box",      "height": 0.80, "radius": 0.30, "color": "#8b5a2b" },

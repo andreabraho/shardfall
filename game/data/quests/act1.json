@@ -19,18 +19,18 @@
 
   { "id": "qst_the_gnawing_barrows", "name": "$quest.qst_the_gnawing_barrows.name",
     "act": 1, "type": "story", "level_req": 8, "prerequisites": ["qst_thornbacks_on_the_road"],
-    "objectives": [ { "type": "kill", "target": "mob_pale_gnawer", "count": 12 } ],
+    "objectives": [ { "type": "kill", "target": "mob_orc_grunt", "count": 12 } ],
     "rewards": { "xp": 6559, "yang": 3498, "items": [] } },
 
   // Finishing this one is what opens the road to the Broken Gate.
   { "id": "qst_wolves_of_the_ridge", "name": "$quest.qst_wolves_of_the_ridge.name",
     "act": 1, "type": "story", "level_req": 12, "prerequisites": ["qst_the_gnawing_barrows"],
-    "objectives": [ { "type": "kill", "target": "mob_corrupted_wolf", "count": 12 } ],
+    "objectives": [ { "type": "kill", "target": "mob_sand_spider", "count": 12 } ],
     "rewards": { "xp": 13887, "yang": 5807, "items": [] } },
 
   { "id": "qst_breakers_at_the_gate", "name": "$quest.qst_breakers_at_the_gate.name",
     "act": 1, "type": "story", "level_req": 16, "prerequisites": ["qst_wolves_of_the_ridge"],
-    "objectives": [ { "type": "kill", "target": "mob_gate_breaker", "count": 12 } ],
+    "objectives": [ { "type": "kill", "target": "mob_frostbone_warrior", "count": 12 } ],
     "rewards": { "xp": 23646, "yang": 8320, "items": [] } },
 
   // The act's destination: all nine floors.

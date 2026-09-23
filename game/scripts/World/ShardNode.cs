@@ -21,7 +21,7 @@ namespace Kiln.Game.World;
 /// </remarks>
 public partial class ShardNode : StaticBody3D
 {
-    [Export] public string ShardId { get; set; } = "shd_hollow_bloom";
+    [Export] public string ShardId { get; set; } = "shd_mossbound_stone";
 
     /// <summary>Radius of the corruption zone. Entering it starts the fight.</summary>
     [Export] public float ZoneRadius { get; set; } = 18f;

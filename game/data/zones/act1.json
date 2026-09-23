@@ -217,38 +217,86 @@
     ],
     "spawn_fields": [
       {
-        "id": "spf_floor_gnawers",
-        "entries": [{ "enemy": "mob_pale_gnawer", "weight": 1.0 }],
+        "id": "spf_floor_grunts_west",
+        "entries": [
+          { "enemy": "mob_orc_grunt", "weight": 1.0 }
+        ],
         "count": 5,
-        "respawn_seconds": 28,
-        "activation_radius": 55,
+        "respawn_seconds": 26,
+        "activation_radius": 60,
+        "radius": 8
+      },
+      {
+        "id": "spf_floor_lookout",
+        "entries": [
+          { "enemy": "mob_orc_skirmisher", "weight": 2.0 },
+          { "enemy": "mob_orc_grunt", "weight": 1.0 }
+        ],
+        "count": 5,
+        "respawn_seconds": 30,
+        "activation_radius": 60,
         "radius": 9
       },
       {
-        "id": "spf_floor_barrow_line",
+        "id": "spf_floor_quarry",
         "entries": [
-          { "enemy": "mob_barrow_shield", "weight": 1.0 },
-          { "enemy": "mob_bone_flinger", "weight": 2.0 },
-          { "enemy": "mob_grave_stitcher", "weight": 1.0 }
+          { "enemy": "mob_goleling_bulwark", "weight": 1.0 },
+          { "enemy": "mob_rockburst_goleling", "weight": 2.0 },
+          { "enemy": "mob_orc_grunt", "weight": 1.0 }
         ],
         "count": 5,
-        "respawn_seconds": 36,
-        "activation_radius": 55,
-        "radius": 10
+        "respawn_seconds": 32,
+        "activation_radius": 60,
+        "radius": 9
       },
       {
-        "id": "spf_floor_bloat_pit",
+        "id": "spf_floor_grove",
         "entries": [
-          { "enemy": "mob_carrion_bloat", "weight": 1.0 },
-          { "enemy": "mob_pale_gnawer", "weight": 2.0 }
+          { "enemy": "mob_mushnub_mystic", "weight": 1.0 },
+          { "enemy": "mob_orc_grunt", "weight": 2.0 },
+          { "enemy": "mob_orc_skirmisher", "weight": 1.0 }
         ],
-        "count": 4,
+        "count": 5,
         "respawn_seconds": 32,
-        "activation_radius": 55,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      {
+        "id": "spf_floor_road_east",
+        "entries": [
+          { "enemy": "mob_orc_grunt", "weight": 2.0 },
+          { "enemy": "mob_orc_skirmisher", "weight": 1.0 },
+          { "enemy": "mob_rockburst_goleling", "weight": 1.0 }
+        ],
+        "count": 5,
+        "respawn_seconds": 30,
+        "activation_radius": 60,
         "radius": 8
+      },
+      {
+        "id": "spf_floor_war_guard",
+        "entries": [
+          { "enemy": "mob_goleling_bulwark", "weight": 1.0 },
+          { "enemy": "mob_orc_skirmisher", "weight": 1.0 },
+          { "enemy": "mob_mushnub_mystic", "weight": 1.0 }
+        ],
+        "count": 3,
+        "respawn_seconds": 40,
+        "activation_radius": 60,
+        "radius": 5
+      },
+      {
+        "id": "spf_floor_warlord",
+        "entries": [
+          { "enemy": "mob_orc_warlord", "weight": 1.0 }
+        ],
+        "count": 1,
+        "respawn_seconds": 300,
+        "activation_radius": 60,
+        "radius": 3
       }
     ],
-    "shards": ["shd_hollow_bloom"]
+    "shards": ["shd_war_totem"]
   },
   {
     "id": "zone_ridge",
@@ -256,7 +304,7 @@
     "name": "$zone.zone_ridge.name",
     "kind": "wilds",
     "level_band": [11, 15],
-    "scene": "res://scenes/arena.tscn",
+    "scene": "res://scenes/ridge.tscn",
     "exits": [
       { "to": "zone_vale_floor" },
       { "to": "zone_broken_gate", "required_level": 14, "required_quest": "qst_wolves_of_the_ridge" }
@@ -267,38 +315,86 @@
     ],
     "spawn_fields": [
       {
-        "id": "spf_ridge_wolves",
-        "entries": [{ "enemy": "mob_corrupted_wolf", "weight": 1.0 }],
-        "count": 4,
-        "respawn_seconds": 26,
-        "activation_radius": 55,
+        "id": "spf_ridge_spiderlings",
+        "entries": [
+          { "enemy": "mob_spiderling", "weight": 1.0 }
+        ],
+        "count": 6,
+        "respawn_seconds": 22,
+        "activation_radius": 60,
         "radius": 8
       },
       {
-        "id": "spf_ridge_watchpost",
+        "id": "spf_ridge_sand_spiders",
         "entries": [
-          { "enemy": "mob_shard_archer", "weight": 2.0 },
-          { "enemy": "mob_grave_warden", "weight": 1.0 }
+          { "enemy": "mob_sand_spider", "weight": 2.0 },
+          { "enemy": "mob_spiderling", "weight": 1.0 }
         ],
-        "count": 4,
-        "respawn_seconds": 34,
-        "activation_radius": 55,
+        "count": 5,
+        "respawn_seconds": 26,
+        "activation_radius": 60,
         "radius": 9
       },
       {
-        "id": "spf_ridge_rot_nest",
+        "id": "spf_ridge_ruins",
         "entries": [
-          { "enemy": "mob_rot_mender", "weight": 1.0 },
-          { "enemy": "mob_blight_bomber", "weight": 1.0 },
-          { "enemy": "mob_corrupted_wolf", "weight": 2.0 }
+          { "enemy": "mob_spitting_adder", "weight": 2.0 },
+          { "enemy": "mob_cactoro_thornguard", "weight": 1.0 },
+          { "enemy": "mob_sand_spider", "weight": 1.0 }
         ],
         "count": 5,
         "respawn_seconds": 32,
-        "activation_radius": 55,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      {
+        "id": "spf_ridge_oasis",
+        "entries": [
+          { "enemy": "mob_cactoro_bloomcaller", "weight": 1.0 },
+          { "enemy": "mob_cactoro_thornguard", "weight": 1.0 },
+          { "enemy": "mob_spitting_adder", "weight": 1.0 },
+          { "enemy": "mob_blister_wasp", "weight": 1.0 }
+        ],
+        "count": 5,
+        "respawn_seconds": 32,
+        "activation_radius": 60,
         "radius": 10
+      },
+      {
+        "id": "spf_ridge_wasp_flats",
+        "entries": [
+          { "enemy": "mob_blister_wasp", "weight": 1.0 },
+          { "enemy": "mob_sand_spider", "weight": 2.0 },
+          { "enemy": "mob_spiderling", "weight": 1.0 }
+        ],
+        "count": 5,
+        "respawn_seconds": 30,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      {
+        "id": "spf_ridge_brood",
+        "entries": [
+          { "enemy": "mob_spiderling", "weight": 3.0 },
+          { "enemy": "mob_sand_spider", "weight": 1.0 }
+        ],
+        "count": 4,
+        "respawn_seconds": 34,
+        "activation_radius": 60,
+        "radius": 5
+      },
+      {
+        "id": "spf_ridge_queen",
+        "entries": [
+          { "enemy": "mob_spider_queen", "weight": 1.0 }
+        ],
+        "count": 1,
+        "respawn_seconds": 300,
+        "activation_radius": 60,
+        "radius": 3
       }
     ],
-    "shards": ["shd_ridge_spine"]
+    "shards": ["shd_webbed_stone"]
   },
   {
     "id": "zone_broken_gate",
@@ -317,41 +413,86 @@
     ],
     "spawn_fields": [
       {
-        "id": "spf_gate_breakers",
+        "id": "spf_gate_minions",
         "entries": [
-          { "enemy": "mob_gate_breaker", "weight": 2.0 },
-          { "enemy": "mob_ash_slinger", "weight": 1.0 }
+          { "enemy": "mob_bone_minion", "weight": 1.0 }
+        ],
+        "count": 6,
+        "respawn_seconds": 24,
+        "activation_radius": 60,
+        "radius": 8
+      },
+      {
+        "id": "spf_gate_graveyard_west",
+        "entries": [
+          { "enemy": "mob_frostbone_warrior", "weight": 2.0 },
+          { "enemy": "mob_bone_minion", "weight": 2.0 },
+          { "enemy": "mob_frost_caster", "weight": 1.0 }
         ],
         "count": 5,
         "respawn_seconds": 30,
-        "activation_radius": 55,
-        "radius": 9
-      },
-      {
-        "id": "spf_gate_wall_line",
-        "entries": [
-          { "enemy": "mob_iron_bulwark", "weight": 1.0 },
-          { "enemy": "mob_ember_chanter", "weight": 1.0 },
-          { "enemy": "mob_ash_slinger", "weight": 2.0 }
-        ],
-        "count": 5,
-        "respawn_seconds": 38,
-        "activation_radius": 55,
+        "activation_radius": 60,
         "radius": 10
       },
       {
-        "id": "spf_gate_cinder_row",
+        "id": "spf_gate_yeti_pass",
         "entries": [
-          { "enemy": "mob_cinder_bearer", "weight": 1.0 },
-          { "enemy": "mob_gate_breaker", "weight": 2.0 }
+          { "enemy": "mob_mountain_yeti", "weight": 1.0 },
+          { "enemy": "mob_frostbone_warrior", "weight": 2.0 }
         ],
         "count": 4,
         "respawn_seconds": 34,
-        "activation_radius": 55,
-        "radius": 8
+        "activation_radius": 60,
+        "radius": 9
+      },
+      {
+        "id": "spf_gate_wall",
+        "entries": [
+          { "enemy": "mob_frost_caster", "weight": 2.0 },
+          { "enemy": "mob_frostbone_warrior", "weight": 1.0 },
+          { "enemy": "mob_mountain_yeti", "weight": 1.0 }
+        ],
+        "count": 5,
+        "respawn_seconds": 36,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      {
+        "id": "spf_gate_haunt",
+        "entries": [
+          { "enemy": "mob_wailing_ghost", "weight": 1.0 },
+          { "enemy": "mob_screaming_skull", "weight": 1.0 },
+          { "enemy": "mob_frostbone_warrior", "weight": 2.0 }
+        ],
+        "count": 5,
+        "respawn_seconds": 34,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      {
+        "id": "spf_gate_crypt_guard",
+        "entries": [
+          { "enemy": "mob_wailing_ghost", "weight": 1.0 },
+          { "enemy": "mob_frost_caster", "weight": 1.0 },
+          { "enemy": "mob_mountain_yeti", "weight": 1.0 }
+        ],
+        "count": 3,
+        "respawn_seconds": 40,
+        "activation_radius": 60,
+        "radius": 5
+      },
+      {
+        "id": "spf_gate_lich",
+        "entries": [
+          { "enemy": "mob_frost_lich", "weight": 1.0 }
+        ],
+        "count": 1,
+        "respawn_seconds": 300,
+        "activation_radius": 60,
+        "radius": 3
       }
     ],
-    "shards": ["shd_gate_warden"]
+    "shards": ["shd_frost_rune"]
   },
   {
     "id": "zone_catacombs",

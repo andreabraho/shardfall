@@ -1,12 +1,28 @@
-Tribal, Ninja (two variants), Wizard — Quaternius, "Ultimate Monsters" pack
+Tribal, Ninja (two variants), Wizard, Orc, Orc Enemy, Goleling, Goleling Evolved, Mushnub,
+Cactoro (two variants), Ghost, Ghost Skull, Yeti — Quaternius, "Ultimate Monsters"
+Spider, Snake, Wasp — Quaternius, "LowPoly Animated Easy Enemies" (Animated Enemies bundle)
 
 Downloaded 2026-09-23 as single .glb files from Poly Pizza (https://poly.pizza), each model page
 marked "Public Domain (CC0)" and credited to Quaternius:
-  Tribal   https://poly.pizza/m/t91lDHaqRW
-  Ninja_a  https://poly.pizza/m/mCNoqcqpvC
-  Ninja_b  https://poly.pizza/m/xGYmeDpfTu
-  Wizard   https://poly.pizza/m/o87Upt5uHX
+  Tribal            https://poly.pizza/m/t91lDHaqRW
+  Ninja_a           https://poly.pizza/m/mCNoqcqpvC
+  Ninja_b           https://poly.pizza/m/xGYmeDpfTu
+  Wizard            https://poly.pizza/m/o87Upt5uHX
+  Orc               https://poly.pizza/m/5vO2YJsPEf
+  Orc_Enemy         https://poly.pizza/m/Q3z8ZX4kUy
+  Goleling          https://poly.pizza/m/71gomWolax
+  Goleling_Evolved  https://poly.pizza/m/iHEuXiH6Aj
+  Mushnub           https://poly.pizza/m/LWKmS30Xxl
+  Cactoro_a         https://poly.pizza/m/66CYX5UhRK
+  Cactoro_b         https://poly.pizza/m/IGn9lhdama
+  Ghost             https://poly.pizza/m/Iip30bDHmu
+  Ghost_Skull       https://poly.pizza/m/TX8r9WBXpe
+  Yeti_b            https://poly.pizza/m/ceRHrn8HHE
+  Spider            https://poly.pizza/m/yRYJiAJyiM
+  Snake             https://poly.pizza/m/x9x0viZs8V
+  Wasp              https://poly.pizza/m/3aQgc75sUR
 
-Quaternius publishes the pack under CC0 1.0 Universal:
+Quaternius publishes both packs under CC0 1.0 Universal:
   https://quaternius.com/packs/ultimatemonsters.html
+  https://quaternius.itch.io/animated-easy-enemies
   https://creativecommons.org/publicdomain/zero/1.0/

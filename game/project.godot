@@ -53,7 +53,7 @@ Game="*res://scripts/Bootstrap.cs"
 
 [navigation]
 
-; Must match the NavigationMesh cell size in arena.tscn, or Godot rasterizes navmesh
+; Must match the NavigationMesh cell size in the map scenes, or Godot rasterizes navmesh
 ; edges against a coarser grid and paths drift near walls and pillars.
 3d/default_cell_size=0.15
 3d/default_cell_height=0.15

@@ -1,0 +1,97 @@
+[gd_scene load_steps=6 format=3]
+
+; SpiderEggs — a clutch of pale eggs in a nest of web. Procedural. Kit piece kit_spider_eggs.
+
+
+
+[sub_resource type="Shader" id="WebShader"]
+code = "shader_type spatial;
+render_mode unshaded, cull_disabled, blend_mix, depth_draw_never, shadows_disabled;
+
+uniform vec4 tint : source_color = vec4(0.93, 0.93, 0.96, 0.85);
+
+void fragment() {
+	vec2 p = UV * 2.0 - 1.0;
+	float r = length(p);
+	float a = atan(p.y, p.x);
+	float spokes = 11.0;
+	float seg = fract(a / 6.2831853 * spokes + 0.5) - 0.5;
+	float spoke = 1.0 - smoothstep(0.0, 0.018, abs(seg) * r * 6.2831853 / spokes);
+	float ring = 0.5 - abs(fract(r * 8.0 + 0.12 * sin(a * spokes)) - 0.5);
+	float thread = 1.0 - smoothstep(0.0, 0.07, ring);
+	float mask = 1.0 - smoothstep(0.82, 1.0, r);
+	ALBEDO = tint.rgb;
+	ALPHA = max(spoke, thread * step(0.08, r)) * mask * tint.a;
+}"
+
+[sub_resource type="ShaderMaterial" id="Web"]
+render_priority = 1
+shader = SubResource("WebShader")
+
+[sub_resource type="QuadMesh" id="Sheet"]
+size = Vector2(1, 1)
+
+[sub_resource type="SphereMesh" id="Egg"]
+radius = 0.5
+height = 1.1
+
+[sub_resource type="StandardMaterial3D" id="Shell"]
+albedo_color = Color(0.9, 0.87, 0.78, 1)
+roughness = 0.9
+rim_enabled = true
+rim = 0.6
+emission_enabled = true
+emission = Color(0.25, 0.3, 0.2, 1)
+
+[node name="SpiderEggs" type="Node3D"]
+
+[node name="Egg0" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.94276, -0.00009, 0.0015, 0, 0.94097, 0.05808, -0.0015, -0.05808, 0.94097, 0.015, 0.486, 0.231)
+mesh = SubResource("Egg")
+surface_material_override/0 = SubResource("Shell")
+
+[node name="Egg1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.89589, -0.02545, 0.11939, 0, 0.88429, 0.18853, -0.12207, -0.1868, 0.8762, -0.21, 0.226, 0.285)
+mesh = SubResource("Egg")
+surface_material_override/0 = SubResource("Shell")
+
+[node name="Egg2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.54051, -0.10551, 0.45165, 0, 0.69356, 0.16203, -0.46381, -0.12296, 0.52634, 0.52, 0.178, -0.486)
+mesh = SubResource("Egg")
+surface_material_override/0 = SubResource("Shell")
+
+[node name="Egg3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.72482, 0.00536, 0.08132, 0, 0.72781, -0.04797, -0.08149, 0.04767, 0.72325, -0.055, 0.432, -0.213)
+mesh = SubResource("Egg")
+surface_material_override/0 = SubResource("Shell")
+
+[node name="Egg4" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.12144, -0.15947, 0.69462, 0, 0.70463, 0.16177, -0.71269, -0.02717, 0.11836, -0.02, 0.181, -0.584)
+mesh = SubResource("Egg")
+surface_material_override/0 = SubResource("Shell")
+
+[node name="Egg5" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.29846, 0.06881, 0.69158, 0, 0.75265, -0.07489, -0.69499, 0.02955, 0.29699, 0.024, 0.189, 0.46)
+mesh = SubResource("Egg")
+surface_material_override/0 = SubResource("Shell")
+
+[node name="Egg6" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.14566, 0.01936, 0.54686, 0, 0.56591, -0.02003, -0.54721, 0.00515, 0.14557, -0.329, 0.142, -0.357)
+mesh = SubResource("Egg")
+surface_material_override/0 = SubResource("Shell")
+
+[node name="Egg7" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.77438, 0.01524, 0.07488, 0, 0.7625, -0.15522, -0.07642, 0.15447, 0.75882, 0.383, 0.195, -0.18)
+mesh = SubResource("Egg")
+surface_material_override/0 = SubResource("Shell")
+
+[node name="Egg8" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.21808, 0.00713, 0.77243, 0, 0.80262, -0.00741, -0.77246, 0.00201, 0.21808, 0.094, 0.451, -0.207)
+mesh = SubResource("Egg")
+surface_material_override/0 = SubResource("Shell")
+
+[node name="Nest" type="MeshInstance3D" parent="."]
+transform = Transform3D(2.2, 0, 0, 0, 0, 1, 0, -2.2, 0, 0, 0.03, 0)
+mesh = SubResource("Sheet")
+surface_material_override/0 = SubResource("Web")
+cast_shadow = 0

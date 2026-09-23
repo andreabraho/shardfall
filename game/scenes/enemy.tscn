@@ -19,7 +19,7 @@ collision_layer = 4
 ; (CBT-16), so a pack spreads out without queueing single-file down a corridor.
 collision_mask = 1
 script = ExtResource("1_brain")
-EnemyId = "mob_corrupted_wolf"
+EnemyId = "mob_field_rat"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)

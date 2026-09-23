@@ -1,0 +1,84 @@
+[gd_scene load_steps=6 format=3]
+
+; FrostStone — map five's shard: a snow-capped standing stone with a ring of rune obelisks and
+; candles round it. ShardGlow burns the "Stone" only, in ice blue. Rock: Ultimate Nature Pack;
+; obelisks: Kenney Graveyard Kit; candles: KayKit Halloween Bits (all CC0). mesh_shard_frost.
+
+[ext_resource type="PackedScene" path="res://assets/quaternius/nature_ultimate/Rock_Snow_1.fbx" id="1_rock_snow_1fbx"]
+[ext_resource type="PackedScene" path="res://assets/kenney/graveyard/pillar-obelisk.glb" id="2_pillarobeliskglb"]
+[ext_resource type="PackedScene" path="res://assets/kaykit/halloween/candle_triple.gltf" id="3_candle_tripleglt"]
+
+[sub_resource type="BoxMesh" id="Rune"]
+size = Vector3(0.22, 0.34, 0.02)
+
+[sub_resource type="StandardMaterial3D" id="Glow"]
+shading_mode = 0
+albedo_color = Color(0.5, 0.88, 1, 1)
+
+[node name="FrostStone" type="Node3D"]
+
+[node name="Stone" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Rock" parent="Stone" instance=ExtResource("1_rock_snow_1fbx")]
+transform = Transform3D(3.4, 0, 0, 0, 4.1, 0, 0, 0, 3.4, 0.1, 0.55, 0)
+
+[node name="Obelisk0" parent="." instance=ExtResource("2_pillarobeliskglb")]
+transform = Transform3D(1.47224, 0, -0.85, 0, 1.7, 0, 0.85, 0, 1.47224, 1.992, 0, 1.15)
+
+[node name="Rune0" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0.86603, 0, 1, 0, -0.86603, 0, 0.5, 1.723, 0.95, 0.995)
+mesh = SubResource("Rune")
+surface_material_override/0 = SubResource("Glow")
+cast_shadow = 0
+
+[node name="Obelisk1" parent="." instance=ExtResource("2_pillarobeliskglb")]
+transform = Transform3D(0, 0, -1.7, 0, 1.7, 0, 1.7, 0, 0, 0, 0, 2.3)
+
+[node name="Rune1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 1.99)
+mesh = SubResource("Rune")
+surface_material_override/0 = SubResource("Glow")
+cast_shadow = 0
+
+[node name="Obelisk2" parent="." instance=ExtResource("2_pillarobeliskglb")]
+transform = Transform3D(-1.47224, 0, -0.85, 0, 1.7, 0, 0.85, 0, -1.47224, -1.992, 0, 1.15)
+
+[node name="Rune2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, -0.86603, 0, 1, 0, 0.86603, 0, 0.5, -1.723, 0.95, 0.995)
+mesh = SubResource("Rune")
+surface_material_override/0 = SubResource("Glow")
+cast_shadow = 0
+
+[node name="Obelisk3" parent="." instance=ExtResource("2_pillarobeliskglb")]
+transform = Transform3D(-1.47224, 0, 0.85, 0, 1.7, 0, -0.85, 0, -1.47224, -1.992, 0, -1.15)
+
+[node name="Rune3" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.5, 0, -0.86603, 0, 1, 0, 0.86603, 0, -0.5, -1.723, 0.95, -0.995)
+mesh = SubResource("Rune")
+surface_material_override/0 = SubResource("Glow")
+cast_shadow = 0
+
+[node name="Obelisk4" parent="." instance=ExtResource("2_pillarobeliskglb")]
+transform = Transform3D(0, 0, 1.7, 0, 1.7, 0, -1.7, 0, 0, 0, 0, -2.3)
+
+[node name="Rune4" type="MeshInstance3D" parent="."]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0.95, -1.99)
+mesh = SubResource("Rune")
+surface_material_override/0 = SubResource("Glow")
+cast_shadow = 0
+
+[node name="Obelisk5" parent="." instance=ExtResource("2_pillarobeliskglb")]
+transform = Transform3D(1.47224, 0, 0.85, 0, 1.7, 0, -0.85, 0, 1.47224, 1.992, 0, -1.15)
+
+[node name="Rune5" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.5, 0, 0.86603, 0, 1, 0, -0.86603, 0, -0.5, 1.723, 0.95, -0.995)
+mesh = SubResource("Rune")
+surface_material_override/0 = SubResource("Glow")
+cast_shadow = 0
+
+[node name="CandlesA" parent="." instance=ExtResource("3_candle_tripleglt")]
+transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 1.2, 0, 1.3)
+
+[node name="CandlesB" parent="." instance=ExtResource("3_candle_tripleglt")]
+transform = Transform3D(-0.61284, 0, 0.51423, 0, 0.8, 0, -0.51423, 0, -0.61284, -1.3, 0, -1.2)

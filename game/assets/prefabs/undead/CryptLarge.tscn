@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3]
+
+; CryptLarge — a mausoleum with its roof and door: the way down into the catacombs. Kenney
+; Graveyard Kit (CC0). Door faces +Z. Kit piece kit_kn_crypt_large.
+
+[ext_resource type="PackedScene" path="res://assets/kenney/graveyard/crypt-large.glb" id="1_cryptlargeglb"]
+[ext_resource type="PackedScene" path="res://assets/kenney/graveyard/crypt-large-roof.glb" id="2_cryptlargeroofgl"]
+[ext_resource type="PackedScene" path="res://assets/kenney/graveyard/crypt-large-door.glb" id="3_cryptlargedoorgl"]
+
+[node name="CryptLarge" type="Node3D"]
+
+[node name="Body" parent="." instance=ExtResource("1_cryptlargeglb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Roof" parent="." instance=ExtResource("2_cryptlargeroofgl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="Door" parent="." instance=ExtResource("3_cryptlargedoorgl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.21)

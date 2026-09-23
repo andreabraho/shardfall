@@ -1,0 +1,71 @@
+[gd_scene load_steps=10 format=3]
+
+; OrcTotem — a war totem: carved blocks painted red, black and bone on a pole, a plank for
+; arms and a skull with bone horns on top. Procedural; skull and bones KayKit Halloween Bits
+; (CC0). About 4.3 m. Kit piece kit_orc_totem.
+
+[ext_resource type="PackedScene" path="res://assets/kaykit/halloween/skull.gltf" id="1_skullgltf"]
+[ext_resource type="PackedScene" path="res://assets/kaykit/halloween/bone_C.gltf" id="2_bone_cgltf"]
+
+[sub_resource type="CylinderMesh" id="Pole"]
+top_radius = 0.14
+bottom_radius = 0.17
+height = 4.0
+
+[sub_resource type="BoxMesh" id="Block"]
+size = Vector3(0.62, 0.7, 0.62)
+
+[sub_resource type="BoxMesh" id="Plank"]
+size = Vector3(1.6, 0.18, 0.3)
+
+[sub_resource type="StandardMaterial3D" id="Wood"]
+albedo_color = Color(0.33, 0.23, 0.14, 1)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="Red"]
+albedo_color = Color(0.55, 0.13, 0.08, 1)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="Black"]
+albedo_color = Color(0.12, 0.1, 0.09, 1)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="Bone"]
+albedo_color = Color(0.78, 0.72, 0.58, 1)
+roughness = 0.9
+
+[node name="OrcTotem" type="Node3D"]
+
+[node name="Pole" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+mesh = SubResource("Pole")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="BlockLow" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.70711, 0, 0.70711, 0, 1, 0, -0.70711, 0, 0.70711, 0, 1.1, 0)
+mesh = SubResource("Block")
+surface_material_override/0 = SubResource("Black")
+
+[node name="BlockMid" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.85, 0)
+mesh = SubResource("Block")
+surface_material_override/0 = SubResource("Red")
+
+[node name="BlockHigh" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.70711, 0, 0.70711, 0, 1, 0, -0.70711, 0, 0.70711, 0, 2.6, 0)
+mesh = SubResource("Block")
+surface_material_override/0 = SubResource("Bone")
+
+[node name="Arms" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.15, 0)
+mesh = SubResource("Plank")
+surface_material_override/0 = SubResource("Red")
+
+[node name="Skull" parent="." instance=ExtResource("1_skullgltf")]
+transform = Transform3D(0.62, 0, 0, 0, 0.62, 0, 0, 0, 0.62, 0, 3.28, 0)
+
+[node name="HornL" parent="." instance=ExtResource("2_bone_cgltf")]
+transform = Transform3D(0.34415, -0.49149, 0, 0.49149, 0.34415, 0, 0, 0, 0.6, -0.42, 3.95, 0)
+
+[node name="HornR" parent="." instance=ExtResource("2_bone_cgltf")]
+transform = Transform3D(0.34415, 0.49149, 0, -0.49149, 0.34415, 0, 0, 0, 0.6, 0.42, 3.95, 0)

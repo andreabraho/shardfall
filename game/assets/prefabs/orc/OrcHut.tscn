@@ -1,0 +1,254 @@
+[gd_scene load_steps=8 format=3]
+
+; OrcHut — a round hut of stakes under a thatch cone, the door facing +Z, a skull over it.
+; Procedural wood and thatch; the skull is KayKit Halloween Bits (CC0). Kit piece kit_orc_hut.
+
+[ext_resource type="PackedScene" path="res://assets/kaykit/halloween/skull.gltf" id="1_skullgltf"]
+
+[sub_resource type="CylinderMesh" id="Stake"]
+top_radius = 0.1
+bottom_radius = 0.12
+height = 1.0
+radial_segments = 7
+
+[sub_resource type="CylinderMesh" id="Tip"]
+top_radius = 0.0
+bottom_radius = 0.1
+height = 0.4
+radial_segments = 7
+
+[sub_resource type="StandardMaterial3D" id="Wood"]
+albedo_color = Color(0.34, 0.24, 0.15, 1)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="Pale"]
+albedo_color = Color(0.66, 0.56, 0.4, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="Roof"]
+top_radius = 0.05
+bottom_radius = 3.2
+height = 2.4
+radial_segments = 14
+
+[sub_resource type="StandardMaterial3D" id="Thatch"]
+albedo_color = Color(0.47, 0.38, 0.2, 1)
+roughness = 0.9
+
+[node name="OrcHut" type="Node3D"]
+
+[node name="Wall0" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4, 0, 0)
+
+[node name="Body" type="MeshInstance3D" parent="Wall0"]
+transform = Transform3D(1, 0, 0, 0, 2.17117, 0, 0, 0, 1, 0, 1.086, 0)
+mesh = SubResource("Stake")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Tip" type="MeshInstance3D" parent="Wall0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.371, 0)
+mesh = SubResource("Tip")
+surface_material_override/0 = SubResource("Pale")
+
+[node name="Wall1" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.255, 0, 0.821)
+
+[node name="Body" type="MeshInstance3D" parent="Wall1"]
+transform = Transform3D(1, 0, 0, 0, 2.2652, 0, 0, 0, 1, 0, 1.133, 0)
+mesh = SubResource("Stake")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Tip" type="MeshInstance3D" parent="Wall1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.465, 0)
+mesh = SubResource("Tip")
+surface_material_override/0 = SubResource("Pale")
+
+[node name="Wall2" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.839, 0, 1.543)
+
+[node name="Body" type="MeshInstance3D" parent="Wall2"]
+transform = Transform3D(1, 0, 0, 0, 2.3621, 0, 0, 0, 1, 0, 1.181, 0)
+mesh = SubResource("Stake")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Tip" type="MeshInstance3D" parent="Wall2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.562, 0)
+mesh = SubResource("Tip")
+surface_material_override/0 = SubResource("Pale")
+
+[node name="Wall3" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 0, 2.078)
+
+[node name="Body" type="MeshInstance3D" parent="Wall3"]
+transform = Transform3D(1, 0, 0, 0, 2.33367, 0, 0, 0, 1, 0, 1.167, 0)
+mesh = SubResource("Stake")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Tip" type="MeshInstance3D" parent="Wall3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.534, 0)
+mesh = SubResource("Tip")
+surface_material_override/0 = SubResource("Pale")
+
+[node name="Wall6" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 0, 2.078)
+
+[node name="Body" type="MeshInstance3D" parent="Wall6"]
+transform = Transform3D(1, 0, 0, 0, 2.21504, 0, 0, 0, 1, 0, 1.108, 0)
+mesh = SubResource("Stake")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Tip" type="MeshInstance3D" parent="Wall6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.415, 0)
+mesh = SubResource("Tip")
+surface_material_override/0 = SubResource("Pale")
+
+[node name="Wall7" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.839, 0, 1.543)
+
+[node name="Body" type="MeshInstance3D" parent="Wall7"]
+transform = Transform3D(1, 0, 0, 0, 2.35948, 0, 0, 0, 1, 0, 1.18, 0)
+mesh = SubResource("Stake")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Tip" type="MeshInstance3D" parent="Wall7"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.559, 0)
+mesh = SubResource("Tip")
+surface_material_override/0 = SubResource("Pale")
+
+[node name="Wall8" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.255, 0, 0.821)
+
+[node name="Body" type="MeshInstance3D" parent="Wall8"]
+transform = Transform3D(1, 0, 0, 0, 2.29105, 0, 0, 0, 1, 0, 1.146, 0)
+mesh = SubResource("Stake")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Tip" type="MeshInstance3D" parent="Wall8"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.491, 0)
+mesh = SubResource("Tip")
+surface_material_override/0 = SubResource("Pale")
+
+[node name="Wall9" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 0, 0)
+
+[node name="Body" type="MeshInstance3D" parent="Wall9"]
+transform = Transform3D(1, 0, 0, 0, 2.21655, 0, 0, 0, 1, 0, 1.108, 0)
+mesh = SubResource("Stake")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Tip" type="MeshInstance3D" parent="Wall9"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.417, 0)
+mesh = SubResource("Tip")
+surface_material_override/0 = SubResource("Pale")
+
+[node name="Wall10" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.255, 0, -0.821)
+
+[node name="Body" type="MeshInstance3D" parent="Wall10"]
+transform = Transform3D(1, 0, 0, 0, 2.11018, 0, 0, 0, 1, 0, 1.055, 0)
+mesh = SubResource("Stake")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Tip" type="MeshInstance3D" parent="Wall10"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.31, 0)
+mesh = SubResource("Tip")
+surface_material_override/0 = SubResource("Pale")
+
+[node name="Wall11" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.839, 0, -1.543)
+
+[node name="Body" type="MeshInstance3D" parent="Wall11"]
+transform = Transform3D(1, 0, 0, 0, 2.32624, 0, 0, 0, 1, 0, 1.163, 0)
+mesh = SubResource("Stake")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Tip" type="MeshInstance3D" parent="Wall11"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.526, 0)
+mesh = SubResource("Tip")
+surface_material_override/0 = SubResource("Pale")
+
+[node name="Wall12" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 0, -2.078)
+
+[node name="Body" type="MeshInstance3D" parent="Wall12"]
+transform = Transform3D(1, 0, 0, 0, 2.14737, 0, 0, 0, 1, 0, 1.074, 0)
+mesh = SubResource("Stake")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Tip" type="MeshInstance3D" parent="Wall12"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.347, 0)
+mesh = SubResource("Tip")
+surface_material_override/0 = SubResource("Pale")
+
+[node name="Wall13" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.417, 0, -2.364)
+
+[node name="Body" type="MeshInstance3D" parent="Wall13"]
+transform = Transform3D(1, 0, 0, 0, 2.3376, 0, 0, 0, 1, 0, 1.169, 0)
+mesh = SubResource("Stake")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Tip" type="MeshInstance3D" parent="Wall13"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.538, 0)
+mesh = SubResource("Tip")
+surface_material_override/0 = SubResource("Pale")
+
+[node name="Wall14" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.417, 0, -2.364)
+
+[node name="Body" type="MeshInstance3D" parent="Wall14"]
+transform = Transform3D(1, 0, 0, 0, 2.26332, 0, 0, 0, 1, 0, 1.132, 0)
+mesh = SubResource("Stake")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Tip" type="MeshInstance3D" parent="Wall14"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.463, 0)
+mesh = SubResource("Tip")
+surface_material_override/0 = SubResource("Pale")
+
+[node name="Wall15" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 0, -2.078)
+
+[node name="Body" type="MeshInstance3D" parent="Wall15"]
+transform = Transform3D(1, 0, 0, 0, 2.32217, 0, 0, 0, 1, 0, 1.161, 0)
+mesh = SubResource("Stake")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Tip" type="MeshInstance3D" parent="Wall15"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.522, 0)
+mesh = SubResource("Tip")
+surface_material_override/0 = SubResource("Pale")
+
+[node name="Wall16" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.839, 0, -1.543)
+
+[node name="Body" type="MeshInstance3D" parent="Wall16"]
+transform = Transform3D(1, 0, 0, 0, 2.30752, 0, 0, 0, 1, 0, 1.154, 0)
+mesh = SubResource("Stake")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Tip" type="MeshInstance3D" parent="Wall16"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.508, 0)
+mesh = SubResource("Tip")
+surface_material_override/0 = SubResource("Pale")
+
+[node name="Wall17" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.255, 0, -0.821)
+
+[node name="Body" type="MeshInstance3D" parent="Wall17"]
+transform = Transform3D(1, 0, 0, 0, 2.37391, 0, 0, 0, 1, 0, 1.187, 0)
+mesh = SubResource("Stake")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Tip" type="MeshInstance3D" parent="Wall17"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.574, 0)
+mesh = SubResource("Tip")
+surface_material_override/0 = SubResource("Pale")
+
+[node name="Roof" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.4, 0)
+mesh = SubResource("Roof")
+surface_material_override/0 = SubResource("Thatch")
+
+[node name="Skull" parent="." instance=ExtResource("1_skullgltf")]
+transform = Transform3D(0.45, 0, 0, 0, 0.45, 0, 0, 0, 0.45, 0, 2.35, 2.55)

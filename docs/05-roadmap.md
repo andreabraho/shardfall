@@ -265,6 +265,11 @@ Themes are generic genre settings; no names, layouts or assets from any existing
 | The broken gate | 15–19 | **Undead mountain** in snow | Ultimate Nature Pack (snowy pines, rocks), Kenney Graveyard Kit, KayKit Halloween Bits | KayKit Skeletons, Ghost, Ghost Skull, Yeti | Frosted stone with runes | Lich, or the Yeti as the mountain's guardian |
 | The catacombs | 19–23 | **Demon tower with zombies** | KayKit Dungeon Remastered, KayKit Halloween Bits | Zombies (four kinds), Demon, Blue Demon on the upper floors | Cursed stone with a violet glow | Demon lord |
 
+**Built so far (2026-09-23):** maps one to five, each with its roster, a boss in its own
+stronghold, and three themed shards on two-minute respawns. Bosses: Greymane (the alpha wolf),
+Garrow the Sacker (bandit chief), Gorthak the Warlord (orc), the Spider Queen, and Vaelith the
+Frost Lich. The catacombs are next.
+
 Fire land was dropped: there is no free lava kit, and it would have been a seventh map. The
 downloads (about 450 MB, all CC0, licence files checked) sit outside the repository; a model
 is copied into `game/assets/` only when a map uses it, with its `ASSET-LICENSES.md` row first.
