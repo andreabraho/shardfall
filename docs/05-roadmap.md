@@ -249,6 +249,28 @@ is what proves the structure rather than decorating it.
 | WLD-10 | 2 bosses: phases, mechanics, arenas | **[C→You]** | ◐ three exist — the Gallery Warden, the Vault Chorister and the Heart Keeper — each alone on its own floor with three telegraphed abilities. Arenas done, mechanics done, **phases not**: they fight the same way at 10 % as at 100 %. Difficulty tuning is yours |
 | WLD-11 | **Zone-layout review and iteration** | **[You]** | |
 
+### Map themes (decided 2026-09-23)
+
+Each of the six maps gets one theme: its own monsters, its own shards (the metin-stone
+equivalent) and its own boss, all built from **free CC0 packs only**. The themes were picked
+from what free 3D models actually exist, so that no map has to wait on art that does not.
+Themes are generic genre settings; no names, layouts or assets from any existing game.
+
+| Zone | Levels | Theme | Environment | Monsters | Shard | Boss |
+|---|---|---|---|---|---|---|
+| Ember Hollow | 1–3 | Village and woods with **animals** | Medieval Village MegaKit, Stylized Nature MegaKit | Wolf, Fox, Deer, Bull, Rat | Moss- and root-grown stone | Alpha wolf |
+| The approach | 3–7 | Second village overrun by **humanoid monsters** | Medieval Village MegaKit (ruins), Fantasy Props MegaKit | Tribal, Ninja, Wizard, KayKit bandits | Stone with a camp banner and chains | Bandit chief |
+| Valley floor | 7–11 | **Orc** valley | Stylized Nature MegaKit, KayKit Forest, Fantasy Props | Orc, Orc Enemy, Goleling, Mushnub | Stone with crude totems and spikes | Orc warlord |
+| The ridge | 11–15 | **Desert with spiders**, the giant spider lair a cave inside it | Ultimate Nature Pack (cacti, palms, dead trees, rocks), KayKit Dungeon for the lair | Spider in three sizes, Snake, Cactoro, Wasp | Web- and sand-wrapped stone | Spider queen, in the lair |
+| The broken gate | 15–19 | **Undead mountain** in snow | Ultimate Nature Pack (snowy pines, rocks), Kenney Graveyard Kit, KayKit Halloween Bits | KayKit Skeletons, Ghost, Ghost Skull, Yeti | Frosted stone with runes | Lich, or the Yeti as the mountain's guardian |
+| The catacombs | 19–23 | **Demon tower with zombies** | KayKit Dungeon Remastered, KayKit Halloween Bits | Zombies (four kinds), Demon, Blue Demon on the upper floors | Cursed stone with a violet glow | Demon lord |
+
+Fire land was dropped: there is no free lava kit, and it would have been a seventh map. The
+downloads (about 450 MB, all CC0, licence files checked) sit outside the repository; a model
+is copied into `game/assets/` only when a map uses it, with its `ASSET-LICENSES.md` row first.
+Building the maps is folded into REF-04 (enemies), REF-05 (bosses), REF-06 (shards) and REF-13
+(world).
+
 ---
 
 ## Phase 7 — The main road (week 11)
