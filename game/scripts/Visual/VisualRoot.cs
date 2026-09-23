@@ -271,7 +271,40 @@ public partial class VisualRoot : Node3D
         _current = VisualRegistry.Create(def, tint, scale);
         AddChild(_current);
 
+        StandOnGround(def);
+
         AdoptAnimator();
+    }
+
+    /// <summary>
+    /// Puts a model's feet on the ground its body stands on.
+    /// </summary>
+    /// <remarks>
+    /// A model is centred on this node, and this node sits a fixed height above the body's
+    /// origin — 0.85 m in the enemy scene, half of a 1.7 m figure. That was right while every
+    /// creature was a person-sized KayKit model; a 0.55 m rat centred there floated sixty
+    /// centimetres off the grass. The body's origin is its feet, so the model's lowest point
+    /// is moved to meet it, whatever the model's size. A model that already stood there moves
+    /// by nothing.
+    /// <para>
+    /// Only for models whose own lowest point is their feet — creatures and people. A shard
+    /// stone is placed by its scene at its centre on purpose, and keeps that.
+    /// </para>
+    /// </remarks>
+    private void StandOnGround(VisualDef def)
+    {
+        if (_current is null || def.Primitive != "model" || def.Fit == "stretch") return;
+        if (GetParent() is not CharacterBody3D) return;
+
+        var bounds = ModelFit.LocalBounds(_current);
+
+        if (bounds.Size.Y <= 0.0001f) return;
+
+        // In this node's space: the model's current bottom, and where the ground is.
+        var bottom = (_current.Transform * bounds).Position.Y;
+        var ground = -_restPosition.Y;
+
+        _current.Position += new Vector3(0, ground - bottom, 0);
     }
 
     /// <summary>
