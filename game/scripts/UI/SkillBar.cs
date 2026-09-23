@@ -30,6 +30,7 @@ public partial class SkillBar : CanvasLayer
     private SkillCaster? _caster;
     private DefensiveAbility? _guard;
     private HBoxContainer _row = null!;
+    private SkillTip _tip = null!;
     private SkillSlot[] _slots = [];
 
     public override void _Ready()
@@ -44,6 +45,9 @@ public partial class SkillBar : CanvasLayer
         _row.OffsetBottom = -14;
 
         AddChild(_row);
+
+        _tip = new SkillTip { Name = "SkillTip" };
+        AddChild(_tip);
 
         CallDeferred(nameof(Bind));
     }
@@ -68,6 +72,8 @@ public partial class SkillBar : CanvasLayer
     {
         if (_caster is null) return;
 
+        _tip.Hide();
+
         foreach (var child in _row.GetChildren()) child.QueueFree();
 
         var count = Math.Min(SlotActions.Length, _caster.Hotbar.Length);
@@ -75,7 +81,7 @@ public partial class SkillBar : CanvasLayer
 
         for (var i = 0; i < count; i++)
         {
-            _slots[i] = Add(_caster.Hotbar[i], SlotActions[i]);
+            _slots[i] = Add(_caster.Hotbar[i], SlotActions[i], i);
         }
 
         // Guard sits apart from the numbered row, because it is the one ability the player
@@ -83,16 +89,30 @@ public partial class SkillBar : CanvasLayer
         if (_guard is not null)
         {
             _row.AddChild(new Control { CustomMinimumSize = new Vector2(10, 0), MouseFilter = Control.MouseFilterEnum.Ignore });
-            _slots[^1] = Add(_guard.SkillId, GameActions.DefensiveAbility);
+            _slots[^1] = Add(_guard.SkillId, GameActions.DefensiveAbility, -1);
         }
     }
 
-    private SkillSlot Add(string skillId, string action)
+    private SkillSlot Add(string skillId, string action, int index)
     {
-        var slot = new SkillSlot { SkillId = skillId, Action = action };
+        var slot = new SkillSlot { SkillId = skillId, Action = action, Slot = index };
 
         _row.AddChild(slot);
         slot.Describe();
+
+        // The card is the bar's, not the slot's: only one is ever up, and it has to be able
+        // to sit outside the slot it describes.
+        slot.Hovered += entered =>
+        {
+            if (entered) _tip.Show(slot.Description, slot);
+            else _tip.Hide();
+        };
+
+        slot.SkillDropped += (at, skillId) =>
+        {
+            _caster?.Assign(at, skillId);
+            _tip.Hide();
+        };
 
         return slot;
     }

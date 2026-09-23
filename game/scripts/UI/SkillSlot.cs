@@ -29,10 +29,53 @@ public partial class SkillSlot : Control
     public string SkillId { get; set; } = "";
     public string Action { get; set; } = "";
 
+    /// <summary>
+    /// Which numbered key this is, or -1 for a slot that is not part of the bar — Guard
+    /// Stance, which has its own key and cannot be rearranged.
+    /// </summary>
+    public int Slot { get; set; } = -1;
+
+    /// <summary>What the skill does, in full. Shown by the bar on a card above the slot.</summary>
+    public string Description { get; private set; } = "";
+
+    /// <summary>Told when a skill is dropped on this slot: the slot index and the skill.</summary>
+    [Signal] public delegate void SkillDroppedEventHandler(int slot, string skillId);
+
+    /// <summary>Told when the mouse comes to rest here, or leaves.</summary>
+    [Signal] public delegate void HoveredEventHandler(bool entered);
+
     public override void _Ready()
     {
         CustomMinimumSize = new Vector2(Side, Side);
         MouseFilter = MouseFilterEnum.Pass;
+
+        MouseEntered += () => EmitSignal(SignalName.Hovered, true);
+        MouseExited += () => EmitSignal(SignalName.Hovered, false);
+    }
+
+    // ------------------------------------------------------------------ dragging
+
+    /// <summary>
+    /// Picks the skill up off the bar, so slots can be rearranged by dragging one onto
+    /// another (REF-03). A slot that is not part of the numbered bar is not draggable.
+    /// </summary>
+    public override Variant _GetDragData(Vector2 atPosition)
+    {
+        if (Slot < 0 || SkillId.Length == 0) return default;
+
+        SetDragPreview(SkillDrag.Preview(_name));
+
+        return SkillDrag.Data(SkillId);
+    }
+
+    public override bool _CanDropData(Vector2 atPosition, Variant data) =>
+        Slot >= 0 && SkillDrag.SkillOf(data) is not null;
+
+    public override void _DropData(Vector2 atPosition, Variant data)
+    {
+        if (SkillDrag.SkillOf(data) is not { } skillId) return;
+
+        EmitSignal(SignalName.SkillDropped, Slot, skillId);
     }
 
     /// <summary>Reads the parts that do not change while playing: name, key, tree, tooltip.</summary>
@@ -43,7 +86,9 @@ public partial class SkillSlot : Control
         if (SkillId.Length == 0 || !GameContent.IsLoaded
             || !GameContent.Database.Skills.TryGetValue(SkillId, out var def))
         {
-            TooltipText = "";
+            Description = L10n.F("Empty. Drag a skill here from the skill screen ({0}).",
+                GameActions.DescribeBinding(GameActions.ToggleSkills));
+
             return;
         }
 
@@ -70,11 +115,13 @@ public partial class SkillSlot : Control
 
         if (book is null)
         {
-            TooltipText = $"{_name}   [{_key}]";
+            Description = $"{_name}   [{_key}]";
             return;
         }
 
-        TooltipText = book.IsUnlocked(SkillId)
+        // Kept as text rather than as a TooltipText: the bar draws its own card above the
+        // slot, because the engine's tooltip follows the cursor and lands on top of the bar.
+        Description = book.IsUnlocked(SkillId)
             ? $"{SkillText.Title(def, book)}   [{_key}]\n" + SkillText.Describe(def, book)
             : $"{_name}   [{_key}]\n" + L10n.T("Not learned. Spend a skill point on it with K.");
     }

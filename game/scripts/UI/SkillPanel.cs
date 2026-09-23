@@ -9,7 +9,7 @@ using Kiln.Game.Items;
 namespace Kiln.Game.UI;
 
 /// <summary>
-/// The skill screen, on V (REF-03): where skill points are spent.
+/// The skill screen, on K (REF-03): where skill points are spent and skills put on keys.
 /// </summary>
 /// <remarks>
 /// Skills are no longer learned on their own, and no longer gated on level: a point learns
@@ -17,14 +17,14 @@ namespace Kiln.Game.UI;
 /// what makes the screen a decision rather than a list of buttons to click through.
 /// <para>
 /// Each row states what the skill does at the investment it has now, so the cost of a point is
-/// read against what the point buys, and carries the key it is cast with. Putting the key
-/// beside the skill rather than on the bar keeps both halves of the decision — what to be good
-/// at, and what to reach for — in the same place.
+/// read against what the point buys, and carries a grip: a skill is put on a key by dragging it
+/// down onto the bar, which stays on screen behind the panel, and taken off it by dragging it
+/// back up onto the list.
 /// </para>
 /// </remarks>
 public partial class SkillPanel : CanvasLayer
 {
-    private sealed record Row(SkillDef Def, Label Title, Label Detail, Button Plus, OptionButton Key);
+    private sealed record Row(SkillDef Def, Label Title, Label Detail, Button Plus, SkillHandle Handle);
 
     private readonly List<Row> _rows = [];
 
@@ -55,6 +55,10 @@ public partial class SkillPanel : CanvasLayer
             _character.LeveledUp += _ => Refresh();
             _character.ExperienceChanged += Refresh;
         }
+
+        // A skill dropped on the bar changes what the grips say, and the drop happens on the
+        // bar rather than here.
+        if (_caster is not null) _caster.HotbarChanged += Refresh;
 
         BuildRows();
     }
@@ -133,6 +137,7 @@ public partial class SkillPanel : CanvasLayer
         {
             Text = L10n.F("A point learns a skill; {0} points master it. Mastery beyond that is earned by casting.",
                       SkillBook.MaxPoints)
+                + "\n" + L10n.T("Drag a skill down onto the bar to put it on a key, and back up here to take it off.")
                 + "\n" + L10n.T("There are never enough points for everything — that choice is the build. Any shrine refunds them, free."),
             AutowrapMode = TextServer.AutowrapMode.WordSmart,
         };
@@ -171,26 +176,19 @@ public partial class SkillPanel : CanvasLayer
 
             var id = def.Id;
 
-            // Which key casts it. A skill can sit on any key, and the picker is beside the
-            // skill rather than on the bar because this is where the player is already
-            // deciding what the character is for.
-            var key = new OptionButton { CustomMinimumSize = new Vector2(76, 32) };
+            // The grip. A skill is put on a key by dragging it down onto the bar, which stays
+            // on screen behind this panel — the gesture says where the skill is going, which a
+            // dropdown listing "Key 4" never quite does.
+            var handle = new SkillHandle { SkillId = id, SkillName = GameItems.Localise(def.Name) };
 
-            key.AddItem(L10n.T("none"), 0);
-
-            for (var slot = 0; slot < Player.SkillCaster.Slots; slot++)
-            {
-                key.AddItem(L10n.F("Key {0}", slot + 1), slot + 1);
-            }
-
-            key.ItemSelected += index => Assign(id, (int)index - 1);
-            row.AddChild(key);
+            handle.SkillReturned += returned => Assign(returned, -1);
+            row.AddChild(handle);
 
             var plus = new Button { Text = "+", CustomMinimumSize = new Vector2(38, 32) };
             plus.Pressed += () => Invest(id);
             row.AddChild(plus);
 
-            _rows.Add(new Row(def, title, detail, plus, key));
+            _rows.Add(new Row(def, title, detail, plus, handle));
         }
 
         Refresh();
@@ -256,16 +254,9 @@ public partial class SkillPanel : CanvasLayer
             // Guard Stance has its own key and is not on the numbered bar.
             var onBar = row.Def.CastType != "channel";
 
-            row.Key.Visible = onBar;
-            row.Key.Disabled = !onBar;
+            row.Handle.Visible = onBar;
 
-            if (!onBar) continue;
-
-            var slot = _caster?.SlotOf(row.Def.Id) ?? -1;
-
-            // Selected rather than by index-changed: setting Selected does not raise
-            // ItemSelected, so refreshing the panel never re-assigns anything.
-            row.Key.Selected = slot + 1;
+            if (onBar) row.Handle.ShowKey(_caster?.SlotOf(row.Def.Id) ?? -1);
         }
     }
 }
