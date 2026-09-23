@@ -448,7 +448,8 @@ public partial class SkillCaster : Node
 
             case SkillTargeting.Cone:
                 targets = AreaQuery.Cone(_motor, center, aim, (float)skill.Radius, (float)skill.ConeAngle);
-                AoeVisual.Cone(center, aim, (float)skill.Radius, (float)skill.ConeAngle, hostile: false, skill.Rank);
+                AoeVisual.Cone(center, aim, (float)skill.Radius, (float)skill.ConeAngle, hostile: false, skill.Rank,
+                    swirl: skill.Motion == "spin");
                 break;
 
             case SkillTargeting.GroundAoe:

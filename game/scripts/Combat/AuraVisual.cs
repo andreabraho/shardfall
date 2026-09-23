@@ -18,7 +18,7 @@ namespace Kiln.Game.Combat;
 /// be worn at once, which is why it is one node per status rather than one that switches.
 /// <para>
 /// Mastery is written into it. The rank shifts the colour — amber at Master, violet at Grand
-/// Master, a white-gold at Perfect — and adds embers, width and brightness with it, so a skill
+/// Master, deep violet with the gear burning gold at Perfect — and adds embers, width and brightness with it, so a skill
 /// six hundred casts deep does not look like the one bought this morning.
 /// </para>
 /// <para>
@@ -378,6 +378,8 @@ public partial class AuraVisual : Node3D
         // A Perfect skill breathes hardest, and never quite goes dim between beats.
         var breath = 0.5f + (Mathf.Sin((float)_spin * 3.4f) * 0.16f);
 
-        Light(Mathf.Min(1f, breath * glow) * _strength * (Kind == StatusKind.Fortify ? 0.5f : 1f));
+        // Iron Skin only tints the armour faintly: a body lit like the blade reads as the
+        // character changing colour, when all it should say is "harder to hurt".
+        Light(Mathf.Min(1f, breath * glow) * _strength * (Kind == StatusKind.Fortify ? 0.16f : 1f));
     }
 }
