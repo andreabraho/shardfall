@@ -53,11 +53,11 @@ public class ExperienceTableTests
     [Fact]
     public void CatchUp_MakesGrindingEasyZonesPointless()
     {
-        // Every level over costs a share; eight over pays nothing.
-        Assert.Equal(0.85, ExperienceTable.CatchUpMultiplier(playerLevel: 15, zoneBand: 14), 3);
-        Assert.Equal(0.45, ExperienceTable.CatchUpMultiplier(playerLevel: 17, zoneBand: 14), 3);
-        Assert.Equal(0.10, ExperienceTable.CatchUpMultiplier(playerLevel: 20, zoneBand: 14), 3);
-        Assert.Equal(0.0, ExperienceTable.CatchUpMultiplier(playerLevel: 22, zoneBand: 14), 3);
+        // A fifth for every level over; five over pays nothing.
+        Assert.Equal(0.80, ExperienceTable.CatchUpMultiplier(playerLevel: 15, zoneBand: 14), 3);
+        Assert.Equal(0.40, ExperienceTable.CatchUpMultiplier(playerLevel: 17, zoneBand: 14), 3);
+        Assert.Equal(0.20, ExperienceTable.CatchUpMultiplier(playerLevel: 18, zoneBand: 14), 3);
+        Assert.Equal(0.0, ExperienceTable.CatchUpMultiplier(playerLevel: 19, zoneBand: 14), 3);
     }
 
     [Fact]
