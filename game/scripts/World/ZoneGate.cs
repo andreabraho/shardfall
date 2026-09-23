@@ -18,6 +18,8 @@ public partial class ZoneGate : Area3D
 {
     private double _cooldown;
     private Combat.NamePlate? _label;
+    private PortalVisual? _portal;
+    private double _recheck;
 
     /// <summary>The zone on the other side. Must be a declared exit of the zone this scene is.</summary>
     [Export] public string ToZone { get; set; } = "";
@@ -47,6 +49,18 @@ public partial class ZoneGate : Area3D
 
         BodyEntered += OnBodyEntered;
         BuildLabel();
+
+        // The portal that shows where the border is. Borders sit at a map's edge, so the road
+        // through them runs from the middle of the map outward.
+        var outward = GlobalPosition with { Y = 0 };
+
+        _portal = new PortalVisual
+        {
+            Name = "Portal",
+            Along = outward.LengthSquared() > 0.01f ? outward.Normalized() : Vector3.Right,
+        };
+
+        AddChild(_portal);
     }
 
     /// <summary>
@@ -119,6 +133,19 @@ public partial class ZoneGate : Area3D
     public override void _Process(double delta)
     {
         if (_cooldown > 0) _cooldown -= delta;
+
+        // Twice a second is plenty for a colour: levels and quests do not change mid-frame.
+        _recheck -= delta;
+
+        if (_portal is not null && _recheck <= 0)
+        {
+            _recheck = 0.5;
+
+            var character = GetTree().GetFirstNodeInGroup("player")
+                ?.GetNodeOrNull<Player.PlayerCharacter>("PlayerCharacter");
+
+            if (character is not null) _portal.Open = Check(character.Progression.Level) is null;
+        }
 
         if (_label is null) return;
 

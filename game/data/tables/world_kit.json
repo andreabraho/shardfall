@@ -68,6 +68,10 @@
   { "id": "kit_vil_crate",      "shape": "model", "size": [1.1, 1.10, 1.1], "color": "#7a5a3a", "navigation": false, "model_path": "res://assets/quaternius/village/Prop_Crate.gltf" },
   { "id": "kit_vil_fence_4",    "shape": "model", "size": [4.0, 0.90, 0.25], "color": "#7a5a3a", "tile": 2, "model_path": "res://assets/quaternius/village/Prop_WoodenFence_Extension1.gltf" },
 
+  // The standing stones every border portal is framed by (PortalVisual). Solid, but not baked:
+  // they stand beside the road, off the navigation mesh, and nothing paths between them.
+  { "id": "kit_portal_stone",   "shape": "model", "size": [1.6, 5.2, 1.4], "collision": "cylinder", "navigation": false, "color": "#6b6d68", "model_path": "res://assets/quaternius/nature/Rock_Medium_2.gltf" },
+
   // Woods. Stopped by the trunk, drawn with the crown.
   { "id": "kit_nat_tree",       "shape": "model", "fit": "height", "random_yaw": true, "size": [4.4, 7.6, 4.4], "collision_size": [0.9, 4.0, 0.9], "collision": "cylinder", "color": "#4c6b46", "models": ["res://assets/quaternius/nature/CommonTree_1.gltf","res://assets/quaternius/nature/CommonTree_2.gltf","res://assets/quaternius/nature/CommonTree_3.gltf","res://assets/quaternius/nature/CommonTree_4.gltf","res://assets/quaternius/nature/CommonTree_5.gltf"] },
   { "id": "kit_nat_pine",       "shape": "model", "fit": "height", "random_yaw": true, "size": [4.4, 7.4, 4.4], "collision_size": [0.9, 4.0, 0.9], "collision": "cylinder", "color": "#3f5a3c", "models": ["res://assets/quaternius/nature/Pine_1.gltf","res://assets/quaternius/nature/Pine_2.gltf","res://assets/quaternius/nature/Pine_3.gltf","res://assets/quaternius/nature/Pine_4.gltf","res://assets/quaternius/nature/Pine_5.gltf"] },
