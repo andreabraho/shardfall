@@ -1,0 +1,43 @@
+[gd_scene load_steps=4 format=3]
+
+; Shelter — a raiders' lean-to: a plank roof on four posts, open at the front (Medieval Village
+; MegaKit Roof_Wooden_2x1, CC0). About 4.5 × 3 m. Kit piece kit_camp_shelter.
+
+[ext_resource type="PackedScene" path="res://assets/quaternius/village/Roof_Wooden_2x1.gltf" id="1_roof_wooden_2x1g"]
+
+[sub_resource type="CylinderMesh" id="Post"]
+top_radius = 0.09
+bottom_radius = 0.11
+height = 2.4
+
+[sub_resource type="StandardMaterial3D" id="Wood"]
+albedo_color = Color(0.34, 0.24, 0.15, 1)
+roughness = 0.9
+
+[node name="Shelter" type="Node3D"]
+
+[node name="Post0" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1.2, 1.2)
+mesh = SubResource("Post")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Post1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1.2, 1.2)
+mesh = SubResource("Post")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Post2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.75, 0, 0, 0, 1, -2, 0.9, -1.2)
+mesh = SubResource("Post")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Post3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.75, 0, 0, 0, 1, 2, 0.9, -1.2)
+mesh = SubResource("Post")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="RoofL" parent="." instance=ExtResource("1_roof_wooden_2x1g")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1.75, -1.05, 1.75, -1.35)
+
+[node name="RoofR" parent="." instance=ExtResource("1_roof_wooden_2x1g")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1.75, 1.05, 1.75, -1.35)

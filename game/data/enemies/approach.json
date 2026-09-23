@@ -1,14 +1,23 @@
 [
+  // The Approach — the second village, sacked and held by raiders (map themes, 2026-09-23).
+  // Map two is where the roster widens: the first ranged enemy, the first healer, the first
+  // shielder and the first creature that runs in to burst. Masked tribal raiders and ninjas
+  // work the ruins; hedge wizards keep them alive; the bandits proper hold the old square
+  // around their chief.
+  //
+  // Models: Quaternius Ultimate Monsters (CC0) for the raiders; the KayKit Barbarian (CC0) for
+  // the bandits and the chief. ASSET-LICENSES.md.
+
   {
-    "id": "mob_thornback_boar",
-    "name": "$mob.mob_thornback_boar.name",
-    "family": "animal",
+    "id": "mob_tribal_raider",
+    "name": "$mob.mob_tribal_raider.name",
+    "family": "human",
     "role": "bruiser",
     "level": 3,
     "stats": { "hp": 205, "attack_power": 30, "defense": 13, "move_speed": 5.4 },
     "abilities": [
-      { "id": "abl_boar_gore", "cooldown": 2.6, "windup": 0.50, "damage_coef": 1.00 },
-      { "id": "abl_boar_charge", "cooldown": 8.0, "windup": 2.20, "damage_coef": 1.45,
+      { "id": "abl_tribal_headbutt", "cooldown": 2.6, "windup": 0.50, "damage_coef": 1.00 },
+      { "id": "abl_tribal_dive", "cooldown": 8.0, "windup": 2.20, "damage_coef": 1.45,
         "telegraph": { "shape": "line", "radius": 4.5, "angle": 0 } }
     ],
     "ai": "bt_melee_chaser",
@@ -16,20 +25,42 @@
     "leash_radius": 18,
     "xp": 62,
     "drop_table": "dt_valley_animal_t1",
-    "visual": "mesh_placeholder_quadruped",
-    "visual_scale": 0.95,
-    "visual_tint": "#7a5b42"
+    "visual": "mesh_q_tribal",
+    "visual_scale": 1.0,
+    "visual_tint": "#b0703a"
   },
   {
-    "id": "mob_sling_scavenger",
-    "name": "$mob.mob_sling_scavenger.name",
+    "id": "mob_ninja_cutthroat",
+    "name": "$mob.mob_ninja_cutthroat.name",
+    "family": "human",
+    "role": "bruiser",
+    "level": 4,
+    "stats": { "hp": 190, "attack_power": 36, "defense": 11, "move_speed": 5.9 },
+    "abilities": [
+      { "id": "abl_ninja_slash", "cooldown": 2.0, "windup": 0.45, "damage_coef": 0.95 },
+      { "id": "abl_ninja_flurry", "cooldown": 7.5, "windup": 1.65, "damage_coef": 1.35,
+        "applies": { "kind": "bleed", "magnitude": 5, "duration": 4.0 },
+        "telegraph": { "shape": "cone", "radius": 3.0, "angle": 90 } }
+    ],
+    "ai": "bt_melee_chaser",
+    "aggro_radius": 11,
+    "leash_radius": 18,
+    "xp": 80,
+    "drop_table": "dt_valley_animal_t1",
+    "visual": "mesh_q_ninja",
+    "visual_scale": 1.0,
+    "visual_tint": "#3a3a4a"
+  },
+  {
+    "id": "mob_ninja_thrower",
+    "name": "$mob.mob_ninja_thrower.name",
     "family": "human",
     "role": "archer",
     "level": 4,
     "stats": { "hp": 165, "attack_power": 36, "defense": 11, "move_speed": 4.7 },
     "abilities": [
-      { "id": "abl_sling_stone", "cooldown": 2.2, "windup": 0.75, "damage_coef": 1.05, "range": 11.0 },
-      { "id": "abl_sling_scatter", "cooldown": 9.5, "windup": 1.70, "damage_coef": 1.25, "range": 10.0,
+      { "id": "abl_ninja_star", "cooldown": 2.2, "windup": 0.75, "damage_coef": 1.05, "range": 11.0 },
+      { "id": "abl_ninja_star_fan", "cooldown": 9.5, "windup": 1.70, "damage_coef": 1.25, "range": 10.0,
         "placement": "target",
         "telegraph": { "shape": "circle", "radius": 3.0 } }
     ],
@@ -38,20 +69,20 @@
     "leash_radius": 22,
     "xp": 88,
     "drop_table": "dt_valley_animal_t1",
-    "visual": "mesh_placeholder_humanoid",
-    "visual_scale": 0.95,
-    "visual_tint": "#8a7a55"
+    "visual": "mesh_q_ninja_b",
+    "visual_scale": 1.0,
+    "visual_tint": "#4a3a3a"
   },
   {
-    "id": "mob_husk_sentinel",
-    "name": "$mob.mob_husk_sentinel.name",
-    "family": "mystic",
+    "id": "mob_bandit_bulwark",
+    "name": "$mob.mob_bandit_bulwark.name",
+    "family": "human",
     "role": "shielder",
     "level": 5,
     "stats": { "hp": 420, "attack_power": 32, "defense": 34, "move_speed": 3.7 },
     "abilities": [
-      { "id": "abl_husk_swing", "cooldown": 3.2, "windup": 0.85, "damage_coef": 1.10 },
-      { "id": "abl_husk_bulwark", "cooldown": 15.0, "windup": 2.10, "damage_coef": 0.00 }
+      { "id": "abl_bandit_club", "cooldown": 3.2, "windup": 0.85, "damage_coef": 1.10 },
+      { "id": "abl_bandit_bulwark", "cooldown": 15.0, "windup": 2.10, "damage_coef": 0.00 }
     ],
     "ai": "bt_support_shielder",
     "aggro_radius": 11,
@@ -59,39 +90,39 @@
     "xp": 128,
     "drop_table": "dt_valley_animal_t1",
     "visual": "mesh_placeholder_heavy",
-    "visual_scale": 1.0,
-    "visual_tint": "#6b7280"
+    "visual_scale": 0.95,
+    "visual_tint": "#8a5a4a"
   },
   {
-    "id": "mob_moss_tender",
-    "name": "$mob.mob_moss_tender.name",
+    "id": "mob_hedge_wizard",
+    "name": "$mob.mob_hedge_wizard.name",
     "family": "mystic",
     "role": "mender",
     "level": 5,
     "stats": { "hp": 225, "attack_power": 26, "defense": 14, "move_speed": 4.2 },
     "abilities": [
-      { "id": "abl_tend_ally", "cooldown": 7.5, "windup": 1.40, "damage_coef": 0.00, "range": 10.0 },
-      { "id": "abl_moss_lash", "cooldown": 3.0, "windup": 0.80, "damage_coef": 0.85, "range": 9.0 }
+      { "id": "abl_wizard_mend", "cooldown": 7.5, "windup": 1.40, "damage_coef": 0.00, "range": 10.0 },
+      { "id": "abl_wizard_bolt", "cooldown": 3.0, "windup": 0.80, "damage_coef": 0.85, "range": 9.0 }
     ],
     "ai": "bt_support_healer",
     "aggro_radius": 13,
     "leash_radius": 20,
     "xp": 132,
     "drop_table": "dt_valley_animal_t1",
-    "visual": "mesh_placeholder_humanoid",
-    "visual_scale": 0.9,
-    "visual_tint": "#5f8a5c"
+    "visual": "mesh_q_wizard",
+    "visual_scale": 1.0,
+    "visual_tint": "#5a4a8a"
   },
   {
-    "id": "mob_spore_pod",
-    "name": "$mob.mob_spore_pod.name",
-    "family": "mystic",
+    "id": "mob_firebrand_mask",
+    "name": "$mob.mob_firebrand_mask.name",
+    "family": "human",
     "role": "bomber",
     "level": 6,
     "stats": { "hp": 190, "attack_power": 44, "defense": 10, "move_speed": 5.0 },
     "abilities": [
-      { "id": "abl_spore_burst", "cooldown": 1.0, "windup": 1.85, "damage_coef": 1.90,
-        "applies": { "kind": "poison", "magnitude": 5, "duration": 4.0 },
+      { "id": "abl_firepot_burst", "cooldown": 1.0, "windup": 1.85, "damage_coef": 1.90,
+        "applies": { "kind": "burn", "magnitude": 5, "duration": 4.0 },
         "telegraph": { "shape": "circle", "radius": 3.5 } }
     ],
     "ai": "bt_suicide_charger",
@@ -99,8 +130,38 @@
     "leash_radius": 22,
     "xp": 158,
     "drop_table": "dt_valley_animal_t1",
-    "visual": "mesh_placeholder_quadruped",
-    "visual_scale": 0.8,
-    "visual_tint": "#7d9b4a"
+    "visual": "mesh_q_tribal",
+    "visual_scale": 0.85,
+    "visual_tint": "#d04a2a"
+  },
+
+  // The map's boss: the chief who took the village, in the palisaded square at its heart with
+  // his guard. A heavy fighter with a wide sweep that bleeds and a slam that stuns — the first
+  // boss that punishes standing in front of it.
+  {
+    "id": "mob_bandit_chief",
+    "stun_resist": 0.5,
+    "name": "$mob.mob_bandit_chief.name",
+    "family": "human",
+    "role": "bruiser",
+    "level": 7,
+    "stats": { "hp": 2800, "attack_power": 58, "defense": 26, "move_speed": 4.8 },
+    "abilities": [
+      { "id": "abl_chief_cleave", "cooldown": 2.4, "windup": 0.70, "damage_coef": 1.15 },
+      { "id": "abl_chief_sweep", "cooldown": 6.5, "windup": 1.80, "damage_coef": 1.50,
+        "applies": { "kind": "bleed", "magnitude": 8, "duration": 4.0 },
+        "telegraph": { "shape": "cone", "radius": 3.5, "angle": 120 } },
+      { "id": "abl_chief_slam", "cooldown": 12.0, "windup": 2.30, "damage_coef": 1.90,
+        "applies": { "kind": "stun", "duration": 0.9, "chance": 0.5 },
+        "telegraph": { "shape": "circle", "radius": 4.5 } }
+    ],
+    "ai": "bt_melee_chaser",
+    "aggro_radius": 10,
+    "leash_radius": 22,
+    "xp": 1300,
+    "drop_table": "dt_valley_animal_t2",
+    "visual": "mesh_placeholder_heavy",
+    "visual_scale": 1.45,
+    "visual_tint": "#6a2a22"
   }
 ]

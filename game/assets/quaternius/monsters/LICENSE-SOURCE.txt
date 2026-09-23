@@ -1,0 +1,12 @@
+Tribal, Ninja (two variants), Wizard — Quaternius, "Ultimate Monsters" pack
+
+Downloaded 2026-09-23 as single .glb files from Poly Pizza (https://poly.pizza), each model page
+marked "Public Domain (CC0)" and credited to Quaternius:
+  Tribal   https://poly.pizza/m/t91lDHaqRW
+  Ninja_a  https://poly.pizza/m/mCNoqcqpvC
+  Ninja_b  https://poly.pizza/m/xGYmeDpfTu
+  Wizard   https://poly.pizza/m/o87Upt5uHX
+
+Quaternius publishes the pack under CC0 1.0 Universal:
+  https://quaternius.com/packs/ultimatemonsters.html
+  https://creativecommons.org/publicdomain/zero/1.0/

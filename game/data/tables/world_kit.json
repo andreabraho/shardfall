@@ -82,5 +82,40 @@
   { "id": "kit_nat_bush",       "shape": "model", "fit": "height", "random_yaw": true, "size": [1.9, 1.4, 1.9], "solid": false, "navigation": false, "color": "#4c6b46", "models": ["res://assets/quaternius/nature/Bush_Common.gltf","res://assets/quaternius/nature/Bush_Common_Flowers.gltf"] },
   { "id": "kit_nat_grass",      "shape": "model", "fit": "height", "random_yaw": true, "size": [1.0, 0.8, 1.0], "solid": false, "navigation": false, "color": "#5f7d4a", "models": ["res://assets/quaternius/nature/Grass_Common_Tall.gltf","res://assets/quaternius/nature/Grass_Wispy_Tall.gltf"] },
   { "id": "kit_nat_flowers",    "shape": "model", "fit": "height", "random_yaw": true, "size": [1.2, 0.9, 1.2], "solid": false, "navigation": false, "color": "#b89ac8", "models": ["res://assets/quaternius/nature/Flower_3_Group.gltf","res://assets/quaternius/nature/Flower_4_Group.gltf","res://assets/quaternius/nature/Mushroom_Common.gltf"] },
-  { "id": "kit_nat_fern",       "shape": "model", "fit": "height", "random_yaw": true, "size": [2.4, 1.1, 2.4], "solid": false, "navigation": false, "color": "#4c6b46", "models": ["res://assets/quaternius/nature/Fern_1.gltf","res://assets/quaternius/nature/Plant_1_Big.gltf"] }
+  { "id": "kit_nat_fern",       "shape": "model", "fit": "height", "random_yaw": true, "size": [2.4, 1.1, 2.4], "solid": false, "navigation": false, "color": "#4c6b46", "models": ["res://assets/quaternius/nature/Fern_1.gltf","res://assets/quaternius/nature/Plant_1_Big.gltf"] },
+
+  // -- The sacked village (map two): Medieval Village MegaKit ruins and Fantasy Props MegaKit
+  // camp dressing (CC0; map themes, 2026-09-23). Ruins are prefab scenes like the houses,
+  // walls standing, stumped or gone at random but the same on every load; they stop the player
+  // at the old footprint, low enough to see over. The camps are stalls, shelters, fires, cages
+  // and standards, and the chief's square is walled in with a palisade.
+  { "id": "kit_ruin_house_small",     "shape": "model", "fit": "height", "size": [8.0, 3.38, 8.0],  "collision_size": [6.4, 2.0, 6.4], "color": "#6a5a4a", "model_path": "res://assets/quaternius/village/ruins/RuinSmall.tscn" },
+  { "id": "kit_ruin_house_long",      "shape": "model", "fit": "height", "size": [8.0, 3.38, 10.0], "collision_size": [6.4, 2.0, 8.4], "color": "#6a5a4a", "model_path": "res://assets/quaternius/village/ruins/RuinLong.tscn" },
+  { "id": "kit_ruin_house_cottage",   "shape": "model", "fit": "height", "size": [6.0, 3.38, 8.0],  "collision_size": [4.4, 2.0, 6.4], "color": "#6a5a4a", "model_path": "res://assets/quaternius/village/ruins/RuinCottage.tscn" },
+  { "id": "kit_ruin_beam",            "shape": "model", "random_yaw": true, "size": [0.8, 0.8, 6.0], "solid": false, "navigation": false, "color": "#3a2a1a", "model_path": "res://assets/quaternius/village/Roof_Log.gltf" },
+
+  { "id": "kit_camp_banner",          "shape": "model", "fit": "height", "size": [1.8, 4.6, 0.4], "solid": false, "navigation": false, "color": "#8f3a2a", "model_path": "res://assets/quaternius/props/prefabs/BanditBanner.tscn" },
+  { "id": "kit_camp_shelter",         "shape": "model", "fit": "height", "size": [4.6, 2.85, 3.0], "solid": false, "navigation": false, "color": "#6a4a2a", "model_path": "res://assets/quaternius/props/prefabs/Shelter.tscn" },
+  { "id": "kit_camp_fire",            "shape": "model", "fit": "height", "size": [1.8, 0.35, 1.8], "solid": false, "navigation": false, "color": "#b07038", "model_path": "res://assets/quaternius/props/prefabs/Campfire.tscn" },
+  { "id": "kit_camp_palisade_4",      "shape": "model", "fit": "height", "size": [4.2, 2.8, 0.5], "collision_size": [4.2, 2.8, 0.5], "color": "#5a4028", "model_path": "res://assets/quaternius/props/prefabs/Palisade.tscn" },
+  { "id": "kit_camp_cage",            "shape": "model", "fit": "height", "size": [1.3, 1.25, 1.35], "collision": "cylinder", "navigation": false, "color": "#6a6a6a", "model_path": "res://assets/quaternius/props/Cage_Small.gltf" },
+  { "id": "kit_camp_weapons",         "shape": "model", "size": [1.39, 1.11, 0.98], "navigation": false, "color": "#7a6a5a", "model_path": "res://assets/quaternius/props/WeaponStand.gltf" },
+  { "id": "kit_camp_stall",           "shape": "model", "size": [1.84, 2.63, 0.93], "navigation": false, "color": "#8a6a4a", "model_path": "res://assets/quaternius/props/Stall_Empty.gltf" },
+  { "id": "kit_camp_stall_cart",      "shape": "model", "size": [3.02, 2.63, 1.06], "navigation": false, "color": "#8a6a4a", "model_path": "res://assets/quaternius/props/Stall_Cart_Empty.gltf" },
+  { "id": "kit_camp_barrel",          "shape": "model", "size": [0.7, 0.9, 0.7], "collision": "cylinder", "navigation": false, "color": "#7a5a3a", "model_path": "res://assets/quaternius/props/Barrel.gltf" },
+  { "id": "kit_camp_barrel_rack",     "shape": "model", "size": [1.36, 1.26, 0.74], "navigation": false, "color": "#7a5a3a", "model_path": "res://assets/quaternius/props/Barrel_Holder.gltf" },
+  { "id": "kit_camp_crate",           "shape": "model", "size": [0.84, 0.93, 0.91], "navigation": false, "color": "#7a5a3a", "model_path": "res://assets/quaternius/props/Crate_Wooden.gltf" },
+  { "id": "kit_camp_crate_iron",      "shape": "model", "size": [0.86, 0.87, 0.87], "navigation": false, "color": "#5a5a5a", "model_path": "res://assets/quaternius/props/Crate_Metal.gltf" },
+  { "id": "kit_camp_chest",           "shape": "model", "size": [1.28, 0.72, 0.76], "navigation": false, "color": "#7a5a3a", "model_path": "res://assets/quaternius/props/Chest_Wood.gltf" },
+  { "id": "kit_camp_cauldron",        "shape": "model", "size": [0.99, 0.82, 0.94], "collision": "cylinder", "navigation": false, "color": "#3a3a3a", "model_path": "res://assets/quaternius/props/Cauldron.gltf" },
+  { "id": "kit_camp_dummy",           "shape": "model", "size": [0.81, 1.86, 0.58], "collision": "cylinder", "navigation": false, "color": "#9a8a6a", "model_path": "res://assets/quaternius/props/Dummy.gltf" },
+  { "id": "kit_camp_anvil",           "shape": "model", "size": [1.08, 0.56, 0.4], "navigation": false, "color": "#4a4a4a", "model_path": "res://assets/quaternius/props/Anvil.gltf" },
+  { "id": "kit_camp_table",           "shape": "model", "size": [2.85, 0.81, 1.1], "navigation": false, "color": "#7a5a3a", "model_path": "res://assets/quaternius/props/Table_Large.gltf" },
+  { "id": "kit_camp_bench",           "shape": "model", "size": [2.78, 0.53, 0.53], "solid": false, "navigation": false, "color": "#7a5a3a", "model_path": "res://assets/quaternius/props/Bench.gltf" },
+  { "id": "kit_camp_rope",            "shape": "model", "size": [1.23, 0.1, 0.95], "solid": false, "navigation": false, "color": "#9a8a5a", "model_path": "res://assets/quaternius/props/Rope_3.gltf" },
+  { "id": "kit_camp_chains",          "shape": "model", "size": [1.07, 0.09, 0.91], "solid": false, "navigation": false, "color": "#5a5a5a", "model_path": "res://assets/quaternius/props/Chain_Coil.gltf" },
+  { "id": "kit_camp_torch",           "shape": "model", "size": [0.22, 0.65, 0.39], "solid": false, "navigation": false, "color": "#8a6a3a", "model_path": "res://assets/quaternius/props/Torch_Metal.gltf" },
+  { "id": "kit_ruin_pile",            "shape": "model", "fit": "height", "random_yaw": true, "size": [3.0, 0.8, 3.0], "solid": false, "navigation": false, "color": "#7a6a5a", "model_path": "res://assets/quaternius/village/ruins/RubblePile.tscn" },
+  { "id": "kit_ruin_fence",           "shape": "model", "fit": "height", "size": [1.95, 2.2, 0.16], "navigation": false, "color": "#3a3a3a", "model_path": "res://assets/quaternius/village/Prop_MetalFence_Simple.gltf" },
+  { "id": "kit_ruin_vine",            "shape": "model", "fit": "height", "size": [1.54, 2.6, 0.22], "solid": false, "navigation": false, "color": "#4c6b46", "model_path": "res://assets/quaternius/village/Prop_Vine2.gltf" }
 ]

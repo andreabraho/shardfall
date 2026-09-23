@@ -137,7 +137,11 @@ public partial class ShardGlow : Node3D
 
         if (GetParent().GetNodeOrNull<Node>("VisualRoot") is not { } root) return;
 
-        foreach (var mesh in Meshes(root)) mesh.MaterialOverlay = _veins;
+        // A dressed stone (map two's, with its banners and chains) names the rock "Stone", so
+        // only the rock burns; a bare rock is all stone.
+        var stone = root.FindChild("Stone", recursive: true, owned: false) ?? root;
+
+        foreach (var mesh in Meshes(stone)) mesh.MaterialOverlay = _veins;
     }
 
     private static IEnumerable<MeshInstance3D> Meshes(Node node)

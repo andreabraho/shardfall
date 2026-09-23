@@ -1,0 +1,56 @@
+[gd_scene load_steps=6 format=3]
+
+; BanditStone — map two's shard: a standing stone the raiders have claimed, bound in chains with
+; their standards planted either side. The veins ShardGlow draws are laid over the "Stone" node
+; only, so the banners and chains keep their own colours. Built symmetric about the stone, because
+; the visual is centred on its bounds. Rock: Stylized Nature MegaKit; banners, chains: Fantasy
+; Props MegaKit (both CC0). About 5.2 m tall, poles included. Visual mesh_shard_banner.
+
+[ext_resource type="PackedScene" path="res://assets/quaternius/nature/Rock_Medium_3.gltf" id="1_rock_medium_3glt"]
+[ext_resource type="PackedScene" path="res://assets/quaternius/props/Chain_Coil.gltf" id="2_chain_coilgltf"]
+[ext_resource type="PackedScene" path="res://assets/quaternius/props/Banner_1.gltf" id="3_banner_1gltf"]
+
+[sub_resource type="CylinderMesh" id="Pole"]
+top_radius = 0.07
+bottom_radius = 0.1
+height = 5.2
+
+[sub_resource type="StandardMaterial3D" id="Wood"]
+albedo_color = Color(0.28, 0.19, 0.12, 1)
+roughness = 0.9
+
+[node name="BanditStone" type="Node3D"]
+
+[node name="Stone" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Rock" parent="Stone" instance=ExtResource("1_rock_medium_3glt")]
+transform = Transform3D(0, 0, 0.72, 0, 1.62, 0, -0.72, 0, 0, 0.2, 0.55, -0.2)
+
+[node name="ChainHigh" parent="." instance=ExtResource("2_chain_coilgltf")]
+transform = Transform3D(1.47224, 0.75051, 0.39905, 0, 0.7981, -1.50101, -0.85, 1.29991, 0.69118, 0, 2.6, 0)
+
+[node name="ChainMid" parent="." instance=ExtResource("2_chain_coilgltf")]
+transform = Transform3D(-1.78542, 0.55109, -0.34436, 0, 1.00685, 1.61129, 0.64984, 1.51412, -0.94613, 0, 1.5, 0)
+
+[node name="ChainFoot" parent="." instance=ExtResource("2_chain_coilgltf")]
+transform = Transform3D(0.44463, 0, 1.2216, 0, 1.3, 0, -1.2216, 0, 0.44463, 0.9, 0.05, 1.1)
+
+[node name="ChainFoot2" parent="." instance=ExtResource("2_chain_coilgltf")]
+transform = Transform3D(-1.12763, 0, 0.41042, 0, 1.2, 0, -0.41042, 0, -1.12763, -1, 0.05, -1)
+
+[node name="Pole0" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.1, 2.6, 0)
+mesh = SubResource("Pole")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Banner0" parent="." instance=ExtResource("3_banner_1gltf")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -2.12, 4.35, 0)
+
+[node name="Pole1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.1, 2.6, 0)
+mesh = SubResource("Pole")
+surface_material_override/0 = SubResource("Wood")
+
+[node name="Banner1" parent="." instance=ExtResource("3_banner_1gltf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.12, 4.35, 0)

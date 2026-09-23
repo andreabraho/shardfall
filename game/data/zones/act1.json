@@ -109,38 +109,96 @@
     ],
     "spawn_fields": [
       {
-        "id": "spf_approach_boars",
-        "entries": [{ "enemy": "mob_thornback_boar", "weight": 1.0 }],
-        "count": 4,
-        "respawn_seconds": 26,
-        "activation_radius": 55,
+        "id": "spf_approach_raiders_west",
+        "entries": [
+          { "enemy": "mob_tribal_raider", "weight": 1.0 }
+        ],
+        "count": 5,
+        "respawn_seconds": 22,
+        "activation_radius": 60,
         "radius": 8
       },
       {
-        "id": "spf_approach_camp",
+        "id": "spf_approach_raider_camp",
         "entries": [
-          { "enemy": "mob_sling_scavenger", "weight": 2.0 },
-          { "enemy": "mob_husk_sentinel", "weight": 1.0 }
+          { "enemy": "mob_tribal_raider", "weight": 2.0 },
+          { "enemy": "mob_ninja_cutthroat", "weight": 1.0 }
         ],
-        "count": 4,
-        "respawn_seconds": 34,
-        "activation_radius": 55,
+        "count": 5,
+        "respawn_seconds": 26,
+        "activation_radius": 60,
         "radius": 9
       },
       {
-        "id": "spf_approach_grove",
+        "id": "spf_approach_ninjas_south",
         "entries": [
-          { "enemy": "mob_moss_tender", "weight": 1.0 },
-          { "enemy": "mob_spore_pod", "weight": 1.5 },
-          { "enemy": "mob_thornback_boar", "weight": 2.0 }
+          { "enemy": "mob_ninja_cutthroat", "weight": 1.0 },
+          { "enemy": "mob_ninja_thrower", "weight": 1.0 }
         ],
         "count": 5,
-        "respawn_seconds": 30,
-        "activation_radius": 55,
-        "radius": 10
+        "respawn_seconds": 28,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      {
+        "id": "spf_approach_streets",
+        "entries": [
+          { "enemy": "mob_firebrand_mask", "weight": 1.0 },
+          { "enemy": "mob_tribal_raider", "weight": 2.0 }
+        ],
+        "count": 5,
+        "respawn_seconds": 28,
+        "activation_radius": 60,
+        "radius": 8
+      },
+      {
+        "id": "spf_approach_tower",
+        "entries": [
+          { "enemy": "mob_hedge_wizard", "weight": 1.0 },
+          { "enemy": "mob_ninja_thrower", "weight": 2.0 },
+          { "enemy": "mob_tribal_raider", "weight": 2.0 }
+        ],
+        "count": 5,
+        "respawn_seconds": 32,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      {
+        "id": "spf_approach_east_road",
+        "entries": [
+          { "enemy": "mob_bandit_bulwark", "weight": 1.0 },
+          { "enemy": "mob_ninja_thrower", "weight": 1.0 },
+          { "enemy": "mob_ninja_cutthroat", "weight": 2.0 }
+        ],
+        "count": 5,
+        "respawn_seconds": 32,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      {
+        "id": "spf_approach_guard",
+        "entries": [
+          { "enemy": "mob_bandit_bulwark", "weight": 1.0 },
+          { "enemy": "mob_ninja_thrower", "weight": 1.0 },
+          { "enemy": "mob_hedge_wizard", "weight": 1.0 }
+        ],
+        "count": 3,
+        "respawn_seconds": 40,
+        "activation_radius": 60,
+        "radius": 5
+      },
+      {
+        "id": "spf_approach_chief",
+        "entries": [
+          { "enemy": "mob_bandit_chief", "weight": 1.0 }
+        ],
+        "count": 1,
+        "respawn_seconds": 300,
+        "activation_radius": 60,
+        "radius": 3
       }
     ],
-    "shards": ["shd_cracked_seed"]
+    "shards": ["shd_raider_standard"]
   },
   {
     "id": "zone_vale_floor",

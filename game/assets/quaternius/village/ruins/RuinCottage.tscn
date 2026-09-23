@@ -1,0 +1,181 @@
+[gd_scene load_steps=11 format=3]
+
+; RuinCottage — a burnt-out 4 × 6 m house for the sacked village (map two), generated
+; from Quaternius Medieval Village MegaKit modules (CC0; see ASSET-LICENSES.md). No roof; walls
+; standing, broken to stumps or gone; a fallen roof beam and rubble. The door faces +Z.
+; Placed as a kit piece (kit_ruin_house_*), which gives it its collision; this scene is looks only.
+
+[ext_resource type="PackedScene" path="res://assets/quaternius/village/Prop_Brick2.gltf" id="1_prop_brick2gltf"]
+[ext_resource type="PackedScene" path="res://assets/quaternius/village/Prop_Brick1.gltf" id="2_prop_brick1gltf"]
+[ext_resource type="PackedScene" path="res://assets/quaternius/village/Wall_Plaster_Straight.gltf" id="3_wall_plaster_str"]
+[ext_resource type="PackedScene" path="res://assets/quaternius/village/Prop_Brick3.gltf" id="4_prop_brick3gltf"]
+[ext_resource type="PackedScene" path="res://assets/quaternius/village/Wall_Plaster_Door_Round.gltf" id="5_wall_plaster_doo"]
+[ext_resource type="PackedScene" path="res://assets/quaternius/village/Wall_Plaster_Window_Wide_Round.gltf" id="6_wall_plaster_win"]
+[ext_resource type="PackedScene" path="res://assets/quaternius/village/Corner_Exterior_Wood.gltf" id="7_corner_exterior_"]
+[ext_resource type="PackedScene" path="res://assets/quaternius/village/Floor_WoodDark.gltf" id="8_floor_wooddarkgl"]
+[ext_resource type="PackedScene" path="res://assets/quaternius/village/Roof_Log.gltf" id="9_roof_loggltf"]
+[ext_resource type="PackedScene" path="res://assets/quaternius/village/Prop_Vine1.gltf" id="10_prop_vine1gltf"]
+
+[node name="RuinCottage" type="Node3D"]
+
+[node name="Rubble0" parent="." instance=ExtResource("1_prop_brick2gltf")]
+transform = Transform3D(1.85054, -0.05747, 0.51342, 0, 1.90938, 0.21372, -0.51663, -0.20585, 1.83906, -1.654, 0.1, 2.745)
+
+[node name="Rubble1" parent="." instance=ExtResource("1_prop_brick2gltf")]
+transform = Transform3D(-2.09789, 0.27176, -1.20281, 0, 2.37363, 0.53629, 1.23313, 0.46234, -2.04631, -1.372, 0.1, 3.549)
+
+[node name="Rubble2" parent="." instance=ExtResource("2_prop_brick1gltf")]
+transform = Transform3D(-1.46192, 0.28653, 1.44412, 0, 2.03512, -0.4038, -1.47227, -0.28452, -1.43397, -1.172, 0.1, 3.612)
+
+[node name="Rubble3" parent="." instance=ExtResource("1_prop_brick2gltf")]
+transform = Transform3D(0.6283, 0.39337, 1.84866, 0, 1.94813, -0.41454, -1.89005, 0.13077, 0.61454, -1.748, 0.1, 3.14)
+
+[node name="Back0" parent="." instance=ExtResource("3_wall_plaster_str")]
+transform = Transform3D(-1, 0, 0, 0, 0.30553, 0, 0, 0, -1, -1, 0, -3)
+
+[node name="Rubble4" parent="." instance=ExtResource("4_prop_brick3gltf")]
+transform = Transform3D(1.39277, 0.1116, 0.80938, 0, 1.59961, -0.22055, -0.81704, 0.19023, 1.37972, -1.282, 0.1, -2.881)
+
+[node name="Rubble5" parent="." instance=ExtResource("4_prop_brick3gltf")]
+transform = Transform3D(-0.59949, 0.07871, 1.73893, 0, 1.83916, -0.08325, -1.74071, -0.02711, -0.59887, -0.84, 0.1, -3.13)
+
+[node name="Rubble6" parent="." instance=ExtResource("4_prop_brick3gltf")]
+transform = Transform3D(-0.63986, -0.09405, 1.96689, 0, 2.06813, 0.09889, -1.96914, 0.03056, -0.63913, -1.426, 0.1, -4.048)
+
+[node name="Rubble7" parent="." instance=ExtResource("2_prop_brick1gltf")]
+transform = Transform3D(-0.74984, 0.1073, 1.72019, 0, 1.87594, -0.11701, -1.72353, -0.04668, -0.74839, -0.696, 0.1, -2.989)
+
+[node name="Front1" parent="." instance=ExtResource("5_wall_plaster_doo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 3)
+
+[node name="Back1" parent="." instance=ExtResource("6_wall_plaster_win")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 1, 0, -3)
+
+[node name="Left0" parent="." instance=ExtResource("3_wall_plaster_str")]
+transform = Transform3D(0, 0, 1, 0, 0.37959, 0, -1, 0, 0, -2, 0, -2)
+
+[node name="Rubble8" parent="." instance=ExtResource("4_prop_brick3gltf")]
+transform = Transform3D(-0.9512, -0.10679, 1.41923, 0, 1.70702, 0.12844, -1.42324, 0.07137, -0.94852, -2.892, 0.1, -2.456)
+
+[node name="Rubble9" parent="." instance=ExtResource("1_prop_brick2gltf")]
+transform = Transform3D(-1.77531, 0.01532, 0.22419, 0, 1.78531, -0.12197, -0.22471, -0.121, -1.77118, -2.89, 0.1, -2.656)
+
+[node name="Rubble10" parent="." instance=ExtResource("2_prop_brick1gltf")]
+transform = Transform3D(-0.06223, -0.44828, -1.93916, 0, 1.94011, -0.4485, 1.99031, -0.01402, -0.06063, -1.752, 0.1, -1.757)
+
+[node name="Rubble11" parent="." instance=ExtResource("4_prop_brick3gltf")]
+transform = Transform3D(0.92482, 0.34929, 1.51189, 0, 1.76005, -0.40662, -1.55171, 0.20817, 0.90109, -2.655, 0.1, -1.859)
+
+[node name="Right0" parent="." instance=ExtResource("3_wall_plaster_str")]
+transform = Transform3D(0, 0, -1, 0, 0.27499, 0, 1, 0, 0, 2, 0, -2)
+
+[node name="Rubble12" parent="." instance=ExtResource("1_prop_brick2gltf")]
+transform = Transform3D(-1.87098, -0.01583, 0.57105, 0, 1.9555, 0.0542, -0.57127, 0.05183, -1.87026, 1.609, 0.1, -2.066)
+
+[node name="Rubble13" parent="." instance=ExtResource("4_prop_brick3gltf")]
+transform = Transform3D(-1.56026, -0.0084, -0.5984, 0, 1.67093, -0.02347, 0.59846, -0.02191, -1.5601, 2.489, 0.1, -2.17)
+
+[node name="Rubble14" parent="." instance=ExtResource("2_prop_brick1gltf")]
+transform = Transform3D(-1.27129, 0.43868, 2.25672, 0, 2.57878, -0.50129, -2.29896, -0.24259, -1.24793, 1.99, 0.1, -2.788)
+
+[node name="Rubble15" parent="." instance=ExtResource("1_prop_brick2gltf")]
+transform = Transform3D(0.59349, -0.32064, -2.4594, 0, 2.52883, -0.32969, 2.48022, 0.07673, 0.58851, 2.14, 0.1, -1.816)
+
+[node name="Rubble16" parent="." instance=ExtResource("4_prop_brick3gltf")]
+transform = Transform3D(-2.12429, -0.3258, -1.36589, 0, 2.47696, -0.59081, 1.4042, -0.49287, -2.06632, -2.938, 0.1, -0.256)
+
+[node name="Rubble17" parent="." instance=ExtResource("1_prop_brick2gltf")]
+transform = Transform3D(2.00924, -0.00821, -0.08743, 0, 2.00234, -0.18813, 0.08781, 0.18795, 2.00043, -2.684, 0.1, 0.534)
+
+[node name="Rubble18" parent="." instance=ExtResource("2_prop_brick1gltf")]
+transform = Transform3D(-2.46453, -0.01362, 0.07922, 0, 2.4302, 0.4177, -0.08038, 0.41748, -2.42891, -1.52, 0.1, 0.221)
+
+[node name="Rubble19" parent="." instance=ExtResource("1_prop_brick2gltf")]
+transform = Transform3D(-0.91164, -0.31188, 1.37205, 0, 1.63486, 0.37162, -1.40705, 0.20207, -0.88897, -2.667, 0.1, -0.012)
+
+[node name="Rubble20" parent="." instance=ExtResource("4_prop_brick3gltf")]
+transform = Transform3D(-2.24384, -0.01632, 0.47285, 0, 2.29181, 0.07909, -0.47313, 0.07739, -2.2425, 2.663, 0.1, 0.567)
+
+[node name="Rubble21" parent="." instance=ExtResource("2_prop_brick1gltf")]
+transform = Transform3D(-0.5876, -0.16869, -1.53377, 0, 1.64122, -0.18051, 1.54302, -0.06424, -0.58408, 1.499, 0.1, -0.12)
+
+[node name="Rubble22" parent="." instance=ExtResource("2_prop_brick1gltf")]
+transform = Transform3D(1.40234, -0.06005, -0.87532, 0, 1.65031, -0.11321, 0.87738, 0.09598, 1.39905, 1.776, 0.1, 0.15)
+
+[node name="Rubble23" parent="." instance=ExtResource("4_prop_brick3gltf")]
+transform = Transform3D(-1.60717, 0.00406, -0.21413, 0, 1.62109, 0.0307, 0.21417, 0.03044, -1.60688, 2.772, 0.1, 0.132)
+
+[node name="Rubble24" parent="." instance=ExtResource("4_prop_brick3gltf")]
+transform = Transform3D(2.20652, 0.00859, -0.03536, 0, 2.14441, 0.52114, 0.03639, -0.52107, 2.14412, -2.923, 0.1, 1.924)
+
+[node name="Rubble25" parent="." instance=ExtResource("1_prop_brick2gltf")]
+transform = Transform3D(-0.59415, 0.4545, -2.18039, 0, 2.25663, 0.47039, 2.22725, 0.12124, -0.58165, -1.712, 0.1, 2.686)
+
+[node name="Rubble26" parent="." instance=ExtResource("4_prop_brick3gltf")]
+transform = Transform3D(-0.86632, 0.3411, 1.81233, 0, 2.00234, -0.37686, -1.84415, -0.16024, -0.85137, -2.088, 0.1, 1.622)
+
+[node name="Rubble27" parent="." instance=ExtResource("2_prop_brick1gltf")]
+transform = Transform3D(1.43631, 0.45288, 1.91669, 0, 2.37225, -0.56052, -1.96947, 0.33028, 1.39782, -2.298, 0.1, 2.578)
+
+[node name="Rubble28" parent="." instance=ExtResource("4_prop_brick3gltf")]
+transform = Transform3D(-1.20093, 0.23964, -1.59119, 0, 1.98548, 0.29902, 1.60913, 0.17885, -1.18754, 2.337, 0.1, 1.756)
+
+[node name="Rubble29" parent="." instance=ExtResource("2_prop_brick1gltf")]
+transform = Transform3D(1.87699, 0.10713, -0.81913, 0, 2.03343, 0.26595, 0.8261, -0.24342, 1.86114, 1.557, 0.1, 1.854)
+
+[node name="Rubble30" parent="." instance=ExtResource("1_prop_brick2gltf")]
+transform = Transform3D(-0.38075, -0.16749, -1.81261, 0, 1.85184, -0.17112, 1.82033, -0.03503, -0.37914, 2.468, 0.1, 2.39)
+
+[node name="Rubble31" parent="." instance=ExtResource("1_prop_brick2gltf")]
+transform = Transform3D(-2.4285, 0.14833, -0.62828, 0, 2.4456, 0.57739, 0.64555, 0.55801, -2.36352, 2.504, 0.1, 2.175)
+
+[node name="Corner1" parent="." instance=ExtResource("7_corner_exterior_")]
+transform = Transform3D(1, 0, 0, 0, 0.81629, 0, 0, 0, 1, 2, 0, -3)
+
+[node name="Corner2" parent="." instance=ExtResource("7_corner_exterior_")]
+transform = Transform3D(1, 0, 0, 0, 0.99249, 0, 0, 0, 1, -2, 0, 3)
+
+[node name="Corner3" parent="." instance=ExtResource("7_corner_exterior_")]
+transform = Transform3D(1, 0, 0, 0, 0.96804, 0, 0, 0, 1, 2, 0, 3)
+
+[node name="Floor32" parent="." instance=ExtResource("8_floor_wooddarkgl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.02, -2)
+
+[node name="Floor33" parent="." instance=ExtResource("8_floor_wooddarkgl")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -1, 0.02, 0)
+
+[node name="Floor34" parent="." instance=ExtResource("8_floor_wooddarkgl")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 1, 0.02, 2)
+
+[node name="Beam" type="Node3D" parent="."]
+transform = Transform3D(-0.19986, 0.05731, 0.97815, 0.27564, 0.96126, 0, -0.94026, 0.26961, -0.20791, 0, 1, 0)
+
+[node name="Log" parent="Beam" instance=ExtResource("9_roof_loggltf")]
+transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.45, 0, -3.64, 0)
+
+[node name="Rubble35" parent="." instance=ExtResource("4_prop_brick3gltf")]
+transform = Transform3D(0.8928, -0.05107, 1.42885, 0, 1.68454, 0.06021, -1.42976, -0.03189, 0.89223, 0.458, 0.1, 0.222)
+
+[node name="Rubble36" parent="." instance=ExtResource("4_prop_brick3gltf")]
+transform = Transform3D(-1.55941, 0.04234, -0.89293, 0, 1.79545, 0.08514, 0.89393, 0.07386, -1.55766, 0.141, 0.1, 0.246)
+
+[node name="Rubble37" parent="." instance=ExtResource("1_prop_brick2gltf")]
+transform = Transform3D(0.0428, 0.03985, 2.44596, 0, 2.44633, -0.03986, -2.44628, 0.0007, 0.0428, 1.042, 0.1, 0.614)
+
+[node name="Rubble38" parent="." instance=ExtResource("2_prop_brick1gltf")]
+transform = Transform3D(1.39799, 0.27606, -1.19992, 0, 1.81547, 0.41768, 1.23127, -0.31344, 1.3624, 0.687, 0.1, -0.177)
+
+[node name="Rubble39" parent="." instance=ExtResource("1_prop_brick2gltf")]
+transform = Transform3D(-2.67093, -0.01674, 0.10103, 0, 2.63693, 0.43698, -0.10241, 0.43666, -2.63499, -1.23, 0.1, -0.704)
+
+[node name="Rubble40" parent="." instance=ExtResource("1_prop_brick2gltf")]
+transform = Transform3D(-1.49356, 0.21774, -0.84905, 0, 1.67748, 0.4302, 0.87653, 0.37103, -1.44674, -0.474, 0.1, -0.905)
+
+[node name="Rubble41" parent="." instance=ExtResource("2_prop_brick1gltf")]
+transform = Transform3D(-0.43688, -0.12115, -1.62703, 0, 1.68435, -0.12542, 1.63153, -0.03244, -0.43567, -0.528, 0.1, -1.316)
+
+[node name="Rubble42" parent="." instance=ExtResource("1_prop_brick2gltf")]
+transform = Transform3D(-1.74561, 0.01233, -0.86608, 0, 1.94849, 0.02775, 0.86616, 0.02486, -1.74543, -1.287, 0.1, -1.575)
+
+[node name="Vine" parent="." instance=ExtResource("10_prop_vine1gltf")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -1, 2.9, -3.12)

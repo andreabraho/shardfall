@@ -1,0 +1,87 @@
+[gd_scene load_steps=8 format=3]
+
+; Campfire — a ring of bricks, three logs and a fire that lights the camp at night. The flame is
+; particles; the stones and logs are Medieval Village MegaKit pieces (CC0). Kit piece kit_camp_fire.
+
+[ext_resource type="PackedScene" path="res://assets/quaternius/village/Prop_Brick1.gltf" id="1_prop_brick1gltf"]
+[ext_resource type="PackedScene" path="res://assets/quaternius/village/Prop_Brick2.gltf" id="2_prop_brick2gltf"]
+[ext_resource type="PackedScene" path="res://assets/quaternius/village/Prop_Brick3.gltf" id="3_prop_brick3gltf"]
+[ext_resource type="PackedScene" path="res://assets/quaternius/village/Roof_Log.gltf" id="4_roof_loggltf"]
+
+[sub_resource type="StandardMaterial3D" id="Flame"]
+shading_mode = 0
+transparency = 1
+blend_mode = 1
+vertex_color_use_as_albedo = true
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="Spark"]
+material = SubResource("Flame")
+size = Vector2(0.45, 0.45)
+
+[sub_resource type="Gradient" id="Heat"]
+offsets = PackedFloat32Array(0, 0.35, 1)
+colors = PackedColorArray(1, 0.85, 0.4, 1, 1, 0.45, 0.1, 0.8, 0.4, 0.08, 0.02, 0)
+
+[node name="Campfire" type="Node3D"]
+
+[node name="Stone0" parent="." instance=ExtResource("1_prop_brick1gltf")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0.75, 0.08, 0)
+
+[node name="Stone1" parent="." instance=ExtResource("2_prop_brick2gltf")]
+transform = Transform3D(1.53209, 0, -1.28558, 0, 2, 0, 1.28558, 0, 1.53209, 0.575, 0.08, 0.482)
+
+[node name="Stone2" parent="." instance=ExtResource("3_prop_brick3gltf")]
+transform = Transform3D(0.3473, 0, -1.96962, 0, 2, 0, 1.96962, 0, 0.3473, 0.13, 0.08, 0.739)
+
+[node name="Stone3" parent="." instance=ExtResource("1_prop_brick1gltf")]
+transform = Transform3D(-1, 0, -1.73205, 0, 2, 0, 1.73205, 0, -1, -0.375, 0.08, 0.65)
+
+[node name="Stone4" parent="." instance=ExtResource("2_prop_brick2gltf")]
+transform = Transform3D(-1.87939, 0, -0.68404, 0, 2, 0, 0.68404, 0, -1.87939, -0.705, 0.08, 0.257)
+
+[node name="Stone5" parent="." instance=ExtResource("3_prop_brick3gltf")]
+transform = Transform3D(-1.87939, 0, 0.68404, 0, 2, 0, -0.68404, 0, -1.87939, -0.705, 0.08, -0.257)
+
+[node name="Stone6" parent="." instance=ExtResource("1_prop_brick1gltf")]
+transform = Transform3D(-1, 0, 1.73205, 0, 2, 0, -1.73205, 0, -1, -0.375, 0.08, -0.65)
+
+[node name="Stone7" parent="." instance=ExtResource("2_prop_brick2gltf")]
+transform = Transform3D(0.3473, 0, 1.96962, 0, 2, 0, -1.96962, 0, 0.3473, 0.13, 0.08, -0.739)
+
+[node name="Stone8" parent="." instance=ExtResource("3_prop_brick3gltf")]
+transform = Transform3D(1.53209, 0, 1.28558, 0, 2, 0, -1.28558, 0, 1.53209, 0.575, 0.08, -0.482)
+
+[node name="Log0" parent="." instance=ExtResource("4_roof_loggltf")]
+transform = Transform3D(0.18, 0, 0, 0, 0.18, 0, 0, 0, 0.11, 0, -0.7, 0)
+
+[node name="Log1" parent="." instance=ExtResource("4_roof_loggltf")]
+transform = Transform3D(-0.09, 0, 0.09526, 0, 0.18, 0, -0.15588, 0, -0.055, 0, -0.7, 0)
+
+[node name="Log2" parent="." instance=ExtResource("4_roof_loggltf")]
+transform = Transform3D(-0.09, 0, -0.09526, 0, 0.18, 0, 0.15588, 0, -0.055, 0, -0.7, 0)
+
+[node name="Fire" type="CPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+amount = 26
+lifetime = 0.9
+mesh = SubResource("Spark")
+emission_shape = 1
+emission_sphere_radius = 0.3
+direction = Vector3(0, 1, 0)
+spread = 12.0
+gravity = Vector3(0, 1.6, 0)
+initial_velocity_min = 0.4
+initial_velocity_max = 0.9
+scale_amount_min = 0.6
+scale_amount_max = 1.2
+color_ramp = SubResource("Heat")
+
+[node name="Light" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
+light_color = Color(1, 0.6, 0.3, 1)
+light_energy = 2.2
+omni_range = 8.0

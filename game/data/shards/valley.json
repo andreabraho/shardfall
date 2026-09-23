@@ -25,26 +25,30 @@
       { "phase": "three", "slots": [ { "role": "bruiser", "count": 6 }, { "role": "bruiser", "count": 1, "anchor": true } ] }
     ]
   },
+  // The Approach: a standing stone the raiders have chained and planted their standards
+  // around, in the ruins of the second village (map themes, 2026-09-23). Three of them, two
+  // minutes apart. The first stone that answers with the whole roster: bruisers first, then
+  // throwers behind a shield-bearer, and a hedge wizard as the anchor of the last wave.
   {
-    "id": "shd_cracked_seed",
-    "name": "$shard.shd_cracked_seed.name",
-    "tier": 1,
-    "level": 4,
-    "hp": 900,
+    "id": "shd_raider_standard",
+    "name": "$shard.shd_raider_standard.name",
+    "tier": 2,
+    "level": 5,
+    "hp": 4200,
     "pulse_interval": 10.0,
     "pulse_windup": 3.0,
     "pulse_radius": 7.0,
-    "pulse_damage_coef": 0.8,
+    "pulse_damage_coef": 0.9,
     "reclamation_seconds": 16.0,
     "reclamation_heal": 0.25,
-    "essence": 1,
+    "essence": 3,
     "drop_table": "dt_valley_animal_t2",
-    "visual": "mesh_placeholder_monolith",
-    "modifiers": [],
+    "visual": "mesh_shard_banner",
+    "modifiers": ["frenzied"],
     "waves": [
-      { "phase": "one",   "slots": [ { "role": "bruiser", "count": 3 } ] },
-      { "phase": "two",   "slots": [ { "role": "bruiser", "count": 2 }, { "role": "archer", "count": 1 } ] },
-      { "phase": "three", "slots": [ { "role": "bruiser", "count": 2 }, { "role": "mender", "count": 1, "anchor": true } ] }
+      { "phase": "one",   "slots": [ { "role": "bruiser", "count": 6 } ] },
+      { "phase": "two",   "slots": [ { "role": "bruiser", "count": 4 }, { "role": "archer", "count": 2 }, { "role": "shielder", "count": 1 } ] },
+      { "phase": "three", "slots": [ { "role": "bruiser", "count": 4 }, { "role": "archer", "count": 1 }, { "role": "bomber", "count": 1 }, { "role": "mender", "count": 1, "anchor": true } ] }
     ]
   },
   {

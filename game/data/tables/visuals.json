@@ -21,7 +21,18 @@
   // (ShardGlow) — moss green for the woods.
   { "id": "mesh_shard_moss", "primitive": "model", "fit": "stretch", "height": 3.80, "radius": 1.10, "color": "#8cff6a", "model_yaw": 0, "model_path": "res://assets/quaternius/nature/Rock_Medium_3.gltf" },
 
-  { "id": "mesh_sword_a",               "primitive": "box",      "height": 1.10, "radius": 0.06, "color": "#d9dde2" },
+  // Map-two raiders: Quaternius Ultimate Monsters (CC0). The bandits themselves and their chief
+  // are the KayKit Barbarian, tinted per creature.
+  { "id": "mesh_q_tribal",  "primitive": "model", "height": 1.45, "radius": 0.45, "color": "#b0703a", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Tribal.glb" },
+  { "id": "mesh_q_ninja",   "primitive": "model", "height": 1.50, "radius": 0.40, "color": "#3a3a4a", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Ninja_a.glb" },
+  { "id": "mesh_q_ninja_b", "primitive": "model", "height": 1.60, "radius": 0.40, "color": "#4a3a3a", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Ninja_b.glb" },
+  { "id": "mesh_q_wizard",  "primitive": "model", "height": 1.60, "radius": 0.40, "color": "#5a4a8a", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Wizard.glb" },
+
+  // Map-two shard: a standing stone the raiders have claimed, chained, a standard either side
+  // (a prefab; the veins glow on the rock only). Ember red, the colour of the burnt village.
+  { "id": "mesh_shard_banner", "primitive": "model", "height": 5.20, "radius": 1.30, "color": "#ff5a2a", "model_yaw": 0, "model_path": "res://assets/quaternius/props/prefabs/BanditStone.tscn" },
+
+  { "id": "mesh_sword_a",              "primitive": "box",      "height": 1.10, "radius": 0.06, "color": "#d9dde2" },
   { "id": "mesh_axe_a",                 "primitive": "box",      "height": 1.00, "radius": 0.12, "color": "#c9b08a" },
   { "id": "mesh_spear_a",               "primitive": "cylinder", "height": 1.60, "radius": 0.05, "color": "#b9c2cc" },
   { "id": "mesh_armor_a",               "primitive": "box",      "height": 0.80, "radius": 0.30, "color": "#8b5a2b" },

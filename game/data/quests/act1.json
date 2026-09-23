@@ -14,7 +14,7 @@
 
   { "id": "qst_thornbacks_on_the_road", "name": "$quest.qst_thornbacks_on_the_road.name",
     "act": 1, "type": "story", "level_req": 4, "prerequisites": ["qst_reeds_in_the_hollow"],
-    "objectives": [ { "type": "kill", "target": "mob_thornback_boar", "count": 10 } ],
+    "objectives": [ { "type": "kill", "target": "mob_tribal_raider", "count": 10 } ],
     "rewards": { "xp": 1819, "yang": 1471, "items": [] } },
 
   { "id": "qst_the_gnawing_barrows", "name": "$quest.qst_the_gnawing_barrows.name",
