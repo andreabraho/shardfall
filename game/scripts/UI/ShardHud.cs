@@ -13,8 +13,10 @@ namespace Kiln.Game.UI;
 /// deadline — it is damage that arrives for no reason. This exists so the player can tell
 /// that killing the marked add is the thing to do, and how long they have to do it.
 /// </remarks>
-public partial class ShardHud : CanvasLayer
+public partial class ShardHud : CanvasLayer, ITopBar
 {
+    public Control Panel => _root;
+
     private PanelContainer _root = null!;
     private Label _title = null!;
     private ProgressBar _health = null!;
@@ -27,6 +29,7 @@ public partial class ShardHud : CanvasLayer
     public override void _Ready()
     {
         Layer = 11;
+        AddToGroup("top_bars");
         Build();
         _root.Visible = false;
     }
@@ -39,7 +42,7 @@ public partial class ShardHud : CanvasLayer
             AnchorRight = 0.5f,
             OffsetLeft = -260,
             OffsetRight = 260,
-            OffsetTop = 92,
+            OffsetTop = TopBars.Top,
         };
 
         AddChild(_root);

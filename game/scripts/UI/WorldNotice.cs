@@ -43,6 +43,15 @@ public partial class WorldNotice : CanvasLayer
     {
         if (_showing <= 0) return;
 
+        // Under the shard and boss bars when they show, rather than printed across them.
+        var top = Mathf.Max(96f, TopBars.Free(GetTree()));
+
+        if (!Mathf.IsEqualApprox(_label.OffsetTop, top))
+        {
+            _label.OffsetBottom += top - _label.OffsetTop;
+            _label.OffsetTop = top;
+        }
+
         _showing -= delta;
 
         // Held at full opacity, then faded over the last second: a line that starts fading

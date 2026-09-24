@@ -13,8 +13,10 @@ namespace Kiln.Game.UI;
 /// the player cannot afford to be reading. The bar is where the eye rests between blows, and
 /// its phase line says when the fight has turned.
 /// </remarks>
-public partial class BossHud : CanvasLayer
+public partial class BossHud : CanvasLayer, ITopBar
 {
+    public Control Panel => _root;
+
     private PanelContainer _root = null!;
     private Label _title = null!;
     private ProgressBar _health = null!;
@@ -23,6 +25,7 @@ public partial class BossHud : CanvasLayer
     public override void _Ready()
     {
         Layer = 11;
+        AddToGroup("top_bars");
 
         _root = new PanelContainer
         {
@@ -30,7 +33,7 @@ public partial class BossHud : CanvasLayer
             AnchorRight = 0.5f,
             OffsetLeft = -280,
             OffsetRight = 280,
-            OffsetTop = 58,
+            OffsetTop = TopBars.Top,
             MouseFilter = Control.MouseFilterEnum.Ignore,
         };
         AddChild(_root);
@@ -91,6 +94,15 @@ public partial class BossHud : CanvasLayer
         }
 
         _root.Visible = true;
+
+        var shard = GetParent()?.GetNodeOrNull<ShardHud>("ShardHud");
+        var top = TopBars.Below(shard?.Panel);
+
+        if (!Mathf.IsEqualApprox(_root.OffsetTop, top))
+        {
+            _root.OffsetBottom += top - _root.OffsetTop;
+            _root.OffsetTop = top;
+        }
 
         var name = Items.GameItems.Localise(boss.Self.DisplayName);
         _title.Text = $"{L10n.F("Lv. {0}", boss.Self.Stats.Level)}  {name}";
