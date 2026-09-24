@@ -31,26 +31,26 @@ public partial class BossHud : CanvasLayer, ITopBar
         {
             AnchorLeft = 0.5f,
             AnchorRight = 0.5f,
-            OffsetLeft = -280,
-            OffsetRight = 280,
+            OffsetLeft = -180,
+            OffsetRight = 180,
             OffsetTop = TopBars.Top,
             MouseFilter = Control.MouseFilterEnum.Ignore,
         };
         AddChild(_root);
 
         var margin = new MarginContainer { MouseFilter = Control.MouseFilterEnum.Ignore };
-        margin.AddThemeConstantOverride("margin_left", 12);
-        margin.AddThemeConstantOverride("margin_right", 12);
-        margin.AddThemeConstantOverride("margin_top", 6);
-        margin.AddThemeConstantOverride("margin_bottom", 6);
+        margin.AddThemeConstantOverride("margin_left", 8);
+        margin.AddThemeConstantOverride("margin_right", 8);
+        margin.AddThemeConstantOverride("margin_top", 4);
+        margin.AddThemeConstantOverride("margin_bottom", 4);
         _root.AddChild(margin);
 
         var box = new VBoxContainer { MouseFilter = Control.MouseFilterEnum.Ignore };
-        box.AddThemeConstantOverride("separation", 3);
+        box.AddThemeConstantOverride("separation", 2);
         margin.AddChild(box);
 
         _title = new Label { HorizontalAlignment = HorizontalAlignment.Center };
-        _title.AddThemeFontSizeOverride("font_size", 18);
+        _title.AddThemeFontSizeOverride("font_size", 13);
         _title.AddThemeColorOverride("font_color", new Color("d9a7ff"));
         box.AddChild(_title);
 
@@ -60,7 +60,7 @@ public partial class BossHud : CanvasLayer, ITopBar
             MaxValue = 1,
             Value = 1,
             ShowPercentage = false,
-            CustomMinimumSize = new Vector2(530, 18),
+            CustomMinimumSize = new Vector2(340, 10),
             MouseFilter = Control.MouseFilterEnum.Ignore,
         };
         _health.AddThemeStyleboxOverride("fill", new StyleBoxFlat { BgColor = new Color("b3302a") });
@@ -78,6 +78,8 @@ public partial class BossHud : CanvasLayer, ITopBar
         _phase = new Label { HorizontalAlignment = HorizontalAlignment.Center };
         _phase.AddThemeFontSizeOverride("font_size", 12);
         _phase.AddThemeColorOverride("font_color", new Color(0.78f, 0.8f, 0.85f));
+        // The phase rides on the title line: one row fewer.
+        _phase.Visible = false;
         box.AddChild(_phase);
 
         _root.Visible = false;
@@ -105,9 +107,8 @@ public partial class BossHud : CanvasLayer, ITopBar
         }
 
         var name = Items.GameItems.Localise(boss.Self.DisplayName);
-        _title.Text = $"{L10n.F("Lv. {0}", boss.Self.Stats.Level)}  {name}";
+        _title.Text = $"{L10n.F("Lv. {0}", boss.Self.Stats.Level)}  {name}  ·  {L10n.F("Phase {0}", boss.BossPhase)}";
         _health.Value = boss.Self.Health.Fraction;
-        _phase.Text = L10n.F("Phase {0}", boss.BossPhase);
     }
 
     /// <summary>The nearest boss that is fighting the player, if any.</summary>

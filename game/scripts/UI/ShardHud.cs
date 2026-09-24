@@ -40,26 +40,26 @@ public partial class ShardHud : CanvasLayer, ITopBar
         {
             AnchorLeft = 0.5f,
             AnchorRight = 0.5f,
-            OffsetLeft = -260,
-            OffsetRight = 260,
+            OffsetLeft = -170,
+            OffsetRight = 170,
             OffsetTop = TopBars.Top,
         };
 
         AddChild(_root);
 
         var margin = new MarginContainer();
-        margin.AddThemeConstantOverride("margin_left", 12);
-        margin.AddThemeConstantOverride("margin_right", 12);
-        margin.AddThemeConstantOverride("margin_top", 8);
-        margin.AddThemeConstantOverride("margin_bottom", 8);
+        margin.AddThemeConstantOverride("margin_left", 8);
+        margin.AddThemeConstantOverride("margin_right", 8);
+        margin.AddThemeConstantOverride("margin_top", 4);
+        margin.AddThemeConstantOverride("margin_bottom", 4);
         _root.AddChild(margin);
 
         var box = new VBoxContainer();
-        box.AddThemeConstantOverride("separation", 3);
+        box.AddThemeConstantOverride("separation", 1);
         margin.AddChild(box);
 
         _title = new Label { HorizontalAlignment = HorizontalAlignment.Center };
-        _title.AddThemeFontSizeOverride("font_size", 17);
+        _title.AddThemeFontSizeOverride("font_size", 13);
         box.AddChild(_title);
 
         _health = new ProgressBar
@@ -68,19 +68,19 @@ public partial class ShardHud : CanvasLayer, ITopBar
             MaxValue = 1,
             Value = 1,
             ShowPercentage = false,
-            CustomMinimumSize = new Vector2(500, 20),
+            CustomMinimumSize = new Vector2(320, 10),
         };
 
         Tint(_health, new Color("a05ad0"));
         box.AddChild(_health);
 
         _phase = new Label { HorizontalAlignment = HorizontalAlignment.Center };
-        _phase.AddThemeFontSizeOverride("font_size", 12);
+        _phase.AddThemeFontSizeOverride("font_size", 10);
         _phase.AddThemeColorOverride("font_color", new Color(0.72f, 0.76f, 0.82f));
         box.AddChild(_phase);
 
         _castLabel = new Label { HorizontalAlignment = HorizontalAlignment.Center };
-        _castLabel.AddThemeFontSizeOverride("font_size", 13);
+        _castLabel.AddThemeFontSizeOverride("font_size", 11);
         _castLabel.AddThemeColorOverride("font_color", new Color("ffb347"));
         box.AddChild(_castLabel);
 
@@ -90,7 +90,7 @@ public partial class ShardHud : CanvasLayer, ITopBar
             MaxValue = 1,
             Value = 0,
             ShowPercentage = false,
-            CustomMinimumSize = new Vector2(500, 10),
+            CustomMinimumSize = new Vector2(320, 6),
         };
 
         Tint(_cast, new Color("d06a4f"));
