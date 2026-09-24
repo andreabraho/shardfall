@@ -612,6 +612,7 @@
   "{0}  ·  level {1}  ·  {2}  ·  {3}": "{0}  ·  livello {1}  ·  {2}  ·  {3}",
   "{0}  ·  recommended": "{0}  ·  consigliato",
   "{0} ({1:F0}s)": "{0} ({1:F0}s)",
+  "{0} answers the stone's call!": "{0} risponde al richiamo della pietra!",
   "{0} attribute points to place": "{0} punti attributo da assegnare",
   "{0} calls for help!": "{0} chiama rinforzi!",
   "{0} calls the tower to its aid!": "{0} chiama la torre in suo aiuto!",

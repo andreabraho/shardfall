@@ -95,7 +95,7 @@ public partial class MapView : Control
             if (node is Node3D piece) Include(piece.GlobalPosition);
         }
 
-        foreach (var group in new[] { "zone_gates", "shrines", "shards", "spawn_fields", "safe_zones" })
+        foreach (var group in new[] { "zone_gates", "shrines", "spawn_fields", "safe_zones" })
         {
             foreach (var node in GetTree().GetNodesInGroup(group))
             {
@@ -276,13 +276,8 @@ public partial class MapView : Control
             Caption(font, fontSize, At(npc.GlobalPosition), npc.Def.Title.Length > 0 ? Items.GameItems.Localise(npc.Def.Title) : npc.DisplayName, VillagerTint);
         }
 
-        foreach (var node in GetTree().GetNodesInGroup("shards"))
-        {
-            if (node is not ShardNode shard || !Known(seen, shard.GlobalPosition)) continue;
-
-            Diamond(At(shard.GlobalPosition), 7f, ShardTint);
-            Caption(font, fontSize, At(shard.GlobalPosition), NameOfShard(shard.ShardId), ShardTint);
-        }
+        // No shards (REF-06): they stand somewhere new each time, and finding one is the
+        // player's part.
 
         // Borders last, so their labels sit on top of everything else. A map is mostly read
         // to answer "which way out", and that answer should never be half-hidden by a camp.

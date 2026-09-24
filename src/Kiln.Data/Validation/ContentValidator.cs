@@ -1629,6 +1629,16 @@ public static class ContentValidator
             }
         }
 
+        foreach (var zone in db.Zones.Values.Where(z => z.ShardCount is < 0 or > 8))
+        {
+            report.Error("shards", zone.SourceFile, $"'{zone.Id}' stands {zone.ShardCount} shards.", "shard_count is 0 to 8.");
+        }
+
+        foreach (var shard in db.Shards.Values.Where(s => s.BossChance is < 0 or > 1))
+        {
+            report.Error("shards", shard.SourceFile, $"'{shard.Id}' has boss_chance {shard.BossChance}.", "A chance from 0 to 1.");
+        }
+
         foreach (var table in db.DropTables.Values.Where(t => t.Picks != 0))
         {
             if (table.Picks is < 0 or > 5)

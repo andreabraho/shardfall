@@ -68,6 +68,12 @@ public partial class EnemyBrain : CharacterBody3D
     /// <summary>A boss (REF-05): boss plate and bar, the boss leash, half healing on reset.</summary>
     public bool IsBoss { get; private set; }
 
+    /// <summary>Called in by something else — a shard — and gone once it gives the fight up.</summary>
+    public bool LeavesOnReset { get; set; }
+
+    /// <summary>Turns on the player at once, wherever they are, without calling others in.</summary>
+    public void Engage() => AcquireTarget(force: true, alert: false);
+
     /// <summary>A unique boss, shown in the boss bar at the top of the screen.</summary>
     public bool HasBossBar { get; private set; }
 
@@ -958,6 +964,8 @@ public partial class EnemyBrain : CharacterBody3D
         }
 
         _adds.Clear();
+
+        if (LeavesOnReset) QueueFree();
     }
 
     /// <summary>

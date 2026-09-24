@@ -16,7 +16,8 @@
     "reclamation_seconds": 18.0,
     "reclamation_heal": 0.20,
     "essence": 2,
-    "drop_table": "dt_valley_animal_t1",
+    "drop_table": "dt_shard_moss",
+    "boss_chance": 0.05,
     "visual": "mesh_shard_moss",
     "modifiers": [],
     "waves": [
@@ -42,7 +43,8 @@
     "reclamation_seconds": 16.0,
     "reclamation_heal": 0.25,
     "essence": 3,
-    "drop_table": "dt_valley_animal_t2",
+    "drop_table": "dt_shard_raider",
+    "boss_chance": 0.05,
     "visual": "mesh_shard_banner",
     "modifiers": ["frenzied"],
     "waves": [
@@ -66,7 +68,8 @@
     "reclamation_seconds": 14.0,
     "reclamation_heal": 0.30,
     "essence": 4,
-    "drop_table": "dt_valley_undead_t2",
+    "drop_table": "dt_shard_totem",
+    "boss_chance": 0.05,
     "visual": "mesh_shard_totem",
     "modifiers": ["frenzied", "venomous"],
     "waves": [
@@ -90,7 +93,8 @@
     "reclamation_seconds": 13.0,
     "reclamation_heal": 0.30,
     "essence": 5,
-    "drop_table": "dt_ridge_t3",
+    "drop_table": "dt_shard_web",
+    "boss_chance": 0.05,
     "visual": "mesh_shard_web",
     "modifiers": ["frenzied", "warded", "venomous"],
     "waves": [
@@ -114,7 +118,8 @@
     "reclamation_seconds": 12.0,
     "reclamation_heal": 0.30,
     "essence": 6,
-    "drop_table": "dt_gate_t4",
+    "drop_table": "dt_shard_frost",
+    "boss_chance": 0.05,
     "visual": "mesh_shard_frost",
     "modifiers": ["frenzied", "warded", "venomous", "twin"],
     "waves": [
@@ -138,7 +143,7 @@
     "reclamation_seconds": 11.0,
     "reclamation_heal": 0.30,
     "essence": 8,
-    "drop_table": "dt_catacombs_t5",
+    "drop_table": "dt_shard_demon",
     "visual": "mesh_shard_demon",
     "modifiers": ["frenzied", "warded"],
     "waves": [
@@ -162,7 +167,7 @@
     "reclamation_seconds": 12.0,
     "reclamation_heal": 0.20,
     "essence": 2,
-    "drop_table": "dt_catacombs_t5",
+    "drop_table": "dt_shard_demon_small",
     "visual": "mesh_shard_demon",
     "modifiers": [],
     "waves": [

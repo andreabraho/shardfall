@@ -1313,37 +1313,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 62, 0, -34)
 script = ExtResource("5_spawnfield")
 FieldId = "spf_gate_lich"
 
-; The map's three shards. Each respawns two minutes after it breaks.
-
-[node name="ShardSouthWest" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -52, 0.1, 44)
-script = ExtResource("14_shard")
-ShardId = "shd_frost_rune"
-
-[node name="VisualRoot" type="Node3D" parent="ShardSouthWest"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
-script = ExtResource("7_visualroot")
-VisualId = "mesh_shard_frost"
-
-[node name="ShardNorth" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.1, -56)
-script = ExtResource("14_shard")
-ShardId = "shd_frost_rune"
-
-[node name="VisualRoot" type="Node3D" parent="ShardNorth"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
-script = ExtResource("7_visualroot")
-VisualId = "mesh_shard_frost"
-
-[node name="ShardSouthEast" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0.1, 50)
-script = ExtResource("14_shard")
-ShardId = "shd_frost_rune"
-
-[node name="VisualRoot" type="Node3D" parent="ShardSouthEast"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
-script = ExtResource("7_visualroot")
-VisualId = "mesh_shard_frost"
+; The shards are no longer placed here: the zone stands four at random spots (REF-06).
 
 ; The borders, in opposite corners: back to the Ridge bottom left, into the Demon Tower top right from level 18.
 

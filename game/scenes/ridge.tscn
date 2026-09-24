@@ -1095,37 +1095,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47, 0, -44)
 script = ExtResource("5_spawnfield")
 FieldId = "spf_ridge_queen"
 
-; The map's three shards. Each respawns two minutes after it breaks.
-
-[node name="ShardSouthWest" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 0.1, 44)
-script = ExtResource("14_shard")
-ShardId = "shd_webbed_stone"
-
-[node name="VisualRoot" type="Node3D" parent="ShardSouthWest"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.45, 0)
-script = ExtResource("7_visualroot")
-VisualId = "mesh_shard_web"
-
-[node name="ShardNorth" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.1, -56)
-script = ExtResource("14_shard")
-ShardId = "shd_webbed_stone"
-
-[node name="VisualRoot" type="Node3D" parent="ShardNorth"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.45, 0)
-script = ExtResource("7_visualroot")
-VisualId = "mesh_shard_web"
-
-[node name="ShardSouthEast" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 56, 0.1, 36)
-script = ExtResource("14_shard")
-ShardId = "shd_webbed_stone"
-
-[node name="VisualRoot" type="Node3D" parent="ShardSouthEast"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.45, 0)
-script = ExtResource("7_visualroot")
-VisualId = "mesh_shard_web"
+; The shards are no longer placed here: the zone stands four at random spots (REF-06).
 
 ; The borders, in opposite corners: back to the Vale Floor bottom right, on to the Broken Gate top left (level 14 and the spiders' quest).
 

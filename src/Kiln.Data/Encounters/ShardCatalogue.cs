@@ -13,10 +13,16 @@ public sealed class ShardCatalogue : IEnemyRoster
 {
     private readonly Dictionary<string, ShardTier> _tiers = [];
     private readonly ContentDatabase _content;
+    private readonly IReadOnlySet<string>? _pool;
 
-    public ShardCatalogue(ContentDatabase content)
+    /// <param name="pool">
+    /// The creatures a wave may draw on — a map's own (see <see cref="ZonePool"/>). A role the
+    /// pool has nobody for falls back to the whole game at the shard's level.
+    /// </param>
+    public ShardCatalogue(ContentDatabase content, IReadOnlySet<string>? pool = null)
     {
         _content = content;
+        _pool = pool is { Count: > 0 } ? pool : null;
 
         foreach (var (id, def) in content.Shards) _tiers[id] = ToTier(def);
     }
@@ -32,18 +38,58 @@ public sealed class ShardCatalogue : IEnemyRoster
     /// </summary>
     public IReadOnlyList<string> ByRole(EnemyRole role, int level)
     {
-        foreach (var band in (int[])[4, 8, int.MaxValue])
-        {
-            var matches = _content.Enemies.Values
-                .Where(e => e.Role == role && Math.Abs(e.Level - level) <= band)
-                .Select(e => e.Id)
-                .ToList();
+        // Never a boss: a wave of bruisers used to be able to draw Greymane or Gorthak, who
+        // are bruisers too (REF-06).
+        var anyone = _content.Enemies.Values.Where(e => !e.Boss);
+        var sources = _pool is null ? [anyone] : new[] { anyone.Where(e => _pool.Contains(e.Id)), anyone };
 
-            if (matches.Count > 0) return matches;
+        foreach (var source in sources)
+        {
+            foreach (var band in (int[])[4, 8, int.MaxValue])
+            {
+                var matches = source
+                    .Where(e => e.Role == role && Math.Abs(e.Level - level) <= band)
+                    .Select(e => e.Id)
+                    .ToList();
+
+                if (matches.Count > 0) return matches;
+            }
         }
 
         return [];
     }
+
+    /// <summary>
+    /// The creatures that live on a map: every one its camps spawn and its tower floors send.
+    /// A shard's waves come from here, so a stone in the orc valley raises orcs, not rats.
+    /// </summary>
+    public static IReadOnlySet<string> ZonePool(ContentDatabase content, string zoneId)
+    {
+        var pool = new HashSet<string>(StringComparer.Ordinal);
+
+        if (!content.Zones.TryGetValue(zoneId, out var zone)) return pool;
+
+        foreach (var field in zone.SpawnFields)
+        {
+            foreach (var entry in field.Entries) pool.Add(entry.Enemy);
+        }
+
+        foreach (var floor in zone.Floors)
+        {
+            foreach (var wave in floor.Waves) pool.Add(wave);
+        }
+
+        return pool;
+    }
+
+    /// <summary>The map's boss — the one its camps hold — or null when it has none.</summary>
+    public static string? ZoneBoss(ContentDatabase content, string zoneId) =>
+        content.Zones.TryGetValue(zoneId, out var zone)
+            ? zone.SpawnFields
+                .SelectMany(f => f.Entries)
+                .Select(e => e.Enemy)
+                .FirstOrDefault(id => content.Enemies.TryGetValue(id, out var def) && def.Boss)
+            : null;
 
     public static ShardTier ToTier(ShardDef def)
     {

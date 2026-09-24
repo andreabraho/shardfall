@@ -32,6 +32,7 @@ public partial class ZoneRoot : Node3D
         GameWorld.EnterZone(ZoneId);
         Audio.AudioDirector.Music(GameContent.Database.Zones.TryGetValue(ZoneId, out var here) ? here.Music : "");
         PlaceArrivingPlayer();
+        StandShards();
         Audit();
 
         // Every border is a checkpoint. Deferred so a tower has already put the player on their
@@ -65,6 +66,27 @@ public partial class ZoneRoot : Node3D
     /// spawn. A missing arrival is a warning rather than an error: the player still lands
     /// somewhere sensible, and failing to load the map over it would be a worse trade.
     /// </remarks>
+    /// <summary>
+    /// Puts the map's shards into it (REF-06): as many as the zone says, each finding its own
+    /// random spot once the navigation mesh is up. None is placed in the scene any more.
+    /// </summary>
+    private void StandShards()
+    {
+        if (!GameContent.Database.Zones.TryGetValue(ZoneId, out var zone) || zone.Shards.Length == 0) return;
+
+        for (var i = 0; i < zone.ShardCount; i++)
+        {
+            var id = zone.Shards[i % zone.Shards.Length];
+            var look = GameContent.Database.Shards.TryGetValue(id, out var def) && def.Visual is { } v ? v : "mesh_placeholder_monolith";
+            var height = GameContent.Database.Visuals.TryGetValue(look, out var visual) ? (float)visual.Height : 3.2f;
+
+            var shard = new ShardNode { Name = $"Shard{i + 1}", ShardId = id, Roams = true };
+            shard.AddChild(new Visual.VisualRoot { Name = "VisualRoot", VisualId = look, Position = new Vector3(0, height / 2, 0) });
+
+            AddChild(shard);
+        }
+    }
+
     private void PlaceArrivingPlayer()
     {
         // A load puts the player exactly where they saved, which beats any arrival point.

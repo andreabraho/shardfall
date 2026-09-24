@@ -91,7 +91,8 @@
         "radius": 3
       }
     ],
-    "shards": ["shd_mossbound_stone"]
+    "shards": ["shd_mossbound_stone"],
+    "shard_count": 4
   },
   {
     "id": "zone_vale_approach",
@@ -198,7 +199,8 @@
         "radius": 3
       }
     ],
-    "shards": ["shd_raider_standard"]
+    "shards": ["shd_raider_standard"],
+    "shard_count": 4
   },
   {
     "id": "zone_vale_floor",
@@ -296,7 +298,8 @@
         "radius": 3
       }
     ],
-    "shards": ["shd_war_totem"]
+    "shards": ["shd_war_totem"],
+    "shard_count": 4
   },
   {
     "id": "zone_ridge",
@@ -394,7 +397,8 @@
         "radius": 3
       }
     ],
-    "shards": ["shd_webbed_stone"]
+    "shards": ["shd_webbed_stone"],
+    "shard_count": 4
   },
   {
     "id": "zone_broken_gate",
@@ -492,7 +496,8 @@
         "radius": 3
       }
     ],
-    "shards": ["shd_frost_rune"]
+    "shards": ["shd_frost_rune"],
+    "shard_count": 4
   },
   {
     "id": "zone_catacombs",

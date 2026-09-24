@@ -1173,37 +1173,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 56, 0, -40)
 script = ExtResource("5_spawnfield")
 FieldId = "spf_floor_warlord"
 
-; The map's three shards. Each respawns two minutes after it breaks.
-
-[node name="ShardSouthWest" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -44, 0.1, 40)
-script = ExtResource("14_shard")
-ShardId = "shd_war_totem"
-
-[node name="VisualRoot" type="Node3D" parent="ShardSouthWest"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0)
-script = ExtResource("7_visualroot")
-VisualId = "mesh_shard_totem"
-
-[node name="ShardNorth" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.1, -56)
-script = ExtResource("14_shard")
-ShardId = "shd_war_totem"
-
-[node name="VisualRoot" type="Node3D" parent="ShardNorth"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0)
-script = ExtResource("7_visualroot")
-VisualId = "mesh_shard_totem"
-
-[node name="ShardSouthEast" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 56, 0.1, 40)
-script = ExtResource("14_shard")
-ShardId = "shd_war_totem"
-
-[node name="VisualRoot" type="Node3D" parent="ShardSouthEast"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0)
-script = ExtResource("7_visualroot")
-VisualId = "mesh_shard_totem"
+; The shards are no longer placed here: the zone stands four at random spots (REF-06).
 
 ; The borders, in opposite corners: back to the Approach bottom left, on to the Ridge top right from level 10.
 

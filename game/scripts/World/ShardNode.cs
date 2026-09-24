@@ -51,6 +51,20 @@ public partial class ShardNode : StaticBody3D
     /// <summary>Whether the adds go straight for the player wherever they land (tower floors).</summary>
     [Export] public bool HuntingAdds { get; set; }
 
+    /// <summary>
+    /// Takes a random spot on the map each time it appears (REF-06): the field shards have no
+    /// fixed place, so finding one is part of the map and not a route to learn.
+    /// </summary>
+    [Export] public bool Roams { get; set; }
+
+    /// <summary>How far from the map's centre a roaming shard may stand, in metres.</summary>
+    private const float RoamExtent = 62f;
+
+    private bool _awaitingPlace;
+    private int _roamAttempts;
+    private CollisionShape3D? _collision;
+    private bool _bringsBoss;
+
     /// <summary>Raised once when the stone breaks.</summary>
     public event System.Action? Broken;
 
@@ -120,7 +134,7 @@ public partial class ShardNode : StaticBody3D
 
         CallDeferred(Node.MethodName.AddChild, _plate);
 
-        var collision = new CollisionShape3D
+        var collision = _collision = new CollisionShape3D
         {
             Name = "Collision",
             Shape = new CylinderShape3D { Radius = 1.2f, Height = 3.2f },
@@ -142,11 +156,7 @@ public partial class ShardNode : StaticBody3D
         {
             _broken = true;
             _respawnIn = due - PlayerProfile.PlayTime;
-
-            if (_visual is not null) _visual.Visible = false;
-            if (_glow is not null) _glow.Visible = false;
-
-            _plate.Visible = false;
+            Show(false);
 
             GD.Print($"[shard] {ShardId} still broken — back in {_respawnIn:F0} s");
             return;
@@ -212,7 +222,26 @@ public partial class ShardNode : StaticBody3D
         _plate.Tint = new Color(ModifierTint(_modifier));
         _plate.Visible = true;
 
-        GD.Print($"[shard] {ShardId} armed — tier {_tier.Tier}, {_tier.MaxHp:N0} hp, modifier {_modifier}");
+        // One fight in twenty on the field calls the map's boss in at phase two.
+        _bringsBoss = Persistent
+            && GameContent.Database.Shards.TryGetValue(ShardId, out var chanceDef)
+            && GameItems.EncounterRng.Chance(chanceDef.BossChance)
+            && Kiln.Data.Encounters.ShardCatalogue.ZoneBoss(GameContent.Database, GameWorld.CurrentZoneId) is not null;
+
+        // A roaming stone stays out of sight until it has somewhere to stand.
+        if (Roams)
+        {
+            _awaitingPlace = true;
+            _roamAttempts = 0;
+            Show(false);
+        }
+        else
+        {
+            Show(true);
+        }
+
+        GD.Print($"[shard] {ShardId} armed — tier {_tier.Tier}, {_tier.MaxHp:N0} hp, modifier {_modifier}"
+            + (_bringsBoss ? ", calls the boss" : ""));
 
         EmitSignal(SignalName.EncounterChanged);
     }
@@ -236,6 +265,14 @@ public partial class ShardNode : StaticBody3D
         }
 
         if (_fight is null || _tier is null) return;
+
+        if (_awaitingPlace)
+        {
+            if (!Roam()) return;
+
+            _awaitingPlace = false;
+            Show(true);
+        }
 
         PruneAdds();
 
@@ -311,7 +348,12 @@ public partial class ShardNode : StaticBody3D
     {
         if (_tier?.WaveFor(phase) is not { } wave || _enemyScene is null || !GameContent.IsLoaded) return;
 
-        var roster = new Kiln.Data.Encounters.ShardCatalogue(GameContent.Database);
+        if (phase == ShardPhase.Two && _bringsBoss) SummonBoss();
+
+        // The map's own creatures, so the stone belongs to where it stands.
+        var roster = new Kiln.Data.Encounters.ShardCatalogue(
+            GameContent.Database,
+            Kiln.Data.Encounters.ShardCatalogue.ZonePool(GameContent.Database, GameWorld.CurrentZoneId));
         var composed = WaveComposer.Compose(wave, roster, _tier.Level, GameItems.EncounterRng);
         var index = 0;
 
@@ -359,6 +401,140 @@ public partial class ShardNode : StaticBody3D
 
         GD.Print($"[shard] wave {phase}: {composed.Count} adds"
             + (composed.Any(c => c.IsAnchor) ? " (anchor marked)" : ""));
+    }
+
+    /// <summary>
+    /// The map's boss, called by the stone (REF-06). Not one of the adds: breaking the stone
+    /// does not kill it, it is fought for itself, and it leaves once it gives the fight up.
+    /// </summary>
+    private void SummonBoss()
+    {
+        _bringsBoss = false;
+
+        var id = Kiln.Data.Encounters.ShardCatalogue.ZoneBoss(GameContent.Database, GameWorld.CurrentZoneId);
+
+        if (id is null || _enemyScene?.Instantiate() is not EnemyBrain boss) return;
+
+        boss.EnemyId = id;
+        boss.Name = $"{Name}_Boss_{Time.GetTicksMsec()}";
+        boss.LeavesOnReset = true;
+
+        (GetTree().CurrentScene?.GetNodeOrNull<Node3D>("Enemies") ?? GetParent()).AddChild(boss);
+        boss.PlaceAt(GlobalPosition + new Vector3(SpawnRing, 0, 0).Rotated(Vector3.Up, (float)GameItems.EncounterRng.NextDouble(0, Mathf.Tau)));
+        boss.Engage();
+
+        UI.WorldNotice.Show(GetTree(), L10n.F("{0} answers the stone's call!", GameItems.Localise(boss.Self.DisplayName)));
+        Camera.CameraRig.Kick(Vector3.Up, 1.0f);
+        GD.Print($"[shard] {ShardId} called {id}");
+    }
+
+    /// <summary>Shows or hides the stone, and takes its body out of the way while hidden.</summary>
+    private void Show(bool shown)
+    {
+        if (_visual is not null) _visual.Visible = shown;
+        if (_glow is not null) _glow.Visible = shown;
+
+        _plate.Visible = shown;
+        _collision?.SetDeferred(CollisionShape3D.PropertyName.Disabled, !shown);
+    }
+
+    /// <summary>
+    /// Finds the stone a spot: on walkable ground, clear of anything built or grown there, and
+    /// well away from villages, borders, shrines, camps, the other stones and the player.
+    /// </summary>
+    /// <remarks>
+    /// Waits for the navigation mesh, which is only ready a frame or two after the map loads.
+    /// A map crowded enough to turn every try down loosens the rules rather than leave the
+    /// stone out of the world: first the clearance, then everything but safe ground.
+    /// </remarks>
+    private bool Roam()
+    {
+        var map = GetWorld3D().NavigationMap;
+
+        if (NavigationServer3D.MapGetIterationId(map) == 0) return false;
+
+        var attempt = _roamAttempts++;
+        var strict = attempt < 6;
+        var loose = attempt >= 12;
+        var rng = GameItems.EncounterRng;
+
+        for (var i = 0; i < 40; i++)
+        {
+            var candidate = new Vector3(
+                (float)rng.NextDouble(-RoamExtent, RoamExtent),
+                0,
+                (float)rng.NextDouble(-RoamExtent, RoamExtent));
+
+            var point = NavigationServer3D.MapGetClosestPoint(map, candidate);
+
+            if ((point with { Y = 0 }).DistanceTo(candidate) > 1.5f) continue;
+            if (!loose && !FarFromEverything(point)) continue;
+            if (loose && GameWorld.IsSafe(point)) continue;
+            if (strict && !Clear(point)) continue;
+
+            GlobalPosition = point;
+            GD.Print($"[shard] {Name} ({ShardId}) stands at {point.X:F0}, {point.Z:F0}");
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool FarFromEverything(Vector3 point)
+    {
+        // Its whole zone clear of safe ground, or walking out of the village starts the fight.
+        if (GameWorld.IsSafe(point)) return false;
+
+        for (var k = 0; k < 8; k++)
+        {
+            var edge = point + (new Vector3(ZoneRadius + 4f, 0, 0).Rotated(Vector3.Up, Mathf.Tau * k / 8));
+            if (GameWorld.IsSafe(edge)) return false;
+        }
+
+        if (Near(point, "zone_gates", 24f) || Near(point, "zone_arrivals", 24f) || Near(point, "shrines", 16f)) return false;
+
+        foreach (var node in GetTree().GetNodesInGroup("shards"))
+        {
+            // One still looking for its own spot is nowhere yet.
+            if (node is ShardNode { _awaitingPlace: false } other && other != this && other.GlobalPosition.DistanceTo(point) < 30f) return false;
+        }
+
+        foreach (var node in GetTree().GetNodesInGroup("spawn_fields"))
+        {
+            if (node is not SpawnFieldNode field) continue;
+
+            var boss = field.Def?.Entries.Any(e => GameContent.Database.Enemies.TryGetValue(e.EnemyId, out var def) && def.Boss) == true;
+            var keep = boss ? 28f : (float)(field.Def?.Radius ?? 7.0) + 6f;
+
+            if (field.GlobalPosition.DistanceTo(point) < keep) return false;
+        }
+
+        return GetTree().GetFirstNodeInGroup("player") is not Node3D player
+            || player.GlobalPosition.DistanceTo(point) >= ZoneRadius + 6f;
+    }
+
+    private bool Near(Vector3 point, string group, float distance)
+    {
+        foreach (var node in GetTree().GetNodesInGroup(group))
+        {
+            if (node is Node3D marker && marker.GlobalPosition.DistanceTo(point) < distance) return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>Nothing solid where the stone would stand: no house, rock, tree or wall.</summary>
+    private bool Clear(Vector3 point)
+    {
+        var query = new PhysicsShapeQueryParameters3D
+        {
+            Shape = new SphereShape3D { Radius = 2.2f },
+            Transform = new Transform3D(Basis.Identity, point + (Vector3.Up * 2.5f)),
+            CollisionMask = Foundation.Layers.World,
+            Exclude = [GetRid()],
+        };
+
+        return GetWorld3D().DirectSpaceState.IntersectShape(query, 1).Count == 0;
     }
 
     private void PruneAdds() => _adds.RemoveAll(a => !IsInstanceValid(a) || a.IsDead);
@@ -430,10 +606,7 @@ public partial class ShardNode : StaticBody3D
         // the player's bag and the experience table, and when that threw, the shard was left
         // standing there at zero health with its name still floating over it — beaten, and
         // still on the map. Whether the shard is gone is the shard's own business.
-        if (_visual is not null) _visual.Visible = false;
-            if (_glow is not null) _glow.Visible = false;
-
-        _plate.Visible = false;
+        Show(false);
 
         EmitSignal(SignalName.EncounterChanged);
 
@@ -459,22 +632,15 @@ public partial class ShardNode : StaticBody3D
             ? GameContent.Database.DropTables.GetValueOrDefault(_tier.DropTable)
             : null;
 
-        // A shard always gives something. The burst is the payoff for a fight the player
-        // could not walk away from.
+        // A shard always gives something: its own table (REF-06), whose picks are its
+        // guaranteed drops, with the yang in the table rather than multiplied here.
         var rng = GameItems.LootRng;
-
-        for (var i = 0; i < 3; i++)
-        {
-            if (LootRoller.RollOne(table, rng) is { } item) LootDrop.Spawn(GetParent(), item, GlobalPosition, rng);
-        }
-
         var loot = LootRoller.Roll(table, rng);
 
         if (loot.Yang > 0)
         {
-            var yang = loot.Yang * 6;
-            bag.Bag.AddYang(yang);
-            CombatFeedback.Yang(GlobalPosition + (Vector3.Up * 2.4f), yang);
+            bag.Bag.AddYang(loot.Yang);
+            CombatFeedback.Yang(GlobalPosition + (Vector3.Up * 2.4f), loot.Yang);
         }
 
         foreach (var item in loot.Items) LootDrop.Spawn(GetParent(), item, GlobalPosition, rng);

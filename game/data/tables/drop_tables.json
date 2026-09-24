@@ -288,5 +288,157 @@
       { "item": "mat_shard_essence", "weight": 0, "chance": 0.6, "count_range": [1, 2] },
       { "item": "mat_radiant_core", "weight": 0, "chance": 0.3, "count_range": [1, 1] }
     ]
+  },
+
+  // -- Shards (REF-06): a table each, picks guaranteed, a gem for the sockets in a third of breaks --
+  // The Hollow's mossbound stone.
+  {
+    "id": "dt_shard_moss",
+    "yang_range": [800, 1600],
+    "picks": 2,
+    "entries": [
+      { "item": "wpn_worn_blade", "weight": 8, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "arm_padded_coat", "weight": 8, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "bts_worn_boots", "weight": 8, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "shd_wooden_buckler", "weight": 8, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "rng_tin_band", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "hlm_leather_cap", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "wpn_hunters_axe", "weight": 6, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "brc_leather_band", "weight": 5, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "mat_iron_scrap", "weight": 0, "chance": 1, "count_range": [2, 4] },
+      { "item": "mat_tempering_oil", "weight": 0, "chance": 0.3, "count_range": [1, 1] },
+      { "item": "mat_boring_stone", "weight": 0, "chance": 0.3, "count_range": [1, 1] },
+      { "item": "stn_ember", "weight": 0, "chance": 0.184, "count_range": [1, 1] },
+      { "item": "stn_granite", "weight": 0, "chance": 0.184, "count_range": [1, 1] }
+    ]
+  },
+  // The Approach's raider standard.
+  {
+    "id": "dt_shard_raider",
+    "yang_range": [1600, 3400],
+    "picks": 2,
+    "entries": [
+      { "item": "wpn_hunters_axe", "weight": 8, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "arm_leather_vest", "weight": 8, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "hlm_leather_cap", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "bts_scout_boots", "weight": 6, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "brc_leather_band", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "nck_bone_charm", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "ear_copper_stud", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "rng_tin_band", "weight": 6, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "shd_wooden_buckler", "weight": 6, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "mat_iron_scrap", "weight": 0, "chance": 1, "count_range": [3, 5] },
+      { "item": "mat_tempering_oil", "weight": 0, "chance": 0.4, "count_range": [1, 1] },
+      { "item": "mat_boring_stone", "weight": 0, "chance": 0.35, "count_range": [1, 1] },
+      { "item": "stn_ember", "weight": 0, "chance": 0.184, "count_range": [1, 1] },
+      { "item": "stn_granite", "weight": 0, "chance": 0.184, "count_range": [1, 1] }
+    ]
+  },
+  // The orc valley's war totem.
+  {
+    "id": "dt_shard_totem",
+    "yang_range": [4500, 9500],
+    "picks": 2,
+    "entries": [
+      { "item": "wpn_iron_sword", "weight": 8, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "wpn_bronze_spear", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "shd_banded_shield", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "hlm_iron_helm", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "rng_hunters_signet", "weight": 6, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "arm_scale_hauberk", "weight": 6, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "brc_iron_bracer", "weight": 6, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "bts_scout_boots", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "mat_iron_scrap", "weight": 0, "chance": 1, "count_range": [4, 6] },
+      { "item": "mat_tempering_oil", "weight": 0, "chance": 0.5, "count_range": [1, 2] },
+      { "item": "mat_boring_stone", "weight": 0, "chance": 0.4, "count_range": [1, 1] },
+      { "item": "mat_mutation_ink", "weight": 0, "chance": 0.15, "count_range": [1, 1] },
+      { "item": "stn_ember", "weight": 0, "chance": 0.126, "count_range": [1, 1] },
+      { "item": "stn_granite", "weight": 0, "chance": 0.126, "count_range": [1, 1] },
+      { "item": "stn_falcon", "weight": 0, "chance": 0.126, "count_range": [1, 1] }
+    ]
+  },
+  // The Ridge's webbed stone.
+  {
+    "id": "dt_shard_web",
+    "yang_range": [8500, 19000],
+    "picks": 2,
+    "entries": [
+      { "item": "wpn_ridge_cleaver", "weight": 8, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "bts_ridge_greaves", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "arm_ridge_mail", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "shd_ridge_bulwark", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "ear_jade_drop", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "nck_silver_pendant", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "brc_iron_bracer", "weight": 6, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "mat_steel_core", "weight": 0, "chance": 0.35, "count_range": [1, 1] },
+      { "item": "mat_tempering_oil", "weight": 0, "chance": 0.6, "count_range": [1, 2] },
+      { "item": "mat_boring_stone", "weight": 0, "chance": 0.45, "count_range": [1, 1] },
+      { "item": "mat_mutation_ink", "weight": 0, "chance": 0.2, "count_range": [1, 1] },
+      { "item": "stn_falcon", "weight": 0, "chance": 0.126, "count_range": [1, 1] },
+      { "item": "stn_thorn", "weight": 0, "chance": 0.126, "count_range": [1, 1] },
+      { "item": "stn_ward", "weight": 0, "chance": 0.126, "count_range": [1, 1] }
+    ]
+  },
+  // The Broken Gate's frost rune.
+  {
+    "id": "dt_shard_frost",
+    "yang_range": [13000, 29000],
+    "picks": 2,
+    "entries": [
+      { "item": "wpn_warden_pike", "weight": 8, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "wpn_steel_sword", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "hlm_warden_crown", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "rng_warden_seal", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "brc_warden_vambrace", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "nck_shard_locket", "weight": 6, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "ear_stormglass", "weight": 5, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "arm_warden_plate", "weight": 3, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "mat_steel_core", "weight": 0, "chance": 0.5, "count_range": [1, 2] },
+      { "item": "mat_tempering_oil", "weight": 0, "chance": 0.6, "count_range": [1, 2] },
+      { "item": "mat_boring_stone", "weight": 0, "chance": 0.5, "count_range": [1, 1] },
+      { "item": "mat_mutation_ink", "weight": 0, "chance": 0.3, "count_range": [1, 1] },
+      { "item": "stn_bane_undead", "weight": 0, "chance": 0.126, "count_range": [1, 1] },
+      { "item": "stn_bane_animal", "weight": 0, "chance": 0.126, "count_range": [1, 1] },
+      { "item": "stn_bane_devil", "weight": 0, "chance": 0.126, "count_range": [1, 1] }
+    ]
+  },
+  // The tower's first floor: the demon stone.
+  {
+    "id": "dt_shard_demon",
+    "yang_range": [15000, 33000],
+    "picks": 2,
+    "entries": [
+      { "item": "wpn_ember_edge", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "bts_ashen_striders", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "rng_ashen_circle", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "hlm_ashen_visor", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "ear_stormglass", "weight": 6, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "arm_warden_plate", "weight": 6, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "wpn_gravecaller", "weight": 5, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "mat_steel_core", "weight": 0, "chance": 0.7, "count_range": [1, 2] },
+      { "item": "mat_shard_essence", "weight": 0, "chance": 0.2, "count_range": [1, 1] },
+      { "item": "mat_boring_stone", "weight": 0, "chance": 0.5, "count_range": [1, 1] },
+      { "item": "mat_mutation_ink", "weight": 0, "chance": 0.35, "count_range": [1, 1] },
+      { "item": "stn_bane_undead", "weight": 0, "chance": 0.126, "count_range": [1, 1] },
+      { "item": "stn_bane_animal", "weight": 0, "chance": 0.126, "count_range": [1, 1] },
+      { "item": "stn_bane_devil", "weight": 0, "chance": 0.126, "count_range": [1, 1] }
+    ]
+  },
+  // The tower's seventh floor: four small shards against the clock, one pick each.
+  {
+    "id": "dt_shard_demon_small",
+    "yang_range": [4000, 9000],
+    "picks": 1,
+    "entries": [
+      { "item": "wpn_ember_edge", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "bts_ashen_striders", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "rng_ashen_circle", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "hlm_ashen_visor", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "ear_stormglass", "weight": 6, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "mat_steel_core", "weight": 0, "chance": 0.3, "count_range": [1, 1] },
+      { "item": "mat_boring_stone", "weight": 0, "chance": 0.25, "count_range": [1, 1] },
+      { "item": "stn_bane_undead", "weight": 0, "chance": 0.184, "count_range": [1, 1] },
+      { "item": "stn_bane_devil", "weight": 0, "chance": 0.184, "count_range": [1, 1] }
+    ]
   }
 ]

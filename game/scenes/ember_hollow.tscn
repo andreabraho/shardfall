@@ -629,37 +629,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -54, 0, -54)
 script = ExtResource("5_spawnfield")
 FieldId = "spf_hollow_den"
 
-; The map's three shards. Each respawns two minutes after it breaks.
-
-[node name="ShardNorthEast" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 0.1, -34)
-script = ExtResource("14_shard")
-ShardId = "shd_mossbound_stone"
-
-[node name="VisualRoot" type="Node3D" parent="ShardNorthEast"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9, 0)
-script = ExtResource("7_visualroot")
-VisualId = "mesh_shard_moss"
-
-[node name="ShardSouthWest" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 0.1, 32)
-script = ExtResource("14_shard")
-ShardId = "shd_mossbound_stone"
-
-[node name="VisualRoot" type="Node3D" parent="ShardSouthWest"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9, 0)
-script = ExtResource("7_visualroot")
-VisualId = "mesh_shard_moss"
-
-[node name="ShardNorth" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0.1, -54)
-script = ExtResource("14_shard")
-ShardId = "shd_mossbound_stone"
-
-[node name="VisualRoot" type="Node3D" parent="ShardNorth"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9, 0)
-script = ExtResource("7_visualroot")
-VisualId = "mesh_shard_moss"
+; The shards are no longer placed here: the zone stands four at random spots (REF-06).
 
 ; Posts on the ground between the gates and the camps, to steer by.
 

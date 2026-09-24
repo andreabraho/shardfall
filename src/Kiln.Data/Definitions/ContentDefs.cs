@@ -380,6 +380,12 @@ public sealed class ShardDef : ContentDefBase
 
     /// <summary>Shard Essence granted on the break, before any modifier bonus.</summary>
     public int Essence { get; init; } = 1;
+
+    /// <summary>
+    /// Chance that the fight calls the map's boss into it at phase two (REF-06): what makes a
+    /// stone something to walk up to carefully.
+    /// </summary>
+    public double BossChance { get; init; }
 }
 
 public sealed class ShardWaveDef
@@ -630,6 +636,12 @@ public sealed class ZoneDef : ContentDefBase
 
     /// <summary>Shard node ids this zone may host. The scene decides where they stand.</summary>
     public string[] Shards { get; init; } = [];
+
+    /// <summary>
+    /// How many shards stand on the map at once (REF-06). Each takes a random spot when it
+    /// appears, and a new one every time it comes back: none has a fixed place.
+    /// </summary>
+    public int ShardCount { get; init; }
 
     /// <summary>
     /// The floors of a tower, in descending order (FR-7.11). Empty for every zone that is not
