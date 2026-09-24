@@ -25,15 +25,15 @@ public partial class TelegraphVisual : Node3D
     private float _angle;
     private bool _running;
 
-    [Export] public Color Color { get; set; } = new(1f, 0.35f, 0.28f);
+    [Export] public Color Color { get; set; } = new(0.62f, 0.06f, 0.05f);
 
     /// <summary>Metres across the outline band.</summary>
-    private const float OutlineWidth = 0.14f;
+    private const float OutlineWidth = 0.07f;
 
     public override void _Ready()
     {
         _fillMaterial = Material(0.12f);
-        _edgeMaterial = Material(0.5f);
+        _edgeMaterial = Material(0.12f);
 
         _fill = new MeshInstance3D { MaterialOverride = _fillMaterial, CastShadow = GeometryInstance3D.ShadowCastingSetting.Off };
         _edge = new MeshInstance3D { MaterialOverride = _edgeMaterial, CastShadow = GeometryInstance3D.ShadowCastingSetting.Off };
@@ -101,7 +101,9 @@ public partial class TelegraphVisual : Node3D
         _fill.Scale = new Vector3(Mathf.Max(t, 0.001f), 1, Mathf.Max(t, 0.001f));
 
         // Brighten as it fills, so the last moments are unmistakable even in peripheral vision.
-        _edgeMaterial.AlbedoColor = Color with { A = 0.45f + (0.4f * t) };
+        // Outline and fill at the same transparency (2026-09-24): the edge reads by being a
+        // line, not by being brighter.
+        _edgeMaterial.AlbedoColor = Color with { A = 0.08f + (0.2f * t) };
         _fillMaterial.AlbedoColor = Color with { A = 0.08f + (0.2f * t) };
 
         if (_elapsed >= _duration) Cancel();
