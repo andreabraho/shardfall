@@ -75,6 +75,13 @@ public class ExperienceTableTests
         Assert.True(ExperienceTable.IsTrivial(playerLevel: 20, enemyLevel: 12));
         Assert.False(ExperienceTable.IsTrivial(playerLevel: 20, enemyLevel: 13));
     }
+
+    [Fact]
+    public void TrivialEnemies_DropHalf()
+    {
+        Assert.Equal(0.5, ExperienceTable.LootShare(playerLevel: 20, enemyLevel: 12));
+        Assert.Equal(1.0, ExperienceTable.LootShare(playerLevel: 20, enemyLevel: 13));
+    }
 }
 
 public class CharacterProgressionTests

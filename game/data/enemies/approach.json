@@ -42,6 +42,7 @@
         "applies": { "kind": "bleed", "magnitude": 5, "duration": 4.0 },
         "telegraph": { "shape": "cone", "radius": 3.0, "angle": 90 } }
     ],
+    "traits": { "flank": true },
     "ai": "bt_melee_chaser",
     "aggro_radius": 11,
     "leash_radius": 18,

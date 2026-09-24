@@ -93,7 +93,24 @@ public partial class SpawnFieldNode : Node3D
             return;
         }
 
-        foreach (var enemyId in spawns) Spawn(enemyId);
+        // A creature that comes in groups brings the rest of its group with it, around it —
+        // out of the same population, so a field of four rats is one pack of four, not four
+        // packs. The picks it takes the place of are simply not spawned.
+        for (var next = 0; next < spawns.Count;)
+        {
+            var enemyId = spawns[next];
+            var group = GameContent.Database.Enemies.TryGetValue(enemyId, out var def) ? def.Traits.Group : 1;
+            var size = System.Math.Clamp(group, 1, spawns.Count - next);
+            var at = Scatter();
+
+            for (var i = 0; i < size; i++)
+            {
+                var offset = i == 0 ? Vector3.Zero : new Vector3(Mathf.Cos(i * 2.1f), 0, Mathf.Sin(i * 2.1f)) * 1.6f;
+                Spawn(enemyId, at + offset);
+            }
+
+            next += size;
+        }
 
         if (spawns.Count > 0 && !_reported)
         {
@@ -134,7 +151,7 @@ public partial class SpawnFieldNode : Node3D
         }
     }
 
-    private void Spawn(string enemyId)
+    private void Spawn(string enemyId, Vector3 at)
     {
         if (_enemyScene?.Instantiate() is not Combat.EnemyBrain enemy) return;
 
@@ -143,7 +160,7 @@ public partial class SpawnFieldNode : Node3D
         enemy.Name = $"{FieldId}_{enemyId}_{Time.GetTicksMsec()}_{_mine.Count}";
 
         (_container ?? this).AddChild(enemy);
-        enemy.PlaceAt(Scatter());
+        enemy.PlaceAt(at);
 
         _mine.Add(enemy);
     }

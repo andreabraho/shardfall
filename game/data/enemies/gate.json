@@ -17,6 +17,7 @@
     "abilities": [
       { "id": "abl_minion_claw", "cooldown": 2.6, "windup": 0.6, "damage_coef": 1.05 }
     ],
+    "traits": { "rise": 0.3 },
     "ai": "bt_melee_chaser",
     "aggro_radius": 13,
     "leash_radius": 21,
@@ -35,7 +36,7 @@
     "stats": { "hp": 1020, "attack_power": 78, "defense": 58, "move_speed": 5.5 },
     "abilities": [
       { "id": "abl_frostbone_cleave", "cooldown": 2.6, "windup": 0.6, "damage_coef": 1.05 },
-      { "id": "abl_frostbone_sweep", "cooldown": 8.5, "windup": 2.05, "damage_coef": 1.7, "telegraph": { "shape": "cone", "radius": 4, "angle": 110 } }
+      { "id": "abl_frostbone_sweep", "cooldown": 8.5, "windup": 2.05, "damage_coef": 1.7, "telegraph": { "shape": "cone", "radius": 4, "angle": 110 }, "applies": { "kind": "slow", "magnitude": 0.35, "duration": 2.5 } }
     ],
     "ai": "bt_melee_chaser",
     "aggro_radius": 13,
@@ -54,7 +55,7 @@
     "level": 17,
     "stats": { "hp": 700, "attack_power": 92, "defense": 40, "move_speed": 4.9 },
     "abilities": [
-      { "id": "abl_frost_bolt", "cooldown": 2, "windup": 0.8, "damage_coef": 1.1, "range": 13 },
+      { "id": "abl_frost_bolt", "cooldown": 2, "windup": 0.8, "damage_coef": 1.1, "range": 13, "applies": { "kind": "slow", "magnitude": 0.3, "duration": 2.5 } },
       { "id": "abl_frost_rain", "cooldown": 9, "windup": 2.1, "damage_coef": 1.45, "range": 12, "placement": "target", "telegraph": { "shape": "circle", "radius": 4 } }
     ],
     "ai": "bt_ranged_kiter",

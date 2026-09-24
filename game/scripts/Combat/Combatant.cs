@@ -22,6 +22,9 @@ public partial class Combatant : Node
 
     [Signal] public delegate void HealthChangedEventHandler(float fraction);
 
+    /// <summary>Knocked down instead of killed — the one death <see cref="CheatDeath"/> buys.</summary>
+    [Signal] public delegate void CollapsedEventHandler();
+
     private double _statusAccumulator;
     private double _sinceCombat = 999;
 
@@ -66,6 +69,33 @@ public partial class Combatant : Node
     /// reduction must actually be 70%.
     /// </summary>
     public double IncomingDamageMultiplier { get; set; } = 1.0;
+
+    /// <summary>Scales every blow this combatant lands. An enraged creature's is above one.</summary>
+    public double OutgoingDamageMultiplier { get; set; } = 1.0;
+
+    /// <summary>Fraction of a hit taken from close by that is turned back on the attacker.</summary>
+    public double Thorns { get; set; }
+
+    /// <summary>Metres within which a hit counts as close enough to prick on thorns.</summary>
+    private const float ThornsReach = 4.5f;
+
+    /// <summary>
+    /// The next killing blow knocks it down instead (a bone minion's rise). Spent when used.
+    /// </summary>
+    public bool CheatDeath { get; set; }
+
+    /// <summary>Down and taking nothing, until its owner stands it back up.</summary>
+    public bool Downed { get; private set; }
+
+    /// <summary>Stands a downed combatant back up with this fraction of its health.</summary>
+    public void StandUp(double fraction)
+    {
+        if (!Downed) return;
+
+        Downed = false;
+        Health.SetCurrent(System.Math.Max(1, Health.Max * fraction));
+        EmitSignal(SignalName.HealthChanged, (float)Health.Fraction);
+    }
 
     public override void _Ready() => AddToGroup("combatants");
 
@@ -126,18 +156,8 @@ public partial class Combatant : Node
 
         attacker._sinceCombat = 0;
 
-        // Enemies far below the player stop being a fight: one hit kills them (FR-2.7). Running
-        // back through a cleared zone should cost patience, not time.
-        //
-        // Encounters are exempt. A shard is a designed fight with phases and a payoff, and
-        // deleting a low-tier one in a single click would skip the whole thing rather than
-        // save the player time.
-        if (attacker.IsPlayer && !IsEncounter && ExperienceTable.IsTrivial(attacker.Stats.Level, Stats.Level))
-        {
-            var overkill = (int)Math.Ceiling(Health.Current);
-            ApplyDamage(overkill, critical: true);
-            return new DamageResult(overkill, false, true, false, 0);
-        }
+        // No one-hit kill for enemies far below the player (removed 2026-09-24): they are
+        // outmatched already, and a trivial kill pays half its drops instead.
 
         var result = DamagePipeline.Resolve(request, GameSession.CombatRng);
 
@@ -151,16 +171,25 @@ public partial class Combatant : Node
             result.Amount
             * Statuses.DamageTakenMultiplier
             * attacker.Statuses.DamageDealtMultiplier
+            * attacker.OutgoingDamageMultiplier
             * IncomingDamageMultiplier);
 
         ApplyDamage(Math.Max(1, scaled), result.Critical);
+
+        // Thorns prick only what stands close: a thrown blade or a spell from across the field
+        // is not touching the spines.
+        if (Thorns > 0 && attacker.IsPlayer && attacker.IsAlive
+            && attacker.Body.GlobalPosition.DistanceTo(Body.GlobalPosition) <= ThornsReach)
+        {
+            attacker.ApplyDamage((int)Math.Max(1, Math.Round(scaled * Thorns)));
+        }
         return result with { Amount = scaled };
     }
 
     /// <summary>Applies raw damage, bypassing the pipeline. Used by status ticks and scripted effects.</summary>
     public void ApplyDamage(int amount, bool critical = false)
     {
-        if (!IsAlive || amount <= 0) return;
+        if (!IsAlive || amount <= 0 || Downed) return;
 
         // The backstop for everything that does not come through the pipeline — a bleed
         // carried in from the field, a shard pulse, a scripted effect. Walking into the
@@ -174,7 +203,20 @@ public partial class Combatant : Node
         EmitSignal(SignalName.Damaged, amount, critical, false);
         EmitSignal(SignalName.HealthChanged, (float)Health.Fraction);
 
-        if (Health.Current < 1) Die();
+        if (Health.Current < 1)
+        {
+            if (CheatDeath)
+            {
+                CheatDeath = false;
+                Downed = true;
+                Statuses.Clear();
+                Health.SetCurrent(1);
+                EmitSignal(SignalName.Collapsed);
+                return;
+            }
+
+            Die();
+        }
     }
 
     public void Heal(int amount)

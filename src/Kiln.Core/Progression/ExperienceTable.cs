@@ -92,11 +92,18 @@ public static class ExperienceTable
     }
 
     /// <summary>
-    /// Enemies this far below the player stop being a fight: one hit kills them. They still
-    /// attack (2026-09-24). Running back through a cleared zone should cost patience, not time.
+    /// Enemies this far below the player are trivial: they give no mana back and drop half as
+    /// much (2026-09-24). They are still a fight — no one-hit kill — and they still attack.
     /// </summary>
     public const int TrivialLevelGap = 8;
 
+    /// <summary>The share of yang and item chances a trivial enemy still drops.</summary>
+    public const double TrivialLootShare = 0.5;
+
     public static bool IsTrivial(int playerLevel, int enemyLevel) =>
         enemyLevel <= playerLevel - TrivialLevelGap;
+
+    /// <summary>What fraction of its drop table an enemy pays this player.</summary>
+    public static double LootShare(int playerLevel, int enemyLevel) =>
+        IsTrivial(playerLevel, enemyLevel) ? TrivialLootShare : 1.0;
 }

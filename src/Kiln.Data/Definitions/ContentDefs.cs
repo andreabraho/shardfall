@@ -106,6 +106,40 @@ public sealed class EnemyDef : ContentDefBase
     /// the end of a tower is, so a boss fight is never won by stun-locking it.
     /// </summary>
     public double StunResist { get; init; }
+
+    /// <summary>What sets this creature apart from others of its role (REF-04).</summary>
+    public EnemyTraitsDef Traits { get; init; } = new();
+}
+
+/// <summary>
+/// The small twists that make one creature play differently from another of the same role
+/// (REF-04). Every one defaults to off, except the call for help every creature makes.
+/// </summary>
+public sealed class EnemyTraitsDef
+{
+    /// <summary>Metres within which others join the fight when this one is pulled or hit.</summary>
+    public double CallRadius { get; init; } = 8.0;
+
+    /// <summary>How many arrive together when a spawn field brings one in.</summary>
+    public int Group { get; init; } = 1;
+
+    /// <summary>Circles round to the player's side before closing in.</summary>
+    public bool Flank { get; init; }
+
+    /// <summary>Health fraction at which it enrages; 0 never does.</summary>
+    public double EnrageBelow { get; init; }
+
+    /// <summary>Move speed multiplier once enraged.</summary>
+    public double EnrageSpeed { get; init; } = 1.3;
+
+    /// <summary>Damage multiplier once enraged.</summary>
+    public double EnrageDamage { get; init; } = 1.3;
+
+    /// <summary>Fraction of a close hit's damage turned back on the player.</summary>
+    public double Thorns { get; init; }
+
+    /// <summary>Health fraction it gets back up with, once, after its first death. 0 stays down.</summary>
+    public double Rise { get; init; }
 }
 
 public sealed class EnemyStatsDef

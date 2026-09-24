@@ -121,6 +121,8 @@ public partial class PlayerMotor : CharacterBody3D
         _agent.TargetPosition = GlobalPosition;
     }
 
+    private Combat.Combatant? _combatant;
+
     public override void _PhysicsProcess(double delta)
     {
         _heldFor = System.Math.Max(0, _heldFor - delta);
@@ -131,7 +133,11 @@ public partial class PlayerMotor : CharacterBody3D
                 ? _directionInput
                 : DirectionAlongPath();
 
-        var targetVelocity = desired * MoveSpeed;
+        // A slow from a creature's hit (the adder's spit, frost) bites on the player too.
+        _combatant ??= GetNodeOrNull<Combat.Combatant>("Combatant");
+        var slowed = _combatant is null ? 1f : (float)_combatant.Statuses.MoveSpeedMultiplier;
+
+        var targetVelocity = desired * MoveSpeed * slowed;
         var horizontal = Velocity with { Y = 0 };
 
         var rate = targetVelocity.LengthSquared() > horizontal.LengthSquared()

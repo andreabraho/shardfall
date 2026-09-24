@@ -114,19 +114,20 @@ public sealed record LootRoll(long Yang, IReadOnlyList<ItemInstance> Items);
 /// </remarks>
 public static class LootRoller
 {
-    public static LootRoll Roll(DropTableDef? table, DeterministicRng rng)
+    /// <param name="share">Scales the yang and every item's chance: a trivial kill pays half.</param>
+    public static LootRoll Roll(DropTableDef? table, DeterministicRng rng, double share = 1.0)
     {
         if (table is null) return new LootRoll(0, []);
 
         var yang = table.YangRange.Length > 1
-            ? rng.NextIntInclusive(table.YangRange[0], table.YangRange[1])
+            ? (long)System.Math.Round(rng.NextIntInclusive(table.YangRange[0], table.YangRange[1]) * share)
             : 0;
 
         var items = new List<ItemInstance>();
 
         foreach (var entry in table.Entries)
         {
-            if (!rng.Chance(entry.Chance)) continue;
+            if (!rng.Chance(entry.Chance * share)) continue;
 
             var count = entry.CountRange.Length > 1
                 ? rng.NextIntInclusive(entry.CountRange[0], entry.CountRange[1])

@@ -96,6 +96,13 @@ public partial class CombatFeedback : Node3D
 
     private static readonly Color ManaColor = new("6fa8e8");
 
+    /// <summary>A word over a creature: it enrages, it gets back up.</summary>
+    public static void Callout(Vector3 worldPosition, string text, Color colour)
+        => _instance?.SpawnCallout(worldPosition, text, colour);
+
+    private void SpawnCallout(Vector3 worldPosition, string text, Color colour)
+        => SpawnText(worldPosition, text, colour, NormalFontSize - 2);
+
     /// <summary>Health that came back on its own — the earrings' healing after a kill.</summary>
     public static void Heal(Vector3 worldPosition, int amount) => _instance?.SpawnHeal(worldPosition, amount);
 

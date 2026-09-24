@@ -17,6 +17,7 @@
     "abilities": [
       { "id": "abl_spiderling_bite", "cooldown": 2.4, "windup": 0.55, "damage_coef": 1 }
     ],
+    "traits": { "group": 4 },
     "ai": "bt_melee_chaser",
     "aggro_radius": 12,
     "leash_radius": 20,
@@ -54,7 +55,7 @@
     "level": 13,
     "stats": { "hp": 420, "attack_power": 66, "defense": 28, "move_speed": 4.8 },
     "abilities": [
-      { "id": "abl_venom_spit", "cooldown": 2, "windup": 0.8, "damage_coef": 1.1, "range": 12 },
+      { "id": "abl_venom_spit", "cooldown": 2, "windup": 0.8, "damage_coef": 1.1, "range": 12, "applies": { "kind": "slow", "magnitude": 0.3, "duration": 2.5 } },
       { "id": "abl_venom_rain", "cooldown": 9, "windup": 1.6, "damage_coef": 1.4, "range": 11, "placement": "target", "telegraph": { "shape": "circle", "radius": 2.8 } }
     ],
     "ai": "bt_ranged_kiter",
@@ -77,6 +78,7 @@
       { "id": "abl_thorn_slam", "cooldown": 3.2, "windup": 0.9, "damage_coef": 1.15, "applies": { "kind": "stun", "duration": 0.9, "chance": 0.35 } },
       { "id": "abl_thorn_aegis", "cooldown": 14, "windup": 2, "damage_coef": 0 }
     ],
+    "traits": { "thorns": 0.2 },
     "ai": "bt_support_shielder",
     "aggro_radius": 13,
     "leash_radius": 20,

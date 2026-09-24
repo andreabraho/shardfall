@@ -1574,6 +1574,19 @@ public static class ContentValidator
             }
         }
 
+        foreach (var enemy in db.Enemies.Values)
+        {
+            var t = enemy.Traits;
+
+            if (t.CallRadius is < 0 or > 30 || t.Group is < 1 or > 6 || t.EnrageBelow is < 0 or >= 1
+                || t.EnrageSpeed is < 1 or > 2 || t.EnrageDamage is < 1 or > 2 || t.Thorns is < 0 or > 0.5
+                || t.Rise is < 0 or > 1)
+            {
+                report.Error("traits", enemy.SourceFile, $"'{enemy.Id}' has a trait out of range.",
+                    "call_radius 0–30 m, group 1–6, enrage_below 0–<1, enrage_speed and enrage_damage 1–2, thorns 0–0.5, rise 0–1.");
+            }
+        }
+
         foreach (var enemy in db.Enemies.Values.Where(e => e.StunResist is < 0 or > 1))
         {
             report.Error("stun", enemy.SourceFile, $"'{enemy.Id}' has stun_resist {enemy.StunResist}.",

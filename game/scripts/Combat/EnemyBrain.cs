@@ -57,6 +57,17 @@ public partial class EnemyBrain : CharacterBody3D
     private Vector3 _telegraphCenter;
     private Vector3 _home;
     private bool _dead;
+
+    private EnemyTraitsDef _traits = new();
+    private bool _enraged;
+    private double _downedFor;
+    private MeshInstance3D? _shieldRing;
+
+    /// <summary>Seconds a creature that rises lies on the ground first.</summary>
+    private const double DownedSeconds = 1.8;
+
+    private static readonly Color EnrageColour = new("ff5a3a");
+    private static readonly Color RiseColour = new("c9d6ff");
     private bool _basicChosen;
     private bool _retreating;
     private double _retreatBudget;
@@ -96,8 +107,44 @@ public partial class EnemyBrain : CharacterBody3D
     public Combatant? TargetCombatant { get; private set; }
     public AbilityDef[] Abilities { get; private set; } = [DefaultMelee];
 
-    /// <summary>First ability with a telegraph — the interesting one.</summary>
-    public AbilityDef? SpecialAbility { get; private set; }
+    private readonly List<AbilityDef> _specials = [];
+    private int _lastSpecial = -1;
+
+    /// <summary>
+    /// The telegraphed attack to try next: the first one after the last used that is ready,
+    /// preferring one already in range.
+    /// </summary>
+    /// <remarks>
+    /// Only the first telegraphed ability used to be read, so a boss's second and third
+    /// attacks — Greymane's pounce, the Demon Lord's cataclysm — were written, tuned and never
+    /// seen (REF-04). Taking them in turn after the last one used keeps a short-cooldown opener
+    /// from crowding out the rest.
+    /// </remarks>
+    public AbilityDef? SpecialAbility
+    {
+        get
+        {
+            if (_specials.Count == 0) return null;
+
+            // Mid-attack, the answer must not change under the wind-up.
+            if (_activeAbility is { Telegraph: not null } active) return active;
+
+            AbilityDef? ready = null;
+
+            for (var i = 1; i <= _specials.Count; i++)
+            {
+                var index = (_lastSpecial + i) % _specials.Count;
+                var ability = _specials[index];
+
+                if (!AbilityReady(ability)) continue;
+                if (HasLivingTarget && InRangeOf(ability)) return ability;
+
+                ready ??= ability;
+            }
+
+            return ready ?? _specials[(_lastSpecial + 1) % _specials.Count];
+        }
+    }
 
     /// <summary>First untelegraphed ability, used as the filler swing.</summary>
     public AbilityDef BasicAbility { get; private set; } = DefaultMelee;
@@ -153,6 +200,8 @@ public partial class EnemyBrain : CharacterBody3D
         Self.Damaged += OnDamaged;
         Self.Died += OnDied;
         Self.HealthChanged += f => _bar?.SetFraction(f);
+        Self.HealthChanged += CheckEnrage;
+        Self.Collapsed += OnCollapsed;
     }
 
     private void LoadDefinition()
@@ -171,6 +220,9 @@ public partial class EnemyBrain : CharacterBody3D
         MoveSpeed = (float)def.Stats.MoveSpeed;
         XpReward = def.Xp;
         DropTableId = def.DropTable;
+        _traits = def.Traits;
+        Self.Thorns = _traits.Thorns;
+        Self.CheatDeath = _traits.Rise > 0;
         LabelPlate();
 
         if (def.Abilities.Length > 0) Abilities = def.Abilities;
@@ -179,7 +231,7 @@ public partial class EnemyBrain : CharacterBody3D
         {
             if (ability.Telegraph is not null)
             {
-                SpecialAbility ??= ability;
+                _specials.Add(ability);
                 continue;
             }
 
@@ -241,6 +293,42 @@ public partial class EnemyBrain : CharacterBody3D
         // Being hit pulls an enemy into the fight from outside aggro range — but not while
         // it is walking home, or chasing and poking a leashing enemy restarts the fight.
         if (Target is null) AcquireTarget(force: true);
+    }
+
+    /// <summary>Enrages once, when health first drops past the trait's line.</summary>
+    private void CheckEnrage(float fraction)
+    {
+        if (_enraged || _traits.EnrageBelow <= 0 || fraction > _traits.EnrageBelow || !Self.IsAlive) return;
+
+        _enraged = true;
+        MoveSpeed *= (float)_traits.EnrageSpeed;
+        Self.OutgoingDamageMultiplier = _traits.EnrageDamage;
+
+        (_visual as VisualRoot)?.Flash(0.4);
+        CombatFeedback.Callout(GlobalPosition + (Vector3.Up * 2.2f), L10n.T("Enraged!"), EnrageColour);
+    }
+
+    /// <summary>Knocked down by what would have killed it: lie there, then get back up.</summary>
+    private void OnCollapsed()
+    {
+        _downedFor = DownedSeconds;
+        CancelAbility();
+        ReleaseShields();
+        Velocity = Vector3.Zero;
+
+        _visual?.CreateTween().TweenProperty(_visual, "rotation:x", 1.35f, 0.25);
+    }
+
+    private void TickDowned(double delta)
+    {
+        _downedFor -= delta;
+
+        if (_downedFor > 0) return;
+
+        Self.StandUp(_traits.Rise);
+
+        _visual?.CreateTween().TweenProperty(_visual, "rotation:x", 0f, 0.35);
+        CombatFeedback.Callout(GlobalPosition + (Vector3.Up * 2.2f), L10n.T("Rises again!"), RiseColour);
     }
 
     private void OnDied()
@@ -317,8 +405,12 @@ public partial class EnemyBrain : CharacterBody3D
         var player = GetTree().GetFirstNodeInGroup("player") as Node3D;
         var bag = player?.GetNodeOrNull<Items.PlayerInventory>("PlayerInventory");
 
+        // Half the yang and half each item's chance from something far below the player.
+        var playerLevel = player?.GetNodeOrNull<Combatant>("Combatant")?.Stats.Level ?? 1;
+        var share = Kiln.Core.Progression.ExperienceTable.LootShare(playerLevel, Self.Stats.Level);
+
         var rng = Items.GameItems.LootRng;
-        var loot = Items.LootRoller.Roll(table, rng);
+        var loot = Items.LootRoller.Roll(table, rng, share);
 
         if (loot.Yang > 0 && bag is not null)
         {
@@ -343,6 +435,15 @@ public partial class EnemyBrain : CharacterBody3D
         }
 
         TickCooldowns(delta);
+
+        if (Self.Downed)
+        {
+            TickDowned(delta);
+            Brake(delta);
+            ApplyGravity(delta);
+            MoveAndSlide();
+            return;
+        }
 
         // Checked before the stun branch and before the tree: a creature in the air has no
         // opinion about any of it, and separation would only fight the throw.
@@ -484,7 +585,7 @@ public partial class EnemyBrain : CharacterBody3D
         ReleaseShields();
     }
 
-    private void AcquireTarget(bool force)
+    private void AcquireTarget(bool force, bool alert = true)
     {
         // Deaf while walking home. Otherwise chasing a leashing enemy re-aggros it a metre
         // outside its tether and it simply turns round again.
@@ -508,6 +609,27 @@ public partial class EnemyBrain : CharacterBody3D
 
         Target = player;
         TargetCombatant = combatant;
+
+        if (alert) CallForHelp();
+    }
+
+    /// <summary>
+    /// Pulls the creatures standing nearby into the fight (REF-04). Without it a camp came
+    /// one at a time to whoever hit it first, which is not how a pack behaves and made every
+    /// camp safe to pick apart from its edge. One call, no chain: those who answer do not
+    /// call again, or one wolf would bring the whole field.
+    /// </summary>
+    private void CallForHelp()
+    {
+        if (_traits.CallRadius <= 0) return;
+
+        foreach (var ally in Allies((float)_traits.CallRadius))
+        {
+            if (ally.GetParent() is EnemyBrain { Target: null, _dead: false, _returning: false } other)
+            {
+                other.AcquireTarget(force: true, alert: false);
+            }
+        }
     }
 
     // -- Conditions the trees read -----------------------------------------
@@ -552,11 +674,28 @@ public partial class EnemyBrain : CharacterBody3D
     // -- Actions the trees call --------------------------------------------
 
     /// <summary>Walks toward the target. Always Running: chasing has no natural end.</summary>
+    /// <summary>
+    /// Where a flanker heads: a point beside the player, swung round from the way it is coming
+    /// in, so it closes from the side rather than head on. Near enough, it goes straight in.
+    /// </summary>
+    private Vector3 FlankPoint()
+    {
+        var target = Target!.GlobalPosition;
+        var from = (GlobalPosition - target) with { Y = 0 };
+
+        if (from.Length() < AttackRange + 2.5f || from.LengthSquared() < 0.0001f) return target;
+
+        // Each flanker keeps to one side, so a pair of them splits rather than stacking.
+        var side = (GetInstanceId() & 1) == 0 ? 1f : -1f;
+
+        return target + (from.Normalized().Rotated(Vector3.Up, side * 1.3f) * (AttackRange + 1.5f));
+    }
+
     public BtStatus Chase(double delta)
     {
         if (Target is null) return BtStatus.Failure;
 
-        _agent.TargetPosition = Target.GlobalPosition;
+        _agent.TargetPosition = _traits.Flank ? FlankPoint() : Target.GlobalPosition;
 
         if (_agent.IsNavigationFinished())
         {
@@ -772,6 +911,8 @@ public partial class EnemyBrain : CharacterBody3D
         _telegraph?.Cancel();
         _activeAbility = null;
 
+        if (_specials.IndexOf(ability) is >= 0 and var used) _lastSpecial = used;
+
         if (TargetCombatant is null || !TargetCombatant.IsAlive) return;
 
         // An untelegraphed attack from beyond melee launches a shot instead of resolving
@@ -784,7 +925,8 @@ public partial class EnemyBrain : CharacterBody3D
                 GlobalPosition + (Vector3.Up * 1.2f),
                 TargetCombatant.Body.GlobalPosition + (Vector3.Up * 1.0f),
                 ability.DamageCoef,
-                Layers.Player);
+                Layers.Player,
+                ability.Applies);
 
             return;
         }
@@ -841,16 +983,18 @@ public partial class EnemyBrain : CharacterBody3D
 
             if (!IsInstanceValid(ally) || !nearby.Contains(ally))
             {
-                if (IsInstanceValid(ally)) ally.IncomingDamageMultiplier = 1.0;
+                if (IsInstanceValid(ally)) Shield(ally, false);
                 _shielded.RemoveAt(i);
             }
         }
 
         foreach (var ally in nearby)
         {
-            ally.IncomingDamageMultiplier = ShieldMultiplier;
-
-            if (!_shielded.Contains(ally)) _shielded.Add(ally);
+            if (!_shielded.Contains(ally))
+            {
+                Shield(ally, true);
+                _shielded.Add(ally);
+            }
         }
 
         return nearby.Count > 0 ? BtStatus.Success : BtStatus.Failure;
@@ -858,11 +1002,53 @@ public partial class EnemyBrain : CharacterBody3D
 
     public const double ShieldMultiplier = 0.55;
 
+    /// <summary>Covers or uncovers an ally, and shows it: a blue ring at its feet.</summary>
+    private static void Shield(Combatant ally, bool on)
+    {
+        ally.IncomingDamageMultiplier = on ? ShieldMultiplier : 1.0;
+
+        if (ally.GetParent() is EnemyBrain brain) brain.ShowShieldRing(on);
+    }
+
+    /// <summary>
+    /// The mark of a shielder's cover. The damage cut was invisible before, so a creature that
+    /// took half as much read as a bug rather than a reason to kill the shielder first.
+    /// </summary>
+    private void ShowShieldRing(bool on)
+    {
+        if (!on)
+        {
+            _shieldRing?.QueueFree();
+            _shieldRing = null;
+            return;
+        }
+
+        if (_shieldRing is not null) return;
+
+        _shieldRing = new MeshInstance3D
+        {
+            Name = "ShieldRing",
+            Mesh = new TorusMesh { InnerRadius = 0.85f, OuterRadius = 1.0f, RingSegments = 40 },
+            MaterialOverride = new StandardMaterial3D
+            {
+                AlbedoColor = new Color(0.45f, 0.75f, 1f, 0.7f),
+                EmissionEnabled = true,
+                Emission = new Color(0.3f, 0.6f, 1f),
+                ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
+                Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
+            },
+            CastShadow = GeometryInstance3D.ShadowCastingSetting.Off,
+            Position = Vector3.Up * 0.12f,
+        };
+
+        AddChild(_shieldRing);
+    }
+
     private void ReleaseShields()
     {
         foreach (var ally in _shielded)
         {
-            if (IsInstanceValid(ally)) ally.IncomingDamageMultiplier = 1.0;
+            if (IsInstanceValid(ally)) Shield(ally, false);
         }
 
         _shielded.Clear();

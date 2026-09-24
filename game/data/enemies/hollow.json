@@ -15,6 +15,7 @@
     "abilities": [
       { "id": "abl_rat_nip", "cooldown": 2.3, "windup": 0.45, "damage_coef": 0.85 }
     ],
+    "traits": { "group": 4 },
     "ai": "bt_melee_chaser",
     "aggro_radius": 10,
     "leash_radius": 12,
@@ -57,6 +58,7 @@
       { "id": "abl_wolf_lunge", "cooldown": 8.0, "windup": 1.50, "damage_coef": 1.30,
         "telegraph": { "shape": "cone", "radius": 2.5, "angle": 60 } }
     ],
+    "traits": { "call_radius": 16 },
     "ai": "bt_melee_chaser",
     "aggro_radius": 13,
     "leash_radius": 16,

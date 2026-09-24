@@ -17,6 +17,7 @@
       { "id": "abl_orc_chop", "cooldown": 2.3, "windup": 0.55, "damage_coef": 1 },
       { "id": "abl_orc_leap", "cooldown": 7.5, "windup": 1.55, "damage_coef": 1.5, "telegraph": { "shape": "cone", "radius": 2.5, "angle": 60 } }
     ],
+    "traits": { "enrage_below": 0.3 },
     "ai": "bt_melee_chaser",
     "aggro_radius": 12,
     "leash_radius": 20,

@@ -14,6 +14,7 @@ public partial class Projectile : Node3D
     private double _life;
     private Combatant? _source;
     private double _coefficient = 1.0;
+    private Kiln.Data.Definitions.StatusApplicationDef? _applies;
 
     [Export] public float Speed { get; set; } = 14f;
 
@@ -30,7 +31,8 @@ public partial class Projectile : Node3D
         Vector3 from,
         Vector3 toward,
         double coefficient,
-        uint targetLayers)
+        uint targetLayers,
+        Kiln.Data.Definitions.StatusApplicationDef? applies = null)
     {
         var projectile = new Projectile
         {
@@ -39,6 +41,7 @@ public partial class Projectile : Node3D
         };
 
         parent.AddChild(projectile);
+        projectile._applies = applies;
         projectile.Launch(source, from, toward, coefficient);
         return projectile;
     }
@@ -86,6 +89,7 @@ public partial class Projectile : Node3D
         foreach (var hit in AreaQuery.Sphere(this, GlobalPosition, HitRadius, TargetLayers))
         {
             hit.TakeAttack(_source, skillCoef: _coefficient);
+            StatusApplication.Try(_applies, hit);
             QueueFree();
             return;
         }
