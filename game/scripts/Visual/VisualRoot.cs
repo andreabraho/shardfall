@@ -360,8 +360,26 @@ public partial class VisualRoot : Node3D
         AddChild(_current);
 
         StandOnGround(def);
+        MeasureTop(def, scale);
 
         AdoptAnimator();
+    }
+
+    /// <summary>
+    /// How high above the body's feet the drawn model reaches, in metres. Anything floated
+    /// over a creature — its name, its health bar — goes above this.
+    /// </summary>
+    public float TopHeight { get; private set; } = 1.7f;
+
+    private void MeasureTop(Kiln.Data.Definitions.VisualDef def, double scale)
+    {
+        if (_current is null) return;
+
+        var bounds = ModelFit.LocalBounds(_current);
+
+        TopHeight = bounds.Size.Y > 0.0001f
+            ? _restPosition.Y + (_current.Transform * bounds).End.Y
+            : (float)(def.Height * scale);
     }
 
     /// <summary>

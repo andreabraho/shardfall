@@ -247,6 +247,12 @@ public partial class EnemyBrain : CharacterBody3D
         if (_visual is VisualRoot root && !string.IsNullOrEmpty(def.Visual))
         {
             root.Apply(def.Visual, def.VisualTint, def.VisualScale);
+            
+            // Over the model, however tall it is. At a fixed height a big creature — a queen, a
+            // colossus — stood with its own name inside its body.
+            var top = root.TopHeight;
+            if (_bar is not null) _bar.Offset = new Vector3(0, Mathf.Max(2.1f, top + 0.3f), 0);
+            _plate.Offset = new Vector3(0, Mathf.Max(2.4f, top + 0.62f), 0);
         }
     }
 

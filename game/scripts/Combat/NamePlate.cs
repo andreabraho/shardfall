@@ -106,9 +106,9 @@ public partial class NamePlate : Node3D
 
     private static (int Size, Color Colour, int Outline) Style(NameRank rank) => rank switch
     {
-        NameRank.Boss => (46, new Color("d9a7ff"), 14),
-        NameRank.Elite => (32, new Color("ffd24f"), 10),
-        _ => (24, new Color("cfd4da"), 8),
+        NameRank.Boss => (52, new Color("d9a7ff"), 14),
+        NameRank.Elite => (36, new Color("ffd24f"), 11),
+        _ => (30, new Color("cfd4da"), 9),
     };
 
     private void Restyle()
@@ -125,10 +125,10 @@ public partial class NamePlate : Node3D
         _prefix.OutlineSize = outline;
         _prefix.Modulate = PrefixColour;
 
-        // Only a boss draws through walls. Trash doing it would turn a pillar into a hedge
-        // of floating names.
-        _label.NoDepthTest = _rank == NameRank.Boss;
-        _prefix.NoDepthTest = _label.NoDepthTest;
+        // Every name draws over what is in front of it (2026-09-24): a name hidden behind a
+        // body or a tree is a name the player cannot read, and that was what the plates did.
+        _label.NoDepthTest = true;
+        _prefix.NoDepthTest = true;
     }
 
     public void SetText(string text) => SetText(text, "");
