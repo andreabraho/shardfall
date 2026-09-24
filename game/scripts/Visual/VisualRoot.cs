@@ -153,6 +153,93 @@ public partial class VisualRoot : Node3D
         };
     }
 
+    private double _windFor;
+    private double _windLeft;
+    private double _slamLeft;
+    private bool _tilted;
+
+    /// <summary>How far a creature rears back at the end of a wind-up, in radians.</summary>
+    private const float RearAngle = 0.28f;
+
+    /// <summary>How far it pitches forward as the blow lands.</summary>
+    private const float SlamAngle = 0.18f;
+
+    private const double SlamSeconds = 0.22;
+
+    /// <summary>
+    /// The wind-up of a telegraphed attack (REF-04): the body rears back over the wind-up,
+    /// holding the model's charging pose where it has one.
+    /// </summary>
+    /// <remarks>
+    /// Before this, a boss stood idle through its whole wind-up and nothing but the decal on
+    /// the ground said an attack was coming. The warning worked; the creature did not look
+    /// like it was doing anything, which is what the player's eye is on.
+    /// </remarks>
+    public void WindUp(double seconds)
+    {
+        _animator?.WindUp(seconds);
+        _windFor = System.Math.Max(0.05, seconds);
+        _windLeft = _windFor;
+        _slamLeft = 0;
+    }
+
+    /// <summary>The blow lands: the attack clip, and a pitch forward out of the rear.</summary>
+    public void Strike(Vector3 direction, bool shot)
+    {
+        _windLeft = 0;
+        _slamLeft = SlamSeconds;
+
+        if (_animator is { Ready: true })
+        {
+            if (shot) _animator.Shoot();
+            else _animator.Attack();
+            return;
+        }
+
+        Lunge(direction, 0.3f, 0.2);
+    }
+
+    /// <summary>A wind-up abandoned — stunned, or the target gone.</summary>
+    public void CancelWindUp()
+    {
+        if (_windLeft <= 0) return;
+
+        _windLeft = 0;
+        _animator?.CancelAttack();
+    }
+
+    /// <summary>
+    /// Pitches the whole root about its own side axis. The root faces the target along -Z, so
+    /// a positive angle lifts the front: rearing back. Only written while there is a pose to
+    /// show, and once more to level out, so a creature knocked flat keeps lying there.
+    /// </summary>
+    private void Pitch(double delta)
+    {
+        float angle;
+
+        if (_windLeft > 0)
+        {
+            _windLeft -= delta;
+            var t = 1.0 - (System.Math.Max(0, _windLeft) / _windFor);
+            angle = RearAngle * (float)System.Math.Sin(t * Mathf.Pi / 2);
+        }
+        else if (_slamLeft > 0)
+        {
+            _slamLeft -= delta;
+            var t = System.Math.Max(0, _slamLeft) / SlamSeconds;
+            angle = -SlamAngle * (float)System.Math.Sin(t * Mathf.Pi);
+        }
+        else
+        {
+            if (_tilted) Rotation = Rotation with { X = 0 };
+            _tilted = false;
+            return;
+        }
+
+        _tilted = true;
+        Rotation = Rotation with { X = angle };
+    }
+
     /// <summary>Cuts the swing animation short when the player walks off mid-follow-through.</summary>
     public void CancelSwing() => _animator?.CancelAttack();
 
@@ -220,6 +307,7 @@ public partial class VisualRoot : Node3D
         }
 
         TurnModel(delta);
+        Pitch(delta);
 
         if (_lunge <= 0) return;
 

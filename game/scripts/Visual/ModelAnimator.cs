@@ -89,6 +89,15 @@ public partial class ModelAnimator : Node
         ["Attack", "Attack_Headbutt", "Attack_Kick", "Punch", "Bite_Front", "Headbutt",
          "Rat_Attack", "Spider_Attack", "Snake_Attack", "Wasp_Attack", "Weapon"];
 
+    // Held while a telegraphed attack winds up. Only the humanoid packs carry one; a creature
+    // without it rears back instead (VisualRoot).
+    private static readonly string[] Charge =
+        ["Spellcasting", "Spellcast_Long", "Idle_Attack", "2H_Melee_Idle", "Taunt", "Idle_Combat"];
+
+    // A shot leaving the hand.
+    private static readonly string[] Shot =
+        ["Spellcast_Shoot", "1H_Ranged_Shoot", "Throw", "Weapon", "Punch"];
+
     private static readonly string[] Hurt =
         ["Hit_A", "Hit_B", "HitReact", "HitRecieve", "Idle_HitReact_Left", "Idle_HitReact_Right"];
 
@@ -189,6 +198,38 @@ public partial class ModelAnimator : Node
     }
 
     /// <summary>Stops a swing early so the body can run or idle again. The attack timer is not ours.</summary>
+    /// <summary>
+    /// Holds a charging pose for <paramref name="seconds"/>, looped. False when the model has
+    /// none, so the caller can show the wind-up another way.
+    /// </summary>
+    public bool WindUp(double seconds)
+    {
+        if (_player is null) return false;
+
+        var clip = Find(_player.GetAnimationList(), Charge);
+
+        if (clip.Length == 0) return false;
+
+        _player.GetAnimation(clip).LoopMode = Animation.LoopModeEnum.Linear;
+        _player.Play(clip);
+        _attackFor = seconds;
+        return true;
+    }
+
+    /// <summary>A throw or a cast; the ordinary attack clip when the model has neither.</summary>
+    public double Shoot()
+    {
+        if (_player is null) return 0;
+
+        var clip = Find(_player.GetAnimationList(), Shot);
+
+        if (clip.Length == 0) return Attack();
+
+        _player.Play(clip);
+        _attackFor = _player.GetAnimation(clip).Length;
+        return _attackFor;
+    }
+
     public void CancelAttack() => _attackFor = 0;
 
     /// <summary>

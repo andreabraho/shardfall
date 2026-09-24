@@ -854,6 +854,7 @@ public partial class EnemyBrain : CharacterBody3D
         }
 
         _telegraph?.Cancel();
+        (_visual as VisualRoot)?.CancelWindUp();
         _phase = Phase.Idle;
         _activeAbility = null;
     }
@@ -871,6 +872,9 @@ public partial class EnemyBrain : CharacterBody3D
 
         // Only a telegraphed attack warns out loud: that is the one the player must walk out of.
         if (ability.Telegraph is not null) Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndTelegraph, GlobalPosition);
+
+        // And the body shows it too: a creature winding up rears back rather than idling.
+        if (ability.Telegraph is not null) (_visual as VisualRoot)?.WindUp(_phaseTimer);
 
         if (Target is not null)
         {
@@ -919,6 +923,8 @@ public partial class EnemyBrain : CharacterBody3D
         // instantly, so the player can still break line of sight or step aside.
         if (ability.Telegraph is null && IsRanged(ability))
         {
+            (_visual as VisualRoot)?.Strike(_committedFacing, shot: true);
+
             Projectile.Spawn(
                 GetParent(),
                 Self,
@@ -935,6 +941,9 @@ public partial class EnemyBrain : CharacterBody3D
 
         if (ability.Telegraph is { } tel)
         {
+            // A placed attack thrown at the player is cast; one centred on itself is a blow.
+            (_visual as VisualRoot)?.Strike(_committedFacing, shot: ability.Placement == "target");
+
             hits = tel.Shape == TelegraphShape.Cone
                 ? AreaQuery.Cone(this, _telegraphCenter, _committedFacing, (float)tel.Radius,
                     (float)(tel.Angle > 0 ? tel.Angle : 90), Layers.Player)
