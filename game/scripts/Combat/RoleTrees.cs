@@ -92,9 +92,15 @@ public static class RoleTrees
             Disengage(),
 
             // Maintained every tick and never consumes the turn: shielding is passive,
-            // the shielder still fights.
-            new BtOptional<EnemyBrain>(
-                new BtAction<EnemyBrain>((b, d) => b.MaintainShield(SupportRadius, d))),
+            // the shielder still fights. It must report failure to do that — in a selector a
+            // success ends the tick, and wrapped in BtOptional (which turns failure into
+            // success) it did: no shielder ever attacked or chased, and the crowd pushed them
+            // about until they looked like they were walking off (2026-09-24).
+            new BtAction<EnemyBrain>((b, d) =>
+            {
+                b.MaintainShield(SupportRadius, d);
+                return BtStatus.Failure;
+            }),
 
             Attack(),
             new BtAction<EnemyBrain>((b, d) => b.Chase(d)));
