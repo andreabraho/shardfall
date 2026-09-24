@@ -216,6 +216,7 @@
       { "id": "abl_lord_cataclysm", "cooldown": 14, "windup": 2.45, "damage_coef": 2.4, "applies": { "kind": "poison", "magnitude": 30, "duration": 6 }, "telegraph": { "shape": "circle", "radius": 5 } }
     ],
     "boss": true,
+    "boss_bar": true,
     "phases": [
       { "at": 0.25, "cooldown_scale": 0.5 }
     ],
