@@ -29,8 +29,16 @@ public partial class CameraRig : Node3D
     /// <summary>Fixed camera pitch. Not player-adjustable: it defines the game's read.</summary>
     [Export] public float PitchDegrees { get; set; } = 50f;
 
+    /// <summary>
+    /// The range the pitch can be dragged through (REF-07): up and down while looking around,
+    /// from a low view across the field to nearly straight down.
+    /// </summary>
+    [Export] public float MinPitchDegrees { get; set; } = 30f;
+
+    [Export] public float MaxPitchDegrees { get; set; } = 70f;
+
     [Export] public float MinZoom { get; set; } = 6f;
-    [Export] public float MaxZoom { get; set; } = 18f;
+    [Export] public float MaxZoom { get; set; } = 20f;
     [Export] public float ZoomStep { get; set; } = 1.5f;
 
     /// <summary>Higher follows tighter. Exponential smoothing, so it is frame-rate independent.</summary>
@@ -142,6 +150,10 @@ public partial class CameraRig : Node3D
             {
                 Y = _yaw.RotationDegrees.Y - (motion.Relative.X * DragSensitivity),
             };
+
+            // Up and down tilts the view: the mouse down looks down, more from above.
+            PitchDegrees = Mathf.Clamp(PitchDegrees + (motion.Relative.Y * DragSensitivity * 0.6f), MinPitchDegrees, MaxPitchDegrees);
+            _arm.RotationDegrees = _arm.RotationDegrees with { X = -PitchDegrees };
         }
     }
 
@@ -158,7 +170,7 @@ public partial class CameraRig : Node3D
     {
         if (_dragging == on) return;
 
-        if (on && UI.UiState.ModalOpen) return;
+        if (on && (UI.UiState.ModalOpen || UI.UiState.PointerOverPanel(GetViewport().GetMousePosition()))) return;
 
         _dragging = on;
 

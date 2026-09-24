@@ -101,8 +101,9 @@ public partial class PauseMenu : CanvasLayer
     {
         if (!@event.IsActionPressed(GameActions.Cancel)) return;
 
+        // With a side panel up, Escape is that panel's: it closes it, and the menu waits.
         if (Visible) Close();
-        else if (!UiState.ModalOpen) Open();
+        else if (!UiState.ModalOpen && !UiState.SideOpen) Open();
         else return;
 
         GetViewport().SetInputAsHandled();

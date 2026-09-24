@@ -93,6 +93,9 @@ public partial class ShardNode : StaticBody3D
 
     public bool IsEngaged => _fight?.IsActive == true;
 
+    /// <summary>Up and in its place: something that can be clicked and fought.</summary>
+    public bool IsStanding => !_broken && !_awaitingPlace && _tier is not null;
+
     public double ReclamationProgress => _fight?.ReclamationProgress ?? 0;
 
     public bool IsReclaiming => _fight?.IsReclaiming == true;

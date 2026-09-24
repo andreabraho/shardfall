@@ -174,6 +174,12 @@ public partial class EnemyBrain : CharacterBody3D
 
     public bool IsDead => _dead;
 
+    /// <summary>How wide the creature counts as for a click: its model's footprint.</summary>
+    public float ClickRadius => Mathf.Max(0.5f, (_visual as VisualRoot)?.GroundRadius ?? 0.45f);
+
+    /// <summary>How tall the creature counts as for a click: its model's top.</summary>
+    public float ClickHeight => Mathf.Max(1.2f, (_visual as VisualRoot)?.TopHeight ?? 1.7f);
+
     /// <summary>Experience granted on death, straight from the definition.</summary>
     public int XpReward { get; private set; }
 

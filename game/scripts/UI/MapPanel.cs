@@ -31,6 +31,7 @@ public partial class MapPanel : CanvasLayer
     private const double SampleInterval = 0.25;
 
     private MapView _view = null!;
+    private Control _root = null!;
     private Label _title = null!;
     private Node3D? _player;
     private double _since;
@@ -51,8 +52,7 @@ public partial class MapPanel : CanvasLayer
         if (@event.IsActionPressed(GameActions.ToggleMap))
         {
             Visible = !Visible;
-            UiState.SetOpen(ref _counted, Visible);
-
+            UiState.SetSide(ref _counted, _root, Visible);
             if (Visible) Refresh();
 
             GetViewport().SetInputAsHandled();
@@ -62,13 +62,13 @@ public partial class MapPanel : CanvasLayer
         if (Visible && @event.IsActionPressed(GameActions.Cancel))
         {
             Visible = false;
-            UiState.SetOpen(ref _counted, false);
+            UiState.SetSide(ref _counted, _root, false);
             GetViewport().SetInputAsHandled();
         }
     }
 
     // A panel freed while open would leave the modal count raised and the player unable to move.
-    public override void _ExitTree() => UiState.SetOpen(ref _counted, false);
+    public override void _ExitTree() => UiState.SetSide(ref _counted, _root, false);
 
     public override void _Process(double delta)
     {
@@ -137,13 +137,16 @@ public partial class MapPanel : CanvasLayer
 
     private void Build()
     {
-        var root = new PanelContainer
+        // At the left edge and smaller than it was (REF-07): a map kept open while fighting
+        // has to leave the middle of the screen to the fight.
+        var root = _root = new PanelContainer
         {
-            AnchorLeft = 0.5f,
+            AnchorLeft = 0f,
             AnchorTop = 0.5f,
-            AnchorRight = 0.5f,
+            AnchorRight = 0f,
             AnchorBottom = 0.5f,
-            GrowHorizontal = Control.GrowDirection.Both,
+            OffsetLeft = 16,
+            GrowHorizontal = Control.GrowDirection.End,
             GrowVertical = Control.GrowDirection.Both,
         };
 
@@ -173,7 +176,7 @@ public partial class MapPanel : CanvasLayer
 
         _view = new MapView
         {
-            CustomMinimumSize = new Vector2(760, 560),
+            CustomMinimumSize = new Vector2(540, 400),
             MouseFilter = Control.MouseFilterEnum.Ignore,
         };
 

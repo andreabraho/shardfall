@@ -71,26 +71,28 @@ public partial class InventoryPanel : CanvasLayer
     private void Toggle()
     {
         Visible = !Visible;
-        UiState.SetOpen(ref _counted, Visible);
+        UiState.SetSide(ref _counted, _root, Visible);
 
         if (Visible) Refresh();
     }
 
-    // A panel freed while open would otherwise leave the modal count raised forever, and the
-    // player could never move again.
-    public override void _ExitTree() => UiState.SetOpen(ref _counted, false);
+    // A side panel (REF-07): play goes on with the bag open. Freed while open, it lets go.
+    public override void _ExitTree() => UiState.SetSide(ref _counted, _root, false);
 
     // ------------------------------------------------------------------ build
 
     private void Build()
     {
+        // At the right edge, not the middle (REF-07): the bag stays open during a fight, and
+        // the middle of the screen is where the fight is.
         _root = new PanelContainer
         {
-            AnchorLeft = 0.5f,
+            AnchorLeft = 1f,
             AnchorTop = 0.5f,
-            AnchorRight = 0.5f,
+            AnchorRight = 1f,
             AnchorBottom = 0.5f,
-            GrowHorizontal = Control.GrowDirection.Both,
+            OffsetRight = -16,
+            GrowHorizontal = Control.GrowDirection.Begin,
             GrowVertical = Control.GrowDirection.Both,
         };
 

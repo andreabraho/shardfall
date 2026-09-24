@@ -34,6 +34,12 @@ public partial class PlayerController : Node
     private Vector3 _lastOrderPoint;
     private bool _wasapHeld;
     private bool _steering;
+
+    /// <summary>
+    /// The held button went down on a side panel or on a creature: the press is the panel's,
+    /// or an attack, until it comes up — holding it is not a drag across the ground.
+    /// </summary>
+    private bool _pressTaken;
     private PlayerCombat? _combat;
 
     [Export] public NodePath MotorPath { get; set; } = "..";
@@ -63,9 +69,10 @@ public partial class PlayerController : Node
         // The camera can be swapped at runtime (debug cameras, cutscenes later).
         _camera = GetViewport().GetCamera3D() ?? _camera;
 
-        // A panel owns the mouse while it is open. Movement polls the button directly rather
-        // than going through _UnhandledInput, so without this check clicking a button in the
-        // inventory also walks the character across the arena.
+        // A panel that takes over the screen owns the mouse while it is open. Movement polls the
+        // button directly rather than going through _UnhandledInput, so without this check
+        // clicking a button in the workbench also walks the character across the arena. The
+        // side panels — map, inventory — do not stop play; a click on them is theirs, below.
         if (UI.UiState.ModalOpen)
         {
             // Cleared so reopening does not read the next click as the continuation of a drag.
@@ -141,12 +148,31 @@ public partial class PlayerController : Node
         if (!held)
         {
             _wasapHeld = false;
+            _pressTaken = false;
             _holdTimer = 0;
             return;
         }
 
         var justPressed = !_wasapHeld;
         _wasapHeld = true;
+
+        // A press that lands on an open side panel is the panel's — an item picked up, a
+        // button — and stays so until the button comes up, wherever the cursor goes meanwhile.
+        if (justPressed) _pressTaken = UI.UiState.PointerOverPanel(GetViewport().GetMousePosition());
+
+        if (_pressTaken) return;
+
+        // A click on a creature is an attack on it, whatever stands in front of it (REF-07).
+        // Held, it stays the attack: the fight goes on until the creature falls.
+        if (justPressed
+            && Combat.TargetPicker.Under(GetViewport(), _camera, GetViewport().GetMousePosition(), out var at) is { } target)
+        {
+            _combat?.CommandAttack(target);
+            _marker?.Flash(at);
+            _pressTaken = true;
+            return;
+        }
+
         _holdTimer -= delta;
 
         if (!justPressed && _holdTimer > 0) return;

@@ -36,6 +36,12 @@ public partial class CursorManager : Node
     private Godot.Input.CursorShape ShapeUnderCursor()
     {
         var mouse = GetViewport().GetMousePosition();
+
+        if (UI.UiState.PointerOverPanel(mouse)) return Godot.Input.CursorShape.Arrow;
+
+        // The same test a click makes, so the cursor promises exactly what a click will do.
+        if (Combat.TargetPicker.Under(GetViewport(), _camera!, mouse, out _) is not null) return Godot.Input.CursorShape.Cross;
+
         var from = _camera!.ProjectRayOrigin(mouse);
         var to = from + (_camera.ProjectRayNormal(mouse) * 1000f);
 

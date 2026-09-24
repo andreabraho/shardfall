@@ -42,5 +42,53 @@ public static class UiState
     }
 
     /// <summary>Reset hook for scene changes, so a panel freed while open cannot strand the count.</summary>
-    public static void Reset() => _open = 0;
+    public static void Reset()
+    {
+        _open = 0;
+        _side.Clear();
+    }
+
+    // -- Side panels (REF-07) ----------------------------------------------
+
+    private static readonly System.Collections.Generic.HashSet<Control> _side = [];
+
+    /// <summary>
+    /// True while a side panel is open. They leave play running — the player moves and fights
+    /// with the map or the bag up — so this only settles who the Escape key closes first.
+    /// </summary>
+    public static bool SideOpen
+    {
+        get
+        {
+            _side.RemoveWhere(panel => !GodotObject.IsInstanceValid(panel));
+            return _side.Count > 0;
+        }
+    }
+
+    /// <summary>
+    /// Opens or closes a side panel: one kept at the edge of the screen and open during play,
+    /// the map and the inventory (2026-09-24). Its area belongs to it — a click there is not a
+    /// move — and everything else on screen is still the world.
+    /// </summary>
+    public static void SetSide(ref bool tracked, Control panel, bool open)
+    {
+        if (tracked == open) return;
+
+        tracked = open;
+        Audio.AudioDirector.Play(open ? Kiln.Data.Ids.Sounds.SndUiOpen : Kiln.Data.Ids.Sounds.SndUiClose);
+
+        if (open) _side.Add(panel);
+        else _side.Remove(panel);
+    }
+
+    /// <summary>Whether a screen point is on an open side panel.</summary>
+    public static bool PointerOverPanel(Vector2 screen)
+    {
+        foreach (var panel in _side)
+        {
+            if (GodotObject.IsInstanceValid(panel) && panel.IsVisibleInTree() && panel.GetGlobalRect().HasPoint(screen)) return true;
+        }
+
+        return false;
+    }
 }
