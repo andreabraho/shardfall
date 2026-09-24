@@ -20,7 +20,7 @@ namespace Kiln.Game.UI;
 /// </remarks>
 public partial class ChatLog : CanvasLayer
 {
-    private const int MaxLines = 7;
+    private const int MaxLines = 3;
 
     private static readonly Color YangColour = new("f0c96a");
 
