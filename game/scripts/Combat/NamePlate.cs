@@ -33,6 +33,13 @@ public enum NameRank
 public partial class NamePlate : Node3D
 {
     private Label3D _label = null!;
+    private Label3D _prefix = null!;
+
+    /// <summary>A short lead-in drawn before the name in its own colour — a creature's level.</summary>
+    public string Prefix { get; private set; } = "";
+
+    /// <summary>The prefix's colour: green, so the level reads apart from the name.</summary>
+    public Color PrefixColour { get; set; } = new("6fe36f");
 
     [Export] public Vector3 Offset { get; set; } = new(0, 2.3f, 0);
 
@@ -80,7 +87,16 @@ public partial class NamePlate : Node3D
             CastShadow = GeometryInstance3D.ShadowCastingSetting.Off,
         };
 
+        _prefix = new Label3D
+        {
+            Text = Prefix,
+            Billboard = BaseMaterial3D.BillboardModeEnum.Enabled,
+            PixelSize = 0.0045f,
+            CastShadow = GeometryInstance3D.ShadowCastingSetting.Off,
+        };
+
         AddChild(_label);
+        AddChild(_prefix);
         Restyle();
 
         // Owns its own global transform so the parent's facing does not swing the name around
@@ -105,16 +121,54 @@ public partial class NamePlate : Node3D
         _label.OutlineSize = outline;
         _label.Modulate = _tint ?? colour;
 
+        _prefix.FontSize = size;
+        _prefix.OutlineSize = outline;
+        _prefix.Modulate = PrefixColour;
+
         // Only a boss draws through walls. Trash doing it would turn a pillar into a hedge
         // of floating names.
         _label.NoDepthTest = _rank == NameRank.Boss;
+        _prefix.NoDepthTest = _label.NoDepthTest;
     }
 
-    public void SetText(string text)
+    public void SetText(string text) => SetText(text, "");
+
+    /// <summary>The name, and a lead-in drawn before it in <see cref="PrefixColour"/>.</summary>
+    public void SetText(string text, string prefix)
     {
         Text = text;
+        Prefix = prefix;
 
-        if (_label is not null) _label.Text = text;
+        if (_label is null) return;
+
+        _label.Text = text;
+        _prefix.Text = prefix;
+    }
+
+    /// <summary>
+    /// Lays the prefix and the name side by side, centred together, along the camera's right.
+    /// </summary>
+    /// <remarks>
+    /// Two labels because a Label3D has one colour. Both are billboards, so "side by side" has
+    /// to be the camera's side, recomputed as the camera turns, or the pair would swing apart.
+    /// </remarks>
+    private void Arrange(Camera3D camera)
+    {
+        if (Prefix.Length == 0)
+        {
+            _prefix.Visible = false;
+            _label.Position = Vector3.Zero;
+            return;
+        }
+
+        var font = _label.Font ?? ThemeDB.FallbackFont;
+        var name = font.GetStringSize(_label.Text, HorizontalAlignment.Left, -1, _label.FontSize).X * _label.PixelSize;
+        var lead = font.GetStringSize(Prefix + " ", HorizontalAlignment.Left, -1, _prefix.FontSize).X * _prefix.PixelSize;
+        var total = name + lead;
+        var right = camera.GlobalBasis.X.Normalized();
+
+        _prefix.Position = right * (-(total / 2) + (lead / 2));
+        _label.Position = right * ((total / 2) - (name / 2));
     }
 
     public override void _Process(double delta)
@@ -125,6 +179,7 @@ public partial class NamePlate : Node3D
         if (parent is null || camera is null) return;
 
         GlobalPosition = parent.GlobalPosition + Offset;
+        Arrange(camera);
 
         // Trash fades with distance; a boss never does. Fading the thing the fight is about
         // would defeat the point of giving it a larger plate in the first place.
@@ -135,5 +190,7 @@ public partial class NamePlate : Node3D
 
         _label.Modulate = _label.Modulate with { A = alpha };
         _label.Visible = alpha > 0.02f;
+        _prefix.Modulate = _prefix.Modulate with { A = alpha };
+        _prefix.Visible = _label.Visible && Prefix.Length > 0;
     }
 }

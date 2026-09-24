@@ -66,6 +66,9 @@ public partial class EnemyBrain : CharacterBody3D
 
     [Export] public string EnemyId { get; set; } = "mob_field_rat";
 
+    /// <summary>The colour of every creature's name.</summary>
+    public static readonly Color EnemyNameColour = new("ff4a3a");
+
     /// <summary>0..1 off any chance to stun this creature; 1 is immune (REF-01).</summary>
     public double StunResist =>
         GameContent.IsLoaded && GameContent.Database.Enemies.TryGetValue(EnemyId, out var def) ? def.StunResist : 0;
@@ -141,7 +144,9 @@ public partial class EnemyBrain : CharacterBody3D
 
         // Tinted to match the role marker: shape, colour and name all say the same thing, so
         // none of them has to be learned on its own.
-        _plate.Tint = RoleMarker.ColorFor(Role);
+        // Every creature's name in red, its level before it in green (2026-09-24). The role
+        // still shows in the marker at its feet.
+        _plate.Tint = EnemyNameColour;
         CallDeferred(Node.MethodName.AddChild, _plate);
         _retreatBudget = RetreatSeconds;
 
@@ -208,9 +213,8 @@ public partial class EnemyBrain : CharacterBody3D
     public void LabelPlate(string? suffix = null)
     {
         var name = Items.GameItems.NameOfEnemy(EnemyId);
-        var label = $"[{Self.Stats.Level}] {name}";
 
-        _plate.SetText(suffix is null ? label : $"{label}  ·  {suffix}");
+        _plate.SetText(suffix is null ? name : $"{name}  ·  {suffix}", Kiln.Core.Foundation.L10n.F("Lv. {0}", Self.Stats.Level));
     }
 
     // -- Signals ------------------------------------------------------------
