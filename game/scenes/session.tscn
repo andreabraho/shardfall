@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3]
+[gd_scene load_steps=27 format=3]
 
 ; Everything a zone scene needs and no zone scene decides: the camera, the cursor, the combat
 ; feedback layers, the HUD and the panels.
@@ -35,6 +35,7 @@
 [ext_resource type="Script" path="res://scripts/UI/MerchantPanel.cs" id="22_merchant"]
 [ext_resource type="Script" path="res://scripts/UI/Menus/PauseMenu.cs" id="23_pause"]
 [ext_resource type="Script" path="res://scripts/UI/SkillPanel.cs" id="24_skillui"]
+[ext_resource type="Script" path="res://scripts/UI/ChatLog.cs" id="25_chatlog"]
 [ext_resource type="Script" path="res://scripts/Debug/DebugSkills.cs" id="25_dbgskill"]
 
 [node name="Session" type="Node3D"]
@@ -115,6 +116,10 @@ script = ExtResource("18_towerhud")
 
 [node name="SkillBar" type="CanvasLayer" parent="."]
 script = ExtResource("19_skillbar")
+
+; The message window above the skills: what just came in (yang, for now).
+[node name="ChatLog" type="CanvasLayer" parent="."]
+script = ExtResource("25_chatlog")
 
 [node name="QuestHud" type="CanvasLayer" parent="."]
 script = ExtResource("20_questhud")

@@ -47,6 +47,9 @@ public sealed class Inventory : IResourceStore
 
     public event Action? Changed;
 
+    /// <summary>Raised with the amount whenever yang comes in, from anywhere.</summary>
+    public event Action<long>? YangAdded;
+
     // ---------------------------------------------------------------- yang
 
     public void AddYang(long amount)
@@ -55,6 +58,7 @@ public sealed class Inventory : IResourceStore
 
         Yang += amount;
         Changed?.Invoke();
+        YangAdded?.Invoke(amount);
     }
 
     public bool TrySpendYang(long amount)
