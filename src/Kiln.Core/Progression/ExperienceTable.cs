@@ -92,8 +92,8 @@ public static class ExperienceTable
     }
 
     /// <summary>
-    /// Enemies this far below the player stop being a fight: one hit kills them and they do
-    /// not aggro. Running back through a cleared zone should cost patience, not time.
+    /// Enemies this far below the player stop being a fight: one hit kills them. They still
+    /// attack (2026-09-24). Running back through a cleared zone should cost patience, not time.
     /// </summary>
     public const int TrivialLevelGap = 8;
 
