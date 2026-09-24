@@ -49,6 +49,20 @@ public static class ItemText
             text.Append("\n\n").Append(L10n.F("Armour {0:0}", item.ArmorValue(spec)));
         }
 
+        // What the item gives outright — a bracelet's attack, a ring's damage, an earring's
+        // mana and healing — at its upgrade level. Left out, an accessory's tooltip showed
+        // nothing of its own, and upgrading one looked like it did nothing at all.
+        if (spec.Grants.Count > 0)
+        {
+            text.Append(spec.WeaponDamageMax > 0 || spec.ArmorValue > 0 ? "\n" : "\n\n");
+
+            for (var i = 0; i < spec.Grants.Count; i++)
+            {
+                if (i > 0) text.Append('\n');
+                text.Append(spec.Grants[i].Stat.Describe(item.ScaledGrant(spec.Grants[i])));
+            }
+        }
+
         if (item.UpgradeLevel > 0)
         {
             text.Append("  ").Append(L10n.F("(+{0:0}% from +{1})", UpgradeScaling.BonusPercent(item.UpgradeLevel), item.UpgradeLevel));
@@ -124,6 +138,7 @@ public static class ItemText
         Line(lines, L10n.T("attack power"), mine.AttackPowerFlat, theirs.AttackPowerFlat, "0");
         Line(lines, L10n.T("attack speed"), mine.AttackSpeedFlat, theirs.AttackSpeedFlat, "0.#");
         Line(lines, L10n.T("move speed %"), mine.MoveSpeedPct * 100, theirs.MoveSpeedPct * 100, "0.#");
+        Line(lines, L10n.T("healing after a kill %"), mine.KillRegenPct, theirs.KillRegenPct, "0.#");
 
         foreach (var family in mine.VsFamily.Keys.Union(theirs.VsFamily.Keys))
         {

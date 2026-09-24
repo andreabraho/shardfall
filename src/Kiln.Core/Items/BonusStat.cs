@@ -28,6 +28,31 @@ public enum BonusStatKind
 
     /// <summary>Resistance to every element at once.</summary>
     ResistAll,
+
+    /// <summary>
+    /// Per cent of maximum health healed every <see cref="KillRegen.IntervalSeconds"/> while the
+    /// wearer has killed something in the last <see cref="KillRegen.WindowSeconds"/>. An
+    /// earring's base stat (2026-09-24): it pays the player who keeps fighting.
+    /// </summary>
+    KillRegenPct,
+}
+
+/// <summary>The rules of kill regeneration.</summary>
+public static class KillRegen
+{
+    /// <summary>Seconds between heals.</summary>
+    public const double IntervalSeconds = 3.0;
+
+    /// <summary>How long after a kill the heals keep coming.</summary>
+    public const double WindowSeconds = 10.0;
+
+    /// <summary>
+    /// How an upgrade grows it: a third of the base again per three levels, so 1% at +0 is 3%
+    /// at +9. Linear rather than the quadratic every other base stat follows, because this one
+    /// is the whole point of the item and has to move visibly on every level.
+    /// </summary>
+    public static double UpgradeMultiplier(int upgradeLevel) =>
+        1.0 + (2.0 * Math.Clamp(upgradeLevel, 0, UpgradeScaling.MaxLevel) / UpgradeScaling.MaxLevel);
 }
 
 /// <summary>
@@ -89,6 +114,7 @@ public readonly record struct BonusStat(BonusStatKind Kind, MonsterFamily Family
                 "attack_speed" => BonusStatKind.AttackSpeed,
                 "move_speed_pct" => BonusStatKind.MoveSpeedPct,
                 "resist_all" => BonusStatKind.ResistAll,
+                "kill_regen_pct" => BonusStatKind.KillRegenPct,
                 _ => (BonusStatKind?)null,
             };
 
@@ -180,6 +206,7 @@ public readonly record struct BonusStat(BonusStatKind Kind, MonsterFamily Family
             case BonusStatKind.HpRegen: mods.HpRegenFlat += value; break;
             case BonusStatKind.AttackSpeed: mods.AttackSpeedFlat += value; break;
             case BonusStatKind.MoveSpeedPct: mods.MoveSpeedPct += value; break;
+            case BonusStatKind.KillRegenPct: mods.KillRegenPct += value; break;
 
             case BonusStatKind.VsFamily:
                 mods.VsFamily[Family] = mods.VsFamilyBonus(Family) + value;
@@ -225,6 +252,7 @@ public readonly record struct BonusStat(BonusStatKind Kind, MonsterFamily Family
             BonusStatKind.VsFamily => L10n.F("+{0}% damage against {1}", n, FamilyName(Family)),
             BonusStatKind.ResistElement => L10n.F("+{0}% {1} resistance", n, ElementName(Element)),
             BonusStatKind.ResistAll => L10n.F("+{0}% resistance to all elements", n),
+            BonusStatKind.KillRegenPct => L10n.F("Heals {0}% of maximum health every 3 seconds, for 10 seconds after a kill", n),
             _ => $"+{n} {Key}",
         };
     }

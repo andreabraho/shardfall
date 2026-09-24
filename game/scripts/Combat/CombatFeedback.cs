@@ -96,6 +96,14 @@ public partial class CombatFeedback : Node3D
 
     private static readonly Color ManaColor = new("6fa8e8");
 
+    /// <summary>Health that came back on its own — the earrings' healing after a kill.</summary>
+    public static void Heal(Vector3 worldPosition, int amount) => _instance?.SpawnHeal(worldPosition, amount);
+
+    private void SpawnHeal(Vector3 worldPosition, int amount)
+        => SpawnText(worldPosition, L10n.F("+{0:N0} hp", amount), HealColor, NormalFontSize - 4);
+
+    private static readonly Color HealColor = new("7ee07a");
+
     private static readonly Color YangColor = new("f0c96a");
 
     /// <summary>

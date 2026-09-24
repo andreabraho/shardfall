@@ -29,6 +29,9 @@ public sealed class StatModifiers
     public double AttackSpeedFlat { get; set; }
     public double MoveSpeedPct { get; set; }
 
+    /// <summary>Per cent of maximum health healed every few seconds after a kill (see KillRegen).</summary>
+    public double KillRegenPct { get; set; }
+
     /// <summary>Damage bonus against a monster family — the build lever kept from the original (doc 01 §2.6).</summary>
     public Dictionary<MonsterFamily, double> VsFamily { get; } = [];
 
@@ -55,6 +58,7 @@ public sealed class StatModifiers
         HpRegenFlat += other.HpRegenFlat;
         AttackSpeedFlat += other.AttackSpeedFlat;
         MoveSpeedPct += other.MoveSpeedPct;
+        KillRegenPct += other.KillRegenPct;
 
         foreach (var (family, value) in other.VsFamily)
         {

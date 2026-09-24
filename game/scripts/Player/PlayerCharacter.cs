@@ -191,6 +191,7 @@ public partial class PlayerCharacter : Node
         // Mana first, and independently of experience: it is the fuel for the next fight, so
         // a character at the level cap must still be paid for killing things.
         RestoreManaForKill(enemyLevel);
+        _sinceKill = 0;
 
         if (baseXp <= 0) return;
 
@@ -292,6 +293,39 @@ public partial class PlayerCharacter : Node
     /// started. The fallback matters — a zone the player has crossed without finding a shrine
     /// must still have an answer to dying in it.
     /// </summary>
+    private double _sinceKill = double.MaxValue;
+    private double _regenTick;
+
+    /// <summary>
+    /// Kill regeneration: while something died to the player in the last ten seconds, a share
+    /// of maximum health comes back every three (the earrings' base stat).
+    /// </summary>
+    public override void _Process(double delta)
+    {
+        _sinceKill = _sinceKill >= double.MaxValue / 2 ? _sinceKill : _sinceKill + delta;
+
+        var pct = _combatant.Stats.Modifiers.KillRegenPct;
+
+        if (pct <= 0 || !_combatant.IsAlive || _sinceKill > Kiln.Core.Items.KillRegen.WindowSeconds)
+        {
+            _regenTick = 0;
+            return;
+        }
+
+        _regenTick += delta;
+
+        if (_regenTick < Kiln.Core.Items.KillRegen.IntervalSeconds) return;
+
+        _regenTick -= Kiln.Core.Items.KillRegen.IntervalSeconds;
+
+        var amount = (int)System.Math.Round(_combatant.Health.Max * pct / 100.0);
+
+        if (amount <= 0 || _combatant.Health.IsFull) return;
+
+        _combatant.Heal(amount);
+        Combat.CombatFeedback.Heal(_motor.GlobalPosition + (Vector3.Up * 2.0f), amount);
+    }
+
     private Vector3 RespawnPoint()
     {
         var anchor = World.GameWorld.IsLoaded ? World.GameWorld.Travel.Anchor : null;

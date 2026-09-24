@@ -99,7 +99,7 @@ public sealed class ItemInstance
 
         foreach (var grant in spec.Grants)
         {
-            grant.Stat.Apply(mods, grant.Magnitude * scale);
+            grant.Stat.Apply(mods, ScaledGrant(grant));
         }
 
         foreach (var line in _bonuses)
@@ -119,6 +119,14 @@ public sealed class ItemInstance
 
         return mods;
     }
+
+    /// <summary>
+    /// A base grant at this copy's upgrade level — what the item actually gives, and what its
+    /// tooltip shows.
+    /// </summary>
+    public double ScaledGrant(BonusLine grant) => grant.Magnitude * (grant.Stat.Kind == BonusStatKind.KillRegenPct
+        ? KillRegen.UpgradeMultiplier(UpgradeLevel)
+        : UpgradeScaling.Multiplier(UpgradeLevel));
 
     public double WeaponDamageMin(ItemSpec spec) => spec.WeaponDamageMin * UpgradeScaling.Multiplier(UpgradeLevel);
 
