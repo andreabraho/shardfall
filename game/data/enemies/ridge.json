@@ -142,11 +142,16 @@
       { "id": "abl_queen_spray", "cooldown": 7.5, "windup": 2.35, "damage_coef": 1.5, "applies": { "kind": "poison", "magnitude": 16, "duration": 5 }, "telegraph": { "shape": "cone", "radius": 5, "angle": 70 } },
       { "id": "abl_queen_leap", "cooldown": 12, "windup": 2.4, "damage_coef": 2, "applies": { "kind": "stun", "duration": 0.9, "chance": 0.5 }, "telegraph": { "shape": "circle", "radius": 4.5 } }
     ],
+    "boss": true,
+    "phases": [
+      { "at": 0.7, "adds": "mob_spiderling", "add_count": 4 },
+      { "at": 0.35, "adds": "mob_spiderling", "add_count": 4, "cooldown_scale": 0.5 }
+    ],
     "ai": "bt_melee_chaser",
     "aggro_radius": 11,
     "leash_radius": 24,
     "xp": 5200,
-    "drop_table": "dt_valley_animal_t2",
+    "drop_table": "dt_boss_queen",
     "visual": "mesh_q_spider",
     "visual_scale": 3,
     "visual_tint": "#2a1a2a"

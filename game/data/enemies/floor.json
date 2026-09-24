@@ -121,11 +121,16 @@
       { "id": "abl_warlord_whirl", "cooldown": 7, "windup": 2, "damage_coef": 1.6, "applies": { "kind": "bleed", "magnitude": 12, "duration": 4 }, "telegraph": { "shape": "circle", "radius": 4 } },
       { "id": "abl_warlord_charge", "cooldown": 12, "windup": 3, "damage_coef": 1.9, "applies": { "kind": "stun", "duration": 0.9, "chance": 0.5 }, "telegraph": { "shape": "line", "radius": 7, "angle": 0 } }
     ],
+    "boss": true,
+    "phases": [
+      { "at": 0.5, "adds": "mob_orc_grunt", "add_count": 2, "cooldown_scale": 0.5 },
+      { "at": 0.25, "enrage": true }
+    ],
     "ai": "bt_melee_chaser",
     "aggro_radius": 11,
     "leash_radius": 24,
     "xp": 3000,
-    "drop_table": "dt_valley_undead_t2",
+    "drop_table": "dt_boss_warlord",
     "visual": "mesh_q_orc",
     "visual_scale": 1.7,
     "visual_tint": "#3a5a2a"

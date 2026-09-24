@@ -136,6 +136,23 @@ public static class LootRoller
             items.Add(Mint(entry.Item, count, rng));
         }
 
+        // A boss's guaranteed drops, drawn by weight. Halved with the rest for a kill far
+        // below the player, but never to nothing.
+        var picks = table.Picks <= 0 ? 0 : System.Math.Max(1, (int)System.Math.Round(table.Picks * share));
+        var weights = new double[table.Entries.Length];
+
+        for (var i = 0; i < table.Entries.Length; i++) weights[i] = table.Entries[i].Weight;
+
+        for (var i = 0; i < picks; i++)
+        {
+            var entry = table.Entries[rng.WeightedIndex(weights)];
+            var count = entry.CountRange.Length > 1
+                ? rng.NextIntInclusive(entry.CountRange[0], entry.CountRange[1])
+                : 1;
+
+            items.Add(Mint(entry.Item, count, rng));
+        }
+
         return new LootRoll(yang, items);
     }
 

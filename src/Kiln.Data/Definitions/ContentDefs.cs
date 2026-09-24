@@ -109,6 +109,42 @@ public sealed class EnemyDef : ContentDefBase
 
     /// <summary>What sets this creature apart from others of its role (REF-04).</summary>
     public EnemyTraitsDef Traits { get; init; } = new();
+
+    /// <summary>
+    /// A boss (REF-05): a boss plate and health bar, a leash measured from the player rather
+    /// than from home, and only half its lost health back when it does give up.
+    /// </summary>
+    public bool Boss { get; init; }
+
+    /// <summary>What a boss does as its health falls, highest threshold first.</summary>
+    public BossPhaseDef[] Phases { get; init; } = [];
+}
+
+/// <summary>
+/// One turn in a boss fight, taken once when health first falls to <see cref="At"/> (REF-05).
+/// Any mix of the effects; each defaults to off.
+/// </summary>
+public sealed class BossPhaseDef
+{
+    /// <summary>Health fraction at which the phase begins.</summary>
+    public double At { get; init; }
+
+    /// <summary>Creature called to the boss's side.</summary>
+    public string? Adds { get; init; }
+
+    public int AddCount { get; init; }
+
+    /// <summary>Faster and harder-hitting from here on, by the boss's enrage traits.</summary>
+    public bool Enrage { get; init; }
+
+    /// <summary>Multiplies every cooldown from here on: 0.5 attacks twice as often.</summary>
+    public double CooldownScale { get; init; } = 1.0;
+
+    /// <summary>A status every blow inflicts from here on — Vaelith's frost.</summary>
+    public StatusApplicationDef? Applies { get; init; }
+
+    /// <summary>Vanishes and reappears at a distance from the player.</summary>
+    public bool Teleport { get; init; }
 }
 
 /// <summary>
@@ -541,6 +577,12 @@ public sealed class VisualDef : ContentDefBase
 public sealed class DropTableDef : ContentDefBase
 {
     public DropEntryDef[] Entries { get; init; } = [];
+
+    /// <summary>
+    /// Items drawn by weight on top of each entry's own chance: a boss's guaranteed drops
+    /// (REF-05). Entries with no weight — its materials — are never drawn.
+    /// </summary>
+    public int Picks { get; init; }
     public int[] YangRange { get; init; } = [0, 0];
 }
 

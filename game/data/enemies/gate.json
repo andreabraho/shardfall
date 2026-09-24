@@ -141,11 +141,16 @@
       { "id": "abl_lich_frost", "cooldown": 7, "windup": 2.35, "damage_coef": 1.5, "applies": { "kind": "weaken", "magnitude": 20, "duration": 5 }, "telegraph": { "shape": "cone", "radius": 5, "angle": 70 } },
       { "id": "abl_lich_nova", "cooldown": 13, "windup": 2.5, "damage_coef": 2, "applies": { "kind": "stun", "duration": 1, "chance": 0.5 }, "telegraph": { "shape": "circle", "radius": 5 } }
     ],
+    "boss": true,
+    "phases": [
+      { "at": 0.66, "adds": "mob_bone_minion", "add_count": 3 },
+      { "at": 0.33, "cooldown_scale": 0.5, "applies": { "kind": "slow", "magnitude": 0.3, "duration": 2.5 } }
+    ],
     "ai": "bt_melee_chaser",
     "aggro_radius": 11,
     "leash_radius": 24,
     "xp": 9000,
-    "drop_table": "dt_gate_t4",
+    "drop_table": "dt_boss_lich",
     "visual": "mesh_placeholder_caster",
     "visual_scale": 1.7,
     "visual_tint": "#8ab8e8"

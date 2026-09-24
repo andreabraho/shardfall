@@ -59,6 +59,20 @@ public partial class EnemyBrain : CharacterBody3D
     private bool _dead;
 
     private EnemyTraitsDef _traits = new();
+    private BossPhaseDef[] _phases = [];
+    private int _phaseIndex;
+    private double _cooldownScale = 1.0;
+    private StatusApplicationDef? _phaseApplies;
+    private readonly List<EnemyBrain> _adds = [];
+
+    /// <summary>A boss (REF-05): boss plate and bar, the boss leash, half healing on reset.</summary>
+    public bool IsBoss { get; private set; }
+
+    /// <summary>1 until the first phase turns, then 2, 3.</summary>
+    public int BossPhase => _phaseIndex + 1;
+
+    /// <summary>How far the player may draw a boss before it gives up: measured from them, not from home.</summary>
+    private const float BossLeash = 40f;
     private bool _enraged;
     private double _downedFor;
     private MeshInstance3D? _shieldRing;
@@ -194,6 +208,14 @@ public partial class EnemyBrain : CharacterBody3D
         // Every creature's name in red, its level before it in green (2026-09-24). The role
         // still shows in the marker at its feet.
         _plate.Tint = EnemyNameColour;
+
+        // A boss wears the boss plate — larger, violet — and is what the boss bar looks for.
+        if (IsBoss)
+        {
+            _plate.Tint = null;
+            _plate.Rank = NameRank.Boss;
+            AddToGroup("bosses");
+        }
         CallDeferred(Node.MethodName.AddChild, _plate);
         _retreatBudget = RetreatSeconds;
 
@@ -201,6 +223,7 @@ public partial class EnemyBrain : CharacterBody3D
         Self.Died += OnDied;
         Self.HealthChanged += f => _bar?.SetFraction(f);
         Self.HealthChanged += CheckEnrage;
+        Self.HealthChanged += CheckPhases;
         Self.Collapsed += OnCollapsed;
     }
 
@@ -221,6 +244,8 @@ public partial class EnemyBrain : CharacterBody3D
         XpReward = def.Xp;
         DropTableId = def.DropTable;
         _traits = def.Traits;
+        IsBoss = def.Boss;
+        _phases = def.Phases;
         Self.Thorns = _traits.Thorns;
         Self.CheatDeath = _traits.Rise > 0;
         LabelPlate();
@@ -306,12 +331,115 @@ public partial class EnemyBrain : CharacterBody3D
     {
         if (_enraged || _traits.EnrageBelow <= 0 || fraction > _traits.EnrageBelow || !Self.IsAlive) return;
 
+        Enrage();
+    }
+
+    private void Enrage()
+    {
+        if (_enraged) return;
+
         _enraged = true;
         MoveSpeed *= (float)_traits.EnrageSpeed;
         Self.OutgoingDamageMultiplier = _traits.EnrageDamage;
 
         (_visual as VisualRoot)?.Flash(0.4);
         CombatFeedback.Callout(GlobalPosition + (Vector3.Up * 2.2f), L10n.T("Enraged!"), EnrageColour);
+    }
+
+    /// <summary>Turns every phase whose threshold health has fallen past, in order (REF-05).</summary>
+    private void CheckPhases(float fraction)
+    {
+        while (_phaseIndex < _phases.Length && fraction <= _phases[_phaseIndex].At && Self.IsAlive)
+        {
+            BeginPhase(_phases[_phaseIndex]);
+            _phaseIndex++;
+        }
+    }
+
+    /// <summary>
+    /// One phase's effects, and the announcement of it: a notice across the screen and a
+    /// shake, so the change is read as the fight turning rather than as the boss glitching.
+    /// </summary>
+    private void BeginPhase(BossPhaseDef phase)
+    {
+        var name = Self.DisplayName.Length > 0 ? Items.GameItems.Localise(Self.DisplayName) : EnemyId;
+        string? notice = null;
+
+        if (phase.CooldownScale < 1)
+        {
+            _cooldownScale *= phase.CooldownScale;
+            notice = L10n.F("{0} grows desperate!", name);
+        }
+
+        if (phase.Applies is not null) _phaseApplies = phase.Applies;
+
+        if (phase.Enrage)
+        {
+            Enrage();
+            notice = L10n.F("{0} flies into a rage!", name);
+        }
+
+        if (phase.Adds is { Length: > 0 } adds && phase.AddCount > 0)
+        {
+            CallAdds(adds, phase.AddCount);
+            notice = L10n.F("{0} calls for help!", name);
+        }
+
+        if (phase.Teleport)
+        {
+            Blink();
+            notice = L10n.F("{0} vanishes!", name);
+        }
+
+        UI.WorldNotice.Show(GetTree(), notice ?? L10n.F("{0} changes its tactics!", name));
+        Camera.CameraRig.Kick(Vector3.Up, 0.8f);
+        (_visual as VisualRoot)?.Flash(0.3);
+    }
+
+    /// <summary>Brings creatures to the boss's side, already fighting.</summary>
+    private void CallAdds(string enemyId, int count)
+    {
+        var scene = GD.Load<PackedScene>("res://scenes/enemy.tscn");
+
+        for (var i = 0; i < count; i++)
+        {
+            if (scene.Instantiate() is not EnemyBrain add) continue;
+
+            add.EnemyId = enemyId;
+            add.Name = $"{Name}_add_{Time.GetTicksMsec()}_{i}";
+            GetParent().AddChild(add);
+
+            var angle = Mathf.Tau * i / count;
+            add.PlaceAt(GlobalPosition + (new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) * 3.5f));
+
+            // A boss hunting the length of a tower floor calls hunters; one in a field calls
+            // creatures that fight here and leash here.
+            if (LeashRadius >= 9999f) add.Hunt();
+            else add.AcquireTarget(force: true, alert: false);
+
+            _adds.Add(add);
+        }
+    }
+
+    /// <summary>Vanishes and reappears some way off from the player, on walkable ground.</summary>
+    private void Blink()
+    {
+        if (Target is null) return;
+
+        var away = (GlobalPosition - Target.GlobalPosition) with { Y = 0 };
+
+        if (away.LengthSquared() < 0.01f) away = Vector3.Forward;
+
+        var turn = (float)GD.RandRange(-1.2, 1.2);
+        var dest = Target.GlobalPosition + (away.Normalized().Rotated(Vector3.Up, turn) * 11f);
+
+        dest = NavigationServer3D.MapGetClosestPoint(GetWorld3D().NavigationMap, dest);
+
+        CancelAbility();
+        AoeVisual.Circle(GlobalPosition, 1.6f, hostile: true);
+        GlobalPosition = dest;
+        Velocity = Vector3.Zero;
+        AoeVisual.Circle(dest, 1.6f, hostile: true);
     }
 
     /// <summary>Knocked down by what would have killed it: lie there, then get back up.</summary>
@@ -660,7 +788,13 @@ public partial class EnemyBrain : CharacterBody3D
     public float DistanceToTarget =>
         Target is null ? float.MaxValue : GlobalPosition.DistanceTo(Target.GlobalPosition);
 
-    public bool WithinLeash => GlobalPosition.DistanceTo(_home) <= LeashRadius;
+    /// <remarks>
+    /// A boss measures from the player, not from home (REF-05): with a home leash, stepping
+    /// back past it reset the fight and healed the boss, and that was the whole strategy.
+    /// </remarks>
+    public bool WithinLeash => IsBoss
+        ? Target is null || GlobalPosition.DistanceTo(Target.GlobalPosition) <= BossLeash
+        : GlobalPosition.DistanceTo(_home) <= LeashRadius;
 
     public bool AbilityReady(AbilityDef? ability) =>
         ability is not null && (!_abilityCooldowns.TryGetValue(ability.Id, out var cd) || cd <= 0);
@@ -807,7 +941,19 @@ public partial class EnemyBrain : CharacterBody3D
         _retreatBudget = RetreatSeconds;
 
         Self.Statuses.Clear();
-        Self.Heal((int)System.Math.Ceiling(Self.Stats.MaxHp));
+
+        // A boss gets back only half of what it lost: drawing it off still costs the player,
+        // but it no longer undoes the fight.
+        var missing = Self.Stats.MaxHp - Self.Health.Current;
+        Self.Heal((int)System.Math.Ceiling(IsBoss ? missing / 2 : missing));
+
+        // Its helpers go with the fight they were called to.
+        foreach (var add in _adds)
+        {
+            if (IsInstanceValid(add) && !add.IsDead) add.QueueFree();
+        }
+
+        _adds.Clear();
     }
 
     /// <summary>
@@ -926,7 +1072,7 @@ public partial class EnemyBrain : CharacterBody3D
 
         _phase = Phase.Recover;
         _phaseTimer = RecoverSeconds;
-        _abilityCooldowns[ability.Id] = ability.Cooldown;
+        _abilityCooldowns[ability.Id] = ability.Cooldown * _cooldownScale;
         _telegraph?.Cancel();
         _activeAbility = null;
 
@@ -980,6 +1126,8 @@ public partial class EnemyBrain : CharacterBody3D
         {
             victim.TakeAttack(Self, skillCoef: ability.DamageCoef);
             ApplyStatus(ability, victim);
+
+            if (_phaseApplies is not null) StatusApplication.Try(_phaseApplies, victim);
         }
     }
 

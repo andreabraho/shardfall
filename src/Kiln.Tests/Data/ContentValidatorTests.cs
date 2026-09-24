@@ -973,6 +973,29 @@ public class ContentValidatorTests
         Assert.True(HasError(report, "stun"));
     }
 
+    // -- boss phases (REF-05) ------------------------------------------------
+
+    [Fact]
+    public void Flags_PhasesOutOfOrderOrOnANonBoss()
+    {
+        var phases = new[] { new BossPhaseDef { At = 0.3 }, new BossPhaseDef { At = 0.6 } };
+
+        Assert.True(HasError(ContentValidator.Validate(Db(
+            enemies: [new EnemyDef { Id = "mob_boss", Name = "$m", Level = 5, Boss = true, Phases = phases }])), "phases"));
+
+        Assert.True(HasError(ContentValidator.Validate(Db(
+            enemies: [new EnemyDef { Id = "mob_boss", Name = "$m", Level = 5, Phases = [new BossPhaseDef { At = 0.5 }] }])), "phases"));
+    }
+
+    [Fact]
+    public void Flags_APhaseCallingACreatureThatDoesNotExist()
+    {
+        var phase = new BossPhaseDef { At = 0.5, Adds = "mob_ghost", AddCount = 2 };
+
+        Assert.True(HasError(ContentValidator.Validate(Db(
+            enemies: [new EnemyDef { Id = "mob_boss", Name = "$m", Level = 5, Boss = true, Phases = [phase] }])), "phases"));
+    }
+
     [Fact]
     public void Flags_ASkillEffectThatIsNotAStatus()
     {

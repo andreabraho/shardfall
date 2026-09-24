@@ -152,6 +152,14 @@ public static class Ids
 
     public static class DropTables
     {
+        public const string DtBossChief = "dt_boss_chief";
+        public const string DtBossColossus = "dt_boss_colossus";
+        public const string DtBossGreymane = "dt_boss_greymane";
+        public const string DtBossLich = "dt_boss_lich";
+        public const string DtBossLord = "dt_boss_lord";
+        public const string DtBossQueen = "dt_boss_queen";
+        public const string DtBossSorcerer = "dt_boss_sorcerer";
+        public const string DtBossWarlord = "dt_boss_warlord";
         public const string DtCatacombsT5 = "dt_catacombs_t5";
         public const string DtGateT4 = "dt_gate_t4";
         public const string DtRidgeT3 = "dt_ridge_t3";
@@ -159,7 +167,7 @@ public static class Ids
         public const string DtValleyAnimalT2 = "dt_valley_animal_t2";
         public const string DtValleyUndeadT2 = "dt_valley_undead_t2";
 
-        public static readonly string[] All = ["dt_catacombs_t5", "dt_gate_t4", "dt_ridge_t3", "dt_valley_animal_t1", "dt_valley_animal_t2", "dt_valley_undead_t2"];
+        public static readonly string[] All = ["dt_boss_chief", "dt_boss_colossus", "dt_boss_greymane", "dt_boss_lich", "dt_boss_lord", "dt_boss_queen", "dt_boss_sorcerer", "dt_boss_warlord", "dt_catacombs_t5", "dt_gate_t4", "dt_ridge_t3", "dt_valley_animal_t1", "dt_valley_animal_t2", "dt_valley_undead_t2"];
     }
 
     public static class BonusPools

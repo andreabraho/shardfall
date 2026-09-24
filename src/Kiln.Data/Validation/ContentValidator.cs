@@ -1587,6 +1587,56 @@ public static class ContentValidator
             }
         }
 
+        foreach (var enemy in db.Enemies.Values.Where(e => e.Phases.Length > 0))
+        {
+            if (!enemy.Boss)
+            {
+                report.Error("phases", enemy.SourceFile, $"'{enemy.Id}' has phases but is not a boss.",
+                    "Set \"boss\": true, or drop the phases.");
+            }
+
+            var last = 1.0;
+
+            foreach (var phase in enemy.Phases)
+            {
+                if (phase.At <= 0 || phase.At >= last)
+                {
+                    report.Error("phases", enemy.SourceFile, $"'{enemy.Id}' has a phase at {phase.At}.",
+                        "Each phase is a health fraction between 0 and 1, lower than the one before.");
+                }
+
+                last = phase.At;
+
+                if (phase.CooldownScale is <= 0 or > 1)
+                {
+                    report.Error("phases", enemy.SourceFile, $"'{enemy.Id}' scales cooldowns by {phase.CooldownScale}.",
+                        "cooldown_scale is above 0 and at most 1: a phase only ever speeds a boss up.");
+                }
+
+                if (phase.Adds is { Length: > 0 } adds)
+                {
+                    if (!db.Enemies.ContainsKey(adds))
+                    {
+                        report.Error("phases", enemy.SourceFile, $"'{enemy.Id}' calls '{adds}', which does not exist.");
+                    }
+
+                    if (phase.AddCount is < 1 or > 8)
+                    {
+                        report.Error("phases", enemy.SourceFile, $"'{enemy.Id}' calls {phase.AddCount} of '{adds}'.",
+                            "add_count is 1 to 8.");
+                    }
+                }
+            }
+        }
+
+        foreach (var table in db.DropTables.Values.Where(t => t.Picks != 0))
+        {
+            if (table.Picks is < 0 or > 5)
+            {
+                report.Error("picks", table.SourceFile, $"'{table.Id}' draws {table.Picks} picks.", "picks is 0 to 5.");
+            }
+        }
+
         foreach (var enemy in db.Enemies.Values.Where(e => e.StunResist is < 0 or > 1))
         {
             report.Error("stun", enemy.SourceFile, $"'{enemy.Id}' has stun_resist {enemy.StunResist}.",

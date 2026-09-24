@@ -156,11 +156,16 @@
         "applies": { "kind": "stun", "duration": 0.9, "chance": 0.5 },
         "telegraph": { "shape": "circle", "radius": 4.5 } }
     ],
+    "boss": true,
+    "phases": [
+      { "at": 0.6, "adds": "mob_tribal_raider", "add_count": 3 },
+      { "at": 0.3, "enrage": true }
+    ],
     "ai": "bt_melee_chaser",
     "aggro_radius": 10,
     "leash_radius": 24,
     "xp": 1300,
-    "drop_table": "dt_valley_animal_t2",
+    "drop_table": "dt_boss_chief",
     "visual": "mesh_placeholder_heavy",
     "visual_scale": 1.45,
     "visual_tint": "#6a2a22"

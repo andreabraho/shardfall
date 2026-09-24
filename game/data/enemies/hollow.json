@@ -88,11 +88,15 @@
       { "id": "abl_greymane_pounce", "cooldown": 11.0, "windup": 2.10, "damage_coef": 1.80,
         "telegraph": { "shape": "circle", "radius": 4.0 } }
     ],
+    "boss": true,
+    "phases": [
+      { "at": 0.5, "adds": "mob_grey_wolf", "add_count": 2 }
+    ],
     "ai": "bt_melee_chaser",
     "aggro_radius": 14,
     "leash_radius": 24,
     "xp": 600,
-    "drop_table": "dt_valley_animal_t2",
+    "drop_table": "dt_boss_greymane",
     "visual": "mesh_q_wolf",
     "visual_scale": 1.7,
     "visual_tint": "#4a4a50"
