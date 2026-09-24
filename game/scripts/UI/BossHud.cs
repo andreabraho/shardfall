@@ -6,7 +6,7 @@ namespace Kiln.Game.UI;
 
 /// <summary>
 /// The boss bar (REF-05): name, level, phase and health across the top of the screen while a
-/// boss is fighting the player.
+/// unique boss ("boss_bar": true) is fighting the player. Ordinary bosses have only their plate.
 /// </summary>
 /// <remarks>
 /// A boss's own plate is over its head, in the middle of the fight, and it is the one thing
@@ -120,7 +120,7 @@ public partial class BossHud : CanvasLayer, ITopBar
 
         foreach (var node in GetTree().GetNodesInGroup("bosses"))
         {
-            if (node is not EnemyBrain boss || boss.IsDead || !boss.HasLivingTarget) continue;
+            if (node is not EnemyBrain { HasBossBar: true } boss || boss.IsDead || !boss.HasLivingTarget) continue;
 
             var distance = player is null ? 0 : player.GlobalPosition.DistanceTo(boss.GlobalPosition);
 

@@ -68,6 +68,9 @@ public partial class EnemyBrain : CharacterBody3D
     /// <summary>A boss (REF-05): boss plate and bar, the boss leash, half healing on reset.</summary>
     public bool IsBoss { get; private set; }
 
+    /// <summary>A unique boss, shown in the boss bar at the top of the screen.</summary>
+    public bool HasBossBar { get; private set; }
+
     /// <summary>1 until the first phase turns, then 2, 3.</summary>
     public int BossPhase => _phaseIndex + 1;
 
@@ -245,6 +248,7 @@ public partial class EnemyBrain : CharacterBody3D
         DropTableId = def.DropTable;
         _traits = def.Traits;
         IsBoss = def.Boss;
+        HasBossBar = def.BossBar;
         _phases = def.Phases;
         Self.Thorns = _traits.Thorns;
         Self.CheatDeath = _traits.Rise > 0;

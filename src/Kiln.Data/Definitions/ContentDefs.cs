@@ -116,6 +116,12 @@ public sealed class EnemyDef : ContentDefBase
     /// </summary>
     public bool Boss { get; init; }
 
+    /// <summary>
+    /// A unique boss: its health shows in the bar across the top of the screen. Ordinary
+    /// bosses keep to their plate (2026-09-24): the bar is kept for the few that are an event.
+    /// </summary>
+    public bool BossBar { get; init; }
+
     /// <summary>What a boss does as its health falls, highest threshold first.</summary>
     public BossPhaseDef[] Phases { get; init; } = [];
 }
