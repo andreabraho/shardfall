@@ -23,7 +23,7 @@ public static class GameWorld
     /// while a runaway spawn bug still cannot fill the level.
     /// </para>
     /// </summary>
-    public const int PopulationCap = 36;
+    public const int PopulationCap = 48;
 
     private static WorldCatalogue? _catalogue;
     private static FastTravelNetwork? _travel;

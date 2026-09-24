@@ -27,10 +27,13 @@ public partial class TelegraphVisual : Node3D
 
     [Export] public Color Color { get; set; } = new(1f, 0.35f, 0.28f);
 
+    /// <summary>Metres across the outline band.</summary>
+    private const float OutlineWidth = 0.14f;
+
     public override void _Ready()
     {
-        _fillMaterial = Material(0.30f);
-        _edgeMaterial = Material(0.65f);
+        _fillMaterial = Material(0.12f);
+        _edgeMaterial = Material(0.5f);
 
         _fill = new MeshInstance3D { MaterialOverride = _fillMaterial, CastShadow = GeometryInstance3D.ShadowCastingSetting.Off };
         _edge = new MeshInstance3D { MaterialOverride = _edgeMaterial, CastShadow = GeometryInstance3D.ShadowCastingSetting.Off };
@@ -48,6 +51,8 @@ public partial class TelegraphVisual : Node3D
         ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
         Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
         CullMode = BaseMaterial3D.CullModeEnum.Disabled,
+        // Still drawn over everything, so a raised road or floor never hides a warning. What
+        // made it a wall of red was the opacity, not this (2026-09-24).
         NoDepthTest = true,
         RenderPriority = 2,
     };
@@ -61,10 +66,10 @@ public partial class TelegraphVisual : Node3D
         _elapsed = 0;
         _running = true;
 
-        var fan = AoeGeometry.Fan(_radius, _angle);
-        _edge.Mesh = fan;
-        _fill.Mesh = fan;
-
+        // A thin outline for the extent, and a faint fill growing to meet it for the timing.
+        // The outline used to be the whole shape at two-thirds opacity.
+        _edge.Mesh = AoeGeometry.Outline(_radius, _angle, OutlineWidth);
+        _fill.Mesh = AoeGeometry.Fan(_radius, _angle);
         GlobalPosition = origin + (Vector3.Up * 0.05f);
 
         var flat = forward with { Y = 0 };
@@ -96,8 +101,8 @@ public partial class TelegraphVisual : Node3D
         _fill.Scale = new Vector3(Mathf.Max(t, 0.001f), 1, Mathf.Max(t, 0.001f));
 
         // Brighten as it fills, so the last moments are unmistakable even in peripheral vision.
-        _edgeMaterial.AlbedoColor = Color with { A = 0.55f + (0.35f * t) };
-        _fillMaterial.AlbedoColor = Color with { A = 0.22f + (0.25f * t) };
+        _edgeMaterial.AlbedoColor = Color with { A = 0.45f + (0.4f * t) };
+        _fillMaterial.AlbedoColor = Color with { A = 0.08f + (0.2f * t) };
 
         if (_elapsed >= _duration) Cancel();
     }
@@ -106,6 +111,56 @@ public partial class TelegraphVisual : Node3D
 /// <summary>Shared fan geometry for telegraphs and area effects.</summary>
 public static class AoeGeometry
 {
+    /// <summary>
+    /// The edge of a fan as a band <paramref name="width"/> wide: the arc, and for anything
+    /// short of a full circle the two straight sides.
+    /// </summary>
+    public static ArrayMesh Outline(float radius, float angleDegrees, float width)
+    {
+        const int segmentsPerTurn = 64;
+        var segments = Mathf.Max(3, Mathf.RoundToInt(segmentsPerTurn * (angleDegrees / 360f)));
+        var half = Mathf.DegToRad(angleDegrees * 0.5f);
+        var inner = Mathf.Max(0.01f, radius - width);
+
+        var vertices = new System.Collections.Generic.List<Vector3>();
+        var indices = new System.Collections.Generic.List<int>();
+
+        void Quad(Vector3 a, Vector3 b, Vector3 c, Vector3 d)
+        {
+            var i = vertices.Count;
+            vertices.AddRange([a, b, c, d]);
+            indices.AddRange([i, i + 1, i + 2, i, i + 2, i + 3]);
+        }
+
+        Vector3 At(float r, float a) => new(Mathf.Sin(a) * r, 0, Mathf.Cos(a) * r);
+
+        for (var i = 0; i < segments; i++)
+        {
+            var a0 = -half + (i / (float)segments * half * 2f);
+            var a1 = -half + ((i + 1) / (float)segments * half * 2f);
+            Quad(At(inner, a0), At(radius, a0), At(radius, a1), At(inner, a1));
+        }
+
+        if (angleDegrees < 359f)
+        {
+            foreach (var a in new[] { -half, half })
+            {
+                var along = At(1f, a);
+                var side = new Vector3(along.Z, 0, -along.X) * (width * 0.5f);
+                Quad(-side, side, (along * radius) + side, (along * radius) - side);
+            }
+        }
+
+        var arrays = new Godot.Collections.Array();
+        arrays.Resize((int)Mesh.ArrayType.Max);
+        arrays[(int)Mesh.ArrayType.Vertex] = vertices.ToArray();
+        arrays[(int)Mesh.ArrayType.Index] = indices.ToArray();
+
+        var mesh = new ArrayMesh();
+        mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, arrays);
+        return mesh;
+    }
+
     /// <summary>A flat fan on the XZ plane, centred on the origin, opening along +Z.</summary>
     public static ArrayMesh Fan(float radius, float angleDegrees)
     {

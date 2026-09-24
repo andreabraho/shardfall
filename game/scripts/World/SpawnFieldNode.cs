@@ -84,23 +84,59 @@ public partial class SpawnFieldNode : Node3D
             ? float.MaxValue
             : _player.GlobalPosition.DistanceTo(GlobalPosition);
 
-        var state = new SpawnFieldState(distance, _mine.Count, GameWorld.Headroom(GetTree()));
+        // Held picks count as alive: the field has already handed them out.
+        var state = new SpawnFieldState(distance, _mine.Count + _held.Count, GameWorld.Headroom(GetTree()));
         var spawns = _field.Tick(delta, state);
 
         if (_field.ShouldClear)
         {
+            _held.Clear();
+            _heldFor = 0;
             Clear();
             return;
         }
 
-        // A creature that comes in groups brings the rest of its group with it, around it —
-        // out of the same population, so a field of four rats is one pack of four, not four
-        // packs. The picks it takes the place of are simply not spawned.
-        for (var next = 0; next < spawns.Count;)
+        _held.AddRange(spawns);
+        _heldFor = _held.Count > 0 ? _heldFor + delta : 0;
+        ReleaseHeld();
+
+        if (spawns.Count > 0 && !_reported)
         {
-            var enemyId = spawns[next];
+            _reported = true;
+            GD.Print($"[spawn] {FieldId} populated — {spawns.Count} of {_field.Def.Count}");
+        }
+    }
+
+    private bool _reported;
+
+    private readonly List<string> _held = [];
+    private double _heldFor;
+
+    /// <summary>How long a pack waits for the rest of itself before coming back short.</summary>
+    private const double GatherSeconds = 6.0;
+
+    /// <summary>
+    /// Brings in what the field has handed out, a pack at a time.
+    /// </summary>
+    /// <remarks>
+    /// A creature that comes in groups brings the rest of its group with it, around it, out of
+    /// the same population — a field of eight rats is two packs of four, not eight packs. A
+    /// pack killed together respawns a second or two apart, one timer each, so the first to
+    /// come back waits for the others rather than trickling in alone (REF-04). It waits only
+    /// so long: a field whose count does not divide into packs still fills.
+    /// </remarks>
+    private void ReleaseHeld()
+    {
+        var next = 0;
+
+        while (next < _held.Count)
+        {
+            var enemyId = _held[next];
             var group = GameContent.Database.Enemies.TryGetValue(enemyId, out var def) ? def.Traits.Group : 1;
-            var size = System.Math.Clamp(group, 1, spawns.Count - next);
+            var size = System.Math.Clamp(group, 1, _held.Count - next);
+
+            if (size < group && _heldFor < GatherSeconds) break;
+
             var at = Scatter();
 
             for (var i = 0; i < size; i++)
@@ -112,14 +148,10 @@ public partial class SpawnFieldNode : Node3D
             next += size;
         }
 
-        if (spawns.Count > 0 && !_reported)
-        {
-            _reported = true;
-            GD.Print($"[spawn] {FieldId} populated — {spawns.Count} of {_field.Def.Count}");
-        }
-    }
+        _held.RemoveRange(0, next);
 
-    private bool _reported;
+        if (_held.Count == 0) _heldFor = 0;
+    }
 
     /// <summary>Drops the dead and anything the world removed from under us.</summary>
     private void Prune()

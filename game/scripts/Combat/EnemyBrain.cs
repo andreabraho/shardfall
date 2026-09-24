@@ -359,8 +359,13 @@ public partial class EnemyBrain : CharacterBody3D
         // while a body is sinking holds that body on the field a little longer. Fighting a
         // camp means landing a lot of swings, which is how a corpse ends up standing there
         // with an empty health bar looking like a creature that refused to die.
+        // The model's own death first, where it has one, a moment lying there, then the body
+        // sinks away. Without the clip it sinks at once, as before.
+        var fall = (_visual as VisualRoot)?.Die() ?? 0;
+        var hold = fall > 0 ? System.Math.Min(fall, 1.6) + 0.35 : 0.15;
+
         var tween = CreateTween().SetIgnoreTimeScale();
-        tween.TweenProperty(this, "position:y", Position.Y - 1.4f, 0.6).SetDelay(0.15);
+        tween.TweenProperty(this, "position:y", Position.Y - 1.4f, 0.6).SetDelay(hold);
         tween.TweenCallback(Callable.From(QueueFree));
     }
 
@@ -380,8 +385,9 @@ public partial class EnemyBrain : CharacterBody3D
     /// </remarks>
     private void WatchCorpse()
     {
-        // Generous: the animation is 0.75 s, so roughly three seconds at sixty ticks.
-        const int GraceFrames = 180;
+        // Generous: a death clip, a moment on the ground and the sink come to under three
+        // seconds, so five and a half at sixty ticks.
+        const int GraceFrames = 330;
 
         if (++_deadFrames < GraceFrames) return;
 
@@ -601,6 +607,9 @@ public partial class EnemyBrain : CharacterBody3D
 
         if (!force && GlobalPosition.DistanceTo(player.GlobalPosition) > AggroRadius) return;
 
+        // A passive creature only fights back: the small animals of the Hollow graze until hit.
+        if (!force && _traits.Passive) return;
+
         // Either side of the line ends it: a forced acquisition from inside the village, and
         // a creature that has somehow ended up standing in one.
         if (World.GameWorld.IsSafe(player.GlobalPosition)) return;
@@ -622,7 +631,7 @@ public partial class EnemyBrain : CharacterBody3D
     /// <summary>
     /// Pulls the creatures standing nearby into the fight (REF-04). Without it a camp came
     /// one at a time to whoever hit it first, which is not how a pack behaves and made every
-    /// camp safe to pick apart from its edge. One call, no chain: those who answer do not
+    /// camp safe to pick apart from its edge. Twelve metres by default. One call, no chain: those who answer do not
     /// call again, or one wolf would bring the whole field.
     /// </summary>
     private void CallForHelp()

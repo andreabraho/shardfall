@@ -199,6 +199,14 @@ public partial class VisualRoot : Node3D
         Lunge(direction, 0.3f, 0.2);
     }
 
+    /// <summary>The model's death animation. Seconds it lasts; 0 when the model has none.</summary>
+    public double Die()
+    {
+        _windLeft = 0;
+        _slamLeft = 0;
+        return _animator?.Die() ?? 0;
+    }
+
     /// <summary>A wind-up abandoned — stunned, or the target gone.</summary>
     public void CancelWindUp()
     {

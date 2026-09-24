@@ -98,6 +98,26 @@ public partial class ModelAnimator : Node
     private static readonly string[] Shot =
         ["Spellcast_Shoot", "1H_Ranged_Shoot", "Throw", "Weapon", "Punch"];
 
+    private static readonly string[] Fall =
+        ["Death_A", "Death", "Death_B", "Spider_Death", "Rat_Death", "Snake_Death", "Wasp_Death"];
+
+    private bool _dead;
+
+    /// <summary>Plays the model's death and holds its last frame. Seconds it lasts; 0 without one.</summary>
+    public double Die()
+    {
+        if (_player is null) return 0;
+
+        var clip = Find(_player.GetAnimationList(), Fall);
+
+        if (clip.Length == 0) return 0;
+
+        _dead = true;
+        _player.GetAnimation(clip).LoopMode = Animation.LoopModeEnum.None;
+        _player.Play(clip);
+        return _player.GetAnimation(clip).Length;
+    }
+
     private static readonly string[] Hurt =
         ["Hit_A", "Hit_B", "HitReact", "HitRecieve", "Idle_HitReact_Left", "Idle_HitReact_Right"];
 
@@ -238,7 +258,7 @@ public partial class ModelAnimator : Node
     /// </summary>
     public void Hit()
     {
-        if (_player is null || _attackFor > 0) return;
+        if (_player is null || _attackFor > 0 || _dead) return;
 
         var names = _player.GetAnimationList();
         var clip = Find(names, Hurt);
@@ -251,7 +271,7 @@ public partial class ModelAnimator : Node
 
     public override void _Process(double delta)
     {
-        if (_player is null) return;
+        if (_player is null || _dead) return;
 
         // An attack owns the body until it finishes. Cutting back to a run mid-swing is what
         // makes an attack read as a twitch rather than a blow.

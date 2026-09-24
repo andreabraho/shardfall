@@ -118,7 +118,10 @@ public sealed class EnemyDef : ContentDefBase
 public sealed class EnemyTraitsDef
 {
     /// <summary>Metres within which others join the fight when this one is pulled or hit.</summary>
-    public double CallRadius { get; init; } = 8.0;
+    public double CallRadius { get; init; } = 12.0;
+
+    /// <summary>Never starts a fight: attacks only once it, or one of its pack, is hit.</summary>
+    public bool Passive { get; init; }
 
     /// <summary>How many arrive together when a spawn field brings one in.</summary>
     public int Group { get; init; } = 1;
