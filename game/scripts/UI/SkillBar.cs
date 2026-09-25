@@ -43,7 +43,7 @@ public partial class SkillBar : CanvasLayer
         _row.GrowHorizontal = Control.GrowDirection.Both;
         _row.GrowVertical = Control.GrowDirection.Begin;
         // Inside the task bar (REF-19), centred in its height.
-        _row.OffsetBottom = -((TaskBar.Height - 66) / 2) + 1;
+        _row.OffsetBottom = -((TaskBar.Height - SkillSlot.Side) / 2) + 1;
 
         AddChild(_row);
 

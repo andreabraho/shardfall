@@ -9,8 +9,8 @@ namespace Kiln.Game.UI;
 public partial class ExpOrbs : Control
 {
     public const int Count = 4;
-    private const float Radius = 9f;
-    private const float Gap = 6f;
+    private const float Radius = 6f;
+    private const float Gap = 4f;
 
     private static readonly Color Glass = new(0.10f, 0.09f, 0.07f, 0.95f);
     private static readonly Color Fill = new(0.98f, 0.80f, 0.30f);

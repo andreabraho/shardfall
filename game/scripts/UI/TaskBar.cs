@@ -20,7 +20,7 @@ namespace Kiln.Game.UI;
 public partial class TaskBar : CanvasLayer
 {
     /// <summary>Height of the bar. The skill slots sit inside it; the message log above it.</summary>
-    public const float Height = 88f;
+    public const float Height = 64f;
 
     private static readonly Color Gold = new(0.78f, 0.64f, 0.36f);
     private static readonly Color Text = new(0.92f, 0.90f, 0.84f);
@@ -89,8 +89,8 @@ public partial class TaskBar : CanvasLayer
             BorderWidthTop = 2,
             ContentMarginLeft = 16,
             ContentMarginRight = 16,
-            ContentMarginTop = 8,
-            ContentMarginBottom = 8,
+            ContentMarginTop = 5,
+            ContentMarginBottom = 5,
         });
 
         AddChild(bar);
@@ -135,7 +135,7 @@ public partial class TaskBar : CanvasLayer
         block.AddThemeConstantOverride("separation", 10);
 
         // The level in a gold medallion.
-        var medal = new PanelContainer { CustomMinimumSize = new Vector2(58, 58), SizeFlagsVertical = Control.SizeFlags.ShrinkCenter };
+        var medal = new PanelContainer { CustomMinimumSize = new Vector2(46, 46), SizeFlagsVertical = Control.SizeFlags.ShrinkCenter };
         medal.AddThemeStyleboxOverride("panel", new StyleBoxFlat
         {
             BgColor = new Color(0.16f, 0.12f, 0.07f),
@@ -144,26 +144,26 @@ public partial class TaskBar : CanvasLayer
             BorderWidthBottom = 2,
             BorderWidthLeft = 2,
             BorderWidthRight = 2,
-            CornerRadiusTopLeft = 29,
-            CornerRadiusTopRight = 29,
-            CornerRadiusBottomLeft = 29,
-            CornerRadiusBottomRight = 29,
+            CornerRadiusTopLeft = 23,
+            CornerRadiusTopRight = 23,
+            CornerRadiusBottomLeft = 23,
+            CornerRadiusBottomRight = 23,
             AntiAliasing = true,
         });
 
         _level = new Label { HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
-        _level.AddThemeFontSizeOverride("font_size", 20);
+        _level.AddThemeFontSizeOverride("font_size", 16);
         _level.AddThemeColorOverride("font_color", new Color(0.96f, 0.86f, 0.58f));
         medal.AddChild(_level);
         medal.TooltipText = L10n.T("Level");
         block.AddChild(medal);
 
         var bars = new VBoxContainer { SizeFlagsVertical = Control.SizeFlags.ShrinkCenter };
-        bars.AddThemeConstantOverride("separation", 4);
+        bars.AddThemeConstantOverride("separation", 2);
         block.AddChild(bars);
 
-        (_health, _healthText) = Bar(new Color("c0392b"), new Vector2(300, 20), 13);
-        (_mana, _manaText) = Bar(new Color("3f7fd0"), new Vector2(300, 15), 11);
+        (_health, _healthText) = Bar(new Color("c0392b"), new Vector2(240, 15), 11);
+        (_mana, _manaText) = Bar(new Color("3f7fd0"), new Vector2(240, 13), 10);
 
         bars.AddChild(_health.GetParent<Control>());
         bars.AddChild(_mana.GetParent<Control>());
@@ -176,7 +176,7 @@ public partial class TaskBar : CanvasLayer
         exp.AddChild(_orbs);
 
         _expText = new Label { VerticalAlignment = VerticalAlignment.Center };
-        _expText.AddThemeFontSizeOverride("font_size", 11);
+        _expText.AddThemeFontSizeOverride("font_size", 10);
         _expText.AddThemeColorOverride("font_color", new Color(0.85f, 0.76f, 0.52f));
         exp.AddChild(_expText);
 
@@ -224,7 +224,7 @@ public partial class TaskBar : CanvasLayer
     /// <summary>The flask, on Q: its icon and how many charges are left.</summary>
     private Control BuildFlask()
     {
-        var slot = new PanelContainer { CustomMinimumSize = new Vector2(62, 62), SizeFlagsVertical = Control.SizeFlags.ShrinkCenter };
+        var slot = new PanelContainer { CustomMinimumSize = new Vector2(46, 46), SizeFlagsVertical = Control.SizeFlags.ShrinkCenter };
         slot.TooltipText = L10n.T("Health flask — heals and restores mana. Draughts to fill it are sold by merchants.");
         slot.AddThemeStyleboxOverride("panel", new StyleBoxFlat
         {
@@ -251,10 +251,10 @@ public partial class TaskBar : CanvasLayer
             };
 
             picture.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
-            picture.OffsetLeft = 8;
-            picture.OffsetTop = 8;
-            picture.OffsetRight = -8;
-            picture.OffsetBottom = -8;
+            picture.OffsetLeft = 6;
+            picture.OffsetTop = 6;
+            picture.OffsetRight = -6;
+            picture.OffsetBottom = -6;
             stack.AddChild(picture);
         }
 
@@ -273,7 +273,7 @@ public partial class TaskBar : CanvasLayer
         _flaskCharges.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
         _flaskCharges.OffsetRight = -4;
         _flaskCharges.OffsetBottom = -1;
-        _flaskCharges.AddThemeFontSizeOverride("font_size", 14);
+        _flaskCharges.AddThemeFontSizeOverride("font_size", 12);
         _flaskCharges.AddThemeColorOverride("font_color", Text);
         _flaskCharges.AddThemeColorOverride("font_outline_color", new Color(0, 0, 0, 0.9f));
         _flaskCharges.AddThemeConstantOverride("outline_size", 3);
@@ -285,7 +285,7 @@ public partial class TaskBar : CanvasLayer
     /// <summary>One button for each window, as on the original's bar.</summary>
     private Control BuildButtons()
     {
-        var grid = new GridContainer { Columns = 3, SizeFlagsVertical = Control.SizeFlags.ShrinkCenter };
+        var grid = new GridContainer { Columns = 5, SizeFlagsVertical = Control.SizeFlags.ShrinkCenter };
         grid.AddThemeConstantOverride("h_separation", 4);
         grid.AddThemeConstantOverride("v_separation", 4);
 
@@ -301,12 +301,12 @@ public partial class TaskBar : CanvasLayer
             var button = new Button
             {
                 Text = label,
-                CustomMinimumSize = new Vector2(86, 30),
+                CustomMinimumSize = new Vector2(76, 26),
                 FocusMode = Control.FocusModeEnum.None,
                 TooltipText = $"{tip}  ({GameActions.DescribeBinding(action)})",
             };
 
-            button.AddThemeFontSizeOverride("font_size", 12);
+            button.AddThemeFontSizeOverride("font_size", 11);
             button.AddThemeStyleboxOverride("normal", Button(new Color(0.16f, 0.12f, 0.08f)));
             button.AddThemeStyleboxOverride("hover", Button(new Color(0.26f, 0.20f, 0.11f)));
             button.AddThemeStyleboxOverride("pressed", Button(new Color(0.34f, 0.26f, 0.13f)));

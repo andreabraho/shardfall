@@ -4,31 +4,33 @@ using Kiln.Core.Combat;
 using Kiln.Core.Foundation;
 using Kiln.Core.Progression;
 using Kiln.Game.Input;
-using Kiln.Game.Items;
 
 namespace Kiln.Game.UI;
 
 /// <summary>
-/// The character sheet, on C (PRG-10): where attribute points are actually spent.
+/// The character sheet, on C (PRG-10; REF-19 in the original's style): who the character is,
+/// where attribute points are spent, and what they buy.
 /// </summary>
 /// <remarks>
-/// This closes a loop that had been open since Phase 3. Levelling awarded four attribute
-/// points every level and nothing in the game could spend them, so every point earned after
-/// the starting allocation sat in a counter doing nothing — invisible, because an unspent
-/// point looks exactly like a stat that has not grown yet.
+/// The original's character window: a framed column on the left of the screen. At the top the
+/// name, the class, the level and the experience bar; then the four attributes, each with its
+/// "+", and the points left to place; then the statistics they buy, updated on the frame a
+/// point is spent — "+1 DEX" means nothing until you can watch crit chance move, and watching
+/// it stop at the cap is how the caps teach themselves.
 /// <para>
-/// Derived stats are listed beside the attributes and update on the same frame a point is
-/// spent. Without that the player is spending a currency on faith: "+1 DEX" means nothing
-/// until you can watch crit chance move, and watching it stop moving at the cap is how the
-/// caps teach themselves.
-/// </para>
-/// <para>
-/// Skills are shown but not spent here — see the note on <see cref="BuildSkills"/>.
+/// Skills have their own window (K) and are no longer repeated here.
 /// </para>
 /// </remarks>
 public partial class CharacterPanel : CanvasLayer
 {
     private sealed record Row(Label Value, Button Plus);
+
+    private const float Width = 340f;
+
+    private static readonly Color Gold = new(0.96f, 0.86f, 0.58f);
+    private static readonly Color Frame = new(0.62f, 0.50f, 0.28f);
+    private static readonly Color Soft = new(0.72f, 0.70f, 0.64f);
+    private static readonly Color Dim = new(0.55f, 0.53f, 0.48f);
 
     private readonly Dictionary<AttributeKind, Row> _rows = [];
 
@@ -36,12 +38,12 @@ public partial class CharacterPanel : CanvasLayer
     private Combat.Combatant? _combatant;
     private Items.PlayerInventory? _inventory;
 
-    private Label _title = null!;
-    private Label _experience = null!;
+    private Label _name = null!;
+    private Label _level = null!;
+    private ProgressBar _expBar = null!;
+    private Label _expText = null!;
     private Label _unspent = null!;
-    private VBoxContainer _derived = null!;
-    private VBoxContainer _skills = null!;
-    private Label _hint = null!;
+    private GridContainer _derived = null!;
     private bool _counted;
 
     public override void _Ready()
@@ -73,21 +75,24 @@ public partial class CharacterPanel : CanvasLayer
     {
         if (@event.IsActionPressed(GameActions.ToggleCharacter))
         {
-            Visible = !Visible;
-            UiState.SetOpen(ref _counted, Visible);
-
-            if (Visible) Refresh();
-
+            SetOpen(!Visible);
             GetViewport().SetInputAsHandled();
             return;
         }
 
         if (Visible && @event.IsActionPressed(GameActions.Cancel))
         {
-            Visible = false;
-            UiState.SetOpen(ref _counted, false);
+            SetOpen(false);
             GetViewport().SetInputAsHandled();
         }
+    }
+
+    private void SetOpen(bool open)
+    {
+        Visible = open;
+        UiState.SetOpen(ref _counted, open);
+
+        if (open) Refresh();
     }
 
     // A panel freed while open would leave the modal count raised and the player unable to move.
@@ -99,143 +104,190 @@ public partial class CharacterPanel : CanvasLayer
     {
         var root = new PanelContainer
         {
-            AnchorLeft = 0.5f,
-            AnchorTop = 0.5f,
-            AnchorRight = 0.5f,
-            AnchorBottom = 0.5f,
-            GrowHorizontal = Control.GrowDirection.Both,
-            GrowVertical = Control.GrowDirection.Both,
+            AnchorLeft = 0,
+            AnchorRight = 0,
+            AnchorTop = 0,
+            AnchorBottom = 0,
+            OffsetLeft = 24,
+            OffsetRight = 24 + Width,
+            OffsetTop = 210,
+            GrowVertical = Control.GrowDirection.End,
         };
 
         // Moved by holding its border or title and dragging (REF-19).
         PanelMover.Attach(root, "character");
 
-        root.AddThemeStyleboxOverride("panel", Panel());
+        root.AddThemeStyleboxOverride("panel", Box(new Color(0.06f, 0.055f, 0.05f, 0.96f), 2, 0));
         AddChild(root);
 
-        var margin = new MarginContainer();
-        margin.AddThemeConstantOverride("margin_left", 20);
-        margin.AddThemeConstantOverride("margin_right", 20);
-        margin.AddThemeConstantOverride("margin_top", 16);
-        margin.AddThemeConstantOverride("margin_bottom", 16);
-        root.AddChild(margin);
+        var column = new VBoxContainer();
+        column.AddThemeConstantOverride("separation", 0);
+        root.AddChild(column);
 
-        var columns = new HBoxContainer();
-        columns.AddThemeConstantOverride("separation", 28);
-        margin.AddChild(columns);
+        // Title bar.
+        var bar = new PanelContainer();
+        bar.AddThemeStyleboxOverride("panel", Box(new Color(0.20f, 0.14f, 0.07f), 0, 8, bottom: 1));
+        column.AddChild(bar);
 
-        BuildAttributes(columns);
-        BuildDerived(columns);
-        BuildSkills(columns);
+        var barRow = new HBoxContainer();
+        bar.AddChild(barRow);
+
+        var title = new Label { Text = L10n.T("Character"), SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
+        title.AddThemeFontSizeOverride("font_size", 15);
+        title.AddThemeColorOverride("font_color", Gold);
+        barRow.AddChild(title);
+
+        var cross = new Button { Text = "✕", Flat = true, FocusMode = Control.FocusModeEnum.None };
+        cross.AddThemeFontSizeOverride("font_size", 13);
+        cross.Pressed += () => SetOpen(false);
+        barRow.AddChild(cross);
+
+        var body = new MarginContainer();
+        body.AddThemeConstantOverride("margin_left", 14);
+        body.AddThemeConstantOverride("margin_right", 14);
+        body.AddThemeConstantOverride("margin_top", 10);
+        body.AddThemeConstantOverride("margin_bottom", 12);
+        column.AddChild(body);
+
+        var inner = new VBoxContainer();
+        inner.AddThemeConstantOverride("separation", 6);
+        body.AddChild(inner);
+
+        BuildIdentity(inner);
+        BuildAttributes(inner);
+        BuildDerived(inner);
+
+        var note = new Label
+        {
+            Text = L10n.T("The caps do the balancing: crit stops at 50%, evasion at 30%, mitigation at 75%. Any shrine refunds your points, free."),
+            AutowrapMode = TextServer.AutowrapMode.WordSmart,
+            CustomMinimumSize = new Vector2(Width - 28, 0),
+        };
+
+        note.AddThemeFontSizeOverride("font_size", 11);
+        note.AddThemeColorOverride("font_color", Dim);
+        inner.AddChild(note);
     }
 
-    private void BuildAttributes(HBoxContainer columns)
+    /// <summary>The name, the class and level, and the experience bar.</summary>
+    private void BuildIdentity(VBoxContainer inner)
     {
-        var left = new VBoxContainer { CustomMinimumSize = new Vector2(310, 380) };
-        left.AddThemeConstantOverride("separation", 8);
-        columns.AddChild(left);
+        var plate = new PanelContainer();
+        plate.AddThemeStyleboxOverride("panel", Box(new Color(0.10f, 0.09f, 0.08f), 1, 6, edge: new Color(0.30f, 0.25f, 0.18f)));
+        inner.AddChild(plate);
 
-        _title = Heading(L10n.T("Character"));
-        left.AddChild(_title);
+        var box = new VBoxContainer();
+        box.AddThemeConstantOverride("separation", 3);
+        plate.AddChild(box);
 
-        _experience = new Label();
-        _experience.AddThemeFontSizeOverride("font_size", 13);
-        _experience.AddThemeColorOverride("font_color", new Color(0.70f, 0.76f, 0.84f));
-        left.AddChild(_experience);
+        var top = new HBoxContainer();
+        box.AddChild(top);
 
-        left.AddChild(new HSeparator());
+        _name = new Label { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
+        _name.AddThemeFontSizeOverride("font_size", 16);
+        _name.AddThemeColorOverride("font_color", Gold);
+        top.AddChild(_name);
 
-        _unspent = new Label();
-        _unspent.AddThemeFontSizeOverride("font_size", 15);
-        _unspent.AddThemeColorOverride("font_color", new Color("8fd3a8"));
-        left.AddChild(_unspent);
+        _level = new Label();
+        _level.AddThemeFontSizeOverride("font_size", 13);
+        _level.AddThemeColorOverride("font_color", Soft);
+        top.AddChild(_level);
+
+        var holder = new Control { CustomMinimumSize = new Vector2(0, 16) };
+        box.AddChild(holder);
+
+        _expBar = new ProgressBar { MinValue = 0, MaxValue = 1, ShowPercentage = false, MouseFilter = Control.MouseFilterEnum.Ignore };
+        _expBar.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
+        _expBar.AddThemeStyleboxOverride("fill", new StyleBoxFlat { BgColor = new Color(0.85f, 0.66f, 0.22f) });
+        _expBar.AddThemeStyleboxOverride("background", new StyleBoxFlat
+        {
+            BgColor = new Color(0.04f, 0.035f, 0.03f),
+            BorderColor = new Color(0.45f, 0.37f, 0.22f),
+            BorderWidthTop = 1,
+            BorderWidthBottom = 1,
+            BorderWidthLeft = 1,
+            BorderWidthRight = 1,
+        });
+
+        holder.AddChild(_expBar);
+
+        _expText = new Label
+        {
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
+            MouseFilter = Control.MouseFilterEnum.Ignore,
+        };
+
+        _expText.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
+        _expText.AddThemeFontSizeOverride("font_size", 11);
+        _expText.AddThemeColorOverride("font_outline_color", new Color(0, 0, 0, 0.9f));
+        _expText.AddThemeConstantOverride("outline_size", 3);
+        holder.AddChild(_expText);
+    }
+
+    private void BuildAttributes(VBoxContainer inner)
+    {
+        inner.AddChild(Heading(L10n.T("Attributes")));
+
+        _unspent = new Label { HorizontalAlignment = HorizontalAlignment.Center };
+        _unspent.AddThemeFontSizeOverride("font_size", 13);
+        inner.AddChild(_unspent);
 
         foreach (var (kind, blurb) in Blurbs)
         {
+            var frame = new PanelContainer { TooltipText = blurb };
+            frame.AddThemeStyleboxOverride("panel", Box(new Color(0.10f, 0.09f, 0.08f), 1, 4, edge: new Color(0.30f, 0.25f, 0.18f)));
+            inner.AddChild(frame);
+
             var row = new HBoxContainer();
             row.AddThemeConstantOverride("separation", 8);
-            left.AddChild(row);
+            frame.AddChild(row);
 
-            var name = new Label { Text = Words.Of(kind), CustomMinimumSize = new Vector2(44, 0) };
-            name.AddThemeFontSizeOverride("font_size", 15);
-            row.AddChild(name);
+            // The attribute's short name on a small gold plate, as the original sets it.
+            var tag = new PanelContainer { CustomMinimumSize = new Vector2(46, 26) };
+            tag.AddThemeStyleboxOverride("panel", Box(new Color(0.20f, 0.14f, 0.07f), 1, 0, edge: Frame));
+            row.AddChild(tag);
 
-            var value = new Label { CustomMinimumSize = new Vector2(34, 0), HorizontalAlignment = HorizontalAlignment.Right };
+            var name = new Label { Text = Words.Of(kind), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
+            name.AddThemeFontSizeOverride("font_size", 13);
+            name.AddThemeColorOverride("font_color", Gold);
+            tag.AddChild(name);
+
+            var value = new Label { CustomMinimumSize = new Vector2(34, 0), HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Center };
             value.AddThemeFontSizeOverride("font_size", 15);
             row.AddChild(value);
 
-            var plus = new Button { Text = "+", CustomMinimumSize = new Vector2(30, 0) };
+            var gain = new Label
+            {
+                Text = blurb,
+                ClipText = true,
+                VerticalAlignment = VerticalAlignment.Center,
+                SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
+            };
+
+            gain.AddThemeFontSizeOverride("font_size", 11);
+            gain.AddThemeColorOverride("font_color", Dim);
+            row.AddChild(gain);
+
+            var plus = new Button { Text = "+", CustomMinimumSize = new Vector2(28, 26), FocusMode = Control.FocusModeEnum.None };
+            plus.AddThemeFontSizeOverride("font_size", 15);
+
             var spent = kind;
             plus.Pressed += () => Spend(spent);
             row.AddChild(plus);
 
-            var gain = new Label { Text = blurb, AutowrapMode = TextServer.AutowrapMode.WordSmart };
-            gain.AddThemeFontSizeOverride("font_size", 11);
-            gain.AddThemeColorOverride("font_color", new Color(0.58f, 0.63f, 0.70f));
-            gain.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
-            row.AddChild(gain);
-
             _rows[kind] = new Row(value, plus);
         }
-
-        _hint = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart };
-        _hint.AddThemeFontSizeOverride("font_size", 11);
-        _hint.AddThemeColorOverride("font_color", new Color(0.55f, 0.60f, 0.66f));
-        _hint.Text = L10n.T("Points are yours to place however you like. The caps do the balancing: crit stops at 50%, evasion at 30%, mitigation at 75%.")
-            + "\n\n" + L10n.T("Your opening spread was assigned for you. Any shrine will refund it, free.");
-        left.AddChild(_hint);
     }
 
-    private void BuildDerived(HBoxContainer columns)
+    private void BuildDerived(VBoxContainer inner)
     {
-        var middle = new VBoxContainer { CustomMinimumSize = new Vector2(250, 0) };
-        middle.AddThemeConstantOverride("separation", 4);
-        columns.AddChild(middle);
+        inner.AddChild(Heading(L10n.T("Statistics")));
 
-        middle.AddChild(Heading2(L10n.T("What it buys")));
-
-        _derived = new VBoxContainer();
-        _derived.AddThemeConstantOverride("separation", 3);
-        middle.AddChild(_derived);
-    }
-
-    /// <summary>
-    /// The skill list, read-only.
-    /// </summary>
-    /// <remarks>
-    /// Skills unlock themselves at their level, and the sheet does not offer to spend a point
-    /// on them, because there is no choice there to offer. The Warrior has eight skills and
-    /// the curve grants one point per level, so by the time the last one unlocks at 24 the
-    /// player is holding roughly three times the points the tree can absorb. A screen asking
-    /// you to click "unlock" on the one thing you can afford, with points to spare, is a
-    /// chore wearing the costume of a decision.
-    /// <para>
-    /// Making that a real choice means giving points a second sink — ranks bought rather than
-    /// earned by use, or a tree where the branches genuinely compete. That is a design
-    /// question, not a UI one, and it is flagged rather than invented here.
-    /// </para>
-    /// </remarks>
-    private void BuildSkills(HBoxContainer columns)
-    {
-        var right = new VBoxContainer { CustomMinimumSize = new Vector2(280, 0) };
-        right.AddThemeConstantOverride("separation", 4);
-        columns.AddChild(right);
-
-        right.AddChild(Heading2(L10n.T("Skills")));
-
-        _skills = new VBoxContainer();
-        _skills.AddThemeConstantOverride("separation", 4);
-        right.AddChild(_skills);
-
-        var note = new Label
-        {
-            Text = L10n.T("Skill points are spent from the skill screen (K). A skill masters at seven points and ranks up further by being used."),
-            AutowrapMode = TextServer.AutowrapMode.WordSmart,
-        };
-
-        note.AddThemeFontSizeOverride("font_size", 11);
-        note.AddThemeColorOverride("font_color", new Color(0.55f, 0.60f, 0.66f));
-        right.AddChild(note);
+        _derived = new GridContainer { Columns = 2 };
+        _derived.AddThemeConstantOverride("h_separation", 12);
+        _derived.AddThemeConstantOverride("v_separation", 2);
+        inner.AddChild(_derived);
     }
 
     // ------------------------------------------------------------------ refresh
@@ -264,17 +316,16 @@ public partial class CharacterPanel : CanvasLayer
         var attributes = progression.TotalAttributes;
         var points = progression.UnspentAttributePoints;
 
-        _title.Text = L10n.F("Character — level {0}", progression.Level);
-        _experience.Text = progression.IsMaxLevel
+        _name.Text = Saving.SaveService.CharacterName is { Length: > 0 } given ? given : Saving.SaveService.DefaultName();
+        _level.Text = L10n.F("{0}  ·  level {1}", L10n.T("Warrior"), progression.Level);
+
+        _expBar.Value = progression.IsMaxLevel ? 1 : progression.LevelProgress;
+        _expText.Text = progression.IsMaxLevel
             ? L10n.T("Maximum level.")
-            : L10n.F("{0:N0} / {1:N0} xp to level {2}", progression.Experience, progression.ExperienceForNextLevel, progression.Level + 1);
+            : L10n.F("{0:N0} / {1:N0}  ({2:0.0}%)", progression.Experience, progression.ExperienceForNextLevel, progression.LevelProgress * 100);
 
-        _unspent.Text = points > 0
-            ? (points == 1 ? L10n.T("1 attribute point to place") : L10n.F("{0} attribute points to place", points))
-            : L10n.T("No attribute points to place.");
-
-        _unspent.AddThemeColorOverride("font_color",
-            points > 0 ? new Color("8fd3a8") : new Color(0.55f, 0.60f, 0.66f));
+        _unspent.Text = L10n.F("Points to place: {0}", points);
+        _unspent.AddThemeColorOverride("font_color", points > 0 ? new Color(0.56f, 0.86f, 0.62f) : Dim);
 
         foreach (var (kind, _) in Blurbs)
         {
@@ -282,10 +333,10 @@ public partial class CharacterPanel : CanvasLayer
 
             row.Value.Text = Value(attributes, kind).ToString();
             row.Plus.Disabled = points <= 0;
+            row.Plus.Visible = points > 0;
         }
 
         RefreshDerived();
-        RefreshSkills();
     }
 
     private static int Value(Attributes attributes, AttributeKind kind) => kind switch
@@ -320,109 +371,55 @@ public partial class CharacterPanel : CanvasLayer
         Stat(L10n.T("Mana regen"), L10n.F("{0:F1} / s", s.ManaRegenPerSecond));
     }
 
-    private void Stat(string name, string value)
+    private void Stat(string name, string value, Color? colour = null)
     {
-        var row = new HBoxContainer();
-
         var label = new Label { Text = name, SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
-        label.AddThemeFontSizeOverride("font_size", 13);
-        label.AddThemeColorOverride("font_color", new Color(0.70f, 0.75f, 0.82f));
-        row.AddChild(label);
+        label.AddThemeFontSizeOverride("font_size", 12);
+        label.AddThemeColorOverride("font_color", Soft);
+        _derived.AddChild(label);
 
-        var amount = new Label { Text = value };
-        amount.AddThemeFontSizeOverride("font_size", 13);
-        row.AddChild(amount);
-
-        _derived.AddChild(row);
+        var amount = new Label { Text = value, HorizontalAlignment = HorizontalAlignment.Right, CustomMinimumSize = new Vector2(90, 0) };
+        amount.AddThemeFontSizeOverride("font_size", 12);
+        amount.AddThemeColorOverride("font_color", colour ?? new Color(0.94f, 0.92f, 0.86f));
+        _derived.AddChild(amount);
     }
 
     private void Capped(string name, double value, double cap)
     {
         var atCap = value >= cap - 0.0001;
 
-        Stat(name, atCap ? L10n.F("{0:P0}  (cap)", value) : L10n.F("{0:P1}", value));
-
-        if (!atCap) return;
-
-        if (_derived.GetChild(_derived.GetChildCount() - 1) is HBoxContainer row
-            && row.GetChild(1) is Label amount)
-        {
-            amount.AddThemeColorOverride("font_color", new Color("e0b356"));
-        }
-    }
-
-    private void RefreshSkills()
-    {
-        foreach (var child in _skills.GetChildren()) child.QueueFree();
-
-        if (_character is null || !GameContent.IsLoaded) return;
-
-        var book = _character.Skills;
-
-        foreach (var def in GameContent.Database.Skills.Values)
-        {
-            if (def.Class != CharacterClass.Warrior) continue;
-
-            var known = book.IsUnlocked(def.Id);
-            var text = known
-                ? $"{GameItems.Localise(def.Name)}  ·  {Words.Of(book.RankOf(def.Id))}"
-                    + $"  ·  {book.PointsIn(def.Id)}/{SkillBook.MaxPoints}"
-                : $"{GameItems.Localise(def.Name)}  ·  " + L10n.T("not learned");
-
-            var label = new Label { Text = text };
-            label.AddThemeFontSizeOverride("font_size", 13);
-            label.AddThemeColorOverride("font_color",
-                known ? new Color(0.88f, 0.90f, 0.94f) : new Color(0.45f, 0.49f, 0.55f));
-            _skills.AddChild(label);
-
-            if (!known) continue;
-
-            var toNext = book.ToNextRank(def.Id);
-
-            if (toNext <= 0) continue;
-
-            var progress = new Label
-            {
-                Text = "      " + (book.NextRankCostsPoints(def.Id)
-                    ? L10n.F("{0} more points to master it (K)", toNext)
-                    : L10n.F("{0} more uses to rank up", toNext)),
-            };
-            progress.AddThemeFontSizeOverride("font_size", 11);
-            progress.AddThemeColorOverride("font_color", new Color(0.50f, 0.56f, 0.62f));
-            _skills.AddChild(progress);
-        }
+        Stat(name, atCap ? L10n.F("{0:P0}  (cap)", value) : L10n.F("{0:P1}", value),
+            atCap ? new Color("e0b356") : null);
     }
 
     // ------------------------------------------------------------------ chrome
 
-    private static Label Heading(string text)
+    private static Control Heading(string text)
     {
-        var label = new Label { Text = text };
-        label.AddThemeFontSizeOverride("font_size", 18);
+        var box = new VBoxContainer();
+        box.AddThemeConstantOverride("separation", 2);
 
-        return label;
+        var label = new Label { Text = text };
+        label.AddThemeFontSizeOverride("font_size", 13);
+        label.AddThemeColorOverride("font_color", new Color(0.85f, 0.72f, 0.45f));
+        box.AddChild(label);
+
+        box.AddChild(new ColorRect { Color = new Color(Frame, 0.6f), CustomMinimumSize = new Vector2(0, 1) });
+
+        return box;
     }
 
-    private static Label Heading2(string text)
+    private static StyleBoxFlat Box(Color fill, int width, int margin, int bottom = -1, Color? edge = null) => new()
     {
-        var label = new Label { Text = text };
-        label.AddThemeFontSizeOverride("font_size", 15);
-        label.AddThemeColorOverride("font_color", new Color(0.78f, 0.82f, 0.90f));
-
-        return label;
-    }
-
-    private static StyleBoxFlat Panel() => new()
-    {
-        BgColor = new Color(0.07f, 0.08f, 0.10f, 0.97f),
-        BorderColor = new Color(0.25f, 0.28f, 0.34f),
-        BorderWidthTop = 1,
-        BorderWidthBottom = 1,
-        BorderWidthLeft = 1,
-        BorderWidthRight = 1,
-        CornerRadiusTopLeft = 6,
-        CornerRadiusTopRight = 6,
-        CornerRadiusBottomLeft = 6,
-        CornerRadiusBottomRight = 6,
+        BgColor = fill,
+        BorderColor = edge ?? Frame,
+        BorderWidthTop = width,
+        BorderWidthLeft = width,
+        BorderWidthRight = width,
+        BorderWidthBottom = bottom >= 0 ? bottom : width,
+        ContentMarginLeft = margin + 4,
+        ContentMarginRight = margin,
+        ContentMarginTop = margin * 0.6f,
+        ContentMarginBottom = margin * 0.6f,
     };
 }

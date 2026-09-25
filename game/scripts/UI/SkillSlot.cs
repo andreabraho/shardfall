@@ -9,7 +9,8 @@ namespace Kiln.Game.UI;
 /// <summary>One square on the skill bar, drawn by hand so a cooldown is a sweep, not a number alone.</summary>
 public partial class SkillSlot : Control
 {
-    private const float Side = 66f;
+    /// <summary>Side of a slot. Sized to sit inside the task bar (REF-19).</summary>
+    public const float Side = 50f;
 
     private static readonly Color Frame = new(0.62f, 0.56f, 0.44f);
     private static readonly Color Body = new(0.86f, 0.52f, 0.34f);
@@ -213,7 +214,7 @@ public partial class SkillSlot : Control
         if (SkillIcons.For(SkillId) is { } icon)
         {
             var tint = ready ? colour.Lightened(0.3f) : new Color(colour, 0.45f);
-            DrawTextureRect(icon, rect.Grow(-10), false, tint);
+            DrawTextureRect(icon, rect.Grow(-7), false, tint);
         }
         else
         {
@@ -228,7 +229,7 @@ public partial class SkillSlot : Control
             DrawRect(new Rect2(0, 0, Side, Side * share), new Color(0, 0, 0, 0.62f));
 
             var seconds = _remaining >= 10 ? $"{_remaining:0}" : $"{_remaining:0.0}";
-            DrawString(font, new Vector2(0, Side * 0.62f), seconds, HorizontalAlignment.Center, Side, 20, Colors.White);
+            DrawString(font, new Vector2(0, Side * 0.62f), seconds, HorizontalAlignment.Center, Side, 16, Colors.White);
         }
 
         // With an icon the dimmed picture already says it; the word is for the name-only face.
