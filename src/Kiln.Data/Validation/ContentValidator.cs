@@ -44,6 +44,7 @@ public static class ContentValidator
         Villagers(db, report);
         Sounds(db, report);
         StunRules(db, report);
+        Cosmetics(db, report);
 
         return report;
     }
@@ -1591,6 +1592,75 @@ public static class ContentValidator
                     report.Error("sound", enemy.SourceFile, $"'{enemy.Id}' has voice '{enemy.Voice}', but there is no '{enemy.Voice}{suffix}'.",
                         "A voice is two sounds, <voice>_alert and <voice>_death.");
                 }
+            }
+        }
+    }
+
+    // -- cosmetics (REF-23) --------------------------------------------------
+
+    /// <summary>
+    /// Every cosmetic is a known kind, given by a boss, at a real chance, with what its kind
+    /// needs to be drawn; and every boss gives something.
+    /// </summary>
+    private static void Cosmetics(ContentDatabase db, ValidationReport report)
+    {
+        foreach (var look in db.Cosmetics.Values.OrderBy(c => c.Id, StringComparer.Ordinal))
+        {
+            if (!look.Name.StartsWith('$'))
+            {
+                report.Error("localisation", look.SourceFile, $"'{look.Id}' has a literal name \"{look.Name}\".",
+                    "Player-facing text must be a $localisation.key (NFR-L.1) so it can be translated.");
+            }
+
+            if (!CosmeticDef.Kinds.Contains(look.Kind))
+            {
+                report.Error("cosmetic", look.SourceFile, $"'{look.Id}' is of kind '{look.Kind}'.",
+                    $"Use one of: {string.Join(", ", CosmeticDef.Kinds)}.");
+            }
+
+            if (!db.Enemies.TryGetValue(look.Boss, out var boss) || !boss.Boss)
+            {
+                report.Error("cosmetic", look.SourceFile, $"'{look.Id}' is given by '{look.Boss}', which is not a boss.",
+                    "Name the boss whose death gives it.");
+            }
+
+            if (look.Chance is <= 0 or > 1)
+            {
+                report.Error("cosmetic", look.SourceFile, $"'{look.Id}' drops at {look.Chance}.",
+                    "A chance between 0 (excluded) and 1.");
+            }
+
+            if (look.Kind is "sword" or "armour" && !look.Texture.StartsWith("res://", StringComparison.Ordinal))
+            {
+                report.Error("cosmetic", look.SourceFile, $"'{look.Id}' has no texture.",
+                    "A sword or armour skin is a recoloured texture: give its res:// path.");
+            }
+
+            if (look.Kind == "aura" && look.Particles.Length == 0)
+            {
+                report.Error("cosmetic", look.SourceFile, $"'{look.Id}' is an aura with no particles.",
+                    $"Give it one of: {string.Join(", ", CosmeticDef.ParticleKinds)}.");
+            }
+
+            if (look.Particles.Length > 0 && !CosmeticDef.ParticleKinds.Contains(look.Particles))
+            {
+                report.Error("cosmetic", look.SourceFile, $"'{look.Id}' gives off '{look.Particles}'.",
+                    $"Use one of: {string.Join(", ", CosmeticDef.ParticleKinds)}.");
+            }
+
+            if (look.Kind == "companion" && !db.Visuals.ContainsKey(look.Visual))
+            {
+                report.Error("cosmetic", look.SourceFile, $"'{look.Id}' follows as '{look.Visual}', which is not a visual.",
+                    "A companion names the visual that walks beside the player.");
+            }
+        }
+
+        foreach (var boss in db.Enemies.Values.Where(e => e.Boss && db.Cosmetics.Count > 0).OrderBy(e => e.Id, StringComparer.Ordinal))
+        {
+            if (!db.Cosmetics.Values.Any(c => c.Boss == boss.Id))
+            {
+                report.Warn("cosmetic", boss.SourceFile, $"'{boss.Id}' gives no cosmetic.",
+                    "Every boss has a look to win (REF-23).");
             }
         }
     }

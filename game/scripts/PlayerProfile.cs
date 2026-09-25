@@ -46,6 +46,11 @@ public static class PlayerProfile
 
     public static SkillBook Skills => _skills ??= new SkillBook();
 
+    private static Kiln.Core.Cosmetics.Wardrobe? _wardrobe;
+
+    /// <summary>The looks won from bosses, and the ones worn (REF-23).</summary>
+    public static Kiln.Core.Cosmetics.Wardrobe Wardrobe => _wardrobe ??= new Kiln.Core.Cosmetics.Wardrobe();
+
     /// <summary>
     /// Health carried across a gate, as a fraction.
     /// </summary>
@@ -164,6 +169,7 @@ public static class PlayerProfile
         Exists = false;
         _progression = null;
         _skills = null;
+        _wardrobe = null;
         _bag = null;
         _gear = null;
         HealthFraction = 1.0;

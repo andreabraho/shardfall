@@ -1,0 +1,11 @@
+The REF-23 skins: the KayKit Knight's own texture (game/assets/kaykit/adventurers2/
+knight_texture.png, CC0 1.0, Kay Lousberg), recoloured 2026-09-25 — every pixel sorted by what it
+is (metal, red cloth, gold, leather) and given the skin's colour for that, keeping its light and
+dark; the skin swatches are left alone. A derivative of a CC0 work, so CC0 as well.
+
+  armour_raider.png      Raider's Harness        (Garrow the Plunderer)
+  armour_warbronze.png   War-Bronze Plate        (Gorthak the Warlord)
+  armour_bone.png        Bone Plate              (the Rotting Colossus)
+  sword_venom.png        Venom Blade             (the Spider Queen)
+  sword_frost.png        Frost Blade             (Vaelith the Frost Lich)
+  sword_hellfire.png     Hellfire Blade          (Malgrath, Lord of the Tower)

@@ -513,6 +513,9 @@ public partial class EnemyBrain : CharacterBody3D
         Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndEnemyDeath, GlobalPosition);
         Cry("death");
 
+        // A boss may give a look of its own (REF-23), rolled apart from its loot.
+        if (IsBoss) Items.Cosmetics.BossKilled(GetTree(), EnemyId);
+
         // Last, after the loot: a quest completing pays out into the bag, and if that ever
         // threw it must not take the drop down with it — a death that half-happened is how
         // the Hollow Bloom once stayed on the map with its loot uncollectable.

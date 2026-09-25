@@ -46,7 +46,7 @@ public partial class DebugGrants : Node
             return;
         }
 
-        GD.Print("[debug] F1 grants a level · F8 grants test gan and crafting materials");
+        GD.Print("[debug] F1 grants a level · F8 grants test gan and crafting materials · F10 unlocks every cosmetic");
     }
 
     public override void _UnhandledInput(InputEvent @event)
@@ -55,6 +55,15 @@ public partial class DebugGrants : Node
         {
             GetViewport().SetInputAsHandled();
             GrantLevel();
+            return;
+        }
+
+        // Every look the bosses give (REF-23), to try them on without the bosses.
+        if (@event.IsActionPressed(GameActions.DebugUnlockCosmetics))
+        {
+            GetViewport().SetInputAsHandled();
+            Cosmetics.UnlockAll();
+            UI.WorldNotice.Show(GetTree(), "[debug] every cosmetic unlocked — the wardrobe is in the character window (C)");
             return;
         }
 

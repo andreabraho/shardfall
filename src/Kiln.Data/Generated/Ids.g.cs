@@ -497,4 +497,19 @@ public static class Ids
         public static readonly string[] All = ["amb_campfire", "amb_desert", "amb_dungeon", "amb_haunted", "amb_meadow", "amb_torch", "amb_village", "mus_boss", "mus_catacombs", "mus_menu", "mus_village", "mus_wilds", "snd_enemy_death", "snd_flask", "snd_guard", "snd_hit", "snd_hit_crit", "snd_level_up", "snd_pickup", "snd_player_death", "snd_player_hurt", "snd_quest_complete", "snd_rare_drop", "snd_refused", "snd_reroll", "snd_shard_break", "snd_shrine", "snd_skill", "snd_socket", "snd_stair_open", "snd_swing", "snd_telegraph", "snd_trade", "snd_ui_click", "snd_ui_close", "snd_ui_open", "snd_upgrade_fail", "snd_upgrade_success", "snd_yang", "stp_dirt", "stp_grass", "stp_stone", "vox_beast_alert", "vox_beast_death", "vox_canine_alert", "vox_canine_death", "vox_demon_alert", "vox_demon_death", "vox_ghost_alert", "vox_ghost_death", "vox_golem_alert", "vox_golem_death", "vox_human_alert", "vox_human_death", "vox_insect_alert", "vox_insect_death", "vox_orc_alert", "vox_orc_death", "vox_plant_alert", "vox_plant_death", "vox_rodent_alert", "vox_rodent_death", "vox_serpent_alert", "vox_serpent_death", "vox_undead_alert", "vox_undead_death"];
     }
 
+    public static class Cosmetics
+    {
+        public const string CosArcaneAura = "cos_arcane_aura";
+        public const string CosBoneArmour = "cos_bone_armour";
+        public const string CosFrostBlade = "cos_frost_blade";
+        public const string CosHellfireBlade = "cos_hellfire_blade";
+        public const string CosImp = "cos_imp";
+        public const string CosRaiderArmour = "cos_raider_armour";
+        public const string CosVenomBlade = "cos_venom_blade";
+        public const string CosWarbronzeArmour = "cos_warbronze_armour";
+        public const string CosWolfCub = "cos_wolf_cub";
+
+        public static readonly string[] All = ["cos_arcane_aura", "cos_bone_armour", "cos_frost_blade", "cos_hellfire_blade", "cos_imp", "cos_raider_armour", "cos_venom_blade", "cos_warbronze_armour", "cos_wolf_cub"];
+    }
+
 }

@@ -309,6 +309,8 @@ public partial class SaveService : Node
                 NextGrantUid = PlayerProfile.Bag?.NextGrantUid ?? -1,
                 Items = items,
                 Worn = worn,
+                Cosmetics = [.. PlayerProfile.Wardrobe.Owned.Order(StringComparer.Ordinal)],
+                WornCosmetics = PlayerProfile.Wardrobe.Worn.ToDictionary(p => p.Key, p => p.Value, StringComparer.Ordinal),
             },
             World = new SavedWorld
             {
@@ -490,6 +492,9 @@ public partial class SaveService : Node
         PlayerProfile.MarkCreated();
 
         PlayerProfile.Quests.Load(save.CompletedQuests, save.ActiveQuest, save.QuestProgress);
+
+        // The looks won (REF-23); one since taken out of the game is dropped.
+        PlayerProfile.Wardrobe.Load(p.Cosmetics, p.WornCosmetics, id => GameContent.Database.Cosmetics.ContainsKey(id));
 
         foreach (var (zone, depth) in save.World.Depths) PlayerProfile.ReachedDepth(zone, depth);
 

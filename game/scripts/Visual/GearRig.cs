@@ -11,11 +11,13 @@ namespace Kiln.Game.Visual;
 /// <param name="Upgrade">The weapon's upgrade level: from +7 it glows.</param>
 /// <param name="Helmet">Whether a helmet is worn.</param>
 /// <param name="Cape">Whether the armour is epic or better.</param>
+/// <param name="SwordSkin">The sword skin worn (REF-23), on either blade, or null.</param>
+/// <param name="ArmourSkin">The armour skin worn (REF-23), or null.</param>
 /// <remarks>
 /// No shield (2026-09-25, at your call): as in the original, a shield is worn for what it
 /// gives and never drawn.
 /// </remarks>
-public sealed record GearLook(int Hands, int Upgrade, bool Helmet, bool Cape);
+public sealed record GearLook(int Hands, int Upgrade, bool Helmet, bool Cape, CosmeticDef? SwordSkin = null, CosmeticDef? ArmourSkin = null);
 
 /// <summary>
 /// The parts of a model that stand for worn gear, shown and hidden to match it (REF-22).
@@ -36,8 +38,19 @@ public sealed class GearRig
     private readonly List<MeshInstance3D> _helmet = [];
     private readonly MeshInstance3D? _cape;
 
+    /// <summary>The model's own meshes but the face: what an armour skin recolours.</summary>
+    private readonly List<MeshInstance3D> _body = [];
+
+    private string _armourSkin = "";
+
     private GearRig(Node3D model, GearPartsDef parts)
     {
+        // Before the swords are put in its hands: those are not the armour.
+        foreach (var mesh in model.FindChildren("*", "MeshInstance3D", true, false).OfType<MeshInstance3D>())
+        {
+            if (mesh.Name != parts.Face) _body.Add(mesh);
+        }
+
         _oneHand = Part(model, parts.OneHand, WeaponHand);
         _twoHand = Part(model, parts.TwoHand, WeaponHand);
         _cape = Part(model, parts.Cape, WeaponHand);
@@ -73,9 +86,51 @@ public sealed class GearRig
 
         if (_cape is not null) _cape.Visible = look.Cape;
 
-        // The glow belongs to whichever blade is in hand, and leaves the other.
-        WeaponGlow.Set(_oneHand, look.Hands == 1 ? look.Upgrade : 0);
-        WeaponGlow.Set(_twoHand, look.Hands == 2 ? look.Upgrade : 0);
+        // A sword skin is on both blades, so changing blade keeps it (REF-23).
+        BladeSkin.Set(_oneHand, look.SwordSkin);
+        BladeSkin.Set(_twoHand, look.SwordSkin);
+
+        // The glow belongs to whichever blade is in hand, and leaves the other; with a skin on,
+        // it is the skin's colour.
+        Color? tint = look.SwordSkin is { } sword ? new Color(sword.Color) : null;
+        WeaponGlow.Set(_oneHand, look.Hands == 1 ? look.Upgrade : 0, tint);
+        WeaponGlow.Set(_twoHand, look.Hands == 2 ? look.Upgrade : 0, tint);
+
+        DressArmour(look.ArmourSkin);
+    }
+
+    /// <summary>
+    /// An armour skin (REF-23): the whole Knight but its face in the skin's recoloured texture —
+    /// helmet and cape too — or back in its own with none.
+    /// </summary>
+    private void DressArmour(CosmeticDef? skin)
+    {
+        var id = skin?.Id ?? "";
+
+        if (id == _armourSkin) return;
+
+        _armourSkin = id;
+
+        var texture = skin is not null && ResourceLoader.Exists(skin.Texture) ? ResourceLoader.Load<Texture2D>(skin.Texture) : null;
+
+        if (skin is not null && texture is null) GD.PushWarning($"[cosmetic] '{skin.Id}' texture '{skin.Texture}' is missing.");
+
+        foreach (var mesh in _body)
+        {
+            if (!GodotObject.IsInstanceValid(mesh) || mesh.Mesh is null) continue;
+
+            for (var s = 0; s < mesh.Mesh.GetSurfaceCount(); s++)
+            {
+                if (texture is null || mesh.Mesh.SurfaceGetMaterial(s) is not BaseMaterial3D source || source.Duplicate() is not BaseMaterial3D copy)
+                {
+                    mesh.SetSurfaceOverrideMaterial(s, null);
+                    continue;
+                }
+
+                copy.AlbedoTexture = texture;
+                mesh.SetSurfaceOverrideMaterial(s, copy);
+            }
+        }
     }
 
     private IEnumerable<MeshInstance3D> All()

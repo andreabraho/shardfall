@@ -45,12 +45,17 @@ public partial class CharacterPanel : CanvasLayer
     private Label _unspent = null!;
     private GridContainer _derived = null!;
     private bool _counted;
+    private WardrobePanel _wardrobe = null!;
 
     public override void _Ready()
     {
         Layer = 23;
         Build();
         Visible = false;
+
+        // The wardrobe (REF-23) opens beside this window, from its button.
+        _wardrobe = new WardrobePanel { Name = "WardrobePanel", Left = 24 + Width + 8 };
+        AddChild(_wardrobe);
         CallDeferred(nameof(Bind));
     }
 
@@ -80,7 +85,7 @@ public partial class CharacterPanel : CanvasLayer
             return;
         }
 
-        if (Visible && @event.IsActionPressed(GameActions.Cancel))
+        if (Visible && !_wardrobe.IsOpen && @event.IsActionPressed(GameActions.Cancel))
         {
             SetOpen(false);
             GetViewport().SetInputAsHandled();
@@ -91,6 +96,9 @@ public partial class CharacterPanel : CanvasLayer
     {
         Visible = open;
         UiState.SetOpen(ref _counted, open);
+
+        // The wardrobe goes with the window it belongs to.
+        if (!open && _wardrobe.IsOpen) _wardrobe.SetOpen(false);
 
         if (open) Refresh();
     }
@@ -167,6 +175,18 @@ public partial class CharacterPanel : CanvasLayer
         note.AddThemeFontSizeOverride("font_size", 11);
         note.AddThemeColorOverride("font_color", Dim);
         inner.AddChild(note);
+
+        // The looks won from bosses (REF-23).
+        var wardrobe = new Button { Text = L10n.T("Wardrobe"), CustomMinimumSize = new Vector2(0, 30), FocusMode = Control.FocusModeEnum.None };
+        wardrobe.AddThemeStyleboxOverride("normal", Box(new Color(0.10f, 0.09f, 0.08f), 1, 6, edge: new Color(0.30f, 0.25f, 0.18f)));
+        wardrobe.AddThemeStyleboxOverride("hover", Box(new Color(0.17f, 0.13f, 0.08f), 1, 6, edge: Frame));
+        wardrobe.AddThemeStyleboxOverride("pressed", Box(new Color(0.22f, 0.16f, 0.08f), 1, 6, edge: Gold));
+        wardrobe.AddThemeStyleboxOverride("focus", new StyleBoxEmpty());
+        wardrobe.AddThemeColorOverride("font_color", new Color(0.90f, 0.88f, 0.82f));
+        wardrobe.AddThemeColorOverride("font_hover_color", Gold);
+        wardrobe.AddThemeFontSizeOverride("font_size", 13);
+        wardrobe.Pressed += () => _wardrobe.SetOpen(!_wardrobe.IsOpen);
+        inner.AddChild(wardrobe);
     }
 
     /// <summary>The name, the class and level, and the experience bar.</summary>

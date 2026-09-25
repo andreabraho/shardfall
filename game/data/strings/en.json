@@ -210,5 +210,14 @@
   "$mob.mob_blue_demon_sorcerer.name": "Azhrel, the Blue Sorcerer",
   "$mob.mob_demon_lord.name": "Malgrath, Lord of the Tower",
   "$shard.shd_demon_stone.name": "Demon Stone",
-  "$shard.shd_demon_shard.name": "Demon Shard"
+  "$shard.shd_demon_shard.name": "Demon Shard",
+  "$cos.cos_wolf_cub.name": "Greymane's Cub",
+  "$cos.cos_raider_armour.name": "Raider's Harness",
+  "$cos.cos_warbronze_armour.name": "War-Bronze Plate",
+  "$cos.cos_venom_blade.name": "Venom Blade",
+  "$cos.cos_frost_blade.name": "Frost Blade",
+  "$cos.cos_bone_armour.name": "Bone Plate",
+  "$cos.cos_arcane_aura.name": "Arcane Aura",
+  "$cos.cos_hellfire_blade.name": "Hellfire Blade",
+  "$cos.cos_imp.name": "Tower Imp"
 }

@@ -41,6 +41,7 @@ public static class ContentLoader
         ("tables/visuals.json", typeof(VisualDef)),
         ("tables/world_kit.json", typeof(KitPieceDef)),
         ("tables/sounds.json", typeof(SoundDef)),
+        ("tables/cosmetics.json", typeof(CosmeticDef)),
     ];
 
     public static ContentLoadResult LoadFromDirectory(string dataRoot)
@@ -99,6 +100,7 @@ public static class ContentLoader
             KitPieces = ctx.KitPieces,
             Npcs = ctx.Npcs,
             Sounds = ctx.Sounds,
+            Cosmetics = ctx.Cosmetics,
         };
 
         return new ContentLoadResult(db, ctx.Errors);
@@ -120,6 +122,7 @@ public static class ContentLoader
         public readonly Dictionary<string, KitPieceDef> KitPieces = new(StringComparer.Ordinal);
         public readonly Dictionary<string, NpcDef> Npcs = new(StringComparer.Ordinal);
         public readonly Dictionary<string, SoundDef> Sounds = new(StringComparer.Ordinal);
+        public readonly Dictionary<string, CosmeticDef> Cosmetics = new(StringComparer.Ordinal);
         public readonly Dictionary<string, Dictionary<string, string>> Strings = new(StringComparer.Ordinal);
     }
 
@@ -178,6 +181,9 @@ public static class ContentLoader
                     break;
                 case var t when t == typeof(NpcDef):
                     Add(Deserialize<NpcDef>(json), file, ctx.Npcs, ctx.Errors);
+                    break;
+                case var t when t == typeof(CosmeticDef):
+                    Add(Deserialize<CosmeticDef>(json), file, ctx.Cosmetics, ctx.Errors);
                     break;
             }
         }

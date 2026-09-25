@@ -34,6 +34,9 @@ public sealed class ContentDatabase
     /// <summary>What each sound id plays (AUD-01).</summary>
     public IReadOnlyDictionary<string, SoundDef> Sounds { get; init; } = new Dictionary<string, SoundDef>();
 
+    /// <summary>The looks the bosses give (REF-23).</summary>
+    public IReadOnlyDictionary<string, CosmeticDef> Cosmetics { get; init; } = new Dictionary<string, CosmeticDef>();
+
     /// <summary>
     /// Language code → its table (UIX-06): <c>$content.keys</c> and, for languages other than
     /// English, English interface text → its translation. From <c>data/strings/&lt;code&gt;.json</c>.
@@ -48,7 +51,7 @@ public sealed class ContentDatabase
     public int TotalDefinitions =>
         Items.Count + Enemies.Count + Skills.Count + Quests.Count +
         DropTables.Count + BonusPools.Count + UpgradePaths.Count + Visuals.Count + Shards.Count +
-        Zones.Count + KitPieces.Count + Npcs.Count + Sounds.Count;
+        Zones.Count + KitPieces.Count + Npcs.Count + Sounds.Count + Cosmetics.Count;
 
     /// <summary>All definitions, for rules that apply across every type (id format, uniqueness).</summary>
     public IEnumerable<IContentDef> All()
@@ -66,6 +69,7 @@ public sealed class ContentDatabase
         foreach (var d in KitPieces.Values) yield return d;
         foreach (var d in Npcs.Values) yield return d;
         foreach (var d in Sounds.Values) yield return d;
+        foreach (var d in Cosmetics.Values) yield return d;
     }
 
     /// <summary>True when the id exists in any registry — used by cross-reference checks.</summary>
@@ -73,7 +77,8 @@ public sealed class ContentDatabase
         Items.ContainsKey(id) || Enemies.ContainsKey(id) || Skills.ContainsKey(id) ||
         Quests.ContainsKey(id) || DropTables.ContainsKey(id) || BonusPools.ContainsKey(id) ||
         UpgradePaths.ContainsKey(id) || Visuals.ContainsKey(id) || Shards.ContainsKey(id) ||
-        Zones.ContainsKey(id) || KitPieces.ContainsKey(id) || Npcs.ContainsKey(id) || Sounds.ContainsKey(id);
+        Zones.ContainsKey(id) || KitPieces.ContainsKey(id) || Npcs.ContainsKey(id) || Sounds.ContainsKey(id) ||
+        Cosmetics.ContainsKey(id);
 
     public static ContentDatabase Empty() => new()
     {

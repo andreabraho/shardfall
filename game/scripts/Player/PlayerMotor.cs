@@ -75,6 +75,7 @@ public partial class PlayerMotor : CharacterBody3D
     public override void _Ready()
     {
         AddChild(new Audio.Footsteps { Name = "Footsteps" });
+        AddChild(new PlayerLooks { Name = "PlayerLooks" });
 
         _agent = GetNode<NavigationAgent3D>("NavigationAgent3D");
         _visual = GetNodeOrNull<Node3D>("VisualRoot");

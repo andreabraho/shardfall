@@ -25,9 +25,11 @@ public class ContentValidatorTests
         IEnumerable<ZoneDef>? zones = null,
         IEnumerable<KitPieceDef>? kit = null,
         IEnumerable<NpcDef>? npcs = null,
+        IEnumerable<CosmeticDef>? cosmetics = null,
         Dictionary<string, string>? english = null) => new()
     {
         Npcs = Index(npcs),
+        Cosmetics = Index(cosmetics),
         Strings = english is null
             ? new Dictionary<string, IReadOnlyDictionary<string, string>>()
             : new Dictionary<string, IReadOnlyDictionary<string, string>> { ["en"] = english },
@@ -1010,5 +1012,41 @@ public class ContentValidatorTests
         };
 
         Assert.True(HasError(ContentValidator.Validate(Db(skills: [skill])), "skill-effect"));
+    }
+    // -- cosmetics (REF-23) ---------------------------------------------------
+
+    private static ContentDatabase CosmeticDb(CosmeticDef look) => Db(
+        enemies: [new EnemyDef { Id = "mob_boss", Name = "$m", Level = 5, Boss = true, Voice = "" },
+                  new EnemyDef { Id = "mob_grunt", Name = "$m", Level = 5 }],
+        visuals: [new VisualDef { Id = "mesh_pet" }],
+        cosmetics: [look]);
+
+    [Fact]
+    public void Accepts_ASwordSkinFromABoss()
+    {
+        var report = ContentValidator.Validate(CosmeticDb(new CosmeticDef
+        {
+            Id = "cos_blade", Name = "$c", Kind = "sword", Boss = "mob_boss", Texture = "res://assets/cosmetics/x.png", Particles = "frost",
+        }));
+
+        Assert.False(HasError(report, "cosmetic"));
+    }
+
+    [Theory]
+    [InlineData("hat", "mob_boss", "res://x.png", "", "", 0.15)]      // unknown kind
+    [InlineData("sword", "mob_grunt", "res://x.png", "", "", 0.15)]   // not a boss
+    [InlineData("sword", "mob_boss", "", "", "", 0.15)]               // a skin with no texture
+    [InlineData("aura", "mob_boss", "", "", "", 0.15)]                // an aura with no particles
+    [InlineData("aura", "mob_boss", "", "glitter", "", 0.15)]         // unknown particles
+    [InlineData("companion", "mob_boss", "", "", "mesh_none", 0.15)]  // a companion with no visual
+    [InlineData("sword", "mob_boss", "res://x.png", "", "", 0.0)]     // never drops
+    public void Rejects_ABrokenCosmetic(string kind, string boss, string texture, string particles, string visual, double chance)
+    {
+        var report = ContentValidator.Validate(CosmeticDb(new CosmeticDef
+        {
+            Id = "cos_bad", Name = "$c", Kind = kind, Boss = boss, Texture = texture, Particles = particles, Visual = visual, Chance = chance,
+        }));
+
+        Assert.True(HasError(report, "cosmetic"));
     }
 }

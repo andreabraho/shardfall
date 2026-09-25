@@ -18,8 +18,11 @@ public partial class WeaponGlow : Node
     private float _alpha;
     private double _time;
 
-    /// <summary>Puts the glow for an upgrade level on a blade, or takes it off below +7.</summary>
-    public static void Set(MeshInstance3D? blade, int upgrade)
+    /// <summary>
+    /// Puts the glow for an upgrade level on a blade, or takes it off below +7. A sword skin's
+    /// colour (REF-23), when given, replaces the blue and the gold.
+    /// </summary>
+    public static void Set(MeshInstance3D? blade, int upgrade, Color? tint = null)
     {
         if (blade is null) return;
 
@@ -29,10 +32,10 @@ public partial class WeaponGlow : Node
 
         var glow = new WeaponGlow { Name = "Glow" };
         blade.AddChild(glow);
-        glow.Light(blade, upgrade);
+        glow.Light(blade, upgrade, tint);
     }
 
-    private void Light(MeshInstance3D blade, int upgrade)
+    private void Light(MeshInstance3D blade, int upgrade, Color? tint)
     {
         _blade = blade;
 
@@ -42,6 +45,8 @@ public partial class WeaponGlow : Node
             8 => (new Color(0.6f, 0.82f, 1f), 0.36f, 0.018f, 0.5f),
             _ => (new Color(1f, 0.84f, 0.45f), 0.5f, 0.024f, 0.9f),
         };
+
+        if (tint is { } skin) colour = skin;
 
         _alpha = alpha;
         _shell = new StandardMaterial3D

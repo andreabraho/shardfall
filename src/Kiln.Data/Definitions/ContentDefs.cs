@@ -546,6 +546,54 @@ public sealed class SoundDef : ContentDefBase
 }
 
 // ---------------------------------------------------------------------------
+// Cosmetics (REF-23)
+// ---------------------------------------------------------------------------
+
+/// <summary>
+/// A look a boss can give (REF-23): a sword skin, an armour skin, an aura or a companion.
+/// Looks only — no cosmetic carries a number that touches play.
+/// </summary>
+public sealed class CosmeticDef : ContentDefBase
+{
+    public static readonly string[] Kinds = ["sword", "armour", "aura", "companion"];
+
+    /// <summary>The effects a sword skin or an aura can give off.</summary>
+    public static readonly string[] ParticleKinds = ["frost", "venom", "embers", "arcane"];
+
+    public string Name { get; init; } = string.Empty;
+
+    /// <summary>sword | armour | aura | companion</summary>
+    public string Kind { get; init; } = "sword";
+
+    /// <summary>The boss whose death may give it.</summary>
+    public string Boss { get; init; } = string.Empty;
+
+    /// <summary>The chance each kill gives it, 0–1.</summary>
+    public double Chance { get; init; } = 0.15;
+
+    /// <summary>Gan paid in its place when it is already owned.</summary>
+    public int DuplicateGan { get; init; }
+
+    /// <summary>Sword and armour: the recoloured texture put on the model (res://).</summary>
+    public string Texture { get; init; } = string.Empty;
+
+    /// <summary>Sword and aura: the colour of its light, and of a blade's glow from +7.</summary>
+    public string Color { get; init; } = "#ffffff";
+
+    /// <summary>Sword: how much the blade shines on its own, 0 for none.</summary>
+    public double Emission { get; init; }
+
+    /// <summary>Sword and aura: the effect it gives off — frost, venom, embers or arcane. Empty for none.</summary>
+    public string Particles { get; init; } = string.Empty;
+
+    /// <summary>Companion: the visual that follows the player.</summary>
+    public string Visual { get; init; } = string.Empty;
+
+    /// <summary>Companion: its size against the creature the visual was made for.</summary>
+    public double Scale { get; init; } = 0.5;
+}
+
+// ---------------------------------------------------------------------------
 // Visuals — the art-swap boundary (ENG-07, NFR-M.4)
 // ---------------------------------------------------------------------------
 
@@ -641,6 +689,9 @@ public sealed class GearPartsDef
 
     /// <summary>Worn with epic and relic armour.</summary>
     public string Cape { get; init; } = string.Empty;
+
+    /// <summary>The face: the one mesh an armour skin (REF-23) leaves as it is.</summary>
+    public string Face { get; init; } = string.Empty;
 }
 
 // ---------------------------------------------------------------------------

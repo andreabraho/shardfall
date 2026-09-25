@@ -88,6 +88,12 @@ public sealed class SavedPlayer
 
     /// <summary>Slot name → uid of the item worn there.</summary>
     public Dictionary<string, long> Worn { get; set; } = new(StringComparer.Ordinal);
+
+    /// <summary>The cosmetics won (REF-23). Empty in a save written before there were any.</summary>
+    public List<string> Cosmetics { get; set; } = [];
+
+    /// <summary>Cosmetic kind → the one worn.</summary>
+    public Dictionary<string, string> WornCosmetics { get; set; } = new(StringComparer.Ordinal);
 }
 
 public sealed class SavedItem

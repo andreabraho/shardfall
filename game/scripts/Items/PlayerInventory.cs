@@ -102,7 +102,7 @@ public partial class PlayerInventory : Node
     /// over epic armour, the glow of a blade at +7 and above. Not the shield, which is never
     /// drawn (2026-09-25).
     /// </summary>
-    private void ShowGear()
+    public void ShowGear()
     {
         if (GetParent().GetNodeOrNull<Visual.VisualRoot>("VisualRoot") is not { } visual) return;
 
@@ -113,7 +113,9 @@ public partial class PlayerInventory : Node
             Hands: weapon is null ? 0 : GameItems.Spec(weapon.DefId)?.Hands ?? 1,
             Upgrade: weapon?.UpgradeLevel ?? 0,
             Helmet: Gear.In(EquipSlot.Helmet) is not null,
-            Cape: armour is not null && GameItems.Spec(armour.DefId)?.Rarity >= Rarity.Epic));
+            Cape: armour is not null && GameItems.Spec(armour.DefId)?.Rarity >= Rarity.Epic,
+            SwordSkin: Cosmetics.Worn(Cosmetics.Sword),
+            ArmourSkin: Cosmetics.Worn(Cosmetics.Armour)));
     }
 
     /// <summary>
