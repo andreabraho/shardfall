@@ -98,21 +98,20 @@ public partial class PlayerInventory : Node
     }
 
     /// <summary>
-    /// Puts what is worn on the character's model (REF-22): the blade, the shield, the helmet,
-    /// the cape over epic armour, the glow of a blade at +7 and above.
+    /// Puts what is worn on the character's model (REF-22): the blade, the helmet, the cape
+    /// over epic armour, the glow of a blade at +7 and above. Not the shield, which is never
+    /// drawn (2026-09-25).
     /// </summary>
     private void ShowGear()
     {
         if (GetParent().GetNodeOrNull<Visual.VisualRoot>("VisualRoot") is not { } visual) return;
 
         var weapon = Gear.In(EquipSlot.Weapon);
-        var shield = Gear.In(EquipSlot.Shield);
         var armour = Gear.In(EquipSlot.Armor);
 
         visual.Wear(new Visual.GearLook(
             Hands: weapon is null ? 0 : GameItems.Spec(weapon.DefId)?.Hands ?? 1,
             Upgrade: weapon?.UpgradeLevel ?? 0,
-            Shield: shield is null ? null : GameItems.Spec(shield.DefId)?.Rarity,
             Helmet: Gear.In(EquipSlot.Helmet) is not null,
             Cape: armour is not null && GameItems.Spec(armour.DefId)?.Rarity >= Rarity.Epic));
     }

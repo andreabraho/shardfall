@@ -629,15 +629,12 @@ public sealed class VisualDef : ContentDefBase
 
 /// <summary>
 /// The parts of a model that show what the player wears (REF-22). Each is a mesh named in the
-/// model, or a res:// scene put in the hand: a weapon in the right, a shield in the left.
+/// model, or a res:// scene put in the right hand. There is no shield: it is never drawn.
 /// </summary>
 public sealed class GearPartsDef
 {
     public string OneHand { get; init; } = string.Empty;
     public string TwoHand { get; init; } = string.Empty;
-
-    /// <summary>Shields in order of rarity: the first for common and fine, then one per step up.</summary>
-    public string[] Shields { get; init; } = [];
 
     /// <summary>Every part of the helmet — a helm and its visor, say.</summary>
     public string[] Helmet { get; init; } = [];
