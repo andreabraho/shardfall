@@ -50,7 +50,6 @@ public static class GameActions
     public const string ToggleFullscreen = "toggle_fullscreen";
     public const string Cancel = "cancel";
     public const string ToggleInventory = "toggle_inventory";
-    public const string ToggleUpgradeBench = "toggle_upgrade_bench";
     public const string ToggleCharacter = "toggle_character";
     public const string ToggleSkills = "toggle_skills";
     public const string ToggleMap = "toggle_map";
@@ -111,7 +110,6 @@ public static class GameActions
         [ToggleFullscreen] = [Key(Godot.Key.F11)],
         [Cancel] = [Key(Godot.Key.Escape)],
         [ToggleInventory] = [Key(Godot.Key.I)],
-        [ToggleUpgradeBench] = [Key(Godot.Key.U)],
         [ToggleCharacter] = [Key(Godot.Key.C)],
         [ToggleSkills] = [Key(Godot.Key.K)],
         [ToggleMap] = [Key(Godot.Key.M)],

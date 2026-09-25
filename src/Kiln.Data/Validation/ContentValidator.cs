@@ -231,8 +231,7 @@ public static class ContentValidator
             {
                 report.Error("upgrade-safety", path.SourceFile,
                     $"'{path.Id}' has on_failure '{path.OnFailure}'.",
-                    "Standard upgrade paths must be 'consume_materials_only' — no destruction, "
-                    + "no downgrade. The opt-in Gambler's Anvil is a separate Shardbound-only path.");
+                    "Upgrade paths must be 'consume_materials_only' — no destruction, no downgrade.");
             }
 
             var previousTo = 0;

@@ -195,9 +195,10 @@ Replace "chance to destroy your item" with a **cost-and-pity ladder**:
 - **Failure never destroys and never downgrades.** It consumes the materials and advances
   the pity counter, which is **displayed in the UI**. Risk costs resources; it cannot cost
   progress. This kills save-scumming dead, which is the real design goal.
-- On **Shardbound** difficulty only, an optional **Gambler's Anvil** exists: higher success
-  rates in exchange for downgrade-on-fail, for players who miss the original thrill. Opt-in,
-  clearly labelled, never required.
+- ~~On **Shardbound** difficulty only, an optional **Gambler's Anvil**~~ — dropped at your call
+  (REF-11, 2026-09-25). What raises the odds instead is the **Blessing Scroll**: +10% on one
+  attempt, dropped by bosses only (map bosses 10%, the tower's first two 30%, the Demon Lord
+  always), never sold. Upgrading happens only at a smith or a tower bench.
 
 ### 4.2 Sockets
 

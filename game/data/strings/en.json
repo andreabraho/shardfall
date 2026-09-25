@@ -39,6 +39,7 @@
   "$item.hlm_warden_crown.name": "Warden Crown",
   "$item.mat_boring_stone.name": "Boring Stone",
   "$item.mat_iron_scrap.name": "Iron Scrap",
+  "$item.mat_blessing_scroll.name": "Blessing Scroll",
   "$item.mat_mutation_ink.name": "Mutation Ink",
   "$item.mat_flask_draught.name": "Flask Draught",
   "$item.mat_radiant_core.name": "Radiant Core",

@@ -9,38 +9,43 @@ using Kiln.Game.Items;
 namespace Kiln.Game.UI;
 
 /// <summary>
-/// The anvil, the socket bench and the reroll table, on U.
+/// The smith (REF-11): upgrading, sockets and rerolling, at a smith or a bench only.
 /// </summary>
 /// <remarks>
-/// The upgrade panel is where the redesign's central promise is either kept or broken, so it
-/// says everything out loud: the real chance, the pity counter and how many failures remain
-/// before the next attempt is guaranteed, and what the attempt costs against what the player
-/// actually holds. Metin2's version hides all of this behind a percentage and an animation,
-/// which is precisely how a system that can delete your item stays tolerable — and exactly
-/// what this design refuses to inherit.
+/// Laid out as the original's smith window: it opens beside the bag, an item is carried from
+/// the bag onto the anvil — or right-clicked there — and the window shows what the next level
+/// gives, the chance, and every material as its icon with how many are held against how many
+/// are needed. Three tabs share the anvil: upgrade, sockets, bonus lines.
+/// <para>
+/// No failure ever destroys or downgrades an item; that line stays on the window because it
+/// is what makes the chance something a player can take.
+/// </para>
 /// </remarks>
 public partial class WorkbenchPanel : CanvasLayer
 {
+    private enum Tab { Upgrade, Sockets, Reroll }
+
+    private const int IconSize = 44;
+
+    /// <summary>The smith window while it is open, so the bag can hand items to it.</summary>
+    public static WorkbenchPanel? Current { get; private set; }
+
     private PlayerInventory? _inventory;
     private ItemInstance? _selected;
+    private Tab _tab = Tab.Upgrade;
 
-    private VBoxContainer _itemList = null!;
-    private Label _title = null!;
-    private RichTextLabel _detail = null!;
-    private Label _chance = null!;
-    private Label _pity = null!;
-    private Label _cost = null!;
-    private Button _upgrade = null!;
-    private Button _gift = null!;
-
-    /// <summary>The bench the panel was opened at, when it holds the tower smith's free upgrade.</summary>
+    /// <summary>The bench the window was opened at, when it holds the tower smith's free upgrade.</summary>
     private World.BenchNode? _bench;
-    private Button _bore = null!;
-    private VBoxContainer _stoneList = null!;
-    private Label _rerollCost = null!;
-    private Button _reroll = null!;
-    private VBoxContainer _lockList = null!;
+
+    private Control _root = null!;
+    private ItemView _anvil = null!;
+    private Label _title = null!;
+    private Label _hint = null!;
+    private readonly List<Button> _tabs = [];
+    private VBoxContainer _body = null!;
     private Label _status = null!;
+    private ItemTip _tip = null!;
+    private bool _blessed;
 
     public override void _Ready()
     {
@@ -60,225 +65,200 @@ public partial class WorkbenchPanel : CanvasLayer
         _inventory.Changed += Refresh;
     }
 
-    /// <summary>Opens the bench, as a bench in the world does (FR-7.14).</summary>
+    /// <summary>Opens the smith, at a smith or a bench in the world (FR-7.14), and the bag beside it.</summary>
     public void Open(World.BenchNode? bench = null)
     {
         if (Visible) return;
 
-        // Opened on the key while standing at the smith's bench counts as opened at it.
-        _bench = bench ?? SmithInReach();
+        _bench = bench;
         Visible = true;
+        Current = this;
         UiState.SetOpen(ref _counted, true);
-        _selected ??= FirstUpgradable();
+
+        // What is worked on comes from the bag, so the bag opens with the window.
+        GetParent()?.GetNodeOrNull<InventoryPanel>("InventoryPanel")?.Open();
+
+        // Still owned, it stays on the anvil; otherwise the anvil starts empty.
+        if (_selected is not null && !Owned(_selected)) _selected = null;
+
+        _status.Text = "";
         Refresh();
+    }
+
+    private void Close()
+    {
+        if (!Visible) return;
+
+        Visible = false;
+        Current = null;
+        _tip.Clear();
+        UiState.SetOpen(ref _counted, false);
     }
 
     public override void _UnhandledInput(InputEvent @event)
     {
-        if (@event.IsActionPressed(GameActions.ToggleUpgradeBench))
-        {
-            if (Visible)
-            {
-                Visible = false;
-                UiState.SetOpen(ref _counted, false);
-            }
-            else
-            {
-                Open();
-            }
+        if (!Visible || !@event.IsActionPressed(GameActions.Cancel)) return;
 
-            GetViewport().SetInputAsHandled();
-            return;
-        }
-
-        if (Visible && @event.IsActionPressed(GameActions.Cancel))
-        {
-            Visible = false;
-            UiState.SetOpen(ref _counted, false);
-            GetViewport().SetInputAsHandled();
-        }
+        Close();
+        GetViewport().SetInputAsHandled();
     }
 
     private bool _counted;
 
-    private World.BenchNode? SmithInReach()
-    {
-        if (GetTree().GetFirstNodeInGroup("player") is not Node3D player) return null;
-
-        foreach (var node in GetTree().GetNodesInGroup("benches"))
-        {
-            if (node is World.BenchNode { HasGift: true } bench
-                && bench.GlobalPosition.DistanceTo(player.GlobalPosition) <= bench.Radius + 0.5f) return bench;
-        }
-
-        return null;
-    }
-
     // A panel freed while open would otherwise leave the modal count raised forever, and the
     // player could never move again.
-    public override void _ExitTree() => UiState.SetOpen(ref _counted, false);
-
-    private ItemInstance? FirstUpgradable()
+    public override void _ExitTree()
     {
-        if (_inventory is null) return null;
+        if (Current == this) Current = null;
 
-        foreach (var slot in System.Enum.GetValues<EquipSlot>())
+        UiState.SetOpen(ref _counted, false);
+    }
+
+    /// <summary>
+    /// An item right-clicked in the bag while the window is open (REF-11): gear goes on the
+    /// anvil; a stone, on the sockets tab, into the first empty socket. False leaves the click
+    /// to the bag.
+    /// </summary>
+    public bool Offer(ItemInstance item)
+    {
+        var spec = GameItems.Spec(item.DefId);
+
+        if (spec is null) return false;
+
+        if (spec.IsEquipment)
         {
-            if (_inventory.Gear.In(slot) is { } worn && GameItems.Spec(worn.DefId)?.IsUpgradable == true) return worn;
+            Place(item);
+            return true;
         }
 
-        return _inventory.Bag.Items
-            .Select(p => p.Item)
-            .FirstOrDefault(i => GameItems.Spec(i.DefId)?.IsUpgradable == true);
+        if (_tab == Tab.Sockets && _selected is not null && IsStone(spec))
+        {
+            var empty = _selected.Sockets.Select((s, i) => (s, i)).FirstOrDefault(p => p.s.IsOpen && p.s.StoneId is null);
+
+            if (empty.s is not null) SetStone(item.DefId, empty.i);
+            else Say(L10n.T("No open, empty socket on this item."), Bad);
+
+            return true;
+        }
+
+        return false;
     }
 
     // ------------------------------------------------------------------ build
 
     private void Build()
     {
-        var root = new PanelContainer
+        // Beside the bag, which keeps the right edge (REF-10): the item goes from one to the other.
+        _root = new PanelContainer
         {
-            AnchorLeft = 0.5f,
+            AnchorLeft = 1f,
             AnchorTop = 0.5f,
-            AnchorRight = 0.5f,
+            AnchorRight = 1f,
             AnchorBottom = 0.5f,
-            GrowHorizontal = Control.GrowDirection.Both,
+            OffsetRight = -304,
+            GrowHorizontal = Control.GrowDirection.Begin,
             GrowVertical = Control.GrowDirection.Both,
+            CustomMinimumSize = new Vector2(340, 0),
         };
 
-        root.AddThemeStyleboxOverride("panel", Panel(new Color(0.07f, 0.08f, 0.10f, 0.97f)));
-        AddChild(root);
+        _root.AddThemeStyleboxOverride("panel", Style(new Color(0.07f, 0.08f, 0.10f, 0.97f)));
+        AddChild(_root);
 
         var margin = new MarginContainer();
-        margin.AddThemeConstantOverride("margin_left", 20);
-        margin.AddThemeConstantOverride("margin_right", 20);
-        margin.AddThemeConstantOverride("margin_top", 16);
-        margin.AddThemeConstantOverride("margin_bottom", 16);
-        root.AddChild(margin);
+        margin.AddThemeConstantOverride("margin_left", 14);
+        margin.AddThemeConstantOverride("margin_right", 14);
+        margin.AddThemeConstantOverride("margin_top", 12);
+        margin.AddThemeConstantOverride("margin_bottom", 12);
+        _root.AddChild(margin);
 
-        var columns = new HBoxContainer();
-        columns.AddThemeConstantOverride("separation", 24);
-        margin.AddChild(columns);
+        var column = new VBoxContainer();
+        column.AddThemeConstantOverride("separation", 8);
+        margin.AddChild(column);
 
-        // -- what can be worked on
-        var left = new VBoxContainer { CustomMinimumSize = new Vector2(240, 380) };
-        left.AddThemeConstantOverride("separation", 6);
-        columns.AddChild(left);
-        left.AddChild(Heading(L10n.T("Workbench")));
+        _title = new Label();
+        _title.AddThemeFontSizeOverride("font_size", 17);
+        column.AddChild(_title);
 
-        _itemList = new VBoxContainer();
-        _itemList.AddThemeConstantOverride("separation", 4);
-        left.AddChild(_itemList);
+        var tabs = new HBoxContainer();
+        tabs.AddThemeConstantOverride("separation", 4);
+        column.AddChild(tabs);
 
-        // -- the item and the three benches
-        var right = new VBoxContainer { CustomMinimumSize = new Vector2(430, 0) };
-        right.AddThemeConstantOverride("separation", 10);
-        columns.AddChild(right);
-
-        _title = Heading("—");
-        right.AddChild(_title);
-
-        _detail = new RichTextLabel
+        foreach (var (tab, name) in new[] { (Tab.Upgrade, L10n.T("Upgrade")), (Tab.Sockets, L10n.T("Sockets")), (Tab.Reroll, L10n.T("Bonus lines")) })
         {
-            CustomMinimumSize = new Vector2(0, 120),
-            BbcodeEnabled = false,
-            FitContent = true,
+            var button = new Button { Text = name, ToggleMode = true, SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
+            var captured = tab;
+
+            button.Pressed += () =>
+            {
+                _tab = captured;
+                _status.Text = "";
+                Refresh();
+            };
+
+            tabs.AddChild(button);
+            _tabs.Add(button);
+        }
+
+        // -- the anvil
+        var anvilRow = new HBoxContainer();
+        anvilRow.AddThemeConstantOverride("separation", 12);
+        column.AddChild(anvilRow);
+
+        _anvil = new ItemView
+        {
+            Placeholder = L10n.T("Anvil"),
+            CustomMinimumSize = new Vector2(92, 92),
+            CanTake = (_, data) => ItemOf(data) is { } item && GameItems.Spec(item.DefId)?.IsEquipment == true,
+            Take = (_, data) =>
+            {
+                if (ItemOf(data) is { } item) Place(item);
+            },
         };
 
-        _detail.AddThemeFontSizeOverride("normal_font_size", 13);
-        right.AddChild(_detail);
-
-        right.AddChild(Separator());
-        right.AddChild(Heading2(L10n.T("Upgrade")));
-
-        _chance = new Label();
-        _chance.AddThemeFontSizeOverride("font_size", 15);
-        right.AddChild(_chance);
-
-        _pity = new Label();
-        _pity.AddThemeColorOverride("font_color", new Color("8fd3a8"));
-        right.AddChild(_pity);
-
-        _cost = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart };
-        _cost.AddThemeFontSizeOverride("font_size", 13);
-        right.AddChild(_cost);
-
-        _upgrade = new Button { Text = L10n.T("Upgrade") };
-        _upgrade.Pressed += DoUpgrade;
-        right.AddChild(_upgrade);
-
-        // The tower smith's gift: shown only at a bench that holds one.
-        _gift = new Button { Text = L10n.T("Free upgrade — the tower smith"), Visible = false };
-        _gift.AddThemeColorOverride("font_color", new Color("ffd36b"));
-        _gift.Pressed += DoGift;
-        right.AddChild(_gift);
-
-        var safety = new Label
+        _anvil.MouseEntered += () => Describe(_anvil.Item);
+        _anvil.MouseExited += () => _tip.Clear();
+        _anvil.GuiInput += @event =>
         {
-            Text = L10n.T("Failure costs the materials. It never destroys or downgrades the item."),
+            // Right-click takes the item back off the anvil.
+            if (@event is InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Right } && _selected is not null)
+            {
+                _anvil.AcceptEvent();
+                _selected = null;
+                _tip.Clear();
+                Refresh();
+            }
+        };
+
+        anvilRow.AddChild(_anvil);
+
+        _hint = new Label
+        {
             AutowrapMode = TextServer.AutowrapMode.WordSmart,
+            SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
+            VerticalAlignment = VerticalAlignment.Center,
         };
 
-        safety.AddThemeFontSizeOverride("font_size", 12);
-        safety.AddThemeColorOverride("font_color", new Color(0.62f, 0.70f, 0.64f));
-        right.AddChild(safety);
+        _hint.AddThemeFontSizeOverride("font_size", 13);
+        anvilRow.AddChild(_hint);
 
-        right.AddChild(Separator());
-        right.AddChild(Heading2(L10n.T("Sockets")));
+        column.AddChild(new HSeparator());
 
-        _bore = new Button { Text = L10n.T("Open a socket") };
-        _bore.Pressed += DoBore;
-        right.AddChild(_bore);
+        _body = new VBoxContainer();
+        _body.AddThemeConstantOverride("separation", 8);
+        column.AddChild(_body);
 
-        _stoneList = new VBoxContainer();
-        _stoneList.AddThemeConstantOverride("separation", 3);
-        right.AddChild(_stoneList);
-
-        right.AddChild(Separator());
-        right.AddChild(Heading2(L10n.T("Bonus lines")));
-
-        _lockList = new VBoxContainer();
-        _lockList.AddThemeConstantOverride("separation", 3);
-        right.AddChild(_lockList);
-
-        _rerollCost = new Label();
-        _rerollCost.AddThemeFontSizeOverride("font_size", 13);
-        right.AddChild(_rerollCost);
-
-        _reroll = new Button { Text = L10n.T("Reroll") };
-        _reroll.Pressed += DoReroll;
-        right.AddChild(_reroll);
-
-        _status = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart };
+        _status = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart, CustomMinimumSize = new Vector2(310, 0) };
         _status.AddThemeFontSizeOverride("font_size", 13);
-        right.AddChild(_status);
+        column.AddChild(_status);
 
-        var hint = new Label { Text = L10n.T("U to close") };
-        hint.AddThemeFontSizeOverride("font_size", 12);
-        hint.AddThemeColorOverride("font_color", new Color(0.55f, 0.60f, 0.66f));
-        right.AddChild(hint);
+        var footer = Muted(L10n.T("Esc to close"));
+        column.AddChild(footer);
+
+        _tip = new ItemTip();
+        AddChild(_tip);
     }
 
-    private static Label Heading(string text)
-    {
-        var label = new Label { Text = text };
-        label.AddThemeFontSizeOverride("font_size", 18);
-
-        return label;
-    }
-
-    private static Label Heading2(string text)
-    {
-        var label = new Label { Text = text };
-        label.AddThemeFontSizeOverride("font_size", 15);
-        label.AddThemeColorOverride("font_color", new Color(0.78f, 0.82f, 0.90f));
-
-        return label;
-    }
-
-    private static HSeparator Separator() => new();
-
-    private static StyleBoxFlat Panel(Color colour) => new()
+    private static StyleBoxFlat Style(Color colour) => new()
     {
         BgColor = colour,
         BorderColor = new Color(0.25f, 0.28f, 0.34f),
@@ -292,140 +272,76 @@ public partial class WorkbenchPanel : CanvasLayer
         CornerRadiusBottomRight = 6,
     };
 
-    // ------------------------------------------------------------------ actions
-
-    private void DoUpgrade()
+    private static Label Muted(string text)
     {
-        if (_inventory is null || _selected is null) return;
+        var label = new Label { Text = text, AutowrapMode = TextServer.AutowrapMode.WordSmart, CustomMinimumSize = new Vector2(310, 0) };
+        label.AddThemeFontSizeOverride("font_size", 12);
+        label.AddThemeColorOverride("font_color", new Color(0.58f, 0.62f, 0.68f));
 
-        var ladder = GameItems.Catalogue.LadderFor(_selected);
-        var before = _selected.UpgradeLevel;
+        return label;
+    }
 
-        var result = UpgradeAnvil.Attempt(_selected, ladder, _inventory.Bag, GameItems.CraftRng);
+    private static Label Line(string text, int size = 14, Color? colour = null)
+    {
+        var label = new Label { Text = text, AutowrapMode = TextServer.AutowrapMode.WordSmart, CustomMinimumSize = new Vector2(310, 0) };
+        label.AddThemeFontSizeOverride("font_size", size);
+        if (colour is { } c) label.AddThemeColorOverride("font_color", c);
 
-        if (result.Attempted)
+        return label;
+    }
+
+    private static readonly Color Good = new("8fd3a8");
+    private static readonly Color Warn = new("d8b06a");
+    private static readonly Color Bad = new("e07a6a");
+    private static readonly Color Gold = new("ffd36b");
+
+    // ------------------------------------------------------------------ the anvil
+
+    private void Place(ItemInstance item)
+    {
+        _selected = item;
+        _status.Text = "";
+        _blessed = false;
+        Refresh();
+    }
+
+    private bool Owned(ItemInstance item) =>
+        _inventory is not null
+        && (_inventory.Bag.Find(item) is not null || System.Enum.GetValues<EquipSlot>().Any(s => ReferenceEquals(_inventory.Gear.In(s), item)));
+
+    /// <summary>The item a drag from the bag or the worn figure carries, found by its id.</summary>
+    private ItemInstance? ItemOf(Variant data)
+    {
+        if (_inventory is null || data.VariantType != Variant.Type.Dictionary) return null;
+
+        var payload = data.AsGodotDictionary();
+
+        if (!payload.TryGetValue("kind", out var kind) || kind.AsString() != "kiln_item") return null;
+        if (!payload.TryGetValue("uid", out var uidValue)) return null;
+
+        var uid = uidValue.AsInt64();
+
+        return _inventory.Bag.Items.Select(p => p.Item).FirstOrDefault(i => i.Uid == uid)
+            ?? System.Enum.GetValues<EquipSlot>().Select(s => _inventory.Gear.In(s)).FirstOrDefault(i => i?.Uid == uid);
+    }
+
+    private static bool IsStone(ItemSpec spec) => spec is { IsEquipment: false, Grants.Count: > 0 };
+
+    private void Describe(ItemInstance? item)
+    {
+        if (item is null)
         {
-            Audio.AudioDirector.Play(result.Outcome == UpgradeOutcome.Success ? Kiln.Data.Ids.Sounds.SndUpgradeSuccess : Kiln.Data.Ids.Sounds.SndUpgradeFail);
+            _tip.Clear();
+            return;
         }
 
-        _status.Text = result.Outcome switch
-        {
-            UpgradeOutcome.Success when result.WasGuaranteed => L10n.F("Guaranteed success — now +{0}.", result.Level),
-            UpgradeOutcome.Success => L10n.F("Success — now +{0}.", result.Level),
-            UpgradeOutcome.Failed => L10n.F("Failed. Still +{0}, and the next attempt is closer to guaranteed.", before),
-            UpgradeOutcome.CannotAfford => L10n.T("Not enough yang or materials."),
-            UpgradeOutcome.AtMaxLevel => L10n.T("Already at the highest level."),
-            _ => L10n.T("This item cannot be upgraded."),
-        };
-
-        _status.AddThemeColorOverride("font_color", result.Outcome switch
-        {
-            UpgradeOutcome.Success => new Color("8fd3a8"),
-            UpgradeOutcome.Failed => new Color("d8b06a"),
-            _ => new Color("c98b8b"),
-        });
-
-        _inventory.ApplyToStats();
-        Refresh();
+        _tip.Say(ItemText.RichTooltip(item, null, PlayerProfile.Progression.Level));
     }
 
-    private void DoGift()
+    private void Say(string message, Color colour)
     {
-        if (_inventory is null || _selected is null || _bench is not { HasGift: true } bench || !IsInstanceValid(bench)) return;
-
-        var result = UpgradeAnvil.Gift(_selected, GameItems.Catalogue.LadderFor(_selected));
-
-        if (result.Outcome != UpgradeOutcome.Success) return;
-
-        bench.Revoke();
-        Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndUpgradeSuccess);
-        GD.Print($"[tower] the smith upgraded {_selected.DefId} to +{result.Level}");
-
-        _status.Text = L10n.F("The smith's gift — now +{0}.", result.Level);
-        _status.AddThemeColorOverride("font_color", new Color("ffd36b"));
-
-        _inventory.ApplyToStats();
-        Refresh();
-    }
-
-    private void DoBore()
-    {
-        if (_inventory is null || _selected is null) return;
-
-        var outcome = SocketBench.TryBore(_selected, _inventory.Bag);
-
-        if (outcome == SocketOutcome.Success) Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndSocket);
-
-        _status.Text = outcome switch
-        {
-            SocketOutcome.Success => L10n.T("A socket is open."),
-            SocketOutcome.NoSocketsLeft => L10n.T("Every socket on this item is already open."),
-            SocketOutcome.CannotAfford => L10n.T("Needs a Boring Stone and yang."),
-            _ => outcome.ToString(),
-        };
-
-        _inventory.ApplyToStats();
-        Refresh();
-    }
-
-    private void DoSlot(string stoneId, int socketIndex)
-    {
-        if (_inventory is null || _selected is null) return;
-
-        var outcome = SocketBench.TrySlot(_selected, socketIndex, stoneId, GameItems.Catalogue, _inventory.Bag);
-
-        if (outcome == SocketOutcome.Success) Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndSocket);
-
-        _status.Text = outcome == SocketOutcome.Success ? L10n.T("Stone set.") : L10n.T("The stone could not be set.");
-
-        _inventory.ApplyToStats();
-        Refresh();
-    }
-
-    private void DoRemoveStone(int socketIndex)
-    {
-        if (_inventory is null || _selected is null) return;
-
-        var outcome = SocketBench.TryRemove(_selected, socketIndex, _inventory.Bag);
-
-        if (outcome == SocketOutcome.Success) Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndSocket);
-
-        _status.Text = outcome switch
-        {
-            SocketOutcome.Success => L10n.T("Stone recovered, intact."),
-            SocketOutcome.NoRoomForStone => L10n.T("No room in the bag for the stone."),
-            SocketOutcome.CannotAfford => L10n.F("Removal costs {0:N0} yang.", ItemEconomy.SocketRemoveYang),
-            _ => outcome.ToString(),
-        };
-
-        _inventory.ApplyToStats();
-        Refresh();
-    }
-
-    private void DoReroll()
-    {
-        if (_inventory is null || _selected is null) return;
-
-        var spec = GameItems.Spec(_selected.DefId);
-
-        if (spec is null) return;
-
-        var pool = GameItems.Catalogue.Pool(spec.BonusPoolId);
-        var outcome = RerollTable.TryReroll(_selected, spec, pool, _inventory.Bag, GameItems.CraftRng);
-
-        if (outcome == RerollOutcome.Success) Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndReroll);
-
-        _status.Text = outcome switch
-        {
-            RerollOutcome.Success => L10n.T("Rerolled."),
-            RerollOutcome.CannotAfford => L10n.T("Needs Mutation Ink and yang."),
-            RerollOutcome.NothingToReroll => L10n.T("Nothing left to reroll — unlock a line first."),
-            RerollOutcome.TooManyLocked => L10n.T("Too many locked lines for this item's rarity."),
-            _ => L10n.T("This item has no bonus pool."),
-        };
-
-        _inventory.ApplyToStats();
-        Refresh();
+        _status.Text = message;
+        _status.AddThemeColorOverride("font_color", colour);
     }
 
     // ------------------------------------------------------------------ refresh
@@ -434,216 +350,339 @@ public partial class WorkbenchPanel : CanvasLayer
     {
         if (_inventory is null || !Visible) return;
 
-        RefreshItemList();
+        if (_selected is not null && !Owned(_selected)) _selected = null;
 
-        if (_selected is null)
+        _title.Text = _bench is { HasGift: true } && IsInstanceValid(_bench) ? L10n.T("Tower smith") : L10n.T("Smith");
+
+        for (var i = 0; i < _tabs.Count; i++) _tabs[i].SetPressedNoSignal(i == (int)_tab);
+
+        _anvil.Display(_selected);
+
+        _hint.Text = _selected is null
+            ? L10n.T("Drag an item from the bag onto the anvil, or right-click it there.")
+            : GameItems.NameOf(_selected);
+
+        _hint.AddThemeColorOverride("font_color", _selected is null
+            ? new Color(0.62f, 0.66f, 0.72f)
+            : World.LootDrop.RarityColour(GameItems.Spec(_selected.DefId)?.Rarity ?? Rarity.Common));
+
+        foreach (var child in _body.GetChildren()) child.QueueFree();
+
+        if (_selected is null) return;
+
+        switch (_tab)
         {
-            _title.Text = L10n.T("Nothing to work on");
-            _detail.Text = "";
-            _upgrade.Disabled = true;
-            _gift.Disabled = true;
-            _bore.Disabled = true;
-            _reroll.Disabled = true;
-
-            return;
-        }
-
-        _title.Text = GameItems.NameOf(_selected);
-        _detail.Text = ItemText.Tooltip(_selected);
-
-        RefreshUpgrade();
-        RefreshSockets();
-        RefreshReroll();
-    }
-
-    private void RefreshItemList()
-    {
-        foreach (var child in _itemList.GetChildren()) child.QueueFree();
-
-        // Worn first, then the bag — and each row carries which it is (ITM-15). The bench is
-        // where the player decides what to improve, and that decision is mostly "is this the
-        // thing I am actually wearing?". Leaving it to be inferred from the order made them
-        // hold the list's shape in their head to read a single row.
-        var candidates = new List<(ItemInstance Item, EquipSlot? Worn)>();
-
-        foreach (var slot in System.Enum.GetValues<EquipSlot>())
-        {
-            if (_inventory!.Gear.In(slot) is { } worn) candidates.Add((worn, slot));
-        }
-
-        candidates.AddRange(_inventory!.Bag.Items
-            .Select(p => p.Item)
-            .Where(i => GameItems.Spec(i.DefId)?.IsEquipment == true)
-            .Select(i => (i, (EquipSlot?)null)));
-
-        foreach (var (item, worn) in candidates)
-        {
-            var spec = GameItems.Spec(item.DefId);
-            var rarity = spec?.Rarity ?? Rarity.Common;
-
-            var button = new Button
-            {
-                Text = worn is null
-                    ? GameItems.NameOf(item)
-                    : $"{GameItems.NameOf(item)}   ·   {ItemIcon.NameOf(worn.Value)}",
-                Alignment = HorizontalAlignment.Left,
-                TooltipText = ItemText.Tooltip(item),
-                Disabled = ReferenceEquals(item, _selected),
-                Icon = ItemIcon.For(rarity, worn is not null),
-                ExpandIcon = false,
-            };
-
-            button.AddThemeColorOverride("font_color", World.LootDrop.RarityColour(rarity));
-
-            var captured = item;
-            button.Pressed += () =>
-            {
-                _selected = captured;
-                _status.Text = "";
-                Refresh();
-            };
-
-            _itemList.AddChild(button);
-        }
-
-        if (candidates.Count == 0) _selected = null;
-        else if (_selected is not null && !candidates.Any(c => ReferenceEquals(c.Item, _selected)))
-        {
-            _selected = candidates[0].Item;
+            case Tab.Upgrade: BuildUpgrade(_selected); break;
+            case Tab.Sockets: BuildSockets(_selected); break;
+            default: BuildReroll(_selected); break;
         }
     }
 
-    private void RefreshUpgrade()
+    /// <summary>A row of material icons, each with how many are held against how many it takes, and the yang.</summary>
+    private Control Costs(long yang, IReadOnlyDictionary<string, int> materials)
     {
-        var ladder = GameItems.Catalogue.LadderFor(_selected!);
-        var quote = UpgradeAnvil.Quote(_selected!, ladder, _inventory!.Bag);
+        var row = new HBoxContainer();
+        row.AddThemeConstantOverride("separation", 8);
 
-        _gift.Visible = _bench is { HasGift: true } && IsInstanceValid(_bench);
-        _gift.Disabled = quote is null;
-
-        if (quote is null)
+        foreach (var (id, need) in materials)
         {
-            _chance.Text = ladder is null ? L10n.T("This item does not upgrade.") : L10n.T("Already at the highest level.");
-            _pity.Text = "";
-            _cost.Text = "";
-            _upgrade.Disabled = true;
+            var cell = new VBoxContainer();
+            cell.AddThemeConstantOverride("separation", 2);
 
+            var icon = new ItemView { CustomMinimumSize = new Vector2(IconSize, IconSize), MouseFilter = Control.MouseFilterEnum.Pass };
+            var shown = new ItemInstance(0, id, need);
+            icon.Display(shown);
+            icon.MouseEntered += () => Describe(shown);
+            icon.MouseExited += () => _tip.Clear();
+            cell.AddChild(icon);
+
+            var have = _inventory!.Bag.CountOf(id);
+            var count = new Label { Text = $"{have}/{need}", HorizontalAlignment = HorizontalAlignment.Center };
+            count.AddThemeFontSizeOverride("font_size", 12);
+            count.AddThemeColorOverride("font_color", have >= need ? Good : Bad);
+            cell.AddChild(count);
+
+            row.AddChild(cell);
+        }
+
+        var money = new Label
+        {
+            Text = L10n.F("{0:N0} yang", yang),
+            VerticalAlignment = VerticalAlignment.Center,
+            SizeFlagsVertical = Control.SizeFlags.ShrinkCenter,
+        };
+
+        money.AddThemeFontSizeOverride("font_size", 14);
+        money.AddThemeColorOverride("font_color", _inventory!.Bag.Yang >= yang ? new Color("f0c96a") : Bad);
+        row.AddChild(money);
+
+        return row;
+    }
+
+    // ------------------------------------------------------------------ upgrade
+
+    private void BuildUpgrade(ItemInstance item)
+    {
+        var spec = GameItems.Spec(item.DefId);
+        var ladder = GameItems.Catalogue.LadderFor(item);
+        var scrolls = _inventory!.Bag.CountOf(UpgradeAnvil.BlessingScrollId);
+
+        if (scrolls == 0) _blessed = false;
+
+        var quote = UpgradeAnvil.Quote(item, ladder, _inventory.Bag, _blessed);
+
+        if (quote is null || spec is null)
+        {
+            _body.AddChild(Line(ladder is null ? L10n.T("This item does not upgrade.") : L10n.T("Already at the highest level."), 15, Warn));
             return;
         }
 
-        _chance.Text = L10n.F("+{0} → +{1}   {2:P0}", _selected!.UpgradeLevel, quote.Step.To, quote.DisplayedChance)
-            + (quote.Guaranteed ? "  " + L10n.T("(guaranteed)") : "");
+        var chance = quote.DisplayedChance;
+
+        _body.AddChild(Line(L10n.F("+{0}  →  +{1}", item.UpgradeLevel, quote.Step.To), 20, Gold));
+        _body.AddChild(Line(L10n.F("Chance {0:P0}", chance) + (quote.Guaranteed ? "  " + L10n.T("(guaranteed)") : ""), 16,
+            chance >= 0.999 ? Good : chance >= 0.5 ? Warn : Bad));
 
         // The counter is the whole point: the player can always see the ladder converging.
-        _pity.Text = quote.Guaranteed
-            ? L10n.T("Pity reached — this attempt cannot fail.")
-            : quote.Step.Pity > 0
-                ? L10n.F("Failed {0} in a row · guaranteed after {1} more", quote.FailuresSoFar, quote.AttemptsToGuarantee)
-                : "";
+        if (quote.Guaranteed) _body.AddChild(Line(L10n.T("Pity reached — this attempt cannot fail."), 13, Good));
+        else if (quote.Step.Pity > 0)
+        {
+            _body.AddChild(Line(L10n.F("Failed {0} in a row · guaranteed after {1} more", quote.FailuresSoFar, quote.AttemptsToGuarantee), 13, Good));
+        }
 
-        _cost.Text = L10n.F("Cost: {0:N0} yang", quote.Step.Yang) + DescribeMaterials(quote.Step.Materials);
-        _upgrade.Disabled = !quote.Affordable;
+        // What the next level gives.
+        var now = UpgradeScaling.BonusPercent(item.UpgradeLevel);
+        var next = UpgradeScaling.BonusPercent(quote.Step.To);
+
+        var scale = UpgradeScaling.Multiplier(quote.Step.To);
+
+        if (spec.WeaponDamageMax > 0)
+        {
+            _body.AddChild(Line(L10n.F("Damage {0:0}–{1:0}  →  {2:0}–{3:0}",
+                item.WeaponDamageMin(spec), item.WeaponDamageMax(spec), spec.WeaponDamageMin * scale, spec.WeaponDamageMax * scale)));
+        }
+        else if (spec.ArmorValue > 0)
+        {
+            _body.AddChild(Line(L10n.F("Armour {0:0}  →  {1:0}", item.ArmorValue(spec), spec.ArmorValue * scale)));
+        }
+
+        _body.AddChild(Line(L10n.F("Base stats +{0:0}%  →  +{1:0}%", now, next), 13, new Color(0.72f, 0.76f, 0.82f)));
+
+        _body.AddChild(Costs(quote.Step.Yang, quote.Step.Materials));
+
+        // The scroll, while there is one and the attempt is not sure already.
+        var bless = new CheckBox
+        {
+            Text = L10n.F("Read a Blessing Scroll: +{0:P0} ({1} held)", UpgradeAnvil.BlessingBonus, scrolls),
+            ButtonPressed = _blessed,
+            Disabled = scrolls == 0 || quote.Guaranteed,
+        };
+
+        bless.Toggled += on =>
+        {
+            _blessed = on;
+            Refresh();
+        };
+
+        _body.AddChild(bless);
+
+        var upgrade = new Button { Text = L10n.T("Upgrade"), Disabled = !quote.Affordable };
+        upgrade.Pressed += () => DoUpgrade(item, ladder);
+        _body.AddChild(upgrade);
+
+        // The tower smith's gift: shown only at a bench that holds one.
+        if (_bench is { HasGift: true } && IsInstanceValid(_bench))
+        {
+            var gift = new Button { Text = L10n.T("Free upgrade — the tower smith") };
+            gift.AddThemeColorOverride("font_color", Gold);
+            gift.Pressed += () => DoGift(item, ladder);
+            _body.AddChild(gift);
+        }
+
+        _body.AddChild(Muted(L10n.T("Failure costs the materials. It never destroys or downgrades the item.")));
     }
 
-    private string DescribeMaterials(IReadOnlyDictionary<string, int> materials)
+    private void DoUpgrade(ItemInstance item, UpgradeLadder? ladder)
     {
-        if (materials.Count == 0) return "";
+        if (_inventory is null) return;
 
-        var parts = materials.Select(m =>
+        var before = item.UpgradeLevel;
+        var result = UpgradeAnvil.Attempt(item, ladder, _inventory.Bag, GameItems.CraftRng, _blessed);
+
+        if (result.Attempted)
         {
-            var have = _inventory!.Bag.CountOf(m.Key);
-            var name = GameContent.IsLoaded && GameContent.Database.Items.TryGetValue(m.Key, out var def)
-                ? GameItems.Localise(def.Name)
-                : m.Key;
+            Audio.AudioDirector.Play(result.Outcome == UpgradeOutcome.Success ? Kiln.Data.Ids.Sounds.SndUpgradeSuccess : Kiln.Data.Ids.Sounds.SndUpgradeFail);
+        }
 
-            return $"{name} {have}/{m.Value}";
+        Say(result.Outcome switch
+        {
+            UpgradeOutcome.Success when result.WasGuaranteed => L10n.F("Guaranteed success — now +{0}.", result.Level),
+            UpgradeOutcome.Success => L10n.F("Success — now +{0}.", result.Level),
+            UpgradeOutcome.Failed => L10n.F("Failed. Still +{0}, and the next attempt is closer to guaranteed.", before),
+            UpgradeOutcome.CannotAfford => L10n.T("Not enough yang or materials."),
+            UpgradeOutcome.AtMaxLevel => L10n.T("Already at the highest level."),
+            _ => L10n.T("This item cannot be upgraded."),
+        }, result.Outcome switch
+        {
+            UpgradeOutcome.Success => Good,
+            UpgradeOutcome.Failed => Warn,
+            _ => Bad,
         });
 
-        return " · " + string.Join(" · ", parts);
+        _inventory.ApplyToStats();
+        Refresh();
     }
 
-    private void RefreshSockets()
+    private void DoGift(ItemInstance item, UpgradeLadder? ladder)
     {
-        foreach (var child in _stoneList.GetChildren()) child.QueueFree();
+        if (_inventory is null || _bench is not { HasGift: true } bench || !IsInstanceValid(bench)) return;
 
-        var item = _selected!;
+        var result = UpgradeAnvil.Gift(item, ladder);
 
-        _bore.Disabled = SocketBench.NextClosedSocket(item) is null
-            || !_inventory!.Bag.CanAfford(ItemEconomy.SocketBoreYang,
-                new Dictionary<string, int> { [SocketBench.BoringStoneId] = 1 });
+        if (result.Outcome != UpgradeOutcome.Success) return;
 
-        _bore.Text = item.Sockets.Count == 0
-            ? L10n.T("This item has no sockets")
-            : L10n.F("Open a socket — {0:N0} yang + 1 Boring Stone", ItemEconomy.SocketBoreYang);
+        bench.Revoke();
+        Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndUpgradeSuccess);
+        GD.Print($"[tower] the smith upgraded {item.DefId} to +{result.Level}");
+
+        Say(L10n.F("The smith's gift — now +{0}.", result.Level), Gold);
+
+        _inventory.ApplyToStats();
+        Refresh();
+    }
+
+    // ------------------------------------------------------------------ sockets
+
+    private void BuildSockets(ItemInstance item)
+    {
+        if (item.Sockets.Count == 0)
+        {
+            _body.AddChild(Line(L10n.T("This item has no sockets."), 15, Warn));
+            return;
+        }
+
+        var row = new HBoxContainer();
+        row.AddThemeConstantOverride("separation", 8);
+        _body.AddChild(row);
 
         for (var i = 0; i < item.Sockets.Count; i++)
         {
             var socket = item.Sockets[i];
             var index = i;
 
-            if (!socket.IsOpen)
+            var view = new ItemView
             {
-                _stoneList.AddChild(Muted(L10n.F("Socket {0}: sealed", i + 1)));
-                continue;
-            }
-
-            if (socket.StoneId is { } stoneId)
-            {
-                var remove = new Button
+                CustomMinimumSize = new Vector2(56, 56),
+                Placeholder = !socket.IsOpen ? L10n.T("Sealed") : socket.StoneId is null ? L10n.T("Empty") : "",
+                CanTake = (_, data) => socket.IsOpen && socket.StoneId is null
+                    && ItemOf(data) is { } stone && GameItems.Spec(stone.DefId) is { } s && IsStone(s),
+                Take = (_, data) =>
                 {
-                    Text = L10n.F("Socket {0}: {1} — remove for {2:N0} yang", i + 1, NameOfItem(stoneId), ItemEconomy.SocketRemoveYang),
-                    Alignment = HorizontalAlignment.Left,
-                };
+                    if (ItemOf(data) is { } stone) SetStone(stone.DefId, index);
+                },
+            };
 
-                remove.Pressed += () => DoRemoveStone(index);
-                _stoneList.AddChild(remove);
-                continue;
-            }
+            var shown = socket.StoneId is { } id ? new ItemInstance(0, id) : null;
+            view.Display(shown);
 
-            // An open, empty socket offers whatever stones the player is carrying.
-            var stones = _inventory!.Bag.Items
-                .Select(p => p.Item.DefId)
-                .Distinct()
-                .Where(id => GameItems.Spec(id) is { IsEquipment: false, Grants.Count: > 0 })
-                .ToList();
-
-            if (stones.Count == 0)
+            view.MouseEntered += () => Describe(shown);
+            view.MouseExited += () => _tip.Clear();
+            view.GuiInput += @event =>
             {
-                _stoneList.AddChild(Muted(L10n.F("Socket {0}: empty — no stones in the bag", i + 1)));
-                continue;
-            }
-
-            foreach (var candidate in stones)
-            {
-                var button = new Button
+                if (@event is InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Right } && socket.StoneId is not null)
                 {
-                    Text = L10n.F("Socket {0}: set {1}", i + 1, NameOfItem(candidate)),
-                    Alignment = HorizontalAlignment.Left,
-                };
+                    view.AcceptEvent();
+                    RemoveStone(index);
+                }
+            };
 
-                var captured = candidate;
-                button.Pressed += () => DoSlot(captured, index);
-                _stoneList.AddChild(button);
-            }
+            row.AddChild(view);
         }
+
+        _body.AddChild(Muted(L10n.F("Drag a stone from the bag onto an empty socket, or right-click it in the bag. Right-click a set stone to take it out for {0:N0} yang — it comes back intact.", ItemEconomy.SocketRemoveYang)));
+
+        if (SocketBench.NextClosedSocket(item) is null) return;
+
+        var cost = new Dictionary<string, int> { [SocketBench.BoringStoneId] = 1 };
+
+        _body.AddChild(Line(L10n.T("Open the next socket"), 14));
+        _body.AddChild(Costs(ItemEconomy.SocketBoreYang, cost));
+
+        var bore = new Button { Text = L10n.T("Open a socket"), Disabled = !_inventory!.Bag.CanAfford(ItemEconomy.SocketBoreYang, cost) };
+        bore.Pressed += () => DoBore(item);
+        _body.AddChild(bore);
     }
 
-    private void RefreshReroll()
+    private void DoBore(ItemInstance item)
     {
-        foreach (var child in _lockList.GetChildren()) child.QueueFree();
+        if (_inventory is null) return;
 
-        var item = _selected!;
+        var outcome = SocketBench.TryBore(item, _inventory.Bag);
+
+        if (outcome == SocketOutcome.Success) Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndSocket);
+
+        Say(outcome switch
+        {
+            SocketOutcome.Success => L10n.T("A socket is open."),
+            SocketOutcome.NoSocketsLeft => L10n.T("Every socket on this item is already open."),
+            SocketOutcome.CannotAfford => L10n.T("Needs a Boring Stone and yang."),
+            _ => outcome.ToString(),
+        }, outcome == SocketOutcome.Success ? Good : Bad);
+
+        _inventory.ApplyToStats();
+        Refresh();
+    }
+
+    private void SetStone(string stoneId, int socketIndex)
+    {
+        if (_inventory is null || _selected is null) return;
+
+        var outcome = SocketBench.TrySlot(_selected, socketIndex, stoneId, GameItems.Catalogue, _inventory.Bag);
+
+        if (outcome == SocketOutcome.Success) Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndSocket);
+
+        Say(outcome == SocketOutcome.Success ? L10n.T("Stone set.") : L10n.T("The stone could not be set."),
+            outcome == SocketOutcome.Success ? Good : Bad);
+
+        _inventory.ApplyToStats();
+        Refresh();
+    }
+
+    private void RemoveStone(int socketIndex)
+    {
+        if (_inventory is null || _selected is null) return;
+
+        var outcome = SocketBench.TryRemove(_selected, socketIndex, _inventory.Bag);
+
+        if (outcome == SocketOutcome.Success) Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndSocket);
+
+        Say(outcome switch
+        {
+            SocketOutcome.Success => L10n.T("Stone recovered, intact."),
+            SocketOutcome.NoRoomForStone => L10n.T("No room in the bag for the stone."),
+            SocketOutcome.CannotAfford => L10n.F("Removal costs {0:N0} yang.", ItemEconomy.SocketRemoveYang),
+            _ => outcome.ToString(),
+        }, outcome == SocketOutcome.Success ? Good : Bad);
+
+        _inventory.ApplyToStats();
+        Refresh();
+    }
+
+    // ------------------------------------------------------------------ bonus lines
+
+    private void BuildReroll(ItemInstance item)
+    {
         var spec = GameItems.Spec(item.DefId);
 
         if (spec is null || item.Bonuses.Count == 0)
         {
-            _rerollCost.Text = L10n.T("This item has no bonus lines.");
-            _reroll.Disabled = true;
-
+            _body.AddChild(Line(L10n.T("This item has no bonus lines."), 15, Warn));
             return;
         }
 
         var max = RerollTable.MaxLockedLines(spec);
+
+        _body.AddChild(Muted(max == 1 ? L10n.T("Lock up to 1 line: it is kept, and the others are rolled again.") : L10n.F("Lock up to {0} lines: they are kept, and the others are rolled again.", max)));
 
         for (var i = 0; i < item.Bonuses.Count; i++)
         {
@@ -657,35 +696,44 @@ public partial class WorkbenchPanel : CanvasLayer
                 Disabled = !line.Locked && item.LockedLineCount >= max,
             };
 
+            toggle.AddThemeColorOverride("font_color", Good);
             toggle.Toggled += pressed =>
             {
                 item.SetLineLocked(index, pressed);
                 Refresh();
             };
 
-            _lockList.AddChild(toggle);
+            _body.AddChild(toggle);
         }
 
         var quote = RerollTable.Quote(item, spec, _inventory!.Bag);
 
-        _rerollCost.Text =
-            (max == 1 ? L10n.T("Lock up to 1 line") : L10n.F("Lock up to {0} lines", max))
-            + " · " + L10n.F("cost {0:N0} yang", quote.Yang) + DescribeMaterials(quote.Materials);
+        _body.AddChild(Costs(quote.Yang, quote.Materials));
 
-        _reroll.Disabled = !quote.Affordable || item.LockedLineCount >= item.Bonuses.Count;
+        var reroll = new Button { Text = L10n.T("Reroll"), Disabled = !quote.Affordable || item.LockedLineCount >= item.Bonuses.Count };
+        reroll.Pressed += () => DoReroll(item, spec);
+        _body.AddChild(reroll);
     }
 
-    private static Label Muted(string text)
+    private void DoReroll(ItemInstance item, ItemSpec spec)
     {
-        var label = new Label { Text = text };
-        label.AddThemeFontSizeOverride("font_size", 13);
-        label.AddThemeColorOverride("font_color", new Color(0.58f, 0.62f, 0.68f));
+        if (_inventory is null) return;
 
-        return label;
+        var pool = GameItems.Catalogue.Pool(spec.BonusPoolId);
+        var outcome = RerollTable.TryReroll(item, spec, pool, _inventory.Bag, GameItems.CraftRng);
+
+        if (outcome == RerollOutcome.Success) Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndReroll);
+
+        Say(outcome switch
+        {
+            RerollOutcome.Success => L10n.T("Rerolled."),
+            RerollOutcome.CannotAfford => L10n.T("Needs Mutation Ink and yang."),
+            RerollOutcome.NothingToReroll => L10n.T("Nothing left to reroll — unlock a line first."),
+            RerollOutcome.TooManyLocked => L10n.T("Too many locked lines for this item's rarity."),
+            _ => L10n.T("This item has no bonus pool."),
+        }, outcome == RerollOutcome.Success ? Good : Bad);
+
+        _inventory.ApplyToStats();
+        Refresh();
     }
-
-    private static string NameOfItem(string id) =>
-        GameContent.IsLoaded && GameContent.Database.Items.TryGetValue(id, out var def)
-            ? GameItems.Localise(def.Name)
-            : id;
 }

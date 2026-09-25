@@ -32,6 +32,7 @@ public static class Ids
         public const string HlmIronHelm = "hlm_iron_helm";
         public const string HlmLeatherCap = "hlm_leather_cap";
         public const string HlmWardenCrown = "hlm_warden_crown";
+        public const string MatBlessingScroll = "mat_blessing_scroll";
         public const string MatBoringStone = "mat_boring_stone";
         public const string MatFlaskDraught = "mat_flask_draught";
         public const string MatIronScrap = "mat_iron_scrap";
@@ -74,7 +75,7 @@ public static class Ids
         public const string WpnWardenPike = "wpn_warden_pike";
         public const string WpnWornBlade = "wpn_worn_blade";
 
-        public static readonly string[] All = ["arm_ashen_carapace", "arm_kiln_aegis", "arm_leather_vest", "arm_padded_coat", "arm_ridge_mail", "arm_scale_hauberk", "arm_warden_plate", "brc_iron_bracer", "brc_kiln_coil", "brc_leather_band", "brc_warden_vambrace", "bts_ashen_striders", "bts_ridge_greaves", "bts_scout_boots", "bts_worn_boots", "ear_copper_stud", "ear_jade_drop", "ear_stormglass", "hlm_ashen_visor", "hlm_iron_helm", "hlm_leather_cap", "hlm_warden_crown", "mat_boring_stone", "mat_flask_draught", "mat_iron_scrap", "mat_mutation_ink", "mat_radiant_core", "mat_shard_essence", "mat_steel_core", "mat_tempering_oil", "nck_bone_charm", "nck_emberheart", "nck_shard_locket", "nck_silver_pendant", "rng_ashen_circle", "rng_hunters_signet", "rng_kiln_sigil", "rng_tin_band", "rng_warden_seal", "shd_banded_shield", "shd_kiln_ward", "shd_ridge_bulwark", "shd_wooden_buckler", "stn_bane_animal", "stn_bane_devil", "stn_bane_undead", "stn_ember", "stn_falcon", "stn_granite", "stn_thorn", "stn_ward", "wpn_bronze_spear", "wpn_ember_edge", "wpn_gravecaller", "wpn_hollow_reaver", "wpn_hunters_axe", "wpn_iron_sword", "wpn_kiln_brand", "wpn_ridge_cleaver", "wpn_shard_lance", "wpn_steel_sword", "wpn_warden_pike", "wpn_worn_blade"];
+        public static readonly string[] All = ["arm_ashen_carapace", "arm_kiln_aegis", "arm_leather_vest", "arm_padded_coat", "arm_ridge_mail", "arm_scale_hauberk", "arm_warden_plate", "brc_iron_bracer", "brc_kiln_coil", "brc_leather_band", "brc_warden_vambrace", "bts_ashen_striders", "bts_ridge_greaves", "bts_scout_boots", "bts_worn_boots", "ear_copper_stud", "ear_jade_drop", "ear_stormglass", "hlm_ashen_visor", "hlm_iron_helm", "hlm_leather_cap", "hlm_warden_crown", "mat_blessing_scroll", "mat_boring_stone", "mat_flask_draught", "mat_iron_scrap", "mat_mutation_ink", "mat_radiant_core", "mat_shard_essence", "mat_steel_core", "mat_tempering_oil", "nck_bone_charm", "nck_emberheart", "nck_shard_locket", "nck_silver_pendant", "rng_ashen_circle", "rng_hunters_signet", "rng_kiln_sigil", "rng_tin_band", "rng_warden_seal", "shd_banded_shield", "shd_kiln_ward", "shd_ridge_bulwark", "shd_wooden_buckler", "stn_bane_animal", "stn_bane_devil", "stn_bane_undead", "stn_ember", "stn_falcon", "stn_granite", "stn_thorn", "stn_ward", "wpn_bronze_spear", "wpn_ember_edge", "wpn_gravecaller", "wpn_hollow_reaver", "wpn_hunters_axe", "wpn_iron_sword", "wpn_kiln_brand", "wpn_ridge_cleaver", "wpn_shard_lance", "wpn_steel_sword", "wpn_warden_pike", "wpn_worn_blade"];
     }
 
     public static class Enemies

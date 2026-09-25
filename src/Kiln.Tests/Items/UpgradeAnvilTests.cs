@@ -144,6 +144,27 @@ public class UpgradeAnvilTests
     }
 
     [Fact]
+    public void Blessing_AddsTenPointsAndIsSpentOnlyWhenItCouldMatter()
+    {
+        var (item, bag, ladder) = Setup();
+        var specs = TestSpecs.Standard();
+        bag.TryAdd(new ItemFactory(specs, specs, 9000).CreatePlain(UpgradeAnvil.BlessingScrollId, 2));
+        item.UpgradeLevel = 2;
+
+        // +3 is a 50% rung: read over it, the scroll makes it 60%.
+        Assert.Equal(0.60, UpgradeAnvil.Quote(item, ladder, bag, blessed: true)!.DisplayedChance, 6);
+        Assert.Equal(0.50, UpgradeAnvil.Quote(item, ladder, bag)!.DisplayedChance, 6);
+
+        UpgradeAnvil.Attempt(item, ladder, bag, new DeterministicRng(3), blessed: true);
+        Assert.Equal(1, bag.CountOf(UpgradeAnvil.BlessingScrollId));
+
+        // A sure rung does not take the scroll.
+        item.UpgradeLevel = 0;
+        UpgradeAnvil.Attempt(item, ladder, bag, new DeterministicRng(3), blessed: true);
+        Assert.Equal(1, bag.CountOf(UpgradeAnvil.BlessingScrollId));
+    }
+
+    [Fact]
     public void Gift_ClimbsOneRungFreeAndCannotFail()
     {
         var (item, bag, ladder) = Setup(yang: 0, scrap: 1);

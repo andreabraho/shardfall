@@ -6,6 +6,7 @@
   { "id": "mat_radiant_core",   "name": "$item.mat_radiant_core.name",   "level_req": 1,  "rarity": "relic",  "grid_size": [1, 1], "max_stack": 20, "sell_value": 9000, "visual": "mesh_armor_a" },
   { "id": "mat_boring_stone",   "name": "$item.mat_boring_stone.name",   "level_req": 1,  "rarity": "fine",   "grid_size": [1, 1], "max_stack": 20, "sell_value": 350,  "visual": "mesh_armor_a" },
   { "id": "mat_mutation_ink",   "name": "$item.mat_mutation_ink.name",   "level_req": 1,  "rarity": "rare",   "grid_size": [1, 1], "max_stack": 20, "sell_value": 700,  "visual": "mesh_armor_a" },
+  { "id": "mat_blessing_scroll", "name": "$item.mat_blessing_scroll.name", "level_req": 1, "rarity": "epic",   "grid_size": [1, 1], "max_stack": 20, "sell_value": 1500, "visual": "mesh_armor_a" },
 
   { "id": "mat_flask_draught", "name": "$item.mat_flask_draught.name", "level_req": 1,  "rarity": "common", "grid_size": [1, 1], "max_stack": 20, "sell_value": 250,  "visual": "mesh_armor_a" }
 ]

@@ -118,6 +118,7 @@
     "yang_range": [900, 1400],
     "picks": 2,
     "entries": [
+      { "item": "mat_blessing_scroll", "weight": 0, "chance": 0.1, "count_range": [1, 1] },
       { "item": "wpn_hunters_axe", "weight": 10, "chance": 0.021, "count_range": [1, 1] },
       { "item": "arm_leather_vest", "weight": 10, "chance": 0.021, "count_range": [1, 1] },
       { "item": "hlm_leather_cap", "weight": 10, "chance": 0.021, "count_range": [1, 1] },
@@ -139,6 +140,7 @@
     "yang_range": [1800, 2800],
     "picks": 2,
     "entries": [
+      { "item": "mat_blessing_scroll", "weight": 0, "chance": 0.1, "count_range": [1, 1] },
       { "item": "wpn_iron_sword", "weight": 10, "chance": 0.021, "count_range": [1, 1] },
       { "item": "wpn_bronze_spear", "weight": 9, "chance": 0.021, "count_range": [1, 1] },
       { "item": "bts_scout_boots", "weight": 10, "chance": 0.021, "count_range": [1, 1] },
@@ -162,6 +164,7 @@
     "yang_range": [3500, 5000],
     "picks": 2,
     "entries": [
+      { "item": "mat_blessing_scroll", "weight": 0, "chance": 0.1, "count_range": [1, 1] },
       { "item": "arm_scale_hauberk", "weight": 10, "chance": 0.021, "count_range": [1, 1] },
       { "item": "brc_iron_bracer", "weight": 9, "chance": 0.021, "count_range": [1, 1] },
       { "item": "nck_silver_pendant", "weight": 9, "chance": 0.021, "count_range": [1, 1] },
@@ -187,6 +190,7 @@
     "yang_range": [5500, 8000],
     "picks": 2,
     "entries": [
+      { "item": "mat_blessing_scroll", "weight": 0, "chance": 0.1, "count_range": [1, 1] },
       { "item": "arm_ridge_mail", "weight": 9, "chance": 0.021, "count_range": [1, 1] },
       { "item": "shd_ridge_bulwark", "weight": 9, "chance": 0.021, "count_range": [1, 1] },
       { "item": "bts_ridge_greaves", "weight": 9, "chance": 0.021, "count_range": [1, 1] },
@@ -212,6 +216,7 @@
     "yang_range": [9000, 13000],
     "picks": 2,
     "entries": [
+      { "item": "mat_blessing_scroll", "weight": 0, "chance": 0.1, "count_range": [1, 1] },
       { "item": "arm_warden_plate", "weight": 5, "chance": 0.021, "count_range": [1, 1] },
       { "item": "wpn_gravecaller", "weight": 5, "chance": 0.021, "count_range": [1, 1] },
       { "item": "ear_stormglass", "weight": 8, "chance": 0.021, "count_range": [1, 1] },
@@ -235,6 +240,7 @@
     "yang_range": [10000, 14000],
     "picks": 2,
     "entries": [
+      { "item": "mat_blessing_scroll", "weight": 0, "chance": 0.3, "count_range": [1, 1] },
       { "item": "bts_ashen_striders", "weight": 8, "chance": 0.021, "count_range": [1, 1] },
       { "item": "wpn_ember_edge", "weight": 8, "chance": 0.021, "count_range": [1, 1] },
       { "item": "rng_ashen_circle", "weight": 8, "chance": 0.021, "count_range": [1, 1] },
@@ -259,6 +265,7 @@
     "yang_range": [12000, 16000],
     "picks": 2,
     "entries": [
+      { "item": "mat_blessing_scroll", "weight": 0, "chance": 0.3, "count_range": [1, 1] },
       { "item": "arm_ashen_carapace", "weight": 8, "chance": 0.021, "count_range": [1, 1] },
       { "item": "shd_kiln_ward", "weight": 8, "chance": 0.021, "count_range": [1, 1] },
       { "item": "wpn_hollow_reaver", "weight": 7, "chance": 0.021, "count_range": [1, 1] },
@@ -283,6 +290,7 @@
     "yang_range": [20000, 28000],
     "picks": 3,
     "entries": [
+      { "item": "mat_blessing_scroll", "weight": 0, "chance": 1, "count_range": [1, 1] },
       { "item": "nck_emberheart", "weight": 8, "chance": 0.021, "count_range": [1, 1] },
       { "item": "brc_kiln_coil", "weight": 8, "chance": 0.021, "count_range": [1, 1] },
       { "item": "wpn_shard_lance", "weight": 7, "chance": 0.021, "count_range": [1, 1] },

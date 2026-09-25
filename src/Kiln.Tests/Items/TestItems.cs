@@ -75,6 +75,7 @@ internal sealed class TestSpecs : IItemSpecs, IBonusPools
         });
 
         specs.Add(new ItemSpec { Id = "mat_test_scrap", Width = 1, Height = 1, MaxStack = 99, SellValue = 10 });
+        specs.Add(new ItemSpec { Id = UpgradeAnvil.BlessingScrollId, Width = 1, Height = 1, MaxStack = 20, SellValue = 10 });
         specs.Add(new ItemSpec { Id = "mat_boring_stone", Width = 1, Height = 1, MaxStack = 20 });
         specs.Add(new ItemSpec { Id = "mat_mutation_ink", Width = 1, Height = 1, MaxStack = 20 });
 

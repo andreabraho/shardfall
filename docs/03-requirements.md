@@ -72,7 +72,7 @@ Every MUST is an MVP exit gate — the vertical slice is not done until all of t
 | FR-5.8 | Item comparison tooltips against the currently equipped item | MUST |
 | FR-5.9 | Auto-loot with rarity filter; mark-as-junk and sell-all-junk | MUST |
 | FR-5.10 | Warehouse storage at the Order Hall | SHOULD |
-| FR-5.11 | Gambler's Anvil (opt-in downgrade-on-fail) on Shardbound only | COULD |
+| FR-5.11 | ~~Gambler's Anvil (opt-in downgrade-on-fail) on Shardbound only~~ — dropped (REF-11, 2026-09-25) | — |
 
 ## FR-6 Enemies, spawning, AI
 

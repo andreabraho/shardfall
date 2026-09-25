@@ -105,6 +105,12 @@ public partial class InventoryPanel : CanvasLayer
         else _tip.Clear();
     }
 
+    /// <summary>Opens the bag if it is closed — the smith opens it beside its window (REF-11).</summary>
+    public void Open()
+    {
+        if (!Visible) Toggle();
+    }
+
     // A side panel (REF-07): play goes on with the bag open. Freed while open, it lets go.
     public override void _ExitTree() => UiState.SetSide(ref _counted, _root, false);
 
@@ -461,6 +467,10 @@ public partial class InventoryPanel : CanvasLayer
 
         if (_root.GetGlobalRect().HasPoint(mouse)) return;
 
+        // With a window open over play — the smith, a merchant — nothing is thrown on the
+        // ground by a drag that missed its target: the player is working, not clearing out.
+        if (UiState.ModalOpen) return;
+
         // Worn pieces are taken off first, into the bag; only what is in the bag is dropped.
         if (from is not null) return;
 
@@ -514,6 +524,13 @@ public partial class InventoryPanel : CanvasLayer
             }
 
             ConfirmDestroy(item);
+            return;
+        }
+
+        // At the smith, right-click puts gear on the anvil and a stone in a socket (REF-11).
+        if (WorkbenchPanel.Current?.Offer(item) == true)
+        {
+            Refresh();
             return;
         }
 

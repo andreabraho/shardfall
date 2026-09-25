@@ -56,7 +56,17 @@ public sealed record UpgradeResult(UpgradeOutcome Outcome, int Level, int Failur
 /// </remarks>
 public static class UpgradeAnvil
 {
-    public static UpgradeQuote? Quote(ItemInstance item, UpgradeLadder? ladder, IResourceStore store)
+    /// <summary>
+    /// The Blessing Scroll (REF-11): read over an attempt, it adds to the chance and is spent
+    /// with the materials. Bosses drop it; it is never sold.
+    /// </summary>
+    public const string BlessingScrollId = "mat_blessing_scroll";
+
+    /// <summary>What a Blessing Scroll adds to an attempt's chance.</summary>
+    public const double BlessingBonus = 0.10;
+
+    /// <param name="blessed">Whether a Blessing Scroll is read over the attempt.</param>
+    public static UpgradeQuote? Quote(ItemInstance item, UpgradeLadder? ladder, IResourceStore store, bool blessed = false)
     {
         var step = ladder?.StepTo(item.UpgradeLevel + 1);
 
@@ -64,19 +74,34 @@ public static class UpgradeAnvil
 
         var guaranteed = IsGuaranteed(step, item.UpgradeFailures);
 
+        // A scroll over a sure thing would be wasted, so it is not asked for.
+        var blessing = blessed && !guaranteed;
+
         return new UpgradeQuote(
             Step: step,
-            DisplayedChance: guaranteed ? 1.0 : step.Chance,
+            DisplayedChance: guaranteed ? 1.0 : Math.Min(1.0, step.Chance + (blessing ? BlessingBonus : 0)),
             Guaranteed: guaranteed,
             FailuresSoFar: item.UpgradeFailures,
             AttemptsToGuarantee: guaranteed ? 0 : Math.Max(0, step.Pity - item.UpgradeFailures),
-            Affordable: store.CanAfford(step.Yang, step.Materials));
+            Affordable: store.CanAfford(step.Yang, Cost(step, blessing)));
+    }
+
+    /// <summary>The materials of a step, with the scroll when one is read over it.</summary>
+    private static IReadOnlyDictionary<string, int> Cost(UpgradeStep step, bool blessing)
+    {
+        if (!blessing) return step.Materials;
+
+        var cost = new Dictionary<string, int>(step.Materials);
+        cost[BlessingScrollId] = cost.GetValueOrDefault(BlessingScrollId) + 1;
+
+        return cost;
     }
 
     private static bool IsGuaranteed(UpgradeStep step, int failures) =>
         step.Chance >= 1.0 || (step.Pity > 0 && failures >= step.Pity);
 
-    public static UpgradeResult Attempt(ItemInstance item, UpgradeLadder? ladder, IResourceStore store, DeterministicRng rng)
+    /// <param name="blessed">Whether a Blessing Scroll is read over the attempt (spent unless the attempt is sure anyway).</param>
+    public static UpgradeResult Attempt(ItemInstance item, UpgradeLadder? ladder, IResourceStore store, DeterministicRng rng, bool blessed = false)
     {
         if (ladder is null) return new UpgradeResult(UpgradeOutcome.NoLadder, item.UpgradeLevel, item.UpgradeFailures, false);
 
@@ -84,14 +109,15 @@ public static class UpgradeAnvil
 
         if (step is null) return new UpgradeResult(UpgradeOutcome.AtMaxLevel, item.UpgradeLevel, item.UpgradeFailures, false);
 
-        if (!store.TrySpend(step.Yang, step.Materials))
+        var guaranteed = IsGuaranteed(step, item.UpgradeFailures);
+        var blessing = blessed && !guaranteed;
+
+        if (!store.TrySpend(step.Yang, Cost(step, blessing)))
         {
             return new UpgradeResult(UpgradeOutcome.CannotAfford, item.UpgradeLevel, item.UpgradeFailures, false);
         }
 
-        var guaranteed = IsGuaranteed(step, item.UpgradeFailures);
-
-        if (guaranteed || rng.Chance(step.Chance))
+        if (guaranteed || rng.Chance(Math.Min(1.0, step.Chance + (blessing ? BlessingBonus : 0))))
         {
             item.UpgradeLevel = step.To;
             item.UpgradeFailures = 0;

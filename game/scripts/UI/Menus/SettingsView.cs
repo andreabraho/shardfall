@@ -166,7 +166,6 @@ public partial class SettingsView : ScrollContainer
         (L10n.T("Talk, use"), Key(GameActions.Interact)),
         (L10n.T("Inventory"), Key(GameActions.ToggleInventory)),
         (L10n.T("Character"), Key(GameActions.ToggleCharacter)),
-        (L10n.T("Workbench"), Key(GameActions.ToggleUpgradeBench)),
         (L10n.T("Map"), Key(GameActions.ToggleMap)),
         (L10n.T("Show labels (hold)"), Key(GameActions.RevealLabels)),
         (L10n.T("Turn camera"), $"{Key(GameActions.CameraRotateLeft)} / {Key(GameActions.CameraRotateRight)}"),
