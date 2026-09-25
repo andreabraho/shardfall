@@ -14,6 +14,13 @@ public readonly record struct DamageRequest
     /// <summary>Skill coefficient (doc 06 §7). 1.0 for a plain attack.</summary>
     public double SkillCoef { get; init; } = 1.0;
 
+    /// <summary>
+    /// A skill — or a creature's special ability — rather than a basic attack (2026-09-25).
+    /// Decides which bonus it takes: skill damage, or average damage. Said outright rather
+    /// than read from the coefficient, which a skill can land on 1.0 by being ranked up.
+    /// </summary>
+    public bool IsSkill { get; init; }
+
     public DamageElement Element { get; init; } = DamageElement.Physical;
 
     /// <summary>Flat damage added before percentage bonuses.</summary>
@@ -74,9 +81,9 @@ public static class DamagePipeline
         // 1-2. Base and flat.
         var damage = (attacker.AttackPower * request.WeaponCoef * request.SkillCoef) + request.FlatBonus;
 
-        // 3. Percentage bonuses.
-        damage *= 1 + attacker.Modifiers.DamagePct
-                    + (request.SkillCoef != 1.0 ? attacker.Modifiers.SkillDamagePct : 0);
+        // 3. Percentage bonuses: average damage on a basic attack, skill damage on a skill
+        //    (2026-09-25, as in the original) — never both.
+        damage *= 1 + (request.IsSkill ? attacker.Modifiers.SkillDamagePct : attacker.Modifiers.DamagePct);
 
         // 4. Damage versus the defender's family.
         damage *= 1 + attacker.Modifiers.VsFamilyBonus(defender.Family);
@@ -117,8 +124,7 @@ public static class DamagePipeline
 
         var damage = (attacker.AttackPower * request.WeaponCoef * request.SkillCoef) + request.FlatBonus;
 
-        damage *= 1 + attacker.Modifiers.DamagePct
-                    + (request.SkillCoef != 1.0 ? attacker.Modifiers.SkillDamagePct : 0);
+        damage *= 1 + (request.IsSkill ? attacker.Modifiers.SkillDamagePct : attacker.Modifiers.DamagePct);
 
         damage *= 1 + attacker.Modifiers.VsFamilyBonus(defender.Family);
 

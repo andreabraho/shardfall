@@ -236,7 +236,7 @@ public readonly record struct BonusStat(BonusStatKind Kind, MonsterFamily Family
 
         return Kind switch
         {
-            BonusStatKind.DamagePct => L10n.F("+{0}% damage", n),
+            BonusStatKind.DamagePct => L10n.F("+{0}% average damage", n),
             BonusStatKind.SkillDamagePct => L10n.F("+{0}% skill damage", n),
             BonusStatKind.CritChance => L10n.F("+{0}% critical hit chance", n),
             BonusStatKind.CritDamage => L10n.F("+{0}% critical damage", n),

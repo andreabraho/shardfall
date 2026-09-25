@@ -1142,7 +1142,7 @@ public partial class EnemyBrain : CharacterBody3D
 
         foreach (var victim in hits)
         {
-            victim.TakeAttack(Self, skillCoef: ability.DamageCoef);
+            victim.TakeAttack(Self, skillCoef: ability.DamageCoef, skill: true);
             ApplyStatus(ability, victim);
 
             if (_phaseApplies is not null) StatusApplication.Try(_phaseApplies, victim);

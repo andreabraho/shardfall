@@ -13,6 +13,7 @@ namespace Kiln.Core.Combat;
 public sealed class StatModifiers
 {
     /// <summary>Percent, as a fraction: 0.12 = +12% damage.</summary>
+    /// <summary>Average damage: a share more on every basic attack, and nothing on a skill.</summary>
     public double DamagePct { get; set; }
 
     public double SkillDamagePct { get; set; }

@@ -42,6 +42,24 @@ public class DamagePipelineTests
     }
 
     [Fact]
+    public void AverageDamage_OnlyOnBasicAttacks_SkillDamage_OnlyOnSkills()
+    {
+        var attacker = Attacker();
+        attacker.Modifiers.DamagePct = 0.20;
+        attacker.Modifiers.SkillDamagePct = 0.10;
+
+        var bare = Attacker();
+        var plain = DamagePipeline.ExpectedDamage(Request(bare, Defender()));
+        var plainSkill = DamagePipeline.ExpectedDamage(Request(bare, Defender()) with { SkillCoef = 1.0, IsSkill = true });
+
+        // A basic attack takes the average damage and not the skill damage…
+        Assert.Equal(plain * 1.20, DamagePipeline.ExpectedDamage(Request(attacker, Defender())), 6);
+
+        // …and a skill the other way round, even one whose coefficient is exactly 1.0.
+        Assert.Equal(plainSkill * 1.10, DamagePipeline.ExpectedDamage(Request(attacker, Defender()) with { SkillCoef = 1.0, IsSkill = true }), 6);
+    }
+
+    [Fact]
     public void MoreAttackPower_DealsMoreDamage()
     {
         var weak = DamagePipeline.ExpectedDamage(Request(Attacker(str: 10), Defender()));

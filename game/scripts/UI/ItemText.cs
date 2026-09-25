@@ -159,7 +159,7 @@ public static class ItemText
         var mine = item.ModifiersFor(spec, GameItems.Catalogue);
         var theirs = equipped.ModifiersFor(wornSpec, GameItems.Catalogue);
 
-        Line(lines, L10n.T("damage %"), mine.DamagePct * 100, theirs.DamagePct * 100, "0.#");
+        Line(lines, L10n.T("average damage %"), mine.DamagePct * 100, theirs.DamagePct * 100, "0.#");
         Line(lines, L10n.T("skill damage %"), mine.SkillDamagePct * 100, theirs.SkillDamagePct * 100, "0.#");
         Line(lines, L10n.T("crit %"), mine.CritChance * 100, theirs.CritChance * 100, "0.#");
         Line(lines, L10n.T("pierce %"), mine.PierceChance * 100, theirs.PierceChance * 100, "0.#");

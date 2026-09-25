@@ -528,7 +528,7 @@ public partial class SkillCaster : Node
         {
             if (!target.IsAlive) continue;
 
-            target.TakeAttack(_self, skillCoef: skill.DamageCoef);
+            target.TakeAttack(_self, skillCoef: skill.DamageCoef, skill: true);
 
             // What is not a creature — a shard — cannot be stunned, but can be weakened.
             var resist = (target.Body as EnemyBrain)?.StunResist ?? 1.0;

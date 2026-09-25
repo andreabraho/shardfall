@@ -63,7 +63,7 @@ public class BonusStatTests
     [Fact]
     public void Describe_ReadsAsPlainEnglish()
     {
-        Assert.Equal("+12% damage", BonusStat.Parse("damage_pct").Describe(12));
+        Assert.Equal("+12% average damage", BonusStat.Parse("damage_pct").Describe(12));
         Assert.Equal("+260 maximum health", BonusStat.Parse("max_hp_flat").Describe(260));
         Assert.Equal("+25% damage against the undead", BonusStat.Parse("vs_family.undead").Describe(25));
     }
