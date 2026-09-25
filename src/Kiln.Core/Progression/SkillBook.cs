@@ -30,9 +30,12 @@ public sealed class SkillBook
     /// <summary>Points a single skill can hold. The last one masters it.</summary>
     public const int MaxPoints = 7;
 
-    /// <summary>Casts of a mastered skill needed for Grand Master, and then for Perfect.</summary>
-    public const int GrandMasterUses = 200;
-    public const int PerfectUses = 600;
+    /// <summary>
+    /// Casts of a mastered skill needed for Grand Master, and then for Perfect (counted from
+    /// Master). Cut from 200 and 600 on 2026-09-25 at your call: the long tail was too long.
+    /// </summary>
+    public const int GrandMasterUses = 20;
+    public const int PerfectUses = 35;
 
     private sealed class Entry
     {

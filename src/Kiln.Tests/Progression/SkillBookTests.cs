@@ -166,14 +166,14 @@ public class SkillBookTests
         var book = Mastered("skl_cleave");
         book.Invest("skl_whirlwind");
 
-        for (var i = 0; i < 100; i++) book.RecordUse("skl_cleave");
+        for (var i = 0; i < 10; i++) book.RecordUse("skl_cleave");
 
         var restored = new SkillBook();
         restored.Load(book.Save(), book.SavePoints());
 
         Assert.Equal(MasteryRank.Master, restored.RankOf("skl_cleave"));
         Assert.Equal(SkillBook.MaxPoints, restored.PointsIn("skl_cleave"));
-        Assert.Equal(100, restored.UsesOf("skl_cleave"));
+        Assert.Equal(10, restored.UsesOf("skl_cleave"));
         Assert.True(restored.IsUnlocked("skl_whirlwind"));
         Assert.Equal(MasteryRank.Normal, restored.RankOf("skl_whirlwind"));
     }
