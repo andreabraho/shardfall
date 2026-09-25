@@ -422,6 +422,7 @@ public static class Ids
 
     public static class Sounds
     {
+        public const string MusBoss = "mus_boss";
         public const string MusCatacombs = "mus_catacombs";
         public const string MusMenu = "mus_menu";
         public const string MusVillage = "mus_village";
@@ -454,7 +455,7 @@ public static class Ids
         public const string SndUpgradeSuccess = "snd_upgrade_success";
         public const string SndYang = "snd_yang";
 
-        public static readonly string[] All = ["mus_catacombs", "mus_menu", "mus_village", "mus_wilds", "snd_enemy_death", "snd_flask", "snd_guard", "snd_hit", "snd_hit_crit", "snd_level_up", "snd_pickup", "snd_player_death", "snd_player_hurt", "snd_quest_complete", "snd_rare_drop", "snd_refused", "snd_reroll", "snd_shard_break", "snd_shrine", "snd_skill", "snd_socket", "snd_stair_open", "snd_swing", "snd_telegraph", "snd_trade", "snd_ui_click", "snd_ui_close", "snd_ui_open", "snd_upgrade_fail", "snd_upgrade_success", "snd_yang"];
+        public static readonly string[] All = ["mus_boss", "mus_catacombs", "mus_menu", "mus_village", "mus_wilds", "snd_enemy_death", "snd_flask", "snd_guard", "snd_hit", "snd_hit_crit", "snd_level_up", "snd_pickup", "snd_player_death", "snd_player_hurt", "snd_quest_complete", "snd_rare_drop", "snd_refused", "snd_reroll", "snd_shard_break", "snd_shrine", "snd_skill", "snd_socket", "snd_stair_open", "snd_swing", "snd_telegraph", "snd_trade", "snd_ui_click", "snd_ui_close", "snd_ui_open", "snd_upgrade_fail", "snd_upgrade_success", "snd_yang"];
     }
 
 }

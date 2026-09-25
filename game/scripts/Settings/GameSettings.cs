@@ -43,6 +43,14 @@ public static class GameSettings
 
     public static readonly int[] FpsCaps = [0, 30, 60, 120, 144, 240];
 
+    /// <summary>
+    /// The track chosen for each moment with music (REF-20), by music id: a file path, or
+    /// nothing for every track in turn.
+    /// </summary>
+    public static System.Collections.Generic.Dictionary<string, string> MusicChoice { get; } = new(System.StringComparer.Ordinal);
+
+    private const string MusicSection = "music";
+
     private static string Path =>
         OS.GetEnvironment("KILN_SETTINGS") is { Length: > 0 } path ? path : "user://settings.cfg";
 
@@ -60,6 +68,16 @@ public static class GameSettings
             MusicVolume = Mathf.Clamp((float)file.GetValue(Section, "music_volume", MusicVolume), 0f, 1f);
             EffectsVolume = Mathf.Clamp((float)file.GetValue(Section, "effects_volume", EffectsVolume), 0f, 1f);
             Language = (string)file.GetValue(Section, "language", Language);
+
+            MusicChoice.Clear();
+
+            if (file.HasSection(MusicSection))
+            {
+                foreach (var key in file.GetSectionKeys(MusicSection))
+                {
+                    MusicChoice[key] = (string)file.GetValue(MusicSection, key, "");
+                }
+            }
         }
 
         EnsureBuses();
@@ -78,6 +96,8 @@ public static class GameSettings
         file.SetValue(Section, "music_volume", MusicVolume);
         file.SetValue(Section, "effects_volume", EffectsVolume);
         file.SetValue(Section, "language", Language);
+
+        foreach (var (id, track) in MusicChoice) file.SetValue(MusicSection, id, track);
 
         if (file.Save(Path) != Error.Ok) GD.PushWarning($"[settings] could not write {Path}");
     }

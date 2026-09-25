@@ -43,8 +43,10 @@
   { "id": "snd_ui_close",       "files": ["res://audio/kenney/interface/close_001.ogg", "res://audio/kenney/interface/close_002.ogg", "res://audio/kenney/interface/close_003.ogg", "res://audio/kenney/interface/close_004.ogg"], "bus": "ui",      "volume_db": -12, "max_voices": 1 },
 
   // -- music: one track per kind of place, crossfaded at the border
-  { "id": "mus_menu",           "files": [], "bus": "music",   "volume_db": -6,  "loop": true },
-  { "id": "mus_village",        "files": [], "bus": "music",   "volume_db": -6,  "loop": true },
-  { "id": "mus_wilds",          "files": [], "bus": "music",   "volume_db": -8,  "loop": true },
-  { "id": "mus_catacombs",      "files": [], "bus": "music",   "volume_db": -8,  "loop": true }
+  { "id": "mus_menu",           "files": ["res://audio/music/kevin-macleod-ishikari-lore.mp3", "res://audio/music/kevin-macleod-senbazuru.mp3"], "bus": "music",   "volume_db": -6,  "loop": true },
+  { "id": "mus_village",        "files": ["res://audio/music/kevin-macleod-shenyang.mp3", "res://audio/music/kevin-macleod-ripples.mp3", "res://audio/music/kevin-macleod-nu-flute.mp3"], "bus": "music",   "volume_db": -6,  "loop": true },
+  { "id": "mus_wilds",          "files": ["res://audio/music/kevin-macleod-eastern-thought.mp3", "res://audio/music/kevin-macleod-finding-movement.mp3", "res://audio/music/alexander-nakarada-tranquil-fields-eastern.mp3"], "bus": "music",   "volume_db": -8,  "loop": true },
+  { "id": "mus_catacombs",      "files": ["res://audio/music/kevin-macleod-asian-drums.mp3", "res://audio/music/alexander-nakarada-dark-hollows.mp3"], "bus": "music",   "volume_db": -8,  "loop": true },
+  // Boss fights (REF-20): plays while a boss is engaged, then the map's music comes back.
+  { "id": "mus_boss",           "files": ["res://audio/music/kevin-macleod-mountain-emperor.mp3", "res://audio/music/alexander-nakarada-the-fall-of-chongzhen.mp3", "res://audio/music/kevin-macleod-big-mojo.mp3"], "bus": "music",   "volume_db": -6,  "loop": true }
 ]

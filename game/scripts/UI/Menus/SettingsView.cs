@@ -66,7 +66,34 @@ public partial class SettingsView : ScrollContainer
         Slider(column, L10n.T("Master"), GameSettings.MasterVolume, 0, 1, v => GameSettings.MasterVolume = v, v => L10n.F("{0:P0}", v));
         Slider(column, L10n.T("Music"), GameSettings.MusicVolume, 0, 1, v => GameSettings.MusicVolume = v, v => L10n.F("{0:P0}", v));
         Slider(column, L10n.T("Effects"), GameSettings.EffectsVolume, 0, 1, v => GameSettings.EffectsVolume = v, v => L10n.F("{0:P0}", v));
-        column.AddChild(MenuStyle.Label(L10n.T("The game has no sounds yet; these are ready for them."),
+        // Music for each moment (REF-20): one track, or every track in turn.
+        column.AddChild(MenuStyle.Label(L10n.T("Music"), 15, MenuStyle.Heading));
+
+        foreach (var (id, label) in Audio.MusicTracks.Moments)
+        {
+            if (!GameContent.IsLoaded || !GameContent.Database.Sounds.TryGetValue(id, out var def) || def.Files.Length == 0) continue;
+
+            var tracks = new OptionButton();
+            tracks.AddItem(L10n.T("Every track, in turn"));
+
+            foreach (var file in def.Files) tracks.AddItem(Audio.MusicTracks.Title(file));
+
+            var chosen = GameSettings.MusicChoice.GetValueOrDefault(id, Audio.MusicTracks.Rotation);
+            tracks.Selected = System.Math.Max(0, System.Array.IndexOf(def.Files, chosen) + 1);
+
+            var files = def.Files;
+            var moment = id;
+
+            tracks.ItemSelected += index => Change(() =>
+            {
+                GameSettings.MusicChoice[moment] = index == 0 ? Audio.MusicTracks.Rotation : files[(int)index - 1];
+                Audio.AudioDirector.RestartMusic();
+            });
+
+            Row(column, label, tracks);
+        }
+
+        column.AddChild(MenuStyle.Label(L10n.T("Music by Kevin MacLeod (incompetech.com) and Alexander Nakarada (serpentsoundstudios.com), CC BY 4.0."),
             12, MenuStyle.Dim, wrap: true));
 
         // -- difficulty

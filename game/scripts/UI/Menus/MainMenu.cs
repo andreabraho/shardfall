@@ -86,6 +86,7 @@ public partial class MainMenu : Control
 
         // CC BY 3.0 asks for the credit where the player can see it (ASSET-LICENSES.md).
         left.AddChild(MenuStyle.Label("Icons made by Lorc and Delapouite. Available on https://game-icons.net (CC BY 3.0)", 11, MenuStyle.Dim));
+        left.AddChild(MenuStyle.Label("Music by Kevin MacLeod (incompetech.com) and Alexander Nakarada (serpentsoundstudios.com), licensed under CC BY 4.0", 11, MenuStyle.Dim));
 
         var spacer = new Control { SizeFlagsVertical = SizeFlags.ExpandFill };
         left.AddChild(spacer);

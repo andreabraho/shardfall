@@ -85,9 +85,18 @@ public partial class BossHud : CanvasLayer, ITopBar
         _root.Visible = false;
     }
 
+    private bool _bossMusic;
+
     public override void _Process(double delta)
     {
         var boss = Engaged();
+
+        // The boss's music plays while its bar is up (REF-20).
+        if ((boss is not null) != _bossMusic)
+        {
+            _bossMusic = boss is not null;
+            Audio.AudioDirector.Boss(_bossMusic);
+        }
 
         if (boss is null)
         {

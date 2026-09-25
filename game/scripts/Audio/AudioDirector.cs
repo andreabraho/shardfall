@@ -60,10 +60,15 @@ public partial class AudioDirector : Node
         var player = new AudioStreamPlayer { Name = name, Bus = GameSettings.MusicBus, VolumeDb = Silent };
 
         // Loops by replaying. The loop flag lives on the imported stream and differs between
-        // formats; this works for all of them.
+        // formats; this works for all of them. With every track in turn (REF-20) the next one
+        // is a different track of the same moment.
         player.Finished += () =>
         {
-            if (player.VolumeDb > Silent + 1) player.Play();
+            if (player.VolumeDb <= Silent + 1) return;
+
+            if (MusicDef(_musicId) is { } def && PickMusic(def, player.Stream) is { } next) player.Stream = next;
+
+            player.Play();
         };
 
         AddChild(player);
@@ -177,6 +182,67 @@ public partial class AudioDirector : Node
     /// </summary>
     public static void Music(string id) => _instance?.MusicInternal(id ?? "");
 
+    /// <summary>Starts the current moment's music again, after its track was changed in the settings.</summary>
+    public static void RestartMusic()
+    {
+        if (_instance is null) return;
+
+        var id = _instance._musicId;
+        _instance._musicId = "";
+        _instance.MusicInternal(id);
+    }
+
+    private string _beforeBoss = "";
+
+    /// <summary>
+    /// A boss engaged or gone (REF-20): its music comes in, and the map's comes back after.
+    /// </summary>
+    public static void Boss(bool engaged)
+    {
+        if (_instance is not { } director) return;
+
+        if (engaged)
+        {
+            if (director._musicId == MusicTracks.Boss) return;
+
+            director._beforeBoss = director._musicId;
+            director.MusicInternal(MusicTracks.Boss);
+        }
+        else if (director._musicId == MusicTracks.Boss)
+        {
+            director.MusicInternal(director._beforeBoss);
+        }
+    }
+
+    private static SoundDef? MusicDef(string id) =>
+        id.Length > 0 && GameContent.IsLoaded && GameContent.Database.Sounds.TryGetValue(id, out var found) ? found : null;
+
+    /// <summary>
+    /// The track to play for a moment: the one chosen in the settings, or — every track in
+    /// turn — any but the one that just played.
+    /// </summary>
+    private AudioStream? PickMusic(SoundDef def, AudioStream? after)
+    {
+        if (!_streams.TryGetValue(def.Id, out var loaded))
+        {
+            loaded = def.Files.Select(Load).ToArray();
+            _streams[def.Id] = loaded;
+        }
+
+        if (GameSettings.MusicChoice.TryGetValue(def.Id, out var chosen) && chosen.Length > 0)
+        {
+            var at = System.Array.IndexOf(def.Files, chosen);
+
+            if (at >= 0 && loaded[at] is { } fixedTrack) return fixedTrack;
+        }
+
+        var usable = loaded.Where(s => s is not null && s != after).ToArray();
+
+        if (usable.Length == 0) return after;
+
+        return usable[_random.Next(usable.Length)];
+    }
+
     private void MusicInternal(string id)
     {
         if (id == _musicId) return;
@@ -188,8 +254,8 @@ public partial class AudioDirector : Node
         // between its end and its replay at exactly this moment, and then the wrong one fades.
         var outgoing = _musicA.VolumeDb >= _musicB.VolumeDb ? _musicA : _musicB;
         var incoming = outgoing == _musicA ? _musicB : _musicA;
-        var def = GameContent.IsLoaded && GameContent.Database.Sounds.TryGetValue(id, out var found) ? found : null;
-        var stream = def is null ? null : Pick(def);
+        var def = MusicDef(id);
+        var stream = def is null ? null : PickMusic(def, null);
 
         _fade?.Kill();
         _fade = CreateTween().SetParallel();
