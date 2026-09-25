@@ -223,11 +223,17 @@ public sealed class ShardEncounter
         BeginReclamation();
     }
 
-    /// <summary>The player left the zone: everything resets so a shard cannot be whittled down over many visits.</summary>
+    /// <summary>
+    /// The player left the zone: the fight resets so a shard cannot be whittled down over many
+    /// visits — all but the waves already released, which do not come back.
+    /// </summary>
     public void Reset()
     {
         Phase = ShardPhase.Dormant;
-        _wavesSpawned.Clear();
+
+        // The waves already let out stay let out (2026-09-25): clearing them made walking out
+        // and back in a way to farm the first wave forever. A stone releases each wave once
+        // per life; the next stone, after a break, is a new encounter with its own.
         _telegraphing = false;
         _telegraphRemaining = 0;
         _reclamationRemaining = 0;

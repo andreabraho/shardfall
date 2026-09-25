@@ -260,11 +260,12 @@ public class ShardEncounterTests
         Assert.Equal(ShardPhase.Dormant, fight.Phase);
         Assert.False(fight.IsReclaiming);
 
-        // And it can be fought again from the top, wave and all.
+        // It can be fought again from the top — but its waves do not come back: walking out
+        // and in again must not be a way to farm the first wave (2026-09-25).
         var reengaged = fight.Tick(0.1, 1.0, World());
 
         Assert.Equal(ShardPhase.One, fight.Phase);
-        Assert.Contains(reengaged, e => e.Kind == ShardEventKind.SpawnWave && e.Phase == ShardPhase.One);
+        Assert.DoesNotContain(reengaged, e => e.Kind == ShardEventKind.SpawnWave);
     }
 
     [Fact]
