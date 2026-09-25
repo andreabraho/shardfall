@@ -246,7 +246,11 @@
       { "item": "mat_mutation_ink", "weight": 0, "chance": 0.4, "count_range": [1, 1] },
       { "item": "mat_boring_stone", "weight": 0, "chance": 0.5, "count_range": [1, 1] },
       { "item": "arm_ashen_carapace", "weight": 0, "chance": 0.035, "count_range": [1, 1] },
-      { "item": "shd_kiln_ward", "weight": 0, "chance": 0.028, "count_range": [1, 1] }
+      { "item": "shd_kiln_ward", "weight": 0, "chance": 0.028, "count_range": [1, 1] },
+      // A relic in one kill in ten (REF-09), rising on each boss above.
+      { "item": "wpn_kiln_brand", "weight": 0, "chance": 0.0345, "count_range": [1, 1] },
+      { "item": "arm_kiln_aegis", "weight": 0, "chance": 0.0345, "count_range": [1, 1] },
+      { "item": "rng_kiln_sigil", "weight": 0, "chance": 0.0345, "count_range": [1, 1] }
     ]
   },
   // The Blue Demon Sorcerer, the tower's sixth floor.
@@ -266,10 +270,14 @@
       { "item": "mat_shard_essence", "weight": 0, "chance": 0.5, "count_range": [1, 2] },
       { "item": "mat_radiant_core", "weight": 0, "chance": 0.08, "count_range": [1, 1] },
       { "item": "mat_boring_stone", "weight": 0, "chance": 0.5, "count_range": [1, 1] },
-      { "item": "wpn_shard_lance", "weight": 0, "chance": 0.028, "count_range": [1, 1] }
+      { "item": "wpn_shard_lance", "weight": 0, "chance": 0.028, "count_range": [1, 1] },
+      // A relic in 14% of kills.
+      { "item": "wpn_kiln_brand", "weight": 0, "chance": 0.049, "count_range": [1, 1] },
+      { "item": "arm_kiln_aegis", "weight": 0, "chance": 0.049, "count_range": [1, 1] },
+      { "item": "rng_kiln_sigil", "weight": 0, "chance": 0.049, "count_range": [1, 1] }
     ]
   },
-  // The Demon Lord, the top of the tower: three picks, and each relic a real chance.
+  // The Demon Lord, the top of the tower: three picks, and the best odds of a relic.
   {
     "id": "dt_boss_lord",
     "yang_range": [20000, 28000],
@@ -281,9 +289,10 @@
       { "item": "wpn_hollow_reaver", "weight": 8, "chance": 0.021, "count_range": [1, 1] },
       { "item": "arm_ashen_carapace", "weight": 8, "chance": 0.021, "count_range": [1, 1] },
       { "item": "shd_kiln_ward", "weight": 8, "chance": 0.021, "count_range": [1, 1] },
-      { "item": "wpn_kiln_brand", "weight": 1, "chance": 0.042, "count_range": [1, 1] },
-      { "item": "arm_kiln_aegis", "weight": 1, "chance": 0.042, "count_range": [1, 1] },
-      { "item": "rng_kiln_sigil", "weight": 1, "chance": 0.042, "count_range": [1, 1] },
+      // A relic in 18% of kills.
+      { "item": "wpn_kiln_brand", "weight": 0, "chance": 0.064, "count_range": [1, 1] },
+      { "item": "arm_kiln_aegis", "weight": 0, "chance": 0.064, "count_range": [1, 1] },
+      { "item": "rng_kiln_sigil", "weight": 0, "chance": 0.064, "count_range": [1, 1] },
       { "item": "mat_steel_core", "weight": 0, "chance": 1, "count_range": [2, 4] },
       { "item": "mat_shard_essence", "weight": 0, "chance": 0.6, "count_range": [1, 2] },
       { "item": "mat_radiant_core", "weight": 0, "chance": 0.3, "count_range": [1, 1] }
