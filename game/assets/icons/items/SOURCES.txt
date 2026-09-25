@@ -1,0 +1,29 @@
+Item icons from game-icons.net (https://game-icons.net), licensed CC BY 3.0
+(https://creativecommons.org/licenses/by/3.0/). Downloaded 2026-09-25 from
+https://github.com/game-icons/icons (branch master). Modified: the black background
+square path was removed; the icon shapes are unchanged.
+
+Attribution: Icons made by Lorc and Delapouite. Available on https://game-icons.net
+
+file                      author       source path
+sword.svg                 Lorc         lorc/broadsword.svg
+axe.svg                   Lorc         lorc/battle-axe.svg
+spear.svg                 Lorc         lorc/barbed-spear.svg
+armour.svg                Lorc         lorc/breastplate.svg
+helmet.svg                Lorc         lorc/visored-helm.svg
+shield.svg                Lorc         lorc/checked-shield.svg
+boots.svg                 Lorc         lorc/boots.svg
+bracelet.svg              Delapouite   delapouite/bracer.svg
+necklace.svg              Lorc         lorc/gem-necklace.svg
+earring.svg               Delapouite   delapouite/earrings.svg
+ring.svg                  Delapouite   delapouite/diamond-ring.svg
+stone.svg                 Lorc         lorc/emerald.svg
+material.svg              Lorc         lorc/swap-bag.svg
+mat_iron_scrap.svg        Lorc         lorc/metal-bar.svg
+mat_tempering_oil.svg     Delapouite   delapouite/oil-can.svg
+mat_steel_core.svg        Delapouite   delapouite/metal-plate.svg
+mat_shard_essence.svg     Lorc         lorc/crystal-shine.svg
+mat_radiant_core.svg      Delapouite   delapouite/glowing-artifact.svg
+mat_boring_stone.svg      Lorc         lorc/drill.svg
+mat_mutation_ink.svg      Lorc         lorc/quill-ink.svg
+mat_flask_draught.svg     Lorc         lorc/standing-potion.svg

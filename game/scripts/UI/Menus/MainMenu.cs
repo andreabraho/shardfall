@@ -86,6 +86,9 @@ public partial class MainMenu : Control
         left.AddChild(MenuStyle.Big(L10n.T("Settings"), () => Page(new SettingsView(inGame: false))));
         left.AddChild(MenuStyle.Big(L10n.T("Quit"), () => GetTree().Quit()));
 
+        // CC BY 3.0 asks for the credit where the player can see it (ASSET-LICENSES.md).
+        left.AddChild(MenuStyle.Label("Icons made by Lorc and Delapouite. Available on https://game-icons.net (CC BY 3.0)", 11, MenuStyle.Dim));
+
         var spacer = new Control { SizeFlagsVertical = SizeFlags.ExpandFill };
         left.AddChild(spacer);
         left.AddChild(MenuStyle.Label($"Godot {Engine.GetVersionInfo()["string"]}  ·  {(OS.IsDebugBuild() ? "debug" : "release")} build",
