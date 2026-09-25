@@ -741,6 +741,15 @@ public partial class EnemyBrain : CharacterBody3D
         AcquireTarget(force: false);
     }
 
+    /// <summary>
+    /// Stops chasing and walks home, as if the leash had run out: a shard's adds when the
+    /// player walks away from the stone.
+    /// </summary>
+    public void GiveUp()
+    {
+        if (!_returning && Target is not null) BeginReturn();
+    }
+
     private void BeginReturn()
     {
         _returning = true;

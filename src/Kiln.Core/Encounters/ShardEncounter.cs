@@ -78,7 +78,13 @@ public sealed class ShardEncounter
 
     public ShardPhase Phase { get; private set; } = ShardPhase.Dormant;
 
-    public bool IsActive => Phase is ShardPhase.One or ShardPhase.Two or ShardPhase.Three;
+    public bool IsActive => !IsHeld && Phase is ShardPhase.One or ShardPhase.Two or ShardPhase.Three;
+
+    /// <summary>
+    /// The player walked away mid-fight (2026-09-25): the phase stands where it was, the adds
+    /// stay by the stone, and nothing happens until the player comes back.
+    /// </summary>
+    public bool IsHeld { get; private set; }
 
     public bool IsReclaiming => _reclamationRemaining > 0;
 
@@ -109,6 +115,19 @@ public sealed class ShardEncounter
         _events.Clear();
 
         if (Phase == ShardPhase.Broken) return _events;
+
+        if (IsHeld)
+        {
+            if (!world.PlayerInZone) return _events;
+
+            // Picked up where it was left: the same phase, and in the last one the cast again.
+            IsHeld = false;
+            _events.Add(new ShardEvent(ShardEventKind.Engaged, Phase));
+
+            if (Phase == ShardPhase.Three) BeginReclamation();
+
+            return _events;
+        }
 
         if (Phase == ShardPhase.Dormant)
         {
@@ -224,16 +243,16 @@ public sealed class ShardEncounter
     }
 
     /// <summary>
-    /// The player left the zone: the fight resets so a shard cannot be whittled down over many
-    /// visits — all but the waves already released, which do not come back.
+    /// The player left the zone: the fight waits where it is (2026-09-25). The stone heals
+    /// while nobody is there — the world does that, it owns the health — so it cannot be
+    /// whittled down over many visits; but the phase reached is kept, and the waves already
+    /// let out are neither lost nor let out again, so walking in and out farms nothing.
     /// </summary>
-    public void Reset()
+    public void Hold()
     {
-        Phase = ShardPhase.Dormant;
+        if (!IsActive) return;
 
-        // The waves already let out stay let out (2026-09-25): clearing them made walking out
-        // and back in a way to farm the first wave forever. A stone releases each wave once
-        // per life; the next stone, after a break, is a new encounter with its own.
+        IsHeld = true;
         _telegraphing = false;
         _telegraphRemaining = 0;
         _reclamationRemaining = 0;

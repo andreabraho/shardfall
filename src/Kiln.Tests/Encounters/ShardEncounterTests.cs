@@ -247,25 +247,32 @@ public class ShardEncounterTests
     }
 
     [Fact]
-    public void Leaving_ResetsTheFight()
+    public void Leaving_HoldsTheFightInItsPhase()
     {
-        // Otherwise a shard could be whittled down over many visits, which turns the
-        // encounter into a chore rather than a fight.
+        // 2026-09-25: walking out keeps the phase and the adds; the stone heals meanwhile (the
+        // world owns that). Nothing is let out again on the way back, so nothing is farmed.
         var fight = Fight();
         fight.Tick(0.1, 1.0, World());
         Run(fight, 5, 0.20, World());
 
-        fight.Reset();
+        Assert.Equal(ShardPhase.Three, fight.Phase);
 
-        Assert.Equal(ShardPhase.Dormant, fight.Phase);
+        fight.Hold();
+
+        Assert.True(fight.IsHeld);
+        Assert.False(fight.IsActive);
         Assert.False(fight.IsReclaiming);
 
-        // It can be fought again from the top — but its waves do not come back: walking out
-        // and in again must not be a way to farm the first wave (2026-09-25).
-        var reengaged = fight.Tick(0.1, 1.0, World());
+        // Away, and healed back to whole: nothing happens.
+        Assert.Empty(Run(fight, 30, 1.0, World(inZone: false)));
 
-        Assert.Equal(ShardPhase.One, fight.Phase);
-        Assert.DoesNotContain(reengaged, e => e.Kind == ShardEventKind.SpawnWave);
+        var resumed = fight.Tick(0.1, 1.0, World());
+
+        Assert.Equal(ShardPhase.Three, fight.Phase);
+        Assert.True(fight.IsActive);
+        Assert.Contains(resumed, e => e.Kind == ShardEventKind.Engaged);
+        Assert.DoesNotContain(resumed, e => e.Kind == ShardEventKind.SpawnWave);
+        Assert.True(fight.IsReclaiming);
     }
 
     [Fact]

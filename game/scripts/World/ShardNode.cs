@@ -186,7 +186,6 @@ public partial class ShardNode : StaticBody3D
         // A fresh modifier on every respawn, so farming a node is varied rather than identical.
         _modifier = _tier.RollModifier(GameItems.EncounterRng);
         _fight = new ShardEncounter(_tier, _modifier, GameSession.Difficulty);
-        _waiting.Clear();
         _broken = false;
 
         _self.Configure(
@@ -281,15 +280,20 @@ public partial class ShardNode : StaticBody3D
         PruneAdds();
 
         var player = GetTree().GetFirstNodeInGroup("player") as Node3D;
-        var inZone = player is not null && GlobalPosition.DistanceTo(player.GlobalPosition) <= ZoneRadius;
+        var inZone = player is not null
+            && GlobalPosition.DistanceTo(player.GlobalPosition) <= ZoneRadius
+            && !GameWorld.IsSafe(player.GlobalPosition);
 
-        // Walking out abandons the fight. Without this a shard could be whittled down over
-        // many visits, which turns the encounter into a chore rather than a fight.
+        // Walking out puts the fight on hold, and the stone heals while nobody is there.
+        // Without the heal a shard could be whittled down over many visits, which turns the
+        // encounter into a chore rather than a fight.
         if (_fight.IsActive && !inZone && Abandons)
         {
-            Disengage();
+            Hold();
             return;
         }
+
+        if (_fight.IsHeld && !inZone) Mend(delta);
 
         // Warded: the shard shrugs off damage while its adds live, so clearing them is the
         // prerequisite for hurting it rather than a suggestion.
@@ -308,8 +312,9 @@ public partial class ShardNode : StaticBody3D
         switch (evt.Kind)
         {
             case ShardEventKind.Engaged:
-                GD.Print($"[shard] {ShardId} engaged ({_modifier})");
-                BringBackWaiting();
+                GD.Print(evt.Phase == ShardPhase.Dormant
+                    ? $"[shard] {ShardId} engaged ({_modifier})"
+                    : $"[shard] {ShardId} taken up again in phase {evt.Phase}, {_adds.Count} add(s) still there");
                 EmitSignal(SignalName.EncounterChanged);
                 break;
 
@@ -372,26 +377,6 @@ public partial class ShardNode : StaticBody3D
             + (composed.Any(c => c.IsAnchor) ? " (anchor marked)" : ""));
     }
 
-    /// <summary>
-    /// The adds still standing when the player walked out (2026-09-25). They are cleared with
-    /// the fight, and brought back — these, and only these — when the player walks in again:
-    /// the ones killed stay killed, and the ones left alive are not lost.
-    /// </summary>
-    private readonly List<(string EnemyId, bool Anchor)> _waiting = [];
-
-    private void BringBackWaiting()
-    {
-        if (_waiting.Count == 0) return;
-
-        for (var i = 0; i < _waiting.Count; i++)
-        {
-            SpawnAdd(_waiting[i].EnemyId, _waiting[i].Anchor, $"Add_Back_{i}", i, _waiting.Count);
-        }
-
-        GD.Print($"[shard] {ShardId}: {_waiting.Count} add(s) left alive come back");
-        _waiting.Clear();
-    }
-
     private void SpawnAdd(string enemyId, bool isAnchor, string name, int index, int count)
     {
         if (_enemyScene is null || _fight is null) return;
@@ -404,8 +389,8 @@ public partial class ShardNode : StaticBody3D
         add.EnemyId = enemyId;
         add.Name = name;
 
-        // Adds belong to the fight, not to the world: they are cleared when the player
-        // leaves (and the living ones brought back on return) and when the shard breaks.
+        // Adds belong to the fight, not to the world: they wait by the stone when the player
+        // leaves, and go with it when it breaks.
         add.MoveSpeed *= (float)_fight!.Effects.AddSpeedMultiplier;
 
         _addsRoot.AddChild(add);
@@ -476,7 +461,9 @@ public partial class ShardNode : StaticBody3D
     /// <remarks>
     /// Waits for the navigation mesh, which is only ready a frame or two after the map loads.
     /// A map crowded enough to turn every try down loosens the rules rather than leave the
-    /// stone out of the world: first the clearance, then everything but safe ground.
+    /// stone out of the world: first the clearance, then the camps and the other stones — but
+    /// never safe ground. Its whole zone stays off it, or the fight starts in the village
+    /// (2026-09-25: the loosest try had let a stone stand 22 m from Ember Hollow's square).
     /// </remarks>
     private bool Roam()
     {
@@ -487,6 +474,7 @@ public partial class ShardNode : StaticBody3D
         var attempt = _roamAttempts++;
         var strict = attempt < 6;
         var loose = attempt >= 12;
+        var loosest = attempt >= 30;
         var rng = GameItems.EncounterRng;
 
         for (var i = 0; i < 40; i++)
@@ -499,8 +487,9 @@ public partial class ShardNode : StaticBody3D
             var point = NavigationServer3D.MapGetClosestPoint(map, candidate);
 
             if ((point with { Y = 0 }).DistanceTo(candidate) > 1.5f) continue;
+            if (!ZoneClearOfSafety(point)) continue;
             if (!loose && !FarFromEverything(point)) continue;
-            if (loose && GameWorld.IsSafe(point)) continue;
+            if (loose && !loosest && (Near(point, "zone_gates", 24f) || Near(point, "zone_arrivals", 24f) || Near(point, "shrines", 16f))) continue;
             if (strict && !Clear(point)) continue;
 
             GlobalPosition = point;
@@ -511,17 +500,22 @@ public partial class ShardNode : StaticBody3D
         return false;
     }
 
-    private bool FarFromEverything(Vector3 point)
+    /// <summary>Its whole zone, and a margin, off safe ground: otherwise the village starts the fight.</summary>
+    private bool ZoneClearOfSafety(Vector3 point)
     {
-        // Its whole zone clear of safe ground, or walking out of the village starts the fight.
         if (GameWorld.IsSafe(point)) return false;
 
-        for (var k = 0; k < 8; k++)
+        for (var k = 0; k < 16; k++)
         {
-            var edge = point + (new Vector3(ZoneRadius + 4f, 0, 0).Rotated(Vector3.Up, Mathf.Tau * k / 8));
+            var edge = point + (new Vector3(ZoneRadius + 4f, 0, 0).Rotated(Vector3.Up, Mathf.Tau * k / 16));
             if (GameWorld.IsSafe(edge)) return false;
         }
 
+        return true;
+    }
+
+    private bool FarFromEverything(Vector3 point)
+    {
         if (Near(point, "zone_gates", 24f) || Near(point, "zone_arrivals", 24f) || Near(point, "shrines", 16f)) return false;
 
         foreach (var node in GetTree().GetNodesInGroup("shards"))
@@ -707,23 +701,40 @@ public partial class ShardNode : StaticBody3D
         Arm();
     }
 
-    /// <summary>Player left: reset the fight and clear its adds.</summary>
-    private void Disengage()
+    /// <summary>A tenth of its health a second while held: back to whole in ten seconds.</summary>
+    private const double MendPerSecond = 0.10;
+
+    private double _mending;
+
+    /// <summary>
+    /// The player left the zone (2026-09-25): the fight waits. The phase stays where it was,
+    /// the adds still standing go back to their places round the stone and wait there, and
+    /// the stone heals. Nothing is spawned again on the way back in, so there is nothing to
+    /// farm by walking in and out.
+    /// </summary>
+    private void Hold()
     {
-        GD.Print($"[shard] {ShardId} reset — the player left the zone");
-
-        _waiting.Clear();
-
-        foreach (var add in _adds.Where(a => IsInstanceValid(a) && !a.IsDead))
-        {
-            _waiting.Add((add.EnemyId, add == _anchor));
-        }
-
-        ClearAdds();
+        _fight?.Hold();
         _telegraph.Cancel();
-        _fight?.Reset();
-        _self.Health.Fill();
+        _mending = 0;
 
+        foreach (var add in _adds.Where(a => IsInstanceValid(a) && !a.IsDead)) add.GiveUp();
+
+        GD.Print($"[shard] {ShardId} held in phase {Phase} — the player left the zone, {_adds.Count} add(s) wait by the stone");
         EmitSignal(SignalName.EncounterChanged);
+    }
+
+    private void Mend(double delta)
+    {
+        if (_self.Health.Fraction >= 1.0) return;
+
+        _mending += _self.Stats.MaxHp * MendPerSecond * delta;
+
+        var whole = (int)_mending;
+
+        if (whole <= 0) return;
+
+        _mending -= whole;
+        _self.Heal(whole);
     }
 }
