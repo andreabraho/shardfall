@@ -168,6 +168,17 @@ public partial class ShrinePanel : CanvasLayer
         _notice.AddThemeColorOverride("font_color", new Color(0.62f, 0.70f, 0.64f));
         column.AddChild(_notice);
 
+        // The tower's checkpoint shrines (floors four and seven) offer a free way out to the
+        // tower's entrance (REF-15). Hidden everywhere else.
+        _leave = new Button { Text = L10n.T("Leave the tower (free)"), Visible = false };
+        _leave.Pressed += () =>
+        {
+            Close();
+            TowerNode.Leave(GetTree());
+        };
+
+        column.AddChild(_leave);
+
         column.AddChild(new HSeparator());
         column.AddChild(Heading2(L10n.T("Travel")));
 
@@ -204,6 +215,7 @@ public partial class ShrinePanel : CanvasLayer
     }
 
     private PanelContainer _panel = null!;
+    private Button _leave = null!;
 
     // ------------------------------------------------------------------ refresh
 
@@ -218,6 +230,8 @@ public partial class ShrinePanel : CanvasLayer
         _notice.Text = zone is null
             ? ""
             : L10n.F("{0} · level {1} · {2} shrine(s) found", GameItems.Localise(zone.Name), zone.Band, GameWorld.Travel.Discovered.Count);
+
+        _leave.Visible = zone is { IsTower: true } && shrine is { FastTravel: false };
 
         RefreshTravel();
         RefreshRespec();

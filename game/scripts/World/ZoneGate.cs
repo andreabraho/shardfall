@@ -24,6 +24,13 @@ public partial class ZoneGate : Area3D
     /// <summary>The zone on the other side. Must be a declared exit of the zone this scene is.</summary>
     [Export] public string ToZone { get; set; } = "";
 
+    /// <summary>
+    /// Keeps the sign up without the reveal key (REF-15): the tower's way out, which a player
+    /// on floor one has to be able to find at a glance. Shown only while the player is on the
+    /// same level as the gate, so it does not hang in the air over the floors above.
+    /// </summary>
+    [Export] public bool AlwaysSigned { get; set; }
+
     /// <summary>Radius of the crossing. Wide enough to be hard to slip past at a run.</summary>
     [Export] public float Radius { get; set; } = 4.0f;
 
@@ -101,9 +108,9 @@ public partial class ZoneGate : Area3D
     {
         var target = GameWorld.Graph[ToZone];
 
-        _label!.SetText(target is null
-            ? ToZone
-            : Items.GameItems.Localise(target.Name) + Requirement(target));
+        var name = target is null ? ToZone : Items.GameItems.Localise(target.Name) + Requirement(target);
+
+        _label!.SetText(AlwaysSigned ? L10n.F("Way out  ·  {0}", name) : name);
     }
 
     /// <summary>What the border asks of the player, or nothing when it is simply open.</summary>
@@ -151,8 +158,12 @@ public partial class ZoneGate : Area3D
 
         if (_label.Text.Length == 0) FillLabel();
 
-        _label.Visible = Godot.Input.IsActionPressed(Kiln.Game.Input.GameActions.RevealLabels);
+        _label.Visible = Godot.Input.IsActionPressed(Kiln.Game.Input.GameActions.RevealLabels) || (AlwaysSigned && PlayerNear());
     }
+
+    private bool PlayerNear() =>
+        GetTree().GetFirstNodeInGroup("player") is Node3D player
+        && Mathf.Abs(player.GlobalPosition.Y - GlobalPosition.Y) < 6f;
 
     private void OnBodyEntered(Node3D body)
     {

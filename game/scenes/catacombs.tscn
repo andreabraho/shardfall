@@ -3207,6 +3207,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.1, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17, 0, 14)
 script = ExtResource("7_gate")
 ToZone = "zone_broken_gate"
+AlwaysSigned = true
 
 [node name="ArrivalFromBrokenGate" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.1, 0)

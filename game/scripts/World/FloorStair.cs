@@ -23,6 +23,22 @@ public partial class FloorStair : Area3D
     private bool _open;
     private double _cooldown;
 
+    /// <summary>
+    /// True on the last floor (REF-15): the stair there leads out of the tower, to its
+    /// entrance, rather than up into a fresh climb.
+    /// </summary>
+    public bool LeadsOut
+    {
+        get => _leadsOut;
+        set
+        {
+            _leadsOut = value;
+            Restyle();
+        }
+    }
+
+    private bool _leadsOut;
+
     /// <summary>How wide the crossing is. Generous: a stair you can miss at a run is a bug.</summary>
     [Export] public float Radius { get; set; } = 3.0f;
 
@@ -85,7 +101,9 @@ public partial class FloorStair : Area3D
 
         Restyle();
 
-        UI.WorldNotice.Show(GetTree(), L10n.T("The floor is finished. The stair is open."));
+        UI.WorldNotice.Show(GetTree(), _leadsOut
+            ? L10n.T("The tower is finished. The way out is open.")
+            : L10n.T("The floor is finished. The stair is open."));
     }
 
     private void Restyle()
@@ -97,7 +115,7 @@ public partial class FloorStair : Area3D
         if (_plate is null) return;
 
         _plate.Tint = colour;
-        _plate.SetText(_open ? L10n.T("Up") : L10n.T("Sealed"));
+        _plate.SetText(!_open ? L10n.T("Sealed") : _leadsOut ? L10n.T("Way out") : L10n.T("Up"));
     }
 
     private void OnBodyEntered(Node3D body)

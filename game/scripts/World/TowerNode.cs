@@ -94,6 +94,12 @@ public partial class TowerNode : Node3D
             GD.PushError($"[tower] '{zone.Id}' declares floor '{floor.Id}' but the scene lays out no room for it.");
         }
 
+        // The last floor's stair is the way out (REF-15).
+        if (zone.Floors.Count > 0 && _rooms.TryGetValue(zone.Floors[^1].Id, out var last) && last.Stair is { } stair)
+        {
+            stair.LeadsOut = true;
+        }
+
         foreach (var id in _rooms.Keys)
         {
             if (zone.Floors.Any(f => f.Id == id)) continue;
@@ -193,18 +199,11 @@ public partial class TowerNode : Node3D
     {
         if (_run is null) return;
 
-        // The bottom of the tower leads back to the mouth, which is where the way out of the
-        // dungeon is. The deepest floor reached is already recorded, so walking back up costs
-        // nothing: re-entering later still resumes at the bottom.
+        // The last floor's stair leads out of the tower, to its entrance (REF-15): starting a
+        // fresh climb the moment the lord fell read as the tower throwing the player back in.
         if (_run.Finished)
         {
-            var zone = GameWorld.Graph[GameWorld.CurrentZoneId];
-
-            if (zone is null) return;
-
-            _run = new TowerRun(zone.Floors);
-            Arrive();
-
+            Leave(GetTree());
             return;
         }
 
@@ -216,6 +215,23 @@ public partial class TowerNode : Node3D
         // Climbed to, not resumed onto: a floor that follows a boss hands out its gift here.
         // A resume after a death or a load arrives another way, and gets none.
         if (_run.Floor.Gift && _run.Floor.Task != FloorTask.Fight) _here?.Gift();
+    }
+
+    /// <summary>
+    /// Takes the player out of the tower to its entrance — the map its gate on floor one leads
+    /// to, beside that gate (REF-15). Free: the stair past the last boss and the checkpoint
+    /// shrines on floors four and seven both use it.
+    /// </summary>
+    public static void Leave(SceneTree tree)
+    {
+        var zone = GameWorld.Graph[GameWorld.CurrentZoneId];
+
+        if (zone is null || zone.Exits.Count == 0) return;
+
+        GD.Print($"[tower] leaving {zone.Id} for {zone.Exits[0].To}");
+
+        tree.GetFirstNodeInGroup("player")?.GetNodeOrNull<Player.PlayerCharacter>("PlayerCharacter")?.CarryOut();
+        ZoneTransition.Begin(tree, zone.Id, zone.Exits[0].To);
     }
 
     /// <summary>Switches the world over to the current floor and puts the player on it.</summary>
