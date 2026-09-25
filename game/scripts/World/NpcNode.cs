@@ -98,6 +98,9 @@ public partial class NpcNode : Area3D
         _plate?.SetText(_playerInside ? $"{DisplayName}{title}   [{Input.GameActions.DescribeBinding(Input.GameActions.Interact)}]" : $"{DisplayName}{title}");
     }
 
+    /// <summary>Whether the player stands close enough to talk.</summary>
+    public bool PlayerInside => _playerInside;
+
     public override void _UnhandledInput(InputEvent @event)
     {
         if (!_playerInside || _def is null || !@event.IsActionPressed(GameActions.Interact)) return;

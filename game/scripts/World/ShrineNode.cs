@@ -229,6 +229,13 @@ public partial class ShrineNode : Area3D
     {
         if (!_playerInside || !@event.IsActionPressed(GameActions.Interact)) return;
 
+        // A villager in reach as well takes the key (2026-09-25): the elder stood inside the
+        // shrine's reach and pressing F opened the shrine instead of the conversation.
+        foreach (var node in GetTree().GetNodesInGroup("npcs"))
+        {
+            if (node is NpcNode { PlayerInside: true }) return;
+        }
+
         if (GetTree().CurrentScene?.GetNodeOrNull<UI.ShrinePanel>("Session/ShrinePanel") is not { } panel) return;
 
         panel.Open(ShrineId);
