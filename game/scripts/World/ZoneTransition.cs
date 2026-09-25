@@ -43,6 +43,29 @@ public static class ZoneTransition
         return from;
     }
 
+    /// <summary>The shrine a fast-travel trip ends at, or empty when the trip is not one.</summary>
+    private static string _toShrine = "";
+
+    /// <summary>
+    /// Fast travel to a shrine on another map: the map is loaded and the player stands at the
+    /// shrine instead of at the border they would have walked in by.
+    /// </summary>
+    public static void BeginToShrine(SceneTree tree, string fromZone, string toZone, string shrineId)
+    {
+        _toShrine = shrineId;
+        GD.Print($"[shrine] travel {fromZone} → {toZone}, to {shrineId}");
+        Begin(tree, fromZone, toZone);
+    }
+
+    /// <summary>Consumes the shrine a trip ends at.</summary>
+    public static string TakeShrineArrival()
+    {
+        var shrine = _toShrine;
+        _toShrine = "";
+
+        return shrine;
+    }
+
     /// <summary>
     /// Tells the player why a gate refused them, through whichever HUD the scene has.
     /// </summary>

@@ -93,6 +93,7 @@ public partial class ZoneRoot : Node3D
         if (Saving.SaveService.TakePendingPosition() is { } saved)
         {
             ZoneTransition.TakeArrival();
+            ZoneTransition.TakeShrineArrival();
 
             if (GetTree().GetFirstNodeInGroup("player") is Node3D loaded) loaded.GlobalPosition = saved;
 
@@ -100,10 +101,26 @@ public partial class ZoneRoot : Node3D
         }
 
         var from = ZoneTransition.TakeArrival();
+        var toShrine = ZoneTransition.TakeShrineArrival();
 
         if (from.Length == 0) return;
 
         if (GetTree().GetFirstNodeInGroup("player") is not Node3D player) return;
+
+        // A fast-travel trip ends at its shrine, beside the stone, not at the border.
+        if (toShrine.Length > 0)
+        {
+            foreach (var node in GetTree().GetNodesInGroup("shrines"))
+            {
+                if (node is not ShrineNode shrine || shrine.ShrineId != toShrine) continue;
+
+                player.GlobalPosition = shrine.GlobalPosition + ShrineNode.ArrivalOffset;
+                GD.Print($"[shrine] arrived in {ZoneId} at {toShrine}");
+                return;
+            }
+
+            GD.PushWarning($"[shrine] '{ZoneId}' has no shrine '{toShrine}'; arriving at the border instead.");
+        }
 
         foreach (var node in GetTree().GetNodesInGroup("zone_arrivals"))
         {

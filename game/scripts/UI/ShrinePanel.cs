@@ -305,11 +305,22 @@ public partial class ShrinePanel : CanvasLayer
             .OfType<ShrineNode>()
             .FirstOrDefault(s => s.ShrineId == shrineId);
 
+        // On another map: that map is loaded, and the player arrives at the shrine.
         if (target is null)
         {
-            // The destination is in another zone's scene. Loading that scene is WLD-01's
-            // remaining half; refusing is honest, and silently charging for nothing is not.
-            _status.Text = L10n.T("That shrine is in another zone — zone loading is not wired up yet.");
+            if (GameWorld.Graph.Shrine(shrineId) is not { } far)
+            {
+                _status.Text = Explain(TravelRefusal.UnknownShrine);
+                return;
+            }
+
+            _inventory.Bag.TrySpendYang(quote.Cost);
+            GameWorld.Travel.Discover(shrineId);
+            _status.Text = "";
+            Close();
+
+            _character?.CarryOut();
+            ZoneTransition.BeginToShrine(GetTree(), GameWorld.CurrentZoneId, far.Zone, shrineId);
             return;
         }
 
@@ -317,9 +328,10 @@ public partial class ShrinePanel : CanvasLayer
 
         if (GetTree().GetFirstNodeInGroup("player") is Node3D player)
         {
-            player.GlobalPosition = target.GlobalPosition + new Vector3(0, 0.1f, 2.5f);
+            player.GlobalPosition = target.GlobalPosition + ShrineNode.ArrivalOffset;
         }
 
+        GD.Print($"[shrine] travel within {GameWorld.CurrentZoneId}, to {shrineId}");
         GameWorld.Travel.Discover(shrineId);
         _status.Text = "";
         Close();

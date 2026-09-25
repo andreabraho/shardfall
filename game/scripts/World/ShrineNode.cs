@@ -136,6 +136,9 @@ public partial class ShrineNode : Area3D
     /// <summary>Height the crystal floats at, over the top of the stone.</summary>
     private const float CrystalHeight = 3.1f;
 
+    /// <summary>Where a traveller lands, from the stone: beside it, not inside it.</summary>
+    public static readonly Vector3 ArrivalOffset = new(0, 0.1f, 2.5f);
+
     /// <summary>
     /// The waystone's crystal (REF-08): a gem turning slowly over the obelisk, and a light
     /// once the stone is known. The grey cylinder it replaces read as a post, not as a place
