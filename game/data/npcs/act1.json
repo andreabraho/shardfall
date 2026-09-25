@@ -43,6 +43,22 @@
       "max_rarity": "fine"
     } },
 
+  // The armourer (REF-16): the original's weapon and armour shops in one stall. Base gear of
+  // the first levels, always on the shelf, no bonus lines — something to wear before the
+  // fields have dropped anything.
+  { "id": "npc_brann", "name": "$npc.npc_brann.name", "title": "$npc.title.armourer",
+    "role": "merchant", "zone": "zone_ember_hollow", "visual": "mesh_placeholder_villager", "tint": "#6f7f96",
+    "lines": [
+      "$npc.npc_brann.line_1",
+      "$npc.npc_brann.line_2"
+    ],
+    "stock": {
+      "staples": ["wpn_worn_blade", "wpn_hunters_axe", "wpn_iron_sword", "wpn_bronze_spear",
+                  "arm_padded_coat", "arm_leather_vest", "hlm_leather_cap", "shd_wooden_buckler", "bts_worn_boots"],
+      "rotating": 0,
+      "max_rarity": "fine"
+    } },
+
   // A pedlar on the pass, by the yard shrine (REF-12): the one village is four maps back, and
   // walking home to buy flask draughts is the kind of trip that makes a player stop playing.
   { "id": "npc_tobin", "name": "$npc.npc_tobin.name", "title": "$npc.title.pedlar",

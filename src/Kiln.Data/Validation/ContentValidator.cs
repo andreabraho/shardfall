@@ -1473,10 +1473,10 @@ public static class ContentValidator
                     report.Error("npc-stock", at, $"'{npc.Id}' sells '{staple}', which does not exist.",
                         "Correct the item id.");
                 }
-                else if (item.Slot is not null)
+                else if (item.Slot is not null && item.Rarity > Rarity.Fine)
                 {
-                    report.Error("npc-stock", at, $"'{npc.Id}' sells '{staple}' as a staple, but it is equipment.",
-                        "Staples are sold unrolled and in any number; gear belongs on the rotating shelf.");
+                    report.Error("npc-stock", at, $"'{npc.Id}' sells '{staple}', which is {item.Rarity}, as a staple.",
+                        "Base gear on a staple list is common or fine at most: the best things in the game are found, not bought.");
                 }
                 else if (item.SellValue <= 0)
                 {

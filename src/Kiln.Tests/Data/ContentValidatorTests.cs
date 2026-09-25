@@ -873,6 +873,7 @@ public class ContentValidatorTests
         [
             new ItemDef { Id = "mat_test_scrap", Name = "$x", SellValue = 40 },
             new ItemDef { Id = "wpn_test_blade", Name = "$x", Slot = EquipSlot.Weapon, SellValue = 100 },
+            new ItemDef { Id = "wpn_test_relic", Name = "$x", Slot = EquipSlot.Weapon, Rarity = Rarity.Rare, SellValue = 900 },
         ],
         visuals: [new VisualDef { Id = "mesh_test" }],
         zones: [new ZoneDef { Id = "zone_test" }],
@@ -888,10 +889,14 @@ public class ContentValidatorTests
     }
 
     [Fact]
-    public void Flags_AMerchantSellingGearAsAStapleOrSomethingMissing()
+    public void Flags_AMerchantSellingRareGearAsAStapleOrSomethingMissing()
     {
-        Assert.True(HasError(ContentValidator.Validate(
+        // Base gear on the staple list is the armourer (REF-16); rare gear there is not.
+        Assert.False(HasError(ContentValidator.Validate(
             VillageDb(Merchant(new StockDef { Staples = ["wpn_test_blade"] }))), "npc-stock"));
+
+        Assert.True(HasError(ContentValidator.Validate(
+            VillageDb(Merchant(new StockDef { Staples = ["wpn_test_relic"] }))), "npc-stock"));
 
         Assert.True(HasError(ContentValidator.Validate(
             VillageDb(Merchant(new StockDef { Staples = ["mat_nothing"] }))), "npc-stock"));

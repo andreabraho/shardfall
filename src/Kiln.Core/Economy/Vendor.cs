@@ -36,7 +36,8 @@ public enum TradeResult
 /// </summary>
 /// <remarks>
 /// Two kinds of stock. <b>Staples</b> are the materials the workbench eats, always there in
-/// any quantity, because running out of iron scrap is not a decision anyone enjoys. The
+/// any quantity, because running out of iron scrap is not a decision anyone enjoys — and, at
+/// the armourer, the base gear of the first levels, always there, with no bonus lines. The
 /// <b>shelf</b> is a handful of rolled gear near the player's level, chosen from the save's
 /// seed and the player's level — so it is the same shelf every time the game is loaded at
 /// that level, and a new one each level-up. It never carries better than
@@ -161,7 +162,8 @@ public sealed class Vendor
         {
             if (!bag.CanTake(offer.ItemId, count)) return TradeResult.NoRoom;
 
-            bag.TryAdd(factory.CreatePlain(offer.ItemId, count));
+            // Gear on the staple list is sold as base items: sockets, no bonus lines (REF-16).
+            bag.TryAdd(spec.IsEquipment ? factory.CreateBase(offer.ItemId) : factory.CreatePlain(offer.ItemId, count));
         }
 
         bag.TrySpendYang(cost);

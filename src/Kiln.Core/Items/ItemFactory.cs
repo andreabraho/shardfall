@@ -40,6 +40,19 @@ public sealed class ItemFactory
     /// <summary>A copy with no rolls: materials, stones, quest items.</summary>
     public ItemInstance CreatePlain(string defId, int count = 1) => new(_nextUid++, defId, count);
 
+    /// <summary>
+    /// A piece of gear as a shop sells it (REF-16): its sockets, and no bonus lines — the
+    /// original's base items. Anything that is not gear comes out as <see cref="CreatePlain"/>.
+    /// </summary>
+    public ItemInstance CreateBase(string defId)
+    {
+        var item = new ItemInstance(_nextUid++, defId, 1);
+
+        if (_specs.TryGet(defId, out var spec)) item.SetSocketCount(spec.Sockets);
+
+        return item;
+    }
+
     /// <summary>A fully rolled copy: bonus lines from its pool, socket slots from its spec.</summary>
     public ItemInstance Create(string defId, DeterministicRng rng, int count = 1)
     {

@@ -51,6 +51,25 @@ public class VendorTests
     }
 
     [Fact]
+    public void GearOnTheStapleList_IsSoldAsABaseItem()
+    {
+        // The armourer (REF-16): base gear always in stock, with its sockets and no bonus lines.
+        var specs = Specs();
+        specs.Add(new ItemSpec { Id = "arm_coat", Slot = EquipSlot.Armor, Rarity = Rarity.Common, LevelReq = 1, Height = 2, SellValue = 150, Sockets = 2, MinBonusLines = 1, MaxBonusLines = 2 });
+
+        var vendor = new Vendor("npc_armourer", specs, ["arm_coat"], [], rotating: 0);
+        var bag = new Inventory(specs, 6, 4, 1_000);
+        var factory = new ItemFactory(specs, specs);
+
+        Assert.Equal(TradeResult.Done, vendor.Buy(vendor.Staples[0], bag, factory, 10));
+
+        var coat = Assert.Single(bag.Items).Item;
+        Assert.Equal(2, coat.Sockets.Count);
+        Assert.Empty(coat.Bonuses);
+        Assert.Equal(850, bag.Yang);
+    }
+
+    [Fact]
     public void Shelf_IsTheSameForTheSameSeedAndLevel()
     {
         var (a, _, fa) = Setup();

@@ -411,12 +411,13 @@ public static class Ids
 
     public static class Npcs
     {
+        public const string NpcBrann = "npc_brann";
         public const string NpcCorwen = "npc_corwen";
         public const string NpcHesk = "npc_hesk";
         public const string NpcIdra = "npc_idra";
         public const string NpcTobin = "npc_tobin";
 
-        public static readonly string[] All = ["npc_corwen", "npc_hesk", "npc_idra", "npc_tobin"];
+        public static readonly string[] All = ["npc_brann", "npc_corwen", "npc_hesk", "npc_idra", "npc_tobin"];
     }
 
     public static class Sounds

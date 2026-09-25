@@ -288,8 +288,12 @@ public partial class MerchantPanel : CanvasLayer
 
         Grid(L10n.T("Always in stock"), _vendor.Staples, staple: true);
 
-        if (_vendor.Shelf.Count == 0) Section(L10n.T("Sold out until your next level."), Dim);
-        else Grid(L10n.T("On the shelf  ·  new stock every level"), _vendor.Shelf, staple: false);
+        // The armourer keeps no rotating shelf (REF-16), so there is nothing to call sold out.
+        if (_vendor.Rotating > 0)
+        {
+            if (_vendor.Shelf.Count == 0) Section(L10n.T("Sold out until your next level."), Dim);
+            else Grid(L10n.T("On the shelf  ·  new stock every level"), _vendor.Shelf, staple: false);
+        }
 
         if (_vendor.Buyback.Count > 0) Grid(L10n.T("Buy back"), _vendor.Buyback, staple: false);
     }
