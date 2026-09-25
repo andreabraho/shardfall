@@ -914,6 +914,17 @@ public partial class EnemyBrain : CharacterBody3D
         return BtStatus.Running;
     }
 
+    /// <summary>Stands still, turned toward the target: waiting for a shot to come ready.</summary>
+    public BtStatus Hold(double delta)
+    {
+        if (Target is null) return BtStatus.Failure;
+
+        Brake(delta);
+        Face((Target.GlobalPosition - GlobalPosition) with { Y = 0 }, delta);
+
+        return BtStatus.Running;
+    }
+
     public BtStatus Idle(double delta)
     {
         Brake(delta);

@@ -81,6 +81,15 @@ public static class RoleTrees
                 new BtAction<EnemyBrain>((b, d) => b.Retreat(d))),
 
             Attack(),
+
+            // Already in range with the shot still cooling down: stand and face the target
+            // (2026-09-25). Chasing here walked the archer in until it was too close, then
+            // the retreat walked it out, back and forth every second — the Star Throwers
+            // shook on the spot and were mid-step whenever the shot came ready.
+            new BtSequence<EnemyBrain>(
+                new BtCondition<EnemyBrain>(b => b.InRangeOf(b.BasicAbility)),
+                new BtAction<EnemyBrain>((b, d) => b.Hold(d))),
+
             new BtAction<EnemyBrain>((b, d) => b.Chase(d)));
 
     /// <summary>
@@ -123,6 +132,12 @@ public static class RoleTrees
                 new BtAction<EnemyBrain>((b, d) => b.Retreat(d))),
 
             Attack(),
+
+            // Keeps its distance rather than walking in and backing off again, as the archer.
+            new BtSequence<EnemyBrain>(
+                new BtCondition<EnemyBrain>(b => b.DistanceToTarget <= PreferredRange),
+                new BtAction<EnemyBrain>((b, d) => b.Hold(d))),
+
             new BtAction<EnemyBrain>((b, d) => b.Chase(d)));
 
     /// <summary>
