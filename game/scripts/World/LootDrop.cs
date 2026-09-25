@@ -166,8 +166,11 @@ public partial class LootDrop : Area3D
 
         if (_frame is not null) _frame.Visible = on && _label.Visible;
 
-        // The box glows brighter while it is the one pointed at.
-        if (_mesh.MaterialOverride is StandardMaterial3D material) material.EmissionEnergyMultiplier = on ? 1.6f : 0.6f;
+        // The box glows brighter and the name lightens while it is the one pointed at.
+        if (_mesh.MaterialOverride is StandardMaterial3D material) material.EmissionEnergyMultiplier = on ? 1.3f : 0.6f;
+
+        var colour = RarityColour(_spec?.Rarity ?? Rarity.Common);
+        _label.Modulate = on ? colour.Lerp(Colors.White, 0.35f) : colour;
     }
 
     /// <summary>
@@ -184,16 +187,18 @@ public partial class LootDrop : Area3D
 
         var frame = new Node3D { Name = "Frame", Position = _label.Position };
 
-        frame.AddChild(Plate(size + new Vector2(0.16f, 0.1f), colour, 0));
-        frame.AddChild(Plate(size + new Vector2(0.1f, 0.05f), new Color(0.05f, 0.05f, 0.07f, 0.82f), 1));
+        // Soft (2026-09-25): a faint shade just behind the words and a thin line under them.
+        // A full box in the rarity colour was louder than the item it pointed at.
+        frame.AddChild(Plate(size + new Vector2(0.06f, 0.01f), new Color(0, 0, 0, 0.3f), 0, Vector3.Zero));
+        frame.AddChild(Plate(new Vector2(size.X, 0.012f), colour with { A = 0.75f }, 1, new Vector3(0, -(size.Y / 2) - 0.012f, 0)));
 
         AddChild(frame);
         return frame;
     }
 
-    private static MeshInstance3D Plate(Vector2 size, Color colour, int priority) => new()
+    private static MeshInstance3D Plate(Vector2 size, Color colour, int priority, Vector3 offset) => new()
     {
-        Mesh = new QuadMesh { Size = size },
+        Mesh = new QuadMesh { Size = size, CenterOffset = offset },
         CastShadow = GeometryInstance3D.ShadowCastingSetting.Off,
         MaterialOverride = new StandardMaterial3D
         {
