@@ -51,6 +51,13 @@ public partial class EnemyBrain : CharacterBody3D
 
     private BtNode<EnemyBrain>? _tree;
     private Phase _phase = Phase.Idle;
+
+    /// <summary>
+    /// The ability whose wind-up, strike and recovery are under way, kept through the recovery
+    /// (unlike the active ability, cleared at the strike). Only the branch that started an
+    /// attack may carry it on.
+    /// </summary>
+    private AbilityDef? _runningAbility;
     private double _phaseTimer;
     private AbilityDef? _activeAbility;
     private Vector3 _committedFacing;
@@ -149,8 +156,9 @@ public partial class EnemyBrain : CharacterBody3D
         {
             if (_specials.Count == 0) return null;
 
-            // Mid-attack, the answer must not change under the wind-up.
-            if (_activeAbility is { Telegraph: not null } active) return active;
+            // Mid-attack, the answer must not change under the wind-up — nor under the
+            // recovery, or the branch carrying the special on would stop being asked about it.
+            if (_runningAbility is { } running && _specials.Contains(running)) return running;
 
             AbilityDef? ready = null;
 
@@ -1011,6 +1019,13 @@ public partial class EnemyBrain : CharacterBody3D
     {
         if (ability is null || !HasLivingTarget) return BtStatus.Failure;
 
+        // Another ability's attack is under way: not this branch's to carry on (2026-09-25).
+        // The special is asked first on every tick, and it used to take over the basic
+        // attack's wind-up as its own — whereupon the selector reset the basic branch, which
+        // cancelled the wind-up. Every creature with a special lost its basic attack that way,
+        // and a Star Thrower, whose basic shot is its whole job, never threw a star.
+        if (_phase != Phase.Idle && !ReferenceEquals(ability, _runningAbility)) return BtStatus.Failure;
+
         switch (_phase)
         {
             case Phase.Idle:
@@ -1034,6 +1049,7 @@ public partial class EnemyBrain : CharacterBody3D
                 if (_phaseTimer > 0) return BtStatus.Running;
 
                 _phase = Phase.Idle;
+                _runningAbility = null;
                 return BtStatus.Success;
 
             default:
@@ -1065,6 +1081,7 @@ public partial class EnemyBrain : CharacterBody3D
         (_visual as VisualRoot)?.CancelWindUp();
         _phase = Phase.Idle;
         _activeAbility = null;
+        _runningAbility = null;
     }
 
     private const double CancelLockoutSeconds = 2.0;
@@ -1072,6 +1089,7 @@ public partial class EnemyBrain : CharacterBody3D
     private void BeginWindup(AbilityDef ability)
     {
         _activeAbility = ability;
+        _runningAbility = ability;
         _phase = Phase.Windup;
 
         // Difficulty stretches the reaction window (doc 02 §1); the content validator
@@ -1376,6 +1394,7 @@ public partial class EnemyBrain : CharacterBody3D
 
         CancelAbility();
         _phase = Phase.Idle;
+        _runningAbility = null;
     }
 
     /// <summary>Carries a thrown creature, in place of anything it would rather be doing.</summary>

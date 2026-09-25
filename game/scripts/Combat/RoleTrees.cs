@@ -45,18 +45,26 @@ public static class RoleTrees
             new BtAction<EnemyBrain>((b, d) => b.UseAbility(b.BasicAbility, d), b => b.CancelAbility()));
 
     /// <summary>
-    /// Finish an attack already under way, before anything else gets a say.
+    /// A branch that gives way to an attack already under way: the branches placed before the
+    /// attack are only tried while nothing is being wound up.
     /// <para>
     /// Without this, a repositioning branch keeps interrupting its own wind-up: the enemy
     /// starts an attack, the player steps closer, the retreat branch takes over and cancels
     /// it, the player steps back, and it begins again — re-placing its telegraph on the
     /// player each time. It also defeats the commitment the whole telegraph design rests on.
     /// </para>
+    /// <para>
+    /// It used to be a second copy of the attack placed first, to finish what the first had
+    /// begun. But the selector resets the branch it leaves, and resetting the attack that had
+    /// begun cancelled its wind-up the very next frame: archers and menders wound up, dropped
+    /// it, waited out the lockout and wound up again, and never let a shot go (2026-09-25).
+    /// Now there is one attack, and the branches ahead of it stand aside while it runs.
+    /// </para>
     /// </summary>
-    private static BtNode<EnemyBrain> FinishCommitted() =>
+    private static BtNode<EnemyBrain> UnlessCommitted(BtNode<EnemyBrain> branch) =>
         new BtSequence<EnemyBrain>(
-            new BtCondition<EnemyBrain>(b => b.IsCommitted),
-            Attack());
+            new BtCondition<EnemyBrain>(b => !b.IsCommitted),
+            branch);
 
     /// <summary>Stands and faces the target for as long as <paramref name="holds"/> says so, asked every tick.</summary>
     private static BtNode<EnemyBrain> HoldWhile(System.Func<EnemyBrain, bool> holds) =>
@@ -76,13 +84,12 @@ public static class RoleTrees
     private static BtNode<EnemyBrain> Archer() =>
         new BtSelector<EnemyBrain>(
             Disengage(),
-            FinishCommitted(),
 
             // Backing off takes priority over starting a new shot, so an archer never
-            // settles into melee — but never mid-attack, which is handled above.
-            new BtSequence<EnemyBrain>(
+            // settles into melee — but never mid-attack.
+            UnlessCommitted(new BtSequence<EnemyBrain>(
                 new BtCondition<EnemyBrain>(b => b.DistanceToTarget < TooCloseRange),
-                new BtAction<EnemyBrain>((b, d) => b.Retreat(d))),
+                new BtAction<EnemyBrain>((b, d) => b.Retreat(d)))),
 
             Attack(),
 
@@ -126,15 +133,14 @@ public static class RoleTrees
     private static BtNode<EnemyBrain> Mender() =>
         new BtSelector<EnemyBrain>(
             Disengage(),
-            FinishCommitted(),
 
-            new BtCooldown<EnemyBrain>(
+            UnlessCommitted(new BtCooldown<EnemyBrain>(
                 6.0,
-                new BtAction<EnemyBrain>((b, _) => b.HealLowestAlly(SupportRadius, 0.18))),
+                new BtAction<EnemyBrain>((b, _) => b.HealLowestAlly(SupportRadius, 0.18)))),
 
-            new BtSequence<EnemyBrain>(
+            UnlessCommitted(new BtSequence<EnemyBrain>(
                 new BtCondition<EnemyBrain>(b => b.DistanceToTarget < TooCloseRange),
-                new BtAction<EnemyBrain>((b, d) => b.Retreat(d))),
+                new BtAction<EnemyBrain>((b, d) => b.Retreat(d)))),
 
             Attack(),
 
