@@ -14,8 +14,15 @@ namespace Kiln.Game.Items;
 /// </remarks>
 public partial class PlayerInventory : Node
 {
-    [Export] public int GridWidth { get; set; } = 10;
-    [Export] public int GridHeight { get; set; } = 8;
+    /// <summary>The bag as the original lays it out (REF-10): five columns, nine rows a page, two pages.</summary>
+    public const int Columns = 5;
+
+    public const int PageRows = 9;
+
+    public const int Pages = 2;
+
+    /// <summary>An empty bag of the player's shape.</summary>
+    public static Inventory NewBag(long yang = 0) => new(GameItems.Catalogue, Columns, PageRows * Pages, yang, PageRows);
 
     /// <summary>Starting purse. Enough to reach the first upgrade without begging.</summary>
     [Export] public int StartingYang { get; set; } = 12_000;
@@ -41,7 +48,7 @@ public partial class PlayerInventory : Node
         // a bag owned by this node would be a fresh empty bag on the far side of every gate.
         var isNewCharacter = !PlayerProfile.Exists;
 
-        Bag = PlayerProfile.AdoptBag(() => new Inventory(GameItems.Catalogue, GridWidth, GridHeight, StartingYang));
+        Bag = PlayerProfile.AdoptBag(() => NewBag(StartingYang));
         Gear = PlayerProfile.AdoptGear(() => new Equipment(GameItems.Catalogue));
 
         Bag.Changed += OnBagChanged;
@@ -190,13 +197,26 @@ public partial class PlayerInventory : Node
         return EquipOutcome.Equipped;
     }
 
-    public void Unequip(EquipSlot slot)
+    /// <summary>Takes off what is worn in a slot, into the bag. False when the bag has no room.</summary>
+    public bool Unequip(EquipSlot slot)
     {
-        if (Gear.In(slot) is not { } item) return;
+        if (Gear.In(slot) is not { } item) return false;
 
-        if (!Bag.TryAdd(item)) return;
+        if (!Bag.TryAdd(item)) return false;
 
         Gear.Unequip(slot);
+        return true;
+    }
+
+    /// <summary>Takes off what is worn in a slot, into one spot of the bag — a drag onto it.</summary>
+    public bool UnequipTo(EquipSlot slot, int x, int y)
+    {
+        if (Gear.In(slot) is not { } item) return false;
+
+        if (!Bag.TryPlace(item, x, y)) return false;
+
+        Gear.Unequip(slot);
+        return true;
     }
 
     /// <summary>Pushes gear into the character's stat block.</summary>

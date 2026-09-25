@@ -8,27 +8,55 @@ using Kiln.Game.Items;
 namespace Kiln.Game.UI;
 
 /// <summary>
-/// The bag and the worn gear, on I.
+/// The bag and the worn gear, on I — laid out as the original lays them out (REF-10).
 /// </summary>
 /// <remarks>
-/// Built in code like the rest of the Phase 2–4 UI: this is scaffolding for judging the
-/// systems, not the shipped interface (that is Phase 8). Items are drawn at their true grid
-/// footprint rather than as uniform cells, because the footprint is a real part of the
-/// decision — a two-by-three breastplate costing six cells is something the player weighs.
+/// The worn pieces stand on a figure at the top, the bag is two pages of five columns by nine
+/// rows under it, and everything is moved by carrying it: drag within the bag to rearrange,
+/// onto the figure to wear, off the figure to take off, out of the window to drop it on the
+/// ground. Right-click wears or uses. Items are drawn at their true grid footprint, because
+/// the footprint is a real part of the decision — a two-by-three breastplate costing six
+/// cells is something the player weighs.
 /// </remarks>
 public partial class InventoryPanel : CanvasLayer
 {
-    private const int CellSize = 52;
+    private const int CellSize = 46;
     private const int CellGap = 3;
+    private const int Step = CellSize + CellGap;
+
+    /// <summary>
+    /// Where each worn piece stands on the figure, in squares of the bag's size: the head at
+    /// the top, the weapon, body and shield across the middle, hands and feet below.
+    /// </summary>
+    private static readonly (EquipSlot Slot, int X, int Y, int H)[] Figure =
+    [
+        (EquipSlot.Earring, 0, 0, 1),
+        (EquipSlot.Helmet, 2, 0, 1),
+        (EquipSlot.Necklace, 4, 0, 1),
+        (EquipSlot.Weapon, 0, 1, 2),
+        (EquipSlot.Armor, 2, 1, 2),
+        (EquipSlot.Shield, 4, 1, 2),
+        (EquipSlot.Bracelet, 0, 3, 1),
+        (EquipSlot.Ring1, 1, 3, 1),
+        (EquipSlot.Boots, 2, 3, 1),
+        (EquipSlot.Ring2, 3, 3, 1),
+    ];
 
     private PlayerInventory? _inventory;
     private Control _root = null!;
-    private Control _gridRoot = null!;
-    private VBoxContainer _gearList = null!;
+    private BagGrid _grid = null!;
+    private readonly Dictionary<EquipSlot, ItemView> _worn = [];
+    private readonly List<ItemView> _bagViews = [];
+    private readonly List<BagPageTab> _tabs = [];
+    private ItemTip _tip = null!;
     private Label _yangLabel = null!;
-    private Label _statsLabel = null!;
     private Label _notice = null!;
-    private readonly List<Control> _itemNodes = [];
+    private int _page;
+
+    // What is being carried, while a drag is in the air.
+    private ItemInstance? _carried;
+    private EquipSlot? _carriedFrom;
+    private Vector2I _grab;
 
     public override void _Ready()
     {
@@ -74,6 +102,7 @@ public partial class InventoryPanel : CanvasLayer
         UiState.SetSide(ref _counted, _root, Visible);
 
         if (Visible) Refresh();
+        else _tip.Clear();
     }
 
     // A side panel (REF-07): play goes on with the bag open. Freed while open, it lets go.
@@ -100,46 +129,63 @@ public partial class InventoryPanel : CanvasLayer
         AddChild(_root);
 
         var margin = new MarginContainer();
-        margin.AddThemeConstantOverride("margin_left", 18);
-        margin.AddThemeConstantOverride("margin_right", 18);
-        margin.AddThemeConstantOverride("margin_top", 14);
-        margin.AddThemeConstantOverride("margin_bottom", 14);
+        margin.AddThemeConstantOverride("margin_left", 14);
+        margin.AddThemeConstantOverride("margin_right", 14);
+        margin.AddThemeConstantOverride("margin_top", 12);
+        margin.AddThemeConstantOverride("margin_bottom", 12);
         _root.AddChild(margin);
 
-        var columns = new HBoxContainer();
-        columns.AddThemeConstantOverride("separation", 22);
-        margin.AddChild(columns);
+        var column = new VBoxContainer();
+        column.AddThemeConstantOverride("separation", 8);
+        margin.AddChild(column);
 
-        // -- worn gear
-        var left = new VBoxContainer { CustomMinimumSize = new Vector2(280, 0) };
-        left.AddThemeConstantOverride("separation", 6);
-        columns.AddChild(left);
+        column.AddChild(Heading(L10n.T("Equipped")));
 
-        left.AddChild(Heading(L10n.T("Equipped")));
+        // -- the figure
+        var figure = new Control { CustomMinimumSize = new Vector2((PlayerInventory.Columns * Step) - CellGap, (4 * Step) - CellGap) };
+        column.AddChild(figure);
 
-        _gearList = new VBoxContainer();
-        _gearList.AddThemeConstantOverride("separation", 4);
-        left.AddChild(_gearList);
+        foreach (var (slot, x, y, h) in Figure)
+        {
+            var view = new ItemView
+            {
+                Worn = slot,
+                Placeholder = Words.Of(slot),
+                Position = new Vector2(x * Step, y * Step),
+                Size = new Vector2(CellSize, (h * Step) - CellGap),
+            };
 
-        _statsLabel = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart };
-        _statsLabel.AddThemeFontSizeOverride("font_size", 13);
-        _statsLabel.AddThemeColorOverride("font_color", new Color(0.72f, 0.76f, 0.82f));
-        left.AddChild(_statsLabel);
+            Wire(view);
+            figure.AddChild(view);
+            _worn[slot] = view;
+        }
 
-        // -- bag
-        var right = new VBoxContainer();
-        right.AddThemeConstantOverride("separation", 8);
-        columns.AddChild(right);
+        // -- page tabs, sort
+        var bar = new HBoxContainer();
+        bar.AddThemeConstantOverride("separation", 6);
+        column.AddChild(bar);
 
-        var header = new HBoxContainer();
-        header.AddThemeConstantOverride("separation", 16);
-        right.AddChild(header);
+        bar.AddChild(Heading(L10n.T("Bag")));
 
-        header.AddChild(Heading(L10n.T("Bag")));
+        for (var page = 0; page < PlayerInventory.Pages; page++)
+        {
+            var tab = new BagPageTab
+            {
+                Page = page,
+                Text = page == 0 ? "I" : "II",
+                ToggleMode = true,
+                CustomMinimumSize = new Vector2(36, 0),
+                HeldOver = TurnTo,
+            };
 
-        _yangLabel = new Label();
-        _yangLabel.AddThemeColorOverride("font_color", new Color("f0c96a"));
-        header.AddChild(_yangLabel);
+            var captured = page;
+            tab.Pressed += () => TurnTo(captured);
+
+            bar.AddChild(tab);
+            _tabs.Add(tab);
+        }
+
+        bar.AddChild(new Control { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill });
 
         var sort = new Button { Text = L10n.T("Sort") };
         sort.Pressed += () =>
@@ -148,50 +194,73 @@ public partial class InventoryPanel : CanvasLayer
             Refresh();
         };
 
-        header.AddChild(sort);
+        bar.AddChild(sort);
 
-        _gridRoot = new Control();
-        right.AddChild(_gridRoot);
+        // -- the page
+        _grid = new BagGrid
+        {
+            Columns = PlayerInventory.Columns,
+            Rows = PlayerInventory.PageRows,
+            CellSize = CellSize,
+            Gap = CellGap,
+            CanTake = CanLandInBag,
+            Take = LandInBag,
+        };
+
+        column.AddChild(_grid);
+
+        _yangLabel = new Label { HorizontalAlignment = HorizontalAlignment.Right };
+        _yangLabel.AddThemeColorOverride("font_color", new Color("f0c96a"));
+        column.AddChild(_yangLabel);
 
         var hint = new Label
         {
-            Text = L10n.T("Click to equip or unequip, or to pour a draught into the flask") + "\n"
-                + L10n.T("Right-click to drop on the ground") + "\n"
-                + L10n.T("Shift + right-click destroys it · Ctrl + right-click locks it against both") + "\n"
-                + L10n.T("I to close · U for the anvil"),
+            Text = L10n.T("Drag to move, onto the figure to wear, out of the window to drop") + "\n"
+                + L10n.T("Right-click to wear or use · Shift + right-click destroys · Ctrl + right-click locks"),
             AutowrapMode = TextServer.AutowrapMode.WordSmart,
+            CustomMinimumSize = new Vector2((PlayerInventory.Columns * Step) - CellGap, 0),
         };
 
-        hint.AddThemeFontSizeOverride("font_size", 12);
+        hint.AddThemeFontSizeOverride("font_size", 11);
         hint.AddThemeColorOverride("font_color", new Color(0.55f, 0.60f, 0.66f));
-        right.AddChild(hint);
+        column.AddChild(hint);
 
-        _notice = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart };
+        _notice = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart, CustomMinimumSize = new Vector2((PlayerInventory.Columns * Step) - CellGap, 0) };
         _notice.AddThemeFontSizeOverride("font_size", 13);
         _notice.AddThemeColorOverride("font_color", new Color("f0c96a"));
-        right.AddChild(_notice);
+        column.AddChild(_notice);
+
+        _tip = new ItemTip();
+        AddChild(_tip);
+    }
+
+    /// <summary>Hooks a view up to carrying, hovering and right-clicking.</summary>
+    private void Wire(ItemView view)
+    {
+        view.DragFrom = StartCarrying;
+
+        if (view.Worn is null)
+        {
+            view.CanTake = CanLandInBag;
+            view.Take = LandInBag;
+        }
+        else
+        {
+            view.CanTake = (_, data) => CanWear(view, data);
+            view.Take = (_, data) => Wear(view, data);
+        }
+
+        view.MouseEntered += () => Describe(view);
+        view.MouseExited += () => _tip.Clear();
+        view.GuiInput += @event => OnItemInput(@event, view);
     }
 
     private static Label Heading(string text)
     {
         var label = new Label { Text = text };
-        label.AddThemeFontSizeOverride("font_size", 18);
+        label.AddThemeFontSizeOverride("font_size", 17);
 
         return label;
-    }
-
-    /// <summary>A protected item: the same fill, with its rarity colour drawn as a hard border.</summary>
-    private static StyleBoxFlat Locked(Color colour)
-    {
-        var style = Background(colour * new Color(1, 1, 1, 0.18f));
-
-        style.BorderColor = colour;
-        style.BorderWidthTop = 2;
-        style.BorderWidthBottom = 2;
-        style.BorderWidthLeft = 2;
-        style.BorderWidthRight = 2;
-
-        return style;
     }
 
     private static StyleBoxFlat Background(Color colour) => new()
@@ -216,121 +285,274 @@ public partial class InventoryPanel : CanvasLayer
 
         _yangLabel.Text = L10n.F("{0:N0} yang", _inventory.Bag.Yang);
 
-        RefreshGear();
-        RefreshGrid();
-        RefreshStats();
+        foreach (var (slot, view) in _worn) view.Display(_inventory.Gear.In(slot));
+
+        for (var i = 0; i < _tabs.Count; i++) _tabs[i].SetPressedNoSignal(i == _page);
+
+        RefreshPage();
     }
 
-    private void RefreshGear()
+    private void RefreshPage()
     {
-        foreach (var child in _gearList.GetChildren()) child.QueueFree();
+        foreach (var view in _bagViews) view.QueueFree();
 
-        foreach (var slot in System.Enum.GetValues<EquipSlot>())
-        {
-            var item = _inventory!.Gear.In(slot);
-
-            var button = new Button
-            {
-                Text = $"{Words.Of(slot),-9} {(item is null ? "—" : GameItems.NameOf(item))}",
-                Alignment = HorizontalAlignment.Left,
-                Disabled = item is null,
-                TooltipText = item is null ? "" : ItemText.Tooltip(item),
-            };
-
-            if (item is not null)
-            {
-                var spec = GameItems.Spec(item.DefId);
-                button.AddThemeColorOverride("font_color", World.LootDrop.RarityColour(spec?.Rarity ?? Rarity.Common));
-
-                var captured = slot;
-                button.Pressed += () =>
-                {
-                    _inventory.Unequip(captured);
-                    Refresh();
-                };
-            }
-
-            _gearList.AddChild(button);
-        }
-    }
-
-    private void RefreshGrid()
-    {
-        foreach (var node in _itemNodes) node.QueueFree();
-
-        _itemNodes.Clear();
+        _bagViews.Clear();
 
         var bag = _inventory!.Bag;
-        var width = (bag.Width * (CellSize + CellGap)) - CellGap;
-        var height = (bag.Height * (CellSize + CellGap)) - CellGap;
-
-        _gridRoot.CustomMinimumSize = new Vector2(width, height);
-
-        // Empty cells, drawn once each refresh. Cheap enough at 80 cells that pooling them
-        // would be optimisation without a measurement behind it.
-        for (var y = 0; y < bag.Height; y++)
-        {
-            for (var x = 0; x < bag.Width; x++)
-            {
-                var cell = new Panel
-                {
-                    Position = new Vector2(x * (CellSize + CellGap), y * (CellSize + CellGap)),
-                    Size = new Vector2(CellSize, CellSize),
-                    MouseFilter = Control.MouseFilterEnum.Ignore,
-                };
-
-                cell.AddThemeStyleboxOverride("panel", Background(new Color(0.12f, 0.13f, 0.16f, 0.9f)));
-                _gridRoot.AddChild(cell);
-                _itemNodes.Add(cell);
-            }
-        }
+        var top = _page * bag.PageHeight;
 
         foreach (var placed in bag.Items)
         {
-            var spec = GameItems.Spec(placed.Item.DefId);
-            var colour = World.LootDrop.RarityColour(spec?.Rarity ?? Rarity.Common);
+            if (placed.Y < top || placed.Y >= top + bag.PageHeight) continue;
 
-            var button = new Button
-            {
-                Position = new Vector2(placed.X * (CellSize + CellGap), placed.Y * (CellSize + CellGap)),
-                Size = new Vector2(
-                    (placed.Width * (CellSize + CellGap)) - CellGap,
-                    (placed.Height * (CellSize + CellGap)) - CellGap),
-                Text = ItemText.Label(placed.Item),
+            var rect = _grid.RectOf(placed.X, placed.Y - top, placed.Width, placed.Height);
+            var view = new ItemView { Position = rect.Position, Size = rect.Size };
 
-                // Compared against whatever occupies the slot it would go into, so the
-                // tooltip answers "should I wear this" rather than only "what is this".
-                TooltipText = ItemText.Tooltip(placed.Item, WornRival(spec)),
-                AutowrapMode = TextServer.AutowrapMode.WordSmart,
-                ClipText = true,
-            };
+            Wire(view);
+            view.Display(placed.Item);
 
-            var item = placed.Item;
-
-            button.AddThemeFontSizeOverride("font_size", 11);
-            button.AddThemeColorOverride("font_color", colour);
-
-            // A locked item is outlined rather than dimmed: it is protected, not unavailable,
-            // and dimming it would read as "you cannot use this".
-            button.AddThemeStyleboxOverride("normal", item.Locked
-                ? Locked(colour)
-                : Background(colour * new Color(1, 1, 1, 0.18f)));
-
-            if (item.Locked) button.Text = "🔒 " + button.Text;
-
-            button.Pressed += () =>
-            {
-                if (spec?.IsEquipment == true) _inventory.Equip(item);
-                else if (item.DefId == Player.HealthFlask.DraughtId) PourDraught();
-
-                Refresh();
-            };
-
-            button.GuiInput += @event => OnItemInput(@event, item, button);
-
-            _gridRoot.AddChild(button);
-            _itemNodes.Add(button);
+            _grid.AddChild(view);
+            _bagViews.Add(view);
         }
+
+        _grid.Raise();
+    }
+
+    private void TurnTo(int page)
+    {
+        if (page == _page || page < 0 || page >= PlayerInventory.Pages) return;
+
+        _page = page;
+        _tip.Clear();
+        Refresh();
+    }
+
+    // ------------------------------------------------------------------ the card
+
+    private void Describe(ItemView view)
+    {
+        if (view.Item is null || _carried is not null)
+        {
+            _tip.Clear();
+            return;
+        }
+
+        // A worn piece is described on its own; a bag item against what it would replace,
+        // so the card answers "should I wear this" rather than only "what is this".
+        var rival = view.Worn is null ? WornRival(GameItems.Spec(view.Item.DefId)) : null;
+
+        _tip.Say(ItemText.RichTooltip(view.Item, rival, PlayerProfile.Progression.Level));
+    }
+
+    // ------------------------------------------------------------------ carrying
+
+    private Variant StartCarrying(ItemView view, Vector2 at)
+    {
+        if (view.Item is not { } item) return default;
+
+        _carried = item;
+        _carriedFrom = view.Worn;
+
+        // Which of the item's squares was picked up, so it lands the way it was held.
+        _grab = view.Worn is null
+            ? new Vector2I(Mathf.FloorToInt(at.X / Step), Mathf.FloorToInt(at.Y / Step))
+            : Vector2I.Zero;
+
+        _tip.Clear();
+
+        var spec = GameItems.Spec(item.DefId);
+        var preview = new ItemView
+        {
+            Size = new Vector2(((spec?.Width ?? 1) * Step) - CellGap, ((spec?.Height ?? 1) * Step) - CellGap),
+            Modulate = new Color(1, 1, 1, 0.8f),
+            MouseFilter = Control.MouseFilterEnum.Ignore,
+        };
+
+        preview.Display(item);
+
+        // The preview hangs from the cursor at the point it was picked up.
+        var holder = new Control { MouseFilter = Control.MouseFilterEnum.Ignore };
+        preview.Position = -at;
+        holder.AddChild(preview);
+        view.SetDragPreview(holder);
+
+        return new Godot.Collections.Dictionary { ["kind"] = "kiln_item", ["uid"] = item.Uid };
+    }
+
+    private bool IsOurs(Variant data) =>
+        _carried is not null
+        && data.VariantType == Variant.Type.Dictionary
+        && data.AsGodotDictionary().TryGetValue("kind", out var kind)
+        && kind.AsString() == "kiln_item";
+
+    /// <summary>The top-left square an item carried to a screen point would land on, page-wide.</summary>
+    private Vector2I LandingAt(Vector2 screen) => _grid.CellAt(screen) - _grab;
+
+    private bool CanLandInBag(Vector2 screen, Variant data)
+    {
+        if (!IsOurs(data) || _inventory is null || GameItems.Spec(_carried!.DefId) is not { } spec) return false;
+
+        var at = LandingAt(screen);
+        var fits = _inventory.Bag.Fits(at.X, at.Y + (_page * _inventory.Bag.PageHeight), spec.Width, spec.Height,
+            ignoring: _carriedFrom is null ? _carried : null);
+
+        _grid.Preview(new Rect2I(at, new Vector2I(spec.Width, spec.Height)), fits);
+
+        return fits;
+    }
+
+    private void LandInBag(Vector2 screen, Variant data)
+    {
+        if (!IsOurs(data) || _inventory is null) return;
+
+        var at = LandingAt(screen);
+        var y = at.Y + (_page * _inventory.Bag.PageHeight);
+
+        if (_carriedFrom is { } slot)
+        {
+            if (_inventory.UnequipTo(slot, at.X, y)) _inventory.ApplyToStats();
+        }
+        else
+        {
+            _inventory.Bag.TryMove(_carried!, at.X, y);
+        }
+
+        Refresh();
+    }
+
+    private bool CanWear(ItemView slot, Variant data)
+    {
+        _grid.Preview(null, false);
+
+        if (!IsOurs(data) || _carriedFrom is not null || slot.Worn is not { } target) return false;
+
+        var wants = GameItems.Spec(_carried!.DefId)?.Slot;
+
+        // A ring goes on either hand.
+        return wants == target || (wants is EquipSlot.Ring1 or EquipSlot.Ring2 && target is EquipSlot.Ring1 or EquipSlot.Ring2);
+    }
+
+    private void Wear(ItemView slot, Variant data)
+    {
+        if (!IsOurs(data)) return;
+
+        Equip(_carried!);
+    }
+
+    /// <summary>
+    /// Where a drag ends. Let go outside the window, an item from the bag is dropped on the
+    /// ground at the player's feet — the original's gesture for throwing something away.
+    /// Let go anywhere else that did not take it, and it goes back where it was.
+    /// </summary>
+    public override void _Notification(int what)
+    {
+        if (what != NotificationDragEnd || _carried is null) return;
+
+        var item = _carried;
+        var from = _carriedFrom;
+
+        _carried = null;
+        _carriedFrom = null;
+        _grid.Preview(null, false);
+
+        if (GetViewport().GuiIsDragSuccessful() || !Visible) return;
+
+        var mouse = _root.GetViewport().GetMousePosition();
+
+        if (_root.GetGlobalRect().HasPoint(mouse)) return;
+
+        // Worn pieces are taken off first, into the bag; only what is in the bag is dropped.
+        if (from is not null) return;
+
+        TryDrop(item);
+    }
+
+    // ------------------------------------------------------------------ right-click
+
+    /// <summary>
+    /// Right-click, and its two modifiers (ITM-14, REF-10).
+    /// </summary>
+    /// <remarks>
+    /// Plain right-click wears or uses, as in the original. Destroying cannot be undone, so it
+    /// always asks, every time, however worthless the item looks: a rule about which items
+    /// are worth confirming is a rule that will one day be wrong about someone's stack of
+    /// upgrade materials. Locking is the standing answer for anything the player never wants
+    /// to be asked about again, and it refuses dropping and destroying rather than
+    /// confirming harder.
+    /// </remarks>
+    private void OnItemInput(InputEvent @event, ItemView view)
+    {
+        if (@event is not InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Right } click) return;
+        if (view.Item is not { } item || _inventory is null) return;
+
+        view.AcceptEvent();
+
+        // A worn piece: right-click takes it off.
+        if (view.Worn is { } slot)
+        {
+            if (!_inventory.Unequip(slot)) Notify(L10n.T("No room in the bag to take it off."));
+            else _inventory.ApplyToStats();
+
+            Refresh();
+            return;
+        }
+
+        if (click.CtrlPressed)
+        {
+            item.Locked = !item.Locked;
+            Refresh();
+
+            return;
+        }
+
+        if (click.ShiftPressed)
+        {
+            if (item.Locked)
+            {
+                Notify(L10n.F("{0} is locked. Ctrl + right-click to unlock it.", GameItems.NameOf(item)));
+                return;
+            }
+
+            ConfirmDestroy(item);
+            return;
+        }
+
+        var spec = GameItems.Spec(item.DefId);
+
+        if (spec?.IsEquipment == true) Equip(item);
+        else if (item.DefId == Player.HealthFlask.DraughtId) PourDraught();
+
+        Refresh();
+    }
+
+    /// <summary>Wears an item from the bag, and says why when it cannot.</summary>
+    private void Equip(ItemInstance item)
+    {
+        if (_inventory is null) return;
+
+        var spec = GameItems.Spec(item.DefId);
+        var outcome = _inventory.Equip(item);
+
+        switch (outcome)
+        {
+            case EquipOutcome.Equipped:
+                _inventory.ApplyToStats();
+                break;
+
+            case EquipOutcome.LevelTooLow:
+                Notify(L10n.F("Needs level {0}.", spec?.LevelReq ?? 0));
+                break;
+
+            case EquipOutcome.WrongClass:
+                Notify(L10n.T("The Warrior cannot use this."));
+                break;
+
+            default:
+                Notify(L10n.T("No room in the bag for what it replaces."));
+                break;
+        }
+
+        Refresh();
     }
 
     // ------------------------------------------------------------------ filling the flask
@@ -367,53 +589,16 @@ public partial class InventoryPanel : CanvasLayer
 
     // ------------------------------------------------------------------ throwing things away
 
-    /// <summary>
-    /// Right-click, and its two modifiers (ITM-14).
-    /// </summary>
-    /// <remarks>
-    /// The three actions are deliberately asymmetric in how much they ask of the player.
-    /// Dropping is reversible — the item is at their feet — so it happens immediately.
-    /// Destroying is not, so it always asks, every time, however worthless the item looks:
-    /// a rule about which items are worth confirming is a rule that will one day be wrong
-    /// about someone's stack of upgrade materials.
-    /// <para>
-    /// Locking is the standing answer for anything the player never wants to be asked about
-    /// again, and it refuses both actions rather than confirming harder.
-    /// </para>
-    /// </remarks>
-    private void OnItemInput(InputEvent @event, ItemInstance item, Control source)
+    /// <summary>Puts the item on the ground beside the player, where it can be picked up again.</summary>
+    private void TryDrop(ItemInstance item)
     {
-        if (@event is not InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Right } click) return;
-
-        source.AcceptEvent();
-
-        if (click.CtrlPressed)
-        {
-            item.Locked = !item.Locked;
-            Refresh();
-
-            return;
-        }
+        if (_inventory is null) return;
 
         if (item.Locked)
         {
             Notify(L10n.F("{0} is locked. Ctrl + right-click to unlock it.", GameItems.NameOf(item)));
             return;
         }
-
-        if (click.ShiftPressed)
-        {
-            ConfirmDestroy(item);
-            return;
-        }
-
-        Drop(item);
-    }
-
-    /// <summary>Puts the item on the ground beside the player, where it can be picked up again.</summary>
-    private void Drop(ItemInstance item)
-    {
-        if (_inventory is null) return;
 
         if (GetTree().GetFirstNodeInGroup("player") is not Node3D player)
         {
@@ -444,7 +629,7 @@ public partial class InventoryPanel : CanvasLayer
         {
             Title = L10n.T("Destroy item"),
             DialogText = L10n.F("Destroy {0}?", GameItems.NameOf(item) + (item.Count > 1 ? $" x{item.Count}" : ""))
-                + "\n\n" + L10n.T("This cannot be undone. To keep it but free the space, right-click to drop it instead."),
+                + "\n\n" + L10n.T("This cannot be undone. To keep it but free the space, drag it out of the bag to drop it instead."),
             OkButtonText = L10n.T("Destroy"),
             CancelButtonText = L10n.T("Cancel"),
         };
@@ -500,21 +685,5 @@ public partial class InventoryPanel : CanvasLayer
         }
 
         return _inventory.Gear.In(slot);
-    }
-
-    private void RefreshStats()
-    {
-        var player = GetTree().GetFirstNodeInGroup("player");
-        var combatant = player?.GetNodeOrNull<Combat.Combatant>("Combatant");
-
-        if (combatant is null) return;
-
-        var stats = combatant.Stats;
-
-        _statsLabel.Text =
-            "\n" + L10n.F("Attack power {0:0}", stats.AttackPower) + "\n"
-            + L10n.F("Defence {0:0}", stats.Defense) + "\n"
-            + L10n.F("Health {0:0}", stats.MaxHp) + "\n"
-            + L10n.F("Crit {0:P0} · pierce {1:P0}", stats.CritChance, stats.PierceChance);
     }
 }

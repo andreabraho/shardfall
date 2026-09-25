@@ -27,6 +27,25 @@ public class InventoryTests
     }
 
     [Fact]
+    public void Pages_NothingLiesAcrossTwo()
+    {
+        var specs = TestSpecs.Standard();
+        var bag = new Inventory(specs, 5, 8, pageHeight: 4);
+        var factory = new ItemFactory(specs, specs);
+
+        Assert.Equal(2, bag.Pages);
+
+        // A 2x3 vest from row 2 would run into the second page.
+        Assert.False(bag.TryPlace(factory.CreatePlain("arm_test_vest"), 0, 2));
+        Assert.True(bag.TryPlace(factory.CreatePlain("arm_test_vest"), 0, 4));
+
+        // Added ones stay on one page too: the first page has one 2x3 spot per two columns.
+        for (var i = 0; i < 3; i++) Assert.True(bag.TryAdd(factory.CreatePlain("arm_test_vest")));
+
+        Assert.All(bag.Items, p => Assert.Equal(p.Y / 4, (p.Y + p.Height - 1) / 4));
+    }
+
+    [Fact]
     public void Placement_RefusesOverlapAndOutOfBounds()
     {
         var (bag, factory) = Setup();

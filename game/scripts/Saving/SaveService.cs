@@ -399,7 +399,7 @@ public partial class SaveService : Node
             .Where(e => !wornUids.Contains(e.Item.Uid))
             .Select(e => (e.Item, X: e.At is { Length: 2 } at ? at[0] : -1, Y: e.At is { Length: 2 } at2 ? at2[1] : -1));
 
-        var bag = PlayerProfile.AdoptBag(() => new Inventory(catalogue, 10, 8));
+        var bag = PlayerProfile.AdoptBag(() => Items.PlayerInventory.NewBag());
         var homeless = bag.Restore(p.Yang, p.NextGrantUid, carried);
 
         foreach (var lost in homeless)

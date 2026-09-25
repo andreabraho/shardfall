@@ -22,13 +22,20 @@ public sealed class Inventory : IResourceStore
     private readonly List<PlacedItem> _placed = [];
     private readonly bool[,] _occupied;
 
-    public Inventory(IItemSpecs specs, int width = 10, int height = 8, long yang = 0)
+    /// <param name="pageHeight">
+    /// Rows per page, or 0 for one page. The bag is laid out as pages stacked one under the
+    /// other (REF-10, as in the original: five columns, nine rows a page), and nothing lies
+    /// across two of them.
+    /// </param>
+    public Inventory(IItemSpecs specs, int width = 10, int height = 8, long yang = 0, int pageHeight = 0)
     {
         if (width < 1 || height < 1) throw new ArgumentOutOfRangeException(nameof(width));
+        if (pageHeight < 0 || (pageHeight > 0 && height % pageHeight != 0)) throw new ArgumentOutOfRangeException(nameof(pageHeight));
 
         _specs = specs;
         Width = width;
         Height = height;
+        PageHeight = pageHeight == 0 ? height : pageHeight;
         Yang = yang;
         _occupied = new bool[width, height];
     }
@@ -36,6 +43,11 @@ public sealed class Inventory : IResourceStore
     public int Width { get; }
 
     public int Height { get; }
+
+    /// <summary>Rows in one page of the bag.</summary>
+    public int PageHeight { get; }
+
+    public int Pages => Height / PageHeight;
 
     public long Yang { get; private set; }
 
@@ -80,6 +92,9 @@ public sealed class Inventory : IResourceStore
     public bool Fits(int x, int y, int w, int h, ItemInstance? ignoring = null)
     {
         if (x < 0 || y < 0 || x + w > Width || y + h > Height) return false;
+
+        // Wholly on one page.
+        if (y / PageHeight != (y + h - 1) / PageHeight) return false;
 
         for (var dx = 0; dx < w; dx++)
         {
