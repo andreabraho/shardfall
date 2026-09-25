@@ -600,6 +600,21 @@ public sealed class VisualDef : ContentDefBase
     public string[] Animations { get; init; } = [];
 
     /// <summary>
+    /// A modular character's other pieces (REF-16): res:// files made for the model's skeleton
+    /// — hair, a beard — whose skinned meshes are hung on it.
+    /// </summary>
+    public string[] Parts { get; init; } = [];
+
+    /// <summary>A whole base figure whose head alone is put on the model (REF-16).</summary>
+    public string? Head { get; init; }
+
+    /// <summary>An outfit's other colourway: base-colour textures whose path contains this…</summary>
+    public string? RetextureFrom { get; init; }
+
+    /// <summary>…are replaced by this res:// texture.</summary>
+    public string? RetextureTo { get; init; }
+
+    /// <summary>
     /// For a model that wears the player's gear: which of its parts stand for which piece.
     /// Shown only while that piece is worn.
     /// </summary>

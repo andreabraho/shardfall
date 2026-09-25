@@ -34,6 +34,9 @@ public static class VisualRegistry
             {
                 var instance = packed.Instantiate<Node3D>();
 
+                // A modular character's head, hair and colourway (REF-16).
+                SkinnedParts.Assemble(instance, def);
+
                 // Clips that ship in files of their own (REF-22).
                 AnimationLibraries.Attach(instance, def.Animations);
 

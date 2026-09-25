@@ -86,7 +86,7 @@ public partial class ModelAnimator : Node
     // Quaternius "Gallop", "Rat_Run" or "CharacterArmature|Run". The part after the last "|"
     // is compared, and the first list entry any clip matches wins, so the best-looking clip
     // for a role is listed first.
-    private static readonly string[] Idle = ["Idle", "Idle_A", "Rat_Idle", "Spider_Idle", "Snake_Idle", "Flying_Idle", "Idle_2", "Wasp_Flying"];
+    private static readonly string[] Idle = ["Idle", "Idle_Loop", "Idle_A", "Rat_Idle", "Spider_Idle", "Snake_Idle", "Flying_Idle", "Idle_2", "Wasp_Flying"];
 
     private static readonly string[] Move =
         ["Running_A", "Running_B", "Run", "Gallop", "Rat_Run", "Fast_Flying", "Walking_A", "Walk",
