@@ -30,8 +30,14 @@ public partial class CursorManager : Node
         _camera = GetViewport().GetCamera3D();
         if (_camera is null) return;
 
+        _hovered = null;
         Apply(ShapeUnderCursor());
+
+        // The drop a click would pick up is framed; anything else takes the frame away.
+        LootDrop.Hover(_hovered);
     }
+
+    private LootDrop? _hovered;
 
     private Godot.Input.CursorShape ShapeUnderCursor()
     {
@@ -41,7 +47,12 @@ public partial class CursorManager : Node
 
         // The same test a click makes, so the cursor promises exactly what a click will do.
         if (Combat.TargetPicker.Under(GetViewport(), _camera!, mouse, out _) is not null) return Godot.Input.CursorShape.Cross;
-        if (LootDrop.Under(GetViewport(), _camera!, mouse) is not null) return Godot.Input.CursorShape.PointingHand;
+
+        if (LootDrop.Under(GetViewport(), _camera!, mouse) is { } drop)
+        {
+            _hovered = drop;
+            return Godot.Input.CursorShape.PointingHand;
+        }
 
         var from = _camera!.ProjectRayOrigin(mouse);
         var to = from + (_camera.ProjectRayNormal(mouse) * 1000f);

@@ -132,9 +132,83 @@ public partial class LootDrop : Area3D
             // loot names — the same problem the damage numbers had.
             FixedSize = false,
             PixelSize = 0.006f,
+
+            // Over the frame drawn behind it when the cursor is on the drop.
+            RenderPriority = 3,
+            OutlineRenderPriority = 2,
         };
 
         AddChild(_label);
+    }
+
+    // -- The frame under the cursor ----------------------------------------------------------
+
+    private static LootDrop? _hovered;
+    private Node3D? _frame;
+
+    /// <summary>
+    /// Frames the drop the cursor is on — the one a click would pick up (REF-09) — and takes
+    /// the frame off the one it was on before. Null frames nothing.
+    /// </summary>
+    public static void Hover(LootDrop? drop)
+    {
+        if (_hovered == drop) return;
+
+        if (_hovered is not null && IsInstanceValid(_hovered)) _hovered.SetFramed(false);
+
+        _hovered = drop;
+        drop?.SetFramed(true);
+    }
+
+    private void SetFramed(bool on)
+    {
+        if (on) _frame ??= BuildFrame();
+
+        if (_frame is not null) _frame.Visible = on && _label.Visible;
+
+        // The box glows brighter while it is the one pointed at.
+        if (_mesh.MaterialOverride is StandardMaterial3D material) material.EmissionEnergyMultiplier = on ? 1.6f : 0.6f;
+    }
+
+    /// <summary>
+    /// A plate behind the name in the rarity's colour, with a dark face: a box round the words,
+    /// turned to the camera the way the words are.
+    /// </summary>
+    private Node3D BuildFrame()
+    {
+        var colour = RarityColour(_spec?.Rarity ?? Rarity.Common);
+        var size = new Vector2(_label.GetAabb().Size.X, _label.GetAabb().Size.Y);
+
+        // Before the text has been laid out its box is empty; a guess from its length will do.
+        if (size.X < 0.01f) size = new Vector2(Describe().Length * 0.08f, 0.16f);
+
+        var frame = new Node3D { Name = "Frame", Position = _label.Position };
+
+        frame.AddChild(Plate(size + new Vector2(0.16f, 0.1f), colour, 0));
+        frame.AddChild(Plate(size + new Vector2(0.1f, 0.05f), new Color(0.05f, 0.05f, 0.07f, 0.82f), 1));
+
+        AddChild(frame);
+        return frame;
+    }
+
+    private static MeshInstance3D Plate(Vector2 size, Color colour, int priority) => new()
+    {
+        Mesh = new QuadMesh { Size = size },
+        CastShadow = GeometryInstance3D.ShadowCastingSetting.Off,
+        MaterialOverride = new StandardMaterial3D
+        {
+            AlbedoColor = colour,
+            ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
+            Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
+            BillboardMode = BaseMaterial3D.BillboardModeEnum.Enabled,
+            CullMode = BaseMaterial3D.CullModeEnum.Disabled,
+            RenderPriority = priority,
+        },
+    };
+
+    public override void _ExitTree()
+    {
+        if (_hovered == this) _hovered = null;
     }
 
     private string Describe()
@@ -174,6 +248,7 @@ public partial class LootDrop : Area3D
 
             _mesh.Visible = shown;
             _label.Visible = shown;
+            if (_frame is not null) _frame.Visible = shown && _hovered == this;
         }
 
         // A slow bob and spin so a drop reads as an object to collect rather than scenery.
