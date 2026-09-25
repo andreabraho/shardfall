@@ -111,4 +111,23 @@ public class SafetyFieldTests
         Assert.Equal("saf_village", field.Encroaches(41, 0, campRadius, reach - campRadius));
         Assert.Null(field.Encroaches(49, 0, campRadius, reach - campRadius));
     }
+
+    [Fact]
+    public void PushOut_PutsAPointJustPastTheEdge_AndLeavesTheWorldAlone()
+    {
+        var field = Village();
+
+        // Out in the world: untouched.
+        Assert.Equal((30.0, 5.0), field.PushOut(30, 5));
+
+        // Inside: straight out from the centre, two metres past the edge.
+        var (x, z) = field.PushOut(0, 10);
+        Assert.Equal(0, x, 6);
+        Assert.Equal(22, z, 6);
+        Assert.False(field.IsSafe(x, z));
+
+        // The very centre still goes somewhere safe from.
+        var (cx, cz) = field.PushOut(0, 0);
+        Assert.False(field.IsSafe(cx, cz));
+    }
 }

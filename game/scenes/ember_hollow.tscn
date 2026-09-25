@@ -593,32 +593,32 @@ NpcId = "npc_idra"
 ; leashes require. Composition and respawn are data; these coordinates are the level design.
 
 [node name="RatCampEast" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0, 4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58, 0, 5)
 script = ExtResource("5_spawnfield")
 FieldId = "spf_hollow_rats_east"
 
 [node name="RatCampSouth" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 44)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 58)
 script = ExtResource("5_spawnfield")
 FieldId = "spf_hollow_rats_south"
 
 [node name="FoxCampNorth" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, -44)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, -54)
 script = ExtResource("5_spawnfield")
 FieldId = "spf_hollow_foxes_north"
 
 [node name="FoxCampWest" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 0, 6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58, 0, 7)
 script = ExtResource("5_spawnfield")
 FieldId = "spf_hollow_foxes_west"
 
 [node name="WolfCampNW" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -34, 0, -40)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -45, 0, -37)
 script = ExtResource("5_spawnfield")
 FieldId = "spf_hollow_wolves_nw"
 
 [node name="WolfCampSE" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34, 0, 40)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0, 43)
 script = ExtResource("5_spawnfield")
 FieldId = "spf_hollow_wolves_se"
 

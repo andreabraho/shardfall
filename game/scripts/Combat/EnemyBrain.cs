@@ -659,13 +659,22 @@ public partial class EnemyBrain : CharacterBody3D
     /// </remarks>
     public void PlaceAt(Vector3 at)
     {
-        GlobalPosition = at;
-        _home = at;
-
+        // Nothing is born on safe ground (REF-13): a camp's edge, a shard's ring of adds, a
+        // boss's call — whichever put it there, it is born just past the edge instead, on the
+        // walkable ground nearest that point.
         if (World.GameWorld.IsLoaded && World.GameWorld.IsSafe(at))
         {
-            GD.PushWarning($"[spawn] '{EnemyId}' was placed on safe ground at {at}. It will walk back out.");
+            var (x, z) = World.GameWorld.Safety.PushOut(at.X, at.Z);
+            var outside = new Vector3((float)x, at.Y, (float)z);
+
+            if (IsInsideTree()) outside = NavigationServer3D.MapGetClosestPoint(GetWorld3D().NavigationMap, outside);
+
+            GD.Print($"[spawn] '{EnemyId}' would have been born on safe ground at {at.X:F0}, {at.Z:F0}; born at {outside.X:F0}, {outside.Z:F0} instead.");
+            at = outside;
         }
+
+        GlobalPosition = at;
+        _home = at;
     }
 
     /// <summary>

@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3]
+[gd_scene load_steps=18 format=3]
 
 ; zone_broken_gate — the undead mountain in the snow (WLD-05; rebuilt for the map themes,
 ; 2026-09-23), band 15–19.
@@ -25,6 +25,7 @@
 [ext_resource type="Script" path="res://scripts/World/ZoneArrival.cs" id="11_arrival"]
 [ext_resource type="Script" path="res://scripts/World/ScatterNode.cs" id="13_scatter"]
 [ext_resource type="Script" path="res://scripts/World/ShardNode.cs" id="14_shard"]
+[ext_resource type="Script" path="res://scripts/World/SafeZoneNode.cs" id="16_safe"]
 [ext_resource type="Script" path="res://scripts/World/NpcNode.cs" id="15_npc"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_zone"]
@@ -1324,6 +1325,44 @@ FieldId = "spf_gate_lich"
 ; The shards are no longer placed here: the zone stands four at random spots (REF-06).
 
 ; The borders, in opposite corners: back to the Ridge bottom left, into the Demon Tower top right from level 18.
+
+; -- Gate Camp (REF-13): 11 m of safe ground at the map's entrance, a shrine, a fire,
+; a shelter and a banner. No merchant.
+
+[node name="SafeCamp" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -77, 0, 66)
+script = ExtResource("16_safe")
+RegionId = "saf_gate_camp"
+
+[node name="ShrineCamp" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -73, 0.1, 63)
+script = ExtResource("6_shrine")
+ShrineId = "shr_gate_camp"
+
+[node name="VisualRoot" type="Node3D" parent="ShrineCamp"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+script = ExtResource("7_visualroot")
+VisualId = "mesh_placeholder_shrine"
+
+[node name="CampFire" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -79, 0.1, 62)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_fire"
+
+[node name="CampShelter" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -83, 0.1, 59)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_shelter"
+
+[node name="CampBanner" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -70, 0.1, 68)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_banner"
+
+[node name="CampBench" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -81, 0.1, 65)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_bench"
 
 [node name="GateToRidge" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -74, 0, 74)

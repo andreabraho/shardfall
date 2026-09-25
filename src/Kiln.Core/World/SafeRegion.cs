@@ -87,6 +87,39 @@ public sealed class SafetyField
         return null;
     }
 
+    /// <summary>
+    /// The point itself when it is out in the world; otherwise the nearest point
+    /// <paramref name="margin"/> metres past the edge of the region it is in (REF-13). Nothing
+    /// is born on safe ground: whatever places a creature there has it placed here instead.
+    /// </summary>
+    /// <remarks>
+    /// Straight out from the region's centre, which is the shortest way out of a circle. A point
+    /// at the very centre has no direction, and goes out along +X. Pushed out of one region, a
+    /// point can land in a neighbouring one, so it is checked again — a few times at most.
+    /// </remarks>
+    public (double X, double Z) PushOut(double x, double z, double margin = 2.0)
+    {
+        for (var pass = 0; pass < 4; pass++)
+        {
+            var inside = _regions.FirstOrDefault(r => DistanceTo(r, x, z) <= 0);
+
+            if (inside == default) return (x, z);
+
+            var dx = x - inside.X;
+            var dz = z - inside.Z;
+            var length = Math.Sqrt((dx * dx) + (dz * dz));
+
+            if (length < 1e-6) (dx, dz, length) = (1, 0, 1);
+
+            var reach = inside.Radius + margin;
+
+            x = inside.X + (dx / length * reach);
+            z = inside.Z + (dz / length * reach);
+        }
+
+        return (x, z);
+    }
+
     /// <summary>Metres from the nearest safe edge; negative inside, <see cref="double.MaxValue"/> with no regions.</summary>
     public double DistanceToSafety(double x, double z)
     {

@@ -106,7 +106,11 @@
       { "to": "zone_vale_floor", "required_level": 6 }
     ],
     "shrines": [
+      { "id": "shr_approach_camp", "name": "$shrine.shr_approach_camp.name", "fast_travel": true },
       { "id": "shr_approach_ford", "name": "$shrine.shr_approach_ford.name", "fast_travel": true }
+    ],
+    "safe_regions": [
+      { "id": "saf_approach_camp", "name": "$safe.saf_approach_camp.name", "radius": 11 }
     ],
     "spawn_fields": [
       {
@@ -214,8 +218,12 @@
       { "to": "zone_ridge", "required_level": 10 }
     ],
     "shrines": [
+      { "id": "shr_floor_camp", "name": "$shrine.shr_floor_camp.name", "fast_travel": true },
       { "id": "shr_floor_cairn", "name": "$shrine.shr_floor_cairn.name", "fast_travel": true },
       { "id": "shr_floor_barrows", "name": "$shrine.shr_floor_barrows.name", "fast_travel": true }
+    ],
+    "safe_regions": [
+      { "id": "saf_floor_camp", "name": "$safe.saf_floor_camp.name", "radius": 11 }
     ],
     "spawn_fields": [
       {
@@ -313,8 +321,12 @@
       { "to": "zone_broken_gate", "required_level": 14, "required_quest": "qst_wolves_of_the_ridge" }
     ],
     "shrines": [
+      { "id": "shr_ridge_camp", "name": "$shrine.shr_ridge_camp.name", "fast_travel": true },
       { "id": "shr_ridge_watch", "name": "$shrine.shr_ridge_watch.name", "fast_travel": true },
       { "id": "shr_ridge_spur", "name": "$shrine.shr_ridge_spur.name", "fast_travel": true }
+    ],
+    "safe_regions": [
+      { "id": "saf_ridge_camp", "name": "$safe.saf_ridge_camp.name", "radius": 11 }
     ],
     "spawn_fields": [
       {
@@ -412,8 +424,12 @@
       { "to": "zone_catacombs", "required_level": 18 }
     ],
     "shrines": [
+      { "id": "shr_gate_camp", "name": "$shrine.shr_gate_camp.name", "fast_travel": true },
       { "id": "shr_gate_arch", "name": "$shrine.shr_gate_arch.name", "fast_travel": true },
       { "id": "shr_gate_yard", "name": "$shrine.shr_gate_yard.name", "fast_travel": true }
+    ],
+    "safe_regions": [
+      { "id": "saf_gate_camp", "name": "$safe.saf_gate_camp.name", "radius": 11 }
     ],
     "spawn_fields": [
       {

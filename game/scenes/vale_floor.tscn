@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=17 format=3]
 
 ; zone_vale_floor — the orc valley (WLD-05; rebuilt for the map themes, 2026-09-23), band 7–11.
 ;
@@ -24,6 +24,7 @@
 [ext_resource type="Script" path="res://scripts/World/ZoneArrival.cs" id="11_arrival"]
 [ext_resource type="Script" path="res://scripts/World/ScatterNode.cs" id="13_scatter"]
 [ext_resource type="Script" path="res://scripts/World/ShardNode.cs" id="14_shard"]
+[ext_resource type="Script" path="res://scripts/World/SafeZoneNode.cs" id="16_safe"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_zone"]
 vertices = PackedVector3Array()
@@ -1176,6 +1177,44 @@ FieldId = "spf_floor_warlord"
 ; The shards are no longer placed here: the zone stands four at random spots (REF-06).
 
 ; The borders, in opposite corners: back to the Approach bottom left, on to the Ridge top right from level 10.
+
+; -- Valley Floor Camp (REF-13): 11 m of safe ground at the map's entrance, a shrine, a fire,
+; a shelter and a banner. No merchant.
+
+[node name="SafeCamp" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -72, 0, 60)
+script = ExtResource("16_safe")
+RegionId = "saf_floor_camp"
+
+[node name="ShrineCamp" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -68, 0.1, 57)
+script = ExtResource("6_shrine")
+ShrineId = "shr_floor_camp"
+
+[node name="VisualRoot" type="Node3D" parent="ShrineCamp"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+script = ExtResource("7_visualroot")
+VisualId = "mesh_placeholder_shrine"
+
+[node name="CampFire" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -74, 0.1, 56)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_fire"
+
+[node name="CampShelter" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -78, 0.1, 53)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_shelter"
+
+[node name="CampBanner" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -65, 0.1, 62)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_banner"
+
+[node name="CampBench" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -76, 0.1, 59)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_bench"
 
 [node name="GateToApproach" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -74, 0, 74)
