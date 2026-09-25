@@ -74,7 +74,16 @@ public partial class MapPanel : CanvasLayer
     {
         // Every frame while open: the quest marker pulses, and a quarter-second redraw both
         // stuttered it and left a finished quest's markers up for a beat after it changed.
-        if (Visible) _view.QueueRedraw();
+        if (Visible)
+        {
+            _view.QueueRedraw();
+
+            // Where the player stands, in metres, as the original's map writes it.
+            if (_player is not null && GodotObject.IsInstanceValid(_player))
+            {
+                _where.Text = L10n.F("Your position: {0:0}, {1:0}", _player.GlobalPosition.X, _player.GlobalPosition.Z);
+            }
+        }
 
         _since += delta;
 
@@ -135,6 +144,16 @@ public partial class MapPanel : CanvasLayer
 
     // ------------------------------------------------------------------ build
 
+    private static readonly Color Gold = new(0.96f, 0.86f, 0.58f);
+    private static readonly Color Frame = new(0.62f, 0.50f, 0.28f);
+
+    private Label _where = null!;
+
+    /// <summary>
+    /// The window in the original's style (REF-19): a gold title bar with the map's name and
+    /// its levels, the map in an inner frame, and the legend on a dark strip under it with
+    /// where the player stands.
+    /// </summary>
     private void Build()
     {
         // At the left edge and smaller than it was (REF-07): a map kept open while fighting
@@ -153,44 +172,82 @@ public partial class MapPanel : CanvasLayer
         // Moved by holding its border or title and dragging (REF-19).
         PanelMover.Attach(root, "map");
 
-        root.AddThemeStyleboxOverride("panel", new StyleBoxFlat
-        {
-            BgColor = new Color(0.1f, 0.11f, 0.13f, 0.96f),
-            BorderColor = new Color(0.3f, 0.33f, 0.38f),
-            BorderWidthTop = 1,
-            BorderWidthBottom = 1,
-            BorderWidthLeft = 1,
-            BorderWidthRight = 1,
-            ContentMarginLeft = 16,
-            ContentMarginRight = 16,
-            ContentMarginTop = 12,
-            ContentMarginBottom = 12,
-        });
-
+        root.AddThemeStyleboxOverride("panel", Box(new Color(0.06f, 0.055f, 0.05f, 0.96f), 2, 0));
         AddChild(root);
 
         var column = new VBoxContainer();
-        column.AddThemeConstantOverride("separation", 8);
+        column.AddThemeConstantOverride("separation", 0);
         root.AddChild(column);
 
-        _title = new Label { Text = "—" };
-        _title.AddThemeColorOverride("font_color", new Color(0.88f, 0.9f, 0.93f));
-        column.AddChild(_title);
+        // Title bar.
+        var bar = new PanelContainer();
+        bar.AddThemeStyleboxOverride("panel", Box(new Color(0.20f, 0.14f, 0.07f), 0, 8, bottom: 1));
+        column.AddChild(bar);
 
+        var barRow = new HBoxContainer();
+        bar.AddChild(barRow);
+
+        _title = new Label { Text = "—", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
+        _title.AddThemeFontSizeOverride("font_size", 15);
+        _title.AddThemeColorOverride("font_color", Gold);
+        barRow.AddChild(_title);
+
+        var cross = new Button { Text = "✕", Flat = true, FocusMode = Control.FocusModeEnum.None };
+        cross.AddThemeFontSizeOverride("font_size", 13);
+        cross.Pressed += Close;
+        barRow.AddChild(cross);
+
+        // The map, in a frame of its own.
+        var body = new MarginContainer();
+        body.AddThemeConstantOverride("margin_left", 10);
+        body.AddThemeConstantOverride("margin_right", 10);
+        body.AddThemeConstantOverride("margin_top", 10);
+        body.AddThemeConstantOverride("margin_bottom", 8);
+        column.AddChild(body);
+
+        var inset = new PanelContainer();
+        var frame = Box(new Color(0.07f, 0.075f, 0.09f), 1, 0, edge: Frame);
+        frame.ContentMarginLeft = frame.ContentMarginRight = frame.ContentMarginTop = frame.ContentMarginBottom = 1;
+        inset.AddThemeStyleboxOverride("panel", frame);
+        body.AddChild(inset);
+
+        // Clipped to its frame: a caption near the edge is cut rather than drawn over the border.
         _view = new MapView
         {
             CustomMinimumSize = new Vector2(540, 400),
             MouseFilter = Control.MouseFilterEnum.Ignore,
+            ClipContents = true,
         };
 
-        column.AddChild(_view);
-        column.AddChild(Legend());
+        inset.AddChild(_view);
+
+        // The legend, on a dark strip.
+        var foot = new PanelContainer();
+        foot.AddThemeStyleboxOverride("panel", Box(new Color(0.10f, 0.08f, 0.06f), 0, 8, top: 1));
+        column.AddChild(foot);
+
+        var footColumn = new VBoxContainer();
+        footColumn.AddThemeConstantOverride("separation", 2);
+        foot.AddChild(footColumn);
+
+        footColumn.AddChild(Legend());
+
+        _where = new Label();
+        _where.AddThemeFontSizeOverride("font_size", 11);
+        _where.AddThemeColorOverride("font_color", new Color(0.62f, 0.58f, 0.50f));
+        footColumn.AddChild(_where);
+    }
+
+    private void Close()
+    {
+        Visible = false;
+        UiState.SetSide(ref _counted, _root, false);
     }
 
     private static Control Legend()
     {
         var row = new HBoxContainer();
-        row.AddThemeConstantOverride("separation", 18);
+        row.AddThemeConstantOverride("separation", 16);
 
         row.AddChild(Key(L10n.T("you"), new Color(0.98f, 0.86f, 0.42f)));
         row.AddChild(Key(L10n.T("border"), new Color(0.62f, 0.82f, 1f)));
@@ -199,18 +256,44 @@ public partial class MapPanel : CanvasLayer
         row.AddChild(Key(L10n.T("camp"), new Color(0.85f, 0.38f, 0.34f)));
         row.AddChild(Key(L10n.T("safe"), new Color(0.36f, 0.72f, 0.42f)));
 
-        var hint = new Label { Text = L10n.T("M or Esc to close") };
-        hint.AddThemeColorOverride("font_color", new Color(0.48f, 0.53f, 0.58f));
+        var hint = new Label { Text = L10n.T("M or Esc to close"), SizeFlagsHorizontal = Control.SizeFlags.ExpandFill, HorizontalAlignment = HorizontalAlignment.Right };
+        hint.AddThemeFontSizeOverride("font_size", 11);
+        hint.AddThemeColorOverride("font_color", new Color(0.55f, 0.52f, 0.46f));
         row.AddChild(hint);
 
         return row;
     }
 
+    /// <summary>A coloured dot and its word, as the original's legend sets them.</summary>
     private static Control Key(string text, Color tint)
     {
-        var label = new Label { Text = text };
-        label.AddThemeColorOverride("font_color", tint);
+        var item = new HBoxContainer();
+        item.AddThemeConstantOverride("separation", 4);
 
-        return label;
+        var dot = new Label { Text = "●", VerticalAlignment = VerticalAlignment.Center };
+        dot.AddThemeFontSizeOverride("font_size", 11);
+        dot.AddThemeColorOverride("font_color", tint);
+        item.AddChild(dot);
+
+        var label = new Label { Text = text, VerticalAlignment = VerticalAlignment.Center };
+        label.AddThemeFontSizeOverride("font_size", 12);
+        label.AddThemeColorOverride("font_color", new Color(0.82f, 0.80f, 0.74f));
+        item.AddChild(label);
+
+        return item;
     }
+
+    private static StyleBoxFlat Box(Color fill, int width, int margin, int bottom = -1, int top = -1, Color? edge = null) => new()
+    {
+        BgColor = fill,
+        BorderColor = edge ?? Frame,
+        BorderWidthTop = top >= 0 ? top : width,
+        BorderWidthLeft = width,
+        BorderWidthRight = width,
+        BorderWidthBottom = bottom >= 0 ? bottom : width,
+        ContentMarginLeft = margin + 4,
+        ContentMarginRight = margin,
+        ContentMarginTop = margin * 0.6f,
+        ContentMarginBottom = margin * 0.6f,
+    };
 }
