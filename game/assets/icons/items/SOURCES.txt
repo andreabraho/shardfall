@@ -7,8 +7,6 @@ Attribution: Icons made by Lorc and Delapouite. Available on https://game-icons.
 
 file                      author       source path
 sword.svg                 Lorc         lorc/broadsword.svg
-axe.svg                   Lorc         lorc/battle-axe.svg
-spear.svg                 Lorc         lorc/barbed-spear.svg
 armour.svg                Lorc         lorc/breastplate.svg
 helmet.svg                Lorc         lorc/visored-helm.svg
 shield.svg                Lorc         lorc/checked-shield.svg

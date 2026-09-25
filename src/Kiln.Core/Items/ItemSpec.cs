@@ -24,6 +24,9 @@ public sealed record ItemSpec
     public int Width { get; init; } = 1;
     public int Height { get; init; } = 1;
 
+    /// <summary>One for a sword, two for a great sword (REF-22). Weapons only.</summary>
+    public int Hands { get; init; } = 1;
+
     /// <summary>1 means the item never stacks. Materials stack; equipment never does.</summary>
     public int MaxStack { get; init; } = 1;
 

@@ -98,6 +98,26 @@ public partial class PlayerInventory : Node
     }
 
     /// <summary>
+    /// Puts what is worn on the character's model (REF-22): the blade, the shield, the helmet,
+    /// the cape over epic armour, the glow of a blade at +7 and above.
+    /// </summary>
+    private void ShowGear()
+    {
+        if (GetParent().GetNodeOrNull<Visual.VisualRoot>("VisualRoot") is not { } visual) return;
+
+        var weapon = Gear.In(EquipSlot.Weapon);
+        var shield = Gear.In(EquipSlot.Shield);
+        var armour = Gear.In(EquipSlot.Armor);
+
+        visual.Wear(new Visual.GearLook(
+            Hands: weapon is null ? 0 : GameItems.Spec(weapon.DefId)?.Hands ?? 1,
+            Upgrade: weapon?.UpgradeLevel ?? 0,
+            Shield: shield is null ? null : GameItems.Spec(shield.DefId)?.Rarity,
+            Helmet: Gear.In(EquipSlot.Helmet) is not null,
+            Cape: armour is not null && GameItems.Spec(armour.DefId)?.Rarity >= Rarity.Epic));
+    }
+
+    /// <summary>
     /// Starting kit for the test character. A real new game starts empty and the prologue
     /// hands the first weapon over; this exists so the gear systems can be exercised at all.
     /// </summary>
@@ -219,7 +239,13 @@ public partial class PlayerInventory : Node
         return true;
     }
 
-    /// <summary>Pushes gear into the character's stat block.</summary>
-    public void ApplyToStats() =>
+    /// <summary>
+    /// Pushes gear into the character's stat block, and onto its model — an upgrade at the
+    /// bench changes both, and the bench only calls this.
+    /// </summary>
+    public void ApplyToStats()
+    {
         GetParent().GetNodeOrNull<Player.PlayerCharacter>("PlayerCharacter")?.RefreshStats();
+        ShowGear();
+    }
 }

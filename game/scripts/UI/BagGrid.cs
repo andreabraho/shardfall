@@ -15,8 +15,8 @@ public partial class BagGrid : Control
 {
     private static readonly Color Cell = new(0.12f, 0.13f, 0.16f, 0.92f);
     private static readonly Color Edge = new(0.22f, 0.25f, 0.30f);
-    private static readonly Color Fits = new(0.45f, 0.85f, 0.5f, 0.35f);
-    private static readonly Color Blocked = new(0.95f, 0.35f, 0.3f, 0.35f);
+    internal static readonly Color Fits = new(0.45f, 0.85f, 0.5f, 0.35f);
+    internal static readonly Color Blocked = new(0.95f, 0.35f, 0.3f, 0.35f);
 
     public int Columns { get; init; }
     public int Rows { get; init; }
@@ -31,7 +31,7 @@ public partial class BagGrid : Control
     /// <summary>A payload let go at a screen point.</summary>
     public Action<Vector2, Variant>? Take { get; set; }
 
-    private Overlay _overlay = null!;
+    private BagGridOverlay _overlay = null!;
 
     public override void _Ready()
     {
@@ -40,7 +40,7 @@ public partial class BagGrid : Control
 
         // Drawn over the items, so the shadow of where a carried item would land is seen
         // over whatever it would land on.
-        _overlay = new Overlay { Grid = this, MouseFilter = MouseFilterEnum.Ignore };
+        _overlay = new BagGridOverlay { Grid = this, MouseFilter = MouseFilterEnum.Ignore };
         AddChild(_overlay);
     }
 
@@ -86,28 +86,4 @@ public partial class BagGrid : Control
 
     public override void _DropData(Vector2 atPosition, Variant data) =>
         Take?.Invoke(GetGlobalTransform() * atPosition, data);
-
-    private partial class Overlay : Control
-    {
-        public BagGrid Grid { get; set; } = null!;
-        public Rect2I? Cells { get; set; }
-        public bool Fits { get; set; }
-
-        public override void _Ready() => Size = Grid.CustomMinimumSize;
-
-        public override void _Draw()
-        {
-            if (Cells is not { } cells) return;
-
-            // Clipped to the page: a shadow hanging off the edge says "not here" well enough.
-            var x0 = Mathf.Max(0, cells.Position.X);
-            var y0 = Mathf.Max(0, cells.Position.Y);
-            var x1 = Mathf.Min(Grid.Columns, cells.End.X);
-            var y1 = Mathf.Min(Grid.Rows, cells.End.Y);
-
-            if (x1 <= x0 || y1 <= y0) return;
-
-            DrawRect(Grid.RectOf(x0, y0, x1 - x0, y1 - y0), Fits ? BagGrid.Fits : Blocked);
-        }
-    }
 }

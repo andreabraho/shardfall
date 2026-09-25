@@ -32,12 +32,8 @@ public static class ItemIcons
 
         return defId[..System.Math.Max(0, defId.IndexOf('_'))] switch
         {
-            "wpn" => VisualOf(defId) switch
-            {
-                "mesh_axe_a" => "axe",
-                "mesh_spear_a" => "spear",
-                _ => "sword",
-            },
+            // A great sword has its own picture once there is one, and the sword's until then.
+            "wpn" => spec.Hands == 2 && ResourceLoader.Exists(Folder + "greatsword.svg") ? "greatsword" : "sword",
             "arm" => "armour",
             "hlm" => "helmet",
             "shd" => "shield",
@@ -51,9 +47,6 @@ public static class ItemIcons
             _ => "",
         };
     }
-
-    private static string VisualOf(string defId) =>
-        GameContent.IsLoaded && GameContent.Database.Items.TryGetValue(defId, out var def) ? def.Visual : "";
 
     private static Texture2D? Load(string picture)
     {

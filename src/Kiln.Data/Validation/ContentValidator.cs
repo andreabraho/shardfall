@@ -20,6 +20,9 @@ public static class ContentValidator
 {
     public const int MaxLevel = 60;
 
+    /// <summary>The moves a skill can be swung with (REF-22); empty is a plain swing.</summary>
+    public static readonly string[] SkillMotions = ["", "spin", "chop", "slice", "bash", "slam", "brace", "raise"];
+
     public static ValidationReport Validate(ContentDatabase db)
     {
         var report = new ValidationReport();
@@ -661,6 +664,19 @@ public static class ContentValidator
                 report.Error("rarity-shape", item.SourceFile,
                     $"'{item.Id}' is {item.Rarity} with bonus_line_count [{low}, {high}]; "
                     + $"the table allows {minLines}..{maxLines}.");
+            }
+        }
+
+        // REF-22: a sword or a great sword, and only a weapon is either.
+        foreach (var item in db.Items.Values)
+        {
+            if (item.Hands is not (1 or 2))
+            {
+                report.Error("item-hands", item.SourceFile, $"'{item.Id}' has hands {item.Hands}.", "One or two.");
+            }
+            else if (item.Hands == 2 && item.Slot != EquipSlot.Weapon)
+            {
+                report.Error("item-hands", item.SourceFile, $"'{item.Id}' is two-handed but is not a weapon.");
             }
         }
     }
@@ -1563,6 +1579,13 @@ public static class ContentValidator
         // name it.
         // A channel is held rather than applied - Guard Stance is its own ability, with its
         // own key and its own visual, and it reads its numbers straight from the definition.
+        // REF-22: how a skill is swung is one of the moves the Warrior has clips for.
+        foreach (var skill in db.Skills.Values.Where(s => !SkillMotions.Contains(s.Motion)))
+        {
+            report.Error("skill-motion", skill.SourceFile, $"'{skill.Id}' has motion \"{skill.Motion}\".",
+                $"One of: {string.Join(", ", SkillMotions.Where(m => m.Length > 0))}, or none for a plain swing.");
+        }
+
         foreach (var skill in db.Skills.Values.Where(s => s.Targeting == SkillTargeting.Self && s.CastType != "channel"))
         {
             if (skill.Applies is not { Kind: "fortify" or "empower" })

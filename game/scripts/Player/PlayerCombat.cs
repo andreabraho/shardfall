@@ -65,6 +65,7 @@ public partial class PlayerCombat : Node
     private readonly AttackCycle _cycle = new();
 
     private PlayerMotor _motor = null!;
+    private SkillCaster? _skills;
     private Combatant _self = null!;
     private Combatant? _target;
     private Combatant? _swingTarget;
@@ -82,6 +83,7 @@ public partial class PlayerCombat : Node
     public override void _Ready()
     {
         _motor = GetParent<PlayerMotor>();
+        _skills = GetParent().GetNodeOrNull<SkillCaster>("SkillCaster");
         _self = GetParent().GetNode<Combatant>("Combatant");
 
         Debug.DebugOverlay.Register("combat", this, () =>
@@ -223,6 +225,9 @@ public partial class PlayerCombat : Node
     /// <summary>Starts a blow at this enemy, or at nothing — a swing into the air still takes its time.</summary>
     private void BeginSwing(Combatant? victim)
     {
+        // A skill being cast owns the body; the next blow waits for it to finish (REF-22).
+        if (_skills?.IsCasting == true) return;
+
         var windup = _cycle.TryStart(_self.Stats.AttacksPerSecond);
 
         if (windup <= 0) return;
@@ -242,7 +247,8 @@ public partial class PlayerCombat : Node
             : victim.Body.GlobalPosition - _motor.GlobalPosition;
 
         _motor.FaceTowards(direction);
-        _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Swing(direction);
+        // The blow this swing will be, so the fourth — the sweep — looks like one (REF-22).
+        _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Blow(direction, _blow + 1, windup, AttackCycle.IntervalFor(_self.Stats.AttacksPerSecond));
 
         Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndSwing, _motor.GlobalPosition);
     }

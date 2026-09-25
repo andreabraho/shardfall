@@ -42,7 +42,13 @@ public partial class ModelAnimator : Node
     private AnimationPlayer? _player;
     private CharacterBody3D? _body;
     private string _idle = "";
+    private string _idleTwoHand = "";
     private string _run = "";
+
+    /// <summary>
+    /// Holding a great sword (REF-22): it stands, swings and casts two-handed.
+    /// </summary>
+    public bool TwoHanded { get; set; }
     private int _swing;
     private double _attackFor;
 
@@ -61,13 +67,14 @@ public partial class ModelAnimator : Node
         var names = _player.GetAnimationList();
 
         _idle = Find(names, Idle);
+        _idleTwoHand = Pick(names, "2H_Melee_Idle");
         _run = Find(names, Move);
 
         if (_run.Length == 0) _run = _idle;
 
         // Looping is a property of the imported clip, and glTF does not carry one. Without
         // this every animation plays once and the character freezes on its last frame.
-        foreach (var name in new[] { _idle, _run })
+        foreach (var name in new[] { _idle, _idleTwoHand, _run })
         {
             if (name.Length > 0) _player.GetAnimation(name).LoopMode = Animation.LoopModeEnum.Linear;
         }
@@ -173,6 +180,101 @@ public partial class ModelAnimator : Node
         _player.Play(clip);
         _attackFor = _player.GetAnimation(clip).Length;
 
+        return _attackFor;
+    }
+
+    /// <summary>
+    /// The player's four blows (REF-22), one clip each and the fourth — the one that sweeps —
+    /// the widest: a flat cut with a sword, a full turn with a great sword.
+    /// </summary>
+    private static readonly string[] OneHandChain =
+    [
+        "1H_Melee_Attack_Slice_Diagonal",
+        "1H_Melee_Attack_Stab",
+        "1H_Melee_Attack_Chop",
+        "1H_Melee_Attack_Slice_Horizontal",
+    ];
+
+    private static readonly string[] TwoHandChain =
+    [
+        "2H_Melee_Attack_Slice",
+        "2H_Melee_Attack_Stab",
+        "2H_Melee_Attack_Chop",
+        "2H_Melee_Attack_Spin",
+    ];
+
+    /// <summary>How far into a melee clip its blade meets the target, as a share of the clip.</summary>
+    private const double ImpactAt = 0.4;
+
+    /// <summary>
+    /// The player's blow number <paramref name="blow"/> of a fight (REF-22), timed to the attack:
+    /// the blade meets the target as the windup ends, and the clip is over before the next
+    /// blow may start. Played at its own speed it did neither — slow blows landed their damage
+    /// before the swing had come round, quick ones cut each other off.
+    /// </summary>
+    public double Blow(int blow, double windup, double interval)
+    {
+        if (_player is null) return 0;
+
+        var chain = TwoHanded ? TwoHandChain : OneHandChain;
+        var clip = Pick(_player.GetAnimationList(), chain[(((blow - 1) % chain.Length) + chain.Length) % chain.Length]);
+
+        return clip.Length == 0 ? Attack() : PlayTimed(clip, windup, interval);
+    }
+
+    /// <summary>
+    /// A skill's own move (REF-22): a heavy overhead for Heavy Strike, a flat cut for Cleave,
+    /// the shield driven forward for Shield Bash, a two-handed smash for Ground Slam, a guard
+    /// raised for Iron Skin, the blade lifted for the Blade Aura. A skill's damage lands as it
+    /// is cast, so its move is played to land quickly and to be over by the time the Warrior
+    /// may move again.
+    /// </summary>
+    public double SkillMove(string motion, double seconds)
+    {
+        if (_player is null) return 0;
+
+        var wanted = motion switch
+        {
+            "chop" => TwoHanded ? "2H_Melee_Attack_Chop" : "1H_Melee_Attack_Chop",
+            "slice" => TwoHanded ? "2H_Melee_Attack_Slice" : "1H_Melee_Attack_Slice_Horizontal",
+            "bash" => "Block_Attack",
+            "slam" => "2H_Melee_Attack_Chop",
+            "brace" => "Block",
+            "raise" => "Spellcast_Raise",
+            _ => "",
+        };
+
+        var clip = wanted.Length == 0 ? "" : Pick(_player.GetAnimationList(), wanted);
+
+        if (clip.Length == 0) return motion is "brace" or "raise" ? Flourish() : Attack();
+
+        // A buff is raised, not struck: it has the whole hold to play out.
+        var landBy = motion is "brace" or "raise" ? seconds * 0.6 : SkillImpact;
+
+        return PlayTimed(clip, landBy, seconds);
+    }
+
+    /// <summary>Seconds into a skill's move its blow should appear to land.</summary>
+    private const double SkillImpact = 0.22;
+
+    /// <summary>
+    /// Plays a one-shot clip fast enough that its impact comes by <paramref name="impactBy"/>
+    /// and it ends within <paramref name="within"/>, and not slower than a little under its
+    /// own pace. Restarted from its first frame even when it is the clip already playing.
+    /// </summary>
+    private double PlayTimed(string clip, double impactBy, double within)
+    {
+        var animation = _player!.GetAnimation(clip);
+        var length = animation.Length;
+        var speed = System.Math.Max(length * ImpactAt / System.Math.Max(0.05, impactBy), length / System.Math.Max(0.05, within));
+
+        speed = System.Math.Clamp(speed, 0.8, 3.0);
+
+        animation.LoopMode = Animation.LoopModeEnum.None;
+        _player.Play(clip, customBlend: 0.08, customSpeed: (float)speed);
+        _player.Seek(0, update: true);
+
+        _attackFor = length / speed;
         return _attackFor;
     }
 
@@ -283,7 +385,10 @@ public partial class ModelAnimator : Node
 
         var speed = _body is null ? 0f : (_body.Velocity with { Y = 0 }).Length();
 
-        Play(speed > MovingAbove ? _run : _idle);
+        // With a great sword in hand, standing still is its guard, not an empty-handed rest.
+        var idle = TwoHanded && _idleTwoHand.Length > 0 ? _idleTwoHand : _idle;
+
+        Play(speed > MovingAbove ? _run : idle);
     }
 
     private void Play(string name)

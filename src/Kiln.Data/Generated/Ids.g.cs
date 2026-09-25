@@ -199,8 +199,8 @@ public static class Ids
     public static class Visuals
     {
         public const string MeshArmorA = "mesh_armor_a";
-        public const string MeshAxeA = "mesh_axe_a";
         public const string MeshBootsA = "mesh_boots_a";
+        public const string MeshGreatswordA = "mesh_greatsword_a";
         public const string MeshHelmetA = "mesh_helmet_a";
         public const string MeshPlaceholderCaster = "mesh_placeholder_caster";
         public const string MeshPlaceholderHeavy = "mesh_placeholder_heavy";
@@ -244,7 +244,6 @@ public static class Ids
         public const string MeshShardTotem = "mesh_shard_totem";
         public const string MeshShardWeb = "mesh_shard_web";
         public const string MeshShieldA = "mesh_shield_a";
-        public const string MeshSpearA = "mesh_spear_a";
         public const string MeshStoneA = "mesh_stone_a";
         public const string MeshSwordA = "mesh_sword_a";
         public const string MeshTowerKeystone = "mesh_tower_keystone";
@@ -255,7 +254,7 @@ public static class Ids
         public const string MeshZGhoul = "mesh_z_ghoul";
         public const string MeshZRibcage = "mesh_z_ribcage";
 
-        public static readonly string[] All = ["mesh_armor_a", "mesh_axe_a", "mesh_boots_a", "mesh_helmet_a", "mesh_placeholder_caster", "mesh_placeholder_heavy", "mesh_placeholder_humanoid", "mesh_placeholder_monolith", "mesh_placeholder_player", "mesh_placeholder_quadruped", "mesh_placeholder_rogue", "mesh_placeholder_shrine", "mesh_placeholder_villager", "mesh_q_blue_demon", "mesh_q_bull", "mesh_q_cactoro", "mesh_q_cactoro_b", "mesh_q_deer", "mesh_q_demon", "mesh_q_fox", "mesh_q_ghost", "mesh_q_ghost_skull", "mesh_q_goleling", "mesh_q_goleling_evo", "mesh_q_imp", "mesh_q_mushnub", "mesh_q_ninja", "mesh_q_ninja_b", "mesh_q_orc", "mesh_q_orc_enemy", "mesh_q_rat", "mesh_q_snake", "mesh_q_spider", "mesh_q_stag", "mesh_q_tribal", "mesh_q_wasp", "mesh_q_wizard", "mesh_q_wolf", "mesh_q_yeti", "mesh_shard_banner", "mesh_shard_demon", "mesh_shard_frost", "mesh_shard_moss", "mesh_shard_totem", "mesh_shard_web", "mesh_shield_a", "mesh_spear_a", "mesh_stone_a", "mesh_sword_a", "mesh_tower_keystone", "mesh_tower_lantern", "mesh_trinket_a", "mesh_z_brute", "mesh_z_crawler", "mesh_z_ghoul", "mesh_z_ribcage"];
+        public static readonly string[] All = ["mesh_armor_a", "mesh_boots_a", "mesh_greatsword_a", "mesh_helmet_a", "mesh_placeholder_caster", "mesh_placeholder_heavy", "mesh_placeholder_humanoid", "mesh_placeholder_monolith", "mesh_placeholder_player", "mesh_placeholder_quadruped", "mesh_placeholder_rogue", "mesh_placeholder_shrine", "mesh_placeholder_villager", "mesh_q_blue_demon", "mesh_q_bull", "mesh_q_cactoro", "mesh_q_cactoro_b", "mesh_q_deer", "mesh_q_demon", "mesh_q_fox", "mesh_q_ghost", "mesh_q_ghost_skull", "mesh_q_goleling", "mesh_q_goleling_evo", "mesh_q_imp", "mesh_q_mushnub", "mesh_q_ninja", "mesh_q_ninja_b", "mesh_q_orc", "mesh_q_orc_enemy", "mesh_q_rat", "mesh_q_snake", "mesh_q_spider", "mesh_q_stag", "mesh_q_tribal", "mesh_q_wasp", "mesh_q_wizard", "mesh_q_wolf", "mesh_q_yeti", "mesh_shard_banner", "mesh_shard_demon", "mesh_shard_frost", "mesh_shard_moss", "mesh_shard_totem", "mesh_shard_web", "mesh_shield_a", "mesh_stone_a", "mesh_sword_a", "mesh_tower_keystone", "mesh_tower_lantern", "mesh_trinket_a", "mesh_z_brute", "mesh_z_crawler", "mesh_z_ghoul", "mesh_z_ribcage"];
     }
 
     public static class Shards

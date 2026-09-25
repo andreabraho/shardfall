@@ -131,11 +131,45 @@ public partial class SkillCaster : Node
     /// <summary>Skill currently being aimed, if any. Ground areas aim before they commit.</summary>
     private string? _aiming;
 
+    /// <summary>
+    /// Seconds until the skill being cast has finished (REF-22). Another skill waits for it:
+    /// pressing several keys at once used to fire every one of them together, each swinging
+    /// over the last.
+    /// </summary>
+    private double _castingFor;
+
+    /// <summary>The skill pressed while another was playing, fired as soon as it ends.</summary>
+    private string? _queued;
+
+    private double _queuedFor;
+
+    /// <summary>How long a skill pressed too early waits to be cast before it is forgotten.</summary>
+    private const double QueueSeconds = 0.6;
+
+    /// <summary>True while a skill is being cast.</summary>
+    public bool IsCasting => _castingFor > 0;
+
     public override void _Process(double delta)
     {
         foreach (var id in new List<string>(_cooldowns.Keys))
         {
             if (_cooldowns[id] > 0) _cooldowns[id] -= delta;
+        }
+
+        if (_castingFor > 0) _castingFor -= delta;
+
+        // The next skill, pressed during the last one, goes the moment it can.
+        if (_queued is not null)
+        {
+            _queuedFor -= delta;
+
+            if (_queuedFor <= 0) _queued = null;
+            else if (_castingFor <= 0)
+            {
+                var next = _queued;
+                _queued = null;
+                TryCast(next);
+            }
         }
 
         ProcessPulses(delta);
@@ -233,6 +267,15 @@ public partial class SkillCaster : Node
 
         if (CooldownRemaining(skillId) > 0) return;
 
+        // One skill at a time: pressed during another, it waits its turn (only the last
+        // pressed is kept, and only briefly).
+        if (_castingFor > 0)
+        {
+            _queued = skillId;
+            _queuedFor = QueueSeconds;
+            return;
+        }
+
         if (!_self.Mana.CanAfford(skill.ManaCost))
         {
             GD.Print($"[skill] not enough mana for {skillId} ({_self.Mana})");
@@ -323,6 +366,8 @@ public partial class SkillCaster : Node
     {
         var origin = _motor.GlobalPosition;
 
+        _castingFor = skill.Targeting == SkillTargeting.Self ? SelfCastHold : CastHold(skill);
+
         // A skill that only touches its caster has nothing to aim at: it is cast where the
         // Warrior already faces, with a raised-weapon flourish instead of a swing.
         if (skill.Targeting == SkillTargeting.Self)
@@ -351,7 +396,9 @@ public partial class SkillCaster : Node
         _motor.Stop();
         _motor.HoldFor(CastHold(skill));
         _motor.FaceTowards(aim);
-        _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Swing(aim);
+
+        // Its own move (REF-22); a spinning skill turns on each of its hits instead.
+        if (skill.Motion != "spin") _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove(skill.Motion, aim, CastHold(skill));
 
         var center = skill.Targeting == SkillTargeting.GroundAoe
             ? GroundPoint(origin, aim, (float)skill.Radius)
@@ -390,7 +437,7 @@ public partial class SkillCaster : Node
 
         _motor.Stop();
         _motor.HoldFor(SelfCastHold);
-        _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Flourish();
+        _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove(skill.Motion, _motor.Facing, SelfCastHold);
 
         var effect = kind switch
         {

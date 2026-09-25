@@ -43,6 +43,12 @@ public sealed class ItemDef : ContentDefBase
 
     /// <summary>How many fit in one grid cell. 1 means the item never stacks; equipment never does.</summary>
     public int MaxStack { get; init; } = 1;
+
+    /// <summary>
+    /// A weapon held in one hand or two (REF-22): a sword or a great sword. It decides what the
+    /// Warrior holds and how every blow and skill is swung. Weapons only.
+    /// </summary>
+    public int Hands { get; init; } = 1;
 }
 
 public sealed class BonusPoolDef : ContentDefBase
@@ -580,6 +586,32 @@ public sealed class VisualDef : ContentDefBase
     /// rock that has to stand on end as a shard.
     /// </summary>
     public string Fit { get; init; } = "height";
+
+    /// <summary>
+    /// Parts of the model never shown (REF-22). A pack ships each character holding every
+    /// weapon and shield it comes with at once; the ones this creature does not carry go here.
+    /// </summary>
+    public string[] Hide { get; init; } = [];
+
+    /// <summary>
+    /// For a model that wears the player's gear: which of its parts stand for which piece.
+    /// Shown only while that piece is worn.
+    /// </summary>
+    public GearPartsDef? Gear { get; init; }
+}
+
+/// <summary>The parts of a model that show what the player wears (REF-22). Mesh names in the model.</summary>
+public sealed class GearPartsDef
+{
+    public string OneHand { get; init; } = string.Empty;
+    public string TwoHand { get; init; } = string.Empty;
+
+    /// <summary>Shields in order of rarity: the first for common and fine, then one per step up.</summary>
+    public string[] Shields { get; init; } = [];
+    public string Helmet { get; init; } = string.Empty;
+
+    /// <summary>Worn with epic and relic armour.</summary>
+    public string Cape { get; init; } = string.Empty;
 }
 
 // ---------------------------------------------------------------------------

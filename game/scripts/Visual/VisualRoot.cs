@@ -89,6 +89,49 @@ public partial class VisualRoot : Node3D
     }
 
     /// <summary>
+    /// The player's blow number <paramref name="blow"/>, timed to land as the windup ends
+    /// (REF-22). The shove stands in on a model with nothing to play.
+    /// </summary>
+    public void Blow(Vector3 direction, int blow, double windup, double interval)
+    {
+        if (_animator is { Ready: true })
+        {
+            _animator.Blow(blow, windup, interval);
+            return;
+        }
+
+        Lunge(direction, 0.12f, 0.16);
+    }
+
+    /// <summary>A skill's own move (REF-22), over <paramref name="seconds"/> at most.</summary>
+    public void SkillMove(string motion, Vector3 direction, double seconds)
+    {
+        if (_animator is { Ready: true })
+        {
+            _animator.SkillMove(motion, seconds);
+            return;
+        }
+
+        Lunge(direction, 0.12f, 0.16);
+    }
+
+    private GearRig? _gear;
+    private GearLook? _look;
+
+    /// <summary>
+    /// Shows what the player wears (REF-22): the blade in hand, the shield, the helmet, the
+    /// cape, the glow of a blade at +7 and above, and the stance a great sword is held in.
+    /// Kept, so a visual applied again later wears it too.
+    /// </summary>
+    public void Wear(GearLook look)
+    {
+        _look = look;
+        _gear?.Wear(look);
+
+        if (_animator is not null) _animator.TwoHanded = look.Hands == 2;
+    }
+
+    /// <summary>
     /// The flourish a self-buff is cast with: weapon raised rather than swung, so Iron Skin
     /// and the Blade Aura do not look like another attack (REF-03).
     /// </summary>
@@ -367,10 +410,15 @@ public partial class VisualRoot : Node3D
         _current = VisualRegistry.Create(def, tint, scale);
         AddChild(_current);
 
+        // Before measuring: a model holding every sword it came with stands taller than it is.
+        _gear = GearRig.Build(_current, def);
+
         StandOnGround(def);
         MeasureTop(def, scale);
 
         AdoptAnimator();
+
+        if (_look is not null) Wear(_look);
     }
 
     /// <summary>
