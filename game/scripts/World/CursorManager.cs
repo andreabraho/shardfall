@@ -41,6 +41,7 @@ public partial class CursorManager : Node
 
         // The same test a click makes, so the cursor promises exactly what a click will do.
         if (Combat.TargetPicker.Under(GetViewport(), _camera!, mouse, out _) is not null) return Godot.Input.CursorShape.Cross;
+        if (LootDrop.Under(GetViewport(), _camera!, mouse) is not null) return Godot.Input.CursorShape.PointingHand;
 
         var from = _camera!.ProjectRayOrigin(mouse);
         var to = from + (_camera.ProjectRayNormal(mouse) * 1000f);

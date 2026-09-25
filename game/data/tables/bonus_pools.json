@@ -19,11 +19,9 @@
     "lines": [
       { "id": "bon_hp",          "stat": "max_hp_flat",      "range": [40, 260], "weight": 100 },
       { "id": "bon_defense",     "stat": "defense_flat",     "range": [4, 22],   "weight": 80 },
-      { "id": "bon_resist_all",  "stat": "resist_all",       "range": [1, 6],    "weight": 35 },
-      { "id": "bon_resist_fire", "stat": "resist.fire",      "range": [3, 14],   "weight": 25 },
-      { "id": "bon_resist_dark", "stat": "resist.dark",      "range": [3, 14],   "weight": 25 },
       { "id": "bon_hp_regen",    "stat": "hp_regen",         "range": [1, 5],    "weight": 30 },
-      { "id": "bon_evasion",     "stat": "evasion",          "range": [1, 4],    "weight": 25 }
+      { "id": "bon_evasion",     "stat": "evasion",          "range": [1, 4],    "weight": 25 },
+      { "id": "bon_mana",        "stat": "max_mana_flat",    "range": [20, 100], "weight": 40 }
     ]
   },
   {
@@ -31,8 +29,8 @@
     "lines": [
       { "id": "bon_defense",     "stat": "defense_flat",     "range": [6, 28],   "weight": 100 },
       { "id": "bon_hp",          "stat": "max_hp_flat",      "range": [40, 220], "weight": 70 },
-      { "id": "bon_resist_all",  "stat": "resist_all",       "range": [2, 8],    "weight": 50 },
-      { "id": "bon_evasion",     "stat": "evasion",          "range": [1, 5],    "weight": 30 }
+      { "id": "bon_evasion",     "stat": "evasion",          "range": [1, 5],    "weight": 30 },
+      { "id": "bon_hp_regen",    "stat": "hp_regen",         "range": [1, 4],    "weight": 40 }
     ]
   },
   {
@@ -53,7 +51,6 @@
       { "id": "bon_mana",        "stat": "max_mana_flat",    "range": [20, 120], "weight": 70 },
       { "id": "bon_hp",          "stat": "max_hp_flat",      "range": [30, 180], "weight": 70 },
       { "id": "bon_attack_power","stat": "attack_power_flat","range": [4, 20],   "weight": 55 },
-      { "id": "bon_resist_all",  "stat": "resist_all",       "range": [1, 5],    "weight": 35 },
       { "id": "bon_vs_mystic",   "stat": "vs_family.mystic", "range": [5, 22],   "weight": 30 },
       { "id": "bon_vs_human",    "stat": "vs_family.human",  "range": [5, 22],   "weight": 30 }
     ]

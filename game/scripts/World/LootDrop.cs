@@ -6,13 +6,13 @@ using Kiln.Game.Items;
 namespace Kiln.Game.World;
 
 /// <summary>
-/// One item lying on the ground, waiting to be walked over.
+/// One item lying on the ground, waiting to be picked up.
 /// </summary>
 /// <remarks>
-/// Auto-pickup on proximity rather than a click, because click-to-move already owns the left
-/// mouse button and a game where looting fights with moving is a game where looting feels
-/// bad. The rarity filter of FR-5.8 lands with the settings screen; until then everything is
-/// collected, which is the right default while bags are large and vendors do not exist.
+/// Picked up on purpose, as in the original (REF-09): Z gathers everything close by, and a
+/// click on a drop picks it up — from where the player stands when it is in reach, after a
+/// walk to it when it is not. Walking over loot used to collect it, and the bag filled with
+/// every common sword a camp let fall; now nothing enters it that the player did not ask for.
 /// <para>
 /// The drop is labelled, coloured by rarity, and lies there for a minute. It used to stay
 /// forever, on the reasoning that nothing expiring serves a single-player game — but a farmed
@@ -32,26 +32,20 @@ public partial class LootDrop : Area3D
     /// <summary>Seconds before the drop can be collected, so it visibly lands first.</summary>
     [Export] public double ArmDelay { get; set; } = 0.35;
 
-    [Export] public float PickupRadius { get; set; } = 1.6f;
-
     /// <summary>Seconds on the ground before the drop is gone.</summary>
     [Export] public double Lifetime { get; set; } = 60.0;
 
     /// <summary>How long before the end it starts blinking.</summary>
     [Export] public double WarningSeconds { get; set; } = 10.0;
 
-    /// <summary>
-    /// Set for an item the player threw away themselves: it will not be collected again
-    /// until they have stepped out of pickup range at least once.
-    /// </summary>
-    /// <remarks>
-    /// Without this, dropping something is a no-op — auto-pickup is proximity-based and the
-    /// player is standing on the spot, so the item returns to the bag on the next frame and
-    /// the feature looks broken.
-    /// </remarks>
-    public bool RequiresStepAway { get; set; }
+    /// <summary>How near a clicked drop has to be to be picked up without a step, in metres.</summary>
+    public const float Reach = 2.5f;
 
-    private bool _steppedAway = true;
+    /// <summary>How far round the player Z gathers, in metres.</summary>
+    public const float GatherRadius = 4f;
+
+    /// <summary>The group every drop on the ground is in.</summary>
+    public const string Group = "loot";
 
     public ItemInstance Item => _item;
 
@@ -69,8 +63,6 @@ public partial class LootDrop : Area3D
         {
             Name = $"Loot_{item.Uid}",
             _item = item,
-            RequiresStepAway = true,
-            _steppedAway = false,
         };
 
         parent.CallDeferred(Node.MethodName.AddChild, drop);
@@ -104,6 +96,7 @@ public partial class LootDrop : Area3D
     public override void _Ready()
     {
         _spec = GameItems.Spec(_item.DefId);
+        AddToGroup(Group);
 
         CollisionLayer = 0;
         CollisionMask = 0;
@@ -186,30 +179,98 @@ public partial class LootDrop : Area3D
         // A slow bob and spin so a drop reads as an object to collect rather than scenery.
         _mesh.Rotation = new Vector3(0, (float)(_age * 1.6), 0);
         _mesh.Position = new Vector3(0, (float)(Mathf.Sin(_age * 2.2) * 0.06), 0);
+    }
 
-        if (_age < ArmDelay) return;
+    /// <summary>Still on the ground and landed: something a pick-up can take.</summary>
+    public bool CanCollect => !IsQueuedForDeletion() && _age >= ArmDelay && _age < Lifetime;
 
-        var player = GetTree().GetFirstNodeInGroup("player") as Node3D;
-
-        if (player is null) return;
-
-        var distance = GlobalPosition.DistanceTo(player.GlobalPosition);
-
-        if (RequiresStepAway && !_steppedAway)
-        {
-            // Armed the moment the player walks off it, so one step is all it takes to change
-            // their mind — and standing still is all it takes not to.
-            if (distance > PickupRadius) _steppedAway = true;
-
-            return;
-        }
-
-        if (distance > PickupRadius) return;
-
-        var bag = player.GetNodeOrNull<PlayerInventory>("PlayerInventory");
-
-        if (bag is null || !bag.TryPickUp(_item)) return;
+    /// <summary>Into the bag, if there is room. False leaves it where it lies.</summary>
+    public bool Collect(PlayerInventory bag)
+    {
+        if (!CanCollect || !bag.TryPickUp(_item)) return false;
 
         QueueFree();
+        return true;
+    }
+
+    /// <summary>Whether it lies within <paramref name="radius"/> of a point, measured flat.</summary>
+    public bool Within(Vector3 point, float radius) =>
+        new Vector2(GlobalPosition.X - point.X, GlobalPosition.Z - point.Z).Length() <= radius;
+
+    /// <summary>
+    /// Z (REF-09): everything lying round the player goes into the bag, nearest first, until the
+    /// bag is full. The number picked up.
+    /// </summary>
+    public static int GatherAround(Node3D player, PlayerInventory bag)
+    {
+        var near = new System.Collections.Generic.List<LootDrop>();
+
+        foreach (var node in player.GetTree().GetNodesInGroup(Group))
+        {
+            if (node is LootDrop { CanCollect: true } drop && drop.Within(player.GlobalPosition, GatherRadius)) near.Add(drop);
+        }
+
+        near.Sort((a, b) => a.GlobalPosition.DistanceSquaredTo(player.GlobalPosition).CompareTo(b.GlobalPosition.DistanceSquaredTo(player.GlobalPosition)));
+
+        var taken = 0;
+
+        foreach (var drop in near)
+        {
+            // A full bag says so once, and the rest stays on the ground.
+            if (!drop.Collect(bag)) break;
+
+            taken++;
+        }
+
+        return taken;
+    }
+
+    /// <summary>
+    /// The drop under the cursor, if any: its box or its name, whichever the player points at.
+    /// The nearest to the camera wins where two overlap.
+    /// </summary>
+    public static LootDrop? Under(Viewport viewport, Camera3D camera, Vector2 screen)
+    {
+        LootDrop? best = null;
+        var nearest = float.MaxValue;
+
+        foreach (var node in viewport.GetTree().GetNodesInGroup(Group))
+        {
+            if (node is not LootDrop { CanCollect: true } drop || !drop._label.Visible) continue;
+
+            var hit = drop.Covers(camera, screen, drop._mesh.GlobalPosition, 0.22f, 0.22f)
+                || drop.Covers(camera, screen, drop._label.GlobalPosition, drop.LabelHalfWidth(), drop.LabelHalfHeight());
+
+            if (!hit) continue;
+
+            var distance = camera.GlobalPosition.DistanceTo(drop.GlobalPosition);
+
+            if (distance >= nearest) continue;
+
+            nearest = distance;
+            best = drop;
+        }
+
+        return best;
+    }
+
+    private float LabelHalfWidth() => (_label.GetAabb().Size.X / 2) + 0.05f;
+
+    private float LabelHalfHeight() => (_label.GetAabb().Size.Y / 2) + 0.04f;
+
+    /// <summary>
+    /// Whether a screen point falls in a rectangle facing the camera round a world point — the
+    /// shape a billboard label or a small box shows. A few pixels of slack round it.
+    /// </summary>
+    private bool Covers(Camera3D camera, Vector2 screen, Vector3 centre, float halfWidth, float halfHeight)
+    {
+        if (camera.IsPositionBehind(centre)) return false;
+
+        var basis = camera.GlobalTransform.Basis;
+        var middle = camera.UnprojectPosition(centre);
+        var across = Mathf.Abs(camera.UnprojectPosition(centre + (basis.X * halfWidth)).X - middle.X) + 4;
+        var up = Mathf.Abs(camera.UnprojectPosition(centre + (basis.Y * halfHeight)).Y - middle.Y) + 4;
+
+        return Mathf.Abs(screen.X - middle.X) <= across && Mathf.Abs(screen.Y - middle.Y) <= up;
     }
 }

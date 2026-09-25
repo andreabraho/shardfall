@@ -41,6 +41,10 @@ public partial class PlayerController : Node
     /// </summary>
     private bool _pressTaken;
     private PlayerCombat? _combat;
+    private Items.PlayerInventory? _bag;
+
+    /// <summary>A drop clicked out of reach: the character walks to it and picks it up there.</summary>
+    private LootDrop? _goingFor;
 
     [Export] public NodePath MotorPath { get; set; } = "..";
     [Export] public NodePath MarkerPath { get; set; } = "";
@@ -50,6 +54,7 @@ public partial class PlayerController : Node
         _motor = GetNode<PlayerMotor>(MotorPath);
         _camera = GetViewport().GetCamera3D();
         _combat = GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat");
+        _bag = GetParent().GetNodeOrNull<Items.PlayerInventory>("PlayerInventory");
 
         if (!MarkerPath.IsEmpty)
         {
@@ -81,6 +86,12 @@ public partial class PlayerController : Node
             return;
         }
 
+        // Z gathers what lies round the character, wherever it is going (REF-09).
+        if (Godot.Input.IsActionJustPressed(GameActions.PickUp) && _bag is not null)
+        {
+            LootDrop.GatherAround(_motor, _bag);
+        }
+
         // The keys are asked first, so a hand already on WASD overrides whatever the last
         // click ordered. Deciding in advance which of the two you are using is a decision a
         // player should never have to make; the one they are making right now is the answer.
@@ -94,6 +105,7 @@ public partial class PlayerController : Node
             if (!_steering)
             {
                 _combat?.ClearTarget();
+                _goingFor = null;
                 _steering = true;
             }
 
@@ -113,6 +125,55 @@ public partial class PlayerController : Node
         }
 
         HandleClickToMove(delta);
+        WalkToLoot();
+    }
+
+    /// <summary>
+    /// Picks up the drop being walked to once it is in reach. The walk ends without it if the
+    /// drop is gone or the character has stopped short of it — a wall, a closed path.
+    /// </summary>
+    private void WalkToLoot()
+    {
+        if (_goingFor is null) return;
+
+        if (!GodotObject.IsInstanceValid(_goingFor) || !_goingFor.CanCollect)
+        {
+            _goingFor = null;
+            return;
+        }
+
+        if (_goingFor.Within(_motor.GlobalPosition, LootDrop.Reach))
+        {
+            if (_bag is not null) _goingFor.Collect(_bag);
+
+            _motor.Stop();
+            _goingFor = null;
+            return;
+        }
+
+        if (!_motor.HasActiveOrder) _goingFor = null;
+    }
+
+    /// <summary>
+    /// A click on a drop (REF-09): picked up from here when it is in reach, walked to and
+    /// picked up there when it is not. True when the click was on one.
+    /// </summary>
+    private bool ClickLoot()
+    {
+        if (LootDrop.Under(GetViewport(), _camera, GetViewport().GetMousePosition()) is not { } drop) return false;
+
+        _combat?.ClearTarget();
+
+        if (drop.Within(_motor.GlobalPosition, LootDrop.Reach))
+        {
+            if (_bag is not null) drop.Collect(_bag);
+            return true;
+        }
+
+        _goingFor = drop;
+        _motor.CommandMoveTo(drop.GlobalPosition);
+        _marker?.Flash(drop.GlobalPosition);
+        return true;
     }
 
     /// <summary>
@@ -162,6 +223,9 @@ public partial class PlayerController : Node
 
         if (_pressTaken) return;
 
+        // Any new order replaces a walk to a drop.
+        if (justPressed) _goingFor = null;
+
         // A click on a creature is an attack on it, whatever stands in front of it (REF-07).
         // Held, it stays the attack: the fight goes on until the creature falls.
         if (justPressed
@@ -169,6 +233,13 @@ public partial class PlayerController : Node
         {
             _combat?.CommandAttack(target);
             _marker?.Flash(at);
+            _pressTaken = true;
+            return;
+        }
+
+        // A creature before a drop: in a fight, a name on the ground must not steal the blow.
+        if (justPressed && ClickLoot())
+        {
             _pressTaken = true;
             return;
         }

@@ -162,6 +162,7 @@ public partial class SettingsView : ScrollContainer
         (L10n.T("Guard"), Key(GameActions.DefensiveAbility)),
         (L10n.T("Skills"), $"{Key(GameActions.Skill1)} – {Key(GameActions.Skill6)}"),
         (L10n.T("Health flask"), Key(GameActions.HealthFlask)),
+        (L10n.T("Pick up what is near"), Key(GameActions.PickUp)),
         (L10n.T("Talk, use"), Key(GameActions.Interact)),
         (L10n.T("Inventory"), Key(GameActions.ToggleInventory)),
         (L10n.T("Character"), Key(GameActions.ToggleCharacter)),

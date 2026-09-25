@@ -35,6 +35,9 @@ public static class GameActions
     public const string Skill7 = "skill_7";
     public const string HealthFlask = "health_flask";
 
+    /// <summary>Everything lying round the player into the bag (REF-09).</summary>
+    public const string PickUp = "pick_up";
+
     // Camera
     public const string CameraRotateLeft = "camera_rotate_left";
     public const string CameraRotateRight = "camera_rotate_right";
@@ -93,10 +96,11 @@ public static class GameActions
         [Skill7] = [Key(Godot.Key.Key7)],
         [HealthFlask] = [Key(Godot.Key.Q)],
 
-        // Z/X rather than Z/C: C is the near-universal key for the character sheet, and a
-        // sheet nobody can find is a sheet nobody uses.
-        [CameraRotateLeft] = [Key(Godot.Key.Z)],
-        [CameraRotateRight] = [Key(Godot.Key.X)],
+        // The arrows: Z is the original's key for picking up (REF-09), and WASD already
+        // walks, so the keys left free beside them are the ones that turn the view.
+        [CameraRotateLeft] = [Key(Godot.Key.Left)],
+        [CameraRotateRight] = [Key(Godot.Key.Right)],
+        [PickUp] = [Key(Godot.Key.Z)],
         // Right drag to look, with middle kept as a second way in: it costs nothing to leave
         // the old binding in place for anybody whose hand already knows it.
         [CameraDrag] = [Mouse(MouseButton.Right), Mouse(MouseButton.Middle)],

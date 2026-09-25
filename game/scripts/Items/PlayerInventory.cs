@@ -152,7 +152,12 @@ public partial class PlayerInventory : Node
 
     public bool TryPickUp(ItemInstance item)
     {
-        if (!Bag.TryAdd(item)) return false;
+        if (!Bag.TryAdd(item))
+        {
+            // Picking up is asked for now (REF-09), so a refusal needs saying.
+            EmitSignal(SignalName.PickedUp, L10n.T("Bag full"));
+            return false;
+        }
 
         Picked(GameItems.NameOf(item));
         return true;
