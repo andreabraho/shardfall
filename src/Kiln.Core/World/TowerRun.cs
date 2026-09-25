@@ -46,6 +46,7 @@ public enum FloorTask
 /// <param name="Shrine">Shrine id standing on this floor, or empty.</param>
 /// <param name="Bench">Whether an upgrade bench stands on this floor (FR-7.14).</param>
 /// <param name="Refuge">Whether this floor carries a low-threat corner (FR-7.18).</param>
+/// <param name="Gift">Whether its bench gives one free upgrade — the tower smith.</param>
 public sealed record TowerFloor(
     string Id,
     int Index,
@@ -57,7 +58,8 @@ public sealed record TowerFloor(
     string Boss = "",
     string Shrine = "",
     bool Bench = false,
-    bool Refuge = false)
+    bool Refuge = false,
+    bool Gift = false)
 {
     /// <summary>What the floor keeps sending while its task runs. Empty on a boss floor.</summary>
     /// <remarks>

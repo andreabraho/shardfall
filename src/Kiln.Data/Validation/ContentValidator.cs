@@ -1032,6 +1032,13 @@ public static class ContentValidator
                 report.Error("world-floors", zone.SourceFile, $"duplicate floor id '{floor.Id}'.");
             }
 
+            if (floor.Gift && !floor.Bench)
+            {
+                report.Error("world-floors", zone.SourceFile,
+                    $"{where} gives the smith's free upgrade but has no bench.",
+                    "The gift is given at the floor's bench: set \"bench\": true.");
+            }
+
             if (!string.IsNullOrEmpty(floor.Name) && !floor.Name.StartsWith('$'))
             {
                 report.Error("localisation", zone.SourceFile,

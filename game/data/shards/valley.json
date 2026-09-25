@@ -159,7 +159,7 @@
     "name": "$shard.shd_demon_shard.name",
     "tier": 3,
     "level": 21,
-    "hp": 3600,
+    "hp": 14400,
     "pulse_interval": 9.0,
     "pulse_windup": 3.4,
     "pulse_radius": 6.0,

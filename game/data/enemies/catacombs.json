@@ -180,7 +180,7 @@
     "family": "devil",
     "role": "archer",
     "level": 22,
-    "stats": { "hp": 6100, "attack_power": 156, "defense": 72, "move_speed": 6 },
+    "stats": { "hp": 30500, "attack_power": 156, "defense": 72, "move_speed": 6 },
     "abilities": [
       { "id": "abl_sorcerer_lance", "cooldown": 2.4, "windup": 0.9, "damage_coef": 1.25, "range": 16 },
       { "id": "abl_sorcerer_rain", "cooldown": 8, "windup": 2.1, "damage_coef": 1.7, "range": 15, "applies": { "kind": "burn", "magnitude": 24, "duration": 5 }, "telegraph": { "shape": "circle", "radius": 4 } },
@@ -188,8 +188,10 @@
     ],
     "boss": true,
     "phases": [
-      { "at": 0.66, "teleport": true, "adds": "mob_hell_imp", "add_count": 2 },
-      { "at": 0.33, "teleport": true, "adds": "mob_hell_imp", "add_count": 2 }
+      { "at": 0.8, "adds": "mob_hell_imp", "add_count": 5 },
+      { "at": 0.6, "teleport": true, "adds": "mob_demon_warrior", "add_count": 4 },
+      { "at": 0.4, "adds": "mob_hell_imp", "add_count": 6 },
+      { "at": 0.2, "teleport": true, "adds": "mob_demon_warrior", "add_count": 5 }
     ],
     "ai": "bt_ranged_kiter",
     "aggro_radius": 28,

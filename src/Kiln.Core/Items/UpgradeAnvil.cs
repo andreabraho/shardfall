@@ -105,6 +105,23 @@ public static class UpgradeAnvil
     }
 
     /// <summary>
+    /// The tower smith's free upgrade: the next rung, no cost, no chance of failing.
+    /// </summary>
+    public static UpgradeResult Gift(ItemInstance item, UpgradeLadder? ladder)
+    {
+        if (ladder is null) return new UpgradeResult(UpgradeOutcome.NoLadder, item.UpgradeLevel, item.UpgradeFailures, false);
+
+        var step = ladder.StepTo(item.UpgradeLevel + 1);
+
+        if (step is null) return new UpgradeResult(UpgradeOutcome.AtMaxLevel, item.UpgradeLevel, item.UpgradeFailures, false);
+
+        item.UpgradeLevel = step.To;
+        item.UpgradeFailures = 0;
+
+        return new UpgradeResult(UpgradeOutcome.Success, item.UpgradeLevel, 0, true);
+    }
+
+    /// <summary>
     /// Worst-case attempts to clear a rung, which is what the pity counter actually promises.
     /// Used by the economy simulator to bound the cost of reaching +9.
     /// </summary>

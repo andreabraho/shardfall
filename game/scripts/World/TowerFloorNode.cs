@@ -106,11 +106,17 @@ public partial class TowerFloorNode : Node3D
         Visible = false;
         SetProcess(false);
 
+        // A free upgrade not taken stays behind with the floor, as the smith does.
+        GetNodeOrNull<BenchNode>("Bench")?.Revoke();
+
         Clear();
     }
 
     /// <summary>Called by the tower when the task is finished.</summary>
     public void Open() => Stair?.Open();
+
+    /// <summary>The smith's free upgrade, put on this floor's bench.</summary>
+    public void Gift() => GetNodeOrNull<BenchNode>("Bench")?.Grant();
 
     public override void _Process(double delta)
     {

@@ -96,7 +96,8 @@ public sealed class WorldCatalogue
         def.Boss,
         def.Shrine,
         def.Bench,
-        def.Refuge)
+        def.Refuge,
+        def.Gift)
     {
         Waves = def.Waves,
         WaveSize = def.WaveSize,

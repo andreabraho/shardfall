@@ -31,6 +31,10 @@ public partial class WorkbenchPanel : CanvasLayer
     private Label _pity = null!;
     private Label _cost = null!;
     private Button _upgrade = null!;
+    private Button _gift = null!;
+
+    /// <summary>The bench the panel was opened at, when it holds the tower smith's free upgrade.</summary>
+    private World.BenchNode? _bench;
     private Button _bore = null!;
     private VBoxContainer _stoneList = null!;
     private Label _rerollCost = null!;
@@ -57,10 +61,12 @@ public partial class WorkbenchPanel : CanvasLayer
     }
 
     /// <summary>Opens the bench, as a bench in the world does (FR-7.14).</summary>
-    public void Open()
+    public void Open(World.BenchNode? bench = null)
     {
         if (Visible) return;
 
+        // Opened on the key while standing at the smith's bench counts as opened at it.
+        _bench = bench ?? SmithInReach();
         Visible = true;
         UiState.SetOpen(ref _counted, true);
         _selected ??= FirstUpgradable();
@@ -94,6 +100,19 @@ public partial class WorkbenchPanel : CanvasLayer
     }
 
     private bool _counted;
+
+    private World.BenchNode? SmithInReach()
+    {
+        if (GetTree().GetFirstNodeInGroup("player") is not Node3D player) return null;
+
+        foreach (var node in GetTree().GetNodesInGroup("benches"))
+        {
+            if (node is World.BenchNode { HasGift: true } bench
+                && bench.GlobalPosition.DistanceTo(player.GlobalPosition) <= bench.Radius + 0.5f) return bench;
+        }
+
+        return null;
+    }
 
     // A panel freed while open would otherwise leave the modal count raised forever, and the
     // player could never move again.
@@ -187,6 +206,12 @@ public partial class WorkbenchPanel : CanvasLayer
         _upgrade = new Button { Text = L10n.T("Upgrade") };
         _upgrade.Pressed += DoUpgrade;
         right.AddChild(_upgrade);
+
+        // The tower smith's gift: shown only at a bench that holds one.
+        _gift = new Button { Text = L10n.T("Free upgrade — the tower smith"), Visible = false };
+        _gift.AddThemeColorOverride("font_color", new Color("ffd36b"));
+        _gift.Pressed += DoGift;
+        right.AddChild(_gift);
 
         var safety = new Label
         {
@@ -304,6 +329,25 @@ public partial class WorkbenchPanel : CanvasLayer
         Refresh();
     }
 
+    private void DoGift()
+    {
+        if (_inventory is null || _selected is null || _bench is not { HasGift: true } bench || !IsInstanceValid(bench)) return;
+
+        var result = UpgradeAnvil.Gift(_selected, GameItems.Catalogue.LadderFor(_selected));
+
+        if (result.Outcome != UpgradeOutcome.Success) return;
+
+        bench.Revoke();
+        Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndUpgradeSuccess);
+        GD.Print($"[tower] the smith upgraded {_selected.DefId} to +{result.Level}");
+
+        _status.Text = L10n.F("The smith's gift — now +{0}.", result.Level);
+        _status.AddThemeColorOverride("font_color", new Color("ffd36b"));
+
+        _inventory.ApplyToStats();
+        Refresh();
+    }
+
     private void DoBore()
     {
         if (_inventory is null || _selected is null) return;
@@ -397,6 +441,7 @@ public partial class WorkbenchPanel : CanvasLayer
             _title.Text = L10n.T("Nothing to work on");
             _detail.Text = "";
             _upgrade.Disabled = true;
+            _gift.Disabled = true;
             _bore.Disabled = true;
             _reroll.Disabled = true;
 
@@ -472,6 +517,9 @@ public partial class WorkbenchPanel : CanvasLayer
     {
         var ladder = GameItems.Catalogue.LadderFor(_selected!);
         var quote = UpgradeAnvil.Quote(_selected!, ladder, _inventory!.Bag);
+
+        _gift.Visible = _bench is { HasGift: true } && IsInstanceValid(_bench);
+        _gift.Disabled = quote is null;
 
         if (quote is null)
         {

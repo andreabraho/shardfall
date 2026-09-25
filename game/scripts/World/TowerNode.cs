@@ -212,6 +212,10 @@ public partial class TowerNode : Node3D
 
         Checkpoint();
         Arrive();
+
+        // Climbed to, not resumed onto: a floor that follows a boss hands out its gift here.
+        // A resume after a death or a load arrives another way, and gets none.
+        if (_run.Floor.Gift && _run.Floor.Task != FloorTask.Fight) _here?.Gift();
     }
 
     /// <summary>Switches the world over to the current floor and puts the player on it.</summary>
@@ -274,6 +278,13 @@ public partial class TowerNode : Node3D
         if (_run is null) return;
 
         _here?.Open();
+
+        // A boss floor that carries the gift gives it when the boss is down.
+        if (_run.Floor.Gift && _run.Floor.Task == FloorTask.Fight)
+        {
+            _here?.Gift();
+            UI.WorldNotice.Show(GetTree(), L10n.T("The tower smith offers one free upgrade at the bench."));
+        }
 
         if (_run.Finished)
         {

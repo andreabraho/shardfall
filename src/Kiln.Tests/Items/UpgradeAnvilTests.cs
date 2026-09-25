@@ -144,6 +144,23 @@ public class UpgradeAnvilTests
     }
 
     [Fact]
+    public void Gift_ClimbsOneRungFreeAndCannotFail()
+    {
+        var (item, bag, ladder) = Setup(yang: 0, scrap: 1);
+        item.UpgradeLevel = ladder.MaxLevel - 1;
+        item.UpgradeFailures = 2;
+
+        var result = UpgradeAnvil.Gift(item, ladder);
+
+        Assert.Equal(UpgradeOutcome.Success, result.Outcome);
+        Assert.Equal(ladder.MaxLevel, item.UpgradeLevel);
+        Assert.Equal(0, item.UpgradeFailures);
+        Assert.Equal(0, bag.Yang);
+
+        Assert.Equal(UpgradeOutcome.AtMaxLevel, UpgradeAnvil.Gift(item, ladder).Outcome);
+    }
+
+    [Fact]
     public void AtMaxLevel_NothingIsSpent()
     {
         var (item, bag, ladder) = Setup();

@@ -723,6 +723,12 @@ public sealed class FloorDef
     /// <summary>Whether an upgrade bench stands here (FR-7.14).</summary>
     public bool Bench { get; init; }
 
+    /// <summary>
+    /// Whether the bench here is the tower smith's, with one free upgrade (the original's smith):
+    /// given on arriving from the floor below, or on finishing a boss floor.
+    /// </summary>
+    public bool Gift { get; init; }
+
     /// <summary>Whether this floor carries a corner nothing walks into (FR-7.18).</summary>
     public bool Refuge { get; init; }
 }

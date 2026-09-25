@@ -2935,6 +2935,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.6, 2.75, 19.6)
 script = ExtResource("3_kit")
 PieceId = "kit_tower"
 
+[node name="Bench" type="Area3D" parent="NavigationRegion3D/Tower/Floor09"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.1, -6)
+script = ExtResource("12_bench")
+
+[node name="Piece" type="StaticBody3D" parent="NavigationRegion3D/Tower/Floor09/Bench"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.28, 0)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_anvil"
+
 [node name="Entry" type="Node3D" parent="NavigationRegion3D/Tower/Floor09"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0.1, 0)
 
