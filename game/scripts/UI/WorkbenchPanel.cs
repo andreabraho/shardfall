@@ -405,15 +405,8 @@ public partial class WorkbenchPanel : CanvasLayer
             row.AddChild(cell);
         }
 
-        var money = new Label
-        {
-            Text = L10n.F("{0:N0} yang", yang),
-            VerticalAlignment = VerticalAlignment.Center,
-            SizeFlagsVertical = Control.SizeFlags.ShrinkCenter,
-        };
-
-        money.AddThemeFontSizeOverride("font_size", 14);
-        money.AddThemeColorOverride("font_color", _inventory!.Bag.Yang >= yang ? new Color("f0c96a") : Bad);
+        var money = Coin.Amount(yang, 14, _inventory!.Bag.Yang >= yang ? new Color("f0c96a") : Bad);
+        money.SizeFlagsVertical = Control.SizeFlags.ShrinkCenter;
         row.AddChild(money);
 
         return row;
@@ -519,7 +512,7 @@ public partial class WorkbenchPanel : CanvasLayer
             UpgradeOutcome.Success when result.WasGuaranteed => L10n.F("Guaranteed success — now +{0}.", result.Level),
             UpgradeOutcome.Success => L10n.F("Success — now +{0}.", result.Level),
             UpgradeOutcome.Failed => L10n.F("Failed. Still +{0}, and the next attempt is closer to guaranteed.", before),
-            UpgradeOutcome.CannotAfford => L10n.T("Not enough yang or materials."),
+            UpgradeOutcome.CannotAfford => L10n.T("Not enough gan or materials."),
             UpgradeOutcome.AtMaxLevel => L10n.T("Already at the highest level."),
             _ => L10n.T("This item cannot be upgraded."),
         }, result.Outcome switch
@@ -599,7 +592,7 @@ public partial class WorkbenchPanel : CanvasLayer
             row.AddChild(view);
         }
 
-        _body.AddChild(Muted(L10n.F("Drag a stone from the bag onto an empty socket, or right-click it in the bag. Right-click a set stone to take it out for {0:N0} yang — it comes back intact.", ItemEconomy.SocketRemoveYang)));
+        _body.AddChild(Muted(L10n.F("Drag a stone from the bag onto an empty socket, or right-click it in the bag. Right-click a set stone to take it out for {0:N0} gan — it comes back intact.", ItemEconomy.SocketRemoveYang)));
 
         if (SocketBench.NextClosedSocket(item) is null) return;
 
@@ -625,7 +618,7 @@ public partial class WorkbenchPanel : CanvasLayer
         {
             SocketOutcome.Success => L10n.T("A socket is open."),
             SocketOutcome.NoSocketsLeft => L10n.T("Every socket on this item is already open."),
-            SocketOutcome.CannotAfford => L10n.T("Needs a Boring Stone and yang."),
+            SocketOutcome.CannotAfford => L10n.T("Needs a Boring Stone and gan."),
             _ => outcome.ToString(),
         }, outcome == SocketOutcome.Success ? Good : Bad);
 
@@ -660,7 +653,7 @@ public partial class WorkbenchPanel : CanvasLayer
         {
             SocketOutcome.Success => L10n.T("Stone recovered, intact."),
             SocketOutcome.NoRoomForStone => L10n.T("No room in the bag for the stone."),
-            SocketOutcome.CannotAfford => L10n.F("Removal costs {0:N0} yang.", ItemEconomy.SocketRemoveYang),
+            SocketOutcome.CannotAfford => L10n.F("Removal costs {0:N0} gan.", ItemEconomy.SocketRemoveYang),
             _ => outcome.ToString(),
         }, outcome == SocketOutcome.Success ? Good : Bad);
 
@@ -727,7 +720,7 @@ public partial class WorkbenchPanel : CanvasLayer
         Say(outcome switch
         {
             RerollOutcome.Success => L10n.T("Rerolled."),
-            RerollOutcome.CannotAfford => L10n.T("Needs Mutation Ink and yang."),
+            RerollOutcome.CannotAfford => L10n.T("Needs Mutation Ink and gan."),
             RerollOutcome.NothingToReroll => L10n.T("Nothing left to reroll — unlock a line first."),
             RerollOutcome.TooManyLocked => L10n.T("Too many locked lines for this item's rarity."),
             _ => L10n.T("This item has no bonus pool."),

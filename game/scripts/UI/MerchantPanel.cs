@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using Kiln.Core.Economy;
@@ -10,31 +11,37 @@ using Kiln.Game.Items;
 namespace Kiln.Game.UI;
 
 /// <summary>
-/// Buying and selling (ITM-10, FR-10.3, FR-12.2 "vendor").
+/// Buying and selling (ITM-10, FR-10.3), laid out as the original's shop (REF-12).
 /// </summary>
 /// <remarks>
-/// Lists rather than a second grid. The merchant's side is three short lists — what is always
-/// there, what is on the shelf this level, and what the player just sold — and the player's
-/// side is their bag, one row per stack with what it would fetch. Every price is on the row,
-/// and every button says what it will do before it is pressed: a shop that makes the player
-/// hover to find out a price is a shop that sells things by accident.
+/// The merchant's goods are a grid of icons beside the bag, each with its price and coin under
+/// it: right-click buys one, Shift + right-click ten of what is always in stock. Selling is
+/// carrying an item from the bag onto the shop. What was just sold waits in a row of its own
+/// to be bought back at the price it fetched, so a sale is never a mistake that cannot be
+/// undone. The price is under every icon, never only in a tooltip: a shop that makes the
+/// player hover to find out a price is a shop that sells things by accident.
 /// </remarks>
 public partial class MerchantPanel : CanvasLayer
 {
-    private static readonly Color Gold = new(0.96f, 0.86f, 0.58f);
+    private static readonly Color Gold = new("f0c96a");
     private static readonly Color Dim = new(0.62f, 0.62f, 0.6f);
     private static readonly Color Bad = new(0.9f, 0.45f, 0.4f);
+    private static readonly Color Good = new(0.55f, 0.82f, 0.58f);
+
+    private const int Cell = 50;
+    private const int Columns = 5;
 
     private PlayerInventory? _inventory;
     private Vendor? _vendor;
     private bool _counted;
 
+    private Control _root = null!;
     private Label _title = null!;
     private Label _greeting = null!;
-    private Label _yang = null!;
+    private HBoxContainer _purse = null!;
     private VBoxContainer _stock = null!;
-    private VBoxContainer _bag = null!;
     private Label _status = null!;
+    private ItemTip _tip = null!;
 
     public override void _Ready()
     {
@@ -68,12 +75,17 @@ public partial class MerchantPanel : CanvasLayer
 
         Visible = true;
         UiState.SetOpen(ref _counted, true);
+
+        // Selling is carrying from the bag, so the bag opens with the shop.
+        GetParent()?.GetNodeOrNull<InventoryPanel>("InventoryPanel")?.Open();
+
         Refresh();
     }
 
     public void Close()
     {
         Visible = false;
+        _tip.Clear();
         UiState.SetOpen(ref _counted, false);
     }
 
@@ -88,6 +100,109 @@ public partial class MerchantPanel : CanvasLayer
         }
     }
 
+    // ------------------------------------------------------------------ build
+
+    private void Build()
+    {
+        // Beside the bag, which keeps the right edge (REF-10).
+        _root = new PanelContainer
+        {
+            AnchorLeft = 1f,
+            AnchorTop = 0.5f,
+            AnchorRight = 1f,
+            AnchorBottom = 0.5f,
+            OffsetRight = -304,
+            GrowHorizontal = Control.GrowDirection.Begin,
+            GrowVertical = Control.GrowDirection.Both,
+        };
+
+        _root.AddThemeStyleboxOverride("panel", new StyleBoxFlat
+        {
+            BgColor = new Color(0.07f, 0.08f, 0.10f, 0.97f),
+            BorderColor = new Color(0.25f, 0.28f, 0.34f),
+            BorderWidthTop = 1,
+            BorderWidthBottom = 1,
+            BorderWidthLeft = 1,
+            BorderWidthRight = 1,
+            CornerRadiusTopLeft = 6,
+            CornerRadiusTopRight = 6,
+            CornerRadiusBottomLeft = 6,
+            CornerRadiusBottomRight = 6,
+        });
+
+        AddChild(_root);
+
+        var margin = new MarginContainer();
+        margin.AddThemeConstantOverride("margin_left", 14);
+        margin.AddThemeConstantOverride("margin_right", 14);
+        margin.AddThemeConstantOverride("margin_top", 12);
+        margin.AddThemeConstantOverride("margin_bottom", 12);
+        _root.AddChild(margin);
+
+        var column = new VBoxContainer();
+        column.AddThemeConstantOverride("separation", 8);
+        margin.AddChild(column);
+
+        _title = new Label();
+        _title.AddThemeFontSizeOverride("font_size", 17);
+        column.AddChild(_title);
+
+        _greeting = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart, CustomMinimumSize = new Vector2(Columns * (Cell + 12), 0) };
+        _greeting.AddThemeFontSizeOverride("font_size", 13);
+        _greeting.AddThemeColorOverride("font_color", Dim);
+        column.AddChild(_greeting);
+
+        // The whole list is where a carried item is sold: let go of it anywhere over the goods.
+        var drop = new ShopDrop
+        {
+            CanTake = data => ItemOf(data) is not null,
+            Take = data =>
+            {
+                if (ItemOf(data) is { } item) Sell(item);
+            },
+        };
+
+        column.AddChild(drop);
+
+        _stock = new VBoxContainer();
+        _stock.AddThemeConstantOverride("separation", 6);
+        drop.AddChild(_stock);
+
+        _purse = new HBoxContainer { Alignment = BoxContainer.AlignmentMode.End };
+        column.AddChild(_purse);
+
+        var hint = new Label
+        {
+            Text = L10n.T("Right-click to buy · Shift + right-click buys ten · drag from the bag onto the shop to sell"),
+            AutowrapMode = TextServer.AutowrapMode.WordSmart,
+            CustomMinimumSize = new Vector2(Columns * (Cell + 12), 0),
+        };
+
+        hint.AddThemeFontSizeOverride("font_size", 11);
+        hint.AddThemeColorOverride("font_color", new Color(0.55f, 0.60f, 0.66f));
+        column.AddChild(hint);
+
+        _status = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart, CustomMinimumSize = new Vector2(Columns * (Cell + 12), 0) };
+        _status.AddThemeFontSizeOverride("font_size", 13);
+        column.AddChild(_status);
+
+        _tip = new ItemTip();
+        AddChild(_tip);
+    }
+
+    /// <summary>The item a drag from the bag carries, found by its id; only what is in the bag sells.</summary>
+    private ItemInstance? ItemOf(Variant data)
+    {
+        if (_inventory is null || data.VariantType != Variant.Type.Dictionary) return null;
+
+        var payload = data.AsGodotDictionary();
+
+        if (!payload.TryGetValue("kind", out var kind) || kind.AsString() != "kiln_item") return null;
+        if (!payload.TryGetValue("uid", out var uid)) return null;
+
+        return _inventory.Bag.Items.Select(p => p.Item).FirstOrDefault(i => i.Uid == uid.AsInt64());
+    }
+
     // ------------------------------------------------------------------ trading
 
     private void Buy(VendorOffer offer, int count)
@@ -100,7 +215,7 @@ public partial class MerchantPanel : CanvasLayer
         Say(result switch
         {
             TradeResult.Done => count > 1 ? L10n.F("Bought {0} × {1}.", count, name) : L10n.F("Bought {0}.", name),
-            TradeResult.TooPoor => L10n.T("Not enough yang."),
+            TradeResult.TooPoor => L10n.T("Not enough gan."),
             TradeResult.NoRoom => L10n.T("No room in the bag."),
             _ => L10n.T("That is no longer for sale."),
         }, result == TradeResult.Done);
@@ -120,7 +235,7 @@ public partial class MerchantPanel : CanvasLayer
 
         Say(result switch
         {
-            TradeResult.Done => L10n.F("Sold {0} for {1:N0} yang. It can be bought back for a while.", name, _inventory.Bag.Yang - before),
+            TradeResult.Done => L10n.F("Sold {0} for {1:N0} gan. It can be bought back for a while.", name, _inventory.Bag.Yang - before),
             TradeResult.Locked => L10n.F("{0} is locked. Unlock it in the bag first.", name),
             TradeResult.Worthless => L10n.F("Nobody pays for {0}.", name),
             _ => L10n.F("{0} is not in the bag.", name),
@@ -134,17 +249,17 @@ public partial class MerchantPanel : CanvasLayer
     private void Say(string text, bool good)
     {
         _status.Text = text;
-        _status.AddThemeColorOverride("font_color", good ? new Color(0.55f, 0.82f, 0.58f) : Bad);
+        _status.AddThemeColorOverride("font_color", good ? Good : Bad);
     }
 
-    // ------------------------------------------------------------------ lists
+    // ------------------------------------------------------------------ the goods
 
     private bool _pending;
 
-    /// <summary>Rebuilds the lists at the end of the frame.</summary>
+    /// <summary>Rebuilds the goods at the end of the frame.</summary>
     /// <remarks>
-    /// Deferred, because it is called from inside a button's own press, and the rebuild frees
-    /// that button. A node taken out of the tree while it is still emitting is an engine error.
+    /// Deferred, because it is called from inside a cell's own input, and the rebuild frees
+    /// that cell. A node taken out of the tree while it is still emitting is an engine error.
     /// </remarks>
     private void Refresh()
     {
@@ -160,156 +275,87 @@ public partial class MerchantPanel : CanvasLayer
 
         if (!Visible || _vendor is null || _inventory is null) return;
 
-        var yang = _inventory.Bag.Yang;
+        _tip.Clear();
 
-        _yang.Text = L10n.F("{0:N0} yang", yang);
+        foreach (var child in _purse.GetChildren()) child.QueueFree();
+        _purse.AddChild(Coin.Amount(_inventory.Bag.Yang, 15, Gold));
 
-        Clear(_stock);
-
-        Section(_stock, L10n.T("Always in stock"));
-
-        foreach (var offer in _vendor.Staples)
+        foreach (var child in _stock.GetChildren())
         {
-            var row = Row(_stock, offer.ItemId, null, L10n.F("{0:N0}", offer.Price), offer.Price <= yang ? Gold : Bad);
-
-            Button(row, L10n.T("Buy"), offer.Price <= yang, () => Buy(offer, 1));
-            Button(row, L10n.T("×10"), offer.Price * 10 <= yang, () => Buy(offer, 10));
-        }
-
-        Section(_stock, L10n.T("On the shelf  ·  new stock every level"));
-
-        if (_vendor.Shelf.Count == 0) Note(_stock, L10n.T("Sold out until your next level."));
-
-        foreach (var offer in _vendor.Shelf)
-        {
-            var row = Row(_stock, offer.ItemId, offer.Item, L10n.F("{0:N0}", offer.Price), offer.Price <= yang ? Gold : Bad);
-
-            Button(row, L10n.T("Buy"), offer.Price <= yang, () => Buy(offer, 1));
-        }
-
-        if (_vendor.Buyback.Count > 0)
-        {
-            Section(_stock, L10n.T("Buy back"));
-
-            foreach (var offer in _vendor.Buyback)
-            {
-                var row = Row(_stock, offer.ItemId, offer.Item, L10n.F("{0:N0}", offer.Price), offer.Price <= yang ? Gold : Bad);
-
-                Button(row, L10n.T("Buy back"), offer.Price <= yang, () => Buy(offer, 1));
-            }
-        }
-
-        Clear(_bag);
-
-        var carried = _inventory.Bag.Items
-            .OrderBy(p => p.Y)
-            .ThenBy(p => p.X)
-            .Select(p => p.Item)
-            .ToList();
-
-        if (carried.Count == 0) Note(_bag, L10n.T("The bag is empty. Worn gear is not for sale here."));
-
-        foreach (var item in carried)
-        {
-            var spec = GameItems.Spec(item.DefId);
-            var price = spec is null ? 0 : Vendor.SellPrice(spec, item);
-            var row = Row(_bag, item.DefId, item, price > 0 ? L10n.F("{0:N0}", price) : "—", price > 0 ? Gold : Dim);
-
-            if (item.Locked) Note(row, L10n.T("locked"));
-            else Button(row, L10n.T("Sell"), price > 0, () => Sell(item));
-        }
-    }
-
-    private static void Clear(Node list)
-    {
-        foreach (var child in list.GetChildren())
-        {
-            list.RemoveChild(child);
+            _stock.RemoveChild(child);
             child.QueueFree();
         }
+
+        Grid(L10n.T("Always in stock"), _vendor.Staples, staple: true);
+
+        if (_vendor.Shelf.Count == 0) Section(L10n.T("Sold out until your next level."), Dim);
+        else Grid(L10n.T("On the shelf  ·  new stock every level"), _vendor.Shelf, staple: false);
+
+        if (_vendor.Buyback.Count > 0) Grid(L10n.T("Buy back"), _vendor.Buyback, staple: false);
     }
 
-    private static void Section(VBoxContainer list, string text)
+    private void Section(string text, Color colour)
     {
         var label = new Label { Text = text };
         label.AddThemeFontSizeOverride("font_size", 13);
-        label.AddThemeColorOverride("font_color", new Color(0.78f, 0.82f, 0.90f));
-
-        if (list.GetChildCount() > 0) list.AddChild(new HSeparator());
-
-        list.AddChild(label);
+        label.AddThemeColorOverride("font_color", colour);
+        _stock.AddChild(label);
     }
 
-    private static void Note(Container parent, string text)
+    /// <summary>A heading and its offers as a grid of icons, each with its price and coin under it.</summary>
+    private void Grid(string heading, IEnumerable<VendorOffer> offers, bool staple)
     {
-        var label = new Label { Text = text };
-        label.AddThemeFontSizeOverride("font_size", 12);
-        label.AddThemeColorOverride("font_color", Dim);
-        parent.AddChild(label);
-    }
+        Section(heading, new Color(0.78f, 0.82f, 0.90f));
 
-    /// <summary>One line of a list: the item, its price, and room for the buttons.</summary>
-    private HBoxContainer Row(VBoxContainer list, string itemId, ItemInstance? item, string price, Color priceColour)
-    {
-        var spec = GameItems.Spec(itemId);
-        var row = new HBoxContainer();
-        row.AddThemeConstantOverride("separation", 8);
+        var grid = new GridContainer { Columns = Columns };
+        grid.AddThemeConstantOverride("h_separation", 12);
+        grid.AddThemeConstantOverride("v_separation", 6);
+        _stock.AddChild(grid);
 
-        var name = item is null ? GameItems.NameOfId(itemId) : GameItems.NameOf(item);
+        var gan = _inventory!.Bag.Yang;
 
-        if (item is { Count: > 1 }) name += $"  ×{item.Count}";
-
-        var label = new Label
+        foreach (var offer in offers)
         {
-            Text = name,
-            SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
-            ClipText = true,
-            MouseFilter = Control.MouseFilterEnum.Stop,
-            TooltipText = item is null ? GameItems.NameOfId(itemId) : ItemText.Tooltip(item, Worn(spec)),
-        };
+            var cell = new VBoxContainer();
+            cell.AddThemeConstantOverride("separation", 2);
 
-        label.AddThemeFontSizeOverride("font_size", 13);
-        label.AddThemeColorOverride("font_color", World.LootDrop.RarityColour(spec?.Rarity ?? Rarity.Common));
-        row.AddChild(label);
+            var shown = offer.Item ?? new ItemInstance(0, offer.ItemId);
+            // A drop on an icon sells too: a cell that stops the mouse does not pass drops on.
+            var view = new ItemView
+            {
+                CustomMinimumSize = new Vector2(Cell, Cell),
+                CanTake = (_, data) => ItemOf(data) is not null,
+                Take = (_, data) =>
+                {
+                    if (ItemOf(data) is { } item) Sell(item);
+                },
+            };
 
-        if (spec is { LevelReq: > 1 } && spec.IsEquipment)
-        {
-            var level = new Label { Text = L10n.F("Lv {0}", spec.LevelReq), CustomMinimumSize = new Vector2(44, 0) };
-            level.AddThemeFontSizeOverride("font_size", 12);
-            level.AddThemeColorOverride("font_color",
-                spec.LevelReq > PlayerProfile.Progression.Level ? Bad : Dim);
-            row.AddChild(level);
+            view.Display(shown);
+
+            var spec = GameItems.Spec(offer.ItemId);
+            view.MouseEntered += () => _tip.Say(ItemText.RichTooltip(shown, Worn(spec), PlayerProfile.Progression.Level));
+            view.MouseExited += () => _tip.Clear();
+            view.GuiInput += @event =>
+            {
+                if (@event is not InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Right } click) return;
+
+                view.AcceptEvent();
+                Buy(offer, staple && click.ShiftPressed ? 10 : 1);
+            };
+
+            cell.AddChild(view);
+
+            var price = Coin.Amount(offer.Price, 11, offer.Price <= gan ? Gold : Bad);
+            price.Alignment = BoxContainer.AlignmentMode.Center;
+            price.CustomMinimumSize = new Vector2(Cell, 0);
+
+            // Just the number under an icon: the coin already says what it is.
+            if (price.GetChild(1) is Label label) label.Text = L10n.F("{0:N0}", offer.Price);
+
+            cell.AddChild(price);
+            grid.AddChild(cell);
         }
-
-        var cost = new Label
-        {
-            Text = price,
-            CustomMinimumSize = new Vector2(70, 0),
-            HorizontalAlignment = HorizontalAlignment.Right,
-        };
-
-        cost.AddThemeFontSizeOverride("font_size", 13);
-        cost.AddThemeColorOverride("font_color", priceColour);
-        row.AddChild(cost);
-
-        list.AddChild(row);
-
-        return row;
-    }
-
-    private static void Button(HBoxContainer row, string text, bool enabled, System.Action pressed)
-    {
-        var button = new Button
-        {
-            Text = text,
-            Disabled = !enabled,
-            CustomMinimumSize = new Vector2(text.Length > 4 ? 76 : 48, 0),
-            FocusMode = Control.FocusModeEnum.None,
-        };
-
-        button.AddThemeFontSizeOverride("font_size", 12);
-        button.Pressed += pressed;
-        row.AddChild(button);
     }
 
     private ItemInstance? Worn(ItemSpec? spec)
@@ -317,101 +363,5 @@ public partial class MerchantPanel : CanvasLayer
         if (spec?.Slot is not { } slot || _inventory is null) return null;
 
         return _inventory.Gear.In(slot);
-    }
-
-    // ------------------------------------------------------------------ build
-
-    private void Build()
-    {
-        var root = new PanelContainer
-        {
-            AnchorLeft = 0.5f,
-            AnchorTop = 0.5f,
-            AnchorRight = 0.5f,
-            AnchorBottom = 0.5f,
-            GrowHorizontal = Control.GrowDirection.Both,
-            GrowVertical = Control.GrowDirection.Both,
-        };
-
-        root.AddThemeStyleboxOverride("panel", new StyleBoxFlat
-        {
-            BgColor = new Color(0.07f, 0.08f, 0.10f, 0.97f),
-            BorderColor = new Color(0.25f, 0.28f, 0.34f),
-            BorderWidthTop = 1,
-            BorderWidthBottom = 1,
-            BorderWidthLeft = 1,
-            BorderWidthRight = 1,
-            ContentMarginLeft = 20,
-            ContentMarginRight = 20,
-            ContentMarginTop = 16,
-            ContentMarginBottom = 14,
-        });
-
-        AddChild(root);
-
-        var column = new VBoxContainer();
-        column.AddThemeConstantOverride("separation", 8);
-        root.AddChild(column);
-
-        var header = new HBoxContainer();
-        column.AddChild(header);
-
-        _title = new Label { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
-        _title.AddThemeFontSizeOverride("font_size", 18);
-        _title.AddThemeColorOverride("font_color", Gold);
-        header.AddChild(_title);
-
-        _yang = new Label();
-        _yang.AddThemeFontSizeOverride("font_size", 16);
-        _yang.AddThemeColorOverride("font_color", Gold);
-        header.AddChild(_yang);
-
-        _greeting = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart, CustomMinimumSize = new Vector2(860, 0) };
-        _greeting.AddThemeFontSizeOverride("font_size", 13);
-        _greeting.AddThemeColorOverride("font_color", new Color(0.82f, 0.8f, 0.74f));
-        column.AddChild(_greeting);
-
-        column.AddChild(new HSeparator());
-
-        var sides = new HBoxContainer();
-        sides.AddThemeConstantOverride("separation", 24);
-        column.AddChild(sides);
-
-        _stock = Side(sides, L10n.T("For sale"));
-        _bag = Side(sides, L10n.T("Your bag  ·  sells for a quarter of its value"));
-
-        _status = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart };
-        _status.AddThemeFontSizeOverride("font_size", 13);
-        column.AddChild(_status);
-
-        var hint = new Label { Text = L10n.T("Hover a name for details   ·   Esc or F to close") };
-        hint.AddThemeFontSizeOverride("font_size", 11);
-        hint.AddThemeColorOverride("font_color", new Color(0.55f, 0.60f, 0.66f));
-        column.AddChild(hint);
-    }
-
-    private static VBoxContainer Side(HBoxContainer sides, string heading)
-    {
-        var side = new VBoxContainer { CustomMinimumSize = new Vector2(420, 0) };
-        side.AddThemeConstantOverride("separation", 6);
-        sides.AddChild(side);
-
-        var label = new Label { Text = heading };
-        label.AddThemeFontSizeOverride("font_size", 15);
-        side.AddChild(label);
-
-        var scroll = new ScrollContainer
-        {
-            CustomMinimumSize = new Vector2(420, 380),
-            HorizontalScrollMode = ScrollContainer.ScrollMode.Disabled,
-        };
-
-        side.AddChild(scroll);
-
-        var list = new VBoxContainer { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
-        list.AddThemeConstantOverride("separation", 4);
-        scroll.AddChild(list);
-
-        return list;
     }
 }

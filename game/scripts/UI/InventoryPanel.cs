@@ -49,7 +49,7 @@ public partial class InventoryPanel : CanvasLayer
     private readonly List<ItemView> _bagViews = [];
     private readonly List<BagPageTab> _tabs = [];
     private ItemTip _tip = null!;
-    private Label _yangLabel = null!;
+    private HBoxContainer _purse = null!;
     private Label _notice = null!;
     private int _page;
 
@@ -215,9 +215,9 @@ public partial class InventoryPanel : CanvasLayer
 
         column.AddChild(_grid);
 
-        _yangLabel = new Label { HorizontalAlignment = HorizontalAlignment.Right };
-        _yangLabel.AddThemeColorOverride("font_color", new Color("f0c96a"));
-        column.AddChild(_yangLabel);
+        // The purse, under the bag, with its coin (REF-12).
+        _purse = new HBoxContainer { Alignment = BoxContainer.AlignmentMode.End };
+        column.AddChild(_purse);
 
         var hint = new Label
         {
@@ -289,7 +289,8 @@ public partial class InventoryPanel : CanvasLayer
     {
         if (_inventory is null || !Visible) return;
 
-        _yangLabel.Text = L10n.F("{0:N0} yang", _inventory.Bag.Yang);
+        foreach (var child in _purse.GetChildren()) child.QueueFree();
+        _purse.AddChild(Coin.Amount(_inventory.Bag.Yang, 15, new Color("f0c96a")));
 
         foreach (var (slot, view) in _worn) view.Display(_inventory.Gear.In(slot));
 

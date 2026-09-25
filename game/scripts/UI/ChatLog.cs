@@ -102,7 +102,7 @@ public partial class ChatLog : CanvasLayer
         _panel.Modulate = Colors.White;
     }
 
-    private void OnYang(long amount) => Add(L10n.F("You received {0:N0} yang.", amount), YangColour);
+    private void OnYang(long amount) => Add(L10n.F("You received {0:N0} gan.", amount), YangColour);
 
     public override void _Process(double delta)
     {

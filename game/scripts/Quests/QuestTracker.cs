@@ -98,7 +98,7 @@ public static class QuestTracker
         var parts = new System.Collections.Generic.List<string>();
 
         if (reward.Xp > 0) parts.Add(L10n.F("+{0:N0} xp", reward.Xp));
-        if (reward.Yang > 0) parts.Add(L10n.F("+{0:N0} yang", reward.Yang));
+        if (reward.Yang > 0) parts.Add(L10n.F("+{0:N0} gan", reward.Yang));
         if (reward.Items.Count > 0) parts.Add(string.Join(", ", reward.Items.Select(GameItems.NameOfId)));
 
         return string.Join("  ", parts);

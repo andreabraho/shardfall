@@ -46,7 +46,7 @@ public partial class DebugGrants : Node
             return;
         }
 
-        GD.Print("[debug] F1 grants a level · F8 grants test yang and crafting materials");
+        GD.Print("[debug] F1 grants a level · F8 grants test gan and crafting materials");
     }
 
     public override void _UnhandledInput(InputEvent @event)
@@ -79,7 +79,7 @@ public partial class DebugGrants : Node
             if (!bag.Bag.TryGrant(id, count)) refused++;
         }
 
-        GD.Print($"[debug] granted {Yang:N0} yang and {Kit.Length - refused}/{Kit.Length} material stacks"
+        GD.Print($"[debug] granted {Yang:N0} gan and {Kit.Length - refused}/{Kit.Length} material stacks"
             + (refused > 0 ? " — bag is full" : ""));
     }
 

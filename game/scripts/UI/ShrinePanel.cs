@@ -237,7 +237,7 @@ public partial class ShrinePanel : CanvasLayer
             var row = new Button
             {
                 Text = $"{GameItems.Localise(shrine.Name)}  —  {GameItems.Localise(zone?.Name ?? "")}   "
-                    + L10n.F("{0:N0} yang", quote.Cost),
+                    + L10n.F("{0:N0} gan", quote.Cost),
                 Disabled = !quote.Allowed,
                 Alignment = HorizontalAlignment.Left,
             };
@@ -340,7 +340,7 @@ public partial class ShrinePanel : CanvasLayer
     private static string Explain(TravelRefusal refusal) => refusal switch
     {
         TravelRefusal.InCombat => L10n.T("Not while something is chasing you."),
-        TravelRefusal.NotEnoughYang => L10n.T("Not enough yang."),
+        TravelRefusal.NotEnoughYang => L10n.T("Not enough gan."),
         TravelRefusal.NotDiscovered => L10n.T("You have not stood at that shrine yet."),
         TravelRefusal.NotATravelPoint => L10n.T("That is a checkpoint, not a shrine."),
         TravelRefusal.AlreadyHere => L10n.T("You are already here."),

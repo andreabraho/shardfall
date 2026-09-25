@@ -121,7 +121,7 @@ public static class ItemText
 
         if (spec.SellValue > 0)
         {
-            text.Append("\n\n").Append(C(L10n.F("Sells for {0:N0} yang", (long)(spec.SellValue * ItemEconomy.VendorBuybackRate)), Gold));
+            text.Append("\n\n").Append(C(L10n.F("Sells for {0:N0} gan", (long)(spec.SellValue * ItemEconomy.VendorBuybackRate)), Gold));
         }
 
         if (equipped is not null && !ReferenceEquals(equipped, item))
