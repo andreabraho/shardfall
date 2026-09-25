@@ -83,15 +83,15 @@ public static class PlayerProfile
     /// </remarks>
     public static string[] Hotbar { get; private set; } = DefaultHotbar();
 
+    /// <summary>Keys on the bar.</summary>
+    public const int HotbarKeys = 7;
+
     /// <summary>
-    /// What a new character's bar holds: the skills whose suggested levels come first, so the
-    /// keys are not blank before the first point is spent.
+    /// What a new character's bar holds: nothing (2026-09-25, at your call). The player puts
+    /// a skill on a key by dragging it from the skill window once it is learned, as in the
+    /// original.
     /// </summary>
-    public static string[] DefaultHotbar() =>
-    [
-        "skl_heavy_strike", "skl_cleave", "skl_shield_bash", "skl_whirlwind",
-        "skl_ground_slam", "skl_iron_skin", "skl_blade_aura",
-    ];
+    public static string[] DefaultHotbar() => [.. System.Linq.Enumerable.Repeat("", HotbarKeys)];
 
     /// <summary>Restores a saved bar, padded or trimmed to the number of keys there are.</summary>
     public static void LoadHotbar(IReadOnlyList<string>? saved)
