@@ -1,6 +1,6 @@
 [
   // The looks the bosses give (REF-23): looks only, nothing that touches a number. Each kill
-  // of the boss rolls its chance; one already owned pays duplicate_gan instead. The chances
+  // of the boss rolls its chance (50%, at your call); one already owned pays duplicate_gan instead. The chances
   // and the gan wait for the final playthrough.
   //
   // kind: sword (on the sword and the great sword alike) | armour (the whole Knight but its
@@ -8,30 +8,30 @@
   // texture: the model's own texture, recoloured — see game/assets/cosmetics/SOURCES.txt.
   // particles: frost | venom | embers | arcane.
 
-  { "id": "cos_wolf_cub",       "name": "$cos.cos_wolf_cub.name",       "kind": "companion", "boss": "mob_greymane",            "chance": 0.15, "duplicate_gan": 800,
+  { "id": "cos_wolf_cub",       "name": "$cos.cos_wolf_cub.name",       "kind": "companion", "boss": "mob_greymane",            "chance": 0.5,  "duplicate_gan": 800,
     "visual": "mesh_q_wolf", "scale": 0.42 },
 
-  { "id": "cos_raider_armour",  "name": "$cos.cos_raider_armour.name",  "kind": "armour",    "boss": "mob_bandit_chief",        "chance": 0.15, "duplicate_gan": 1500,
+  { "id": "cos_raider_armour",  "name": "$cos.cos_raider_armour.name",  "kind": "armour",    "boss": "mob_bandit_chief",        "chance": 0.5,  "duplicate_gan": 1500,
     "texture": "res://assets/cosmetics/armour_raider.png" },
 
-  { "id": "cos_warbronze_armour","name": "$cos.cos_warbronze_armour.name","kind": "armour",  "boss": "mob_orc_warlord",         "chance": 0.15, "duplicate_gan": 2500,
+  { "id": "cos_warbronze_armour","name": "$cos.cos_warbronze_armour.name","kind": "armour",  "boss": "mob_orc_warlord",         "chance": 0.5,  "duplicate_gan": 2500,
     "texture": "res://assets/cosmetics/armour_warbronze.png" },
 
-  { "id": "cos_venom_blade",    "name": "$cos.cos_venom_blade.name",    "kind": "sword",     "boss": "mob_spider_queen",        "chance": 0.15, "duplicate_gan": 3500,
+  { "id": "cos_venom_blade",    "name": "$cos.cos_venom_blade.name",    "kind": "sword",     "boss": "mob_spider_queen",        "chance": 0.5,  "duplicate_gan": 3500,
     "texture": "res://assets/cosmetics/sword_venom.png", "color": "#7ddc5a", "emission": 0.15, "particles": "venom" },
 
-  { "id": "cos_frost_blade",    "name": "$cos.cos_frost_blade.name",    "kind": "sword",     "boss": "mob_frost_lich",          "chance": 0.15, "duplicate_gan": 5000,
+  { "id": "cos_frost_blade",    "name": "$cos.cos_frost_blade.name",    "kind": "sword",     "boss": "mob_frost_lich",          "chance": 0.5,  "duplicate_gan": 5000,
     "texture": "res://assets/cosmetics/sword_frost.png", "color": "#9fdcff", "emission": 0.25, "particles": "frost" },
 
-  { "id": "cos_bone_armour",    "name": "$cos.cos_bone_armour.name",    "kind": "armour",    "boss": "mob_rotting_colossus",    "chance": 0.15, "duplicate_gan": 7000,
+  { "id": "cos_bone_armour",    "name": "$cos.cos_bone_armour.name",    "kind": "armour",    "boss": "mob_rotting_colossus",    "chance": 0.5,  "duplicate_gan": 7000,
     "texture": "res://assets/cosmetics/armour_bone.png" },
 
-  { "id": "cos_arcane_aura",    "name": "$cos.cos_arcane_aura.name",    "kind": "aura",      "boss": "mob_blue_demon_sorcerer", "chance": 0.15, "duplicate_gan": 7500,
+  { "id": "cos_arcane_aura",    "name": "$cos.cos_arcane_aura.name",    "kind": "aura",      "boss": "mob_blue_demon_sorcerer", "chance": 0.5,  "duplicate_gan": 7500,
     "color": "#7a8cff", "particles": "arcane" },
 
-  { "id": "cos_hellfire_blade", "name": "$cos.cos_hellfire_blade.name", "kind": "sword",     "boss": "mob_demon_lord",          "chance": 0.15, "duplicate_gan": 8000,
+  { "id": "cos_hellfire_blade", "name": "$cos.cos_hellfire_blade.name", "kind": "sword",     "boss": "mob_demon_lord",          "chance": 0.5,  "duplicate_gan": 8000,
     "texture": "res://assets/cosmetics/sword_hellfire.png", "color": "#ff6a2a", "emission": 0.45, "particles": "embers" },
 
-  { "id": "cos_imp",            "name": "$cos.cos_imp.name",            "kind": "companion", "boss": "mob_demon_lord",          "chance": 0.15, "duplicate_gan": 8000,
+  { "id": "cos_imp",            "name": "$cos.cos_imp.name",            "kind": "companion", "boss": "mob_demon_lord",          "chance": 0.5,  "duplicate_gan": 8000,
     "visual": "mesh_q_imp", "scale": 0.32 }
 ]

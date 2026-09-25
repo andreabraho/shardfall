@@ -569,7 +569,7 @@ public sealed class CosmeticDef : ContentDefBase
     public string Boss { get; init; } = string.Empty;
 
     /// <summary>The chance each kill gives it, 0–1.</summary>
-    public double Chance { get; init; } = 0.15;
+    public double Chance { get; init; } = 0.5;
 
     /// <summary>Gan paid in its place when it is already owned.</summary>
     public int DuplicateGan { get; init; }

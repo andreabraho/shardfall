@@ -86,10 +86,15 @@ public partial class SkillPanel : CanvasLayer
         }
     }
 
+    private Control _root = null!;
+
     private void SetOpen(bool open)
     {
         Visible = open;
-        UiState.SetOpen(ref _counted, open);
+
+        // A side panel, as the bag, the map and the character window (2026-09-25): play goes on
+        // with it open, and a click on it is not a walk order.
+        UiState.SetSide(ref _counted, _root, open);
 
         if (!open) return;
 
@@ -101,8 +106,8 @@ public partial class SkillPanel : CanvasLayer
         GD.Print($"[skill] screen open — {PlayerProfile.Progression.UnspentSkillPoints} point(s) to spend");
     }
 
-    // A panel freed while open would leave the modal count raised and the player unable to move.
-    public override void _ExitTree() => UiState.SetOpen(ref _counted, false);
+    // Freed while open, it lets go of its place on screen.
+    public override void _ExitTree() => UiState.SetSide(ref _counted, _root, false);
 
     // ------------------------------------------------------------------ build
 
@@ -124,6 +129,7 @@ public partial class SkillPanel : CanvasLayer
 
         // Moved by holding its border or title and dragging (REF-19).
         PanelMover.Attach(root, "skills");
+        _root = root;
 
         root.AddThemeStyleboxOverride("panel", Box(new Color(0.06f, 0.055f, 0.05f, 0.96f), 2, 0));
         AddChild(root);
