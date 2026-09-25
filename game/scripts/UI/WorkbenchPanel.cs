@@ -505,6 +505,10 @@ public partial class WorkbenchPanel : CanvasLayer
         if (result.Attempted)
         {
             Audio.AudioDirector.Play(result.Outcome == UpgradeOutcome.Success ? Kiln.Data.Ids.Sounds.SndUpgradeSuccess : Kiln.Data.Ids.Sounds.SndUpgradeFail);
+
+            // Written at once (REF-18), so the outcome cannot be undone by loading the save
+            // from before the attempt.
+            Saving.SaveService.Autosave($"Upgraded {item.DefId}");
         }
 
         Say(result.Outcome switch
@@ -539,6 +543,7 @@ public partial class WorkbenchPanel : CanvasLayer
         GD.Print($"[tower] the smith upgraded {item.DefId} to +{result.Level}");
 
         Say(L10n.F("The smith's gift — now +{0}.", result.Level), Gold);
+        Saving.SaveService.Autosave($"Gift on {item.DefId}");
 
         _inventory.ApplyToStats();
         Refresh();
@@ -715,7 +720,11 @@ public partial class WorkbenchPanel : CanvasLayer
         var pool = GameItems.Catalogue.Pool(spec.BonusPoolId);
         var outcome = RerollTable.TryReroll(item, spec, pool, _inventory.Bag, GameItems.CraftRng);
 
-        if (outcome == RerollOutcome.Success) Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndReroll);
+        if (outcome == RerollOutcome.Success)
+        {
+            Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndReroll);
+            Saving.SaveService.Autosave($"Rerolled {item.DefId}");
+        }
 
         Say(outcome switch
         {

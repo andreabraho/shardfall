@@ -9,9 +9,10 @@ namespace Kiln.Game.UI.Menus;
 /// The list of save files, to load one or to write one (UIX-01).
 /// </summary>
 /// <remarks>
-/// Loading lists everything — the three slots, the quick save and the autosave ring — newest
-/// first within each kind, and greys out what is empty or damaged rather than hiding it, so a
-/// player looking for a save can see it is there and why it will not open.
+/// One character's saves (REF-18). Loading lists everything — the three slots, the quick
+/// save and the autosave ring — newest first within each kind, and greys out what is empty or
+/// damaged rather than hiding it, so a player looking for a save can see it is there and why
+/// it will not open.
 /// <para>
 /// Saving only offers the three slots: the quick save and the ring belong to their keys and
 /// to the game. Writing over a slot that holds something takes a second press on a button that
@@ -28,13 +29,18 @@ public partial class SaveList : ScrollContainer
     }
 
     private readonly Purpose _purpose;
+    private readonly string _character;
+    private readonly string _name;
     private VBoxContainer _rows = null!;
     private Label _status = null!;
     private string? _armed;
 
-    public SaveList(Purpose purpose)
+    /// <param name="character">Whose saves (REF-18); the character being played when null.</param>
+    public SaveList(Purpose purpose, string? character = null, string? name = null)
     {
         _purpose = purpose;
+        _character = character ?? SaveService.CharacterId;
+        _name = name ?? SaveService.CharacterName;
         HorizontalScrollMode = ScrollMode.Disabled;
         CustomMinimumSize = new Vector2(560, 480);
     }
@@ -49,7 +55,9 @@ public partial class SaveList : ScrollContainer
         column.AddThemeConstantOverride("separation", 8);
         AddChild(column);
 
-        column.AddChild(MenuStyle.Label(_purpose == Purpose.Load ? L10n.T("Load a game") : L10n.T("Save the game"), 17, MenuStyle.Heading));
+        var heading = _purpose == Purpose.Load ? L10n.T("Load a game") : L10n.T("Save the game");
+
+        column.AddChild(MenuStyle.Label(_name.Length > 0 ? $"{heading}  ·  {_name}" : heading, 17, MenuStyle.Heading));
 
         _rows = new VBoxContainer();
         _rows.AddThemeConstantOverride("separation", 6);
@@ -69,7 +77,7 @@ public partial class SaveList : ScrollContainer
             child.QueueFree();
         }
 
-        var summaries = SaveService.Summaries();
+        var summaries = SaveService.Summaries(_character);
 
         var shown = _purpose == Purpose.Save
             ? summaries.Where(s => s.Kind == SlotKind.Manual)
@@ -81,7 +89,7 @@ public partial class SaveList : ScrollContainer
 
         if (_purpose == Purpose.Load)
         {
-            _rows.AddChild(MenuStyle.Label(L10n.T("Autosaves are written at every shrine and every border; the oldest of five is replaced."),
+            _rows.AddChild(MenuStyle.Label(L10n.T("Autosaves are written at shrines, at every border, after every roll at the smith and every ten minutes of play; the oldest of five is replaced."),
                 12, MenuStyle.Dim, wrap: true));
         }
     }
@@ -120,7 +128,7 @@ public partial class SaveList : ScrollContainer
 
     private void Load(SaveSummary summary)
     {
-        if (SaveService.Instance?.Load(summary.Slot) != true)
+        if (SaveService.Instance?.Load(_character, summary.Slot) != true)
         {
             _status.Text = L10n.T("That save could not be loaded. The log says why.");
         }

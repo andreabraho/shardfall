@@ -21,6 +21,9 @@ public sealed class SaveGame
     public string CreatedUtc { get; set; } = "";
     public string Label { get; set; } = "";
 
+    /// <summary>The character's name (REF-18), for the character list. Empty in older saves.</summary>
+    public string CharacterName { get; set; } = "";
+
     /// <summary><c>Wanderer</c>, <c>Disciple</c>, <c>Adept</c> or <c>Shardbound</c>.</summary>
     public string Difficulty { get; set; } = "Disciple";
 

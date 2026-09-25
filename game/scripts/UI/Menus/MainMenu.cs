@@ -70,19 +70,17 @@ public partial class MainMenu : Control
         left.AddChild(MenuStyle.Label(L10n.T("working title"), 14, MenuStyle.Dim));
         left.AddChild(new Control { CustomMinimumSize = new Vector2(0, 40) });
 
-        var newest = SaveService.Summaries()
-            .Where(s => s.Readable)
-            .OrderByDescending(s => s.Written)
-            .FirstOrDefault();
+        // The character played last, whoever it is (REF-18).
+        var newest = SaveService.Characters().FirstOrDefault();
 
-        var resume = MenuStyle.Big(L10n.T("Continue"), () => SaveService.Instance?.LoadLatest());
+        var resume = MenuStyle.Big(L10n.T("Continue"), () => SaveService.Instance?.LoadLatest(anyCharacter: true));
         resume.Disabled = newest is null;
         left.AddChild(resume);
-        left.AddChild(MenuStyle.Label(newest is null ? L10n.T("No saved game yet.") : newest.Describe(), 12, MenuStyle.Dim));
+        left.AddChild(MenuStyle.Label(newest is null ? L10n.T("No saved game yet.") : $"{newest.Name}  ·  {newest.Newest.Describe()}", 12, MenuStyle.Dim));
         left.AddChild(new Control { CustomMinimumSize = new Vector2(0, 6) });
 
         left.AddChild(MenuStyle.Big(L10n.T("New game"), () => Page(NewGamePage())));
-        left.AddChild(MenuStyle.Big(L10n.T("Load game"), () => Page(new SaveList(SaveList.Purpose.Load))));
+        left.AddChild(MenuStyle.Big(L10n.T("Load game"), () => Page(new CharacterList(Page))));
         left.AddChild(MenuStyle.Big(L10n.T("Settings"), () => Page(new SettingsView(inGame: false))));
         left.AddChild(MenuStyle.Big(L10n.T("Quit"), () => GetTree().Quit()));
 
@@ -122,7 +120,19 @@ public partial class MainMenu : Control
         var column = new VBoxContainer { CustomMinimumSize = new Vector2(560, 0) };
         column.AddThemeConstantOverride("separation", 10);
 
-        column.AddChild(MenuStyle.Label(L10n.T("New game  ·  choose a difficulty"), 17, MenuStyle.Heading));
+        column.AddChild(MenuStyle.Label(L10n.T("New game  ·  name your character and choose a difficulty"), 17, MenuStyle.Heading));
+
+        // The character's name (REF-18): what the character list calls it.
+        var name = new LineEdit
+        {
+            PlaceholderText = SaveService.DefaultName(),
+            MaxLength = SaveService.NameLength,
+            CustomMinimumSize = new Vector2(280, 34),
+            SizeFlagsHorizontal = SizeFlags.ShrinkBegin,
+        };
+
+        name.AddThemeFontSizeOverride("font_size", 16);
+        column.AddChild(name);
         column.AddChild(MenuStyle.Label(L10n.T("It can be changed at any time from the pause menu. Loot and experience are the same on every tier."),
             12, MenuStyle.Dim, wrap: true));
 
@@ -141,8 +151,8 @@ public partial class MainMenu : Control
             text.OffsetTop = 8;
             text.OffsetRight = -14;
 
-            var name = tier.Tier == Difficulty.Disciple ? L10n.F("{0}  ·  recommended", Words.Of(tier.Tier)) : Words.Of(tier.Tier);
-            var title = MenuStyle.Label(name, 17, MenuStyle.Gold);
+            var label = tier.Tier == Difficulty.Disciple ? L10n.F("{0}  ·  recommended", Words.Of(tier.Tier)) : Words.Of(tier.Tier);
+            var title = MenuStyle.Label(label, 17, MenuStyle.Gold);
             title.MouseFilter = MouseFilterEnum.Ignore;
 
             var about = MenuStyle.Label(MenuStyle.Describe(tier), 12, MenuStyle.Text, wrap: true);
@@ -153,14 +163,14 @@ public partial class MainMenu : Control
             card.AddChild(text);
 
             var chosen = tier.Tier;
-            card.Pressed += () => SaveService.Instance?.NewGame(chosen);
+            card.Pressed += () => SaveService.Instance?.NewGame(chosen, name.Text);
 
             column.AddChild(card);
         }
 
         if (SaveService.AnySave())
         {
-            column.AddChild(MenuStyle.Label(L10n.T("Your saves stay where they are. The first autosave of the new game replaces the oldest autosave."),
+            column.AddChild(MenuStyle.Label(L10n.T("Every character keeps its own saves: the new one never writes over another's."),
                 12, MenuStyle.Dim, wrap: true));
         }
 

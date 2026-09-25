@@ -20,10 +20,15 @@ namespace Kiln.Game.Saving;
 /// Lives on the autoload, not in a scene, because loading replaces the scene — a service
 /// owned by the thing it is about to tear down cannot finish its own job.
 /// <para>
+/// Every character has a folder of its own (REF-18): its three slots, its quick save and its
+/// ring of five autosaves. A new character never writes over another's.
+/// </para>
+/// <para>
 /// Two kinds of file: the quick save, which is the player's, and a ring of five autosaves
-/// written at every shrine and every border, which is the game's. The ring is what makes an
-/// autosave safe to take without asking: the one about to be overwritten is always the
-/// oldest, so a bad autosave can never be the only one.
+/// written at shrines, borders, after every roll at the smith and every ten minutes of play,
+/// which is the game's. The ring is what makes an autosave safe to take without asking: the
+/// one about to be overwritten is always the oldest, so a bad autosave can never be the only
+/// one.
 /// </para>
 /// <para>
 /// Every write goes to a temporary file first and is renamed over the real one only once it
@@ -44,6 +49,17 @@ public partial class SaveService : Node
     public static string Folder =>
         OS.GetEnvironment("KILN_SAVE_DIR") is { Length: > 0 } dir ? dir : ProjectSettings.GlobalizePath("user://saves");
     public const string QuickSlot = "quick";
+
+    /// <summary>Play time between two autosaves when nothing else has saved (REF-18).</summary>
+    public const double AutosaveEverySeconds = 600;
+
+    /// <summary>The character being played (REF-18): the folder its saves go in.</summary>
+    public static string CharacterId { get; private set; } = "";
+
+    /// <summary>The name the player gave the character.</summary>
+    public static string CharacterName { get; private set; } = "";
+
+    private double _sinceSaved;
     public const int AutosaveRing = 5;
 
     /// <summary>The player's own slots, written only when they choose to (UIX-01).</summary>
@@ -75,6 +91,34 @@ public partial class SaveService : Node
     {
         _instance = this;
         ProcessMode = ProcessModeEnum.Always;
+        Migrate();
+    }
+
+    /// <summary>
+    /// Moves saves written before characters had folders (REF-18) into a folder of their own,
+    /// so they show up as one character in the list.
+    /// </summary>
+    private static void Migrate()
+    {
+        try
+        {
+            if (!Directory.Exists(Folder)) return;
+
+            var loose = Directory.GetFiles(Folder, "*.sav");
+
+            if (loose.Length == 0) return;
+
+            var target = System.IO.Path.Combine(Folder, $"char_{DateTime.UtcNow.Ticks}");
+            Directory.CreateDirectory(target);
+
+            foreach (var file in loose) File.Move(file, System.IO.Path.Combine(target, System.IO.Path.GetFileName(file)));
+
+            GD.Print($"[save] moved {loose.Length} older save(s) into {target}");
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            GD.PushWarning($"[save] could not move the older saves: {ex.Message}");
+        }
     }
 
     /// <summary>The play clock: only in a map, only while not paused.</summary>
@@ -83,6 +127,15 @@ public partial class SaveService : Node
         if (GameWorld.CurrentZoneId.Length > 0 && !GetTree().Paused && PlayerProfile.Exists)
         {
             PlayerProfile.PlayTime += delta;
+
+            // Ten minutes of play without a save of any kind writes one (REF-18).
+            _sinceSaved += delta;
+
+            if (_sinceSaved >= AutosaveEverySeconds)
+            {
+                _sinceSaved = 0;
+                Autosave("Ten minutes of play");
+            }
         }
     }
 
@@ -125,12 +178,15 @@ public partial class SaveService : Node
             return false;
         }
 
+        // A map started straight from the editor has no character yet: it becomes one.
+        if (CharacterId.Length == 0) Begin(DefaultName());
+
         var save = Capture(tree, label);
         var path = PathOf(slot);
 
         try
         {
-            Directory.CreateDirectory(Folder);
+            Directory.CreateDirectory(CharacterFolder(CharacterId));
             WriteAtomically(path, SaveCodec.Encode(save));
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
@@ -141,7 +197,8 @@ public partial class SaveService : Node
             return false;
         }
 
-        GD.Print($"[save] wrote {slot} — {save.World.Zone}, level {save.Player.Level}");
+        _sinceSaved = 0;
+        GD.Print($"[save] wrote {CharacterId}/{slot} — {save.World.Zone}, level {save.Player.Level}");
 
         if (!quiet) UI.WorldNotice.Show(tree, L10n.T("Saved."));
 
@@ -227,6 +284,7 @@ public partial class SaveService : Node
         {
             CreatedUtc = DateTime.UtcNow.ToString("O"),
             Label = label,
+            CharacterName = CharacterName,
             Difficulty = GameSession.Difficulty.Tier.ToString(),
             Seed = GameSession.Seed,
             PlayTime = PlayerProfile.PlayTime,
@@ -270,21 +328,29 @@ public partial class SaveService : Node
 
     // ------------------------------------------------------------------ reading
 
-    /// <summary>Loads the newest save of any kind, quick or auto.</summary>
-    public bool LoadLatest()
+    /// <summary>
+    /// Loads the newest save of any kind, quick or auto: the character being played's, or —
+    /// from the main menu's Continue, or with no character yet — any character's.
+    /// </summary>
+    public bool LoadLatest(bool anyCharacter = false) =>
+        LoadNewest(anyCharacter || CharacterId.Length == 0 ? CharacterIds() : [CharacterId]);
+
+    /// <summary>Loads one character's newest save.</summary>
+    public bool LoadLatestOf(string character) => LoadNewest([character]);
+
+    private bool LoadNewest(IEnumerable<string> characters)
     {
-        var newest = Slots()
-            .Select(slot => (Slot: slot, File: new FileInfo(PathOf(slot))))
+        var newest = characters
+            .SelectMany(c => Slots().Select(slot => (Character: c, Slot: slot, File: new FileInfo(PathOf(c, slot)))))
             .Where(s => s.File.Exists)
             .OrderByDescending(s => s.File.LastWriteTimeUtc)
-            .Select(s => s.Slot)
             .ToList();
 
         // Newest first, falling back through the older ones. A damaged newest save is the
         // case the ring exists for, and stopping at it would throw the ring away.
-        foreach (var slot in newest)
+        foreach (var (character, slot, _) in newest)
         {
-            if (Load(slot)) return true;
+            if (Load(character, slot)) return true;
         }
 
         if (newest.Count == 0) UI.WorldNotice.Show(GetTree(), L10n.T("There is no save to load."));
@@ -292,9 +358,11 @@ public partial class SaveService : Node
         return false;
     }
 
-    public bool Load(string slot)
+    public bool Load(string slot) => Load(CharacterId, slot);
+
+    public bool Load(string character, string slot)
     {
-        var path = PathOf(slot);
+        var path = PathOf(character, slot);
         string text;
 
         try
@@ -330,6 +398,11 @@ public partial class SaveService : Node
 
         Apply(save);
         _loading = true;
+
+        // The folder says whose save it is; the name inside is only for showing.
+        CharacterId = character;
+        CharacterName = save.CharacterName.Length > 0 ? save.CharacterName : DefaultName();
+        _sinceSaved = 0;
 
         GD.Print($"[save] loaded {slot} — {save.World.Zone}, level {save.Player.Level}");
 
@@ -458,15 +531,17 @@ public partial class SaveService : Node
     // ------------------------------------------------------------------ new game and leaving
 
     /// <summary>
-    /// Starts a new character in the village, on the chosen difficulty. Saves on disk are left
-    /// alone.
+    /// Starts a new character in the village, on the chosen difficulty, with a folder of its
+    /// own (REF-18). Every other character's saves are left alone.
     /// </summary>
     /// <remarks>
     /// A fresh seed each time, so a second character does not meet the first one's merchant
     /// shelves and loot rolls in the same order.
     /// </remarks>
-    public void NewGame(Difficulty tier)
+    public void NewGame(Difficulty tier, string name = "")
     {
+        Begin(name);
+        _sinceSaved = 0;
         PlayerProfile.Reset();
         GameWorld.Travel.Load([], null);
         GameSession.SetDifficulty(DifficultySettings.For(tier));
@@ -474,7 +549,7 @@ public partial class SaveService : Node
         _pendingPosition = null;
         _loading = false;
 
-        GD.Print($"[save] new game — {tier}, seed {GameSession.Seed}");
+        GD.Print($"[save] new game — {CharacterName} ({CharacterId}), {tier}, seed {GameSession.Seed}");
 
         GetTree().Paused = false;
         GetTree().CallDeferred(SceneTree.MethodName.ChangeSceneToFile, StartScene);
@@ -513,8 +588,72 @@ public partial class SaveService : Node
             .Append(QuickSlot)
             .Concat(Enumerable.Range(0, AutosaveRing).Select(i => $"auto_{i}"));
 
-    /// <summary>True when any save exists, damaged or not: whether "Continue" means anything.</summary>
-    public static bool AnySave() => Slots().Any(slot => File.Exists(PathOf(slot)));
+    /// <summary>True when any character has any save, damaged or not.</summary>
+    public static bool AnySave() => CharacterIds().Any(c => Slots().Any(slot => File.Exists(PathOf(c, slot))));
+
+    /// <summary>A fresh character: a new folder id and the name the player chose.</summary>
+    private static void Begin(string name)
+    {
+        CharacterId = $"char_{DateTime.UtcNow.Ticks}";
+        CharacterName = name.Trim() is { Length: > 0 } given ? given : DefaultName();
+    }
+
+    public static string DefaultName() => L10n.T("Warrior");
+
+    /// <summary>Longest name a character can have.</summary>
+    public const int NameLength = 16;
+
+    private static string CharacterFolder(string character) => System.IO.Path.Combine(Folder, character);
+
+    private static IEnumerable<string> CharacterIds()
+    {
+        try
+        {
+            return Directory.Exists(Folder)
+                ? Directory.GetDirectories(Folder).Select(d => System.IO.Path.GetFileName(d)).ToList()
+                : [];
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            GD.PushWarning($"[save] could not list the characters: {ex.Message}");
+            return [];
+        }
+    }
+
+    /// <summary>
+    /// Every character with a save that opens, most recently played first (REF-18).
+    /// </summary>
+    public static List<CharacterSummary> Characters() =>
+        CharacterIds()
+            .Select(id => (Id: id, Newest: Summaries(id).Where(s => s.Readable).OrderByDescending(s => s.Written).FirstOrDefault()))
+            .Where(c => c.Newest is not null)
+            .Select(c => new CharacterSummary(c.Id, c.Newest!))
+            .OrderByDescending(c => c.Newest.Written)
+            .ToList();
+
+    /// <summary>Deletes a character and every save it has. Asked twice by the list first.</summary>
+    public static bool DeleteCharacter(string character)
+    {
+        try
+        {
+            Directory.Delete(CharacterFolder(character), recursive: true);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            GD.PushWarning($"[save] could not delete {character}: {ex.Message}");
+            return false;
+        }
+
+        GD.Print($"[save] deleted {character}");
+
+        if (character == CharacterId)
+        {
+            CharacterId = "";
+            CharacterName = "";
+        }
+
+        return true;
+    }
 
     /// <summary>
     /// What is in every slot, for the load and save lists.
@@ -523,13 +662,14 @@ public partial class SaveService : Node
     /// Each file is decoded in full. They are a few kilobytes each and there are nine; a
     /// separate header cache would be one more thing that can disagree with the file.
     /// </remarks>
-    public static List<SaveSummary> Summaries()
+    public static List<SaveSummary> Summaries(string? character = null)
     {
         var list = new List<SaveSummary>();
+        character ??= CharacterId;
 
         foreach (var slot in Slots())
         {
-            var file = new FileInfo(PathOf(slot));
+            var file = new FileInfo(PathOf(character, slot));
             var kind = slot.StartsWith("slot_") ? SlotKind.Manual : slot == QuickSlot ? SlotKind.Quick : SlotKind.Auto;
 
             if (!file.Exists)
@@ -554,13 +694,17 @@ public partial class SaveService : Node
             var zone = save is null ? "" : GameWorld.Graph[save.World.Zone] is { } z ? GameItems.Localise(z.Name) : save.World.Zone;
 
             list.Add(new SaveSummary(slot, kind, true, save is not null, save?.Label ?? "", zone,
-                save?.Player.Level ?? 0, save?.Difficulty ?? "", file.LastWriteTime));
+                save?.Player.Level ?? 0, save?.Difficulty ?? "", file.LastWriteTime,
+                save is null ? "" : save.CharacterName.Length > 0 ? save.CharacterName : DefaultName(), save?.PlayTime ?? 0));
         }
 
         return list;
     }
 
-    private static string PathOf(string slot) => System.IO.Path.Combine(Folder, $"{slot}.sav");
+    private static string PathOf(string slot) => PathOf(CharacterId, slot);
+
+    private static string PathOf(string character, string slot) =>
+        System.IO.Path.Combine(CharacterFolder(character), $"{slot}.sav");
 
     /// <summary>The autosave slot to overwrite next: an empty one, else the oldest.</summary>
     private static string OldestAutosave() =>
@@ -592,7 +736,9 @@ public sealed record SaveSummary(
     string Zone,
     int Level,
     string Difficulty,
-    DateTime Written)
+    DateTime Written,
+    string Name = "",
+    double PlayTime = 0)
 {
     public string Title => Kind switch
     {
@@ -606,6 +752,21 @@ public sealed record SaveSummary(
         : !Readable ? L10n.T("damaged — cannot be loaded")
         : L10n.F("{0}  ·  level {1}  ·  {2}  ·  {3}", Zone, Level, TierName, Written.ToString("dd/MM  HH:mm"));
 
-    private string TierName =>
+    public string TierName =>
         Enum.TryParse<Kiln.Core.Foundation.Difficulty>(Difficulty, out var tier) ? UI.Words.Of(tier) : Difficulty;
+}
+
+/// <summary>One character in the list (REF-18): its folder and its newest save that opens.</summary>
+public sealed record CharacterSummary(string Id, SaveSummary Newest)
+{
+    public string Name => Newest.Name;
+
+    /// <summary>"level 12 · Valley Floor · Disciple · 3 h 20 min played".</summary>
+    public string Describe()
+    {
+        var played = TimeSpan.FromSeconds(Newest.PlayTime);
+
+        return L10n.F("level {0}  ·  {1}  ·  {2}  ·  {3} h {4:00} min played  ·  {5}",
+            Newest.Level, Newest.Zone, Newest.TierName, (int)played.TotalHours, played.Minutes, Newest.Written.ToString("dd/MM  HH:mm"));
+    }
 }
