@@ -81,12 +81,30 @@ public static class UiState
         else _side.Remove(panel);
     }
 
-    /// <summary>Whether a screen point is on an open side panel.</summary>
+    /// <summary>
+    /// Parts of the HUD that are always there and take clicks — the task bar, the minimap
+    /// (REF-19). A press on them is theirs and never a walk order, but unlike a side panel they
+    /// have no say over who the Escape key closes.
+    /// </summary>
+    private static readonly System.Collections.Generic.HashSet<Control> _hud = [];
+
+    public static void AddHud(Control area)
+    {
+        _hud.Add(area);
+        area.TreeExiting += () => _hud.Remove(area);
+    }
+
+    /// <summary>Whether a screen point is on an open side panel or on the HUD that takes clicks.</summary>
     public static bool PointerOverPanel(Vector2 screen)
     {
         foreach (var panel in _side)
         {
             if (GodotObject.IsInstanceValid(panel) && panel.IsVisibleInTree() && panel.GetGlobalRect().HasPoint(screen)) return true;
+        }
+
+        foreach (var area in _hud)
+        {
+            if (GodotObject.IsInstanceValid(area) && area.IsVisibleInTree() && area.GetGlobalRect().HasPoint(screen)) return true;
         }
 
         return false;

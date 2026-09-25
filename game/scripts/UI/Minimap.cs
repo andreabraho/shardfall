@@ -46,6 +46,9 @@ public partial class Minimap : CanvasLayer
 
         AddChild(root);
 
+        // Nor is a click on the minimap or its zoom.
+        UiState.AddHud(root);
+
         // The plaque with the map's name and its levels.
         var plaque = new PanelContainer
         {

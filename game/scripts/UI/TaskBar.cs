@@ -95,6 +95,9 @@ public partial class TaskBar : CanvasLayer
 
         AddChild(bar);
 
+        // A click on the bar — a button, a slot, the frame — is never a walk order.
+        UiState.AddHud(bar);
+
         var row = new HBoxContainer();
         row.AddThemeConstantOverride("separation", 14);
         bar.AddChild(row);
