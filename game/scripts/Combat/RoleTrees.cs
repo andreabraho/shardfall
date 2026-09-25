@@ -58,6 +58,10 @@ public static class RoleTrees
             new BtCondition<EnemyBrain>(b => b.IsCommitted),
             Attack());
 
+    /// <summary>Stands and faces the target for as long as <paramref name="holds"/> says so, asked every tick.</summary>
+    private static BtNode<EnemyBrain> HoldWhile(System.Func<EnemyBrain, bool> holds) =>
+        new BtAction<EnemyBrain>((b, d) => holds(b) ? b.Hold(d) : BtStatus.Failure);
+
     /// <summary>Straight damage. The baseline the other roles are read against.</summary>
     private static BtNode<EnemyBrain> Bruiser() =>
         new BtSelector<EnemyBrain>(
@@ -85,10 +89,11 @@ public static class RoleTrees
             // Already in range with the shot still cooling down: stand and face the target
             // (2026-09-25). Chasing here walked the archer in until it was too close, then
             // the retreat walked it out, back and forth every second — the Star Throwers
-            // shook on the spot and were mid-step whenever the shot came ready.
-            new BtSequence<EnemyBrain>(
-                new BtCondition<EnemyBrain>(b => b.InRangeOf(b.BasicAbility)),
-                new BtAction<EnemyBrain>((b, d) => b.Hold(d))),
+            // shook on the spot and were mid-step whenever the shot came ready. The range is
+            // asked every tick, inside the one action: as a condition before it, a running
+            // hold was resumed without asking again, and an archer the player had walked away
+            // from stood where it was for good, neither shooting nor following.
+            HoldWhile(b => b.InRangeOf(b.BasicAbility)),
 
             new BtAction<EnemyBrain>((b, d) => b.Chase(d)));
 
@@ -134,9 +139,7 @@ public static class RoleTrees
             Attack(),
 
             // Keeps its distance rather than walking in and backing off again, as the archer.
-            new BtSequence<EnemyBrain>(
-                new BtCondition<EnemyBrain>(b => b.DistanceToTarget <= PreferredRange),
-                new BtAction<EnemyBrain>((b, d) => b.Hold(d))),
+            HoldWhile(b => b.DistanceToTarget <= PreferredRange),
 
             new BtAction<EnemyBrain>((b, d) => b.Chase(d)));
 
