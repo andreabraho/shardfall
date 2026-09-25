@@ -580,7 +580,8 @@ public partial class InventoryPanel : CanvasLayer
     /// reason yang is still worth carrying once the gear is bought.
     /// </summary>
     /// <remarks>
-    /// Refused while the flask is full, so a mis-click never costs a draught.
+    /// Refused while the flask is full, so a mis-click never costs a draught, and for three
+    /// seconds after a hit, so it is not a second flask to drink mid-fight.
     /// </remarks>
     private void PourDraught()
     {
@@ -595,6 +596,13 @@ public partial class InventoryPanel : CanvasLayer
         if (flask.Charges >= flask.MaxCharges)
         {
             Notify(L10n.T("The flask is already full."));
+            return;
+        }
+
+        // Not in the middle of a fight: three seconds clear of any hit first.
+        if (flask.RefillLockedFor > 0)
+        {
+            Notify(L10n.F("Not while you are being hit. Wait {0:0.0} s.", flask.RefillLockedFor));
             return;
         }
 

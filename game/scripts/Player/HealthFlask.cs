@@ -45,6 +45,12 @@ public partial class HealthFlask : Node
     /// <summary>Cast time. Long enough that drinking mid-telegraph is a real gamble.</summary>
     [Export] public double CastSeconds { get; set; } = 0.8;
 
+    /// <summary>
+    /// How long after a hit a draught cannot be poured in (2026-09-25, at your call): filling
+    /// the flask is something done between fights, not in the middle of one.
+    /// </summary>
+    public const double RefillLockSeconds = 3.0;
+
     /// <summary>The material a charge is poured from. Bought at a merchant, one for one.</summary>
     public const string DraughtId = "mat_flask_draught";
 
@@ -53,6 +59,11 @@ public partial class HealthFlask : Node
     public int MaxCharges => GameSession.Difficulty.FlaskCharges;
 
     public bool IsCasting => _casting > 0;
+
+    private double _sinceHit = double.MaxValue;
+
+    /// <summary>Seconds left before a draught can be poured in; 0 when it can be now.</summary>
+    public double RefillLockedFor => System.Math.Max(0, RefillLockSeconds - _sinceHit);
 
     [Signal] public delegate void ChargesChangedEventHandler(int charges, int max);
 
@@ -69,9 +80,13 @@ public partial class HealthFlask : Node
         PlayerProfile.FlaskCharges = _charges;
 
         // Taking damage interrupts the drink — the cost of using it at the wrong moment.
-        _self.Damaged += (_, _, evaded) =>
+        _self.Damaged += (amount, _, evaded) =>
         {
-            if (evaded || !IsCasting) return;
+            if (evaded) return;
+
+            if (amount > 0) _sinceHit = 0;
+
+            if (!IsCasting) return;
 
             _casting = 0;
             GD.Print("[flask] interrupted");
@@ -115,11 +130,11 @@ public partial class HealthFlask : Node
 
     /// <summary>
     /// Pours one draught in. False when the flask is already full, so the draught is not
-    /// quietly wasted.
+    /// quietly wasted, or when the player was hit in the last <see cref="RefillLockSeconds"/>.
     /// </summary>
     public bool AddCharge()
     {
-        if (_charges >= MaxCharges) return false;
+        if (_charges >= MaxCharges || RefillLockedFor > 0) return false;
 
         _charges++;
         Changed();
@@ -136,6 +151,8 @@ public partial class HealthFlask : Node
 
     public override void _Process(double delta)
     {
+        if (_sinceHit < RefillLockSeconds) _sinceHit += delta;
+
         if (_casting > 0)
         {
             _casting -= delta;
