@@ -2,19 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://3mubaog5odww"
-path="res://.godot/imported/Knight_knight_texture.png-afd6cbe45b296aea36330fc7c89fad2c.ctex"
+uid="uid://1tdlgu2sck8m"
+path="res://.godot/imported/knight_texture.png-98bdc529270e65e7a8e1f3825ce1a31e.ctex"
 metadata={
 "vram_texture": false
-}
-generator_parameters={
-"md5": "af4707185c3e9844f7ed166c1a2e24f8"
 }
 
 [deps]
 
-source_file="res://assets/kaykit/characters/Knight_knight_texture.png"
-dest_files=["res://.godot/imported/Knight_knight_texture.png-afd6cbe45b296aea36330fc7c89fad2c.ctex"]
+source_file="res://assets/kaykit/adventurers2/knight_texture.png"
+dest_files=["res://.godot/imported/knight_texture.png-98bdc529270e65e7a8e1f3825ce1a31e.ctex"]
 
 [params]
 
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

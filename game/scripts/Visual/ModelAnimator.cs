@@ -67,7 +67,7 @@ public partial class ModelAnimator : Node
         var names = _player.GetAnimationList();
 
         _idle = Find(names, Idle);
-        _idleTwoHand = Pick(names, "2H_Melee_Idle");
+        _idleTwoHand = Pick(names, "Melee_2H_Idle", "2H_Melee_Idle");
         _run = Find(names, Move);
 
         if (_run.Length == 0) _run = _idle;
@@ -86,7 +86,7 @@ public partial class ModelAnimator : Node
     // Quaternius "Gallop", "Rat_Run" or "CharacterArmature|Run". The part after the last "|"
     // is compared, and the first list entry any clip matches wins, so the best-looking clip
     // for a role is listed first.
-    private static readonly string[] Idle = ["Idle", "Rat_Idle", "Spider_Idle", "Snake_Idle", "Flying_Idle", "Idle_2", "Wasp_Flying"];
+    private static readonly string[] Idle = ["Idle", "Idle_A", "Rat_Idle", "Spider_Idle", "Snake_Idle", "Flying_Idle", "Idle_2", "Wasp_Flying"];
 
     private static readonly string[] Move =
         ["Running_A", "Running_B", "Run", "Gallop", "Rat_Run", "Fast_Flying", "Walking_A", "Walk",
@@ -99,7 +99,7 @@ public partial class ModelAnimator : Node
     // Held while a telegraphed attack winds up. Only the humanoid packs carry one; a creature
     // without it rears back instead (VisualRoot).
     private static readonly string[] Charge =
-        ["Spellcasting", "Spellcast_Long", "Idle_Attack", "2H_Melee_Idle", "Taunt", "Idle_Combat"];
+        ["Spellcasting", "Spellcast_Long", "Idle_Attack", "2H_Melee_Idle", "Melee_2H_Idle", "Taunt", "Idle_Combat"];
 
     // A shot leaving the hand.
     private static readonly string[] Shot =
@@ -187,20 +187,24 @@ public partial class ModelAnimator : Node
     /// The player's four blows (REF-22), one clip each and the fourth — the one that sweeps —
     /// the widest: a flat cut with a sword, a full turn with a great sword.
     /// </summary>
-    private static readonly string[] OneHandChain =
+    /// <remarks>
+    /// Each blow under both the names KayKit has used: "Melee_1H_…" in the 2.0 animation
+    /// files the Knight wears, "1H_Melee_…" in the 1.0 characters.
+    /// </remarks>
+    private static readonly string[][] OneHandChain =
     [
-        "1H_Melee_Attack_Slice_Diagonal",
-        "1H_Melee_Attack_Stab",
-        "1H_Melee_Attack_Chop",
-        "1H_Melee_Attack_Slice_Horizontal",
+        ["Melee_1H_Attack_Slice_Diagonal", "1H_Melee_Attack_Slice_Diagonal"],
+        ["Melee_1H_Attack_Stab", "1H_Melee_Attack_Stab"],
+        ["Melee_1H_Attack_Chop", "1H_Melee_Attack_Chop"],
+        ["Melee_1H_Attack_Slice_Horizontal", "1H_Melee_Attack_Slice_Horizontal"],
     ];
 
-    private static readonly string[] TwoHandChain =
+    private static readonly string[][] TwoHandChain =
     [
-        "2H_Melee_Attack_Slice",
-        "2H_Melee_Attack_Stab",
-        "2H_Melee_Attack_Chop",
-        "2H_Melee_Attack_Spin",
+        ["Melee_2H_Attack_Slice", "2H_Melee_Attack_Slice"],
+        ["Melee_2H_Attack_Stab", "2H_Melee_Attack_Stab"],
+        ["Melee_2H_Attack_Chop", "2H_Melee_Attack_Chop"],
+        ["Melee_2H_Attack_Spin", "2H_Melee_Attack_Spin"],
     ];
 
     /// <summary>How far into a melee clip its blade meets the target, as a share of the clip.</summary>
@@ -233,15 +237,15 @@ public partial class ModelAnimator : Node
     {
         if (_player is null) return 0;
 
-        var wanted = motion switch
+        string[] wanted = motion switch
         {
-            "chop" => TwoHanded ? "2H_Melee_Attack_Chop" : "1H_Melee_Attack_Chop",
-            "slice" => TwoHanded ? "2H_Melee_Attack_Slice" : "1H_Melee_Attack_Slice_Horizontal",
-            "bash" => "Block_Attack",
-            "slam" => "2H_Melee_Attack_Chop",
-            "brace" => "Block",
-            "raise" => "Spellcast_Raise",
-            _ => "",
+            "chop" => TwoHanded ? ["Melee_2H_Attack_Chop", "2H_Melee_Attack_Chop"] : ["Melee_1H_Attack_Chop", "1H_Melee_Attack_Chop"],
+            "slice" => TwoHanded ? ["Melee_2H_Attack_Slice", "2H_Melee_Attack_Slice"] : ["Melee_1H_Attack_Slice_Horizontal", "1H_Melee_Attack_Slice_Horizontal"],
+            "bash" => ["Melee_Block_Attack", "Block_Attack"],
+            "slam" => ["Melee_1H_Attack_Jump_Chop", "Melee_2H_Attack_Chop", "2H_Melee_Attack_Chop"],
+            "brace" => ["Melee_Block", "Block"],
+            "raise" => ["Cheering", "Cheer", "Spellcast_Raise"],
+            _ => [],
         };
 
         var clip = wanted.Length == 0 ? "" : Pick(_player.GetAnimationList(), wanted);
@@ -286,7 +290,7 @@ public partial class ModelAnimator : Node
     {
         if (_player is null) return 0;
 
-        var clip = Pick(_player.GetAnimationList(), "Cheer", "Spellcast_Raise", "Taunt", "Block");
+        var clip = Pick(_player.GetAnimationList(), "Cheer", "Cheering", "Spellcast_Raise", "Taunt", "Block", "Melee_Block");
 
         if (clip.Length == 0) return Attack();
 
@@ -304,7 +308,7 @@ public partial class ModelAnimator : Node
     {
         if (_player is null) return false;
 
-        var clip = Pick(_player.GetAnimationList(), "2H_Melee_Attack_Spin", "2H_Melee_Attack_Spinning");
+        var clip = Pick(_player.GetAnimationList(), "Melee_2H_Attack_Spin", "Melee_2H_Attack_Spinning", "2H_Melee_Attack_Spin", "2H_Melee_Attack_Spinning");
 
         if (clip.Length == 0) return false;
 

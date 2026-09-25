@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using Kiln.Core.Foundation;
 using Kiln.Data.Definitions;
@@ -17,29 +18,39 @@ public sealed record GearLook(int Hands, int Upgrade, Rarity? Shield, bool Helme
 /// The parts of a model that stand for worn gear, shown and hidden to match it (REF-22).
 /// </summary>
 /// <remarks>
-/// A character pack ships each figure holding everything it comes with — the Knight carries two
-/// swords and four shields at once, one inside the other. Every part named in the visual's
-/// data starts hidden, and only what the player wears is shown: the sword or the great sword,
-/// the shield whose shape goes with its rarity, the helmet, and the cape over epic armour.
+/// A part is either a mesh the model already has — the Knight's helmet and cape — or a
+/// separate scene put in a hand: KayKit 2.0 ships its swords and shields as files of their
+/// own, made to sit on the skeleton's hand slots. Every part starts hidden, and only what the
+/// player wears is shown: the sword or the great sword, the shield whose shape goes with its
+/// rarity, the helmet, and the cape over epic armour.
 /// </remarks>
 public sealed class GearRig
 {
+    /// <summary>The bone a weapon is held on, and the one a shield is strapped to.</summary>
+    private const string WeaponHand = "handslot.r";
+
+    private const string ShieldHand = "handslot.l";
+
     private readonly MeshInstance3D? _oneHand;
     private readonly MeshInstance3D? _twoHand;
     private readonly List<MeshInstance3D> _shields = [];
-    private readonly MeshInstance3D? _helmet;
+    private readonly List<MeshInstance3D> _helmet = [];
     private readonly MeshInstance3D? _cape;
 
     private GearRig(Node3D model, GearPartsDef parts)
     {
-        _oneHand = Part(model, parts.OneHand);
-        _twoHand = Part(model, parts.TwoHand);
-        _helmet = Part(model, parts.Helmet);
-        _cape = Part(model, parts.Cape);
+        _oneHand = Part(model, parts.OneHand, WeaponHand);
+        _twoHand = Part(model, parts.TwoHand, WeaponHand);
+        _cape = Part(model, parts.Cape, WeaponHand);
+
+        foreach (var name in parts.Helmet)
+        {
+            if (Part(model, name, WeaponHand) is { } piece) _helmet.Add(piece);
+        }
 
         foreach (var name in parts.Shields)
         {
-            if (Part(model, name) is { } shield) _shields.Add(shield);
+            if (Part(model, name, ShieldHand) is { } shield) _shields.Add(shield);
         }
 
         foreach (var part in All()) part.Visible = false;
@@ -53,7 +64,7 @@ public sealed class GearRig
     {
         foreach (var name in def.Hide)
         {
-            if (Part(model, name) is { } part) part.Visible = false;
+            if (model.FindChild(name, recursive: true, owned: false) is MeshInstance3D part) part.Visible = false;
         }
 
         return def.Gear is null ? null : new GearRig(model, def.Gear);
@@ -69,7 +80,8 @@ public sealed class GearRig
 
         for (var i = 0; i < _shields.Count; i++) _shields[i].Visible = i == shield;
 
-        if (_helmet is not null) _helmet.Visible = look.Helmet;
+        foreach (var piece in _helmet) piece.Visible = look.Helmet;
+
         if (_cape is not null) _cape.Visible = look.Cape;
 
         // The glow belongs to whichever blade is in hand, and leaves the other.
@@ -95,21 +107,56 @@ public sealed class GearRig
 
     private IEnumerable<MeshInstance3D> All()
     {
-        foreach (var part in new[] { _oneHand, _twoHand, _helmet, _cape })
+        foreach (var part in new[] { _oneHand, _twoHand, _cape })
         {
             if (part is not null) yield return part;
         }
 
+        foreach (var piece in _helmet) yield return piece;
         foreach (var shield in _shields) yield return shield;
     }
 
-    private static MeshInstance3D? Part(Node3D model, string name)
+    /// <summary>
+    /// A part by name: a mesh of the model's own, or — for a res:// path — that scene put on
+    /// <paramref name="bone"/>, returned as its mesh.
+    /// </summary>
+    private static MeshInstance3D? Part(Node3D model, string name, string bone)
     {
         if (name.Length == 0) return null;
 
-        if (model.FindChild(name, recursive: true, owned: false) is MeshInstance3D part) return part;
+        if (!name.StartsWith("res://"))
+        {
+            if (model.FindChild(name, recursive: true, owned: false) is MeshInstance3D own) return own;
 
-        GD.PushWarning($"[gear] the model has no part '{name}'.");
-        return null;
+            GD.PushWarning($"[gear] the model has no part '{name}'.");
+            return null;
+        }
+
+        var skeleton = model.FindChildren("*", "Skeleton3D", true, false).OfType<Skeleton3D>().FirstOrDefault();
+
+        if (skeleton is null || skeleton.FindBone(bone) < 0)
+        {
+            GD.PushWarning($"[gear] the model has no bone '{bone}' to hold '{name}'.");
+            return null;
+        }
+
+        if (ResourceLoader.Load<PackedScene>(name)?.Instantiate() is not Node3D held)
+        {
+            GD.PushWarning($"[gear] '{name}' did not load.");
+            return null;
+        }
+
+        // One attachment per hand, shared by everything that hand can hold.
+        var slot = skeleton.GetNodeOrNull<BoneAttachment3D>(bone);
+
+        if (slot is null)
+        {
+            slot = new BoneAttachment3D { Name = bone, BoneName = bone };
+            skeleton.AddChild(slot);
+        }
+
+        slot.AddChild(held);
+
+        return held as MeshInstance3D ?? held.FindChildren("*", "MeshInstance3D", true, false).OfType<MeshInstance3D>().FirstOrDefault();
     }
 }

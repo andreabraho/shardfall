@@ -34,6 +34,9 @@ public static class VisualRegistry
             {
                 var instance = packed.Instantiate<Node3D>();
 
+                // Clips that ship in files of their own (REF-22).
+                AnimationLibraries.Attach(instance, def.Animations);
+
                 // Turned to face the way the engine thinks is forward, before it is fitted:
                 // the fit centres the model, and centring something that is about to be spun
                 // around leaves it off to one side.

@@ -1,7 +1,9 @@
 [
-  { "id": "mesh_placeholder_player",    "primitive": "model",    "height": 1.80, "radius": 0.38, "color": "#4fa3d0", "model_yaw": 180, "model_path": "res://assets/kaykit/characters/Knight.glb",
-    "hide": ["1H_Sword_Offhand"],
-    "gear": { "one_hand": "1H_Sword", "two_hand": "2H_Sword", "shields": ["Round_Shield", "Badge_Shield", "Rectangle_Shield", "Spike_Shield"], "helmet": "Knight_Helmet", "cape": "Knight_Cape" } },
+  { "id": "mesh_placeholder_player",    "primitive": "model",    "height": 1.80, "radius": 0.38, "color": "#4fa3d0", "model_yaw": 180, "model_path": "res://assets/kaykit/adventurers2/Knight.glb",
+    "animations": ["res://assets/kaykit/adventurers2/animations/Rig_Medium_General.glb", "res://assets/kaykit/adventurers2/animations/Rig_Medium_MovementBasic.glb", "res://assets/kaykit/adventurers2/animations/Rig_Medium_CombatMelee.glb", "res://assets/kaykit/adventurers2/animations/Rig_Medium_Simulation.glb"],
+    "gear": { "one_hand": "res://assets/kaykit/adventurers2/sword_1handed.gltf", "two_hand": "res://assets/kaykit/adventurers2/sword_2handed.gltf",
+              "shields": ["res://assets/kaykit/adventurers2/shield_round.gltf", "res://assets/kaykit/adventurers2/shield_badge.gltf", "res://assets/kaykit/adventurers2/shield_square.gltf", "res://assets/kaykit/adventurers2/shield_spikes.gltf"],
+              "helmet": ["Knight_Helmet", "Knight_HelmetVisor"], "cape": "Knight_Cape" } },
   { "id": "mesh_placeholder_humanoid",  "primitive": "model",    "height": 1.80, "radius": 0.35, "color": "#b8b8c0", "model_yaw": 180, "model_path": "res://assets/kaykit/characters/Skeleton_Warrior.glb" },
   { "id": "mesh_placeholder_quadruped", "primitive": "model",    "height": 1.40, "radius": 0.40, "color": "#8a6b4f", "model_yaw": 180, "model_path": "res://assets/kaykit/characters/Skeleton_Minion.glb" },
   { "id": "mesh_placeholder_heavy",     "primitive": "model",    "height": 2.10, "radius": 0.55, "color": "#6d7a86", "model_yaw": 180, "model_path": "res://assets/kaykit/characters/Barbarian.glb", "hide": ["1H_Axe_Offhand", "2H_Axe", "Mug"] },

@@ -594,13 +594,22 @@ public sealed class VisualDef : ContentDefBase
     public string[] Hide { get; init; } = [];
 
     /// <summary>
+    /// Files whose animation clips the model is given (REF-22): characters whose clips ship
+    /// apart from them, made for the same skeleton.
+    /// </summary>
+    public string[] Animations { get; init; } = [];
+
+    /// <summary>
     /// For a model that wears the player's gear: which of its parts stand for which piece.
     /// Shown only while that piece is worn.
     /// </summary>
     public GearPartsDef? Gear { get; init; }
 }
 
-/// <summary>The parts of a model that show what the player wears (REF-22). Mesh names in the model.</summary>
+/// <summary>
+/// The parts of a model that show what the player wears (REF-22). Each is a mesh named in the
+/// model, or a res:// scene put in the hand: a weapon in the right, a shield in the left.
+/// </summary>
 public sealed class GearPartsDef
 {
     public string OneHand { get; init; } = string.Empty;
@@ -608,7 +617,9 @@ public sealed class GearPartsDef
 
     /// <summary>Shields in order of rarity: the first for common and fine, then one per step up.</summary>
     public string[] Shields { get; init; } = [];
-    public string Helmet { get; init; } = string.Empty;
+
+    /// <summary>Every part of the helmet — a helm and its visor, say.</summary>
+    public string[] Helmet { get; init; } = [];
 
     /// <summary>Worn with epic and relic armour.</summary>
     public string Cape { get; init; } = string.Empty;
