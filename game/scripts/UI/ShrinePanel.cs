@@ -148,32 +148,55 @@ public partial class ShrinePanel : CanvasLayer
         // Moved by holding its border or title and dragging (REF-19).
         PanelMover.Attach(root, "shrine");
 
-        root.AddThemeStyleboxOverride("panel", Panel());
+        // In the original's style, as the other windows (REF-19): a dark body in a gold frame,
+        // the shrine's name on a brown title bar, the sections under gold headings, the
+        // destinations as plates in an inset, and a strip along the bottom.
+        root.AddThemeStyleboxOverride("panel", Box(new Color(0.06f, 0.055f, 0.05f, 0.96f), 2, 0));
         AddChild(root);
         _panel = root;
 
+        var outer = new VBoxContainer();
+        outer.AddThemeConstantOverride("separation", 0);
+        root.AddChild(outer);
+
+        // Title bar.
+        var bar = new PanelContainer();
+        bar.AddThemeStyleboxOverride("panel", Box(new Color(0.20f, 0.14f, 0.07f), 0, 8, bottom: 1));
+        outer.AddChild(bar);
+
+        var barRow = new HBoxContainer();
+        bar.AddChild(barRow);
+
+        _title = new Label { Text = L10n.T("Shrine"), SizeFlagsHorizontal = Control.SizeFlags.ExpandFill, VerticalAlignment = VerticalAlignment.Center };
+        _title.AddThemeFontSizeOverride("font_size", 15);
+        _title.AddThemeColorOverride("font_color", Gold);
+        barRow.AddChild(_title);
+
+        var cross = new Button { Text = "✕", Flat = true, FocusMode = Control.FocusModeEnum.None };
+        cross.AddThemeFontSizeOverride("font_size", 13);
+        cross.Pressed += Close;
+        barRow.AddChild(cross);
+
         var margin = new MarginContainer();
-        margin.AddThemeConstantOverride("margin_left", 20);
-        margin.AddThemeConstantOverride("margin_right", 20);
-        margin.AddThemeConstantOverride("margin_top", 16);
-        margin.AddThemeConstantOverride("margin_bottom", 16);
-        root.AddChild(margin);
+        margin.AddThemeConstantOverride("margin_left", 14);
+        margin.AddThemeConstantOverride("margin_right", 14);
+        margin.AddThemeConstantOverride("margin_top", 10);
+        margin.AddThemeConstantOverride("margin_bottom", 10);
+        outer.AddChild(margin);
 
-        var column = new VBoxContainer { CustomMinimumSize = new Vector2(460, 0) };
-        column.AddThemeConstantOverride("separation", 10);
+        var column = new VBoxContainer { CustomMinimumSize = new Vector2(440, 0) };
+        column.AddThemeConstantOverride("separation", 8);
         margin.AddChild(column);
-
-        _title = Heading(L10n.T("Shrine"));
-        column.AddChild(_title);
 
         _notice = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart };
         _notice.AddThemeFontSizeOverride("font_size", 12);
-        _notice.AddThemeColorOverride("font_color", new Color(0.62f, 0.70f, 0.64f));
+        _notice.AddThemeColorOverride("font_color", Soft);
         column.AddChild(_notice);
 
         // The tower's checkpoint shrines (floors four and seven) offer a free way out to the
         // tower's entrance (REF-15). Hidden everywhere else.
-        _leave = new Button { Text = L10n.T("Leave the tower (free)"), Visible = false };
+        _leave = new Button { Text = L10n.T("Leave the tower (free)"), Visible = false, CustomMinimumSize = new Vector2(0, 30), FocusMode = Control.FocusModeEnum.None };
+        Plate(_leave);
         _leave.Pressed += () =>
         {
             Close();
@@ -182,39 +205,58 @@ public partial class ShrinePanel : CanvasLayer
 
         column.AddChild(_leave);
 
-        column.AddChild(new HSeparator());
-        column.AddChild(Heading2(L10n.T("Travel")));
+        column.AddChild(Heading(L10n.T("Travel")));
+
+        // The destinations, in an inset of their own.
+        var inset = new PanelContainer();
+        inset.AddThemeStyleboxOverride("panel", Box(new Color(0.045f, 0.042f, 0.04f), 1, 4, edge: new Color(0.30f, 0.25f, 0.18f)));
+        column.AddChild(inset);
 
         _destinations = new VBoxContainer { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
-        _destinations.AddThemeConstantOverride("separation", 4);
+        _destinations.AddThemeConstantOverride("separation", 3);
 
         var scroll = new ScrollContainer
         {
-            CustomMinimumSize = new Vector2(0, 330),
+            CustomMinimumSize = new Vector2(0, 320),
             HorizontalScrollMode = ScrollContainer.ScrollMode.Disabled,
         };
 
         scroll.AddChild(_destinations);
-        column.AddChild(scroll);
+        inset.AddChild(scroll);
 
-        column.AddChild(new HSeparator());
-        column.AddChild(Heading2(L10n.T("Reconsider")));
+        column.AddChild(Heading(L10n.T("Reconsider")));
 
-        _respecCost = new Label();
-        _respecCost.AddThemeFontSizeOverride("font_size", 13);
+        _respecCost = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart };
+        _respecCost.AddThemeFontSizeOverride("font_size", 12);
+        _respecCost.AddThemeColorOverride("font_color", Soft);
         column.AddChild(_respecCost);
 
-        _respec = new Button { Text = L10n.T("Refund attribute points") };
+        _respec = new Button { Text = L10n.T("Refund attribute points"), CustomMinimumSize = new Vector2(0, 30), FocusMode = Control.FocusModeEnum.None };
+        Plate(_respec);
         _respec.Pressed += DoRespec;
         column.AddChild(_respec);
 
         _status = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart };
-        _status.AddThemeFontSizeOverride("font_size", 13);
+        _status.AddThemeFontSizeOverride("font_size", 12);
+        _status.AddThemeColorOverride("font_color", Gold);
         column.AddChild(_status);
 
-        var close = new Button { Text = L10n.T("Close  (Esc)") };
-        close.Pressed += Close;
-        column.AddChild(close);
+        // The strip along the bottom: the way to close it.
+        var foot = new PanelContainer();
+        foot.AddThemeStyleboxOverride("panel", Box(new Color(0.10f, 0.08f, 0.06f), 0, 8, top: 1));
+        outer.AddChild(foot);
+
+        var footRow = new HBoxContainer();
+        foot.AddChild(footRow);
+
+        var hint = new Label { Text = L10n.T("Esc to close"), SizeFlagsHorizontal = Control.SizeFlags.ExpandFill, VerticalAlignment = VerticalAlignment.Center };
+        hint.AddThemeFontSizeOverride("font_size", 11);
+        hint.AddThemeColorOverride("font_color", Dim);
+        footRow.AddChild(hint);
+
+        var close = Menus.MenuStyle.Small(L10n.T("Close"), Close);
+        close.FocusMode = Control.FocusModeEnum.None;
+        footRow.AddChild(close);
     }
 
     private PanelContainer _panel = null!;
@@ -241,7 +283,10 @@ public partial class ShrinePanel : CanvasLayer
     }
 
     private static readonly Color ShrineGold = new("ffd88a");
-    private static readonly Color Dim = new(0.55f, 0.58f, 0.62f);
+    private static readonly Color Gold = new(0.96f, 0.86f, 0.58f);
+    private static readonly Color Frame = new(0.62f, 0.50f, 0.28f);
+    private static readonly Color Soft = new(0.72f, 0.70f, 0.64f);
+    private static readonly Color Dim = new(0.55f, 0.53f, 0.48f);
     private static readonly Color Short = new(0.90f, 0.42f, 0.36f);
 
     /// <summary>
@@ -291,15 +336,19 @@ public partial class ShrinePanel : CanvasLayer
         _destinations.AddChild(empty);
     }
 
-    /// <summary>A map's line in the list: its name, and the levels it is meant for.</summary>
+    /// <summary>A map's line in the list: its name, and the levels it is meant for, on a brown strip.</summary>
     private static Control MapHeading(Zone zone)
     {
+        var strip = new PanelContainer();
+        strip.AddThemeStyleboxOverride("panel", Box(new Color(0.16f, 0.12f, 0.07f), 0, 6, bottom: 1));
+
         var row = new HBoxContainer();
         row.AddThemeConstantOverride("separation", 8);
+        strip.AddChild(row);
 
         var name = new Label { Text = GameItems.Localise(zone.Name) };
-        name.AddThemeFontSizeOverride("font_size", 14);
-        name.AddThemeColorOverride("font_color", new Color(0.78f, 0.82f, 0.90f));
+        name.AddThemeFontSizeOverride("font_size", 13);
+        name.AddThemeColorOverride("font_color", new Color(0.85f, 0.72f, 0.45f));
         row.AddChild(name);
 
         var band = new Label
@@ -316,8 +365,8 @@ public partial class ShrinePanel : CanvasLayer
 
         var block = new VBoxContainer();
         block.AddThemeConstantOverride("separation", 2);
-        block.AddChild(new Control { CustomMinimumSize = new Vector2(0, 4) });
-        block.AddChild(row);
+        block.AddChild(new Control { CustomMinimumSize = new Vector2(0, 2) });
+        block.AddChild(strip);
 
         return block;
     }
@@ -336,6 +385,8 @@ public partial class ShrinePanel : CanvasLayer
             Disabled = !quote.Allowed,
             FocusMode = Control.FocusModeEnum.None,
         };
+
+        Plate(button);
 
         var content = new HBoxContainer { MouseFilter = Control.MouseFilterEnum.Ignore };
         content.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
@@ -358,7 +409,7 @@ public partial class ShrinePanel : CanvasLayer
         };
 
         name.AddThemeFontSizeOverride("font_size", 13);
-        name.AddThemeColorOverride("font_color", here ? Dim : new Color(0.90f, 0.90f, 0.86f));
+        name.AddThemeColorOverride("font_color", here ? Dim : new Color(0.90f, 0.88f, 0.82f));
         content.AddChild(name);
 
         if (here)
@@ -507,34 +558,50 @@ public partial class ShrinePanel : CanvasLayer
 
     // ------------------------------------------------------------------ chrome
 
-    private static Label Heading(string text)
+    /// <summary>A section's gold heading with a thin line under it, as the skill window has.</summary>
+    private static Control Heading(string text)
     {
-        var label = new Label { Text = text };
-        label.AddThemeFontSizeOverride("font_size", 18);
+        var box = new VBoxContainer();
+        box.AddThemeConstantOverride("separation", 2);
 
-        return label;
+        var label = new Label { Text = text };
+        label.AddThemeFontSizeOverride("font_size", 13);
+        label.AddThemeColorOverride("font_color", new Color(0.85f, 0.72f, 0.45f));
+        box.AddChild(label);
+
+        box.AddChild(new ColorRect { Color = new Color(Frame, 0.6f), CustomMinimumSize = new Vector2(0, 1) });
+
+        return box;
     }
 
-    private static Label Heading2(string text)
+    /// <summary>
+    /// A button as one of the window's plates: dark, edged in bronze, lit gold under the mouse.
+    /// </summary>
+    private static void Plate(Button button)
     {
-        var label = new Label { Text = text };
-        label.AddThemeFontSizeOverride("font_size", 15);
-        label.AddThemeColorOverride("font_color", new Color(0.78f, 0.82f, 0.90f));
+        var edge = new Color(0.30f, 0.25f, 0.18f);
 
-        return label;
+        button.AddThemeStyleboxOverride("normal", Box(new Color(0.10f, 0.09f, 0.08f), 1, 6, edge: edge));
+        button.AddThemeStyleboxOverride("hover", Box(new Color(0.17f, 0.13f, 0.08f), 1, 6, edge: Frame));
+        button.AddThemeStyleboxOverride("pressed", Box(new Color(0.22f, 0.16f, 0.08f), 1, 6, edge: Gold));
+        button.AddThemeStyleboxOverride("disabled", Box(new Color(0.08f, 0.075f, 0.07f), 1, 6, edge: new Color(0.20f, 0.18f, 0.15f)));
+        button.AddThemeStyleboxOverride("focus", new StyleBoxEmpty());
+        button.AddThemeColorOverride("font_color", new Color(0.90f, 0.88f, 0.82f));
+        button.AddThemeColorOverride("font_hover_color", Gold);
+        button.AddThemeFontSizeOverride("font_size", 13);
     }
 
-    private static StyleBoxFlat Panel() => new()
+    private static StyleBoxFlat Box(Color fill, int width, int margin, int bottom = -1, int top = -1, Color? edge = null) => new()
     {
-        BgColor = new Color(0.07f, 0.08f, 0.10f, 0.97f),
-        BorderColor = new Color(0.25f, 0.28f, 0.34f),
-        BorderWidthTop = 1,
-        BorderWidthBottom = 1,
-        BorderWidthLeft = 1,
-        BorderWidthRight = 1,
-        CornerRadiusTopLeft = 6,
-        CornerRadiusTopRight = 6,
-        CornerRadiusBottomLeft = 6,
-        CornerRadiusBottomRight = 6,
+        BgColor = fill,
+        BorderColor = edge ?? Frame,
+        BorderWidthTop = top >= 0 ? top : width,
+        BorderWidthLeft = width,
+        BorderWidthRight = width,
+        BorderWidthBottom = bottom >= 0 ? bottom : width,
+        ContentMarginLeft = margin + 4,
+        ContentMarginRight = margin,
+        ContentMarginTop = margin * 0.6f,
+        ContentMarginBottom = margin * 0.6f,
     };
 }
