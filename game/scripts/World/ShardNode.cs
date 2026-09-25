@@ -186,6 +186,7 @@ public partial class ShardNode : StaticBody3D
         // A fresh modifier on every respawn, so farming a node is varied rather than identical.
         _modifier = _tier.RollModifier(GameItems.EncounterRng);
         _fight = new ShardEncounter(_tier, _modifier, GameSession.Difficulty);
+        _waiting.Clear();
         _broken = false;
 
         _self.Configure(
@@ -308,6 +309,7 @@ public partial class ShardNode : StaticBody3D
         {
             case ShardEventKind.Engaged:
                 GD.Print($"[shard] {ShardId} engaged ({_modifier})");
+                BringBackWaiting();
                 EmitSignal(SignalName.EncounterChanged);
                 break;
 
@@ -362,48 +364,74 @@ public partial class ShardNode : StaticBody3D
 
         foreach (var entry in composed)
         {
-            var angle = Mathf.Tau * index / Mathf.Max(1, composed.Count);
-            var offset = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) * SpawnRing;
-
-            if (_enemyScene.Instantiate() is not EnemyBrain add) continue;
-
-            add.EnemyId = entry.EnemyId;
-            add.Name = $"Add_{phase}_{index}";
-
-            // Adds belong to the fight, not to the world: they are cleared when the player
-            // leaves and when the shard breaks.
-            add.MoveSpeed *= (float)_fight!.Effects.AddSpeedMultiplier;
-
-            _addsRoot.AddChild(add);
-            add.PlaceAt(GlobalPosition + offset);
-
-            _adds.Add(add);
-
-            if (HuntingAdds) add.Hunt();
-
-            if (entry.IsAnchor)
-            {
-                _anchor = add;
-                // Its own body, larger and gilded: a gold skeleton standing in for a wolf or an
-                // orc read as a different creature altogether.
-                if (GameContent.Database.Enemies.TryGetValue(entry.EnemyId, out var anchorDef))
-                {
-                    add.GetNodeOrNull<VisualRoot>("VisualRoot")?.Apply(anchorDef.Visual, "#ffd24f", anchorDef.VisualScale * 1.2);
-                }
-
-                // The one add the player has to find in a crowd, so it gets a louder plate
-                // and says why it matters.
-                add.Plate.Rank = NameRank.Elite;
-                add.Plate.Tint = new Color("ffd24f");
-                add.Plate.Offset = new Vector3(0, 2.7f, 0);
-                add.LabelPlate(L10n.T("ANCHOR"));
-            }
-
+            SpawnAdd(entry.EnemyId, entry.IsAnchor, $"Add_{phase}_{index}", index, composed.Count);
             index++;
         }
 
         GD.Print($"[shard] wave {phase}: {composed.Count} adds"
             + (composed.Any(c => c.IsAnchor) ? " (anchor marked)" : ""));
+    }
+
+    /// <summary>
+    /// The adds still standing when the player walked out (2026-09-25). They are cleared with
+    /// the fight, and brought back — these, and only these — when the player walks in again:
+    /// the ones killed stay killed, and the ones left alive are not lost.
+    /// </summary>
+    private readonly List<(string EnemyId, bool Anchor)> _waiting = [];
+
+    private void BringBackWaiting()
+    {
+        if (_waiting.Count == 0) return;
+
+        for (var i = 0; i < _waiting.Count; i++)
+        {
+            SpawnAdd(_waiting[i].EnemyId, _waiting[i].Anchor, $"Add_Back_{i}", i, _waiting.Count);
+        }
+
+        GD.Print($"[shard] {ShardId}: {_waiting.Count} add(s) left alive come back");
+        _waiting.Clear();
+    }
+
+    private void SpawnAdd(string enemyId, bool isAnchor, string name, int index, int count)
+    {
+        if (_enemyScene is null || _fight is null) return;
+
+        var angle = Mathf.Tau * index / Mathf.Max(1, count);
+        var offset = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) * SpawnRing;
+
+        if (_enemyScene.Instantiate() is not EnemyBrain add) return;
+
+        add.EnemyId = enemyId;
+        add.Name = name;
+
+        // Adds belong to the fight, not to the world: they are cleared when the player
+        // leaves (and the living ones brought back on return) and when the shard breaks.
+        add.MoveSpeed *= (float)_fight!.Effects.AddSpeedMultiplier;
+
+        _addsRoot.AddChild(add);
+        add.PlaceAt(GlobalPosition + offset);
+
+        _adds.Add(add);
+
+        if (HuntingAdds) add.Hunt();
+
+        if (isAnchor)
+        {
+            _anchor = add;
+            // Its own body, larger and gilded: a gold skeleton standing in for a wolf or an
+            // orc read as a different creature altogether.
+            if (GameContent.Database.Enemies.TryGetValue(enemyId, out var anchorDef))
+            {
+                add.GetNodeOrNull<VisualRoot>("VisualRoot")?.Apply(anchorDef.Visual, "#ffd24f", anchorDef.VisualScale * 1.2);
+            }
+
+            // The one add the player has to find in a crowd, so it gets a louder plate
+            // and says why it matters.
+            add.Plate.Rank = NameRank.Elite;
+            add.Plate.Tint = new Color("ffd24f");
+            add.Plate.Offset = new Vector3(0, 2.7f, 0);
+            add.LabelPlate(L10n.T("ANCHOR"));
+        }
     }
 
     /// <summary>
@@ -683,6 +711,13 @@ public partial class ShardNode : StaticBody3D
     private void Disengage()
     {
         GD.Print($"[shard] {ShardId} reset — the player left the zone");
+
+        _waiting.Clear();
+
+        foreach (var add in _adds.Where(a => IsInstanceValid(a) && !a.IsDead))
+        {
+            _waiting.Add((add.EnemyId, add == _anchor));
+        }
 
         ClearAdds();
         _telegraph.Cancel();
