@@ -46,10 +46,20 @@ public partial class ShrineNode : Area3D
 
         _visual = GetNodeOrNull<Visual.VisualRoot>("VisualRoot");
 
+        // The stone stands on the ground whatever height the scene put its visual at: the
+        // placeholder was a cylinder centred at half its height, the waystone is a model.
+        if (_visual is not null && GameContent.IsLoaded
+            && GameContent.Database.Visuals.TryGetValue(_visual.VisualId, out var look))
+        {
+            _visual.Position = new Vector3(0, (float)look.Height / 2, 0);
+        }
+
+        BuildCrystal();
+
         _plate = new Combat.NamePlate
         {
             Name = "NamePlate",
-            Offset = new Vector3(0, 2.4f, 0),
+            Offset = new Vector3(0, 3.9f, 0),
             Rank = Combat.NameRank.Elite,
         };
 
@@ -79,7 +89,16 @@ public partial class ShrineNode : Area3D
 
         if (_plate is not null) _plate.Tint = colour;
 
-        if (_visual is not null) _visual.Apply(_visual.VisualId, "#" + colour.ToHtml(false), _visual.VisualScale);
+        // The stone keeps its own colour; the crystal over it says whether it is known — dull
+        // until the player has touched it, gold and glowing after.
+        if (_crystalMaterial is not null)
+        {
+            _crystalMaterial.AlbedoColor = colour;
+            _crystalMaterial.Emission = colour;
+            _crystalMaterial.EmissionEnergyMultiplier = known ? 1.6f : 0.15f;
+        }
+
+        if (_light is not null) _light.Visible = known;
     }
 
     private void OnBodyEntered(Node3D body)
@@ -103,10 +122,68 @@ public partial class ShrineNode : Area3D
             ? $"[shrine] discovered {ShrineId}"
             : $"[shrine] rested at {ShrineId}");
 
-        if (GetTree().CurrentScene?.GetNodeOrNull<UI.ShrinePanel>("ShrinePanel") is { } panel)
+        if (GetTree().CurrentScene?.GetNodeOrNull<UI.ShrinePanel>("Session/ShrinePanel") is { } panel)
         {
             panel.Announce(Label(), first);
         }
+    }
+
+    private MeshInstance3D? _crystal;
+    private StandardMaterial3D? _crystalMaterial;
+    private OmniLight3D? _light;
+    private double _time;
+
+    /// <summary>Height the crystal floats at, over the top of the stone.</summary>
+    private const float CrystalHeight = 3.1f;
+
+    /// <summary>
+    /// The waystone's crystal (REF-08): a gem turning slowly over the obelisk, and a light
+    /// once the stone is known. The grey cylinder it replaces read as a post, not as a place
+    /// to rest, travel from and rethink a build.
+    /// </summary>
+    private void BuildCrystal()
+    {
+        _crystalMaterial = new StandardMaterial3D
+        {
+            AlbedoColor = Unlit,
+            EmissionEnabled = true,
+            Emission = Unlit,
+            Metallic = 0.3f,
+            Roughness = 0.25f,
+        };
+
+        // Four sides and two rings: a sphere with that few faces is an octahedron — a gem.
+        _crystal = new MeshInstance3D
+        {
+            Name = "Crystal",
+            Mesh = new SphereMesh { Radius = 0.32f, Height = 0.9f, RadialSegments = 4, Rings = 2 },
+            MaterialOverride = _crystalMaterial,
+            Position = new Vector3(0, CrystalHeight, 0),
+            CastShadow = GeometryInstance3D.ShadowCastingSetting.Off,
+        };
+
+        AddChild(_crystal);
+
+        _light = new OmniLight3D
+        {
+            Name = "Glow",
+            Position = new Vector3(0, CrystalHeight, 0),
+            LightColor = Lit,
+            LightEnergy = 1.4f,
+            OmniRange = 7f,
+            Visible = false,
+        };
+
+        AddChild(_light);
+    }
+
+    public override void _Process(double delta)
+    {
+        if (_crystal is null) return;
+
+        _time += delta;
+        _crystal.Rotation = new Vector3(0, (float)(_time * 0.8), 0);
+        _crystal.Position = new Vector3(0, CrystalHeight + (0.12f * Mathf.Sin((float)_time * 1.6f)), 0);
     }
 
     private void OnBodyExited(Node3D body)
@@ -135,7 +212,7 @@ public partial class ShrineNode : Area3D
     {
         if (!_playerInside || !@event.IsActionPressed(GameActions.Interact)) return;
 
-        if (GetTree().CurrentScene?.GetNodeOrNull<UI.ShrinePanel>("ShrinePanel") is not { } panel) return;
+        if (GetTree().CurrentScene?.GetNodeOrNull<UI.ShrinePanel>("Session/ShrinePanel") is not { } panel) return;
 
         panel.Open(ShrineId);
         GetViewport().SetInputAsHandled();

@@ -6,7 +6,7 @@
   { "id": "mesh_placeholder_caster",    "primitive": "model",    "height": 1.85, "radius": 0.36, "color": "#8f6ad2", "model_yaw": 180, "model_path": "res://assets/kaykit/characters/Skeleton_Mage.glb" },
   { "id": "mesh_placeholder_rogue",     "primitive": "model",    "height": 1.78, "radius": 0.36, "color": "#6f5a8c", "model_yaw": 180, "model_path": "res://assets/kaykit/characters/Skeleton_Rogue.glb" },
   { "id": "mesh_placeholder_monolith",  "primitive": "monolith", "height": 3.20, "radius": 0.80, "color": "#7a4fd0" },
-  { "id": "mesh_placeholder_shrine",    "primitive": "cylinder", "height": 1.70, "radius": 0.45, "color": "#55606b" },
+  { "id": "mesh_placeholder_shrine",    "primitive": "model",    "height": 2.60, "radius": 0.45, "color": "#8a8f98", "model_path": "res://assets/kenney/graveyard/pillar-obelisk.glb" },
   { "id": "mesh_placeholder_villager",  "primitive": "capsule",  "height": 1.75, "radius": 0.34, "color": "#a89a86" },
 
   // Map-one animals: Quaternius Ultimate Animated Animals and Easy Enemies (CC0).

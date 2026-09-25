@@ -34,9 +34,9 @@ public static class ExperienceTable
         return total;
     }
 
-    /// <summary>Experience a same-level trash enemy is worth.</summary>
+    /// <summary>Experience a same-level trash enemy is worth. Cut by a fifth on 2026-09-25 (REF-08).</summary>
     public static long TrashXp(int enemyLevel) =>
-        (long)Math.Round(1.1 * Math.Pow(Math.Max(1, enemyLevel), 1.85), MidpointRounding.AwayFromZero);
+        (long)Math.Round(0.88 * Math.Pow(Math.Max(1, enemyLevel), 1.85), MidpointRounding.AwayFromZero);
 
     /// <summary>Experience for breaking a shard of this tier.</summary>
     public static long ShardXp(int tier, int level) =>
@@ -57,7 +57,7 @@ public static class ExperienceTable
     /// </para>
     /// </summary>
     public static long QuestXp(int level) =>
-        (long)Math.Round(140 * Math.Pow(Math.Max(1, level), 1.85), MidpointRounding.AwayFromZero);
+        (long)Math.Round(134 * Math.Pow(Math.Max(1, level), 1.85), MidpointRounding.AwayFromZero);
 
     /// <summary>
     /// Adjusts a reward for the gap between the player and the zone they are in (FR-2.7).

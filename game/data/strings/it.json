@@ -336,6 +336,7 @@
   "Level {0}": "Livello {0}",
   "Level {0}   {1:N0} / {2:N0} xp": "Livello {0}   {1:N0} / {2:N0} esp",
   "Level {0} (max)": "Livello {0} (max)",
+  "Level {0}! +{1} attribute points, +{2} skill point.": "Livello {0}! +{1} punti attributo, +{2} punto abilità.",
   "Load": "Carica",
   "Load a game": "Carica una partita",
   "Load game": "Carica partita",

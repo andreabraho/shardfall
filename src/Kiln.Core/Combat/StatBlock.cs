@@ -70,15 +70,15 @@ public sealed class StatBlock
     public double Defense => FlatDefense
         ?? (ArmorValue + (Attributes.Vit * 0.8) + (Level * 0.6) + Modifiers.DefenseFlat);
 
-    public double CritChance => Math.Clamp(0.03 + (Attributes.Dex * 0.0012) + Modifiers.CritChance, 0, CritChanceCap);
+    public double CritChance => Math.Clamp(0.03 + (Attributes.Dex * 0.0016) + Modifiers.CritChance, 0, CritChanceCap);
 
     public double CritDamage => 1.50 + Modifiers.CritDamage;
 
-    public double PierceChance => Math.Clamp((Attributes.Dex * 0.0008) + Modifiers.PierceChance, 0, PierceChanceCap);
+    public double PierceChance => Math.Clamp((Attributes.Dex * 0.0011) + Modifiers.PierceChance, 0, PierceChanceCap);
 
-    public double Evasion => Math.Clamp((Attributes.Dex * 0.0006) + Modifiers.Evasion, 0, EvasionCap);
+    public double Evasion => Math.Clamp((Attributes.Dex * 0.0008) + Modifiers.Evasion, 0, EvasionCap);
 
-    public double AttackSpeed => Math.Min(100 + (Attributes.Dex * 0.5) + Modifiers.AttackSpeedFlat, AttackSpeedCap);
+    public double AttackSpeed => Math.Min(100 + (Attributes.Dex * 0.65) + Modifiers.AttackSpeedFlat, AttackSpeedCap);
 
     /// <summary>Attacks per second. 100 attack speed = 1.0/s.</summary>
     public double AttacksPerSecond => AttackSpeed / 100.0;

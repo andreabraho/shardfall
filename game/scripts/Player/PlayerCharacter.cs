@@ -226,6 +226,10 @@ public partial class PlayerCharacter : Node
         {
             GD.Print($"[progression] level {level.NewLevel} — {level.AttributePoints} attribute points, {level.SkillPoints} skill points");
             EmitSignal(SignalName.LeveledUp, level.NewLevel);
+
+            UI.ChatLog.Post(
+                Kiln.Core.Foundation.L10n.F("Level {0}! +{1} attribute points, +{2} skill point.", level.NewLevel, level.AttributePoints, level.SkillPoints),
+                new Color("9fe07a"));
         }
 
         // Level-up restores and is announced loudly: it is the reward beat of the loop.

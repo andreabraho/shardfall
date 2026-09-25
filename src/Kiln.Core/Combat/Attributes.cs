@@ -8,7 +8,7 @@ public readonly record struct Attributes(int Str, int Dex, int Int, int Vit)
     public const int StartingValue = 6;
 
     /// <summary>Points granted per level.</summary>
-    public const int PointsPerLevel = 4;
+    public const int PointsPerLevel = 3;
 
     public static readonly Attributes Starting =
         new(StartingValue, StartingValue, StartingValue, StartingValue);
