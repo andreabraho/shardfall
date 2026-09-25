@@ -231,7 +231,8 @@ public partial class SkillSlot : Control
             DrawString(font, new Vector2(0, Side * 0.62f), seconds, HorizontalAlignment.Center, Side, 20, Colors.White);
         }
 
-        if (!_learned)
+        // With an icon the dimmed picture already says it; the word is for the name-only face.
+        if (!_learned && SkillIcons.For(SkillId) is null)
         {
             DrawString(font, new Vector2(0, Side - 6), L10n.T("unlearned"), HorizontalAlignment.Center, Side, 11,
                 new Color(0.75f, 0.75f, 0.78f));

@@ -1,0 +1,16 @@
+Skill icons from game-icons.net (https://game-icons.net), licensed CC BY 3.0
+(https://creativecommons.org/licenses/by/3.0/). Downloaded 2026-09-25 from
+https://github.com/game-icons/icons (branch master). Modified: the black background
+square path was removed; the icon shapes are unchanged.
+
+Attribution: Icons made by Lorc and Delapouite. Available on https://game-icons.net
+
+file                      author       source path
+skl_heavy_strike.svg      Lorc         lorc/sword-wound.svg
+skl_cleave.svg            Lorc         lorc/sword-slice.svg
+skl_whirlwind.svg         Lorc         lorc/sword-spin.svg
+skl_ground_slam.svg       Lorc         lorc/earth-crack.svg
+skl_guard_stance.svg      Lorc         lorc/bordered-shield.svg
+skl_shield_bash.svg       Delapouite   delapouite/shield-bash.svg
+skl_iron_skin.svg         Delapouite   delapouite/armor-upgrade.svg
+skl_blade_aura.svg        Lorc         lorc/aura.svg
