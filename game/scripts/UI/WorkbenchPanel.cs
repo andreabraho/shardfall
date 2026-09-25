@@ -161,6 +161,9 @@ public partial class WorkbenchPanel : CanvasLayer
             CustomMinimumSize = new Vector2(340, 0),
         };
 
+        // Moved by holding its border or title and dragging (REF-19).
+        PanelMover.Attach(_root, "workbench");
+
         _root.AddThemeStyleboxOverride("panel", Style(new Color(0.07f, 0.08f, 0.10f, 0.97f)));
         AddChild(_root);
 

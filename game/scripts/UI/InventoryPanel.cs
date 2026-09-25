@@ -131,6 +131,9 @@ public partial class InventoryPanel : CanvasLayer
             GrowVertical = Control.GrowDirection.Both,
         };
 
+        // Moved by holding its border or title and dragging (REF-19).
+        PanelMover.Attach(_root, "inventory");
+
         _root.AddThemeStyleboxOverride("panel", Background(new Color(0.07f, 0.08f, 0.10f, 0.96f)));
         AddChild(_root);
 

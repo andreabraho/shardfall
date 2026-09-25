@@ -52,6 +52,9 @@ public partial class DialoguePanel : CanvasLayer
             GrowVertical = Control.GrowDirection.Both,
         };
 
+        // Moved by holding its border or title and dragging (REF-19).
+        PanelMover.Attach(_box, "dialogue");
+
         _box.AddThemeStyleboxOverride("panel", Box(new Color(0.06f, 0.055f, 0.05f, 0.96f), Frame, 2, 0));
 
         var column = new VBoxContainer();

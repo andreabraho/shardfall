@@ -114,12 +114,15 @@ public partial class SkillPanel : CanvasLayer
             AnchorTop = 0,
             AnchorBottom = 0,
             // Beside the minimap and the quest, not over them.
-            OffsetLeft = -(Width + Minimap.Diameter + 48),
-            OffsetRight = -(Minimap.Diameter + 48),
+            OffsetLeft = -(Width + 324),
+            OffsetRight = -324,
             OffsetTop = 60,
             GrowHorizontal = Control.GrowDirection.Begin,
             GrowVertical = Control.GrowDirection.End,
         };
+
+        // Moved by holding its border or title and dragging (REF-19).
+        PanelMover.Attach(root, "skills");
 
         root.AddThemeStyleboxOverride("panel", Box(new Color(0.06f, 0.055f, 0.05f, 0.96f), 2, 0));
         AddChild(root);

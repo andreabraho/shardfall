@@ -145,6 +145,9 @@ public partial class ShrinePanel : CanvasLayer
             GrowVertical = Control.GrowDirection.Both,
         };
 
+        // Moved by holding its border or title and dragging (REF-19).
+        PanelMover.Attach(root, "shrine");
+
         root.AddThemeStyleboxOverride("panel", Panel());
         AddChild(root);
         _panel = root;

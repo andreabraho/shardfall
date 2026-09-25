@@ -107,6 +107,9 @@ public partial class CharacterPanel : CanvasLayer
             GrowVertical = Control.GrowDirection.Both,
         };
 
+        // Moved by holding its border or title and dragging (REF-19).
+        PanelMover.Attach(root, "character");
+
         root.AddThemeStyleboxOverride("panel", Panel());
         AddChild(root);
 

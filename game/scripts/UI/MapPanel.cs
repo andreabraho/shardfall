@@ -150,6 +150,9 @@ public partial class MapPanel : CanvasLayer
             GrowVertical = Control.GrowDirection.Both,
         };
 
+        // Moved by holding its border or title and dragging (REF-19).
+        PanelMover.Attach(root, "map");
+
         root.AddThemeStyleboxOverride("panel", new StyleBoxFlat
         {
             BgColor = new Color(0.1f, 0.11f, 0.13f, 0.96f),
