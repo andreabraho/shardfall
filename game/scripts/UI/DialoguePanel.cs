@@ -56,6 +56,7 @@ public partial class DialoguePanel : CanvasLayer
         PanelMover.Attach(_box, "dialogue");
 
         _box.AddThemeStyleboxOverride("panel", Box(new Color(0.06f, 0.055f, 0.05f, 0.96f), Frame, 2, 0));
+        AddChild(_box);
 
         var column = new VBoxContainer();
         column.AddThemeConstantOverride("separation", 0);
