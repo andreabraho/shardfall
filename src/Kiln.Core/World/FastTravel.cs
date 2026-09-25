@@ -37,11 +37,11 @@ public readonly record struct TravelQuote(bool Allowed, long Cost, TravelRefusal
 /// </remarks>
 public sealed class FastTravelNetwork
 {
-    /// <summary>Flat fee, before the band scaling.</summary>
-    public const long BaseCost = 120;
+    /// <summary>Flat fee, before the band scaling. Five times the first draft's (REF-14).</summary>
+    public const long BaseCost = 600;
 
     /// <summary>Added per level of the destination band's floor.</summary>
-    public const long CostPerBandLevel = 45;
+    public const long CostPerBandLevel = 225;
 
     private readonly ZoneGraph _graph;
     private readonly HashSet<string> _discovered = new(StringComparer.Ordinal);

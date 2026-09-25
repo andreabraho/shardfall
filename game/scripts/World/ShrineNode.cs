@@ -25,6 +25,12 @@ public partial class ShrineNode : Area3D
     private Combat.NamePlate? _plate;
     private bool _playerInside;
 
+    /// <summary>The least time between two shrine saves (REF-14).</summary>
+    public const double AutosaveEverySeconds = 300;
+
+    /// <summary>When a shrine last saved, across every shrine and map of the session.</summary>
+    private static double _lastSaved = double.MinValue / 2;
+
     [Export] public string ShrineId { get; set; } = "";
 
     [Export] public float Radius { get; set; } = 3.2f;
@@ -115,8 +121,16 @@ public partial class ShrineNode : Area3D
         Restore(body);
 
         // A shrine is the save point (WLD-02). Written after the restore, so the save holds
-        // the rested character rather than the one who walked up.
-        Saving.SaveService.Autosave($"Rested at {ShrineId}");
+        // the rested character rather than the one who walked up — but at most once every
+        // few minutes (REF-14), so a camp walked through again and again does not save every
+        // time. A shrine found for the first time always saves.
+        var now = Time.GetTicksMsec() / 1000.0;
+
+        if (first || now - _lastSaved >= AutosaveEverySeconds)
+        {
+            _lastSaved = now;
+            Saving.SaveService.Autosave($"Rested at {ShrineId}");
+        }
 
         GD.Print(first
             ? $"[shrine] discovered {ShrineId}"

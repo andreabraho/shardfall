@@ -44,7 +44,7 @@ Every MUST is an MVP exit gate — the vertical slice is not done until all of t
 | FR-3.6 | Threat/aggro system: proximity + damage + taunt; aggro leash and de-aggro on leash break | MUST |
 | FR-3.7 | Enemy roles: Bruiser, Archer, Shielder, Mender, Bomber — each with distinct AI and a kill-priority identity | MUST |
 | FR-3.8 | Elite and boss variants with phases, at least 3 mechanics each | MUST |
-| FR-3.9 | Death → respawn at last shrine in ≤ 4 s, with the difficulty-appropriate penalty | MUST |
+| FR-3.9 | Death → respawn at last shrine or in the village (player's choice) in ≤ 4 s, with the difficulty-appropriate penalty | MUST |
 
 ## FR-4 Shard (metin stone) encounters
 

@@ -432,5 +432,5 @@ These are requirements, not nice-to-haves:
   junk → sell all junk" flow.
 - Map with fog of war, shard-node overlay, quest markers, custom pins.
 - Skippable cutscenes, re-readable dialogue log, re-watchable cutscene gallery.
-- Death → respawn at the last shrine in ≤ 4 seconds. Long death sequences are the fastest
+- Death → respawn at the last shrine or in the village, the player's choice (REF-14), in ≤ 4 seconds. Long death sequences are the fastest
   way to make a hard game feel unfair.

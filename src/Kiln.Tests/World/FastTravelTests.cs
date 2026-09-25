@@ -80,7 +80,7 @@ public class FastTravelTests
 
         // The fee exists to make travel a decision, not a toll gate: by the time walking is
         // tedious it has to be affordable, so it stays far under a single band's income.
-        Assert.True(far < 1000);
+        Assert.True(far < 5000);
     }
 
     [Fact]

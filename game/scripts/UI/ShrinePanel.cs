@@ -156,7 +156,7 @@ public partial class ShrinePanel : CanvasLayer
         margin.AddThemeConstantOverride("margin_bottom", 16);
         root.AddChild(margin);
 
-        var column = new VBoxContainer { CustomMinimumSize = new Vector2(420, 0) };
+        var column = new VBoxContainer { CustomMinimumSize = new Vector2(460, 0) };
         column.AddThemeConstantOverride("separation", 10);
         margin.AddChild(column);
 
@@ -171,9 +171,17 @@ public partial class ShrinePanel : CanvasLayer
         column.AddChild(new HSeparator());
         column.AddChild(Heading2(L10n.T("Travel")));
 
-        _destinations = new VBoxContainer();
+        _destinations = new VBoxContainer { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
         _destinations.AddThemeConstantOverride("separation", 4);
-        column.AddChild(_destinations);
+
+        var scroll = new ScrollContainer
+        {
+            CustomMinimumSize = new Vector2(0, 330),
+            HorizontalScrollMode = ScrollContainer.ScrollMode.Disabled,
+        };
+
+        scroll.AddChild(_destinations);
+        column.AddChild(scroll);
 
         column.AddChild(new HSeparator());
         column.AddChild(Heading2(L10n.T("Reconsider")));
@@ -215,6 +223,15 @@ public partial class ShrinePanel : CanvasLayer
         RefreshRespec();
     }
 
+    private static readonly Color ShrineGold = new("ffd88a");
+    private static readonly Color Dim = new(0.55f, 0.58f, 0.62f);
+    private static readonly Color Short = new(0.90f, 0.42f, 0.36f);
+
+    /// <summary>
+    /// The travel list (REF-14): every shrine found, under the map it stands on, maps in the
+    /// order of their levels, each with its level range. The shrine the player stands at is
+    /// listed too, greyed, so the list reads as the whole network rather than as "elsewhere".
+    /// </summary>
     private void RefreshTravel()
     {
         foreach (var child in _destinations.GetChildren()) child.QueueFree();
@@ -223,28 +240,25 @@ public partial class ShrinePanel : CanvasLayer
         var inCombat = InCombat();
         var any = false;
 
-        foreach (var shrine in GameWorld.Travel.Destinations())
+        var maps = GameWorld.Travel.Destinations()
+            .GroupBy(s => s.Zone)
+            .Select(g => (Zone: GameWorld.Graph[g.Key], Shrines: g.ToList()))
+            .Where(m => m.Zone is not null)
+            .OrderBy(m => m.Zone!.Band.Min)
+            .ThenBy(m => m.Zone!.Id, System.StringComparer.Ordinal);
+
+        foreach (var (zone, shrines) in maps)
         {
-            var quote = GameWorld.Travel.Quote(shrine.Id, yang, inCombat);
+            _destinations.AddChild(MapHeading(zone!));
 
-            // Where you are standing is not a destination; everything else is listed even when
-            // it is refused, so the player can see what the trip would cost.
-            if (quote.Refusal == TravelRefusal.AlreadyHere) continue;
-
-            any = true;
-
-            var zone = GameWorld.Graph[shrine.Zone];
-            var row = new Button
+            foreach (var shrine in shrines)
             {
-                Text = $"{GameItems.Localise(shrine.Name)}  —  {GameItems.Localise(zone?.Name ?? "")}   "
-                    + L10n.F("{0:N0} gan", quote.Cost),
-                Disabled = !quote.Allowed,
-                Alignment = HorizontalAlignment.Left,
-            };
+                var quote = GameWorld.Travel.Quote(shrine.Id, yang, inCombat);
 
-            var id = shrine.Id;
-            row.Pressed += () => Travel(id);
-            _destinations.AddChild(row);
+                if (quote.Refusal != TravelRefusal.AlreadyHere) any = true;
+
+                _destinations.AddChild(Destination(shrine, quote));
+            }
         }
 
         if (any) return;
@@ -256,8 +270,101 @@ public partial class ShrinePanel : CanvasLayer
         };
 
         empty.AddThemeFontSizeOverride("font_size", 12);
-        empty.AddThemeColorOverride("font_color", new Color(0.55f, 0.58f, 0.62f));
+        empty.AddThemeColorOverride("font_color", Dim);
         _destinations.AddChild(empty);
+    }
+
+    /// <summary>A map's line in the list: its name, and the levels it is meant for.</summary>
+    private static Control MapHeading(Zone zone)
+    {
+        var row = new HBoxContainer();
+        row.AddThemeConstantOverride("separation", 8);
+
+        var name = new Label { Text = GameItems.Localise(zone.Name) };
+        name.AddThemeFontSizeOverride("font_size", 14);
+        name.AddThemeColorOverride("font_color", new Color(0.78f, 0.82f, 0.90f));
+        row.AddChild(name);
+
+        var band = new Label
+        {
+            Text = L10n.F("level {0}", zone.Band),
+            SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
+            HorizontalAlignment = HorizontalAlignment.Right,
+            VerticalAlignment = VerticalAlignment.Center,
+        };
+
+        band.AddThemeFontSizeOverride("font_size", 12);
+        band.AddThemeColorOverride("font_color", Dim);
+        row.AddChild(band);
+
+        var block = new VBoxContainer();
+        block.AddThemeConstantOverride("separation", 2);
+        block.AddChild(new Control { CustomMinimumSize = new Vector2(0, 4) });
+        block.AddChild(row);
+
+        return block;
+    }
+
+    /// <summary>
+    /// One shrine: the lit-crystal mark, its name, and what the trip costs with the coin
+    /// before it — red when the purse is short. The shrine underfoot says so instead.
+    /// </summary>
+    private Control Destination(Shrine shrine, TravelQuote quote)
+    {
+        var here = quote.Refusal == TravelRefusal.AlreadyHere;
+
+        var button = new Button
+        {
+            CustomMinimumSize = new Vector2(0, 30),
+            Disabled = !quote.Allowed,
+            FocusMode = Control.FocusModeEnum.None,
+        };
+
+        var content = new HBoxContainer { MouseFilter = Control.MouseFilterEnum.Ignore };
+        content.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
+        content.OffsetLeft = 10;
+        content.OffsetRight = -10;
+        content.AddThemeConstantOverride("separation", 8);
+        button.AddChild(content);
+
+        var mark = new Label { Text = "◆", VerticalAlignment = VerticalAlignment.Center, MouseFilter = Control.MouseFilterEnum.Ignore };
+        mark.AddThemeFontSizeOverride("font_size", 12);
+        mark.AddThemeColorOverride("font_color", here ? Dim : ShrineGold);
+        content.AddChild(mark);
+
+        var name = new Label
+        {
+            Text = GameItems.Localise(shrine.Name),
+            VerticalAlignment = VerticalAlignment.Center,
+            SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
+            MouseFilter = Control.MouseFilterEnum.Ignore,
+        };
+
+        name.AddThemeFontSizeOverride("font_size", 13);
+        name.AddThemeColorOverride("font_color", here ? Dim : new Color(0.90f, 0.90f, 0.86f));
+        content.AddChild(name);
+
+        if (here)
+        {
+            var label = new Label { Text = L10n.T("you are here"), VerticalAlignment = VerticalAlignment.Center, MouseFilter = Control.MouseFilterEnum.Ignore };
+            label.AddThemeFontSizeOverride("font_size", 12);
+            label.AddThemeColorOverride("font_color", Dim);
+            content.AddChild(label);
+        }
+        else
+        {
+            var cost = Coin.Amount(quote.Cost, 13, quote.Refusal == TravelRefusal.NotEnoughYang ? Short : ShrineGold);
+            cost.SizeFlagsVertical = Control.SizeFlags.ShrinkCenter;
+            content.AddChild(cost);
+        }
+
+        // A refused trip still shows what it would cost, only dimmer.
+        if (!quote.Allowed && !here) content.Modulate = new Color(1, 1, 1, 0.6f);
+
+        var id = shrine.Id;
+        button.Pressed += () => Travel(id);
+
+        return button;
     }
 
     private void RefreshRespec()

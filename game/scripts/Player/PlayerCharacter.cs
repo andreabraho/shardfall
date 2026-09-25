@@ -1,3 +1,4 @@
+using System.Linq;
 using Godot;
 using Kiln.Core.Combat;
 using Kiln.Core.Foundation;
@@ -330,42 +331,96 @@ public partial class PlayerCharacter : Node
         Combat.CombatFeedback.Heal(_motor.GlobalPosition + (Vector3.Up * 2.0f), amount);
     }
 
-    private Vector3 RespawnPoint()
+    /// <summary>
+    /// Death (REF-14): the cost is paid at once, then the player chooses where to get up — at
+    /// the last shrine touched (the tower's last safe floor, inside the tower) or back in the
+    /// village, as in the original.
+    /// </summary>
+    private void OnDied()
     {
-        var anchor = World.GameWorld.IsLoaded ? World.GameWorld.Travel.Anchor : null;
-
-        if (anchor is null) return _spawnPoint;
-
-        foreach (var node in GetTree().GetNodesInGroup("shrines"))
-        {
-            if (node is World.ShrineNode shrine && shrine.ShrineId == anchor)
-            {
-                return shrine.GlobalPosition + new Vector3(0, 0.1f, 2.5f);
-            }
-        }
-
-        return _spawnPoint;
-    }
-
-    private async void OnDied()
-    {
-        var at = RespawnPoint();
-
         Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndPlayerDeath);
 
         PayDeathCost();
 
-        GD.Print($"[combat] player died — respawning at {(World.GameWorld.IsLoaded ? World.GameWorld.Travel.Anchor ?? "start" : "start")}");
+        var anchor = World.GameWorld.IsLoaded ? World.GameWorld.Travel.Anchor : null;
+        var tower = GetTree().GetFirstNodeInGroup("tower") as World.TowerNode;
+        var village = VillageShrine();
+
+        GD.Print($"[combat] player died — last shrine {anchor ?? "none"}{(tower is null ? "" : ", in the tower")}");
         _motor.Stop();
 
-        await ToSignal(GetTree().CreateTimer(RespawnSeconds), SceneTreeTimer.SignalName.Timeout);
+        var here = tower is not null ? Kiln.Core.Foundation.L10n.T("the last safe floor")
+            : anchor is not null ? ShrineName(anchor)
+            : Kiln.Core.Foundation.L10n.T("the map's entrance");
 
+        // The village is not offered twice: when the last shrine is the village's, one button.
+        var offerVillage = village is not null && (tower is not null || anchor != village);
+
+        var panel = UI.DeathPanel.Open(GetTree().CurrentScene, here, offerVillage ? ShrineName(village!) : null, RespawnSeconds);
+        panel.Chosen += toVillage => GetUp(toVillage ? village : null, tower);
+    }
+
+    /// <summary>The village's shrine: the first travel shrine of the hub.</summary>
+    private static string? VillageShrine()
+    {
+        if (!World.GameWorld.IsLoaded || World.GameWorld.Graph.Hub is not { } hub) return null;
+
+        return World.GameWorld.Graph.ShrinesIn(hub.Id).FirstOrDefault(s => s.FastTravel)?.Id;
+    }
+
+    private static string ShrineName(string shrineId) =>
+        World.GameWorld.Graph.Shrine(shrineId) is { } shrine ? Items.GameItems.Localise(shrine.Name) : shrineId;
+
+    /// <summary>
+    /// Brings the player back: at <paramref name="shrineId"/> when it is given (the village),
+    /// otherwise at the last shrine. A shrine on another map loads that map.
+    /// </summary>
+    private void GetUp(string? shrineId, World.TowerNode? tower)
+    {
         if (!IsInstanceValid(this)) return;
 
         // Inside the tower the tower decides where the player comes back, and puts them there.
-        if (GetTree().GetFirstNodeInGroup("tower") is World.TowerNode tower) tower.RespawnPlayer();
-        else _motor.GlobalPosition = at;
+        if (shrineId is null && tower is not null && IsInstanceValid(tower))
+        {
+            tower.RespawnPlayer();
+            Stand();
+            return;
+        }
 
+        var target = shrineId ?? (World.GameWorld.IsLoaded ? World.GameWorld.Travel.Anchor : null);
+
+        if (target is null)
+        {
+            _motor.GlobalPosition = _spawnPoint;
+            Stand();
+            return;
+        }
+
+        foreach (var node in GetTree().GetNodesInGroup("shrines"))
+        {
+            if (node is not World.ShrineNode shrine || shrine.ShrineId != target) continue;
+
+            _motor.GlobalPosition = shrine.GlobalPosition + World.ShrineNode.ArrivalOffset;
+            Stand();
+            return;
+        }
+
+        if (World.GameWorld.Graph.Shrine(target) is not { } far)
+        {
+            _motor.GlobalPosition = _spawnPoint;
+            Stand();
+            return;
+        }
+
+        // On another map: revived first, so the health that crosses over is full.
+        _combatant.Revive();
+        CarryOut();
+        GD.Print($"[combat] player gets up at {target}, on {far.Zone}");
+        World.ZoneTransition.BeginToShrine(GetTree(), World.GameWorld.CurrentZoneId, far.Zone, target);
+    }
+
+    private void Stand()
+    {
         _motor.MovementLocked = false;
         _motor.Stop();
         _combatant.Revive();
