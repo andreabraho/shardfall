@@ -1,0 +1,12 @@
+Creature voices, downloaded 2026-09-25 at your call from OpenGameArt.org; all CC0
+(https://creativecommons.org/publicdomain/zero/1.0/). Files unchanged; renamed with the
+author in front. Only the ones the game uses are kept (see data/tables/sounds.json, vox_*).
+
+rubberduck — "80 CC0 creature SFX" and "80 CC0 creature SFX #2"
+  https://opengameart.org/content/80-cc0-creature-sfx
+  https://opengameart.org/content/80-cc0-creture-sfx-2
+  rubberduck-*.ogg
+
+Ogrebane — "Monster Sound Pack, Volume 1" (the archive is named monster-sounds-volume-2.zip)
+  https://opengameart.org/content/monster-sound-pack-volume-1
+  ogrebane-monster-NN.wav   (Monster-N.wav in the pack)

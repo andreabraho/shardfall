@@ -108,6 +108,12 @@ public sealed class EnemyDef : ContentDefBase
     public string? VisualTint { get; init; }
 
     /// <summary>
+    /// The kind of voice it has (REF-20): <c>vox_canine</c> means the sounds
+    /// <c>vox_canine_alert</c>, when it sets on the player, and <c>vox_canine_death</c>.
+    /// </summary>
+    public string Voice { get; init; } = string.Empty;
+
+    /// <summary>
     /// 0..1, taken off any chance to stun this creature (REF-01). 1 is immune: every boss at
     /// the end of a tower is, so a boss fight is never won by stun-locking it.
     /// </summary>
@@ -517,7 +523,7 @@ public sealed class SoundDef : ContentDefBase
     /// <summary>res:// paths. One is picked at random each time, so repeats do not grate.</summary>
     public string[] Files { get; init; } = [];
 
-    /// <summary>music | effects | ui</summary>
+    /// <summary>music | ambience | effects | ui. Ambience plays at the effects volume.</summary>
     public string Bus { get; init; } = "effects";
 
     /// <summary>Loudness relative to the bus, in decibels.</summary>
@@ -535,7 +541,7 @@ public sealed class SoundDef : ContentDefBase
     /// <summary>Metres at which a positional sound is no longer heard.</summary>
     public double MaxDistance { get; init; } = 30;
 
-    /// <summary>Music only: loops until something else is asked for.</summary>
+    /// <summary>Music and ambience only: loops until something else is asked for.</summary>
     public bool Loop { get; init; }
 }
 
@@ -715,6 +721,15 @@ public sealed class ZoneDef : ContentDefBase
 
     /// <summary>The music that plays here: a sound id with <c>loop</c> set. Empty for silence.</summary>
     public string Music { get; init; } = string.Empty;
+
+    /// <summary>
+    /// The sound of the place under the music (REF-20): wind, birds, a cave's drip. A looping
+    /// sound on the ambience bus. Empty for none.
+    /// </summary>
+    public string Ambience { get; init; } = string.Empty;
+
+    /// <summary>The player's footsteps here: grass, dirt or stone. Empty for none.</summary>
+    public string Footsteps { get; init; } = string.Empty;
 }
 
 /// <summary>
@@ -879,6 +894,9 @@ public sealed class KitPieceDef : ContentDefBase
 
     /// <summary>False for decoration the player walks through — grass, banners, decals.</summary>
     public bool Solid { get; init; } = true;
+
+    /// <summary>A sound it makes where it stands, over and over: a fire's crackle. Empty for none.</summary>
+    public string Sound { get; init; } = string.Empty;
 
     /// <summary>
     /// The shape the collider takes, when it differs from the shape that is drawn.

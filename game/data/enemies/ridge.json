@@ -10,6 +10,7 @@
   {
     "id": "mob_spiderling",
     "name": "$mob.mob_spiderling.name",
+    "voice": "vox_insect",
     "family": "animal",
     "role": "bruiser",
     "level": 12,
@@ -30,6 +31,7 @@
   {
     "id": "mob_sand_spider",
     "name": "$mob.mob_sand_spider.name",
+    "voice": "vox_insect",
     "family": "animal",
     "role": "bruiser",
     "level": 12,
@@ -50,6 +52,7 @@
   {
     "id": "mob_spitting_adder",
     "name": "$mob.mob_spitting_adder.name",
+    "voice": "vox_serpent",
     "family": "animal",
     "role": "archer",
     "level": 13,
@@ -70,6 +73,7 @@
   {
     "id": "mob_cactoro_thornguard",
     "name": "$mob.mob_cactoro_thornguard.name",
+    "voice": "vox_plant",
     "family": "mystic",
     "role": "shielder",
     "level": 14,
@@ -91,6 +95,7 @@
   {
     "id": "mob_cactoro_bloomcaller",
     "name": "$mob.mob_cactoro_bloomcaller.name",
+    "voice": "vox_plant",
     "family": "mystic",
     "role": "mender",
     "level": 14,
@@ -111,6 +116,7 @@
   {
     "id": "mob_blister_wasp",
     "name": "$mob.mob_blister_wasp.name",
+    "voice": "vox_insect",
     "family": "animal",
     "role": "bomber",
     "level": 15,
@@ -133,6 +139,7 @@
     "id": "mob_spider_queen",
     "stun_resist": 0.6,
     "name": "$mob.mob_spider_queen.name",
+    "voice": "vox_insect",
     "family": "animal",
     "role": "bruiser",
     "level": 15,

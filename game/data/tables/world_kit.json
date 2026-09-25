@@ -38,7 +38,7 @@
 
   // Decoration. Walked through, never collided with, never baked.
   { "id": "kit_banner",         "shape": "model",    "size": [0.1, 2.40, 0.90], "color": "#8f4a4a", "solid": false, "navigation": false, "model_path": "res://assets/kaykit/dungeon/banner_red.glb" },
-  { "id": "kit_brazier",        "shape": "model",    "size": [0.7, 1.10, 0.7],  "color": "#b07038", "solid": false, "navigation": false, "model_path": "res://assets/kaykit/dungeon/torch_lit.glb" },
+  { "id": "kit_brazier",        "shape": "model",    "size": [0.7, 1.10, 0.7],  "color": "#b07038", "solid": false, "navigation": false, "model_path": "res://assets/kaykit/dungeon/torch_lit.glb", "sound": "amb_torch" },
   { "id": "kit_shrub",          "shape": "sphere",   "size": [1.3, 1.00, 1.3],  "color": "#4c6b46", "solid": false, "navigation": false },
   { "id": "kit_marker_post",    "shape": "model",    "size": [0.3, 2.20, 0.3],  "color": "#9a8a6a", "solid": false, "navigation": false, "model_path": "res://assets/kaykit/dungeon/torch.glb" },
 
@@ -96,7 +96,7 @@
 
   { "id": "kit_camp_banner",          "shape": "model", "fit": "height", "size": [1.8, 4.6, 0.4], "solid": false, "navigation": false, "color": "#8f3a2a", "model_path": "res://assets/quaternius/props/prefabs/BanditBanner.tscn" },
   { "id": "kit_camp_shelter",         "shape": "model", "fit": "height", "size": [4.6, 2.85, 3.0], "solid": false, "navigation": false, "color": "#6a4a2a", "model_path": "res://assets/quaternius/props/prefabs/Shelter.tscn" },
-  { "id": "kit_camp_fire",            "shape": "model", "fit": "height", "size": [1.8, 0.35, 1.8], "solid": false, "navigation": false, "color": "#b07038", "model_path": "res://assets/quaternius/props/prefabs/Campfire.tscn" },
+  { "id": "kit_camp_fire",            "shape": "model", "fit": "height", "size": [1.8, 0.35, 1.8], "solid": false, "navigation": false, "color": "#b07038", "model_path": "res://assets/quaternius/props/prefabs/Campfire.tscn", "sound": "amb_campfire" },
   { "id": "kit_camp_palisade_4",      "shape": "model", "fit": "height", "size": [4.2, 2.8, 0.5], "collision_size": [4.2, 2.8, 0.5], "color": "#5a4028", "model_path": "res://assets/quaternius/props/prefabs/Palisade.tscn" },
   { "id": "kit_camp_cage",            "shape": "model", "fit": "height", "size": [1.3, 1.25, 1.35], "collision": "cylinder", "navigation": false, "color": "#6a6a6a", "model_path": "res://assets/quaternius/props/Cage_Small.gltf" },
   { "id": "kit_camp_weapons",         "shape": "model", "size": [1.39, 1.11, 0.98], "navigation": false, "color": "#7a6a5a", "model_path": "res://assets/quaternius/props/WeaponStand.gltf" },
@@ -169,7 +169,7 @@
   { "id": "kit_kn_obelisk",           "shape": "model", "fit": "height", "size": [1.2, 3.4, 1.2], "collision": "cylinder", "navigation": false, "color": "#8a8a90", "model_path": "res://assets/kenney/graveyard/pillar-obelisk.glb" },
   { "id": "kit_kn_stone_wall",        "shape": "model", "size": [4.0, 2.6, 0.7], "tile": 4, "color": "#7a7a80", "model_path": "res://assets/kenney/graveyard/stone-wall.glb" },
   { "id": "kit_kn_stone_wall_broken", "shape": "model", "size": [4.0, 2.6, 0.7], "tile": 4, "color": "#7a7a80", "model_path": "res://assets/kenney/graveyard/stone-wall-damaged.glb" },
-  { "id": "kit_ghost_fire",           "shape": "model", "fit": "height", "size": [1.2, 1.9, 1.2], "collision": "cylinder", "navigation": false, "color": "#5ad0e0", "model_path": "res://assets/prefabs/undead/GhostFire.tscn" },
+  { "id": "kit_ghost_fire",           "shape": "model", "fit": "height", "size": [1.2, 1.9, 1.2], "collision": "cylinder", "navigation": false, "color": "#5ad0e0", "model_path": "res://assets/prefabs/undead/GhostFire.tscn", "sound": "amb_torch" },
   { "id": "kit_kn_pine_crooked",      "shape": "model", "fit": "height", "random_yaw": true, "size": [3.4, 6.0, 3.8], "collision_size": [0.8, 4.0, 0.8], "collision": "cylinder", "color": "#3a4a3a", "model_path": "res://assets/kenney/graveyard/pine-crooked.glb" },
   { "id": "kit_hb_dead_tree",         "shape": "model", "fit": "height", "random_yaw": true, "size": [3.0, 5.5, 3.0], "collision_size": [0.7, 4.0, 0.7], "collision": "cylinder", "color": "#4a3a3a", "models": ["res://assets/kaykit/halloween/tree_dead_large.gltf", "res://assets/kaykit/halloween/tree_dead_medium.gltf", "res://assets/kaykit/halloween/tree_dead_small.gltf"] },
   { "id": "kit_hb_fence",             "shape": "model", "fit": "height", "size": [4.0, 2.2, 0.5], "navigation": false, "color": "#4a4040", "models": ["res://assets/kaykit/halloween/fence.gltf", "res://assets/kaykit/halloween/fence_broken.gltf"] },
@@ -180,5 +180,5 @@
   { "id": "kit_kn_cross",             "shape": "model", "fit": "height", "size": [0.7, 2.2, 0.7], "solid": false, "navigation": false, "color": "#7a7a80", "model_path": "res://assets/kenney/graveyard/cross-column.glb" },
 
   // -- The Demon Tower: a brazier burning red into violet (prefab).
-  { "id": "kit_demon_fire",           "shape": "model", "fit": "height", "size": [1.2, 1.9, 1.2], "collision": "cylinder", "navigation": false, "color": "#c03a6a", "model_path": "res://assets/prefabs/tower/DemonFire.tscn" }
+  { "id": "kit_demon_fire",           "shape": "model", "fit": "height", "size": [1.2, 1.9, 1.2], "collision": "cylinder", "navigation": false, "color": "#c03a6a", "model_path": "res://assets/prefabs/tower/DemonFire.tscn", "sound": "amb_torch" }
 ]

@@ -8,6 +8,7 @@
   {
     "id": "mob_field_rat",
     "name": "$mob.mob_field_rat.name",
+    "voice": "vox_rodent",
     "family": "animal",
     "role": "bruiser",
     "level": 1,
@@ -28,6 +29,7 @@
   {
     "id": "mob_red_fox",
     "name": "$mob.mob_red_fox.name",
+    "voice": "vox_canine",
     "family": "animal",
     "role": "bruiser",
     "level": 2,
@@ -50,6 +52,7 @@
   {
     "id": "mob_grey_wolf",
     "name": "$mob.mob_grey_wolf.name",
+    "voice": "vox_canine",
     "family": "animal",
     "role": "bruiser",
     "level": 3,
@@ -76,6 +79,7 @@
     "id": "mob_greymane",
     "stun_resist": 0.5,
     "name": "$mob.mob_greymane.name",
+    "voice": "vox_canine",
     "family": "animal",
     "role": "bruiser",
     "level": 4,

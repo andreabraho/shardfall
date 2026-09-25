@@ -427,6 +427,13 @@ public static class Ids
 
     public static class Sounds
     {
+        public const string AmbCampfire = "amb_campfire";
+        public const string AmbDesert = "amb_desert";
+        public const string AmbDungeon = "amb_dungeon";
+        public const string AmbHaunted = "amb_haunted";
+        public const string AmbMeadow = "amb_meadow";
+        public const string AmbTorch = "amb_torch";
+        public const string AmbVillage = "amb_village";
         public const string MusBoss = "mus_boss";
         public const string MusCatacombs = "mus_catacombs";
         public const string MusMenu = "mus_menu";
@@ -459,8 +466,35 @@ public static class Ids
         public const string SndUpgradeFail = "snd_upgrade_fail";
         public const string SndUpgradeSuccess = "snd_upgrade_success";
         public const string SndYang = "snd_yang";
+        public const string StpDirt = "stp_dirt";
+        public const string StpGrass = "stp_grass";
+        public const string StpStone = "stp_stone";
+        public const string VoxBeastAlert = "vox_beast_alert";
+        public const string VoxBeastDeath = "vox_beast_death";
+        public const string VoxCanineAlert = "vox_canine_alert";
+        public const string VoxCanineDeath = "vox_canine_death";
+        public const string VoxDemonAlert = "vox_demon_alert";
+        public const string VoxDemonDeath = "vox_demon_death";
+        public const string VoxGhostAlert = "vox_ghost_alert";
+        public const string VoxGhostDeath = "vox_ghost_death";
+        public const string VoxGolemAlert = "vox_golem_alert";
+        public const string VoxGolemDeath = "vox_golem_death";
+        public const string VoxHumanAlert = "vox_human_alert";
+        public const string VoxHumanDeath = "vox_human_death";
+        public const string VoxInsectAlert = "vox_insect_alert";
+        public const string VoxInsectDeath = "vox_insect_death";
+        public const string VoxOrcAlert = "vox_orc_alert";
+        public const string VoxOrcDeath = "vox_orc_death";
+        public const string VoxPlantAlert = "vox_plant_alert";
+        public const string VoxPlantDeath = "vox_plant_death";
+        public const string VoxRodentAlert = "vox_rodent_alert";
+        public const string VoxRodentDeath = "vox_rodent_death";
+        public const string VoxSerpentAlert = "vox_serpent_alert";
+        public const string VoxSerpentDeath = "vox_serpent_death";
+        public const string VoxUndeadAlert = "vox_undead_alert";
+        public const string VoxUndeadDeath = "vox_undead_death";
 
-        public static readonly string[] All = ["mus_boss", "mus_catacombs", "mus_menu", "mus_village", "mus_wilds", "snd_enemy_death", "snd_flask", "snd_guard", "snd_hit", "snd_hit_crit", "snd_level_up", "snd_pickup", "snd_player_death", "snd_player_hurt", "snd_quest_complete", "snd_rare_drop", "snd_refused", "snd_reroll", "snd_shard_break", "snd_shrine", "snd_skill", "snd_socket", "snd_stair_open", "snd_swing", "snd_telegraph", "snd_trade", "snd_ui_click", "snd_ui_close", "snd_ui_open", "snd_upgrade_fail", "snd_upgrade_success", "snd_yang"];
+        public static readonly string[] All = ["amb_campfire", "amb_desert", "amb_dungeon", "amb_haunted", "amb_meadow", "amb_torch", "amb_village", "mus_boss", "mus_catacombs", "mus_menu", "mus_village", "mus_wilds", "snd_enemy_death", "snd_flask", "snd_guard", "snd_hit", "snd_hit_crit", "snd_level_up", "snd_pickup", "snd_player_death", "snd_player_hurt", "snd_quest_complete", "snd_rare_drop", "snd_refused", "snd_reroll", "snd_shard_break", "snd_shrine", "snd_skill", "snd_socket", "snd_stair_open", "snd_swing", "snd_telegraph", "snd_trade", "snd_ui_click", "snd_ui_close", "snd_ui_open", "snd_upgrade_fail", "snd_upgrade_success", "snd_yang", "stp_dirt", "stp_grass", "stp_stone", "vox_beast_alert", "vox_beast_death", "vox_canine_alert", "vox_canine_death", "vox_demon_alert", "vox_demon_death", "vox_ghost_alert", "vox_ghost_death", "vox_golem_alert", "vox_golem_death", "vox_human_alert", "vox_human_death", "vox_insect_alert", "vox_insect_death", "vox_orc_alert", "vox_orc_death", "vox_plant_alert", "vox_plant_death", "vox_rodent_alert", "vox_rodent_death", "vox_serpent_alert", "vox_serpent_death", "vox_undead_alert", "vox_undead_death"];
     }
 
 }

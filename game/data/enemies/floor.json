@@ -9,6 +9,7 @@
   {
     "id": "mob_orc_grunt",
     "name": "$mob.mob_orc_grunt.name",
+    "voice": "vox_orc",
     "family": "orc",
     "role": "bruiser",
     "level": 8,
@@ -30,6 +31,7 @@
   {
     "id": "mob_orc_skirmisher",
     "name": "$mob.mob_orc_skirmisher.name",
+    "voice": "vox_orc",
     "family": "orc",
     "role": "archer",
     "level": 9,
@@ -50,6 +52,7 @@
   {
     "id": "mob_goleling_bulwark",
     "name": "$mob.mob_goleling_bulwark.name",
+    "voice": "vox_golem",
     "family": "mystic",
     "role": "shielder",
     "level": 10,
@@ -70,6 +73,7 @@
   {
     "id": "mob_mushnub_mystic",
     "name": "$mob.mob_mushnub_mystic.name",
+    "voice": "vox_plant",
     "family": "mystic",
     "role": "mender",
     "level": 10,
@@ -90,6 +94,7 @@
   {
     "id": "mob_rockburst_goleling",
     "name": "$mob.mob_rockburst_goleling.name",
+    "voice": "vox_golem",
     "family": "mystic",
     "role": "bomber",
     "level": 11,
@@ -112,6 +117,7 @@
     "id": "mob_orc_warlord",
     "stun_resist": 0.5,
     "name": "$mob.mob_orc_warlord.name",
+    "voice": "vox_orc",
     "family": "orc",
     "role": "bruiser",
     "level": 11,

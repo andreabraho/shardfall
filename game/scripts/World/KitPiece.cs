@@ -48,7 +48,14 @@ public partial class KitPiece : StaticBody3D
         set { _tint = value; Rebuild(); }
     }
 
-    public override void _Ready() => Apply();
+    public override void _Ready()
+    {
+        Apply();
+
+        // A fire crackles where it burns (REF-20). Not in the editor, and not rebuilt with
+        // the geometry: a piece only changes there.
+        if (!Engine.IsEditorHint() && Piece is { Sound.Length: > 0 } piece) Audio.AudioDirector.Emitter(this, piece.Sound);
+    }
 
     /// <summary>
     /// Builds, or rebuilds, the piece's geometry.

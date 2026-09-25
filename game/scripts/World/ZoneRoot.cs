@@ -31,6 +31,7 @@ public partial class ZoneRoot : Node3D
 
         GameWorld.EnterZone(ZoneId);
         Audio.AudioDirector.Music(GameContent.Database.Zones.TryGetValue(ZoneId, out var here) ? here.Music : "");
+        Audio.AudioDirector.Ambience(here?.Ambience ?? "");
         PlaceArrivingPlayer();
         StandShards();
         Audit();

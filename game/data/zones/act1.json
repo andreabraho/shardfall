@@ -2,6 +2,8 @@
   {
     "id": "zone_ember_hollow",
     "music": "mus_village",
+    "ambience": "amb_village",
+    "footsteps": "stp_grass",
     "name": "$zone.zone_ember_hollow.name",
     "kind": "hub",
     "level_band": [1, 3],
@@ -97,6 +99,8 @@
   {
     "id": "zone_vale_approach",
     "music": "mus_wilds",
+    "ambience": "amb_meadow",
+    "footsteps": "stp_grass",
     "name": "$zone.zone_vale_approach.name",
     "kind": "wilds",
     "level_band": [3, 7],
@@ -209,6 +213,8 @@
   {
     "id": "zone_vale_floor",
     "music": "mus_wilds",
+    "ambience": "amb_meadow",
+    "footsteps": "stp_grass",
     "name": "$zone.zone_vale_floor.name",
     "kind": "wilds",
     "level_band": [7, 11],
@@ -312,6 +318,8 @@
   {
     "id": "zone_ridge",
     "music": "mus_wilds",
+    "ambience": "amb_desert",
+    "footsteps": "stp_dirt",
     "name": "$zone.zone_ridge.name",
     "kind": "wilds",
     "level_band": [11, 15],
@@ -415,6 +423,8 @@
   {
     "id": "zone_broken_gate",
     "music": "mus_wilds",
+    "ambience": "amb_haunted",
+    "footsteps": "stp_dirt",
     "name": "$zone.zone_broken_gate.name",
     "kind": "wilds",
     "level_band": [15, 19],
@@ -518,6 +528,8 @@
   {
     "id": "zone_catacombs",
     "music": "mus_catacombs",
+    "ambience": "amb_dungeon",
+    "footsteps": "stp_stone",
     "name": "$zone.zone_catacombs.name",
     "kind": "dungeon",
     "level_band": [19, 23],

@@ -10,6 +10,7 @@
   {
     "id": "mob_bone_minion",
     "name": "$mob.mob_bone_minion.name",
+    "voice": "vox_undead",
     "family": "undead",
     "role": "bruiser",
     "level": 16,
@@ -30,6 +31,7 @@
   {
     "id": "mob_frostbone_warrior",
     "name": "$mob.mob_frostbone_warrior.name",
+    "voice": "vox_undead",
     "family": "undead",
     "role": "bruiser",
     "level": 16,
@@ -50,6 +52,7 @@
   {
     "id": "mob_frost_caster",
     "name": "$mob.mob_frost_caster.name",
+    "voice": "vox_undead",
     "family": "undead",
     "role": "archer",
     "level": 17,
@@ -70,6 +73,7 @@
   {
     "id": "mob_mountain_yeti",
     "name": "$mob.mob_mountain_yeti.name",
+    "voice": "vox_beast",
     "family": "animal",
     "role": "shielder",
     "level": 18,
@@ -90,6 +94,7 @@
   {
     "id": "mob_wailing_ghost",
     "name": "$mob.mob_wailing_ghost.name",
+    "voice": "vox_ghost",
     "family": "undead",
     "role": "mender",
     "level": 18,
@@ -110,6 +115,7 @@
   {
     "id": "mob_screaming_skull",
     "name": "$mob.mob_screaming_skull.name",
+    "voice": "vox_ghost",
     "family": "undead",
     "role": "bomber",
     "level": 19,
@@ -132,6 +138,7 @@
     "id": "mob_frost_lich",
     "stun_resist": 0.6,
     "name": "$mob.mob_frost_lich.name",
+    "voice": "vox_undead",
     "family": "undead",
     "role": "bruiser",
     "level": 19,

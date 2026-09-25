@@ -250,6 +250,15 @@ public partial class EnemyBrain : CharacterBody3D
         Self.Collapsed += OnCollapsed;
     }
 
+    private string _voice = "";
+    private float _voicePitch = 1f;
+
+    /// <summary>Its cry (REF-20): <c>alert</c> when it sets on the player, <c>death</c> when it falls.</summary>
+    private void Cry(string what)
+    {
+        if (_voice.Length > 0) Audio.AudioDirector.Play($"{_voice}_{what}", GlobalPosition, _voicePitch);
+    }
+
     private void LoadDefinition()
     {
         if (!GameContent.IsLoaded || !GameContent.Database.Enemies.TryGetValue(EnemyId, out var def))
@@ -270,6 +279,10 @@ public partial class EnemyBrain : CharacterBody3D
         IsBoss = def.Boss;
         HasBossBar = def.BossBar;
         _phases = def.Phases;
+        _voice = def.Voice;
+
+        // A bigger body, a deeper voice, and a boss deeper still.
+        _voicePitch = Mathf.Clamp((def.Boss ? 0.85f : 1f) / Mathf.Sqrt((float)System.Math.Max(0.3, def.VisualScale)), 0.6f, 1.3f);
         Self.Thorns = _traits.Thorns;
         Self.CheatDeath = _traits.Rise > 0;
         LabelPlate();
@@ -498,6 +511,7 @@ public partial class EnemyBrain : CharacterBody3D
         AwardExperience();
         DropLoot();
         Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndEnemyDeath, GlobalPosition);
+        Cry("death");
 
         // Last, after the loot: a quest completing pays out into the bag, and if that ever
         // threw it must not take the drop down with it — a death that half-happened is how
@@ -791,6 +805,9 @@ public partial class EnemyBrain : CharacterBody3D
         // low-level creatures used to ignore the player (FR-2.7) so a cleared zone was quiet to
         // walk back through; in play it read as the world not noticing you. They still die to
         // a single blow, and they pay nothing.
+
+        // A cry only when it first sets on the player, not every time it looks again.
+        if (Target is null) Cry("alert");
 
         Target = player;
         TargetCombatant = combatant;

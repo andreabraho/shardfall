@@ -1,0 +1,15 @@
+Ambience, downloaded 2026-09-25 at your call from OpenGameArt.org; files unchanged, renamed.
+
+JC Sounds — "Nature Ambient Pack Vol 1", Creative Commons Attribution 4.0
+(https://creativecommons.org/licenses/by/4.0/), from
+https://opengameart.org/content/jc-sounds-nature-ambient-pack-vol-1
+  jc-sounds-forest-clearing.mp3      "Forest Clearing"        Ember Hollow
+  jc-sounds-forest-day.mp3           "Forest Day"             the Approach, the Vale Floor
+  jc-sounds-desert-wind.mp3          "Desert Wind"            the Ridge
+  jc-sounds-spooky-forest.mp3        "Spooky Forest"          the Broken Gate
+  jc-sounds-campfire-crackling.mp3   "Campfire Crackling"     camp fires
+  jc-sounds-torch-flame.mp3          "Torch Flame"            braziers and tower fires
+
+JaggedStone — "Loopable Dungeon Ambience", CC0, from
+https://opengameart.org/content/loopable-dungeon-ambience
+  jaggedstone-dungeon-ambience.ogg   (dungeon_ambient_1.ogg)  the Demon Tower

@@ -95,6 +95,7 @@ public partial class SettingsView : ScrollContainer
 
         column.AddChild(MenuStyle.Label(L10n.T("Music by Kevin MacLeod (incompetech.com) and Alexander Nakarada (serpentsoundstudios.com), CC BY 4.0."),
             12, MenuStyle.Dim, wrap: true));
+        column.AddChild(MenuStyle.Label(L10n.T("Ambient sounds by JC Sounds, CC BY 4.0."), 12, MenuStyle.Dim, wrap: true));
 
         // -- difficulty
         if (_inGame)

@@ -34,6 +34,7 @@ public partial class AudioDirector : Node
 
     private AudioStreamPlayer _musicA = null!;
     private AudioStreamPlayer _musicB = null!;
+    private AmbienceBed _bed = null!;
     private string _musicId = "";
     private string _lastSound = "—";
     private Tween? _fade;
@@ -45,6 +46,9 @@ public partial class AudioDirector : Node
 
         _musicA = MusicPlayer("MusicA");
         _musicB = MusicPlayer("MusicB");
+
+        _bed = new AmbienceBed { Name = "Ambience" };
+        AddChild(_bed);
 
         // Every button in the game clicks, without every panel having to remember to.
         GetTree().NodeAdded += OnNodeAdded;
@@ -83,10 +87,13 @@ public partial class AudioDirector : Node
 
     // ------------------------------------------------------------------ effects
 
-    /// <summary>Plays a sound, flat or — when the sound is positional and a place is given — from there.</summary>
-    public static void Play(string id, Vector3? at = null) => _instance?.PlayInternal(id, at);
+    /// <summary>
+    /// Plays a sound, flat or — when the sound is positional and a place is given — from there.
+    /// <paramref name="pitch"/> scales its pitch: a big creature's voice is deeper.
+    /// </summary>
+    public static void Play(string id, Vector3? at = null, float pitch = 1f) => _instance?.PlayInternal(id, at, pitch);
 
-    private void PlayInternal(string id, Vector3? at)
+    private void PlayInternal(string id, Vector3? at, float pitchScale)
     {
         if (!GameContent.IsLoaded || !GameContent.Database.Sounds.TryGetValue(id, out var def)) return;
 
@@ -111,7 +118,7 @@ public partial class AudioDirector : Node
             voices.RemoveAt(0);
         }
 
-        var pitch = 1f + (float)((_random.NextDouble() * 2 - 1) * def.PitchJitter);
+        var pitch = pitchScale * (1f + (float)((_random.NextDouble() * 2 - 1) * def.PitchJitter));
         var bus = def.Bus == "music" ? GameSettings.MusicBus : GameSettings.EffectsBus;
         Node voice;
 
@@ -173,6 +180,49 @@ public partial class AudioDirector : Node
 
     private static bool HasFiles(string id) =>
         id.Length > 0 && GameContent.IsLoaded && GameContent.Database.Sounds.TryGetValue(id, out var def) && def.Files.Length > 0;
+
+    // ------------------------------------------------------------------ ambience
+
+    /// <summary>The sound of the place under the music (REF-20), crossing over from the last one.</summary>
+    public static void Ambience(string id)
+    {
+        if (_instance is not { } director) return;
+
+        var def = MusicDef(id ?? "");
+
+        if ((id ?? "") != director._bed.Id) GD.Print($"[audio] ambience {(director._bed.Id.Length == 0 ? "—" : director._bed.Id)} → {(string.IsNullOrEmpty(id) ? "—" : id)}");
+
+        director._bed.Change(id ?? "", def is null ? null : director.Pick(def), def is null ? Silent : (float)def.VolumeDb);
+    }
+
+    /// <summary>
+    /// A sound that goes on where <paramref name="host"/> stands for as long as it stands
+    /// there (REF-20): a fire's crackle. Each starts at its own point in the recording, so a
+    /// row of torches does not crackle in step.
+    /// </summary>
+    public static void Emitter(Node3D host, string id)
+    {
+        if (_instance is not { } director || !GameContent.IsLoaded || !GameContent.Database.Sounds.TryGetValue(id, out var def)) return;
+        if (director.Pick(def) is not { } stream) return;
+
+        var player = new AudioStreamPlayer3D
+        {
+            Name = "Sound",
+            Stream = stream,
+            Bus = GameSettings.EffectsBus,
+            VolumeDb = (float)def.VolumeDb,
+            MaxDistance = (float)def.MaxDistance,
+            UnitSize = 4f,
+            Autoplay = false,
+        };
+
+        player.Finished += () => player.Play();
+        host.AddChild(player);
+
+        var length = stream.GetLength();
+
+        player.Play(length > 1 ? (float)(director._random.NextDouble() * length * 0.9) : 0f);
+    }
 
     // ------------------------------------------------------------------ music
 

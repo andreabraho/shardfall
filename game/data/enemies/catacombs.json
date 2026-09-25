@@ -10,6 +10,7 @@
   {
     "id": "mob_zombie_crawler",
     "name": "$mob.mob_zombie_crawler.name",
+    "voice": "vox_undead",
     "family": "undead",
     "role": "bruiser",
     "level": 20,
@@ -29,6 +30,7 @@
   {
     "id": "mob_zombie_ghoul",
     "name": "$mob.mob_zombie_ghoul.name",
+    "voice": "vox_undead",
     "family": "undead",
     "role": "bruiser",
     "level": 20,
@@ -49,6 +51,7 @@
   {
     "id": "mob_ribcage_spitter",
     "name": "$mob.mob_ribcage_spitter.name",
+    "voice": "vox_undead",
     "family": "undead",
     "role": "archer",
     "level": 21,
@@ -69,6 +72,7 @@
   {
     "id": "mob_zombie_brute",
     "name": "$mob.mob_zombie_brute.name",
+    "voice": "vox_undead",
     "family": "undead",
     "role": "shielder",
     "level": 22,
@@ -89,6 +93,7 @@
   {
     "id": "mob_blue_demon_hexer",
     "name": "$mob.mob_blue_demon_hexer.name",
+    "voice": "vox_demon",
     "family": "devil",
     "role": "mender",
     "level": 22,
@@ -109,6 +114,7 @@
   {
     "id": "mob_hell_imp",
     "name": "$mob.mob_hell_imp.name",
+    "voice": "vox_demon",
     "family": "devil",
     "role": "bomber",
     "level": 23,
@@ -128,6 +134,7 @@
   {
     "id": "mob_demon_warrior",
     "name": "$mob.mob_demon_warrior.name",
+    "voice": "vox_demon",
     "family": "devil",
     "role": "bruiser",
     "level": 22,
@@ -150,6 +157,7 @@
     "id": "mob_rotting_colossus",
     "stun_resist": 1,
     "name": "$mob.mob_rotting_colossus.name",
+    "voice": "vox_undead",
     "family": "undead",
     "role": "bruiser",
     "level": 21,
@@ -177,6 +185,7 @@
     "id": "mob_blue_demon_sorcerer",
     "stun_resist": 1,
     "name": "$mob.mob_blue_demon_sorcerer.name",
+    "voice": "vox_demon",
     "family": "devil",
     "role": "archer",
     "level": 22,
@@ -208,6 +217,7 @@
     "id": "mob_demon_lord",
     "stun_resist": 1,
     "name": "$mob.mob_demon_lord.name",
+    "voice": "vox_demon",
     "family": "devil",
     "role": "bruiser",
     "level": 23,

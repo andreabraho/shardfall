@@ -1501,7 +1501,7 @@ public static class ContentValidator
     /// </summary>
     private static void Sounds(ContentDatabase db, ValidationReport report)
     {
-        string[] buses = ["effects", "ui", "music"];
+        string[] buses = ["effects", "ui", "music", "ambience"];
         string[] kinds = [".ogg", ".wav", ".mp3"];
 
         foreach (var sound in db.Sounds.Values.OrderBy(s => s.Id, StringComparer.Ordinal))
@@ -1518,10 +1518,10 @@ public static class ContentValidator
                     "At least one, or it can never play.");
             }
 
-            if (sound.Loop != (sound.Bus == "music"))
+            if (sound.Loop != (sound.Bus is "music" or "ambience"))
             {
-                report.Error("sound", sound.SourceFile, $"'{sound.Id}' loops on the {sound.Bus} bus, or is music that does not loop.",
-                    "Music loops and lives on the music bus; nothing else does either.");
+                report.Error("sound", sound.SourceFile, $"'{sound.Id}' loops on the {sound.Bus} bus, or is music or ambience that does not loop.",
+                    "Music and ambience loop, on their own buses; nothing else does.");
             }
 
             foreach (var file in sound.Files)
@@ -1541,6 +1541,56 @@ public static class ContentValidator
             {
                 report.Error("sound", zone.SourceFile, $"'{zone.Id}' plays '{zone.Music}', which is not a looping track.",
                     "Point music at a sound with \"loop\": true on the music bus.");
+            }
+        }
+
+        // REF-20: a map's ambience is a bed on the ambience bus, heard everywhere on it; its
+        // footsteps are short effects.
+        foreach (var zone in db.Zones.Values.Where(z => z.Ambience.Length > 0))
+        {
+            if (!db.Sounds.TryGetValue(zone.Ambience, out var bed) || bed.Bus != "ambience" || bed.Positional)
+            {
+                report.Error("sound", zone.SourceFile, $"'{zone.Id}' has ambience '{zone.Ambience}', which is not a flat sound on the ambience bus.",
+                    "Point ambience at a looping, non-positional sound with \"bus\": \"ambience\".");
+            }
+        }
+
+        foreach (var zone in db.Zones.Values.Where(z => z.Footsteps.Length > 0))
+        {
+            if (!db.Sounds.TryGetValue(zone.Footsteps, out var steps) || steps.Bus != "effects" || steps.Loop)
+            {
+                report.Error("sound", zone.SourceFile, $"'{zone.Id}' has footsteps '{zone.Footsteps}', which is not a short effect.",
+                    "Point footsteps at a sound on the effects bus that does not loop.");
+            }
+        }
+
+        foreach (var piece in db.KitPieces.Values.Where(p => p.Sound.Length > 0))
+        {
+            if (!db.Sounds.TryGetValue(piece.Sound, out var sound) || !sound.Loop || !sound.Positional)
+            {
+                report.Error("sound", piece.SourceFile, $"'{piece.Id}' makes '{piece.Sound}', which is not a looping sound heard from a place.",
+                    "Point a piece's sound at a looping, positional sound on the ambience bus.");
+            }
+        }
+
+        // A voice is two sounds: setting on the player, and dying. A creature without one is
+        // silent, which is allowed but worth knowing.
+        foreach (var enemy in db.Enemies.Values.OrderBy(e => e.Id, StringComparer.Ordinal))
+        {
+            if (enemy.Voice.Length == 0)
+            {
+                report.Warn("sound", enemy.SourceFile, $"'{enemy.Id}' has no voice.",
+                    "Give it \"voice\": one of the vox_* voices in sounds.json.");
+                continue;
+            }
+
+            foreach (var suffix in new[] { "_alert", "_death" })
+            {
+                if (!db.Sounds.ContainsKey(enemy.Voice + suffix))
+                {
+                    report.Error("sound", enemy.SourceFile, $"'{enemy.Id}' has voice '{enemy.Voice}', but there is no '{enemy.Voice}{suffix}'.",
+                        "A voice is two sounds, <voice>_alert and <voice>_death.");
+                }
             }
         }
     }
