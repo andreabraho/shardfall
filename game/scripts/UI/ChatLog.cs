@@ -39,14 +39,14 @@ public partial class ChatLog : CanvasLayer
 
         _panel = new PanelContainer { Name = "Panel", MouseFilter = Control.MouseFilterEnum.Ignore };
 
-        // Centred over the skill bar, clear of its tooltips: the bar is 66 px slots 14 px off
-        // the bottom, and its tip rises above the hovered slot.
-        _panel.SetAnchorsPreset(Control.LayoutPreset.CenterBottom);
-        _panel.GrowHorizontal = Control.GrowDirection.Both;
+        // Bottom left, just over the task bar (REF-19), where the original keeps its chat:
+        // clear of the skill slots and the cards that rise above them.
+        _panel.SetAnchorsPreset(Control.LayoutPreset.BottomLeft);
+        _panel.GrowHorizontal = Control.GrowDirection.End;
         _panel.GrowVertical = Control.GrowDirection.Begin;
-        _panel.OffsetLeft = -230;
-        _panel.OffsetRight = 230;
-        _panel.OffsetBottom = -96;
+        _panel.OffsetLeft = 16;
+        _panel.OffsetRight = 16 + 440;
+        _panel.OffsetBottom = -(TaskBar.Height + 34);
 
         _panel.AddThemeStyleboxOverride("panel", new StyleBoxFlat
         {

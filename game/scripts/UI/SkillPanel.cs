@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using Kiln.Core.Foundation;
 using Kiln.Core.Progression;
@@ -9,34 +10,35 @@ using Kiln.Game.Items;
 namespace Kiln.Game.UI;
 
 /// <summary>
-/// The skill screen, on K (REF-03): where skill points are spent and skills put on keys.
+/// The skill screen, on K (REF-03; REF-19 in the original's style): where skill points are
+/// spent and skills put on keys.
 /// </summary>
 /// <remarks>
-/// Skills are no longer learned on their own, and no longer gated on level: a point learns
-/// any of them, six more master it, and there are never enough points for all eight — which is
-/// what makes the screen a decision rather than a list of buttons to click through.
+/// The original's skill window: a framed column on the right of the screen, the points to
+/// spend at the top, the skills in their two groups — Body and Mind — each on one row with its
+/// icon, its name, its grade and a "+". The icon is what the player drags down onto the bar.
+/// The full description is a hover away; the row only holds what changes as the skill grows.
 /// <para>
-/// Compact on purpose, and pinned to the top of the screen. The first version gave every skill
-/// its full description and grew taller than the window: centred, it ran off both edges and sat
-/// on top of the skill bar — the one thing a skill has to be dragged onto. Each card now holds
-/// one line of numbers, the full text is on the card's tooltip, and the panel ends well above
-/// the bar so the bar is always there to drop on.
+/// It stands to the right, beside the minimap, and ends above the bar, so the bar is always
+/// there to drop on.
 /// </para>
 /// </remarks>
 public partial class SkillPanel : CanvasLayer
 {
-    private sealed record Card(SkillDef Def, PanelContainer Frame, Label Title, Label Line, Button Plus, SkillHandle Handle);
+    private sealed record Row(SkillDef Def, Control Frame, Label Name, Label Grade, ProgressBar Progress, Button Plus, SkillHandle Handle);
 
-    /// <summary>Width of one skill card. Two of them side by side make the panel.</summary>
-    private const float CardWidth = 400f;
+    private const float Width = 340f;
 
-    private readonly List<Card> _cards = [];
+    private static readonly Color Gold = new(0.96f, 0.86f, 0.58f);
+    private static readonly Color Frame = new(0.62f, 0.50f, 0.28f);
+
+    private readonly List<Row> _rows = [];
 
     private Player.PlayerCharacter? _character;
     private Player.SkillCaster? _caster;
 
     private Label _unspent = null!;
-    private GridContainer _grid = null!;
+    private VBoxContainer _list = null!;
     private bool _counted;
 
     public override void _Ready()
@@ -60,40 +62,42 @@ public partial class SkillPanel : CanvasLayer
             _character.ExperienceChanged += Refresh;
         }
 
-        // A skill dropped on the bar changes what the grips say, and the drop happens on the
+        // A skill dropped on the bar changes what the icons say, and the drop happens on the
         // bar rather than here.
         if (_caster is not null) _caster.HotbarChanged += Refresh;
 
-        BuildCards();
+        BuildRows();
     }
 
     public override void _UnhandledInput(InputEvent @event)
     {
         if (@event.IsActionPressed(GameActions.ToggleSkills))
         {
-            Visible = !Visible;
-            UiState.SetOpen(ref _counted, Visible);
-
-            // Rebuilt rather than refreshed when the cards were never built — a panel opened
-            // before the content finished loading would otherwise stay empty for the session.
-            if (Visible && _cards.Count == 0) BuildCards();
-            else if (Visible) Refresh();
-
-            if (Visible)
-            {
-                GD.Print($"[skill] screen open — {PlayerProfile.Progression.UnspentSkillPoints} point(s) to spend");
-            }
-
+            SetOpen(!Visible);
             GetViewport().SetInputAsHandled();
             return;
         }
 
         if (Visible && @event.IsActionPressed(GameActions.Cancel))
         {
-            Visible = false;
-            UiState.SetOpen(ref _counted, false);
+            SetOpen(false);
             GetViewport().SetInputAsHandled();
         }
+    }
+
+    private void SetOpen(bool open)
+    {
+        Visible = open;
+        UiState.SetOpen(ref _counted, open);
+
+        if (!open) return;
+
+        // Rebuilt rather than refreshed when the rows were never built — a panel opened before
+        // the content finished loading would otherwise stay empty for the session.
+        if (_rows.Count == 0) BuildRows();
+        else Refresh();
+
+        GD.Print($"[skill] screen open — {PlayerProfile.Progression.UnspentSkillPoints} point(s) to spend");
     }
 
     // A panel freed while open would leave the modal count raised and the player unable to move.
@@ -103,152 +107,193 @@ public partial class SkillPanel : CanvasLayer
 
     private void Build()
     {
-        // Anchored to the top centre and grown downward only, so however many skills there
-        // are it can never reach down over the bar.
         var root = new PanelContainer
         {
-            AnchorLeft = 0.5f,
-            AnchorRight = 0.5f,
-            AnchorTop = 0f,
-            AnchorBottom = 0f,
-            OffsetTop = 48,
-            GrowHorizontal = Control.GrowDirection.Both,
+            AnchorLeft = 1,
+            AnchorRight = 1,
+            AnchorTop = 0,
+            AnchorBottom = 0,
+            // Beside the minimap and the quest, not over them.
+            OffsetLeft = -(Width + Minimap.Diameter + 48),
+            OffsetRight = -(Minimap.Diameter + 48),
+            OffsetTop = 60,
+            GrowHorizontal = Control.GrowDirection.Begin,
             GrowVertical = Control.GrowDirection.End,
         };
 
-        root.AddThemeStyleboxOverride("panel", SkillText.Panel());
+        root.AddThemeStyleboxOverride("panel", Box(new Color(0.06f, 0.055f, 0.05f, 0.96f), 2, 0));
         AddChild(root);
 
-        var margin = new MarginContainer();
-        margin.AddThemeConstantOverride("margin_left", 16);
-        margin.AddThemeConstantOverride("margin_right", 16);
-        margin.AddThemeConstantOverride("margin_top", 12);
-        margin.AddThemeConstantOverride("margin_bottom", 12);
-        root.AddChild(margin);
-
         var column = new VBoxContainer();
-        column.AddThemeConstantOverride("separation", 8);
-        margin.AddChild(column);
+        column.AddThemeConstantOverride("separation", 0);
+        root.AddChild(column);
 
-        var header = new HBoxContainer();
-        header.AddThemeConstantOverride("separation", 16);
-        column.AddChild(header);
+        // Title bar.
+        var bar = new PanelContainer();
+        bar.AddThemeStyleboxOverride("panel", Box(new Color(0.20f, 0.14f, 0.07f), 0, 8, bottom: 1));
+        column.AddChild(bar);
 
-        var title = new Label { Text = L10n.T("Skills") };
-        title.AddThemeFontSizeOverride("font_size", 18);
-        header.AddChild(title);
+        var barRow = new HBoxContainer();
+        bar.AddChild(barRow);
 
-        _unspent = new Label { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
-        _unspent.AddThemeFontSizeOverride("font_size", 15);
-        _unspent.AddThemeColorOverride("font_color", new Color("8fd3a8"));
-        header.AddChild(_unspent);
+        var title = new Label { Text = L10n.T("Skills"), SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
+        title.AddThemeFontSizeOverride("font_size", 15);
+        title.AddThemeColorOverride("font_color", Gold);
+        barRow.AddChild(title);
 
-        _grid = new GridContainer { Columns = 2 };
-        _grid.AddThemeConstantOverride("h_separation", 8);
-        _grid.AddThemeConstantOverride("v_separation", 8);
-        column.AddChild(_grid);
+        var cross = new Button { Text = "✕", Flat = true, FocusMode = Control.FocusModeEnum.None };
+        cross.AddThemeFontSizeOverride("font_size", 13);
+        cross.Pressed += () => SetOpen(false);
+        barRow.AddChild(cross);
+
+        var body = new MarginContainer();
+        body.AddThemeConstantOverride("margin_left", 12);
+        body.AddThemeConstantOverride("margin_right", 12);
+        body.AddThemeConstantOverride("margin_top", 10);
+        body.AddThemeConstantOverride("margin_bottom", 12);
+        column.AddChild(body);
+
+        var inner = new VBoxContainer();
+        inner.AddThemeConstantOverride("separation", 6);
+        body.AddChild(inner);
+
+        _unspent = new Label { HorizontalAlignment = HorizontalAlignment.Center };
+        _unspent.AddThemeFontSizeOverride("font_size", 14);
+        inner.AddChild(_unspent);
+
+        _list = new VBoxContainer();
+        _list.AddThemeConstantOverride("separation", 4);
+        inner.AddChild(_list);
 
         var note = new Label
         {
-            Text = L10n.F("A point learns a skill; {0} points master it. Mastery beyond that is earned by casting.",
-                      SkillBook.MaxPoints)
-                + "\n" + L10n.T("Drag a skill down onto the bar to put it on a key, and back up here to take it off.")
-                + "\n" + L10n.T("Hover a skill for everything it does."),
+            Text = L10n.F("A point learns a skill; {0} points master it. Beyond that it grows by being used.", SkillBook.MaxPoints)
+                + "\n" + L10n.T("Drag an icon onto the bar to put the skill on a key."),
             AutowrapMode = TextServer.AutowrapMode.WordSmart,
-            CustomMinimumSize = new Vector2((CardWidth * 2) + 8, 0),
+            CustomMinimumSize = new Vector2(Width - 24, 0),
         };
 
         note.AddThemeFontSizeOverride("font_size", 11);
-        note.AddThemeColorOverride("font_color", new Color(0.55f, 0.60f, 0.66f));
-        column.AddChild(note);
+        note.AddThemeColorOverride("font_color", new Color(0.58f, 0.56f, 0.50f));
+        inner.AddChild(note);
     }
 
-    private void BuildCards()
+    private void BuildRows()
     {
-        foreach (var child in _grid.GetChildren()) child.QueueFree();
+        foreach (var child in _list.GetChildren()) child.QueueFree();
 
-        _cards.Clear();
+        _rows.Clear();
 
         if (!GameContent.IsLoaded) return;
 
-        foreach (var def in SkillText.WarriorSkills())
+        // The two groups, as the original splits a class's skills.
+        foreach (var (tree, heading) in new[] { ("body", L10n.T("Body")), ("mental", L10n.T("Mind")) })
         {
-            var frame = new PanelContainer
-            {
-                CustomMinimumSize = new Vector2(CardWidth, 0),
-                MouseFilter = Control.MouseFilterEnum.Pass,
-            };
+            var skills = SkillText.WarriorSkills().Where(d => d.Tree == tree).ToList();
 
-            frame.AddThemeStyleboxOverride("panel", CardStyle());
-            _grid.AddChild(frame);
+            if (skills.Count == 0) continue;
 
-            var margin = new MarginContainer { MouseFilter = Control.MouseFilterEnum.Pass };
-            margin.AddThemeConstantOverride("margin_left", 10);
-            margin.AddThemeConstantOverride("margin_right", 8);
-            margin.AddThemeConstantOverride("margin_top", 6);
-            margin.AddThemeConstantOverride("margin_bottom", 6);
-            frame.AddChild(margin);
+            _list.AddChild(Heading(heading));
 
-            var row = new HBoxContainer { MouseFilter = Control.MouseFilterEnum.Pass };
-            row.AddThemeConstantOverride("separation", 8);
-            margin.AddChild(row);
-
-            var text = new VBoxContainer
-            {
-                SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
-                MouseFilter = Control.MouseFilterEnum.Pass,
-            };
-
-            text.AddThemeConstantOverride("separation", 1);
-            row.AddChild(text);
-
-            var title = new Label { ClipText = true, MouseFilter = Control.MouseFilterEnum.Pass };
-            title.AddThemeFontSizeOverride("font_size", 14);
-            text.AddChild(title);
-
-            var line = new Label { ClipText = true, MouseFilter = Control.MouseFilterEnum.Pass };
-            line.AddThemeFontSizeOverride("font_size", 12);
-            line.AddThemeColorOverride("font_color", new Color(0.66f, 0.72f, 0.80f));
-            text.AddChild(line);
-
-            var id = def.Id;
-
-            // The grip. A skill is put on a key by dragging it down onto the bar — the gesture
-            // says where the skill is going, which a dropdown listing "Key 4" never quite does.
-            var handle = new SkillHandle { SkillId = id, SkillName = GameItems.Localise(def.Name) };
-
-            handle.SkillReturned += returned => Assign(returned, -1);
-            row.AddChild(handle);
-
-            var plus = new Button
-            {
-                Text = "+",
-                CustomMinimumSize = new Vector2(36, 34),
-                SizeFlagsVertical = Control.SizeFlags.ShrinkCenter,
-            };
-
-            plus.Pressed += () => Invest(id);
-            row.AddChild(plus);
-
-            _cards.Add(new Card(def, frame, title, line, plus, handle));
+            foreach (var def in skills) _list.AddChild(BuildRow(def));
         }
 
         Refresh();
     }
 
-    private static StyleBoxFlat CardStyle() => new()
+    private static Control Heading(string text)
     {
-        BgColor = new Color(0.11f, 0.12f, 0.15f, 1f),
-        BorderColor = new Color(0.22f, 0.25f, 0.30f),
-        BorderWidthTop = 1,
-        BorderWidthBottom = 1,
-        BorderWidthLeft = 1,
-        BorderWidthRight = 1,
-        CornerRadiusTopLeft = 4,
-        CornerRadiusTopRight = 4,
-        CornerRadiusBottomLeft = 4,
-        CornerRadiusBottomRight = 4,
+        var box = new VBoxContainer();
+        box.AddThemeConstantOverride("separation", 2);
+
+        var label = new Label { Text = text };
+        label.AddThemeFontSizeOverride("font_size", 13);
+        label.AddThemeColorOverride("font_color", new Color(0.85f, 0.72f, 0.45f));
+        box.AddChild(label);
+
+        box.AddChild(new ColorRect { Color = new Color(Frame, 0.6f), CustomMinimumSize = new Vector2(0, 1) });
+
+        return box;
+    }
+
+    private Control BuildRow(SkillDef def)
+    {
+        var frame = new PanelContainer { MouseFilter = Control.MouseFilterEnum.Pass };
+        frame.AddThemeStyleboxOverride("panel", Box(new Color(0.10f, 0.09f, 0.08f), 1, 4, edge: new Color(0.30f, 0.25f, 0.18f)));
+
+        var row = new HBoxContainer { MouseFilter = Control.MouseFilterEnum.Pass };
+        row.AddThemeConstantOverride("separation", 8);
+        frame.AddChild(row);
+
+        // The icon, which is also the grip: drag it onto the bar.
+        var handle = new SkillHandle { SkillId = def.Id, SkillName = GameItems.Localise(def.Name) };
+        handle.SkillReturned += returned => Assign(returned, -1);
+        row.AddChild(handle);
+
+        var text = new VBoxContainer
+        {
+            SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
+            SizeFlagsVertical = Control.SizeFlags.ShrinkCenter,
+            MouseFilter = Control.MouseFilterEnum.Pass,
+        };
+
+        text.AddThemeConstantOverride("separation", 1);
+        row.AddChild(text);
+
+        var name = new Label { ClipText = true, MouseFilter = Control.MouseFilterEnum.Pass };
+        name.AddThemeFontSizeOverride("font_size", 13);
+        text.AddChild(name);
+
+        var grade = new Label { ClipText = true, MouseFilter = Control.MouseFilterEnum.Pass };
+        grade.AddThemeFontSizeOverride("font_size", 11);
+        text.AddChild(grade);
+
+        var progress = new ProgressBar
+        {
+            MinValue = 0,
+            MaxValue = 1,
+            ShowPercentage = false,
+            CustomMinimumSize = new Vector2(0, 4),
+            MouseFilter = Control.MouseFilterEnum.Pass,
+        };
+
+        progress.AddThemeStyleboxOverride("background", new StyleBoxFlat { BgColor = new Color(0.04f, 0.035f, 0.03f) });
+        text.AddChild(progress);
+
+        var plus = new Button
+        {
+            Text = "+",
+            CustomMinimumSize = new Vector2(28, 28),
+            SizeFlagsVertical = Control.SizeFlags.ShrinkCenter,
+            FocusMode = Control.FocusModeEnum.None,
+        };
+
+        plus.AddThemeFontSizeOverride("font_size", 15);
+
+        var id = def.Id;
+        plus.Pressed += () => Invest(id);
+        row.AddChild(plus);
+
+        _rows.Add(new Row(def, frame, name, grade, progress, plus, handle));
+
+        return frame;
+    }
+
+    private static StyleBoxFlat Box(Color fill, int width, int margin, int bottom = -1, Color? edge = null) => new()
+    {
+        BgColor = fill,
+        BorderColor = edge ?? Frame,
+        BorderWidthTop = width,
+        BorderWidthLeft = width,
+        BorderWidthRight = width,
+        BorderWidthBottom = bottom >= 0 ? bottom : width,
+        ContentMarginLeft = margin + 4,
+        ContentMarginRight = margin,
+        ContentMarginTop = margin * 0.6f,
+        ContentMarginBottom = margin * 0.6f,
     };
+
+    // ------------------------------------------------------------------ actions
 
     /// <summary>Moves a skill onto a key, or off the bar entirely.</summary>
     private void Assign(string skillId, int slot)
@@ -283,46 +328,87 @@ public partial class SkillPanel : CanvasLayer
         Refresh();
     }
 
+    // ------------------------------------------------------------------ refresh
+
+    /// <summary>The colour of each grade, as the skill effects wear it (REF-03).</summary>
+    private static Color RankColour(MasteryRank rank) => rank switch
+    {
+        MasteryRank.Master => new Color(1f, 0.78f, 0.35f),
+        MasteryRank.GrandMaster => new Color(0.78f, 0.55f, 1f),
+        MasteryRank.Perfect => new Color(1f, 0.86f, 0.35f),
+        _ => new Color(0.80f, 0.84f, 0.90f),
+    };
+
+    private static string RankName(MasteryRank rank) => rank switch
+    {
+        MasteryRank.Master => L10n.T("Master"),
+        MasteryRank.GrandMaster => L10n.T("Grand Master"),
+        MasteryRank.Perfect => L10n.T("Perfect"),
+        _ => "",
+    };
+
     private void Refresh()
     {
-        if (_character is null || _cards.Count == 0) return;
+        if (_character is null || _rows.Count == 0) return;
 
         var book = _character.Skills;
         var points = _character.Progression.UnspentSkillPoints;
 
-        _unspent.Text = points > 0
-            ? L10n.F("{0} skill point(s) to spend", points)
-            : L10n.T("No skill points to spend.");
+        _unspent.Text = L10n.F("Skill points: {0}", points);
+        _unspent.AddThemeColorOverride("font_color", points > 0 ? new Color(0.56f, 0.86f, 0.62f) : new Color(0.6f, 0.58f, 0.52f));
 
-        foreach (var card in _cards)
+        foreach (var row in _rows)
         {
-            var spent = book.PointsIn(card.Def.Id);
+            var id = row.Def.Id;
+            var spent = book.PointsIn(id);
+            var rank = book.RankOf(id);
+            var colour = RankColour(rank);
 
-            card.Title.Text = SkillText.Title(card.Def, book);
-            card.Title.AddThemeColorOverride("font_color", spent > 0
-                ? new Color(0.92f, 0.94f, 0.98f)
-                : new Color(0.62f, 0.67f, 0.74f));
+            row.Name.Text = GameItems.Localise(row.Def.Name);
+            row.Name.AddThemeColorOverride("font_color", spent > 0 ? new Color(0.94f, 0.92f, 0.86f) : new Color(0.55f, 0.54f, 0.50f));
 
-            card.Line.Text = spent > 0
-                ? SkillText.Summary(card.Def, book)
-                : L10n.T("Not learned") + "  ·  " + SkillText.Summary(card.Def, book);
+            // The grade: points while they are being bought, then the rank and the casts it
+            // still takes to reach the next one.
+            if (spent == 0)
+            {
+                row.Grade.Text = L10n.T("Not learned");
+                row.Progress.Value = 0;
+            }
+            else if (!book.IsFullyInvested(id))
+            {
+                row.Grade.Text = L10n.F("Grade {0} / {1}", spent, SkillBook.MaxPoints);
+                row.Progress.Value = (double)spent / SkillBook.MaxPoints;
+            }
+            else if (rank == MasteryRank.Perfect)
+            {
+                row.Grade.Text = RankName(rank);
+                row.Progress.Value = 1;
+            }
+            else
+            {
+                var target = rank == MasteryRank.Master ? SkillBook.GrandMasterUses : SkillBook.PerfectUses;
+                var uses = book.UsesOf(id);
 
-            // The whole description, a hover away: the card only has room for the numbers.
-            card.Frame.TooltipText = SkillText.Title(card.Def, book) + "\n" + SkillText.Describe(card.Def, book);
+                row.Grade.Text = L10n.F("{0}  ·  {1} / {2} uses", RankName(rank), uses, target);
+                row.Progress.Value = (double)uses / target;
+            }
 
-            card.Plus.Disabled = _caster?.CanInvest(card.Def.Id) != true;
-            card.Plus.TooltipText = book.IsFullyInvested(card.Def.Id)
-                ? L10n.T("Fully invested. It ranks up from here by being used.")
-                : points > 0
-                    ? L10n.T("Spend a skill point.")
-                    : L10n.T("No skill points left.");
+            row.Grade.AddThemeColorOverride("font_color", spent > 0 ? colour : new Color(0.5f, 0.49f, 0.46f));
+            row.Progress.AddThemeStyleboxOverride("fill", new StyleBoxFlat { BgColor = colour });
+
+            // The whole description, a hover away.
+            row.Frame.TooltipText = SkillText.Title(row.Def, book) + "\n" + SkillText.Describe(row.Def, book);
+
+            row.Plus.Disabled = _caster?.CanInvest(id) != true;
+            row.Plus.Visible = !book.IsFullyInvested(id);
+            row.Plus.TooltipText = points > 0 ? L10n.T("Spend a skill point.") : L10n.T("No skill points left.");
 
             // Guard Stance has its own key and is not on the numbered bar.
-            var onBar = card.Def.CastType != "channel";
+            var onBar = row.Def.CastType != "channel";
 
-            card.Handle.Visible = onBar;
-
-            if (onBar) card.Handle.ShowKey(_caster?.SlotOf(card.Def.Id) ?? -1);
+            row.Handle.Draggable = onBar;
+            row.Handle.Learned = spent > 0;
+            row.Handle.ShowKey(onBar ? _caster?.SlotOf(id) ?? -1 : -1, onBar ? null : GameActions.DescribeBinding(GameActions.DefensiveAbility));
         }
     }
 }

@@ -43,8 +43,34 @@ public partial class MapView : Control
     private static readonly Color QuestTint = new(1f, 0.74f, 0.2f);
     private static readonly Color Faint = new(0.48f, 0.53f, 0.58f);
 
+    private static readonly Color EnemyTint = new(0.92f, 0.30f, 0.26f);
+
     private float _scale = 1f;
     private Vector2 _centre;
+
+    /// <summary>
+    /// The minimap's way of drawing (REF-19): centred on the player at a fixed scale rather than
+    /// framing the whole zone, no captions, and the creatures close by as red dots.
+    /// </summary>
+    public bool Follow { get; set; }
+
+    /// <summary>Metres from the player to the minimap's edge.</summary>
+    public float ViewRadius { get; set; } = 42f;
+
+    private double _redrawIn;
+
+    public override void _Process(double delta)
+    {
+        if (!Follow || !IsVisibleInTree()) return;
+
+        // Ten times a second: smooth enough for a map, a tenth of the cost of every frame.
+        _redrawIn -= delta;
+
+        if (_redrawIn > 0) return;
+
+        _redrawIn = 0.1;
+        QueueRedraw();
+    }
 
     public override void _Draw()
     {
@@ -54,7 +80,8 @@ public partial class MapView : Control
 
         if (!GameWorld.IsLoaded) return;
 
-        Frame();
+        if (Follow) Centre();
+        else Frame();
 
         var seen = Memory();
 
@@ -63,7 +90,36 @@ public partial class MapView : Control
         DrawRegions(seen);
         DrawMarkers(seen);
         DrawQuest();
+
+        if (Follow) DrawEnemies();
+
         DrawPlayer();
+    }
+
+    /// <summary>The minimap's frame: the player in the middle, <see cref="ViewRadius"/> to the edge.</summary>
+    private void Centre()
+    {
+        if (GetTree().GetFirstNodeInGroup("player") is Node3D player)
+        {
+            _centre = new Vector2(player.GlobalPosition.X, player.GlobalPosition.Z);
+        }
+
+        _scale = Mathf.Min(Size.X, Size.Y) / (2f * ViewRadius);
+    }
+
+    /// <summary>Living creatures within the minimap's reach, as the original draws them: red dots.</summary>
+    private void DrawEnemies()
+    {
+        foreach (var node in GetTree().GetNodesInGroup("enemies"))
+        {
+            if (node is not Combat.EnemyBrain { IsDead: false } body) continue;
+
+            var at = new Vector2(body.GlobalPosition.X, body.GlobalPosition.Z);
+
+            if (at.DistanceTo(_centre) > ViewRadius) continue;
+
+            DrawCircle(At(body.GlobalPosition), 2.6f, EnemyTint);
+        }
     }
 
     // ------------------------------------------------------------------ framing
@@ -385,6 +441,9 @@ public partial class MapView : Control
 
     private void Caption(Font font, int fontSize, Vector2 at, string text, Color tint)
     {
+        // The minimap is too small for words: the markers say enough at that size.
+        if (Follow) return;
+
         var offset = at + new Vector2(8, 4);
 
         // Drawn twice, dark underneath. The map's background is whatever the terrain happens

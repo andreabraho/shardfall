@@ -39,7 +39,8 @@ public partial class QuestHud : CanvasLayer
             AnchorRight = 1,
             OffsetLeft = -300,
             OffsetRight = -16,
-            OffsetTop = 16,
+            // Under the minimap (REF-19).
+            OffsetTop = Minimap.Bottom,
             MouseFilter = Control.MouseFilterEnum.Ignore,
         };
 

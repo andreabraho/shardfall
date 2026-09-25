@@ -209,7 +209,16 @@ public partial class SkillSlot : Control
         // The face: the skill's tree colour, dimmed until it can actually be used.
         DrawRect(rect.Grow(-3), new Color(colour, ready && _affordable ? 0.32f : 0.14f));
 
-        DrawName(font, colour, ready);
+        // The icon when the skill has one (REF-19), the name while it does not.
+        if (SkillIcons.For(SkillId) is { } icon)
+        {
+            var tint = ready ? colour.Lightened(0.3f) : new Color(colour, 0.45f);
+            DrawTextureRect(icon, rect.Grow(-10), false, tint);
+        }
+        else
+        {
+            DrawName(font, colour, ready);
+        }
 
         // The sweep. It drains downward as the cooldown runs, so how full it is reads at a
         // glance without reading the number.
