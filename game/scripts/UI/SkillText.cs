@@ -142,6 +142,56 @@ public static class SkillText
         return body + " " + L10n.F("({0:P0} of the time)", applies.Chance);
     }
 
+    /// <summary>
+    /// What spending one more point does (REF-19): the grade it moves to and every number that
+    /// changes, before and after — or, for a skill not yet learned, what learning it gives.
+    /// </summary>
+    public static string Change(SkillDef def, SkillBook book)
+    {
+        var points = book.PointsIn(def.Id);
+        var name = GameItems.Localise(def.Name);
+
+        if (book.IsFullyInvested(def.Id))
+        {
+            return name + "\n" + L10n.T("Fully invested. It ranks up from here by being used.");
+        }
+
+        if (points == 0)
+        {
+            var learn = new SkillBook();
+            learn.Invest(def.Id);
+
+            return L10n.F("Learn {0}", name) + "\n" + Describe(def, learn);
+        }
+
+        var next = points + 1;
+        var nextRank = next >= SkillBook.MaxPoints ? MasteryRank.Master : book.RankOf(def.Id);
+        var now = ResolvedSkill.For(def, book.RankOf(def.Id), points);
+        var then = ResolvedSkill.For(def, nextRank, next);
+        var lines = new List<string> { L10n.F("{0}  ·  grade {1} → {2}", name, points, next) };
+
+        void Line(string label, double a, double b, string format)
+        {
+            if (System.Math.Abs(a - b) < 0.0005) return;
+
+            lines.Add($"{label}: {string.Format(L10n.Culture, format, a)} → {string.Format(L10n.Culture, format, b)}");
+        }
+
+        Line(L10n.T("Damage"), now.DamageCoef, then.DamageCoef, "{0:P0}");
+        Line(L10n.T("Strength"), now.Magnitude, then.Magnitude, "{0:P0}");
+        Line(L10n.T("Duration"), now.Duration, then.Duration, "{0:0.#} s");
+        Line(L10n.T("Reach"), now.Radius, then.Radius, "{0:0.#} m");
+        Line(L10n.T("Mana"), now.ManaCost, then.ManaCost, "{0:0}");
+        Line(L10n.T("Cooldown"), now.Cooldown, then.Cooldown, "{0:0.#} s");
+
+        if (nextRank == MasteryRank.Master && book.RankOf(def.Id) != MasteryRank.Master)
+        {
+            lines.Add(L10n.T("This point masters it: from here it ranks up by being used."));
+        }
+
+        return string.Join("\n", lines);
+    }
+
     /// <summary>What the next rank costs: points while they buy it, casts once they do not.</summary>
     private static string Next(SkillDef def, SkillBook book)
     {

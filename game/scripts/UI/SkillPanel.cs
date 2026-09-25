@@ -38,6 +38,7 @@ public partial class SkillPanel : CanvasLayer
     private Player.SkillCaster? _caster;
 
     private Label _unspent = null!;
+    private SkillTip _tip = null!;
     private VBoxContainer _list = null!;
     private bool _counted;
 
@@ -126,6 +127,11 @@ public partial class SkillPanel : CanvasLayer
 
         root.AddThemeStyleboxOverride("panel", Box(new Color(0.06f, 0.055f, 0.05f, 0.96f), 2, 0));
         AddChild(root);
+
+        // The bar's own card (REF-19): the same words on a row as on the slot, and on the +,
+        // what the next point changes.
+        _tip = new SkillTip { Name = "SkillTip", Beside = true };
+        AddChild(_tip);
 
         var column = new VBoxContainer();
         column.AddThemeConstantOverride("separation", 0);
@@ -274,8 +280,17 @@ public partial class SkillPanel : CanvasLayer
         plus.AddThemeFontSizeOverride("font_size", 15);
 
         var id = def.Id;
-        plus.Pressed += () => Invest(id);
+        plus.Pressed += () =>
+        {
+            Invest(id);
+            ShowChange(def, frame);
+        };
         row.AddChild(plus);
+
+        frame.MouseEntered += () => ShowDescription(def, frame);
+        frame.MouseExited += () => _tip.Hide();
+        plus.MouseEntered += () => ShowChange(def, frame);
+        plus.MouseExited += () => ShowDescription(def, frame);
 
         _rows.Add(new Row(def, frame, name, grade, progress, plus, handle));
 
@@ -295,6 +310,27 @@ public partial class SkillPanel : CanvasLayer
         ContentMarginTop = margin * 0.6f,
         ContentMarginBottom = margin * 0.6f,
     };
+
+    /// <summary>The card the skill bar shows for this skill: its title and everything it does.</summary>
+    private void ShowDescription(SkillDef def, Control at)
+    {
+        if (_character is null) return;
+
+        var book = _character.Skills;
+        var text = book.IsUnlocked(def.Id)
+            ? SkillText.Title(def, book) + "\n" + SkillText.Describe(def, book)
+            : GameItems.Localise(def.Name) + "\n" + L10n.T("Not learned. Spend a skill point on it with the +.");
+
+        _tip.Show(text, at);
+    }
+
+    /// <summary>What the next point does, on the +.</summary>
+    private void ShowChange(SkillDef def, Control at)
+    {
+        if (_character is null) return;
+
+        _tip.Show(SkillText.Change(def, _character.Skills), at);
+    }
 
     // ------------------------------------------------------------------ actions
 
@@ -399,12 +435,9 @@ public partial class SkillPanel : CanvasLayer
             row.Grade.AddThemeColorOverride("font_color", spent > 0 ? colour : new Color(0.5f, 0.49f, 0.46f));
             row.Progress.AddThemeStyleboxOverride("fill", new StyleBoxFlat { BgColor = colour });
 
-            // The whole description, a hover away.
-            row.Frame.TooltipText = SkillText.Title(row.Def, book) + "\n" + SkillText.Describe(row.Def, book);
 
             row.Plus.Disabled = _caster?.CanInvest(id) != true;
             row.Plus.Visible = !book.IsFullyInvested(id);
-            row.Plus.TooltipText = points > 0 ? L10n.T("Spend a skill point.") : L10n.T("No skill points left.");
 
             // Guard Stance has its own key and is not on the numbered bar.
             var onBar = row.Def.CastType != "channel";

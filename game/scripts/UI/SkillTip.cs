@@ -45,6 +45,9 @@ public partial class SkillTip : PanelContainer
     }
 
     /// <summary>Shows the card centred above <paramref name="slot"/>.</summary>
+    /// <summary>Beside the thing described rather than above it: the skill window's rows.</summary>
+    public bool Beside { get; set; }
+
     public void Show(string text, Control slot)
     {
         if (text.Length == 0)
@@ -70,13 +73,16 @@ public partial class SkillTip : PanelContainer
         var size = Size;
         var viewport = GetViewportRect().Size;
 
-        var x = rect.Position.X + ((rect.Size.X - size.X) / 2f);
-        var y = rect.Position.Y - size.Y - Clearance;
+        var x = Beside ? rect.Position.X - size.X - Clearance : rect.Position.X + ((rect.Size.X - size.X) / 2f);
+        var y = Beside ? rect.Position.Y : rect.Position.Y - size.Y - Clearance;
+
+        // No room on the left: the right side instead.
+        if (Beside && x < 8f) x = rect.End.X + Clearance;
 
         // Kept on screen: the slots at the ends of the bar would otherwise push the card
         // half out of the window.
         GlobalPosition = new Vector2(
             Mathf.Clamp(x, 8f, Mathf.Max(8f, viewport.X - size.X - 8f)),
-            Mathf.Max(8f, y));
+            Mathf.Clamp(y, 8f, Mathf.Max(8f, viewport.Y - size.Y - 8f)));
     }
 }
