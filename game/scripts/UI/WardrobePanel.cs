@@ -25,6 +25,7 @@ public partial class WardrobePanel : CanvasLayer
     private VBoxContainer _sections = null!;
     private Label _count = null!;
     private bool _counted;
+    private Control _root = null!;
 
     /// <summary>Where it opens: just right of the character window.</summary>
     public float Left { get; set; } = 24 + 330;
@@ -42,7 +43,7 @@ public partial class WardrobePanel : CanvasLayer
     public override void _ExitTree()
     {
         PlayerProfile.Wardrobe.Changed -= OnChanged;
-        UiState.SetOpen(ref _counted, false);
+        UiState.SetSide(ref _counted, _root, false);
     }
 
     private void OnChanged()
@@ -53,7 +54,9 @@ public partial class WardrobePanel : CanvasLayer
     public void SetOpen(bool open)
     {
         Visible = open;
-        UiState.SetOpen(ref _counted, open);
+
+        // A side panel, as the character window it opens from: play goes on.
+        UiState.SetSide(ref _counted, _root, open);
 
         if (open) Refresh();
     }
@@ -79,6 +82,7 @@ public partial class WardrobePanel : CanvasLayer
 
         // Moved by holding its border or title and dragging (REF-19).
         PanelMover.Attach(root, "wardrobe");
+        _root = root;
 
         root.AddThemeStyleboxOverride("panel", Box(new Color(0.06f, 0.055f, 0.05f, 0.96f), 2, 0));
         AddChild(root);

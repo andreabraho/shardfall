@@ -46,6 +46,7 @@ public partial class CharacterPanel : CanvasLayer
     private GridContainer _derived = null!;
     private bool _counted;
     private WardrobePanel _wardrobe = null!;
+    private Control _root = null!;
 
     public override void _Ready()
     {
@@ -95,7 +96,10 @@ public partial class CharacterPanel : CanvasLayer
     private void SetOpen(bool open)
     {
         Visible = open;
-        UiState.SetOpen(ref _counted, open);
+
+        // A side panel, as the bag and the map (2026-09-25): play goes on with it open, and a
+        // click on it is not a walk order.
+        UiState.SetSide(ref _counted, _root, open);
 
         // The wardrobe goes with the window it belongs to.
         if (!open && _wardrobe.IsOpen) _wardrobe.SetOpen(false);
@@ -103,8 +107,8 @@ public partial class CharacterPanel : CanvasLayer
         if (open) Refresh();
     }
 
-    // A panel freed while open would leave the modal count raised and the player unable to move.
-    public override void _ExitTree() => UiState.SetOpen(ref _counted, false);
+    // Freed while open, it lets go of its place on screen.
+    public override void _ExitTree() => UiState.SetSide(ref _counted, _root, false);
 
     // ------------------------------------------------------------------ build
 
@@ -124,6 +128,7 @@ public partial class CharacterPanel : CanvasLayer
 
         // Moved by holding its border or title and dragging (REF-19).
         PanelMover.Attach(root, "character");
+        _root = root;
 
         root.AddThemeStyleboxOverride("panel", Box(new Color(0.06f, 0.055f, 0.05f, 0.96f), 2, 0));
         AddChild(root);
