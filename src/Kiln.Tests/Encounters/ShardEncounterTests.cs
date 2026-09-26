@@ -100,6 +100,28 @@ public class ShardEncounterTests
     }
 
     [Fact]
+    public void NearTheEnd_TheStoneCallsItsLastGuardOnce()
+    {
+        // 2026-09-26, at your call: the last third was the rock alone. At 12% the first wave
+        // comes again — once, however long the stone sits there.
+        var fight = Fight();
+        var events = new List<ShardEvent>();
+
+        events.AddRange(fight.Tick(0.1, 1.00, World()));
+        events.AddRange(Run(fight, 5, 0.50, World()));
+        events.AddRange(Run(fight, 5, 0.20, World()));
+
+        Assert.Single(events, e => e.Kind == ShardEventKind.SpawnWave && e.Phase == ShardPhase.One);
+        Assert.False(fight.LastWaveCalled);
+
+        events.AddRange(Run(fight, 5, 0.10, World()));
+        events.AddRange(Run(fight, 5, 0.05, World()));
+
+        Assert.True(fight.LastWaveCalled);
+        Assert.Equal(2, events.Count(e => e.Kind == ShardEventKind.SpawnWave && e.Phase == ShardPhase.One));
+    }
+
+    [Fact]
     public void Pulses_AlternateTelegraphAndStrike()
     {
         // The rhythm the whole fight is built on. A strike without a telegraph in front of it

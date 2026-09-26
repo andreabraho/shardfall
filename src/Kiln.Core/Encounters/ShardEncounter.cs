@@ -58,6 +58,10 @@ public sealed class ShardEncounter
     private double _telegraphRemaining;
     private bool _telegraphing;
     private double _reclamationRemaining;
+    private bool _lastWave;
+
+    /// <summary>Whether the stone has called its last guard (<see cref="ShardTier.LastWaveAt"/>).</summary>
+    public bool LastWaveCalled => _lastWave;
 
     public ShardEncounter(ShardTier tier, ShardModifier modifier, DifficultySettings difficulty)
     {
@@ -143,6 +147,14 @@ public sealed class ShardEncounter
         AdvancePhase(healthFraction);
 
         if (Phase == ShardPhase.Broken) return _events;
+
+        // Near the end the stone calls its last guard: the first wave once more, so the fight
+        // finishes against creatures rather than against the rock alone.
+        if (!_lastWave && Phase == ShardPhase.Three && healthFraction <= ShardTier.LastWaveAt && Tier.WaveFor(ShardPhase.One) is not null)
+        {
+            _lastWave = true;
+            _events.Add(new ShardEvent(ShardEventKind.SpawnWave, ShardPhase.One));
+        }
 
         TickPulse(delta);
         TickReclamation(delta, world);

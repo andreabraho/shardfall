@@ -354,6 +354,8 @@ public partial class ShardNode : StaticBody3D
 
     // ------------------------------------------------------------------ waves
 
+    private int _wavesLetOut;
+
     private void SpawnWave(ShardPhase phase)
     {
         if (_tier?.WaveFor(phase) is not { } wave || _enemyScene is null || !GameContent.IsLoaded) return;
@@ -367,9 +369,12 @@ public partial class ShardNode : StaticBody3D
         var composed = WaveComposer.Compose(wave, roster, _tier.Level, GameItems.EncounterRng);
         var index = 0;
 
+        // Counted, so the last guard — the first wave called again near the end — has names of its own.
+        _wavesLetOut++;
+
         foreach (var entry in composed)
         {
-            SpawnAdd(entry.EnemyId, entry.IsAnchor, $"Add_{phase}_{index}", index, composed.Count);
+            SpawnAdd(entry.EnemyId, entry.IsAnchor, $"Add_{phase}_{_wavesLetOut}_{index}", index, composed.Count);
             index++;
         }
 

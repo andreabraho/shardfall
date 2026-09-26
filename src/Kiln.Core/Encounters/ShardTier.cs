@@ -124,6 +124,13 @@ public sealed record ShardTier(
     /// <summary>Health fraction at which phase three begins.</summary>
     public const double PhaseThreeAt = 0.33;
 
+    /// <summary>
+    /// Health fraction at which the stone calls its last guard (2026-09-26, at your call): the
+    /// first wave again, once. Before it, the last third was a long stretch of hitting a rock
+    /// with nothing left to fight.
+    /// </summary>
+    public const double LastWaveAt = 0.12;
+
     public static ShardPhase PhaseFor(double healthFraction) => healthFraction switch
     {
         <= 0 => ShardPhase.Broken,
