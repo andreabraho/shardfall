@@ -96,7 +96,7 @@ public partial class QuestHud : CanvasLayer
         _panel.Visible = true;
         _name.Text = QuestTracker.Name(quest);
 
-        foreach (var child in _goals.GetChildren()) child.QueueFree();
+        UiNodes.Clear(_goals);
 
         for (var i = 0; i < quest.Goals.Count; i++)
         {

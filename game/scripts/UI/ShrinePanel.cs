@@ -296,7 +296,7 @@ public partial class ShrinePanel : CanvasLayer
     /// </summary>
     private void RefreshTravel()
     {
-        foreach (var child in _destinations.GetChildren()) child.QueueFree();
+        UiNodes.Clear(_destinations);
 
         var yang = _inventory?.Bag.Yang ?? 0;
         var inCombat = InCombat();

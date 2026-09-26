@@ -292,7 +292,7 @@ public partial class InventoryPanel : CanvasLayer
     {
         if (_inventory is null || !Visible) return;
 
-        foreach (var child in _purse.GetChildren()) child.QueueFree();
+        UiNodes.Clear(_purse);
         _purse.AddChild(Coin.Amount(_inventory.Bag.Yang, 15, new Color("f0c96a")));
 
         foreach (var (slot, view) in _worn) view.Display(_inventory.Gear.In(slot));

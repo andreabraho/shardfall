@@ -230,7 +230,7 @@ public partial class SkillPanel : CanvasLayer
 
     private void BuildRows()
     {
-        foreach (var child in _list.GetChildren()) child.QueueFree();
+        UiNodes.Clear(_list);
 
         _rows.Clear();
 

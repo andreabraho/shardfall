@@ -75,7 +75,7 @@ public partial class SkillBar : CanvasLayer
 
         _tip.Hide();
 
-        foreach (var child in _row.GetChildren()) child.QueueFree();
+        UiNodes.Clear(_row);
 
         var count = Math.Min(SlotActions.Length, _caster.Hotbar.Length);
         _slots = new SkillSlot[count + (_guard is null ? 0 : 1)];

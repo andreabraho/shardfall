@@ -280,7 +280,7 @@ public partial class MerchantPanel : CanvasLayer
 
         _tip.Clear();
 
-        foreach (var child in _purse.GetChildren()) child.QueueFree();
+        UiNodes.Clear(_purse);
         _purse.AddChild(Coin.Amount(_inventory.Bag.Yang, 15, Gold));
 
         foreach (var child in _stock.GetChildren())

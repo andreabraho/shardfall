@@ -140,7 +140,7 @@ public partial class WardrobePanel : CanvasLayer
 
     private void Refresh()
     {
-        foreach (var child in _sections.GetChildren()) child.QueueFree();
+        UiNodes.Clear(_sections);
 
         Section(Cosmetics.Sword, L10n.T("Sword — both blades"));
         Section(Cosmetics.Armour, L10n.T("Armour"));
@@ -150,6 +150,8 @@ public partial class WardrobePanel : CanvasLayer
         var total = GameContent.IsLoaded ? GameContent.Database.Cosmetics.Count : 0;
 
         _count.Text = L10n.F("{0} of {1} won — every boss has a look to give", PlayerProfile.Wardrobe.Owned.Count, total);
+
+        Callable.From(() => { if (IsInstanceValid(_root)) _root.ResetSize(); }).CallDeferred();
     }
 
     private void Section(string kind, string heading)

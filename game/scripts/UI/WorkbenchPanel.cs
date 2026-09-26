@@ -369,7 +369,7 @@ public partial class WorkbenchPanel : CanvasLayer
             ? new Color(0.62f, 0.66f, 0.72f)
             : World.LootDrop.RarityColour(GameItems.Spec(_selected.DefId)?.Rarity ?? Rarity.Common));
 
-        foreach (var child in _body.GetChildren()) child.QueueFree();
+        UiNodes.Clear(_body);
 
         if (_selected is null) return;
 
