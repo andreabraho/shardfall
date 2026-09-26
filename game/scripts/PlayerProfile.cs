@@ -44,7 +44,8 @@ public static class PlayerProfile
 
     public static CharacterProgression Progression => _progression ??= new CharacterProgression();
 
-    public static SkillBook Skills => _skills ??= new SkillBook();
+    /// <summary>The skills known, six at most; the Guard, on its own key, is not one of the six.</summary>
+    public static SkillBook Skills => _skills ??= new SkillBook(free: [Kiln.Data.Ids.Skills.SklGuardStance]);
 
     private static Kiln.Core.Cosmetics.Wardrobe? _wardrobe;
 
@@ -89,7 +90,7 @@ public static class PlayerProfile
     public static string[] Hotbar { get; private set; } = DefaultHotbar();
 
     /// <summary>Keys on the bar.</summary>
-    public const int HotbarKeys = 9;
+    public const int HotbarKeys = 6;
 
     /// <summary>
     /// What a new character's bar holds: nothing (2026-09-25, at your call). The player puts

@@ -37,6 +37,17 @@ public sealed class SkillBook
     public const int GrandMasterUses = 20;
     public const int PerfectUses = 35;
 
+    /// <summary>
+    /// The most skills a character can know at once (2026-09-26, at your call): six, one for
+    /// each key on the bar. Which six is the build; a shrine refunds them to choose again.
+    /// </summary>
+    public const int MaxSkills = 6;
+
+    /// <summary>Skills that do not count toward <see cref="MaxSkills"/>: the Guard, which has a key of its own.</summary>
+    private readonly HashSet<string> _free;
+
+    public SkillBook(IEnumerable<string>? free = null) => _free = new HashSet<string>(free ?? [], StringComparer.Ordinal);
+
     private sealed class Entry
     {
         public int Uses { get; set; }
@@ -52,6 +63,16 @@ public sealed class SkillBook
 
     public bool IsUnlocked(string skillId) => _known.ContainsKey(skillId);
 
+    /// <summary>How many of the <see cref="MaxSkills"/> places are taken.</summary>
+    public int Learned => _known.Keys.Count(id => !_free.Contains(id));
+
+    /// <summary>
+    /// Whether a point could go into this skill as far as the limit goes: it is known already,
+    /// it is free, or there is still a place for it.
+    /// </summary>
+    public bool CanLearn(string skillId) =>
+        _known.ContainsKey(skillId) || _free.Contains(skillId) || Learned < MaxSkills;
+
     /// <summary>Points invested in a skill. Zero for one that has not been learned.</summary>
     public int PointsIn(string skillId) => _known.TryGetValue(skillId, out var e) ? e.Points : 0;
 
@@ -59,7 +80,8 @@ public sealed class SkillBook
 
     /// <summary>
     /// Spends a point on a skill, learning it if this is the first. False when it is already
-    /// full — the caller must not take the point off the player in that case.
+    /// full, or when it would be a seventh skill — the caller must not take the point off the
+    /// player in either case.
     /// </summary>
     public bool Invest(string skillId)
     {
@@ -67,6 +89,8 @@ public sealed class SkillBook
 
         if (!_known.TryGetValue(skillId, out var entry))
         {
+            if (!CanLearn(skillId)) return false;
+
             _known[skillId] = new Entry { Points = 1 };
             return true;
         }

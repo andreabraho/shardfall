@@ -26,6 +26,46 @@ public class SkillBookTests
     }
 
     [Fact]
+    public void ASeventhSkill_CannotBeLearned_ButTheSixKeepGrowing()
+    {
+        // 2026-09-26, at your call: six skills at most, one per key on the bar.
+        var book = new SkillBook();
+
+        for (var i = 0; i < SkillBook.MaxSkills; i++) Assert.True(book.Invest($"skl_{i}"));
+
+        Assert.Equal(SkillBook.MaxSkills, book.Learned);
+        Assert.False(book.CanLearn("skl_extra"));
+        Assert.False(book.Invest("skl_extra"));
+        Assert.False(book.IsUnlocked("skl_extra"));
+
+        Assert.True(book.Invest("skl_0"));
+        Assert.Equal(2, book.PointsIn("skl_0"));
+    }
+
+    [Fact]
+    public void TheGuard_IsNotOneOfTheSix()
+    {
+        var book = new SkillBook(free: ["skl_guard"]);
+
+        for (var i = 0; i < SkillBook.MaxSkills; i++) book.Invest($"skl_{i}");
+
+        Assert.True(book.Invest("skl_guard"));
+        Assert.Equal(SkillBook.MaxSkills, book.Learned);
+    }
+
+    [Fact]
+    public void ARefund_FreesThePlaces()
+    {
+        var book = new SkillBook();
+
+        for (var i = 0; i < SkillBook.MaxSkills; i++) book.Invest($"skl_{i}");
+
+        book.Refund();
+
+        Assert.True(book.CanLearn("skl_extra"));
+    }
+
+    [Fact]
     public void Unlock_LearnsOnce()
     {
         var book = new SkillBook();

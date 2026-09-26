@@ -399,7 +399,7 @@ public partial class SkillPanel : CanvasLayer
         var book = _character.Skills;
         var points = _character.Progression.UnspentSkillPoints;
 
-        _unspent.Text = L10n.F("Skill points: {0}", points);
+        _unspent.Text = L10n.F("Skill points: {0}  ·  skills known: {1} / {2}", points, book.Learned, SkillBook.MaxSkills);
         _unspent.AddThemeColorOverride("font_color", points > 0 ? new Color(0.56f, 0.86f, 0.62f) : new Color(0.6f, 0.58f, 0.52f));
 
         foreach (var row in _rows)
@@ -443,6 +443,10 @@ public partial class SkillPanel : CanvasLayer
 
 
             row.Plus.Disabled = _caster?.CanInvest(id) != true;
+
+            // A seventh skill cannot be learned: the row says so rather than just refusing.
+            row.Plus.TooltipText = book.CanLearn(id) ? ""
+                : L10n.F("You know {0} skills, the most there is room for. A shrine refunds them to choose again.", SkillBook.MaxSkills);
             row.Plus.Visible = !book.IsFullyInvested(id);
 
             // Guard Stance has its own key and is not on the numbered bar.

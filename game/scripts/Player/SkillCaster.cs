@@ -88,8 +88,7 @@ public partial class SkillCaster : Node
     private static readonly string[] SlotActions =
     [
         GameActions.Skill1, GameActions.Skill2, GameActions.Skill3,
-        GameActions.Skill4, GameActions.Skill5, GameActions.Skill6, GameActions.Skill7,
-        GameActions.Skill8, GameActions.Skill9,
+        GameActions.Skill4, GameActions.Skill5, GameActions.Skill6,
     ];
 
     public override void _Ready()
@@ -344,6 +343,7 @@ public partial class SkillCaster : Node
         : _progression.UnspentSkillPoints <= 0 ? "no skill points left"
         : !GameContent.IsLoaded || !GameContent.Database.Skills.ContainsKey(skillId) ? "unknown skill"
         : _book.IsFullyInvested(skillId) ? $"already at {SkillBook.MaxPoints} points"
+        : !_book.CanLearn(skillId) ? $"already knows {SkillBook.MaxSkills} skills"
         : "allowed";
 
     /// <summary>
@@ -357,7 +357,8 @@ public partial class SkillCaster : Node
         && _progression.UnspentSkillPoints > 0
         && GameContent.IsLoaded
         && GameContent.Database.Skills.ContainsKey(skillId)
-        && !_book.IsFullyInvested(skillId);
+        && !_book.IsFullyInvested(skillId)
+        && _book.CanLearn(skillId);
 
     /// <summary>
     /// Spends one skill point on a skill. The first point learns it, the seventh masters it.

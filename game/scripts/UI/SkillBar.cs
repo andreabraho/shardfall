@@ -24,8 +24,7 @@ public partial class SkillBar : CanvasLayer
     private static readonly string[] SlotActions =
     [
         GameActions.Skill1, GameActions.Skill2, GameActions.Skill3,
-        GameActions.Skill4, GameActions.Skill5, GameActions.Skill6, GameActions.Skill7,
-        GameActions.Skill8, GameActions.Skill9,
+        GameActions.Skill4, GameActions.Skill5, GameActions.Skill6,
     ];
 
     private SkillCaster? _caster;
