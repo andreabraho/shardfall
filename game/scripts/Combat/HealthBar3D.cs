@@ -35,11 +35,15 @@ public partial class HealthBar3D : Node3D
 
     public override void _Ready()
     {
-        var backdrop = Quad(new Color(0.05f, 0.05f, 0.07f, 0.9f), Width, Height);
+        var backdrop = Quad(new Color(0.05f, 0.05f, 0.07f, 0.9f), Width, Height, priority: 5);
         backdrop.Position = new Vector3(0, 0, -0.002f);
         AddChild(backdrop);
 
-        _fill = Quad(FullColor, Width, Height * 0.74f);
+        // Always drawn after its backdrop (2026-09-26). At the same priority the two were ordered
+        // by distance, and the fill — shifted left as it drains — could land behind: from some
+        // angles a wounded creature's bar was all backdrop, and it looked dead at 0 while
+        // standing and fighting (the spiders on the Ridge, in your playthrough).
+        _fill = Quad(FullColor, Width, Height * 0.74f, priority: 6);
         _fillMaterial = (StandardMaterial3D)_fill.MaterialOverride;
         AddChild(_fill);
 
@@ -47,7 +51,7 @@ public partial class HealthBar3D : Node3D
         SetFraction(1f);
     }
 
-    private static MeshInstance3D Quad(Color color, float width, float height)
+    private static MeshInstance3D Quad(Color color, float width, float height, int priority)
     {
         var material = new StandardMaterial3D
         {
@@ -55,7 +59,7 @@ public partial class HealthBar3D : Node3D
             ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
             Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
             NoDepthTest = true,
-            RenderPriority = 5,
+            RenderPriority = priority,
             CullMode = BaseMaterial3D.CullModeEnum.Disabled,
         };
 
