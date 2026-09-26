@@ -265,6 +265,15 @@ public static class SkillFx
         Billboard(context, "star_06.png", center + (Vector3.Up * 1.1f), 1.8f, colour, 0.2, bright);
     }
 
+    /// <summary>The Guard shaking off harmful effects: a pale flash and points rising off the Warrior.</summary>
+    public static void Cleanse(Node context, Vector3 center)
+    {
+        var colour = new Color(0.85f, 0.95f, 1f);
+
+        Billboard(context, "star_06.png", center + (Vector3.Up * 1.2f), 1.8f, colour, 0.25);
+        Burst(context, center + (Vector3.Up * 0.6f), "circle_05.png", colour, 24, 0.1f, 1.2f, 2.4f, 0.7, Vector3.Up, 25f, 1.5f, emitRadius: 0.5f);
+    }
+
     /// <summary>Blade Aura cast: a flash on the raised blade and a ring at the feet.</summary>
     public static void Sharpen(Node context, Vector3 center, Color colour, float bright = 1f)
     {
@@ -315,6 +324,7 @@ public static class SkillFx
         Frenzy(context, at, faint);
         Sharpen(context, at, faint);
         Impact(context, at, faint);
+        Cleanse(context, at + (Vector3.Down * 50));
 
         // The slam without its jolt, and its scorch all but invisible.
         Slam(context, at, 1f, faint, quiet: true);

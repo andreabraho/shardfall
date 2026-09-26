@@ -196,6 +196,25 @@ public class StatusEffectTests
     }
 
     [Fact]
+    public void CleanseAll_RemovesEveryHarmfulStatus_AndKeepsTheBuffs()
+    {
+        // The Guard's cleanse (2026-09-26, at your call).
+        var set = new StatusEffectSet();
+        set.Apply(StatusEffectSet.Poison(5));
+        set.Apply(StatusEffectSet.Bleed(3));
+        set.Apply(StatusEffectSet.Slow(0.3));
+        set.Apply(StatusEffectSet.Weaken(0.2));
+        set.Apply(StatusEffectSet.Vulnerability(0.2));
+        set.Apply(StatusEffectSet.Fortify(0.35));
+        set.Apply(StatusEffectSet.Frenzy(0.2));
+
+        Assert.Equal(5, set.CleanseAll());
+        Assert.Equal(2, set.Count);
+        Assert.True(set.Has(StatusKind.Fortify));
+        Assert.True(set.Has(StatusKind.Frenzy));
+    }
+
+    [Fact]
     public void EmptySet_IsCheapAndInert()
     {
         var set = new StatusEffectSet();

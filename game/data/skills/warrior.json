@@ -70,7 +70,7 @@
     } },
 
   { "id": "skl_piercing_blow", "name": "$skill.skl_piercing_blow.name", "color": "#bfe0ff", "sound": "snd_skl_pierce", "class": "warrior", "tree": "mental", "suggested_level": 12, "mana_cost": 30, "cooldown": 12.0, "cast_type": "instant", "targeting": "line",          "radius": 10.0, "width": 2.6, "damage_coef": 4.80, "hits": 1, "motion": "charge",
-    "windup": 0.45, "max_targets": 4, "pierces": true,
+    "windup": 0.45, "pierces": true,
     "applies": { "kind": "stun", "duration": 1.0, "chance": 0.35 },
     "mastery": {
       "master":       { "damage_coef": 5.50, "note": "$skill.skl_piercing_blow.m" },

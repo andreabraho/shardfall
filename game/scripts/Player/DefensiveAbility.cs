@@ -111,6 +111,17 @@ public partial class DefensiveAbility : Node
 
         Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndGuard);
 
+        // Raising the guard shakes off whatever was eating at the Warrior: poison, bleeding,
+        // a slow, a weakening, a vulnerability (2026-09-26, at your call). A stun still holds —
+        // a stunned Warrior cannot raise the guard in the first place.
+        var cleansed = _self.Statuses.CleanseAll();
+
+        if (cleansed > 0)
+        {
+            Combat.SkillFx.Cleanse(this, _motor.GlobalPosition);
+            GD.Print($"[guard] cleansed {cleansed} harmful effect(s)");
+        }
+
         // The dome wears the rank the guard is held at (REF-03).
         _visual.Rank = GetParent().GetNodeOrNull<PlayerCharacter>("PlayerCharacter")?.Skills.RankOf(SkillId)
             ?? Kiln.Core.Progression.MasteryRank.Normal;

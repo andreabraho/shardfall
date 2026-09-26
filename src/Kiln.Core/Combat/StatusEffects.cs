@@ -187,6 +187,26 @@ public sealed class StatusEffectSet
         return false;
     }
 
+    /// <summary>The statuses that hurt whoever carries them.</summary>
+    public static readonly StatusKind[] Harmful =
+        [StatusKind.Stun, StatusKind.Poison, StatusKind.Bleed, StatusKind.Slow, StatusKind.Weaken, StatusKind.Vulnerability];
+
+    /// <summary>
+    /// Removes every harmful status at once and says how many went — the Guard's cleanse
+    /// (2026-09-26, at your call). Buffs stay.
+    /// </summary>
+    public int CleanseAll()
+    {
+        var removed = 0;
+
+        foreach (var kind in Harmful)
+        {
+            if (_effects.Remove(kind)) removed++;
+        }
+
+        return removed;
+    }
+
     public void Clear() => _effects.Clear();
 
     /// <summary>

@@ -195,7 +195,10 @@ public partial class ShardNode : StaticBody3D
                 Family = MonsterFamily.Mystic,
                 FlatMaxHp = _tier.MaxHp * GameSession.Difficulty.EnemyHpMultiplier,
                 FlatDefense = _tier.Level * 1.5,
-                FlatAttackPower = 0,
+                // A creature of its level hits about this hard (the roster runs ~8 + 4.5 a level).
+                // It was 0, so the pulse the whole fight is built round did the minimum 1
+                // damage and could be ignored (found in your playthrough, 2026-09-26).
+                FlatAttackPower = 8 + (_tier.Level * 4.5),
             },
             "$shard.name");
 
