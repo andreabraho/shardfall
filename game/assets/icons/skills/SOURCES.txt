@@ -16,3 +16,5 @@ skl_iron_skin.svg         Delapouite   delapouite/armor-upgrade.svg
 skl_blade_aura.svg        Lorc         lorc/aura.svg
 skl_battle_frenzy.svg     Delapouite   delapouite/enrage.svg         (REF-21, 2026-09-26, with your OK)
 skl_blade_wave.svg        Lorc         lorc/energy-sword.svg         (REF-21, 2026-09-26, with your OK)
+skl_triple_cut.svg        Lorc         lorc/claw-slashes.svg         (REF-21, 2026-09-26, with your OK)
+skl_piercing_blow.svg     Lorc         lorc/piercing-sword.svg       (REF-21, 2026-09-26, with your OK)
