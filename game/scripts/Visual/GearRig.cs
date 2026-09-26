@@ -13,11 +13,12 @@ namespace Kiln.Game.Visual;
 /// <param name="Cape">Whether the armour is epic or better.</param>
 /// <param name="SwordSkin">The sword skin worn (REF-23), on either blade, or null.</param>
 /// <param name="ArmourSkin">The armour skin worn (REF-23), or null.</param>
+/// <param name="Aura">The aura worn (REF-23), round either blade, or null.</param>
 /// <remarks>
 /// No shield (2026-09-25, at your call): as in the original, a shield is worn for what it
 /// gives and never drawn.
 /// </remarks>
-public sealed record GearLook(int Hands, int Upgrade, bool Helmet, bool Cape, CosmeticDef? SwordSkin = null, CosmeticDef? ArmourSkin = null);
+public sealed record GearLook(int Hands, int Upgrade, bool Helmet, bool Cape, CosmeticDef? SwordSkin = null, CosmeticDef? ArmourSkin = null, CosmeticDef? Aura = null);
 
 /// <summary>
 /// The parts of a model that stand for worn gear, shown and hidden to match it (REF-22).
@@ -42,6 +43,7 @@ public sealed class GearRig
     private readonly List<MeshInstance3D> _body = [];
 
     private string _armourSkin = "";
+    private string? _aura;
 
     private GearRig(Node3D model, GearPartsDef parts)
     {
@@ -89,6 +91,14 @@ public sealed class GearRig
         // A sword skin is on both blades, so changing blade keeps it (REF-23).
         BladeSkin.Set(_oneHand, look.SwordSkin);
         BladeSkin.Set(_twoHand, look.SwordSkin);
+
+        // So is the aura: round the sword, as the original's (2026-09-26), not round the feet.
+        if (look.Aura?.Id != _aura)
+        {
+            _aura = look.Aura?.Id;
+            BladeAura.Set(_oneHand, look.Aura);
+            BladeAura.Set(_twoHand, look.Aura);
+        }
 
         // The glow belongs to whichever blade is in hand, and leaves the other; with a skin on,
         // it is the skin's colour.

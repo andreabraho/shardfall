@@ -4,8 +4,8 @@ using Kiln.Game.Items;
 namespace Kiln.Game.Player;
 
 /// <summary>
-/// Puts the wardrobe on the player (REF-23): the sword and armour skins through the worn-gear
-/// look, the aura round the feet, and the companion at the player's side.
+/// Puts the wardrobe on the player (REF-23): the sword and armour skins and the aura through
+/// the worn-gear look, and the companion at the player's side.
 /// </summary>
 /// <remarks>
 /// Listens to the wardrobe, so a look won or changed shows at once, and builds everything
@@ -15,8 +15,6 @@ namespace Kiln.Game.Player;
 public partial class PlayerLooks : Node
 {
     private Node3D _player = null!;
-    private Node3D? _aura;
-    private string _auraId = "";
     private Companion? _companion;
 
     public override void _Ready()
@@ -41,44 +39,7 @@ public partial class PlayerLooks : Node
 
         _player.GetNodeOrNull<PlayerInventory>("PlayerInventory")?.ShowGear();
 
-        RefreshAura();
         RefreshCompanion();
-    }
-
-    private void RefreshAura()
-    {
-        var look = Cosmetics.Worn(Cosmetics.Aura);
-        var id = look?.Id ?? "";
-
-        if (id == _auraId && (_aura is not null || look is null)) return;
-
-        _auraId = id;
-        _aura?.QueueFree();
-        _aura = null;
-
-        if (look is null) return;
-
-        var colour = new Color(look.Color);
-        var aura = new Node3D { Name = "Aura" };
-
-        if (Visual.SkinParticles.Build(look.Particles, colour, Vector3.Zero, aura: true) is { } particles)
-        {
-            particles.Position = new Vector3(0, 0.08f, 0);
-            aura.AddChild(particles);
-        }
-
-        // A little light of its colour on the ground and the legs.
-        aura.AddChild(new OmniLight3D
-        {
-            Position = new Vector3(0, 0.6f, 0),
-            LightColor = colour,
-            LightEnergy = 0.6f,
-            OmniRange = 2.6f,
-            ShadowEnabled = false,
-        });
-
-        _player.AddChild(aura);
-        _aura = aura;
     }
 
     private void RefreshCompanion()

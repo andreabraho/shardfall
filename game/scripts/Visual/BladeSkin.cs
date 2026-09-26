@@ -64,7 +64,7 @@ public partial class BladeSkin : Node3D
         // Along the blade: the mesh's own box, a little in from its ends.
         var box = blade.Mesh.GetAabb();
 
-        if (SkinParticles.Build(skin.Particles, colour, box.Size * 0.45f, aura: false) is { } particles)
+        if (SkinParticles.Build(skin.Particles, colour, box.Size * 0.45f) is { } particles)
         {
             particles.Position = box.GetCenter();
             AddChild(particles);

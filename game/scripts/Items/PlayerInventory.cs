@@ -115,7 +115,8 @@ public partial class PlayerInventory : Node
             Helmet: Gear.In(EquipSlot.Helmet) is not null,
             Cape: armour is not null && GameItems.Spec(armour.DefId)?.Rarity >= Rarity.Epic,
             SwordSkin: Cosmetics.Worn(Cosmetics.Sword),
-            ArmourSkin: Cosmetics.Worn(Cosmetics.Armour)));
+            ArmourSkin: Cosmetics.Worn(Cosmetics.Armour),
+            Aura: Cosmetics.Worn(Cosmetics.Aura)));
     }
 
     /// <summary>

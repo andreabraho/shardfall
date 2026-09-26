@@ -583,7 +583,11 @@ public sealed class CosmeticDef : ContentDefBase
     /// <summary>Sword: how much the blade shines on its own, 0 for none.</summary>
     public double Emission { get; init; }
 
-    /// <summary>Sword and aura: the effect it gives off — frost, venom, embers or arcane. Empty for none.</summary>
+    /// <summary>
+    /// Sword and aura: the effect it gives off — frost, venom, embers or arcane. Empty for none.
+    /// An aura is a stream of points round the blade, whatever its effect; the effect picks
+    /// the glints among them.
+    /// </summary>
     public string Particles { get; init; } = string.Empty;
 
     /// <summary>Companion: the visual that follows the player.</summary>

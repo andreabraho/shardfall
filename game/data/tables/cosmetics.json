@@ -4,7 +4,8 @@
   // and the gan wait for the final playthrough.
   //
   // kind: sword (on the sword and the great sword alike) | armour (the whole Knight but its
-  // face) | aura | companion (walks beside the player).
+  // face) | aura (a stream of points round the blade, either blade, beside any sword skin) |
+  // companion (walks beside the player).
   // texture: the model's own texture, recoloured — see game/assets/cosmetics/SOURCES.txt.
   // particles: frost | venom | embers | arcane.
 
