@@ -30,6 +30,40 @@ public partial class TelegraphVisual : Node3D
     /// <summary>Metres across the outline band.</summary>
     private const float OutlineWidth = 0.07f;
 
+    /// <summary>
+    /// The high-contrast warning (UIX-04): a yellow no creature, grass or floor in the game is,
+    /// a band three times as thick, and stripes in the fill, so the shape says "danger" to
+    /// anyone who cannot tell the red from the ground.
+    /// </summary>
+    private static readonly Color Contrast = new(1f, 0.86f, 0.1f);
+
+    private const float ContrastOutlineWidth = 0.2f;
+
+    private static ImageTexture? _stripes;
+
+    private bool _contrast;
+
+    /// <summary>Diagonal stripes, laid on the ground in world space so they never swim as the fill grows.</summary>
+    private static ImageTexture Stripes()
+    {
+        if (_stripes is not null) return _stripes;
+
+        const int size = 64;
+        var image = Image.CreateEmpty(size, size, false, Image.Format.Rgba8);
+
+        for (var y = 0; y < size; y++)
+        {
+            for (var x = 0; x < size; x++)
+            {
+                // Four stripes across the tile, half of each band solid.
+                var on = ((x + y) % (size / 4)) < size / 8;
+                image.SetPixel(x, y, on ? Colors.White : new Color(1, 1, 1, 0.25f));
+            }
+        }
+
+        return _stripes = ImageTexture.CreateFromImage(image);
+    }
+
     public override void _Ready()
     {
         _fillMaterial = Material(0.12f);
@@ -62,13 +96,21 @@ public partial class TelegraphVisual : Node3D
     {
         _radius = radius;
         _angle = shape == TelegraphShape.Cone ? angleDegrees : 360f;
+
+        // Read now, so a setting changed mid-fight takes effect at the next warning.
+        _contrast = Settings.GameSettings.HighContrastWarnings;
+
+        _fillMaterial.AlbedoTexture = _contrast ? Stripes() : null;
+        _fillMaterial.Uv1Triplanar = _contrast;
+        _fillMaterial.Uv1WorldTriplanar = _contrast;
+        _fillMaterial.Uv1Scale = new Vector3(0.5f, 0.5f, 0.5f);
         _duration = System.Math.Max(0.05, duration);
         _elapsed = 0;
         _running = true;
 
         // A thin outline for the extent, and a faint fill growing to meet it for the timing.
         // The outline used to be the whole shape at two-thirds opacity.
-        _edge.Mesh = AoeGeometry.Outline(_radius, _angle, OutlineWidth);
+        _edge.Mesh = AoeGeometry.Outline(_radius, _angle, _contrast ? ContrastOutlineWidth : OutlineWidth);
         _fill.Mesh = AoeGeometry.Fan(_radius, _angle);
         GlobalPosition = origin + (Vector3.Up * 0.05f);
 
@@ -103,8 +145,17 @@ public partial class TelegraphVisual : Node3D
         // Brighten as it fills, so the last moments are unmistakable even in peripheral vision.
         // Outline and fill at the same transparency (2026-09-24): the edge reads by being a
         // line, not by being brighter.
-        _edgeMaterial.AlbedoColor = Color with { A = 0.08f + (0.2f * t) };
-        _fillMaterial.AlbedoColor = Color with { A = 0.08f + (0.2f * t) };
+        if (_contrast)
+        {
+            // Bold from the first frame: the edge is the part that must never be missed.
+            _edgeMaterial.AlbedoColor = Contrast with { A = 0.55f + (0.35f * t) };
+            _fillMaterial.AlbedoColor = Contrast with { A = 0.18f + (0.3f * t) };
+        }
+        else
+        {
+            _edgeMaterial.AlbedoColor = Color with { A = 0.08f + (0.2f * t) };
+            _fillMaterial.AlbedoColor = Color with { A = 0.08f + (0.2f * t) };
+        }
 
         if (_elapsed >= _duration) Cancel();
     }
@@ -158,6 +209,9 @@ public static class AoeGeometry
         arrays[(int)Mesh.ArrayType.Vertex] = vertices.ToArray();
         arrays[(int)Mesh.ArrayType.Index] = indices.ToArray();
 
+        // Facing up, so a pattern laid on it from above lies flat (UIX-04's stripes).
+        arrays[(int)Mesh.ArrayType.Normal] = System.Linq.Enumerable.Repeat(Vector3.Up, vertices.Count).ToArray();
+
         var mesh = new ArrayMesh();
         mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, arrays);
         return mesh;
@@ -192,6 +246,9 @@ public static class AoeGeometry
         arrays.Resize((int)Mesh.ArrayType.Max);
         arrays[(int)Mesh.ArrayType.Vertex] = vertices.ToArray();
         arrays[(int)Mesh.ArrayType.Index] = indices.ToArray();
+
+        // Facing up, so a pattern laid on it from above lies flat (UIX-04's stripes).
+        arrays[(int)Mesh.ArrayType.Normal] = System.Linq.Enumerable.Repeat(Vector3.Up, vertices.Count).ToArray();
 
         var mesh = new ArrayMesh();
         mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, arrays);

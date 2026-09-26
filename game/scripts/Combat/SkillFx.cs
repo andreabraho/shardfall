@@ -363,9 +363,14 @@ public static class SkillFx
         return quad;
     }
 
-    /// <summary>A quad always facing the camera.</summary>
+    /// <summary>
+    /// A quad always facing the camera. These are the flares: with fewer flashes asked for
+    /// (UIX-04) they are drawn at a third of their strength.
+    /// </summary>
     private static FxQuad Billboard(Node context, string texture, Vector3 at, float size, Color colour, double life, float bright = 1f)
     {
+        if (Settings.GameSettings.ReduceFlashes) colour = colour with { A = colour.A * 0.35f };
+
         var quad = new FxQuad
         {
             Life = life,
@@ -422,7 +427,7 @@ public static class SkillFx
             ScaleMin = 0.6f,
             ScaleMax = 1.3f,
             ScaleCurve = Dwindle(),
-            ColorRamp = Fade(colour, additive ? bright : 1f),
+            ColorRamp = Fade(colour, additive ? (Settings.GameSettings.ReduceFlashes ? Mathf.Min(bright, 1f) : bright) : 1f),
             AngleMin = -180f,
             AngleMax = 180f,
             AngularVelocityMin = -spin * 57f,
@@ -625,7 +630,13 @@ public partial class FxQuad : MeshInstance3D
 
     private double _age;
 
-    public override void _Ready() => Step(0);
+    public override void _Ready()
+    {
+        // Nothing burns brighter than its own colour with fewer flashes asked for (UIX-04).
+        if (Settings.GameSettings.ReduceFlashes) Bright = Mathf.Min(Bright, 1f);
+
+        Step(0);
+    }
 
     public override void _Process(double delta)
     {

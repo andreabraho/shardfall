@@ -57,6 +57,11 @@ public static class PanelMover
             }
         };
 
+        // Kept clear of the task bar when it grows or the screen shrinks — a larger interface
+        // size makes the screen smaller in the interface's own units (UIX-04).
+        window.Resized += () => Callable.From(() => Keep(window)).CallDeferred();
+        window.Ready += () => window.GetViewport().SizeChanged += () => Callable.From(() => Keep(window)).CallDeferred();
+
         // Put back where it was left, once the window has its size.
         if (Placed.TryGetValue(key, out var at))
         {
@@ -81,6 +86,23 @@ public static class PanelMover
         var size = window.Size;
 
         return at.X <= Edge || at.Y <= TitleBand || at.X >= size.X - Edge || at.Y >= size.Y - Edge;
+    }
+
+    /// <summary>
+    /// Moves a window up, as far as it has to and no further, when its foot has gone under the
+    /// task bar or off the bottom of the screen. A window taller than the room above the bar
+    /// goes to the top.
+    /// </summary>
+    private static void Keep(Control window)
+    {
+        if (!GodotObject.IsInstanceValid(window) || !window.IsInsideTree()) return;
+
+        var floor = window.GetViewportRect().Size.Y - TaskBar.Height;
+        var foot = window.GlobalPosition.Y + window.Size.Y;
+
+        if (foot <= floor) return;
+
+        window.GlobalPosition = window.GlobalPosition with { Y = Mathf.Max(0, floor - window.Size.Y) };
     }
 
     /// <summary>Keeps at least part of the window on screen, so it can always be taken back.</summary>

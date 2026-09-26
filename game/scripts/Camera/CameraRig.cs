@@ -112,7 +112,7 @@ public partial class CameraRig : Node3D
     /// <param name="strength">0..1, normally the fraction of health lost.</param>
     public static void Kick(Vector3 fromDirection, float strength)
     {
-        if (_instance is null || !_instance.EnableScreenShake) return;
+        if (_instance is null || !_instance.EnableScreenShake || !Settings.GameSettings.ScreenShake) return;
 
         // Small hits do not move the camera at all. Reacting to every scratch is what turns
         // feedback into noise.

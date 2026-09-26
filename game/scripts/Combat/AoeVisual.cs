@@ -189,7 +189,9 @@ public partial class AoeVisual : Node3D
         // tooltip (REF-03).
         // Warmed toward the rank's second colour, so a Perfect skill throws a violet flash
         // with gold in it rather than the flat violet of Grand Master.
-        var own = hostile ? HostileColor : FriendlyColor;
+        var own = hostile
+            ? (Settings.GameSettings.HighContrastWarnings ? new Color(1f, 0.86f, 0.1f) : HostileColor)
+            : FriendlyColor;
         var color = Visual.MasteryStyle.Tint(own, rank).Lerp(Visual.MasteryStyle.Accent(own, rank), 0.3f);
 
         mesh.Visible = true;

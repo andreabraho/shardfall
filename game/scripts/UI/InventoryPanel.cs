@@ -222,7 +222,7 @@ public partial class InventoryPanel : CanvasLayer
         _purse = new HBoxContainer { Alignment = BoxContainer.AlignmentMode.End };
         column.AddChild(_purse);
 
-        var hint = new Label
+        _hint = new Label
         {
             Text = L10n.T("Drag to move, onto the figure to wear, out of the window to drop") + "\n"
                 + L10n.T("Right-click to wear or use · Shift + right-click destroys · Ctrl + right-click locks"),
@@ -230,9 +230,9 @@ public partial class InventoryPanel : CanvasLayer
             CustomMinimumSize = new Vector2((PlayerInventory.Columns * Step) - CellGap, 0),
         };
 
-        hint.AddThemeFontSizeOverride("font_size", 11);
-        hint.AddThemeColorOverride("font_color", new Color(0.55f, 0.60f, 0.66f));
-        column.AddChild(hint);
+        _hint.AddThemeFontSizeOverride("font_size", 11);
+        _hint.AddThemeColorOverride("font_color", new Color(0.55f, 0.60f, 0.66f));
+        column.AddChild(_hint);
 
         _notice = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart, CustomMinimumSize = new Vector2((PlayerInventory.Columns * Step) - CellGap, 0) };
         _notice.AddThemeFontSizeOverride("font_size", 13);
@@ -687,8 +687,33 @@ public partial class InventoryPanel : CanvasLayer
         _notice.Modulate = new Color(1, 1, 1, 1);
     }
 
+    private Label _hint = null!;
+
+    /// <summary>
+    /// The two lines of how-to under the bag, dropped when they would push the window over the
+    /// task bar — at a larger interface size (UIX-04) the bag only fits without them.
+    /// </summary>
+    private void FitHint()
+    {
+        if (!IsInstanceValid(_root) || !_root.IsInsideTree()) return;
+
+        var room = _root.GetViewportRect().Size.Y - TaskBar.Height;
+        var withHint = _root.Size.Y + (_hint.Visible ? 0 : _hint.GetCombinedMinimumSize().Y + 4);
+
+        var show = withHint <= room;
+
+        if (show == _hint.Visible) return;
+
+        _hint.Visible = show;
+
+        // A container keeps its size when what is in it shrinks: let it go back to what it needs.
+        _root.ResetSize();
+    }
+
     public override void _Process(double delta)
     {
+        if (Visible) FitHint();
+
         if (_noticeFor <= 0) return;
 
         _noticeFor -= delta;

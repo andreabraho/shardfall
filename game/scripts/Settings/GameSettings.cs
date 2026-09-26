@@ -38,6 +38,26 @@ public static class GameSettings
     public static float MusicVolume { get; set; } = 0.7f;
     public static float EffectsVolume { get; set; } = 0.8f;
 
+    // -- accessibility (UIX-04, NFR-A.1) --------------------------------------------------
+
+    /// <summary>How large the whole interface is drawn, 0.9–1.2: every panel and every word in it. Past 1.2 the bag no longer fits above the task bar.</summary>
+    public static float UiScale { get; set; } = 1f;
+
+    public const float UiScaleMin = 0.9f;
+    public const float UiScaleMax = 1.2f;
+
+    /// <summary>Whether heavy blows and a Ground Slam jolt the camera.</summary>
+    public static bool ScreenShake { get; set; } = true;
+
+    /// <summary>Softer, fewer flashes: the flares of skills and the whitening of a creature that is hit.</summary>
+    public static bool ReduceFlashes { get; set; }
+
+    /// <summary>
+    /// Enemy warnings drawn in bright yellow with a thick edge and diagonal stripes, so they
+    /// read by their shape and not only by a red that some eyes cannot tell from the grass.
+    /// </summary>
+    public static bool HighContrastWarnings { get; set; }
+
     /// <summary>Language code; a table in data/strings must exist for it.</summary>
     public static string Language { get; set; } = Kiln.Core.Foundation.L10n.English;
 
@@ -68,6 +88,10 @@ public static class GameSettings
             MusicVolume = Mathf.Clamp((float)file.GetValue(Section, "music_volume", MusicVolume), 0f, 1f);
             EffectsVolume = Mathf.Clamp((float)file.GetValue(Section, "effects_volume", EffectsVolume), 0f, 1f);
             Language = (string)file.GetValue(Section, "language", Language);
+            UiScale = Mathf.Clamp((float)file.GetValue(Section, "ui_scale", UiScale), UiScaleMin, UiScaleMax);
+            ScreenShake = (bool)file.GetValue(Section, "screen_shake", ScreenShake);
+            ReduceFlashes = (bool)file.GetValue(Section, "reduce_flashes", ReduceFlashes);
+            HighContrastWarnings = (bool)file.GetValue(Section, "high_contrast_warnings", HighContrastWarnings);
 
             MusicChoice.Clear();
 
@@ -96,6 +120,10 @@ public static class GameSettings
         file.SetValue(Section, "music_volume", MusicVolume);
         file.SetValue(Section, "effects_volume", EffectsVolume);
         file.SetValue(Section, "language", Language);
+        file.SetValue(Section, "ui_scale", UiScale);
+        file.SetValue(Section, "screen_shake", ScreenShake);
+        file.SetValue(Section, "reduce_flashes", ReduceFlashes);
+        file.SetValue(Section, "high_contrast_warnings", HighContrastWarnings);
 
         foreach (var (id, track) in MusicChoice) file.SetValue(MusicSection, id, track);
 
@@ -113,7 +141,13 @@ public static class GameSettings
         DisplayServer.WindowSetVsyncMode(VSync ? DisplayServer.VSyncMode.Enabled : DisplayServer.VSyncMode.Disabled);
         Engine.MaxFps = MaxFps;
 
-        if (Engine.GetMainLoop() is SceneTree tree) tree.Root.Scaling3DScale = RenderScale;
+        if (Engine.GetMainLoop() is SceneTree tree)
+        {
+            tree.Root.Scaling3DScale = RenderScale;
+
+            // The interface only: the world is drawn at its own size whatever this is.
+            tree.Root.ContentScaleFactor = UiScale;
+        }
 
         Volume("Master", MasterVolume);
         Volume(MusicBus, MusicVolume);

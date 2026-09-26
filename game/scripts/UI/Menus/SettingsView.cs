@@ -128,6 +128,24 @@ public partial class SettingsView : ScrollContainer
             column.AddChild(about);
         }
 
+        // -- accessibility (UIX-04)
+        column.AddChild(MenuStyle.Section(L10n.T("Accessibility")));
+
+        var sizes = new OptionButton();
+        float[] steps = [0.9f, 1f, 1.1f, 1.2f];
+
+        foreach (var step in steps) sizes.AddItem(L10n.F("{0:P0}", step));
+
+        sizes.Selected = System.Math.Max(0, System.Array.FindIndex(steps, s => Mathf.IsEqualApprox(s, GameSettings.UiScale)));
+        sizes.ItemSelected += index => Change(() => GameSettings.UiScale = steps[(int)index]);
+        Row(column, L10n.T("Interface size"), sizes);
+
+        Toggle(column, L10n.T("Camera shake"), GameSettings.ScreenShake, on => GameSettings.ScreenShake = on);
+        Toggle(column, L10n.T("Fewer flashes"), GameSettings.ReduceFlashes, on => GameSettings.ReduceFlashes = on);
+        Toggle(column, L10n.T("High-contrast warnings"), GameSettings.HighContrastWarnings, on => GameSettings.HighContrastWarnings = on);
+        column.AddChild(MenuStyle.Label(L10n.T("High-contrast warnings draw enemy attacks in bright yellow with a thick edge and stripes, readable without telling red from green. How long a warning lasts is set by the difficulty."),
+            12, MenuStyle.Dim, wrap: true));
+
         // -- language
         column.AddChild(MenuStyle.Section(L10n.T("Language")));
 

@@ -368,7 +368,7 @@ public partial class VisualRoot : Node3D
             _flash -= delta;
 
             _flashMaterial.AlbedoColor = _flash > 0
-                ? _baseColor.Lerp(Colors.White, 0.75f)
+                ? _baseColor.Lerp(Colors.White, Settings.GameSettings.ReduceFlashes ? 0.3f : 0.75f)
                 : _baseColor;
         }
 

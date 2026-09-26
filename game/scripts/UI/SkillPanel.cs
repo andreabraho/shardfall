@@ -40,6 +40,28 @@ public partial class SkillPanel : CanvasLayer
     private Label _unspent = null!;
     private SkillTip _tip = null!;
     private VBoxContainer _list = null!;
+    private ScrollContainer _scroll = null!;
+
+    /// <summary>What the window needs round the list: its bars, the points line and the note, and the task bar below.</summary>
+    private const float Chrome = 190f;
+
+    /// <summary>Fits the list's scroll to the screen: the whole list when there is room, the room there is when not.</summary>
+    private void FitList()
+    {
+        if (!IsInstanceValid(_scroll) || !_root.IsInsideTree()) return;
+
+        var screen = _root.GetViewportRect().Size.Y;
+        var room = Mathf.Max(160f, screen - _root.GlobalPosition.Y - Chrome - TaskBar.Height);
+        var wanted = _list.GetCombinedMinimumSize().Y;
+
+        _scroll.CustomMinimumSize = new Vector2(0, Mathf.Min(wanted, room));
+    }
+
+    /// <summary>Kept fitted while open: the window can be moved, and the interface size changed.</summary>
+    public override void _Process(double delta)
+    {
+        if (Visible) FitList();
+    }
     private bool _counted;
 
     public override void _Ready()
@@ -176,9 +198,22 @@ public partial class SkillPanel : CanvasLayer
         _unspent.AddThemeFontSizeOverride("font_size", 14);
         inner.AddChild(_unspent);
 
-        _list = new VBoxContainer();
+        _list = new VBoxContainer { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
         _list.AddThemeConstantOverride("separation", 4);
-        inner.AddChild(_list);
+
+        // In a scroll of its own, as tall as the list or as the screen allows (UIX-04): at a
+        // larger interface size twelve rows no longer fit above the task bar.
+        _scroll = new ScrollContainer
+        {
+            HorizontalScrollMode = ScrollContainer.ScrollMode.Disabled,
+            Theme = Menus.MenuStyle.Theme(),
+        };
+
+        var room = new MarginContainer { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
+        room.AddThemeConstantOverride("margin_right", 8);
+        room.AddChild(_list);
+        _scroll.AddChild(room);
+        inner.AddChild(_scroll);
 
         var note = new Label
         {
