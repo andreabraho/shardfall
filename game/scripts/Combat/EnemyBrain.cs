@@ -1178,7 +1178,8 @@ public partial class EnemyBrain : CharacterBody3D
                 TargetCombatant.Body.GlobalPosition + (Vector3.Up * 1.0f),
                 ability.DamageCoef,
                 Layers.Player,
-                ability.Applies);
+                ability.Applies,
+                reach: RangeOf(ability));
 
             return;
         }

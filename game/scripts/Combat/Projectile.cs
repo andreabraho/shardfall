@@ -23,6 +23,18 @@ public partial class Projectile : Node3D
 
     [Export] public double MaxLifetime { get; set; } = 3.0;
 
+    /// <summary>
+    /// How far it flies before it is spent: a little past its thrower's reach (2026-09-26, at
+    /// your call). Stepping back out of an archer's range used to mean nothing — the shot flew
+    /// on for three seconds, forty metres.
+    /// </summary>
+    public float MaxDistance { get; set; } = float.MaxValue;
+
+    /// <summary>How much past the thrower's reach a shot still carries.</summary>
+    public const float Overshoot = 1.2f;
+
+    private Vector3 _from;
+
     [Export] public uint TargetLayers { get; set; } = Layers.Player;
 
     public static Projectile Spawn(
@@ -32,12 +44,14 @@ public partial class Projectile : Node3D
         Vector3 toward,
         double coefficient,
         uint targetLayers,
-        Kiln.Data.Definitions.StatusApplicationDef? applies = null)
+        Kiln.Data.Definitions.StatusApplicationDef? applies = null,
+        float reach = 0f)
     {
         var projectile = new Projectile
         {
             Name = "Projectile",
             TargetLayers = targetLayers,
+            MaxDistance = reach > 0 ? reach * Overshoot : float.MaxValue,
         };
 
         parent.AddChild(projectile);
@@ -52,6 +66,7 @@ public partial class Projectile : Node3D
         _coefficient = coefficient;
 
         GlobalPosition = from;
+        _from = from;
 
         var direction = (toward - from) with { Y = 0 };
         _velocity = direction.LengthSquared() > 0.0001f
@@ -85,6 +100,13 @@ public partial class Projectile : Node3D
         }
 
         GlobalPosition += _velocity * (float)delta;
+
+        // Spent past its reach: it falls short rather than chasing the player across the field.
+        if (((GlobalPosition - _from) with { Y = 0 }).Length() > MaxDistance)
+        {
+            QueueFree();
+            return;
+        }
 
         foreach (var hit in AreaQuery.Sphere(this, GlobalPosition, HitRadius, TargetLayers))
         {
