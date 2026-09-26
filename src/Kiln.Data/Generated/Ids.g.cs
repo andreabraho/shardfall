@@ -135,10 +135,12 @@ public static class Ids
         public const string SklGuardStance = "skl_guard_stance";
         public const string SklHeavyStrike = "skl_heavy_strike";
         public const string SklIronSkin = "skl_iron_skin";
+        public const string SklPiercingBlow = "skl_piercing_blow";
         public const string SklShieldBash = "skl_shield_bash";
+        public const string SklTripleCut = "skl_triple_cut";
         public const string SklWhirlwind = "skl_whirlwind";
 
-        public static readonly string[] All = ["skl_battle_frenzy", "skl_blade_aura", "skl_blade_wave", "skl_cleave", "skl_ground_slam", "skl_guard_stance", "skl_heavy_strike", "skl_iron_skin", "skl_shield_bash", "skl_whirlwind"];
+        public static readonly string[] All = ["skl_battle_frenzy", "skl_blade_aura", "skl_blade_wave", "skl_cleave", "skl_ground_slam", "skl_guard_stance", "skl_heavy_strike", "skl_iron_skin", "skl_piercing_blow", "skl_shield_bash", "skl_triple_cut", "skl_whirlwind"];
     }
 
     public static class Quests
@@ -463,7 +465,9 @@ public static class Ids
         public const string SndSklFrenzy = "snd_skl_frenzy";
         public const string SndSklHeavy = "snd_skl_heavy";
         public const string SndSklIron = "snd_skl_iron";
+        public const string SndSklPierce = "snd_skl_pierce";
         public const string SndSklSlam = "snd_skl_slam";
+        public const string SndSklTriple = "snd_skl_triple";
         public const string SndSklWave = "snd_skl_wave";
         public const string SndSklWhirl = "snd_skl_whirl";
         public const string SndSocket = "snd_socket";
@@ -505,7 +509,7 @@ public static class Ids
         public const string VoxUndeadAlert = "vox_undead_alert";
         public const string VoxUndeadDeath = "vox_undead_death";
 
-        public static readonly string[] All = ["amb_campfire", "amb_desert", "amb_dungeon", "amb_haunted", "amb_meadow", "amb_torch", "amb_village", "mus_boss", "mus_catacombs", "mus_menu", "mus_village", "mus_wilds", "snd_enemy_death", "snd_flask", "snd_guard", "snd_hit", "snd_hit_crit", "snd_level_up", "snd_pickup", "snd_player_death", "snd_player_hurt", "snd_quest_complete", "snd_rare_drop", "snd_refused", "snd_reroll", "snd_shard_break", "snd_shrine", "snd_skill", "snd_skl_aura", "snd_skl_bash", "snd_skl_cleave", "snd_skl_frenzy", "snd_skl_heavy", "snd_skl_iron", "snd_skl_slam", "snd_skl_wave", "snd_skl_whirl", "snd_socket", "snd_stair_open", "snd_swing", "snd_telegraph", "snd_trade", "snd_ui_click", "snd_ui_close", "snd_ui_open", "snd_upgrade_fail", "snd_upgrade_success", "snd_yang", "stp_dirt", "stp_grass", "stp_stone", "vox_beast_alert", "vox_beast_death", "vox_canine_alert", "vox_canine_death", "vox_demon_alert", "vox_demon_death", "vox_ghost_alert", "vox_ghost_death", "vox_golem_alert", "vox_golem_death", "vox_human_alert", "vox_human_death", "vox_insect_alert", "vox_insect_death", "vox_orc_alert", "vox_orc_death", "vox_plant_alert", "vox_plant_death", "vox_rodent_alert", "vox_rodent_death", "vox_serpent_alert", "vox_serpent_death", "vox_undead_alert", "vox_undead_death"];
+        public static readonly string[] All = ["amb_campfire", "amb_desert", "amb_dungeon", "amb_haunted", "amb_meadow", "amb_torch", "amb_village", "mus_boss", "mus_catacombs", "mus_menu", "mus_village", "mus_wilds", "snd_enemy_death", "snd_flask", "snd_guard", "snd_hit", "snd_hit_crit", "snd_level_up", "snd_pickup", "snd_player_death", "snd_player_hurt", "snd_quest_complete", "snd_rare_drop", "snd_refused", "snd_reroll", "snd_shard_break", "snd_shrine", "snd_skill", "snd_skl_aura", "snd_skl_bash", "snd_skl_cleave", "snd_skl_frenzy", "snd_skl_heavy", "snd_skl_iron", "snd_skl_pierce", "snd_skl_slam", "snd_skl_triple", "snd_skl_wave", "snd_skl_whirl", "snd_socket", "snd_stair_open", "snd_swing", "snd_telegraph", "snd_trade", "snd_ui_click", "snd_ui_close", "snd_ui_open", "snd_upgrade_fail", "snd_upgrade_success", "snd_yang", "stp_dirt", "stp_grass", "stp_stone", "vox_beast_alert", "vox_beast_death", "vox_canine_alert", "vox_canine_death", "vox_demon_alert", "vox_demon_death", "vox_ghost_alert", "vox_ghost_death", "vox_golem_alert", "vox_golem_death", "vox_human_alert", "vox_human_death", "vox_insect_alert", "vox_insect_death", "vox_orc_alert", "vox_orc_death", "vox_plant_alert", "vox_plant_death", "vox_rodent_alert", "vox_rodent_death", "vox_serpent_alert", "vox_serpent_death", "vox_undead_alert", "vox_undead_death"];
     }
 
     public static class Cosmetics

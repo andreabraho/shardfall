@@ -227,5 +227,13 @@
   "$skill.skl_battle_frenzy.name": "Battle Frenzy",
   "$skill.skl_battle_frenzy.m": "Faster still.",
   "$skill.skl_battle_frenzy.g": "Lasts longer.",
-  "$skill.skl_battle_frenzy.p": "Fastest, and comes back sooner."
+  "$skill.skl_battle_frenzy.p": "Fastest, and comes back sooner.",
+  "$skill.skl_triple_cut.name": "Triple Cut",
+  "$skill.skl_triple_cut.m": "Cuts deeper.",
+  "$skill.skl_triple_cut.g": "A wider arc.",
+  "$skill.skl_triple_cut.p": "Cuts deepest, and comes back sooner.",
+  "$skill.skl_piercing_blow.name": "Piercing Blow",
+  "$skill.skl_piercing_blow.m": "Hits harder.",
+  "$skill.skl_piercing_blow.g": "Comes back sooner.",
+  "$skill.skl_piercing_blow.p": "Hits hardest, and reaches further."
 }

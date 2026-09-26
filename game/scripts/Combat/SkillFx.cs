@@ -54,6 +54,79 @@ public static class SkillFx
     }
 
     /// <summary>
+    /// One of the Triple Cut's three cuts: a crescent across the front, tilted a different way
+    /// each time — left, right, then straight down the middle — so the three read as three.
+    /// </summary>
+    public static void Cut(Node context, Vector3 origin, Vector3 forward, float radius, int hit, Color colour, float bright = 1f)
+    {
+        var yaw = Yaw(forward);
+        var tilt = (hit % 3) switch { 0 => -0.45f, 1 => 0.45f, _ => 0f };
+        var way = hit % 2 == 0 ? 1f : -1f;
+
+        var cut = Flat(context, "slash_02.png", origin + (Vector3.Up * (0.7f + (0.12f * (hit % 3)))) + (forward * radius * 0.3f), radius * 1.3f, colour, 0.2, bright);
+        cut.Rotation = new Vector3(0, yaw + tilt, 0);
+        cut.Spin = 2.4f * way;
+        cut.From = 0.75f;
+        cut.To = 1.1f;
+        cut.FadeIn = 0.04f;
+
+        // The last of the three lands hardest.
+        if (hit % 3 == 2)
+        {
+            Billboard(context, "star_06.png", origin + (Vector3.Up * 0.9f) + (forward * radius * 0.55f), 1.4f, colour, 0.16, bright);
+        }
+    }
+
+    /// <summary>
+    /// The Piercing Blow gathering itself: points of light drawn in from all round to a glow
+    /// swelling at the blade's point, for as long as the charge lasts.
+    /// </summary>
+    public static void Gather(Node context, Vector3 origin, Vector3 forward, double seconds, Color colour, float bright = 1f)
+    {
+        var flat = (forward with { Y = 0 }).Normalized();
+        var point = origin + (Vector3.Up * 0.95f) + (flat * 0.7f);
+
+        Burst(context, point, "circle_05.png", colour, 36, 0.12f, 0f, 0f, seconds, Vector3.Up, 0f, 0f,
+            emitRadius: 1.5f, radial: -3.2f, bright: bright);
+
+        var glow = Billboard(context, "light_02.png", point, 1.4f, colour, seconds + 0.05, bright);
+        glow.From = 0.15f;
+        glow.To = 1.0f;
+        glow.FadeIn = 0.5f;
+        glow.Hold = 0.95f;
+    }
+
+    /// <summary>
+    /// The Piercing Blow let go: a flash at the point, a shaft of light driven straight through
+    /// the line, and a ring of force opening round it.
+    /// </summary>
+    public static void Pierce(Node context, Vector3 origin, Vector3 forward, float length, Color colour, float bright = 1f)
+    {
+        var yaw = Yaw(forward);
+        var flat = (forward with { Y = 0 }).Normalized();
+
+        Billboard(context, "star_06.png", origin + (Vector3.Up * 0.95f) + (flat * 0.8f), 2.2f, colour, 0.2, bright * 1.2f);
+
+        // The shaft: long and narrow, lying level at chest height and racing out along the line.
+        var shaft = Flat(context, "trace_06.png", origin + (Vector3.Up * 0.9f) + (flat * length * 0.5f), 1f, colour, 0.3, bright * 1.3f);
+        shaft.Rotation = new Vector3(0, yaw, 0);
+        shaft.Shape = new Vector2(1.8f, length * 1.1f);
+        shaft.From = 0.3f;
+        shaft.To = 1.0f;
+        shaft.FadeIn = 0.02f;
+        shaft.Hold = 0.25f;
+
+        var ring = Flat(context, "circle_03.png", origin + (Vector3.Up * 0.9f) + (flat * length * 0.35f), 2.6f, colour, 0.3, bright);
+        ring.Rotation = new Vector3(0, yaw, 0);
+        ring.From = 0.2f;
+        ring.To = 1.0f;
+        ring.FadeIn = 0.02f;
+
+        Burst(context, origin + (flat * length * 0.6f), "smoke_04.png", Dust, 6, 1.0f, 0.8f, 1.6f, 0.6, flat + (Vector3.Up * 0.3f), 30f, 0f,
+            emitRadius: 0.5f, additive: false);
+    }
+
+    /// <summary>
     /// One turn of the Whirlwind: two rings of wind spinning round the Warrior, and dust driven
     /// outward along the ground.
     /// </summary>
@@ -233,6 +306,9 @@ public static class SkillFx
         Cleave(context, at, ahead, 3f, 100f, faint);
         Whirl(context, at, 3f, faint, 0.3, 0);
         Wave(context, at, ahead, 4f, 2f, faint);
+        Cut(context, at, ahead, 3f, 2, faint);
+        Gather(context, at, ahead, 0.2, faint);
+        Pierce(context, at, ahead, 4f, faint);
         Strike(context, at, faint, bash: true);
         Strike(context, at, faint, bash: false);
         Harden(context, at, faint);

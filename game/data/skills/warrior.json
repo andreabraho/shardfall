@@ -6,6 +6,14 @@
       "perfect":      { "cooldown": 3.0, "damage_coef": 2.40, "note": "$skill.skl_heavy_strike.p" }
     } },
 
+  { "id": "skl_triple_cut",    "name": "$skill.skl_triple_cut.name", "color": "#f0f2ff", "sound": "snd_skl_triple",    "class": "warrior", "tree": "body",   "suggested_level": 2,  "mana_cost": 16, "cooldown": 5.0,  "cast_type": "instant", "targeting": "cone",          "radius": 3.5, "cone_angle": 110, "damage_coef": 0.80, "hits": 3,
+    "hit_interval": 0.24, "motion": "triple",
+    "mastery": {
+      "master":       { "damage_coef": 0.92, "note": "$skill.skl_triple_cut.m" },
+      "grand_master": { "cone_angle": 150, "note": "$skill.skl_triple_cut.g" },
+      "perfect":      { "cooldown": 4.0, "damage_coef": 1.05, "note": "$skill.skl_triple_cut.p" }
+    } },
+
   { "id": "skl_guard_stance",  "name": "$skill.skl_guard_stance.name", "color": "#8fc4ff", "sound": "snd_skill",  "class": "warrior", "tree": "mental", "suggested_level": 3,  "mana_cost": 10, "cooldown": 10.0, "cast_type": "channel", "targeting": "self",          "radius": 0,   "damage_coef": 0.00, "hits": 0,
     "duration": 1.2, "magnitude": 0.70,
     "mastery": {
@@ -59,6 +67,15 @@
       "master":       { "damage_coef": 1.85, "note": "$skill.skl_blade_wave.m" },
       "grand_master": { "radius": 11.0, "note": "$skill.skl_blade_wave.g" },
       "perfect":      { "cooldown": 6.0, "damage_coef": 2.20, "note": "$skill.skl_blade_wave.p" }
+    } },
+
+  { "id": "skl_piercing_blow", "name": "$skill.skl_piercing_blow.name", "color": "#bfe0ff", "sound": "snd_skl_pierce", "class": "warrior", "tree": "mental", "suggested_level": 12, "mana_cost": 30, "cooldown": 12.0, "cast_type": "instant", "targeting": "line",          "radius": 5.0, "width": 2.6, "damage_coef": 2.40, "hits": 1, "motion": "charge",
+    "windup": 0.45, "max_targets": 4, "pierces": true,
+    "applies": { "kind": "stun", "duration": 1.0, "chance": 0.35 },
+    "mastery": {
+      "master":       { "damage_coef": 2.75, "note": "$skill.skl_piercing_blow.m" },
+      "grand_master": { "cooldown": 10.0, "note": "$skill.skl_piercing_blow.g" },
+      "perfect":      { "radius": 6.0, "damage_coef": 3.20, "note": "$skill.skl_piercing_blow.p" }
     } },
 
   { "id": "skl_battle_frenzy", "name": "$skill.skl_battle_frenzy.name", "color": "#ff5a36", "sound": "snd_skl_frenzy", "class": "warrior", "tree": "body",   "suggested_level": 16, "mana_cost": 30, "cooldown": 30.0, "cast_type": "instant", "targeting": "self",          "radius": 0,   "damage_coef": 0.00, "hits": 0, "motion": "roar",

@@ -137,7 +137,8 @@ public partial class Combatant : Node
     /// applies the result. Returns it so the caller can drive feedback.
     /// </summary>
     /// <param name="skill">A skill or a special ability, not a basic attack: it takes skill damage, not average damage.</param>
-    public DamageResult TakeAttack(Combatant attacker, double weaponCoef = 1.0, double skillCoef = 1.0, bool skill = false)
+    /// <param name="pierce">Ignores this combatant's defence (REF-21, the Piercing Blow).</param>
+    public DamageResult TakeAttack(Combatant attacker, double weaponCoef = 1.0, double skillCoef = 1.0, bool skill = false, bool pierce = false)
     {
         if (!IsAlive) return DamageResult.Miss;
 
@@ -152,6 +153,7 @@ public partial class Combatant : Node
             WeaponCoef = weaponCoef,
             SkillCoef = skillCoef,
             IsSkill = skill,
+            AlwaysPierces = pierce,
             // Difficulty raises what the player takes, never what they deal.
             DifficultyDamageMultiplier = attacker.IsPlayer ? 1.0 : GameSession.Difficulty.EnemyDamageMultiplier,
         };

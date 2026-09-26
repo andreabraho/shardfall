@@ -249,6 +249,8 @@ public partial class ModelAnimator : Node
             // shout with the arms up.
             "wave" => TwoHanded ? ["Melee_2H_Attack_Slice", "2H_Melee_Attack_Slice"] : ["Melee_1H_Attack_Slice_Diagonal", "1H_Melee_Attack_Slice_Diagonal"],
             "roar" => ["Cheering", "Cheer", "Spellcast_Raise"],
+            // The Piercing Charge drives the point ahead.
+            "charge" => TwoHanded ? ["Melee_2H_Attack_Stab", "2H_Melee_Attack_Stab"] : ["Melee_1H_Attack_Stab", "1H_Melee_Attack_Stab"],
             _ => [],
         };
 

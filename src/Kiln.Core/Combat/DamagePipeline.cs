@@ -38,6 +38,12 @@ public readonly record struct DamageRequest
     /// <summary>Skips the evade roll. Used by unavoidable effects such as shard pulses.</summary>
     public bool Unavoidable { get; init; }
 
+    /// <summary>
+    /// Skips the defender's mitigation every time, as a lucky pierce does now and then — the
+    /// Piercing Blow (REF-21), which in the original ignores defence.
+    /// </summary>
+    public bool AlwaysPierces { get; init; }
+
     public DamageRequest() { }
 }
 
@@ -93,7 +99,7 @@ public static class DamagePipeline
         if (critical) damage *= attacker.CritDamage;
 
         // 6-7. Pierce skips mitigation entirely.
-        var pierced = rng.Chance(attacker.PierceChance);
+        var pierced = request.AlwaysPierces || rng.Chance(attacker.PierceChance);
         var mitigation = pierced ? 0 : defender.DamageReductionAgainst(attacker.Level);
         damage *= 1 - mitigation;
 

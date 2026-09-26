@@ -320,8 +320,8 @@ public partial class SkillCaster : Node
 
         _self.Mana.TrySpend(skill.ManaCost);
 
-        // Its own sound (REF-21); a spinning skill makes it on every turn instead.
-        if (def.Motion != "spin") Audio.AudioDirector.Play(def.Sound, _motor.GlobalPosition);
+        // Its own sound (REF-21); a skill that moves on every hit makes it every hit instead.
+        if (!PerHit(def.Motion)) Audio.AudioDirector.Play(def.Sound, _motor.GlobalPosition);
         _cooldowns[skillId] = skill.Cooldown;
         _cooldownTotals[skillId] = System.Math.Max(0.01, skill.Cooldown);
 
@@ -436,7 +436,15 @@ public partial class SkillCaster : Node
         _motor.FaceTowards(aim);
 
         // Its own move (REF-22); a spinning skill turns on each of its hits instead.
-        if (skill.Motion != "spin") _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove(skill.Motion, aim, CastHold(skill), FxColour(skill));
+        if (!PerHit(skill.Motion)) _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove(skill.Motion, aim, CastHold(skill), FxColour(skill));
+
+        // A charged skill gathers itself first: the Warrior draws back, light gathers at the
+        // blade, and the blow goes when the windup is spent (REF-21, the Piercing Blow).
+        if (skill.Windup > 0)
+        {
+            _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.WindUp(skill.Windup);
+            SkillFx.Gather(this, origin, aim, skill.Windup, FxColour(skill), FxBright(skill));
+        }
 
         var center = skill.Targeting == SkillTargeting.GroundAoe
             ? GroundPoint(origin, aim, (float)skill.Radius)
@@ -451,6 +459,14 @@ public partial class SkillCaster : Node
             Remaining = System.Math.Max(1, skill.Hits),
             Timer = 0,
         };
+
+        // A charged skill's first hit waits for its windup; any other lands now.
+        if (skill.Windup > 0)
+        {
+            pulse.Timer = skill.Windup;
+            _pulses.Add(pulse);
+            return;
+        }
 
         FirePulse(pulse);
 
@@ -511,12 +527,22 @@ public partial class SkillCaster : Node
         _self.Statuses.Apply(effect);
     }
 
+    /// <summary>
+    /// Whether a skill moves, and sounds, on each of its hits rather than as it is cast: the
+    /// Whirlwind's turns, the Triple Cut's three cuts, and the Piercing Blow's thrust once its
+    /// charge is spent (REF-21).
+    /// </summary>
+    private static bool PerHit(string motion) => motion is "spin" or "triple" or "charge";
+
+    /// <summary>The Triple Cut's three moves, one per hit: across, down on the diagonal, and overhead.</summary>
+    private static readonly string[] TripleMoves = ["slice", "wave", "chop"];
+
     /// <summary>How long a self-buff plants the character. Long enough to read as a cast.</summary>
     private const double SelfCastHold = 0.6;
 
     /// <summary>How long a skill holds the character: every pulse, and a beat after the last.</summary>
     private static double CastHold(ResolvedSkill skill) =>
-        (System.Math.Max(1, skill.Hits) - 1) * skill.HitInterval + 0.35;
+        skill.Windup + ((System.Math.Max(1, skill.Hits) - 1) * skill.HitInterval) + 0.35;
 
     private void FirePulse(Pulse pulse)
     {
@@ -541,6 +567,21 @@ public partial class SkillCaster : Node
             Audio.AudioDirector.Play(SoundOf(skill.Id), _motor.GlobalPosition);
         }
 
+        // The Piercing Blow's thrust, as the charge is let go.
+        if (skill.Motion == "charge")
+        {
+            _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove("charge", aim, 0.35, colour);
+            Audio.AudioDirector.Play(SoundOf(skill.Id), _motor.GlobalPosition);
+        }
+
+        // The Triple Cut: a different cut each hit, each with its sound and its ribbon.
+        if (skill.Motion == "triple")
+        {
+            _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove(
+                TripleMoves[pulse.Index % TripleMoves.Length], aim, skill.HitInterval, colour);
+            Audio.AudioDirector.Play(SoundOf(skill.Id), _motor.GlobalPosition);
+        }
+
         List<Combatant> targets;
 
         switch (skill.Targeting)
@@ -553,6 +594,16 @@ public partial class SkillCaster : Node
             case SkillTargeting.SelfAoe:
                 targets = AreaQuery.Sphere(_motor, center, (float)skill.Radius);
                 SkillFx.Slam(this, center, (float)skill.Radius, colour, bright);
+                break;
+
+            case SkillTargeting.Cone when skill.Motion == "triple":
+                targets = AreaQuery.Cone(_motor, center, aim, (float)skill.Radius, (float)skill.ConeAngle);
+                SkillFx.Cut(this, center, aim, (float)skill.Radius, pulse.Index, colour, bright);
+                break;
+
+            case SkillTargeting.Line when skill.Motion == "charge":
+                targets = AreaQuery.Line(_motor, center, aim, (float)skill.Radius, (float)skill.Width);
+                SkillFx.Pierce(this, center, aim, (float)skill.Radius, colour, bright);
                 break;
 
             case SkillTargeting.Cone:
@@ -589,6 +640,15 @@ public partial class SkillCaster : Node
 
         if (targets.Count == 0) return;
 
+        // A capped skill lands on the nearest few only (REF-21).
+        if (skill.MaxTargets > 0 && targets.Count > skill.MaxTargets)
+        {
+            targets = targets
+                .OrderBy(t => t.Body.GlobalPosition.DistanceSquaredTo(center))
+                .Take(skill.MaxTargets)
+                .ToList();
+        }
+
         var sparks = 0;
 
         foreach (var target in targets)
@@ -602,7 +662,7 @@ public partial class SkillCaster : Node
                 SkillFx.Impact(this, target.Body.GlobalPosition, colour, 0.8f, bright);
             }
 
-            target.TakeAttack(_self, skillCoef: skill.DamageCoef, skill: true);
+            target.TakeAttack(_self, skillCoef: skill.DamageCoef, skill: true, pierce: skill.Pierces);
 
             // What is not a creature — a shard — cannot be stunned, but can be weakened.
             var resist = (target.Body as EnemyBrain)?.StunResist ?? 1.0;

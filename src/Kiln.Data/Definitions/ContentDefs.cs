@@ -331,6 +331,15 @@ public sealed class SkillDef : ContentDefBase
     /// <summary>The sound it is cast with (REF-21); a spinning skill makes it on every turn.</summary>
     public string Sound { get; init; } = "snd_skill";
 
+    /// <summary>Seconds it is charged before its first hit lands (REF-21, the Piercing Blow). Zero for none.</summary>
+    public double Windup { get; init; }
+
+    /// <summary>The most creatures one hit can land on, nearest first (REF-21). Zero for no limit.</summary>
+    public int MaxTargets { get; init; }
+
+    /// <summary>Whether its hits ignore the target's defence (REF-21, the Piercing Blow).</summary>
+    public bool Pierces { get; init; }
+
     /// <summary>
     /// A status the skill puts on what it hits (REF-01): Ground Slam's stun, Shield Bash's
     /// defence debuff. Physical skills control, mental skills weaken.
