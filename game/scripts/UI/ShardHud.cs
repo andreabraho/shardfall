@@ -130,8 +130,8 @@ public partial class ShardHud : CanvasLayer, ITopBar
 
         _phase.Text = _shard.Phase switch
         {
-            ShardPhase.One => L10n.T("Phase 1  ·  walk out of the pulse"),
-            ShardPhase.Two => L10n.T("Phase 2  ·  two rings now"),
+            ShardPhase.One => L10n.T("Phase 1  ·  step into a gap in the pulse"),
+            ShardPhase.Two => L10n.T("Phase 2  ·  narrower gaps now"),
             ShardPhase.Three => L10n.T("Phase 3  ·  kill the marked add"),
             _ => "",
         };

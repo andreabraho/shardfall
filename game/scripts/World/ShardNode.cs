@@ -326,9 +326,7 @@ public partial class ShardNode : StaticBody3D
                 break;
 
             case ShardEventKind.PulseTelegraph:
-                _telegraph.Begin(
-                    TelegraphShape.Circle, GlobalPosition, Vector3.Forward,
-                    (float)_tier!.PulseRadius, 360f, evt.Duration);
+                TelegraphPulse(evt.Phase, evt.Duration);
                 break;
 
             case ShardEventKind.PulseStrike:
@@ -582,15 +580,80 @@ public partial class ShardNode : StaticBody3D
 
     // ------------------------------------------------------------------ pulse
 
+    /// <summary>The broken ring's struck sectors, one warning each, made as they are needed.</summary>
+    private readonly List<TelegraphVisual> _sectors = [];
+
+    /// <summary>The shape of the pulse being warned of, and then struck.</summary>
+    private PulsePattern? _pattern;
+
+    /// <summary>
+    /// Warns of a pulse (2026-09-26, at your call): not a full ring but the struck sectors of a
+    /// broken one, turned a new way each time. Where there is no warning is safe, so a player
+    /// inside steps sideways into a gap rather than leaving the fight.
+    /// </summary>
+    private void TelegraphPulse(ShardPhase phase, double duration)
+    {
+        if (_tier is null) return;
+
+        _pattern = PulsePattern.For(phase, GD.RandRange(0, 360));
+
+        var centres = _pattern.DangerCentres().ToList();
+
+        while (_sectors.Count < centres.Count)
+        {
+            var sector = new TelegraphVisual { Name = $"Telegraph{_sectors.Count}" };
+            AddChild(sector);
+            _sectors.Add(sector);
+        }
+
+        for (var i = 0; i < _sectors.Count; i++)
+        {
+            if (i >= centres.Count)
+            {
+                _sectors[i].Cancel();
+                continue;
+            }
+
+            _sectors[i].Begin(TelegraphShape.Cone, GlobalPosition, Along(centres[i]),
+                (float)_tier.PulseRadius, (float)_pattern.DangerDegrees, duration);
+        }
+    }
+
+    private void CancelTelegraphs()
+    {
+        _telegraph.Cancel();
+
+        foreach (var sector in _sectors) sector.Cancel();
+    }
+
+    /// <summary>The direction at <paramref name="degrees"/> round the stone, measured as the pattern measures.</summary>
+    private static Vector3 Along(double degrees)
+    {
+        var radians = Mathf.DegToRad((float)degrees);
+
+        return new Vector3(Mathf.Sin(radians), 0, Mathf.Cos(radians));
+    }
+
     private void Pulse()
     {
         if (_tier is null) return;
 
-        AoeVisual.Circle(GlobalPosition, (float)_tier.PulseRadius, hostile: true);
+        var pattern = _pattern ?? PulsePattern.For(_fight?.Phase ?? ShardPhase.One, 0);
+
+        foreach (var centre in pattern.DangerCentres())
+        {
+            AoeVisual.Cone(GlobalPosition, Along(centre), (float)_tier.PulseRadius, (float)pattern.DangerDegrees, hostile: true);
+        }
+
         Camera.CameraRig.Kick(Vector3.Up, 0.35f);
 
         foreach (var victim in AreaQuery.Sphere(this, GlobalPosition, (float)_tier.PulseRadius, Foundation.Layers.Player))
         {
+            // In a gap: untouched.
+            var offset = victim.Body.GlobalPosition - GlobalPosition;
+
+            if (!pattern.Hits(Mathf.RadToDeg(Mathf.Atan2(offset.X, offset.Z)))) continue;
+
             victim.TakeAttack(_self, skillCoef: _tier.PulseDamageCoef);
 
             if (_fight?.Effects.PoisonPulse == true)
@@ -620,7 +683,7 @@ public partial class ShardNode : StaticBody3D
         _respawnIn = Persistent ? RespawnSeconds : double.MaxValue;
 
         if (Persistent) PlayerProfile.ShardRespawns[Key] = PlayerProfile.PlayTime + RespawnSeconds;
-        _telegraph.Cancel();
+        CancelTelegraphs();
 
         GD.Print($"[shard] {ShardId} broken");
 
@@ -723,7 +786,7 @@ public partial class ShardNode : StaticBody3D
     private void Hold()
     {
         _fight?.Hold();
-        _telegraph.Cancel();
+        CancelTelegraphs();
         _mending = 0;
 
         foreach (var add in _adds.Where(a => IsInstanceValid(a) && !a.IsDead)) add.GiveUp();
