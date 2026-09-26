@@ -14,7 +14,11 @@ public partial class Bootstrap : Node
 {
     public override void _Ready()
     {
-        GD.Print($"Kiln — {(OS.IsDebugBuild() ? "debug" : "release")} build, Godot {Engine.GetVersionInfo()["string"]}");
+        GD.Print($"Temins — {(OS.IsDebugBuild() ? "debug" : "release")} build, Godot {Engine.GetVersionInfo()["string"]}");
+
+        // The title changed from Kiln (2026-09-26): saves and settings come across once,
+        // before the settings are read.
+        Saving.UserDataMove.Run();
 
         // Before anything can query an action. Scenes assume these exist.
         GameActions.Install();
@@ -28,7 +32,7 @@ public partial class Bootstrap : Node
 
             if (!OS.IsDebugBuild())
             {
-                OS.Alert("Game data is missing or corrupt. Please reinstall.", "Kiln");
+                OS.Alert("Game data is missing or corrupt. Please reinstall.", "Temins");
                 GetTree().Quit(1);
             }
 

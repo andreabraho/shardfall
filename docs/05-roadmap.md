@@ -302,7 +302,7 @@ told anything outside the game.
 | QST-05 | **The chain: about five main-progress quests**, village → fields → tower | **[C]** | ✅ six: reed hoppers, thornback boars, pale gnawers, corrupted wolves (opens the Broken Gate), gate breakers, then clear the catacombs. Rewards on the chain formula; a real-content test locks "mostly hunts, one is the tower" |
 | QST-06 | The NPCs the chain and the economy need (elder, smith, vendor) | **[C]** | ✅ Corwen (elder, talks), Hesk (smith, opens the workbench), Idra (merchant, opens the shop), from `data/npcs/`; F at close range, shown on the map. Placeholder capsules until real models |
 | QST-08 | **Story and tone review** — names, writing, whether it lands | **[You]** | Taste call |
-| QST-09 | **Final naming pass** — replace `Kiln` and any placeholder names (IP hygiene) | **[Provide]** | Your call on the name |
+| QST-09 | **Final naming pass** — replace `Kiln` and any placeholder names (IP hygiene) | **[Provide]** | Your call on the name ✅ 2026-09-26: the title is **Temins** — window, main menu, build and user folder (saves and settings copied across once); the internal codename Kiln stays in the code. |
 
 Dropped from the old plan: 6 side quests, the quest journal screen, dialogue choices, the
 escort and survive objectives, and faction reputation.

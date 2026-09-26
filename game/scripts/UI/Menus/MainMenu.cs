@@ -68,11 +68,10 @@ public partial class MainMenu : Control
         left.AddThemeConstantOverride("separation", 10);
         frame.AddChild(left);
 
-        var logo = MenuStyle.Label("KILN", 76, MenuStyle.Gold);
+        var logo = MenuStyle.Label("TEMINS", 76, MenuStyle.Gold);
         logo.AddThemeColorOverride("font_outline_color", new Color(0.25f, 0.15f, 0.05f));
         logo.AddThemeConstantOverride("outline_size", 10);
         left.AddChild(logo);
-        left.AddChild(MenuStyle.Label(L10n.T("working title"), 14, MenuStyle.Dim));
         left.AddChild(new Control { CustomMinimumSize = new Vector2(0, 24) });
 
         // In the original's style (2026-09-26): the choices in a window of their own, and the

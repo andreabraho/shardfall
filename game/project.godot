@@ -1,4 +1,4 @@
-; Kiln — Godot project configuration
+; Temins — Godot project configuration (internal codename: Kiln)
 ;
 ; Deliberately minimal and hand-authored. Godot rewrites this file when you change
 ; settings in the editor, which produces clean diffs because it is plain text.
@@ -7,7 +7,7 @@ config_version=5
 
 [application]
 
-config/name="Kiln"
+config/name="Temins"
 config/description="A single-player action RPG in the spirit of Metin2."
 run/main_scene="res://scenes/main_menu.tscn"
 config/features=PackedStringArray("4.7", "C#", "Forward Plus")

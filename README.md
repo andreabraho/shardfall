@@ -1,4 +1,4 @@
-# Project Kiln — a single-player action RPG in the spirit of Metin2
+# Temins — a single-player action RPG in the spirit of Metin2
 
 A stylized oriental-fantasy action RPG for PC, built solo (you + Claude) in **Godot 4 / C#**.
 It takes the parts of Metin2 that were actually fun — metin stone hunting, chunky
@@ -6,8 +6,9 @@ skill combat, the upgrade/socket item chase, oriental art direction — and rebu
 them as a **complete, offline, 15–25 hour single-player campaign** with a real
 difficulty curve instead of an MMO grind curve.
 
-> **Codename:** `Kiln` (placeholder, rename freely — Mount Kiln is a Metin2 map name,
-> so pick something original before any public release; see the IP section in the overview).
+> **Title:** **Temins** (chosen 2026-09-26; cleared against USPTO, the WIPO Global Brand
+> Database and Steam). The code, assemblies, namespaces and environment variables keep the
+> internal codename `Kiln` — see the naming section of the overview.
 
 ## Documentation map
 

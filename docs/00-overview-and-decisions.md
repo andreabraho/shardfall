@@ -31,11 +31,22 @@ This matters and it's simple to stay clean:
 All game code is written originally. Every third-party asset gets an entry in
 `ASSET-LICENSES.md` with source + license the moment it enters the repo.
 
-### 2.1 Naming — what is ruled out, and why the codename is `Kiln`
+### 2.1 Naming — the title is **Temins**; the codename stays `Kiln`
 
-The code, assemblies and namespaces use the internal codename **`Kiln`**. It is a
-placeholder chosen to be obviously non-final, not a title candidate. Two names were
-considered and rejected:
+**The public title is Temins** (your call, 2026-09-26): an invented name built from the
+letters of the original's, so the nod is there without borrowing its name. Cleared on
+2026-09-26: no result for "temins" in USPTO tmsearch, none in the WIPO Global Brand Database
+(89 sources, the EU's included), and nothing on Steam but the unrelated "Lord Temin's
+Fortress". The domain temins.com is taken (parked); temins.net is free. `Temins2` was
+considered and set aside: "METIN 2" is a registered mark (USPTO 4570286, Webzen) in the same
+class, and the trailing 2 is the part of it most likely to confuse.
+
+The code, assemblies, namespaces and environment variables keep the internal codename
+**`Kiln`** — a trademark covers the product title, not internal identifiers. The window, the
+main menu and the build use Temins; the user folder moved from `app_userdata/Kiln` to
+`app_userdata/Temins`, and the game copies saves and settings across once
+(`UserDataMove`). Kiln was never a title candidate: Mount Kiln is a Metin2 map, and Double
+Fine released a game called Kiln on 2026-04-23. Names considered and rejected:
 
 | Name | Status | Reason |
 |---|---|---|
@@ -45,9 +56,9 @@ considered and rejected:
 Briefly used before the conflict was caught, so the GitHub repo is still named
 `andreabraho/shardfall` — worth renaming, and the public title must not be Shardfall.
 
-**Clearing process for the eventual title:** check USPTO tmsearch (class 9), WIPO Madrid
-Monitor, the Steam store, and domain availability. Unscreened shortlist carried forward:
-Metanoia, Second Meridian, Meteon, Nine Shards, Seokhwa.
+**Clearing process** (as applied to Temins): check USPTO tmsearch (class 9), the WIPO Global
+Brand Database, the Steam store, and domain availability. A registered-mark search by a
+professional is still worth doing before a paid release.
 
 The in-game mechanic terms `Shard` / `ShardMonolith` / "Shard Essence" are unaffected — a
 trademark covers a product title, not generic internal identifiers.
@@ -145,7 +156,7 @@ Every task in [05-roadmap.md](05-roadmap.md) carries one of these:
 
 | # | Question | Default if you have no preference |
 |---|---|---|
-| Q5 | **Final public title** — still open | **Internal codename is `Kiln`** (decided 2026-09-18), applied across the solution, assemblies, namespaces and the Godot project. `Kiln` is deliberately *not* a candidate title — it is a neutral placeholder so work can proceed. The public title is a pre-launch decision. See §2.1 below for names already ruled out. |
+| Q5 | **Final public title** — ✅ **Temins** (2026-09-26) | Your call, built from the letters of the original's name. Cleared against USPTO, WIPO and Steam (§2.1). The internal codename `Kiln` stays in the code, assemblies and namespaces. |
 | Q6 | Commercial release, or portfolio/learning project? | Affects asset licensing only — assume commercial |
 | Q7 | Launch languages | EN + IT |
 | Q8 | Controller support in v1.0 scope? | Yes — but note click-to-move makes controller support *harder*, so this is a Tier B decision |
