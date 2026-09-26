@@ -27,7 +27,8 @@ public readonly record struct ResolvedSkill(
     int Points,
     StatusApplicationDef? Applies = null,
     double HitInterval = 0.17,
-    string Motion = "")
+    string Motion = "",
+    double Width = 2.0)
 {
     /// <summary>
     /// What each point beyond the first adds, as a fraction (REF-03).
@@ -84,6 +85,6 @@ public readonly record struct ResolvedSkill(
         else duration *= scale;
 
         return new ResolvedSkill(def.Id, def.Targeting, radius, cone, cooldown, mana, damage, hits,
-            duration, magnitude, rank, Math.Max(1, points), def.Applies, def.HitInterval, def.Motion);
+            duration, magnitude, rank, Math.Max(1, points), def.Applies, def.HitInterval, def.Motion, def.Width);
     }
 }

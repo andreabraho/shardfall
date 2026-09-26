@@ -110,6 +110,17 @@ public sealed class GearRig
     }
 
     /// <summary>
+    /// A ribbon behind the blade in hand (REF-21), from <paramref name="delay"/> seconds from
+    /// now for <paramref name="seconds"/>. Nothing with no blade drawn.
+    /// </summary>
+    public void Trail(double delay, double seconds, Color colour)
+    {
+        var blade = _twoHand is { Visible: true } ? _twoHand : _oneHand is { Visible: true } ? _oneHand : null;
+
+        BladeTrail.On(blade)?.Emit(delay, seconds, colour);
+    }
+
+    /// <summary>
     /// An armour skin (REF-23): the whole Knight but its face in the skin's recoloured texture —
     /// helmet and cape too — or back in its own with none.
     /// </summary>

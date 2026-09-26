@@ -219,5 +219,13 @@
   "$cos.cos_bone_armour.name": "Bone Plate",
   "$cos.cos_arcane_aura.name": "Arcane Aura",
   "$cos.cos_hellfire_blade.name": "Hellfire Blade",
-  "$cos.cos_imp.name": "Tower Imp"
+  "$cos.cos_imp.name": "Tower Imp",
+  "$skill.skl_blade_wave.name": "Blade Wave",
+  "$skill.skl_blade_wave.m": "Cuts deeper.",
+  "$skill.skl_blade_wave.g": "Travels further.",
+  "$skill.skl_blade_wave.p": "Cuts deepest, and comes back sooner.",
+  "$skill.skl_battle_frenzy.name": "Battle Frenzy",
+  "$skill.skl_battle_frenzy.m": "Faster still.",
+  "$skill.skl_battle_frenzy.g": "Lasts longer.",
+  "$skill.skl_battle_frenzy.p": "Fastest, and comes back sooner."
 }

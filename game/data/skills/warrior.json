@@ -1,12 +1,12 @@
 [
-  { "id": "skl_heavy_strike",  "name": "$skill.skl_heavy_strike.name",  "class": "warrior", "tree": "body",   "suggested_level": 1,  "mana_cost": 14, "cooldown": 4.0,  "cast_type": "instant", "targeting": "single_target", "radius": 0,   "damage_coef": 1.80, "hits": 1, "motion": "chop",
+  { "id": "skl_heavy_strike",  "name": "$skill.skl_heavy_strike.name", "color": "#ffd9a0", "sound": "snd_skl_heavy",  "class": "warrior", "tree": "body",   "suggested_level": 1,  "mana_cost": 14, "cooldown": 4.0,  "cast_type": "instant", "targeting": "single_target", "radius": 0,   "damage_coef": 1.80, "hits": 1, "motion": "chop",
     "mastery": {
       "master":       { "damage_coef": 2.05, "note": "$skill.skl_heavy_strike.m" },
       "grand_master": { "damage_coef": 2.20, "note": "$skill.skl_heavy_strike.g" },
       "perfect":      { "cooldown": 3.0, "damage_coef": 2.40, "note": "$skill.skl_heavy_strike.p" }
     } },
 
-  { "id": "skl_guard_stance",  "name": "$skill.skl_guard_stance.name",  "class": "warrior", "tree": "mental", "suggested_level": 3,  "mana_cost": 10, "cooldown": 10.0, "cast_type": "channel", "targeting": "self",          "radius": 0,   "damage_coef": 0.00, "hits": 0,
+  { "id": "skl_guard_stance",  "name": "$skill.skl_guard_stance.name", "color": "#8fc4ff", "sound": "snd_skill",  "class": "warrior", "tree": "mental", "suggested_level": 3,  "mana_cost": 10, "cooldown": 10.0, "cast_type": "channel", "targeting": "self",          "radius": 0,   "damage_coef": 0.00, "hits": 0,
     "duration": 1.2, "magnitude": 0.70,
     "mastery": {
       "master":       { "magnitude": 0.78, "note": "$skill.skl_guard_stance.m" },
@@ -14,14 +14,14 @@
       "perfect":      { "cooldown": 8.0, "magnitude": 0.85, "note": "$skill.skl_guard_stance.p" }
     } },
 
-  { "id": "skl_cleave",        "name": "$skill.skl_cleave.name",        "class": "warrior", "tree": "body",   "suggested_level": 6,  "mana_cost": 20, "cooldown": 6.0,  "cast_type": "instant", "targeting": "cone",          "radius": 3.5, "damage_coef": 1.45, "hits": 1, "motion": "slice",
+  { "id": "skl_cleave",        "name": "$skill.skl_cleave.name", "color": "#e8f0ff", "sound": "snd_skl_cleave",        "class": "warrior", "tree": "body",   "suggested_level": 6,  "mana_cost": 20, "cooldown": 6.0,  "cast_type": "instant", "targeting": "cone",          "radius": 3.5, "damage_coef": 1.45, "hits": 1, "motion": "slice",
     "mastery": {
       "master":       { "radius": 4.2, "note": "$skill.skl_cleave.m" },
       "grand_master": { "hits": 2, "note": "$skill.skl_cleave.g" },
       "perfect":      { "cooldown": 4.5, "radius": 5.0, "note": "$skill.skl_cleave.p" }
     } },
 
-  { "id": "skl_shield_bash",   "name": "$skill.skl_shield_bash.name",   "class": "warrior", "tree": "mental", "suggested_level": 8,  "mana_cost": 18, "cooldown": 7.0,  "cast_type": "instant", "targeting": "single_target", "radius": 0,   "damage_coef": 0.90, "hits": 1, "motion": "bash",
+  { "id": "skl_shield_bash",   "name": "$skill.skl_shield_bash.name", "color": "#9fd4ff", "sound": "snd_skl_bash",   "class": "warrior", "tree": "mental", "suggested_level": 8,  "mana_cost": 18, "cooldown": 7.0,  "cast_type": "instant", "targeting": "single_target", "radius": 0,   "damage_coef": 0.90, "hits": 1, "motion": "bash",
     "applies": { "kind": "vulnerability", "magnitude": 0.20, "duration": 5.0, "chance": 1.0 },
     "mastery": {
       "master":       { "damage_coef": 1.05, "note": "$skill.skl_shield_bash.m" },
@@ -29,7 +29,7 @@
       "perfect":      { "damage_coef": 1.30, "cooldown": 4.5, "note": "$skill.skl_shield_bash.p" }
     } },
 
-  { "id": "skl_iron_skin",     "name": "$skill.skl_iron_skin.name",     "class": "warrior", "tree": "mental", "suggested_level": 12, "mana_cost": 24, "cooldown": 22.0, "cast_type": "instant", "targeting": "self",          "radius": 0,   "damage_coef": 0.00, "hits": 0, "motion": "brace",
+  { "id": "skl_iron_skin",     "name": "$skill.skl_iron_skin.name", "color": "#99c7ff", "sound": "snd_skl_iron",     "class": "warrior", "tree": "mental", "suggested_level": 12, "mana_cost": 24, "cooldown": 22.0, "cast_type": "instant", "targeting": "self",          "radius": 0,   "damage_coef": 0.00, "hits": 0, "motion": "brace",
     "duration": 10.0, "magnitude": 0.35,
     "applies": { "kind": "fortify", "magnitude": 0.35, "duration": 10.0, "chance": 1.0 },
     "mastery": {
@@ -38,7 +38,7 @@
       "perfect":      { "cooldown": 18.0, "magnitude": 0.50, "note": "$skill.skl_iron_skin.p" }
     } },
 
-  { "id": "skl_whirlwind",     "name": "$skill.skl_whirlwind.name",     "class": "warrior", "tree": "body",   "suggested_level": 14, "mana_cost": 32, "cooldown": 9.0,  "cast_type": "instant", "targeting": "cone",          "radius": 6.0, "cone_angle": 160, "damage_coef": 1.35, "hits": 3,
+  { "id": "skl_whirlwind",     "name": "$skill.skl_whirlwind.name", "color": "#dff4ff", "sound": "snd_skl_whirl",     "class": "warrior", "tree": "body",   "suggested_level": 14, "mana_cost": 32, "cooldown": 9.0,  "cast_type": "instant", "targeting": "self_aoe",      "radius": 6.0, "damage_coef": 1.35, "hits": 3,
     "hit_interval": 0.42, "motion": "spin",
     "mastery": {
       "master":       { "hits": 4, "note": "$skill.skl_whirlwind.m" },
@@ -46,7 +46,7 @@
       "perfect":      { "radius": 7.5, "cooldown": 7.0, "note": "$skill.skl_whirlwind.p" }
     } },
 
-  { "id": "skl_ground_slam",   "name": "$skill.skl_ground_slam.name",   "class": "warrior", "tree": "body",   "suggested_level": 20, "mana_cost": 40, "cooldown": 14.0, "cast_type": "instant", "targeting": "self_aoe",      "radius": 5.0, "damage_coef": 2.10, "hits": 1, "motion": "slam",
+  { "id": "skl_ground_slam",   "name": "$skill.skl_ground_slam.name", "color": "#ffcf8a", "sound": "snd_skl_slam",   "class": "warrior", "tree": "body",   "suggested_level": 20, "mana_cost": 40, "cooldown": 14.0, "cast_type": "instant", "targeting": "self_aoe",      "radius": 5.0, "damage_coef": 2.10, "hits": 1, "motion": "slam",
     "applies": { "kind": "stun", "duration": 1.5, "chance": 0.30 },
     "mastery": {
       "master":       { "damage_coef": 2.40, "note": "$skill.skl_ground_slam.m" },
@@ -54,7 +54,23 @@
       "perfect":      { "cooldown": 11.0, "damage_coef": 2.80, "note": "$skill.skl_ground_slam.p" }
     } },
 
-  { "id": "skl_blade_aura",    "name": "$skill.skl_blade_aura.name",    "class": "warrior", "tree": "mental", "suggested_level": 24, "mana_cost": 28, "cooldown": 30.0, "cast_type": "instant", "targeting": "self",          "radius": 0,   "damage_coef": 0.00, "hits": 0, "motion": "raise",
+  { "id": "skl_blade_wave",    "name": "$skill.skl_blade_wave.name", "color": "#8fd0ff", "sound": "snd_skl_wave",    "class": "warrior", "tree": "mental", "suggested_level": 10, "mana_cost": 24, "cooldown": 8.0,  "cast_type": "instant", "targeting": "line",          "radius": 9.0, "width": 2.4, "damage_coef": 1.60, "hits": 1, "motion": "wave",
+    "mastery": {
+      "master":       { "damage_coef": 1.85, "note": "$skill.skl_blade_wave.m" },
+      "grand_master": { "radius": 11.0, "note": "$skill.skl_blade_wave.g" },
+      "perfect":      { "cooldown": 6.0, "damage_coef": 2.20, "note": "$skill.skl_blade_wave.p" }
+    } },
+
+  { "id": "skl_battle_frenzy", "name": "$skill.skl_battle_frenzy.name", "color": "#ff5a36", "sound": "snd_skl_frenzy", "class": "warrior", "tree": "body",   "suggested_level": 16, "mana_cost": 30, "cooldown": 30.0, "cast_type": "instant", "targeting": "self",          "radius": 0,   "damage_coef": 0.00, "hits": 0, "motion": "roar",
+    "duration": 20.0, "magnitude": 0.20,
+    "applies": { "kind": "frenzy", "magnitude": 0.20, "duration": 20.0, "chance": 1.0 },
+    "mastery": {
+      "master":       { "magnitude": 0.26, "note": "$skill.skl_battle_frenzy.m" },
+      "grand_master": { "duration": 26.0, "note": "$skill.skl_battle_frenzy.g" },
+      "perfect":      { "cooldown": 24.0, "magnitude": 0.32, "note": "$skill.skl_battle_frenzy.p" }
+    } },
+
+  { "id": "skl_blade_aura",    "name": "$skill.skl_blade_aura.name", "color": "#ffc752", "sound": "snd_skl_aura",    "class": "warrior", "tree": "mental", "suggested_level": 24, "mana_cost": 28, "cooldown": 30.0, "cast_type": "instant", "targeting": "self",          "radius": 0,   "damage_coef": 0.00, "hits": 0, "motion": "raise",
     "duration": 20.0, "magnitude": 0.25,
     "applies": { "kind": "empower", "magnitude": 0.25, "duration": 20.0, "chance": 1.0 },
     "mastery": {

@@ -31,6 +31,11 @@ public partial class AuraVisual : Node3D
 {
     private static readonly Color Blade = new(1.0f, 0.78f, 0.32f);
     private static readonly Color Skin = new(0.60f, 0.78f, 1.0f);
+    private static readonly Color Rage = new(1.0f, 0.36f, 0.22f);
+
+    /// <summary>The blades wrapped in the Blade Aura's stream of points (REF-21), and the rank they were wrapped at.</summary>
+    private readonly List<MeshInstance3D> _streamed = [];
+    private MasteryRank? _streamRank;
 
     /// <summary>Mesh names that are a weapon on the character models in use.</summary>
     private static readonly string[] WeaponNames =
@@ -64,7 +69,18 @@ public partial class AuraVisual : Node3D
     /// </summary>
     public MasteryRank Rank { get; set; } = MasteryRank.Normal;
 
-    private Color Base => Kind == StatusKind.Fortify ? Skin : Blade;
+    private Color Base => Kind switch
+    {
+        StatusKind.Fortify => Skin,
+        StatusKind.Frenzy => Rage,
+        _ => Blade,
+    };
+
+    /// <summary>
+    /// A frenzy wears flames round the body and no rings (REF-21): three buffs up at once would
+    /// otherwise stand the Warrior in six rings.
+    /// </summary>
+    private bool Rings => Kind != StatusKind.Frenzy;
 
     private Color Tint => MasteryStyle.Tint(Base, Rank);
 
@@ -97,6 +113,16 @@ public partial class AuraVisual : Node3D
         AddChild(_inner);
         AddChild(_outer);
         AddChild(_motes);
+
+        // A frenzy's flames lick up the body instead of drifting off the ring (REF-21).
+        if (Kind == StatusKind.Frenzy && _motes.ProcessMaterial is ParticleProcessMaterial flames)
+        {
+            flames.EmissionRingRadius = 0.42f;
+            flames.EmissionRingInnerRadius = 0.2f;
+            flames.InitialVelocityMin = 0.9f;
+            flames.InitialVelocityMax = 1.5f;
+            _motes.Lifetime = 0.8;
+        }
 
         Visible = false;
     }
@@ -184,7 +210,9 @@ public partial class AuraVisual : Node3D
             ProcessMaterial = process,
             DrawPass1 = new QuadMesh
             {
-                Size = new Vector2(0.1f, 0.1f),
+                // Soft points of light since REF-21 (they were bare squares), and for a frenzy
+                // tongues of flame licking up the body.
+                Size = Kind == StatusKind.Frenzy ? new Vector2(0.5f, 0.5f) : new Vector2(0.13f, 0.13f),
                 Material = new StandardMaterial3D
                 {
                     ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
@@ -193,6 +221,7 @@ public partial class AuraVisual : Node3D
                     BillboardMode = BaseMaterial3D.BillboardModeEnum.Enabled,
                     VertexColorUseAsAlbedo = true,
                     AlbedoColor = colour,
+                    AlbedoTexture = MoteTexture(),
                     CullMode = BaseMaterial3D.CullModeEnum.Disabled,
                 },
             },
@@ -200,6 +229,44 @@ public partial class AuraVisual : Node3D
             Position = new Vector3(0, 0.05f, 0),
             Emitting = false,
         };
+    }
+
+    private Texture2D? MoteTexture()
+    {
+        var path = Kind == StatusKind.Frenzy ? "res://assets/particles/muzzle_02.png" : "res://assets/particles/circle_05.png";
+
+        return ResourceLoader.Exists(path) ? ResourceLoader.Load<Texture2D>(path) : null;
+    }
+
+    /// <summary>
+    /// The Blade Aura's stream of points round the blade in hand (REF-21), in the colour the
+    /// gear burns at this rank: on while the buff is up, rebuilt when the rank changes, gone
+    /// when it ends. Beside a worn aura look, never in place of it.
+    /// </summary>
+    private void Stream(bool on)
+    {
+        if (Kind != StatusKind.Empower) return;
+
+        if (on && _streamRank == Rank && _streamed.Count > 0 && _streamed.TrueForAll(IsInstanceValid)) return;
+
+        foreach (var blade in _streamed)
+        {
+            if (IsInstanceValid(blade)) BladeAura.Remove(blade, "SkillAura");
+        }
+
+        _streamed.Clear();
+        _streamRank = null;
+
+        if (!on) return;
+
+        foreach (var lit in _lit)
+        {
+            if (lit is not MeshInstance3D mesh || !IsInstanceValid(mesh) || !IsWeapon(mesh.Name) || mesh.Mesh is null) continue;
+
+            if (BladeAura.Wrap(mesh, GearTint, "embers", "SkillAura", light: 0f) is not null) _streamed.Add(mesh);
+        }
+
+        _streamRank = Rank;
     }
 
     // ------------------------------------------------------------------ the gear it lights
@@ -318,7 +385,7 @@ public partial class AuraVisual : Node3D
         if (_motes is not null)
         {
             _motes.Amount = BaseEmbers + MasteryStyle.Embers(Rank);
-            _motes.Lifetime = 1.3 + (MasteryStyle.Brightness(Rank) - 1f) * 0.5;
+            _motes.Lifetime = (Kind == StatusKind.Frenzy ? 0.8 : 1.3) + (MasteryStyle.Brightness(Rank) - 1f) * 0.5;
         }
 
         var spread = MasteryStyle.Flourish(Rank);
@@ -347,6 +414,7 @@ public partial class AuraVisual : Node3D
         {
             if (Visible) Light(0);
 
+            Stream(false);
             Visible = false;
             return;
         }
@@ -355,6 +423,10 @@ public partial class AuraVisual : Node3D
         _spin += delta;
 
         FindGear();
+        Stream(wanted > 0);
+
+        _inner.Visible = Rings;
+        _outer.Visible = Rings;
 
         // Counter-rotating, at different speeds: two rings turning together read as one ring.
         _inner.Rotation = new Vector3(0, (float)_spin * 1.6f, 0);
@@ -371,7 +443,7 @@ public partial class AuraVisual : Node3D
 
         if (_ringMaterial is not null)
         {
-            _ringMaterial.AlbedoColor = Tint with { A = Mathf.Min(0.95f, 0.5f * glow) * _strength };
+            _ringMaterial.AlbedoColor = Tint with { A = Mathf.Min(0.95f, (Kind == StatusKind.Fortify ? 0.3f : 0.5f) * glow) * _strength };
         }
 
         // The gear breathes a little harder than the rings: it is the part being looked at.
@@ -380,6 +452,6 @@ public partial class AuraVisual : Node3D
 
         // Iron Skin only tints the armour faintly: a body lit like the blade reads as the
         // character changing colour, when all it should say is "harder to hurt".
-        Light(Mathf.Min(1f, breath * glow) * _strength * (Kind == StatusKind.Fortify ? 0.16f : 1f));
+        Light(Kind == StatusKind.Frenzy ? 0f : Mathf.Min(1f, breath * glow) * _strength * (Kind == StatusKind.Fortify ? 0.16f : 1f));
     }
 }

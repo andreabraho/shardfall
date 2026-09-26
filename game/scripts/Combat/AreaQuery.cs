@@ -85,4 +85,41 @@ public static class AreaQuery
 
         return results;
     }
+
+    /// <summary>
+    /// Enemies in a band <paramref name="width"/> wide running <paramref name="length"/> ahead
+    /// of the origin along <paramref name="forward"/> (REF-21, the Blade Wave). Height is
+    /// ignored, as for the cone.
+    /// </summary>
+    public static List<Combatant> Line(
+        Node3D context,
+        Vector3 origin,
+        Vector3 forward,
+        float length,
+        float width,
+        uint layers = Layers.Enemy)
+    {
+        var flatForward = forward with { Y = 0 };
+
+        if (flatForward.LengthSquared() < 0.0001f) return [];
+
+        flatForward = flatForward.Normalized();
+
+        // Everything near enough to be in it, then only what is ahead and within half the width
+        // of the middle line.
+        var middle = origin + (flatForward * (length * 0.5f));
+        var reach = Mathf.Sqrt((length * length * 0.25f) + (width * width * 0.25f));
+        var results = Sphere(context, middle, reach, layers);
+
+        for (var i = results.Count - 1; i >= 0; i--)
+        {
+            var offset = (results[i].Body.GlobalPosition - origin) with { Y = 0 };
+            var along = offset.Dot(flatForward);
+            var across = (offset - (flatForward * along)).Length();
+
+            if (along < -0.5f || along > length || across > width * 0.5f) results.RemoveAt(i);
+        }
+
+        return results;
+    }
 }

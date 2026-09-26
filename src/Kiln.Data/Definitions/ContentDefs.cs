@@ -294,6 +294,12 @@ public sealed class SkillDef : ContentDefBase
     public double ConeAngle { get; init; } = 100;
 
     /// <summary>
+    /// How wide a line-targeted skill is, in metres (REF-21); its radius is how far it reaches.
+    /// Ignored by every other shape.
+    /// </summary>
+    public double Width { get; init; } = 2.0;
+
+    /// <summary>
     /// Seconds between the hits of a multi-hit skill. Short by default, so a flurry reads as
     /// one blow landing several times; long for a skill whose hits should each be felt.
     /// </summary>
@@ -316,6 +322,14 @@ public sealed class SkillDef : ContentDefBase
 
     /// <summary>What each mastery rank changes, if anything.</summary>
     public SkillMasteryDef? Mastery { get; init; }
+
+    /// <summary>
+    /// The colour its effects are drawn in at Normal (REF-21); the ranks warm it from there.
+    /// </summary>
+    public string Color { get; init; } = "#e8f0ff";
+
+    /// <summary>The sound it is cast with (REF-21); a spinning skill makes it on every turn.</summary>
+    public string Sound { get; init; } = "snd_skill";
 
     /// <summary>
     /// A status the skill puts on what it hits (REF-01): Ground Slam's stun, Shield Bash's

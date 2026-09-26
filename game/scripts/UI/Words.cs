@@ -45,6 +45,7 @@ public static class Words
         StatusKind.Weaken => L10n.T("Weakened"),
         StatusKind.Fortify => L10n.T("Ironclad"),
         StatusKind.Empower => L10n.T("Sharpened"),
+        StatusKind.Frenzy => L10n.T("Frenzied"),
         _ => L10n.T("Vulnerable"),
     };
 

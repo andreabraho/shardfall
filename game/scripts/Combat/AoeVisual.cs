@@ -34,6 +34,12 @@ public partial class AoeVisual : Node3D
         public float Brightness { get; init; } = 1f;
         public required float Radius { get; init; }
         public double Elapsed { get; set; }
+
+        /// <summary>
+        /// How solid it is at full strength. A player's own skill draws its reach faintly since
+        /// REF-21, the skill's effect doing the showing; an enemy's warning stays solid.
+        /// </summary>
+        public float Solid { get; init; } = 0.45f;
     }
 
     private readonly List<Flash> _active = [];
@@ -219,6 +225,7 @@ public partial class AoeVisual : Node3D
             Radius = radius,
             Brightness = Visual.MasteryStyle.Brightness(rank),
             Lifetime = Duration,
+            Solid = hostile ? 0.45f : 0.2f,
         });
     }
 
@@ -306,7 +313,7 @@ public partial class AoeVisual : Node3D
             flash.Mesh.Scale = new Vector3(scale, 1, scale);
             flash.Material!.AlbedoColor = flash.Color with
             {
-                A = Mathf.Min(0.9f, 0.45f * flash.Brightness) * (1f - t),
+                A = Mathf.Min(0.9f, flash.Solid * flash.Brightness) * (1f - t),
             };
         }
     }

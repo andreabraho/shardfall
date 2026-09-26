@@ -154,6 +154,20 @@ public partial class AudioDirector : Node
     }
 
     /// <summary>One of the sound's files at random, or null when it has none that load.</summary>
+    /// <summary>
+    /// Loads these sounds' files now, so the first time one plays it does not stall to read
+    /// them (REF-21: a skill's first cast used to).
+    /// </summary>
+    public static void Preload(IEnumerable<string> ids)
+    {
+        if (_instance is null || !GameContent.IsLoaded) return;
+
+        foreach (var id in ids)
+        {
+            if (GameContent.Database.Sounds.TryGetValue(id, out var def)) _instance.Pick(def);
+        }
+    }
+
     private AudioStream? Pick(SoundDef def)
     {
         if (!_streams.TryGetValue(def.Id, out var loaded))

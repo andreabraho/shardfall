@@ -21,7 +21,7 @@ public static class ContentValidator
     public const int MaxLevel = 60;
 
     /// <summary>The moves a skill can be swung with (REF-22); empty is a plain swing.</summary>
-    public static readonly string[] SkillMotions = ["", "spin", "chop", "slice", "bash", "slam", "brace", "raise"];
+    public static readonly string[] SkillMotions = ["", "spin", "chop", "slice", "bash", "slam", "brace", "raise", "wave", "roar"];
 
     public static ValidationReport Validate(ContentDatabase db)
     {
@@ -1673,7 +1673,7 @@ public static class ContentValidator
     /// </summary>
     private static void StunRules(ContentDatabase db, ValidationReport report)
     {
-        string[] kinds = ["poison", "bleed", "stun", "slow", "weaken", "vulnerability", "fortify", "empower"];
+        string[] kinds = ["poison", "bleed", "stun", "slow", "weaken", "vulnerability", "fortify", "empower", "frenzy"];
 
         foreach (var skill in db.Skills.Values.Where(s => s.Applies is not null))
         {
@@ -1699,6 +1699,23 @@ public static class ContentValidator
         // A channel is held rather than applied - Guard Stance is its own ability, with its
         // own key and its own visual, and it reads its numbers straight from the definition.
         // REF-22: how a skill is swung is one of the moves the Warrior has clips for.
+        // REF-21: a skill's sound exists and plays once.
+        foreach (var skill in db.Skills.Values)
+        {
+            if (!db.Sounds.TryGetValue(skill.Sound, out var sound) || sound.Loop)
+            {
+                report.Error("sound", skill.SourceFile, $"'{skill.Id}' is cast with '{skill.Sound}', which is not a sound that plays once.",
+                    "Name a sound from tables/sounds.json that does not loop.");
+            }
+        }
+
+        // REF-21: a line reaches somewhere and is some width across.
+        foreach (var skill in db.Skills.Values.Where(s => s.Targeting == SkillTargeting.Line && (s.Radius <= 0 || s.Width <= 0)))
+        {
+            report.Error("skill-shape", skill.SourceFile, $"'{skill.Id}' is a line {skill.Radius} m long and {skill.Width} m wide.",
+                "A line skill has a radius (how far it reaches) and a width, both above zero.");
+        }
+
         foreach (var skill in db.Skills.Values.Where(s => !SkillMotions.Contains(s.Motion)))
         {
             report.Error("skill-motion", skill.SourceFile, $"'{skill.Id}' has motion \"{skill.Motion}\".",
@@ -1707,10 +1724,10 @@ public static class ContentValidator
 
         foreach (var skill in db.Skills.Values.Where(s => s.Targeting == SkillTargeting.Self && s.CastType != "channel"))
         {
-            if (skill.Applies is not { Kind: "fortify" or "empower" })
+            if (skill.Applies is not { Kind: "fortify" or "empower" or "frenzy" })
             {
                 report.Error("skill-effect", skill.SourceFile, $"'{skill.Id}' targets the caster and applies nothing.",
-                    "A self skill applies fortify (less damage taken) or empower (more damage dealt).");
+                    "A self skill applies fortify (less damage taken), empower (more damage dealt) or frenzy (faster blows and step).");
 
                 continue;
             }

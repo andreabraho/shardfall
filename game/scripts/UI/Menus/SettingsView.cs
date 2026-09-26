@@ -192,7 +192,7 @@ public partial class SettingsView : ScrollContainer
         (L10n.T("Move with the keyboard"), $"{Key(GameActions.MoveForward)} {Key(GameActions.MoveLeft)} {Key(GameActions.MoveBack)} {Key(GameActions.MoveRight)}"),
         (L10n.T("Attack"), Key(GameActions.Attack)),
         (L10n.T("Guard"), Key(GameActions.DefensiveAbility)),
-        (L10n.T("Skills"), $"{Key(GameActions.Skill1)} – {Key(GameActions.Skill6)}"),
+        (L10n.T("Skills"), $"{Key(GameActions.Skill1)} – {Key(GameActions.Skill9)}"),
         (L10n.T("Health flask"), Key(GameActions.HealthFlask)),
         (L10n.T("Pick up what is near"), Key(GameActions.PickUp)),
         (L10n.T("Talk, use"), Key(GameActions.Interact)),

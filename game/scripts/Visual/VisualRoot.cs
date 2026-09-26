@@ -94,6 +94,10 @@ public partial class VisualRoot : Node3D
     /// </summary>
     public void Blow(Vector3 direction, int blow, double windup, double interval)
     {
+        // A faint ribbon behind the blade as it comes down; the fourth blow, the sweep, a
+        // little stronger (REF-21).
+        Trail(windup * 0.5, (windup * 0.5) + 0.12, new Color(1f, 0.97f, 0.9f, blow % 4 == 0 ? 0.55f : 0.35f));
+
         if (_animator is { Ready: true })
         {
             _animator.Blow(blow, windup, interval);
@@ -103,9 +107,14 @@ public partial class VisualRoot : Node3D
         Lunge(direction, 0.12f, 0.16);
     }
 
-    /// <summary>A skill's own move (REF-22), over <paramref name="seconds"/> at most.</summary>
-    public void SkillMove(string motion, Vector3 direction, double seconds)
+    /// <summary>
+    /// A skill's own move (REF-22), over <paramref name="seconds"/> at most, with a ribbon in
+    /// <paramref name="trail"/> behind the blade when it is a blow (REF-21).
+    /// </summary>
+    public void SkillMove(string motion, Vector3 direction, double seconds, Color? trail = null)
     {
+        if (trail is { } colour && motion is not ("brace" or "raise" or "roar")) Trail(0.04, 0.3, colour with { A = 0.7f });
+
         if (_animator is { Ready: true })
         {
             _animator.SkillMove(motion, seconds);
@@ -117,6 +126,9 @@ public partial class VisualRoot : Node3D
 
     private GearRig? _gear;
     private GearLook? _look;
+
+    /// <summary>A ribbon behind the blade in hand (REF-21); nothing on a model with no blade.</summary>
+    public void Trail(double delay, double seconds, Color colour) => _gear?.Trail(delay, seconds, colour);
 
     /// <summary>
     /// Shows what the player wears (REF-22): the blade in hand, the shield, the helmet, the
@@ -154,8 +166,11 @@ public partial class VisualRoot : Node3D
     /// revolution — the direction alternating hit to hit, so a flurry winds and unwinds rather
     /// than drilling one way — which is what a primitive can show of a spin.
     /// </remarks>
-    public void Spin(double seconds, int hit)
+    public void Spin(double seconds, int hit, Color? trail = null)
     {
+        // The blade's whole turn drawn behind it (REF-21).
+        if (trail is { } colour) Trail(0, seconds, colour with { A = 0.5f });
+
         if (_animator is { Ready: true } && _animator.Spin(seconds)) return;
 
         _spinFor = System.Math.Max(0.05, seconds);

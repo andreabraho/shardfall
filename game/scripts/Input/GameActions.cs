@@ -33,6 +33,8 @@ public static class GameActions
     public const string Skill5 = "skill_5";
     public const string Skill6 = "skill_6";
     public const string Skill7 = "skill_7";
+    public const string Skill8 = "skill_8";
+    public const string Skill9 = "skill_9";
     public const string HealthFlask = "health_flask";
 
     /// <summary>Everything lying round the player into the bag (REF-09).</summary>
@@ -94,6 +96,8 @@ public static class GameActions
         [Skill5] = [Key(Godot.Key.Key5)],
         [Skill6] = [Key(Godot.Key.Key6)],
         [Skill7] = [Key(Godot.Key.Key7)],
+        [Skill8] = [Key(Godot.Key.Key8)],
+        [Skill9] = [Key(Godot.Key.Key9)],
         [HealthFlask] = [Key(Godot.Key.Q)],
 
         // The arrows: Z is the original's key for picking up (REF-09), and WASD already

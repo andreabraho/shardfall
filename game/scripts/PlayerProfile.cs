@@ -89,7 +89,7 @@ public static class PlayerProfile
     public static string[] Hotbar { get; private set; } = DefaultHotbar();
 
     /// <summary>Keys on the bar.</summary>
-    public const int HotbarKeys = 7;
+    public const int HotbarKeys = 9;
 
     /// <summary>
     /// What a new character's bar holds: nothing (2026-09-25, at your call). The player puts

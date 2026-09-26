@@ -147,6 +147,31 @@ public class StatusEffectTests
     }
 
     [Fact]
+    public void Frenzy_QuickensBlowsAndStep_AndCostsThreePercent()
+    {
+        // REF-21, at your call: the step gains half of what the blows gain, and the Warrior
+        // takes 3% more damage while it lasts.
+        var set = new StatusEffectSet();
+        set.Apply(StatusEffectSet.Frenzy(0.20, duration: 20));
+
+        Assert.Equal(1.20, set.AttackSpeedMultiplier, 3);
+        Assert.Equal(1.10, set.MoveSpeedMultiplier, 3);
+        Assert.Equal(1.03, set.DamageTakenMultiplier, 3);
+        Assert.Equal(1.0, set.DamageDealtMultiplier, 6);
+    }
+
+    [Fact]
+    public void IronSkin_ArmoursAndSlowsFivePercent()
+    {
+        var set = new StatusEffectSet();
+        set.Apply(StatusEffectSet.Fortify(0.35, duration: 10));
+
+        Assert.Equal(0.65, set.DamageTakenMultiplier, 3);
+        Assert.Equal(0.95, set.MoveSpeedMultiplier, 3);
+        Assert.Equal(1.0, set.AttackSpeedMultiplier, 6);
+    }
+
+    [Fact]
     public void Tick_ReportsExpiredEffects()
     {
         var set = new StatusEffectSet();

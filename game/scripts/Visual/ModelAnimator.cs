@@ -245,15 +245,19 @@ public partial class ModelAnimator : Node
             "slam" => ["Melee_1H_Attack_Jump_Chop", "Melee_2H_Attack_Chop", "2H_Melee_Attack_Chop"],
             "brace" => ["Melee_Block", "Block"],
             "raise" => ["Cheering", "Cheer", "Spellcast_Raise"],
+            // REF-21: the Blade Wave is a diagonal cut thrown forward, the Battle Frenzy a
+            // shout with the arms up.
+            "wave" => TwoHanded ? ["Melee_2H_Attack_Slice", "2H_Melee_Attack_Slice"] : ["Melee_1H_Attack_Slice_Diagonal", "1H_Melee_Attack_Slice_Diagonal"],
+            "roar" => ["Cheering", "Cheer", "Spellcast_Raise"],
             _ => [],
         };
 
         var clip = wanted.Length == 0 ? "" : Pick(_player.GetAnimationList(), wanted);
 
-        if (clip.Length == 0) return motion is "brace" or "raise" ? Flourish() : Attack();
+        if (clip.Length == 0) return motion is "brace" or "raise" or "roar" ? Flourish() : Attack();
 
         // A buff is raised, not struck: it has the whole hold to play out.
-        var landBy = motion is "brace" or "raise" ? seconds * 0.6 : SkillImpact;
+        var landBy = motion is "brace" or "raise" or "roar" ? seconds * 0.6 : SkillImpact;
 
         return PlayTimed(clip, landBy, seconds);
     }

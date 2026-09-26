@@ -25,6 +25,7 @@ public partial class SkillBar : CanvasLayer
     [
         GameActions.Skill1, GameActions.Skill2, GameActions.Skill3,
         GameActions.Skill4, GameActions.Skill5, GameActions.Skill6, GameActions.Skill7,
+        GameActions.Skill8, GameActions.Skill9,
     ];
 
     private SkillCaster? _caster;

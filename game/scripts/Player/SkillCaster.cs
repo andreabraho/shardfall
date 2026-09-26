@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using Kiln.Core.Combat;
 using Kiln.Core.Foundation;
@@ -88,6 +89,7 @@ public partial class SkillCaster : Node
     [
         GameActions.Skill1, GameActions.Skill2, GameActions.Skill3,
         GameActions.Skill4, GameActions.Skill5, GameActions.Skill6, GameActions.Skill7,
+        GameActions.Skill8, GameActions.Skill9,
     ];
 
     public override void _Ready()
@@ -97,12 +99,45 @@ public partial class SkillCaster : Node
 
         // One aura per buff, so both can be worn at once. They belong to the skills rather
         // than to the scene, so they are built here instead of being placed in player.tscn.
-        foreach (var kind in new[] { StatusKind.Empower, StatusKind.Fortify })
+        foreach (var kind in new[] { StatusKind.Empower, StatusKind.Fortify, StatusKind.Frenzy })
         {
             _motor.CallDeferred(Node.MethodName.AddChild,
                 new Combat.AuraVisual { Name = $"Aura{kind}", Kind = kind });
         }
+
+        // Every effect drawn once where the player stands, and every skill's sound read, so
+        // the first real cast does not stall while the game meets them (REF-21). A moment after
+        // arriving, once the model holds its blade.
+        GetTree().CreateTimer(0.5).Timeout += Prewarm;
     }
+
+    private void Prewarm()
+    {
+        if (!IsInstanceValid(this) || !IsInsideTree() || !GameContent.IsLoaded) return;
+
+        SkillFx.Prewarm(this, _motor.GlobalPosition + (Vector3.Down * 0.5f));
+
+        // The blade's ribbon too, drawn for a moment too faint to see.
+        _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Trail(0, 0.1, new Color(1, 1, 1, 0.01f));
+
+        Audio.AudioDirector.Preload(GameContent.Database.Skills.Values.Select(s => s.Sound).Distinct());
+    }
+
+    /// <summary>
+    /// The colour a skill's effects are drawn in at the rank it was cast at: its own colour,
+    /// warmed by the rank and a little toward the rank's second colour (REF-21).
+    /// </summary>
+    private static Color FxColour(ResolvedSkill skill)
+    {
+        var own = GameContent.Database.Skills.TryGetValue(skill.Id, out var def) ? new Color(def.Color) : Colors.White;
+
+        return Visual.MasteryStyle.Tint(own, skill.Rank).Lerp(Visual.MasteryStyle.Accent(own, skill.Rank), 0.3f);
+    }
+
+    private static float FxBright(ResolvedSkill skill) => Visual.MasteryStyle.Brightness(skill.Rank);
+
+    private static string SoundOf(string skillId) =>
+        GameContent.Database.Skills.TryGetValue(skillId, out var def) ? def.Sound : Kiln.Data.Ids.Sounds.SndSkill;
 
     public double CooldownRemaining(string skillId) =>
         _cooldowns.TryGetValue(skillId, out var remaining) ? System.Math.Max(0, remaining) : 0;
@@ -285,7 +320,9 @@ public partial class SkillCaster : Node
         if (_self.Statuses.IsStunned) return;
 
         _self.Mana.TrySpend(skill.ManaCost);
-        Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndSkill, _motor.GlobalPosition);
+
+        // Its own sound (REF-21); a spinning skill makes it on every turn instead.
+        if (def.Motion != "spin") Audio.AudioDirector.Play(def.Sound, _motor.GlobalPosition);
         _cooldowns[skillId] = skill.Cooldown;
         _cooldownTotals[skillId] = System.Math.Max(0.01, skill.Cooldown);
 
@@ -384,7 +421,7 @@ public partial class SkillCaster : Node
         var aim = skill.Targeting == SkillTargeting.GroundAoe ? AimDirection(origin) : _motor.Facing;
 
         if (GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat")?.Target is { IsAlive: true } target
-            && skill.Targeting is SkillTargeting.SingleTarget or SkillTargeting.Cone)
+            && skill.Targeting is SkillTargeting.SingleTarget or SkillTargeting.Cone or SkillTargeting.Line)
         {
             var toTarget = (target.Body.GlobalPosition - origin) with { Y = 0 };
 
@@ -398,7 +435,7 @@ public partial class SkillCaster : Node
         _motor.FaceTowards(aim);
 
         // Its own move (REF-22); a spinning skill turns on each of its hits instead.
-        if (skill.Motion != "spin") _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove(skill.Motion, aim, CastHold(skill));
+        if (skill.Motion != "spin") _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove(skill.Motion, aim, CastHold(skill), FxColour(skill));
 
         var center = skill.Targeting == SkillTargeting.GroundAoe
             ? GroundPoint(origin, aim, (float)skill.Radius)
@@ -443,8 +480,19 @@ public partial class SkillCaster : Node
         {
             "fortify" => StatusEffectSet.Fortify(skill.Magnitude, skill.Duration),
             "empower" => StatusEffectSet.Empower(skill.Magnitude, skill.Duration),
+            "frenzy" => StatusEffectSet.Frenzy(skill.Magnitude, skill.Duration),
             _ => null,
         };
+
+        // The moment of the cast (REF-21); the aura that follows is the status's own.
+        var at = _motor.GlobalPosition;
+
+        switch (kind)
+        {
+            case "fortify": SkillFx.Harden(this, at, FxColour(skill), FxBright(skill)); break;
+            case "empower": SkillFx.Sharpen(this, at, FxColour(skill), FxBright(skill)); break;
+            case "frenzy": SkillFx.Frenzy(this, at, FxColour(skill), FxBright(skill)); break;
+        }
 
         if (effect is null)
         {
@@ -479,24 +527,41 @@ public partial class SkillCaster : Node
 
         // A spinning skill turns the body on every hit. Only the body: the arc stays where the
         // skill was aimed, in front of the Warrior.
+        var colour = FxColour(skill);
+        var bright = FxBright(skill);
+
+        // A spinning skill turns the body on every hit and makes its sound each time (REF-21:
+        // all the way round, 360°).
         if (skill.Motion == "spin")
         {
+            // No ribbon: a blade turning all the way round draws a disc, and the rings of wind
+            // already show the turn.
             _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Spin(skill.HitInterval, pulse.Index);
+            Audio.AudioDirector.Play(SoundOf(skill.Id), _motor.GlobalPosition);
         }
 
         List<Combatant> targets;
 
         switch (skill.Targeting)
         {
+            case SkillTargeting.SelfAoe when skill.Motion == "spin":
+                targets = AreaQuery.Sphere(_motor, center, (float)skill.Radius);
+                SkillFx.Whirl(this, center, (float)skill.Radius, colour, skill.HitInterval, pulse.Index, bright);
+                break;
+
             case SkillTargeting.SelfAoe:
                 targets = AreaQuery.Sphere(_motor, center, (float)skill.Radius);
-                AoeVisual.Circle(center, (float)skill.Radius, hostile: false, skill.Rank);
+                SkillFx.Slam(this, center, (float)skill.Radius, colour, bright);
                 break;
 
             case SkillTargeting.Cone:
                 targets = AreaQuery.Cone(_motor, center, aim, (float)skill.Radius, (float)skill.ConeAngle);
-                AoeVisual.Cone(center, aim, (float)skill.Radius, (float)skill.ConeAngle, hostile: false, skill.Rank,
-                    swirl: skill.Motion == "spin");
+                SkillFx.Cleave(this, center, aim, (float)skill.Radius, (float)skill.ConeAngle, colour, bright);
+                break;
+
+            case SkillTargeting.Line:
+                targets = AreaQuery.Line(_motor, center, aim, (float)skill.Radius, (float)skill.Width);
+                SkillFx.Wave(this, center, aim, (float)skill.Radius, (float)skill.Width, colour, bright);
                 break;
 
             case SkillTargeting.GroundAoe:
@@ -508,11 +573,10 @@ public partial class SkillCaster : Node
                 var single = GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat")?.Target;
                 targets = single is { IsAlive: true } ? [single] : [];
 
-                // A ring under the one target it lands on. Small, but it is what carries the
-                // rank colour for the skills that cover no ground (REF-03).
+                // The blow landing on the one target, in the rank's colour (REF-03, REF-21).
                 if (targets.Count > 0)
                 {
-                    AoeVisual.Circle(targets[0].Body.GlobalPosition, 0.9f, hostile: false, skill.Rank);
+                    SkillFx.Strike(this, targets[0].Body.GlobalPosition, colour, bash: skill.Motion == "bash", bright);
                 }
 
                 break;
@@ -524,9 +588,18 @@ public partial class SkillCaster : Node
 
         if (targets.Count == 0) return;
 
+        var sparks = 0;
+
         foreach (var target in targets)
         {
             if (!target.IsAlive) continue;
+
+            // Sparks on everything an area skill touches (REF-21), a handful at most: a pull of
+            // twenty does not need twenty flares to read as hit.
+            if (skill.Targeting != SkillTargeting.SingleTarget && sparks++ < 8)
+            {
+                SkillFx.Impact(this, target.Body.GlobalPosition, colour, 0.8f, bright);
+            }
 
             target.TakeAttack(_self, skillCoef: skill.DamageCoef, skill: true);
 

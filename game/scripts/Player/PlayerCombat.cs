@@ -88,7 +88,7 @@ public partial class PlayerCombat : Node
 
         Debug.DebugOverlay.Register("combat", this, () =>
             $"{_cycle.Phase.ToString().ToLowerInvariant()}  next in {_cycle.Cooldown:F2}s  "
-            + $"({_self.Stats.AttacksPerSecond:F2}/s)");
+            + $"({AttacksPerSecond:F2}/s)");
     }
 
     // ------------------------------------------------------------------ targeting
@@ -222,13 +222,16 @@ public partial class PlayerCombat : Node
         if (_cycle.CanStart) BeginSwing(_target);
     }
 
+    /// <summary>Blows a second as the stats give them, quickened by a frenzy (REF-21).</summary>
+    private double AttacksPerSecond => _self.Stats.AttacksPerSecond * _self.Statuses.AttackSpeedMultiplier;
+
     /// <summary>Starts a blow at this enemy, or at nothing — a swing into the air still takes its time.</summary>
     private void BeginSwing(Combatant? victim)
     {
         // A skill being cast owns the body; the next blow waits for it to finish (REF-22).
         if (_skills?.IsCasting == true) return;
 
-        var windup = _cycle.TryStart(_self.Stats.AttacksPerSecond);
+        var windup = _cycle.TryStart(AttacksPerSecond);
 
         if (windup <= 0) return;
 
@@ -248,7 +251,7 @@ public partial class PlayerCombat : Node
 
         _motor.FaceTowards(direction);
         // The blow this swing will be, so the fourth — the sweep — looks like one (REF-22).
-        _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Blow(direction, _blow + 1, windup, AttackCycle.IntervalFor(_self.Stats.AttacksPerSecond));
+        _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Blow(direction, _blow + 1, windup, AttackCycle.IntervalFor(AttacksPerSecond));
 
         Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndSwing, _motor.GlobalPosition);
     }

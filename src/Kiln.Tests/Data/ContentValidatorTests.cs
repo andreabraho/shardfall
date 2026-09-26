@@ -1013,6 +1013,36 @@ public class ContentValidatorTests
 
         Assert.True(HasError(ContentValidator.Validate(Db(skills: [skill])), "skill-effect"));
     }
+
+    [Fact]
+    public void Flags_ASkillCastWithASoundThatDoesNotExist()
+    {
+        var skill = new SkillDef { Id = "skl_test", Name = "$s", Sound = "snd_nothing" };
+
+        Assert.True(HasError(ContentValidator.Validate(Db(skills: [skill])), "sound"));
+    }
+
+    [Theory]
+    [InlineData(0.0, 2.0)] // reaches nowhere
+    [InlineData(9.0, 0.0)] // no width
+    public void Flags_ALineThatHasNoShape(double length, double width)
+    {
+        var skill = new SkillDef { Id = "skl_test", Name = "$s", Targeting = SkillTargeting.Line, Radius = length, Width = width };
+
+        Assert.True(HasError(ContentValidator.Validate(Db(skills: [skill])), "skill-shape"));
+    }
+
+    [Fact]
+    public void Accepts_AFrenzyOnTheCaster()
+    {
+        var skill = new SkillDef
+        {
+            Id = "skl_test", Name = "$s", Targeting = SkillTargeting.Self, Duration = 20, Magnitude = 0.2,
+            Applies = new StatusApplicationDef { Kind = "frenzy", Magnitude = 0.2, Duration = 20, Chance = 1 },
+        };
+
+        Assert.False(HasError(ContentValidator.Validate(Db(skills: [skill])), "skill-effect"));
+    }
     // -- cosmetics (REF-23) ---------------------------------------------------
 
     private static ContentDatabase CosmeticDb(CosmeticDef look) => Db(

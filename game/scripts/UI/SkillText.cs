@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
+using Kiln.Core.Combat;
 using Kiln.Core.Foundation;
 using Kiln.Core.Progression;
 using Kiln.Data.Definitions;
@@ -94,6 +95,10 @@ public static class SkillText
         {
             parts.Add(L10n.F("+{0:P0} damage", skill.Magnitude));
         }
+        else if (skill.Applies is { Kind: "frenzy" })
+        {
+            parts.Add(L10n.F("+{0:P0} attack speed", skill.Magnitude));
+        }
         else if (skill.Magnitude > 0)
         {
             parts.Add(L10n.F("blocks {0:P0}", skill.Magnitude));
@@ -112,6 +117,7 @@ public static class SkillText
         SkillTargeting.Cone => L10n.F("Everything in a {0:0}° arc {1:0.#} m in front of you.", skill.ConeAngle, skill.Radius),
         SkillTargeting.SelfAoe => L10n.F("Everything within {0:0.#} m of you.", skill.Radius),
         SkillTargeting.GroundAoe => L10n.F("Everything within {0:0.#} m of where you aim.", skill.Radius),
+        SkillTargeting.Line => L10n.F("Everything in a line {0:0.#} m ahead of you, {1:0.#} m wide.", skill.Radius, skill.Width),
         _ => L10n.F("Everything within {0:0.#} m.", skill.Radius),
     };
 
@@ -121,12 +127,14 @@ public static class SkillText
 
         // The self-buffs take their strength from the resolved skill, so investment reaches
         // them; everything else applies exactly what the data says.
-        var magnitude = applies.Kind is "fortify" or "empower" ? skill.Magnitude : applies.Magnitude;
-        var duration = applies.Kind is "fortify" or "empower" ? skill.Duration : applies.Duration;
+        var magnitude = applies.Kind is "fortify" or "empower" or "frenzy" ? skill.Magnitude : applies.Magnitude;
+        var duration = applies.Kind is "fortify" or "empower" or "frenzy" ? skill.Duration : applies.Duration;
 
         var body = applies.Kind switch
         {
-            "fortify" => L10n.F("Take {0:P0} less damage for {1:0.#} s.", magnitude, duration),
+            "fortify" => L10n.F("Take {0:P0} less damage for {1:0.#} s, moving {2:P0} slower.", magnitude, duration, StatusEffectSet.FortifyDrag),
+            "frenzy" => L10n.F("Attack {0:P0} faster and move {1:P0} faster for {2:0.#} s, taking {3:P0} more damage.",
+                magnitude, magnitude * 0.5, duration, StatusEffectSet.FrenzyExposure),
             "empower" => L10n.F("Deal {0:P0} more damage for {1:0.#} s.", magnitude, duration),
             "stun" => L10n.F("Stuns for {0:0.#} s.", duration),
             "vulnerability" => L10n.F("The target takes {0:P0} more damage for {1:0.#} s.", magnitude, duration),

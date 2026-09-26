@@ -26,6 +26,12 @@ public enum StatusKind
 
     /// <summary>Increased damage dealt. The Blade Aura, and anything else that sharpens its caster.</summary>
     Empower,
+
+    /// <summary>
+    /// Faster blows and a quicker step, at the price of a little more damage taken: the Battle
+    /// Frenzy (REF-21). The magnitude is the attack-speed gain; the step gains half of it.
+    /// </summary>
+    Frenzy,
 }
 
 /// <summary>How repeated applications of the same status combine.</summary>
@@ -87,7 +93,14 @@ public sealed class StatusEffectSet
         [StatusKind.Vulnerability] = StackRule.Strongest,
         [StatusKind.Fortify] = StackRule.Strongest,
         [StatusKind.Empower] = StackRule.Strongest,
+        [StatusKind.Frenzy] = StackRule.Strongest,
     };
+
+    /// <summary>What a frenzy costs: this much more damage taken while it lasts (REF-21, at your call).</summary>
+    public const double FrenzyExposure = 0.03;
+
+    /// <summary>What Iron Skin costs: this much slower on foot while it lasts (REF-21, at your call).</summary>
+    public const double FortifyDrag = 0.05;
 
     /// <summary>Tolerance for float drift when scheduling damage-over-time ticks.</summary>
     private const double TickEpsilon = 1e-6;
@@ -104,19 +117,28 @@ public sealed class StatusEffectSet
 
     public bool IsStunned => Has(StatusKind.Stun);
 
-    /// <summary>Move speed multiplier from slows. 1.0 when unaffected.</summary>
+    /// <summary>
+    /// Move speed multiplier: slows and Iron Skin's weight down, a frenzy up. 1.0 when unaffected.
+    /// </summary>
     public double MoveSpeedMultiplier =>
-        Has(StatusKind.Slow) ? Math.Max(0.2, 1 - _effects[StatusKind.Slow].Magnitude) : 1.0;
+        (Has(StatusKind.Slow) ? Math.Max(0.2, 1 - _effects[StatusKind.Slow].Magnitude) : 1.0)
+        * (Has(StatusKind.Fortify) ? 1 - FortifyDrag : 1.0)
+        * (Has(StatusKind.Frenzy) ? 1 + (_effects[StatusKind.Frenzy].Magnitude * 0.5) : 1.0);
+
+    /// <summary>Attack speed multiplier: a frenzy's gain. 1.0 when unaffected.</summary>
+    public double AttackSpeedMultiplier =>
+        Has(StatusKind.Frenzy) ? 1 + _effects[StatusKind.Frenzy].Magnitude : 1.0;
 
     /// <summary>Outgoing damage multiplier: weaken down, the aura up.</summary>
     public double DamageDealtMultiplier =>
         (Has(StatusKind.Weaken) ? Math.Max(0.1, 1 - _effects[StatusKind.Weaken].Magnitude) : 1.0)
         * (Has(StatusKind.Empower) ? 1 + _effects[StatusKind.Empower].Magnitude : 1.0);
 
-    /// <summary>Incoming damage multiplier: vulnerability up, fortify down.</summary>
+    /// <summary>Incoming damage multiplier: vulnerability and a frenzy up, fortify down.</summary>
     public double DamageTakenMultiplier =>
         (Has(StatusKind.Vulnerability) ? 1 + _effects[StatusKind.Vulnerability].Magnitude : 1.0)
-        * (Has(StatusKind.Fortify) ? Math.Max(0.1, 1 - _effects[StatusKind.Fortify].Magnitude) : 1.0);
+        * (Has(StatusKind.Fortify) ? Math.Max(0.1, 1 - _effects[StatusKind.Fortify].Magnitude) : 1.0)
+        * (Has(StatusKind.Frenzy) ? 1 + FrenzyExposure : 1.0);
 
     public void Apply(StatusEffect effect)
     {
@@ -239,4 +261,7 @@ public sealed class StatusEffectSet
 
     public static StatusEffect Empower(double fraction, double duration = 30) =>
         new() { Kind = StatusKind.Empower, Magnitude = fraction, Duration = duration };
+
+    public static StatusEffect Frenzy(double fraction, double duration = 20) =>
+        new() { Kind = StatusKind.Frenzy, Magnitude = fraction, Duration = duration };
 }
