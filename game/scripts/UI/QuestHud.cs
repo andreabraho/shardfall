@@ -136,7 +136,16 @@ public partial class QuestHud : CanvasLayer
 
         if (zones.Count == 0) return "";
 
-        if (zones.Contains(here)) return L10n.T("here  ·  marked on the map (M)");
+        if (zones.Contains(here))
+        {
+            // A hunt whose camp has not been found yet sends the player looking (2026-09-26).
+            if (goal.Type == ObjectiveType.Kill && Engine.GetMainLoop() is SceneTree tree && !MapView.KnowsCampOf(tree, goal.Target))
+            {
+                return L10n.T("here  ·  explore the map to find their camp");
+            }
+
+            return L10n.T("here  ·  marked on the map (M)");
+        }
 
         return L10n.F("in {0}  ·  the way is on the map (M)", string.Join(L10n.T(" or "), zones.Select(ZoneName)));
     }

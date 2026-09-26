@@ -254,6 +254,7 @@ public partial class MapPanel : CanvasLayer
         row.AddChild(Key(L10n.T("shrine"), new Color(0.45f, 0.82f, 0.86f)));
         row.AddChild(Key(L10n.T("shard"), new Color(0.82f, 0.52f, 0.95f)));
         row.AddChild(Key(L10n.T("camp"), new Color(0.85f, 0.38f, 0.34f)));
+        row.AddChild(Key(L10n.T("boss"), new Color(1f, 0.28f, 0.22f)));
         row.AddChild(Key(L10n.T("safe"), new Color(0.36f, 0.72f, 0.42f)));
 
         var hint = new Label { Text = L10n.T("M or Esc to close"), SizeFlagsHorizontal = Control.SizeFlags.ExpandFill, HorizontalAlignment = HorizontalAlignment.Right };

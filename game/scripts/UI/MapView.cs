@@ -45,6 +45,9 @@ public partial class MapView : Control
 
     private static readonly Color EnemyTint = new(0.92f, 0.30f, 0.26f);
 
+    /// <summary>A boss's den: a deeper red than a camp, and larger.</summary>
+    private static readonly Color BossTint = new(1f, 0.28f, 0.22f);
+
     private float _scale = 1f;
     private Vector2 _centre;
 
@@ -196,6 +199,37 @@ public partial class MapView : Control
     private static bool Known(System.Collections.Generic.HashSet<long> seen, Vector3 at) =>
         seen.Contains(CellOf(at));
 
+    /// <summary>Whether the player has found a camp in this map with <paramref name="enemyId"/> in it.</summary>
+    public static bool KnowsCampOf(SceneTree tree, string enemyId)
+    {
+        if (!PlayerProfile.Explored.TryGetValue(GameWorld.CurrentZoneId, out var seen)) return false;
+
+        foreach (var node in tree.GetNodesInGroup("spawn_fields"))
+        {
+            if (node is SpawnFieldNode { Def: { } def } field
+                && def.Entries.Any(e => e.EnemyId == enemyId)
+                && Known(seen, field.GlobalPosition))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>The boss a camp holds, if it holds one.</summary>
+    private static Kiln.Data.Definitions.EnemyDef? BossOf(Kiln.Core.World.SpawnFieldDef def)
+    {
+        if (!GameContent.IsLoaded) return null;
+
+        foreach (var entry in def.Entries)
+        {
+            if (GameContent.Database.Enemies.TryGetValue(entry.EnemyId, out var enemy) && enemy.Boss) return enemy;
+        }
+
+        return null;
+    }
+
     private void DrawExplored(System.Collections.Generic.HashSet<long> seen)
     {
         var side = CellSize * _scale;
@@ -332,6 +366,21 @@ public partial class MapView : Control
             Caption(font, fontSize, At(npc.GlobalPosition), npc.Def.Title.Length > 0 ? Items.GameItems.Localise(npc.Def.Title) : npc.DisplayName, VillagerTint);
         }
 
+        // A boss's den, once found (2026-09-26, at your call): a large red diamond and its name.
+        // Like every camp it waits until the player has been near.
+        foreach (var node in GetTree().GetNodesInGroup("spawn_fields"))
+        {
+            if (node is not SpawnFieldNode { Def: { } def } field || !Known(seen, field.GlobalPosition)) continue;
+
+            if (BossOf(def) is not { } boss) continue;
+
+            var at = At(field.GlobalPosition);
+
+            Diamond(at, 8f, new Color(0, 0, 0, 0.7f));
+            Diamond(at, 6.5f, BossTint);
+            Caption(font, fontSize, at, Items.GameItems.Localise(boss.Name), BossTint);
+        }
+
         // No shards (REF-06): they stand somewhere new each time, and finding one is the
         // player's part.
 
@@ -355,18 +404,21 @@ public partial class MapView : Control
     /// Where the active quest wants the player (FR-8.3).
     /// </summary>
     /// <remarks>
-    /// Two cases. If the goal can be done in this map, every place it can be done is marked:
-    /// each camp with the creature in it, or the shard itself. If it cannot, the border to walk
-    /// through is marked instead, on the shortest road to a map where it can.
+    /// Two cases. If the goal can be done in this map, the places it can be done are marked:
+    /// each camp with the creature in it that the player has found, or the shard itself. If it
+    /// cannot, the border to walk through is marked instead, on the shortest road to a map
+    /// where it can.
     /// <para>
-    /// Drawn through the fog. Every other marker waits until the player has been there, and
-    /// that is right for them — but a quest marker the player cannot see until they have
-    /// already found the place is not a marker.
+    /// Camps are not drawn through the fog any more (2026-09-26, at your call): finding them is
+    /// the player's part, and the quest window says to go and look while none is known. The
+    /// shard and the border still are — a stone moves, and a way out is not a secret.
     /// </para>
     /// </remarks>
     private void DrawQuest()
     {
         if (Quests.QuestPlaces.CurrentGoal() is not { } goal) return;
+
+        var seen = Memory();
 
         var font = GetThemeDefaultFont();
         var fontSize = GetThemeDefaultFontSize();
@@ -382,7 +434,7 @@ public partial class MapView : Control
                 foreach (var node in GetTree().GetNodesInGroup("spawn_fields"))
                 {
                     if (node is not SpawnFieldNode field || field.Def is not { } def) continue;
-                    if (!def.Entries.Any(e => e.EnemyId == goal.Target)) continue;
+                    if (!def.Entries.Any(e => e.EnemyId == goal.Target) || !Known(seen, field.GlobalPosition)) continue;
 
                     QuestMark(font, fontSize, field.GlobalPosition, (float)def.Radius, label);
                 }
