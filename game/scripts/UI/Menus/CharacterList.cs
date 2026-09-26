@@ -32,13 +32,19 @@ public partial class CharacterList : ScrollContainer
     {
     }
 
+    /// <summary>The page's name, for the title bar of the window it opens in.</summary>
+    public static string Title => L10n.T("Characters");
+
     public override void _Ready()
     {
         var column = new VBoxContainer { SizeFlagsHorizontal = SizeFlags.ExpandFill };
         column.AddThemeConstantOverride("separation", 8);
-        AddChild(column);
 
-        column.AddChild(MenuStyle.Label(L10n.T("Characters"), 17, MenuStyle.Heading));
+        // Room on the right for the scroll bar, so it never sits over a value.
+        var margin = new MarginContainer { SizeFlagsHorizontal = SizeFlags.ExpandFill };
+        margin.AddThemeConstantOverride("margin_right", 14);
+        margin.AddChild(column);
+        AddChild(margin);
 
         _rows = new VBoxContainer();
         _rows.AddThemeConstantOverride("separation", 10);
@@ -71,8 +77,12 @@ public partial class CharacterList : ScrollContainer
 
     private Control Row(CharacterSummary character)
     {
+        var plate = new PanelContainer();
+        plate.AddThemeStyleboxOverride("panel", MenuStyle.Box(new Color(0.045f, 0.042f, 0.04f), 1, 8, edge: new Color(0.30f, 0.25f, 0.18f)));
+
         var row = new HBoxContainer();
         row.AddThemeConstantOverride("separation", 8);
+        plate.AddChild(row);
 
         var text = new VBoxContainer { SizeFlagsHorizontal = SizeFlags.ExpandFill };
         text.AddChild(MenuStyle.Label(character.Name, 16, MenuStyle.Gold));
@@ -100,7 +110,7 @@ public partial class CharacterList : ScrollContainer
             row.AddChild(button);
         }
 
-        return row;
+        return plate;
     }
 
     private void Delete(CharacterSummary character)

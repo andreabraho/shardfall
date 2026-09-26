@@ -42,22 +42,36 @@ public partial class SaveList : ScrollContainer
         _character = character ?? SaveService.CharacterId;
         _name = name ?? SaveService.CharacterName;
         HorizontalScrollMode = ScrollMode.Disabled;
-        CustomMinimumSize = new Vector2(560, 480);
+
+        // Saving offers three slots, loading the whole list: no empty half-window for the three.
+        CustomMinimumSize = new Vector2(560, purpose == Purpose.Save ? 200 : 480);
     }
 
     public SaveList() : this(Purpose.Load)
     {
     }
 
+    /// <summary>The page's name, for the title bar of the window it opens in.</summary>
+    public string Title
+    {
+        get
+        {
+            var heading = _purpose == Purpose.Load ? L10n.T("Load a game") : L10n.T("Save the game");
+
+            return _name.Length > 0 ? $"{heading}  ·  {_name}" : heading;
+        }
+    }
+
     public override void _Ready()
     {
         var column = new VBoxContainer { SizeFlagsHorizontal = SizeFlags.ExpandFill };
         column.AddThemeConstantOverride("separation", 8);
-        AddChild(column);
 
-        var heading = _purpose == Purpose.Load ? L10n.T("Load a game") : L10n.T("Save the game");
-
-        column.AddChild(MenuStyle.Label(_name.Length > 0 ? $"{heading}  ·  {_name}" : heading, 17, MenuStyle.Heading));
+        // Room on the right for the scroll bar, so it never sits over a value.
+        var margin = new MarginContainer { SizeFlagsHorizontal = SizeFlags.ExpandFill };
+        margin.AddThemeConstantOverride("margin_right", 14);
+        margin.AddChild(column);
+        AddChild(margin);
 
         _rows = new VBoxContainer();
         _rows.AddThemeConstantOverride("separation", 6);
@@ -96,8 +110,12 @@ public partial class SaveList : ScrollContainer
 
     private Control Row(SaveSummary summary)
     {
+        var plate = new PanelContainer();
+        plate.AddThemeStyleboxOverride("panel", MenuStyle.Box(new Color(0.045f, 0.042f, 0.04f), 1, 8, edge: new Color(0.30f, 0.25f, 0.18f)));
+
         var row = new HBoxContainer();
         row.AddThemeConstantOverride("separation", 12);
+        plate.AddChild(row);
 
         var text = new VBoxContainer { SizeFlagsHorizontal = SizeFlags.ExpandFill };
         text.AddChild(MenuStyle.Label(summary.Title, 15, summary.Readable ? MenuStyle.Text : MenuStyle.Dim));
@@ -123,7 +141,7 @@ public partial class SaveList : ScrollContainer
         button.SizeFlagsVertical = SizeFlags.ShrinkCenter;
         row.AddChild(button);
 
-        return row;
+        return plate;
     }
 
     private void Load(SaveSummary summary)

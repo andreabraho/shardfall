@@ -17,6 +17,8 @@ namespace Kiln.Game.UI.Menus;
 public partial class MainMenu : Control
 {
     private PanelContainer _content = null!;
+    private VBoxContainer _page = null!;
+    private Label _pageTitle = null!;
 
     /// <summary>Set when the language changes, so the rebuilt menu opens where the player was.</summary>
     private static bool _reopenSettings;
@@ -42,7 +44,7 @@ public partial class MainMenu : Control
             {
                 Gradient = new Gradient
                 {
-                    Colors = [new Color(0.10f, 0.08f, 0.07f), new Color(0.03f, 0.03f, 0.04f)],
+                    Colors = [new Color(0.16f, 0.11f, 0.06f), new Color(0.03f, 0.025f, 0.02f)],
                 },
                 FillFrom = new Vector2(0.2f, 0.1f),
                 FillTo = new Vector2(0.9f, 1f),
@@ -66,23 +68,38 @@ public partial class MainMenu : Control
         left.AddThemeConstantOverride("separation", 10);
         frame.AddChild(left);
 
-        left.AddChild(MenuStyle.Label("KILN", 76, MenuStyle.Gold));
+        var logo = MenuStyle.Label("KILN", 76, MenuStyle.Gold);
+        logo.AddThemeColorOverride("font_outline_color", new Color(0.25f, 0.15f, 0.05f));
+        logo.AddThemeConstantOverride("outline_size", 10);
+        left.AddChild(logo);
         left.AddChild(MenuStyle.Label(L10n.T("working title"), 14, MenuStyle.Dim));
-        left.AddChild(new Control { CustomMinimumSize = new Vector2(0, 40) });
+        left.AddChild(new Control { CustomMinimumSize = new Vector2(0, 24) });
+
+        // In the original's style (2026-09-26): the choices in a window of their own, and the
+        // page each opens a second window beside it, named on its title bar.
+        var menu = MenuStyle.Window(L10n.T("Menu"), null, out var choices, out _);
+        menu.SizeFlagsHorizontal = SizeFlags.ShrinkBegin;
+        left.AddChild(menu);
 
         // The character played last, whoever it is (REF-18).
         var newest = SaveService.Characters().FirstOrDefault();
 
         var resume = MenuStyle.Big(L10n.T("Continue"), () => SaveService.Instance?.LoadLatest(anyCharacter: true));
         resume.Disabled = newest is null;
-        left.AddChild(resume);
-        left.AddChild(MenuStyle.Label(newest is null ? L10n.T("No saved game yet.") : $"{newest.Name}  ·  {newest.Newest.Describe()}", 12, MenuStyle.Dim));
-        left.AddChild(new Control { CustomMinimumSize = new Vector2(0, 6) });
+        choices.AddChild(resume);
 
-        left.AddChild(MenuStyle.Big(L10n.T("New game"), () => Page(NewGamePage())));
-        left.AddChild(MenuStyle.Big(L10n.T("Load game"), () => Page(new CharacterList(Page))));
-        left.AddChild(MenuStyle.Big(L10n.T("Settings"), () => Page(new SettingsView(inGame: false))));
-        left.AddChild(MenuStyle.Big(L10n.T("Quit"), () => GetTree().Quit()));
+        var where = MenuStyle.Label(newest is null ? L10n.T("No saved game yet.") : $"{newest.Name}  ·  {newest.Newest.Describe()}", 12, MenuStyle.Dim, wrap: true);
+        where.CustomMinimumSize = new Vector2(260, 0);
+        choices.AddChild(where);
+        choices.AddChild(new Control { CustomMinimumSize = new Vector2(0, 4) });
+
+        choices.AddChild(MenuStyle.Big(L10n.T("New game"), () => Page(NewGamePage(), L10n.T("New game  ·  name your character and choose a difficulty"))));
+        choices.AddChild(MenuStyle.Big(L10n.T("Load game"), () => Page(new CharacterList(page => Page(page)))));
+        choices.AddChild(MenuStyle.Big(L10n.T("Settings"), () => Page(new SettingsView(inGame: false))));
+        choices.AddChild(new Control { CustomMinimumSize = new Vector2(0, 4) });
+        choices.AddChild(MenuStyle.Big(L10n.T("Quit"), () => GetTree().Quit()));
+
+        left.AddChild(new Control { CustomMinimumSize = new Vector2(0, 12) });
 
         // CC BY 3.0 asks for the credit where the player can see it (ASSET-LICENSES.md).
         left.AddChild(MenuStyle.Label("Icons made by Lorc and Delapouite. Available on https://game-icons.net (CC BY 3.0)", 11, MenuStyle.Dim));
@@ -94,14 +111,10 @@ public partial class MainMenu : Control
         left.AddChild(MenuStyle.Label($"Godot {Engine.GetVersionInfo()["string"]}  ·  {(OS.IsDebugBuild() ? "debug" : "release")} build",
             11, MenuStyle.Dim));
 
-        _content = new PanelContainer
-        {
-            Visible = false,
-            SizeFlagsVertical = SizeFlags.ShrinkBegin,
-            SizeFlagsHorizontal = SizeFlags.ShrinkBegin,
-        };
-
-        _content.AddThemeStyleboxOverride("panel", MenuStyle.Panel(0.92f));
+        _content = MenuStyle.Window("", () => _content.Visible = false, out _page, out _pageTitle);
+        _content.Visible = false;
+        _content.SizeFlagsVertical = SizeFlags.ShrinkBegin;
+        _content.SizeFlagsHorizontal = SizeFlags.ShrinkBegin;
         frame.AddChild(_content);
 
         if (_reopenSettings)
@@ -123,8 +136,6 @@ public partial class MainMenu : Control
         var column = new VBoxContainer { CustomMinimumSize = new Vector2(560, 0) };
         column.AddThemeConstantOverride("separation", 10);
 
-        column.AddChild(MenuStyle.Label(L10n.T("New game  ·  name your character and choose a difficulty"), 17, MenuStyle.Heading));
-
         // The character's name (REF-18): what the character list calls it.
         var name = new LineEdit
         {
@@ -143,7 +154,7 @@ public partial class MainMenu : Control
         {
             var card = new Button
             {
-                CustomMinimumSize = new Vector2(0, 76),
+                CustomMinimumSize = new Vector2(0, 94),
                 Alignment = HorizontalAlignment.Left,
                 ClipText = false,
             };
@@ -180,15 +191,24 @@ public partial class MainMenu : Control
         return column;
     }
 
-    private void Page(Control page)
+    /// <summary>Opens a page in the window beside the menu, its name on the title bar.</summary>
+    private void Page(Control page, string? title = null)
     {
-        foreach (var child in _content.GetChildren())
+        foreach (var child in _page.GetChildren())
         {
-            _content.RemoveChild(child);
+            _page.RemoveChild(child);
             child.QueueFree();
         }
 
-        _content.AddChild(page);
+        _pageTitle.Text = title ?? page switch
+        {
+            SaveList saves => saves.Title,
+            CharacterList => CharacterList.Title,
+            SettingsView => SettingsView.Title,
+            _ => "",
+        };
+
+        _page.AddChild(page);
         _content.Visible = true;
     }
 }

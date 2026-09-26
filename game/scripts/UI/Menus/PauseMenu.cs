@@ -17,6 +17,8 @@ namespace Kiln.Game.UI.Menus;
 public partial class PauseMenu : CanvasLayer
 {
     private PanelContainer _content = null!;
+    private VBoxContainer _page = null!;
+    private Label _pageTitle = null!;
     private bool _counted;
 
     public override void _Ready()
@@ -42,7 +44,7 @@ public partial class PauseMenu : CanvasLayer
         }
 
         Build();
-        Page(new SettingsView(inGame: true));
+        Page(new SettingsView(inGame: true), SettingsView.Title);
     }
 
     private void Build()
@@ -64,27 +66,23 @@ public partial class PauseMenu : CanvasLayer
         frame.AddThemeConstantOverride("separation", 16);
         centre.AddChild(frame);
 
-        var menu = new PanelContainer();
-        menu.AddThemeStyleboxOverride("panel", MenuStyle.Panel());
+        // In the original's style (2026-09-26): the menu a window of its own, and the page it
+        // opens — saves, settings — a second window beside it, named on its title bar.
+        var menu = MenuStyle.Window(L10n.T("Paused"), Close, out var buttons, out _, L10n.T("Leaving autosaves first."));
+        menu.SizeFlagsVertical = Control.SizeFlags.ShrinkBegin;
         frame.AddChild(menu);
 
-        var buttons = new VBoxContainer();
-        buttons.AddThemeConstantOverride("separation", 8);
-        menu.AddChild(buttons);
-
-        buttons.AddChild(MenuStyle.Label(L10n.T("Paused"), 24, MenuStyle.Gold));
-        buttons.AddChild(new Control { CustomMinimumSize = new Vector2(0, 8) });
         buttons.AddChild(MenuStyle.Big(L10n.T("Resume"), Close));
         buttons.AddChild(MenuStyle.Big(L10n.T("Save game"), () => Page(new SaveList(SaveList.Purpose.Save))));
         buttons.AddChild(MenuStyle.Big(L10n.T("Load game"), () => Page(new SaveList(SaveList.Purpose.Load))));
-        buttons.AddChild(MenuStyle.Big(L10n.T("Settings"), () => Page(new SettingsView(inGame: true))));
-        buttons.AddChild(new Control { CustomMinimumSize = new Vector2(0, 8) });
+        buttons.AddChild(MenuStyle.Big(L10n.T("Settings"), () => Page(new SettingsView(inGame: true), SettingsView.Title)));
+        buttons.AddChild(new Control { CustomMinimumSize = new Vector2(0, 6) });
         buttons.AddChild(MenuStyle.Big(L10n.T("Quit to menu"), () => SaveService.Instance?.QuitToMenu()));
         buttons.AddChild(MenuStyle.Big(L10n.T("Quit to desktop"), () => SaveService.Instance?.QuitGame()));
-        buttons.AddChild(MenuStyle.Label(L10n.T("Leaving autosaves first."), 12, MenuStyle.Dim));
 
-        _content = new PanelContainer { Visible = false };
-        _content.AddThemeStyleboxOverride("panel", MenuStyle.Panel());
+        _content = MenuStyle.Window("", () => _content.Visible = false, out _page, out _pageTitle);
+        _content.Visible = false;
+        _content.SizeFlagsVertical = Control.SizeFlags.ShrinkBegin;
         frame.AddChild(_content);
     }
 
@@ -124,15 +122,18 @@ public partial class PauseMenu : CanvasLayer
         GetTree().Paused = false;
     }
 
-    private void Page(Control page)
+    private void Page(SaveList page) => Page(page, page.Title);
+
+    private void Page(Control page, string title)
     {
-        foreach (var child in _content.GetChildren())
+        foreach (var child in _page.GetChildren())
         {
-            _content.RemoveChild(child);
+            _page.RemoveChild(child);
             child.QueueFree();
         }
 
-        _content.AddChild(page);
+        _pageTitle.Text = title;
+        _page.AddChild(page);
         _content.Visible = true;
     }
 }

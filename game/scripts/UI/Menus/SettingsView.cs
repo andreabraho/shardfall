@@ -34,14 +34,22 @@ public partial class SettingsView : ScrollContainer
     {
     }
 
+    /// <summary>The page's name, for the title bar of the window it opens in.</summary>
+    public static string Title => L10n.T("Settings");
+
     public override void _Ready()
     {
         var column = new VBoxContainer { SizeFlagsHorizontal = SizeFlags.ExpandFill };
-        column.AddThemeConstantOverride("separation", 10);
-        AddChild(column);
+        column.AddThemeConstantOverride("separation", 8);
+
+        // Room on the right for the scroll bar, so it never sits over a value.
+        var margin = new MarginContainer { SizeFlagsHorizontal = SizeFlags.ExpandFill };
+        margin.AddThemeConstantOverride("margin_right", 14);
+        margin.AddChild(column);
+        AddChild(margin);
 
         // -- display
-        column.AddChild(MenuStyle.Label(L10n.T("Display"), 17, MenuStyle.Heading));
+        column.AddChild(MenuStyle.Section(L10n.T("Display")));
 
         Toggle(column, L10n.T("Fullscreen  (F11)"), GameSettings.Fullscreen, on => GameSettings.Fullscreen = on);
         Toggle(column, L10n.T("Vertical sync"), GameSettings.VSync, on => GameSettings.VSync = on);
@@ -60,14 +68,13 @@ public partial class SettingsView : ScrollContainer
             12, MenuStyle.Dim, wrap: true));
 
         // -- audio
-        column.AddChild(new HSeparator());
-        column.AddChild(MenuStyle.Label(L10n.T("Audio"), 17, MenuStyle.Heading));
+        column.AddChild(MenuStyle.Section(L10n.T("Audio")));
 
         Slider(column, L10n.T("Master"), GameSettings.MasterVolume, 0, 1, v => GameSettings.MasterVolume = v, v => L10n.F("{0:P0}", v));
         Slider(column, L10n.T("Music"), GameSettings.MusicVolume, 0, 1, v => GameSettings.MusicVolume = v, v => L10n.F("{0:P0}", v));
         Slider(column, L10n.T("Effects"), GameSettings.EffectsVolume, 0, 1, v => GameSettings.EffectsVolume = v, v => L10n.F("{0:P0}", v));
         // Music for each moment (REF-20): one track, or every track in turn.
-        column.AddChild(MenuStyle.Label(L10n.T("Music"), 15, MenuStyle.Heading));
+        column.AddChild(MenuStyle.Label(L10n.T("Music"), 13, MenuStyle.Heading));
 
         foreach (var (id, label) in Audio.MusicTracks.Moments)
         {
@@ -100,8 +107,7 @@ public partial class SettingsView : ScrollContainer
         // -- difficulty
         if (_inGame)
         {
-            column.AddChild(new HSeparator());
-            column.AddChild(MenuStyle.Label(L10n.T("Difficulty"), 17, MenuStyle.Heading));
+            column.AddChild(MenuStyle.Section(L10n.T("Difficulty")));
 
             var tiers = new OptionButton();
             var about = MenuStyle.Label("", 12, MenuStyle.Dim, wrap: true);
@@ -123,8 +129,7 @@ public partial class SettingsView : ScrollContainer
         }
 
         // -- language
-        column.AddChild(new HSeparator());
-        column.AddChild(MenuStyle.Label(L10n.T("Language"), 17, MenuStyle.Heading));
+        column.AddChild(MenuStyle.Section(L10n.T("Language")));
 
         var languages = GameSettings.Languages();
         var picker = new OptionButton();
@@ -148,8 +153,7 @@ public partial class SettingsView : ScrollContainer
         }
 
         // -- controls
-        column.AddChild(new HSeparator());
-        column.AddChild(MenuStyle.Label(L10n.T("Controls"), 17, MenuStyle.Heading));
+        column.AddChild(MenuStyle.Section(L10n.T("Controls")));
 
         var grid = new GridContainer { Columns = 2 };
         grid.AddThemeConstantOverride("h_separation", 24);
