@@ -362,6 +362,10 @@ public partial class CharacterPanel : CanvasLayer
         }
 
         RefreshDerived();
+
+        // Back to what it needs: a container grows with its content but never shrinks by
+        // itself, so the + buttons going away would leave the window a row too tall.
+        Callable.From(() => { if (IsInstanceValid(_root)) _root.ResetSize(); }).CallDeferred();
     }
 
     private static int Value(Attributes attributes, AttributeKind kind) => kind switch
@@ -372,9 +376,19 @@ public partial class CharacterPanel : CanvasLayer
         _ => attributes.Vit,
     };
 
+    /// <summary>
+    /// The statistics' rows, made once and rewritten in place (2026-09-26). They used to be
+    /// thrown away and made again on every refresh — which, with the window open during play,
+    /// is every kill — and for a frame the old rows and the new stood together, so the window
+    /// grew and jumped.
+    /// </summary>
+    private readonly List<(Label Name, Label Amount)> _statRows = [];
+
+    private int _statIndex;
+
     private void RefreshDerived()
     {
-        foreach (var child in _derived.GetChildren()) child.QueueFree();
+        _statIndex = 0;
 
         if (_combatant is null) return;
 
@@ -398,15 +412,25 @@ public partial class CharacterPanel : CanvasLayer
 
     private void Stat(string name, string value, Color? colour = null)
     {
-        var label = new Label { Text = name, SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
-        label.AddThemeFontSizeOverride("font_size", 12);
-        label.AddThemeColorOverride("font_color", Soft);
-        _derived.AddChild(label);
+        if (_statIndex >= _statRows.Count)
+        {
+            var label = new Label { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
+            label.AddThemeFontSizeOverride("font_size", 12);
+            label.AddThemeColorOverride("font_color", Soft);
+            _derived.AddChild(label);
 
-        var amount = new Label { Text = value, HorizontalAlignment = HorizontalAlignment.Right, CustomMinimumSize = new Vector2(90, 0) };
-        amount.AddThemeFontSizeOverride("font_size", 12);
+            var made = new Label { HorizontalAlignment = HorizontalAlignment.Right, CustomMinimumSize = new Vector2(90, 0) };
+            made.AddThemeFontSizeOverride("font_size", 12);
+            _derived.AddChild(made);
+
+            _statRows.Add((label, made));
+        }
+
+        var (nameLabel, amount) = _statRows[_statIndex++];
+
+        nameLabel.Text = name;
+        amount.Text = value;
         amount.AddThemeColorOverride("font_color", colour ?? new Color(0.94f, 0.92f, 0.86f));
-        _derived.AddChild(amount);
     }
 
     private void Capped(string name, double value, double cap)
