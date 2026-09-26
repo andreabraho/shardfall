@@ -189,6 +189,24 @@ public class DamagePipelineTests
     }
 
     [Fact]
+    public void AlwaysPierces_IgnoresMitigationOnEveryHit()
+    {
+        // REF-21, the Piercing Blow: defence never counts, whatever the roll.
+        var attacker = Attacker();
+        attacker.Modifiers.PierceChance = -1;
+
+        var request = Request(attacker, Defender(defense: 500)) with { AlwaysPierces = true, Unavoidable = true };
+
+        for (ulong seed = 0; seed < 100; seed++)
+        {
+            var result = DamagePipeline.Resolve(request, new DeterministicRng(seed));
+
+            Assert.True(result.Pierced);
+            Assert.Equal(0, result.MitigationApplied);
+        }
+    }
+
+    [Fact]
     public void Evasion_CanCauseAMiss()
     {
         // Capped at 30%, so this checks the rate rather than a single guaranteed miss.
