@@ -68,6 +68,9 @@ public partial class SpawnFieldNode : Node3D
         AddToGroup("spawn_fields");
 
         _field = new SpawnField(def, new DeterministicRng(GameSession.Seed).Fork($"spawn:{FieldId}"));
+
+        _bossDen = def.Entries.Count > 0 && def.Entries.All(e =>
+            GameContent.Database.Enemies.TryGetValue(e.EnemyId, out var enemy) && enemy.Boss);
         _enemyScene = GD.Load<PackedScene>("res://scenes/enemy.tscn");
     }
 
@@ -85,7 +88,11 @@ public partial class SpawnFieldNode : Node3D
             : _player.GlobalPosition.DistanceTo(GlobalPosition);
 
         // Held picks count as alive: the field has already handed them out.
-        var state = new SpawnFieldState(distance, _mine.Count + _held.Count, GameWorld.Headroom(GetTree()));
+        // A boss's den is never kept waiting for room (2026-09-27): with the map's camps and a
+        // stone's adds at the population cap, the Sacker's field waited for a free place that
+        // the camps' twenty-second respawns always took first, and he never came.
+        var headroom = _bossDen ? int.MaxValue : GameWorld.Headroom(GetTree());
+        var state = new SpawnFieldState(distance, _mine.Count + _held.Count, headroom);
         var spawns = _field.Tick(delta, state);
 
         if (_field.ShouldClear)
@@ -108,6 +115,9 @@ public partial class SpawnFieldNode : Node3D
     }
 
     private bool _reported;
+
+    /// <summary>Whether this field holds only bosses, which the population cap does not hold back.</summary>
+    private bool _bossDen;
 
     private readonly List<string> _held = [];
     private double _heldFor;
