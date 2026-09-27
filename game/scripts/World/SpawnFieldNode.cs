@@ -171,6 +171,8 @@ public partial class SpawnFieldNode : Node3D
     /// </summary>
     private void Clear()
     {
+        var returned = 0;
+
         for (var i = _mine.Count - 1; i >= 0; i--)
         {
             var brain = _mine[i];
@@ -180,7 +182,11 @@ public partial class SpawnFieldNode : Node3D
 
             _mine.RemoveAt(i);
             brain.QueueFree();
+            returned++;
         }
+
+        // Sent away, not killed: back the moment the player returns, not after a respawn.
+        _field?.Return(returned);
     }
 
     private void Spawn(string enemyId, Vector3 at)

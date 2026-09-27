@@ -102,6 +102,25 @@ public class SpawnFieldTests
     }
 
     [Fact]
+    public void CreaturesSentAwayOnSleep_AreBackAtOnce_NotAfterARespawn()
+    {
+        // The boss case: one creature, five minutes to respawn. The player dies, wakes in the
+        // village out of range, and the den clears; walking back must find the boss there.
+        var field = Field(Def(count: 1, respawn: 300));
+
+        Assert.Single(field.Tick(0.1, Near(0)));
+
+        field.Tick(0.1, new SpawnFieldState(80, 1, 99));
+        Assert.True(field.ShouldClear);
+        field.Return(1);
+
+        field.Tick(5, new SpawnFieldState(80, 0, 99));
+        Assert.Equal(0, field.Pending);
+
+        Assert.Single(field.Tick(0.1, Near(0)));
+    }
+
+    [Fact]
     public void GlobalHeadroomCapsWhatArrivesThisTick()
     {
         var field = Field(Def(count: 5));

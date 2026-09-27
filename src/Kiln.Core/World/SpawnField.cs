@@ -162,6 +162,17 @@ public sealed class SpawnField
     /// Starts a timer for every creature the field is short of. Missing is measured against
     /// what is alive plus what is already owed, so a slot is never counted twice.
     /// </summary>
+    /// <summary>
+    /// Takes back creatures the game removed when the field went to sleep. They were not
+    /// killed, so they owe no respawn time: they are ready again the moment the player comes
+    /// back. Counted as dead, a boss sent away while its killer lay dead in the village took its
+    /// whole five minutes to come back (2026-09-27).
+    /// </summary>
+    public void Return(int count)
+    {
+        if (count > 0) _ready = Math.Min(Def.Count, _ready + count);
+    }
+
     private void OweMissing(int alive)
     {
         var missing = Def.Count - alive - _timers.Count - _ready;
