@@ -805,6 +805,65 @@ public sealed class ZoneDef : ContentDefBase
 
     /// <summary>The player's footsteps here: grass, dirt or stone. Empty for none.</summary>
     public string Footsteps { get; init; } = string.Empty;
+
+    /// <summary>
+    /// The mountains that close the map in (2026-09-27). Null for a map with walls of its own,
+    /// such as a dungeon.
+    /// </summary>
+    public BorderDef? Border { get; init; }
+}
+
+/// <summary>
+/// What a map's surrounding mountains look like (2026-09-27, at your call): wooded hills round
+/// the village, grey crags round the orc valley, red mesas round the desert, snowy peaks round
+/// the pass. The shape is <c>Kiln.Core.World.BorderTerrain</c>; this is its tuning and its paint.
+/// </summary>
+public sealed class BorderDef
+{
+    /// <summary>[lowest, highest] stretch of the ridge, in metres.</summary>
+    public double[] Height { get; init; } = [22, 36];
+
+    /// <summary>How far in from the foot the slope reaches two thirds of its height. Smaller is steeper.</summary>
+    public double Rise { get; init; } = 11;
+
+    /// <summary>The height of one ledge, for mesas; 0 for a natural slope.</summary>
+    public double Terrace { get; init; }
+
+    /// <summary>Where the foot line stands, in metres from the middle of the map along an axis.</summary>
+    public double Inset { get; init; } = 84;
+
+    /// <summary>The bare rock.</summary>
+    public string Rock { get; init; } = "#6f6b62";
+
+    /// <summary>A second rock, in bands up the slope. Empty for one rock throughout.</summary>
+    public string RockAlt { get; init; } = string.Empty;
+
+    /// <summary>The lower slopes' cover. Empty takes the colour of the map's own ground, so the two meet without a seam.</summary>
+    public string Grass { get; init; } = string.Empty;
+
+    /// <summary>How high the grass climbs before the rock shows, in metres.</summary>
+    public double GrassLine { get; init; } = 6;
+
+    /// <summary>Snow on the tops. Empty for none.</summary>
+    public string Cap { get; init; } = string.Empty;
+
+    /// <summary>Where the snow starts, as a fraction of the ridge's highest stretch.</summary>
+    public double CapFrom { get; init; } = 0.6;
+
+    /// <summary>Kit pieces strewn on the slopes: trees on hills, rocks on crags, cacti on mesas.</summary>
+    public string[] Cover { get; init; } = [];
+
+    /// <summary>How many of them to try to place.</summary>
+    public int CoverCount { get; init; }
+
+    /// <summary>How high up the slope they grow, in metres.</summary>
+    public double CoverHeight { get; init; } = 14;
+
+    /// <summary>A wall across each pass, either side of the road: stone for a village, stakes for a camp. Empty for none.</summary>
+    public string Wall { get; init; } = string.Empty;
+
+    /// <summary>Which mountains: the same seed gives the same skyline on every load.</summary>
+    public int Seed { get; init; } = 1;
 }
 
 /// <summary>

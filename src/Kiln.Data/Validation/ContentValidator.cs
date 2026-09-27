@@ -853,6 +853,7 @@ public static class ContentValidator
             ZoneSafeRegions(zone, kind, safeIds, report);
             ZoneFields(db, zone, report);
             ZoneFloors(db, zone, kind, report);
+            ZoneBorder(db, zone, report);
 
             foreach (var shard in zone.Shards)
             {
@@ -861,6 +862,42 @@ public static class ContentValidator
                     report.Error("cross-ref", zone.SourceFile,
                         $"'{zone.Id}' hosts shard '{shard}', which does not exist.");
                 }
+            }
+        }
+    }
+
+    /// <summary>The mountains round a map (2026-09-27): pieces that exist, and heights that make a ridge.</summary>
+    private static void ZoneBorder(ContentDatabase db, ZoneDef zone, ValidationReport report)
+    {
+        if (zone.Border is not { } border) return;
+
+        if (border.Height.Length != 2 || border.Height[0] <= 0 || border.Height[1] < border.Height[0])
+        {
+            report.Error("zone-border", zone.SourceFile,
+                $"'{zone.Id}' border height must be [low, high] with 0 < low <= high.");
+        }
+
+        if (border.Rise <= 0 || border.Terrace < 0 || border.Inset < 40)
+        {
+            report.Error("zone-border", zone.SourceFile,
+                $"'{zone.Id}' border needs a positive rise, a terrace of 0 or more, and an inset of at least 40 m.");
+        }
+
+        foreach (var piece in border.Cover.Append(border.Wall).Where(p => p.Length > 0))
+        {
+            if (!db.KitPieces.ContainsKey(piece))
+            {
+                report.Error("cross-ref", zone.SourceFile,
+                    $"'{zone.Id}' border uses kit piece '{piece}', which does not exist.");
+            }
+        }
+
+        foreach (var colour in new[] { border.Rock, border.RockAlt, border.Grass, border.Cap }.Where(c => c.Length > 0))
+        {
+            if (!System.Text.RegularExpressions.Regex.IsMatch(colour, "^#[0-9a-fA-F]{6}$"))
+            {
+                report.Error("zone-border", zone.SourceFile,
+                    $"'{zone.Id}' border colour '{colour}' is not #rrggbb.");
             }
         }
     }

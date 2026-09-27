@@ -89,6 +89,7 @@ public partial class MapView : Control
         var seen = Memory();
 
         DrawExplored(seen);
+        DrawMountains();
         DrawTerrain(seen);
         DrawRegions(seen);
         DrawMarkers(seen);
@@ -246,6 +247,68 @@ public partial class MapView : Control
     }
 
     // ------------------------------------------------------------------ the zone
+
+    /// <summary>
+    /// The mountains round the map (2026-09-27): everything beyond the wall at their foot, in
+    /// their own rock, darkened, with the foot drawn as a lighter line. Not hidden by the fog —
+    /// the edge of the world is in sight from anywhere.
+    /// </summary>
+    private void DrawMountains()
+    {
+        var line = ZoneBorder.Outline;
+
+        if (line.Count < 3) return;
+
+        var rock = ZoneBorder.OutlineColour.Darkened(0.45f);
+        var foot = ZoneBorder.OutlineColour.Lightened(0.15f) with { A = 0.9f };
+
+        // One mesh in world metres, placed by the transform, and one line: drawn a polygon
+        // and a line per stretch of wall, the ring was 720 draw calls on every redraw of the
+        // minimap — as many as the whole 3D scene.
+        if (_mountainsFor != line || _mountains is null)
+        {
+            _mountains = MountainMesh(line);
+            _mountainsFor = line;
+        }
+
+        DrawSetTransform(Size * 0.5f - (_centre * _scale), 0, new Vector2(_scale, _scale));
+        DrawMesh(_mountains, null, modulate: rock);
+        DrawSetTransform(Vector2.Zero, 0, Vector2.One);
+
+        var foot2D = new Vector2[line.Count + 1];
+
+        for (var i = 0; i <= line.Count; i++) foot2D[i] = At(line[i % line.Count]);
+
+        DrawPolyline(foot2D, foot, 2f, antialiased: true);
+    }
+
+    private ArrayMesh? _mountains;
+    private System.Collections.Generic.IReadOnlyList<Vector2>? _mountainsFor;
+
+    /// <summary>The band from the wall out to far beyond the map's frame, as triangles in white.</summary>
+    private static ArrayMesh MountainMesh(System.Collections.Generic.IReadOnlyList<Vector2> line)
+    {
+        var verts = new Vector2[line.Count * 6];
+
+        for (var i = 0; i < line.Count; i++)
+        {
+            var a = line[i];
+            var b = line[(i + 1) % line.Count];
+            var k = i * 6;
+
+            (verts[k], verts[k + 1], verts[k + 2]) = (a, b, b * 4f);
+            (verts[k + 3], verts[k + 4], verts[k + 5]) = (a, b * 4f, a * 4f);
+        }
+
+        var arrays = new Godot.Collections.Array();
+        arrays.Resize((int)Mesh.ArrayType.Max);
+        arrays[(int)Mesh.ArrayType.Vertex] = verts;
+
+        var mesh = new ArrayMesh();
+        mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, arrays);
+
+        return mesh;
+    }
 
     private void DrawTerrain(System.Collections.Generic.HashSet<long> seen)
     {
