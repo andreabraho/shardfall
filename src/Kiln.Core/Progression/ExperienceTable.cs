@@ -34,9 +34,9 @@ public static class ExperienceTable
         return total;
     }
 
-    /// <summary>Experience a same-level trash enemy is worth. Cut by a fifth on 2026-09-25 (REF-08).</summary>
+    /// <summary>Experience a same-level trash enemy is worth. Cut by a fifth on 2026-09-25 (REF-08), and halved on 2026-09-27 at your call.</summary>
     public static long TrashXp(int enemyLevel) =>
-        (long)Math.Round(0.88 * Math.Pow(Math.Max(1, enemyLevel), 1.85), MidpointRounding.AwayFromZero);
+        (long)Math.Round(0.44 * Math.Pow(Math.Max(1, enemyLevel), 1.85), MidpointRounding.AwayFromZero);
 
     /// <summary>Experience for breaking a shard of this tier.</summary>
     public static long ShardXp(int tier, int level) =>

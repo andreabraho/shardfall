@@ -17,10 +17,13 @@ public static class SimulateCommand
 {
     private static Zone[] Campaign => CampaignModel.Zones;
 
-    /// <summary>Share of experience each source is meant to contribute (doc 06 §3).</summary>
-    private const double QuestShareTarget = 0.45;
+    /// <summary>
+    /// Share of experience each source is meant to contribute (doc 06 §3). Creatures were halved
+    /// on 2026-09-27 at your call, so the chain and the stones carry more of the climb.
+    /// </summary>
+    private const double QuestShareTarget = 0.55;
     private const double ShardShareTarget = 0.35;
-    private const double TrashShareTarget = 0.20;
+    private const double TrashShareTarget = 0.10;
 
     public static int Run(string[] args)
     {
