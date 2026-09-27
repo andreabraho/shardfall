@@ -26,14 +26,27 @@ public partial class CameraRig : Node3D
 
     [Export] public NodePath TargetPath { get; set; } = "";
 
-    /// <summary>Fixed camera pitch. Not player-adjustable: it defines the game's read.</summary>
+    /// <summary>The pitch the view starts at; the look button drags it between the two limits below.</summary>
     [Export] public float PitchDegrees { get; set; } = 50f;
 
     /// <summary>
     /// The range the pitch can be dragged through (REF-07): up and down while looking around,
     /// from a low view across the field to nearly straight down.
     /// </summary>
-    [Export] public float MinPitchDegrees { get; set; } = 30f;
+    /// <para>
+    /// Down to 5°, nearly level with the ground (2026-09-27, at your call): it stopped at 30°,
+    /// and the view could never be brought down to the character's height as in the original.
+    /// </para>
+    [Export] public float MinPitchDegrees { get; set; } = 5f;
+
+    /// <summary>
+    /// How far the point looked at rises as the view comes down, from the feet at 30° to the
+    /// chest at the lowest: looking level at a character's feet frames the ground under them.
+    /// </summary>
+    [Export] public float LowViewLift { get; set; } = 1.3f;
+
+    /// <summary>The pitch above which the view looks at the feet.</summary>
+    private const float LiftFrom = 30f;
 
     [Export] public float MaxPitchDegrees { get; set; } = 70f;
 
@@ -82,6 +95,7 @@ public partial class CameraRig : Node3D
 
         _arm.CollisionMask = CollisionPullIn ? Layers.World : 0;
         _arm.RotationDegrees = _arm.RotationDegrees with { X = -PitchDegrees };
+        Lift();
         _targetZoom = Mathf.Clamp(_arm.SpringLength, MinZoom, MaxZoom);
         _arm.SpringLength = _targetZoom;
 
@@ -154,8 +168,24 @@ public partial class CameraRig : Node3D
             // Up and down tilts the view: the mouse down looks down, more from above.
             PitchDegrees = Mathf.Clamp(PitchDegrees + (motion.Relative.Y * DragSensitivity * 0.6f), MinPitchDegrees, MaxPitchDegrees);
             _arm.RotationDegrees = _arm.RotationDegrees with { X = -PitchDegrees };
+            Lift();
         }
     }
+
+    /// <summary>Raises the point looked at as the view comes down (see <see cref="LowViewLift"/>).</summary>
+    private void Lift()
+    {
+        var low = Mathf.Clamp((LiftFrom - PitchDegrees) / Mathf.Max(1f, LiftFrom - MinPitchDegrees), 0f, 1f);
+
+        _yaw.Position = new Vector3(0, LowViewLift * low, 0);
+
+        // Low down, a wall or a rise behind the character would fill the screen: the arm pulls
+        // in before it. From above it keeps its length, for the reason CollisionPullIn gives.
+        _arm.CollisionMask = CollisionPullIn || PitchDegrees < PullInBelow ? Layers.World : 0;
+    }
+
+    /// <summary>The pitch below which the camera pulls in before walls and ground.</summary>
+    private const float PullInBelow = 25f;
 
     /// <summary>
     /// Starts or stops looking around, capturing the cursor while it lasts (MOV-10).
