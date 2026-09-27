@@ -103,6 +103,8 @@ public partial class InventoryPanel : CanvasLayer
 
         if (Visible) Refresh();
         else _tip.Clear();
+
+        if (Visible) Quests.Tutorial.Did(GetTree(), Kiln.Core.Quests.TutorialStep.OpenBag);
     }
 
     /// <summary>Opens the bag if it is closed — the smith opens it beside its window (REF-11).</summary>
@@ -501,9 +503,17 @@ public partial class InventoryPanel : CanvasLayer
 
         view.AcceptEvent();
 
-        // A worn piece: right-click takes it off.
+        // A worn piece: right-click takes it off — or, at the smith, puts it on the anvil
+        // (2026-09-27): the training sends a new player there with a sword in their hand, and
+        // taking it off to put it back on the anvil is a step nobody would guess.
         if (view.Worn is { } slot)
         {
+            if (WorkbenchPanel.Current?.Offer(item) == true)
+            {
+                Refresh();
+                return;
+            }
+
             if (!_inventory.Unequip(slot)) Notify(L10n.T("No room in the bag to take it off."));
             else _inventory.ApplyToStats();
 
@@ -614,6 +624,7 @@ public partial class InventoryPanel : CanvasLayer
         flask.AddCharge();
 
         Notify(L10n.F("Flask filled — {0} of {1} charges.", flask.Charges, flask.MaxCharges));
+        Quests.Tutorial.Did(GetTree(), Kiln.Core.Quests.TutorialStep.FillFlask);
     }
 
     // ------------------------------------------------------------------ throwing things away

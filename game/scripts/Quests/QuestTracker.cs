@@ -22,11 +22,11 @@ public static class QuestTracker
     /// <summary>Raised whenever the active quest or its progress changes. The HUD listens.</summary>
     public static event Action? Changed;
 
-    public static void Report(SceneTree tree, ObjectiveType type, string target)
+    public static void Report(SceneTree tree, ObjectiveType type, string target, int amount = 1)
     {
         if (!GameContent.IsLoaded || string.IsNullOrEmpty(target)) return;
 
-        var events = PlayerProfile.Quests.Report(type, target);
+        var events = PlayerProfile.Quests.Report(type, target, amount);
 
         if (events.Count == 0) return;
 

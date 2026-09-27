@@ -118,14 +118,16 @@ public partial class HealthFlask : Node
             return;
         }
 
-        // Now that it restores both, a charge is worth spending when either pool is short.
-        if (_self.Health.IsFull && _self.Mana.IsFull) return;
+        // Now that it restores both, a charge is worth spending when either pool is short —
+        // except in the training, which asks for a sip in the village where nobody is hurt.
+        if (_self.Health.IsFull && _self.Mana.IsFull && !Quests.Tutorial.IsCurrent(Kiln.Core.Quests.TutorialStep.DrinkFlask)) return;
 
         _charges--;
         _casting = CastSeconds;
         Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndFlask);
 
         Changed();
+        Quests.Tutorial.Did(GetTree(), Kiln.Core.Quests.TutorialStep.DrinkFlask);
     }
 
     /// <summary>

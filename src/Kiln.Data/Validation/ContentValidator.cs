@@ -368,7 +368,7 @@ public static class ContentValidator
         if (db.Quests.Count == 0) return;
 
         var spawned = Spawnable(db);
-        var allowed = new[] { ObjectiveType.Kill, ObjectiveType.Reach, ObjectiveType.Shard, ObjectiveType.ClearTower };
+        var allowed = new[] { ObjectiveType.Kill, ObjectiveType.Reach, ObjectiveType.Shard, ObjectiveType.ClearTower, ObjectiveType.Tutorial };
         var followers = new Dictionary<string, string>(StringComparer.Ordinal);
 
         foreach (var quest in db.Quests.Values.OrderBy(q => q.Id, StringComparer.Ordinal))
@@ -424,15 +424,17 @@ public static class ContentValidator
         {
             report.Error("quest-chain", quest.SourceFile,
                 $"{where} uses objective '{objective.Type}'.",
-                "The chain uses kill, reach, shard and clear_tower. The rest went with the side quests (doc 02 §9).");
+                "The chain uses tutorial, kill, reach, shard and clear_tower. The rest went with the side quests (doc 02 §9).");
             return;
         }
 
-        if (objective.Count < 1 || (objective.Type != ObjectiveType.Kill && objective.Count != 1))
+        var counted = objective.Type is ObjectiveType.Kill or ObjectiveType.Tutorial;
+
+        if (objective.Count < 1 || (!counted && objective.Count != 1))
         {
             report.Error("quest-chain", quest.SourceFile,
                 $"{where} asks for {objective.Count} of a '{objective.Type}' objective.",
-                "Kills take a count of one or more; everything else is done once.");
+                "Kills and training steps take a count of one or more; everything else is done once.");
         }
 
         switch (objective.Type)
@@ -441,6 +443,12 @@ public static class ContentValidator
                 report.Error("quest-chain", quest.SourceFile,
                     $"{where} hunts '{objective.Target}', which no camp or tower floor ever spawns.",
                     "Add it to a spawn field or a floor's waves, or hunt something that exists in the world.");
+                break;
+
+            case ObjectiveType.Tutorial when !Kiln.Core.Quests.TutorialStep.All.Contains(objective.Target):
+                report.Error("quest-chain", quest.SourceFile,
+                    $"{where} teaches '{objective.Target}', which is not a training step.",
+                    $"Use one of: {string.Join(", ", Kiln.Core.Quests.TutorialStep.All)}.");
                 break;
 
             case ObjectiveType.Reach when !db.Zones.ContainsKey(objective.Target):

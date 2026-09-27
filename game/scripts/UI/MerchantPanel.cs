@@ -225,6 +225,8 @@ public partial class MerchantPanel : CanvasLayer
 
         if (result == TradeResult.Done) Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndTrade);
 
+        if (result == TradeResult.Done && offer.ItemId == Player.HealthFlask.DraughtId) Quests.Tutorial.Did(GetTree(), Kiln.Core.Quests.TutorialStep.BuyDraught);
+
         Refresh();
     }
 

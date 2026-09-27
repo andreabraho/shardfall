@@ -10,7 +10,7 @@
     "level_band": [1, 3],
     "scene": "res://scenes/ember_hollow.tscn",
     "exits": [
-      { "to": "zone_vale_approach" }
+      { "to": "zone_vale_approach", "required_quest": "qst_hollow_greymane" }
     ],
     "shrines": [
       { "id": "shr_hollow_flame", "name": "$shrine.shr_hollow_flame.name", "fast_travel": true }
@@ -109,7 +109,7 @@
     "scene": "res://scenes/vale_approach.tscn",
     "exits": [
       { "to": "zone_ember_hollow" },
-      { "to": "zone_vale_floor", "required_level": 6 }
+      { "to": "zone_vale_floor", "required_level": 6, "required_quest": "qst_approach_chief" }
     ],
     "shrines": [
       { "id": "shr_approach_camp", "name": "$shrine.shr_approach_camp.name", "fast_travel": true },
@@ -224,7 +224,7 @@
     "scene": "res://scenes/vale_floor.tscn",
     "exits": [
       { "to": "zone_vale_approach" },
-      { "to": "zone_ridge", "required_level": 10 }
+      { "to": "zone_ridge", "required_level": 10, "required_quest": "qst_floor_warlord" }
     ],
     "shrines": [
       { "id": "shr_floor_camp", "name": "$shrine.shr_floor_camp.name", "fast_travel": true },
@@ -330,7 +330,7 @@
     "scene": "res://scenes/ridge.tscn",
     "exits": [
       { "to": "zone_vale_floor" },
-      { "to": "zone_broken_gate", "required_level": 14, "required_quest": "qst_wolves_of_the_ridge" }
+      { "to": "zone_broken_gate", "required_level": 14, "required_quest": "qst_ridge_queen" }
     ],
     "shrines": [
       { "id": "shr_ridge_camp", "name": "$shrine.shr_ridge_camp.name", "fast_travel": true },
@@ -436,7 +436,7 @@
     "scene": "res://scenes/broken_gate.tscn",
     "exits": [
       { "to": "zone_ridge" },
-      { "to": "zone_catacombs", "required_level": 18 }
+      { "to": "zone_catacombs", "required_level": 18, "required_quest": "qst_gate_lich" }
     ],
     "shrines": [
       { "id": "shr_gate_camp", "name": "$shrine.shr_gate_camp.name", "fast_travel": true },

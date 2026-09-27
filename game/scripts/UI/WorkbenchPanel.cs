@@ -531,6 +531,8 @@ public partial class WorkbenchPanel : CanvasLayer
 
         _inventory.ApplyToStats();
         Refresh();
+
+        if (result.Outcome == UpgradeOutcome.Success) Quests.Tutorial.Did(GetTree(), Kiln.Core.Quests.TutorialStep.Upgrade);
     }
 
     private void DoGift(ItemInstance item, UpgradeLadder? ladder)

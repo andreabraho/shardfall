@@ -95,8 +95,9 @@ public enum SkillTargeting
 /// What a quest asks for (FR-8.1).
 /// </summary>
 /// <remarks>
-/// The chain uses four: <see cref="Kill"/> (most of them), <see cref="Reach"/>, <see cref="Shard"/>
-/// and <see cref="ClearTower"/>. The rest are kept so older data still parses, and the validator
+/// The chain uses five: <see cref="Tutorial"/> (the training in the first village),
+/// <see cref="Kill"/> (most of them), <see cref="Reach"/>, <see cref="Shard"/> and
+/// <see cref="ClearTower"/>. The rest are kept so older data still parses, and the validator
 /// rejects them — they belonged to the side-quest plan that was dropped (doc 02 §9).
 /// </remarks>
 public enum ObjectiveType
@@ -117,6 +118,12 @@ public enum ObjectiveType
 
     /// <summary>Finish every floor of a tower. The target is the tower's zone id.</summary>
     ClearTower,
+
+    /// <summary>
+    /// Do one thing the game teaches in its training (2026-09-27): spend points, learn a skill,
+    /// refill the flask. The target is a <see cref="Quests.TutorialStep"/>.
+    /// </summary>
+    Tutorial,
 }
 
 public enum QuestType

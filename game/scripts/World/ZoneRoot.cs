@@ -41,6 +41,7 @@ public partial class ZoneRoot : Node3D
         Callable.From(() => Saving.SaveService.Autosave($"Entered {ZoneId}")).CallDeferred();
 
         Quests.QuestTracker.Report(GetTree(), Kiln.Core.Foundation.ObjectiveType.Reach, ZoneId);
+        Quests.Tutorial.CatchUp(GetTree());
         Quests.QuestTracker.Touch();
 
         Debug.DebugOverlay.Register("zone", this, () =>

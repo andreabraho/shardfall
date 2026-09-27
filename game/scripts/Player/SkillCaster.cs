@@ -335,6 +335,7 @@ public partial class SkillCaster : Node
         }
 
         Execute(skill);
+        Quests.Tutorial.Did(GetTree(), Kiln.Core.Quests.TutorialStep.UseSkill);
     }
 
     /// <summary>Why <see cref="CanInvest"/> said no, in words, for the console.</summary>
@@ -380,6 +381,7 @@ public partial class SkillCaster : Node
         _progression.SpendSkillPoint();
 
         GD.Print($"[skill] {skillId} at {_book.PointsIn(skillId)}/{SkillBook.MaxPoints} points, {_book.RankOf(skillId)}");
+        Quests.Tutorial.Did(GetTree(), Kiln.Core.Quests.TutorialStep.LearnSkill);
 
         return true;
     }

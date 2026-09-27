@@ -87,12 +87,12 @@ public class ExperienceTableTests
 public class CharacterProgressionTests
 {
     [Fact]
-    public void StartsAtLevelOne_WithNothingSpent()
+    public void StartsAtLevelOne_WithThreeStatusPointsToSpend()
     {
         var p = new CharacterProgression();
 
         Assert.Equal(1, p.Level);
-        Assert.Equal(0, p.UnspentAttributePoints);
+        Assert.Equal(3, p.UnspentAttributePoints);
         Assert.Equal(Attributes.Starting, p.TotalAttributes);
     }
 
@@ -104,7 +104,7 @@ public class CharacterProgressionTests
 
         Assert.Single(levels);
         Assert.Equal(2, p.Level);
-        Assert.Equal(CharacterProgression.AttributePointsPerLevel, p.UnspentAttributePoints);
+        Assert.Equal(CharacterProgression.StartingAttributePoints + CharacterProgression.AttributePointsPerLevel, p.UnspentAttributePoints);
         Assert.Equal(CharacterProgression.StartingSkillPoints + CharacterProgression.SkillPointsPerLevel,
             p.UnspentSkillPoints);
     }
@@ -208,7 +208,7 @@ public class CharacterProgressionTests
 
         Assert.Equal(Attributes.StartingValue + 1, p.TotalAttributes.Str);
         Assert.Equal(Attributes.StartingValue + 1, p.TotalAttributes.Vit);
-        Assert.Equal(CharacterProgression.AttributePointsPerLevel - 2, p.UnspentAttributePoints);
+        Assert.Equal(CharacterProgression.StartingAttributePoints + CharacterProgression.AttributePointsPerLevel - 2, p.UnspentAttributePoints);
     }
 
     [Fact]
@@ -216,8 +216,10 @@ public class CharacterProgressionTests
     {
         var p = new CharacterProgression();
 
-        // A new character holds one skill point and no attribute points (REF-03).
+        // A new character holds one skill point (REF-03) and three status points (2026-09-27).
         Assert.True(p.SpendSkillPoint());
+
+        for (var i = 0; i < CharacterProgression.StartingAttributePoints; i++) Assert.True(p.SpendAttributePoint(AttributeKind.Str));
 
         Assert.False(p.SpendAttributePoint(AttributeKind.Str));
         Assert.False(p.SpendSkillPoint());

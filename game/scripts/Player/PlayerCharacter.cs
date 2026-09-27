@@ -122,7 +122,9 @@ public partial class PlayerCharacter : Node
     /// </summary>
     private void SpendStartingPoints()
     {
-        while (Progression.UnspentAttributePoints > 0)
+        // The three a new character starts with are the player's own to spend: the training's
+        // first lesson (2026-09-27).
+        while (Progression.UnspentAttributePoints > CharacterProgression.StartingAttributePoints)
         {
             var remaining = Progression.UnspentAttributePoints;
 
@@ -176,6 +178,7 @@ public partial class PlayerCharacter : Node
 
         ApplyStats();
         EmitSignal(SignalName.ExperienceChanged);
+        Quests.Tutorial.Did(GetTree(), Kiln.Core.Quests.TutorialStep.SpendStat);
 
         return true;
     }

@@ -73,7 +73,7 @@ public partial class QuestHud : CanvasLayer
 
     private static Label Line(string text, int size, Color colour)
     {
-        var label = new Label { Text = text, MouseFilter = Control.MouseFilterEnum.Ignore };
+        var label = new Label { Text = text, MouseFilter = Control.MouseFilterEnum.Ignore, AutowrapMode = TextServer.AutowrapMode.WordSmart };
 
         label.AddThemeFontSizeOverride("font_size", size);
         label.AddThemeColorOverride("font_color", colour);
@@ -115,6 +115,7 @@ public partial class QuestHud : CanvasLayer
 
     private static string Describe(QuestGoal goal, int have) => goal.Type switch
     {
+        ObjectiveType.Tutorial => Training(goal, have),
         ObjectiveType.Kill => $"{GameItems.NameOfEnemy(goal.Target)}   {have} / {goal.Count}",
         ObjectiveType.ClearTower => L10n.F("Clear all {0} floors of {1}", FloorsOf(goal.Target), ZoneName(goal.Target)),
         ObjectiveType.Reach => L10n.F("Travel to {0}", ZoneName(goal.Target)),
@@ -131,6 +132,8 @@ public partial class QuestHud : CanvasLayer
     /// </remarks>
     private static string Where(QuestGoal goal)
     {
+        if (goal.Type == ObjectiveType.Tutorial) return TrainingHint(goal.Target);
+
         var here = GameWorld.CurrentZoneId;
         var zones = QuestPlaces.ZonesFor(goal);
 
@@ -148,6 +151,41 @@ public partial class QuestHud : CanvasLayer
         }
 
         return L10n.F("in {0}  ·  the way is on the map (M)", string.Join(L10n.T(" or "), zones.Select(ZoneName)));
+    }
+
+    /// <summary>What a training step asks for (2026-09-27).</summary>
+    private static string Training(QuestGoal goal, int have) => goal.Target switch
+    {
+        TutorialStep.SpendStat => L10n.F("Spend your status points   {0} / {1}", have, goal.Count),
+        TutorialStep.LearnSkill => L10n.T("Learn a skill"),
+        TutorialStep.UseSkill => L10n.T("Use your skill"),
+        TutorialStep.OpenBag => L10n.T("Open your bag"),
+        TutorialStep.Upgrade => L10n.T("Upgrade a piece of gear at the smith"),
+        TutorialStep.DrinkFlask => L10n.T("Drink from your flask"),
+        TutorialStep.BuyDraught => L10n.T("Buy a flask draught"),
+        TutorialStep.FillFlask => L10n.T("Refill your flask"),
+        TutorialStep.UseShrine => L10n.T("Use the shrine"),
+        _ => goal.Target,
+    };
+
+    /// <summary>How to do a training step, with the keys as they are bound now.</summary>
+    private static string TrainingHint(string step)
+    {
+        static string Key(string action) => Input.GameActions.DescribeBinding(action);
+
+        return step switch
+        {
+            TutorialStep.SpendStat => L10n.F("Open the character window ({0}) and press + beside a status", Key(Input.GameActions.ToggleCharacter)),
+            TutorialStep.LearnSkill => L10n.F("Open the skills window ({0}) and press + on a skill", Key(Input.GameActions.ToggleSkills)),
+            TutorialStep.UseSkill => L10n.F("Drag it from the skills window ({0}) onto the bar, then press its key", Key(Input.GameActions.ToggleSkills)),
+            TutorialStep.OpenBag => L10n.F("Press {0}", Key(Input.GameActions.ToggleInventory)),
+            TutorialStep.Upgrade => L10n.F("Talk to the smith ({0}), right-click your weapon or armour and press Upgrade", Key(Input.GameActions.Interact)),
+            TutorialStep.DrinkFlask => L10n.F("Press {0}", Key(Input.GameActions.HealthFlask)),
+            TutorialStep.BuyDraught => L10n.F("The merchant in the village sells them ({0} to talk)", Key(Input.GameActions.Interact)),
+            TutorialStep.FillFlask => L10n.F("Open your bag ({0}) and right-click the draught", Key(Input.GameActions.ToggleInventory)),
+            TutorialStep.UseShrine => L10n.F("Walk up to the shrine in the village and press {0}", Key(Input.GameActions.Interact)),
+            _ => "",
+        };
     }
 
     private static string ZoneName(string zoneId) =>

@@ -75,6 +75,7 @@ public partial class ShrinePanel : CanvasLayer
         _panel.Visible = true;
         UiState.SetOpen(ref _counted, true);
         Refresh();
+        Quests.Tutorial.Did(GetTree(), Kiln.Core.Quests.TutorialStep.UseShrine);
     }
 
     private void Close()

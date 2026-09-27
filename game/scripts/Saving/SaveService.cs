@@ -492,6 +492,7 @@ public partial class SaveService : Node
         PlayerProfile.MarkCreated();
 
         PlayerProfile.Quests.Load(save.CompletedQuests, save.ActiveQuest, save.QuestProgress);
+        Quests.Tutorial.SkipForVeterans(p.Level);
 
         // The looks won (REF-23); one since taken out of the game is dropped.
         PlayerProfile.Wardrobe.Load(p.Cosmetics, p.WornCosmetics, id => GameContent.Database.Cosmetics.ContainsKey(id));

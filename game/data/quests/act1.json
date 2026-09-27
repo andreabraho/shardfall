@@ -1,41 +1,148 @@
 [
-  // The main road (doc 02 §9, FR-8). One quest per step, in order, and most of them are hunts:
-  // a number of one kind of creature in the map the player has just reached. They exist to say
-  // where to go next and to pay for getting there — not to fill a journal.
+  // The main road (doc 02 §9, FR-8), one quest at a time, in order.
   //
-  // Rewards follow the chain formulas: xp = 140 · band^1.85 and yang = 260 · band^1.25 at the
-  // band of the map the quest is in. The pacing simulation assumes exactly those numbers, so a
-  // reward changed here without changing them there is a level curve that no longer holds.
+  // First the training in Ember Hollow (2026-09-27, at your call): one small quest for each thing
+  // the game expects the player to know, done inside the village. Its gates stay barred until
+  // the last one is done, so nobody walks out without having spent their points, learned a
+  // skill, used the smith, the merchant, the flask and the shrine.
+  //
+  // Then three quests for every map (2026-09-27, at your call): a hunt, a stone, and the map's
+  // boss. The boss quest is what opens the road to the next map (see the exits in
+  // zones/act1.json).
+  //
+  // Rewards follow the chain formulas: xp = 140 · band^1.85 and yang = 260 · band^1.25 for each
+  // map, split 30 / 30 / 40 between its hunt, its stone and its boss. The pacing simulation
+  // counts one such share per map, so the three here must add up to it.
 
+  // -- Training -------------------------------------------------------------------------------
+  { "id": "qst_training_points", "name": "$quest.qst_training_points.name",
+    "act": 1, "type": "tutorial", "level_req": 1, "prerequisites": [],
+    "objectives": [ { "type": "tutorial", "target": "spend_stat", "count": 3 } ],
+    "rewards": { "xp": 10, "yang": 0, "items": [] } },
+
+  { "id": "qst_training_skill", "name": "$quest.qst_training_skill.name",
+    "act": 1, "type": "tutorial", "level_req": 1, "prerequisites": ["qst_training_points"],
+    "objectives": [ { "type": "tutorial", "target": "learn_skill", "count": 1 } ],
+    "rewards": { "xp": 10, "yang": 0, "items": [] } },
+
+  { "id": "qst_training_cast", "name": "$quest.qst_training_cast.name",
+    "act": 1, "type": "tutorial", "level_req": 1, "prerequisites": ["qst_training_skill"],
+    "objectives": [ { "type": "tutorial", "target": "use_skill", "count": 1 } ],
+    "rewards": { "xp": 10, "yang": 0, "items": [] } },
+
+  { "id": "qst_training_bag", "name": "$quest.qst_training_bag.name",
+    "act": 1, "type": "tutorial", "level_req": 1, "prerequisites": ["qst_training_cast"],
+    "objectives": [ { "type": "tutorial", "target": "open_bag", "count": 1 } ],
+    "rewards": { "xp": 10, "yang": 0, "items": [] } },
+
+  { "id": "qst_training_smith", "name": "$quest.qst_training_smith.name",
+    "act": 1, "type": "tutorial", "level_req": 1, "prerequisites": ["qst_training_bag"],
+    "objectives": [ { "type": "tutorial", "target": "upgrade", "count": 1 } ],
+    "rewards": { "xp": 10, "yang": 0, "items": [] } },
+
+  { "id": "qst_training_flask", "name": "$quest.qst_training_flask.name",
+    "act": 1, "type": "tutorial", "level_req": 1, "prerequisites": ["qst_training_smith"],
+    "objectives": [ { "type": "tutorial", "target": "drink_flask", "count": 1 } ],
+    "rewards": { "xp": 10, "yang": 0, "items": [] } },
+
+  { "id": "qst_training_draught", "name": "$quest.qst_training_draught.name",
+    "act": 1, "type": "tutorial", "level_req": 1, "prerequisites": ["qst_training_flask"],
+    "objectives": [ { "type": "tutorial", "target": "buy_draught", "count": 1 } ],
+    "rewards": { "xp": 10, "yang": 0, "items": [] } },
+
+  { "id": "qst_training_refill", "name": "$quest.qst_training_refill.name",
+    "act": 1, "type": "tutorial", "level_req": 1, "prerequisites": ["qst_training_draught"],
+    "objectives": [ { "type": "tutorial", "target": "fill_flask", "count": 1 } ],
+    "rewards": { "xp": 10, "yang": 0, "items": [] } },
+
+  { "id": "qst_training_shrine", "name": "$quest.qst_training_shrine.name",
+    "act": 1, "type": "tutorial", "level_req": 1, "prerequisites": ["qst_training_refill"],
+    "objectives": [ { "type": "tutorial", "target": "use_shrine", "count": 1 } ],
+    "rewards": { "xp": 10, "yang": 0, "items": [] } },
+
+  // -- Ember Hollow, band 1 -------------------------------------------------------------------
   { "id": "qst_reeds_in_the_hollow", "name": "$quest.qst_reeds_in_the_hollow.name",
-    "act": 1, "type": "story", "level_req": 1, "prerequisites": [],
+    "act": 1, "type": "story", "level_req": 1, "prerequisites": ["qst_training_shrine"],
     "objectives": [ { "type": "kill", "target": "mob_field_rat", "count": 8 } ],
-    "rewards": { "xp": 140, "yang": 260, "items": [] } },
+    "rewards": { "xp": 42, "yang": 78, "items": [] } },
 
+  { "id": "qst_hollow_stone", "name": "$quest.qst_hollow_stone.name",
+    "act": 1, "type": "story", "level_req": 2, "prerequisites": ["qst_reeds_in_the_hollow"],
+    "objectives": [ { "type": "shard", "target": "shd_mossbound_stone", "count": 1 } ],
+    "rewards": { "xp": 42, "yang": 78, "items": [] } },
+
+  { "id": "qst_hollow_greymane", "name": "$quest.qst_hollow_greymane.name",
+    "act": 1, "type": "story", "level_req": 3, "prerequisites": ["qst_hollow_stone"],
+    "objectives": [ { "type": "kill", "target": "mob_greymane", "count": 1 } ],
+    "rewards": { "xp": 56, "yang": 104, "items": [] } },
+
+  // -- Vale Approach, band 4 ------------------------------------------------------------------
   { "id": "qst_thornbacks_on_the_road", "name": "$quest.qst_thornbacks_on_the_road.name",
-    "act": 1, "type": "story", "level_req": 4, "prerequisites": ["qst_reeds_in_the_hollow"],
+    "act": 1, "type": "story", "level_req": 4, "prerequisites": ["qst_hollow_greymane"],
     "objectives": [ { "type": "kill", "target": "mob_tribal_raider", "count": 10 } ],
-    "rewards": { "xp": 1819, "yang": 1471, "items": [] } },
+    "rewards": { "xp": 546, "yang": 441, "items": [] } },
 
+  { "id": "qst_approach_standard", "name": "$quest.qst_approach_standard.name",
+    "act": 1, "type": "story", "level_req": 5, "prerequisites": ["qst_thornbacks_on_the_road"],
+    "objectives": [ { "type": "shard", "target": "shd_raider_standard", "count": 1 } ],
+    "rewards": { "xp": 546, "yang": 441, "items": [] } },
+
+  { "id": "qst_approach_chief", "name": "$quest.qst_approach_chief.name",
+    "act": 1, "type": "story", "level_req": 6, "prerequisites": ["qst_approach_standard"],
+    "objectives": [ { "type": "kill", "target": "mob_bandit_chief", "count": 1 } ],
+    "rewards": { "xp": 727, "yang": 589, "items": [] } },
+
+  // -- Vale Floor, band 8 ---------------------------------------------------------------------
   { "id": "qst_the_gnawing_barrows", "name": "$quest.qst_the_gnawing_barrows.name",
-    "act": 1, "type": "story", "level_req": 8, "prerequisites": ["qst_thornbacks_on_the_road"],
+    "act": 1, "type": "story", "level_req": 8, "prerequisites": ["qst_approach_chief"],
     "objectives": [ { "type": "kill", "target": "mob_orc_grunt", "count": 12 } ],
-    "rewards": { "xp": 6559, "yang": 3498, "items": [] } },
+    "rewards": { "xp": 1968, "yang": 1049, "items": [] } },
 
-  // Finishing this one is what opens the road to the Broken Gate.
+  { "id": "qst_floor_totem", "name": "$quest.qst_floor_totem.name",
+    "act": 1, "type": "story", "level_req": 9, "prerequisites": ["qst_the_gnawing_barrows"],
+    "objectives": [ { "type": "shard", "target": "shd_war_totem", "count": 1 } ],
+    "rewards": { "xp": 1968, "yang": 1049, "items": [] } },
+
+  { "id": "qst_floor_warlord", "name": "$quest.qst_floor_warlord.name",
+    "act": 1, "type": "story", "level_req": 10, "prerequisites": ["qst_floor_totem"],
+    "objectives": [ { "type": "kill", "target": "mob_orc_warlord", "count": 1 } ],
+    "rewards": { "xp": 2623, "yang": 1400, "items": [] } },
+
+  // -- Ridge, band 12 -------------------------------------------------------------------------
   { "id": "qst_wolves_of_the_ridge", "name": "$quest.qst_wolves_of_the_ridge.name",
-    "act": 1, "type": "story", "level_req": 12, "prerequisites": ["qst_the_gnawing_barrows"],
+    "act": 1, "type": "story", "level_req": 12, "prerequisites": ["qst_floor_warlord"],
     "objectives": [ { "type": "kill", "target": "mob_sand_spider", "count": 12 } ],
-    "rewards": { "xp": 13887, "yang": 5807, "items": [] } },
+    "rewards": { "xp": 4166, "yang": 1742, "items": [] } },
 
+  { "id": "qst_ridge_stone", "name": "$quest.qst_ridge_stone.name",
+    "act": 1, "type": "story", "level_req": 13, "prerequisites": ["qst_wolves_of_the_ridge"],
+    "objectives": [ { "type": "shard", "target": "shd_webbed_stone", "count": 1 } ],
+    "rewards": { "xp": 4166, "yang": 1742, "items": [] } },
+
+  { "id": "qst_ridge_queen", "name": "$quest.qst_ridge_queen.name",
+    "act": 1, "type": "story", "level_req": 14, "prerequisites": ["qst_ridge_stone"],
+    "objectives": [ { "type": "kill", "target": "mob_spider_queen", "count": 1 } ],
+    "rewards": { "xp": 5555, "yang": 2323, "items": [] } },
+
+  // -- Broken Gate, band 16 -------------------------------------------------------------------
   { "id": "qst_breakers_at_the_gate", "name": "$quest.qst_breakers_at_the_gate.name",
-    "act": 1, "type": "story", "level_req": 16, "prerequisites": ["qst_wolves_of_the_ridge"],
+    "act": 1, "type": "story", "level_req": 16, "prerequisites": ["qst_ridge_queen"],
     "objectives": [ { "type": "kill", "target": "mob_frostbone_warrior", "count": 12 } ],
-    "rewards": { "xp": 23646, "yang": 8320, "items": [] } },
+    "rewards": { "xp": 7094, "yang": 2496, "items": [] } },
 
-  // The act's destination: all nine floors.
+  { "id": "qst_gate_rune", "name": "$quest.qst_gate_rune.name",
+    "act": 1, "type": "story", "level_req": 17, "prerequisites": ["qst_breakers_at_the_gate"],
+    "objectives": [ { "type": "shard", "target": "shd_frost_rune", "count": 1 } ],
+    "rewards": { "xp": 7094, "yang": 2496, "items": [] } },
+
+  { "id": "qst_gate_lich", "name": "$quest.qst_gate_lich.name",
+    "act": 1, "type": "story", "level_req": 18, "prerequisites": ["qst_gate_rune"],
+    "objectives": [ { "type": "kill", "target": "mob_frost_lich", "count": 1 } ],
+    "rewards": { "xp": 9458, "yang": 3328, "items": [] } },
+
+  // -- The act's destination: all nine floors. --------------------------------------------------
   { "id": "qst_into_the_catacombs", "name": "$quest.qst_into_the_catacombs.name",
-    "act": 1, "type": "story", "level_req": 19, "prerequisites": ["qst_breakers_at_the_gate"],
+    "act": 1, "type": "story", "level_req": 19, "prerequisites": ["qst_gate_lich"],
     "objectives": [ { "type": "clear_tower", "target": "zone_catacombs", "count": 1 } ],
     "rewards": { "xp": 35730, "yang": 10997, "items": [] } }
 ]

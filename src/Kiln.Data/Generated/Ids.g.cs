@@ -145,14 +145,33 @@ public static class Ids
 
     public static class Quests
     {
+        public const string QstApproachChief = "qst_approach_chief";
+        public const string QstApproachStandard = "qst_approach_standard";
         public const string QstBreakersAtTheGate = "qst_breakers_at_the_gate";
+        public const string QstFloorTotem = "qst_floor_totem";
+        public const string QstFloorWarlord = "qst_floor_warlord";
+        public const string QstGateLich = "qst_gate_lich";
+        public const string QstGateRune = "qst_gate_rune";
+        public const string QstHollowGreymane = "qst_hollow_greymane";
+        public const string QstHollowStone = "qst_hollow_stone";
         public const string QstIntoTheCatacombs = "qst_into_the_catacombs";
         public const string QstReedsInTheHollow = "qst_reeds_in_the_hollow";
+        public const string QstRidgeQueen = "qst_ridge_queen";
+        public const string QstRidgeStone = "qst_ridge_stone";
         public const string QstTheGnawingBarrows = "qst_the_gnawing_barrows";
         public const string QstThornbacksOnTheRoad = "qst_thornbacks_on_the_road";
+        public const string QstTrainingBag = "qst_training_bag";
+        public const string QstTrainingCast = "qst_training_cast";
+        public const string QstTrainingDraught = "qst_training_draught";
+        public const string QstTrainingFlask = "qst_training_flask";
+        public const string QstTrainingPoints = "qst_training_points";
+        public const string QstTrainingRefill = "qst_training_refill";
+        public const string QstTrainingShrine = "qst_training_shrine";
+        public const string QstTrainingSkill = "qst_training_skill";
+        public const string QstTrainingSmith = "qst_training_smith";
         public const string QstWolvesOfTheRidge = "qst_wolves_of_the_ridge";
 
-        public static readonly string[] All = ["qst_breakers_at_the_gate", "qst_into_the_catacombs", "qst_reeds_in_the_hollow", "qst_the_gnawing_barrows", "qst_thornbacks_on_the_road", "qst_wolves_of_the_ridge"];
+        public static readonly string[] All = ["qst_approach_chief", "qst_approach_standard", "qst_breakers_at_the_gate", "qst_floor_totem", "qst_floor_warlord", "qst_gate_lich", "qst_gate_rune", "qst_hollow_greymane", "qst_hollow_stone", "qst_into_the_catacombs", "qst_reeds_in_the_hollow", "qst_ridge_queen", "qst_ridge_stone", "qst_the_gnawing_barrows", "qst_thornbacks_on_the_road", "qst_training_bag", "qst_training_cast", "qst_training_draught", "qst_training_flask", "qst_training_points", "qst_training_refill", "qst_training_shrine", "qst_training_skill", "qst_training_smith", "qst_wolves_of_the_ridge"];
     }
 
     public static class DropTables

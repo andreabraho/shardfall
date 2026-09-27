@@ -163,4 +163,49 @@ public class QuestChainTests
         Assert.Equal(2, chain.Progress[0]);
         Assert.Equal(QuestEventKind.Completed, chain.Report(ObjectiveType.Kill, "mob_boar")[0].Kind);
     }
+
+    [Fact]
+    public void ALaterQuestFinished_MeansEverythingBeforeItIsToo()
+    {
+        // A save made before the training was put ahead of the old first quest.
+        var chain = Chain();
+
+        chain.Load(completed: ["qst_b"], active: "qst_c", progress: [0]);
+
+        Assert.True(chain.IsComplete("qst_a"));
+        Assert.Equal("qst_c", chain.Active?.Id);
+    }
+
+    [Fact]
+    public void SkippedQuestsAreDone_AndTheChainMovesOn()
+    {
+        var chain = Chain();
+
+        chain.Skip(["qst_a"]);
+
+        Assert.True(chain.IsComplete("qst_a"));
+        Assert.Equal("qst_b", chain.Active?.Id);
+        Assert.Equal(0, chain.Progress[0]);
+    }
+
+    [Fact]
+    public void TrainingStepsCountEachTime_AndOnlyTheirOwnStep()
+    {
+        var chain = new QuestChain(
+        [
+            new QuestStep("qst_points", "$quest.qst_points.name", 1, null,
+                [new QuestGoal(ObjectiveType.Tutorial, TutorialStep.SpendStat, 3)], Nothing),
+            new QuestStep("qst_bag", "$quest.qst_bag.name", 1, "qst_points",
+                [new QuestGoal(ObjectiveType.Tutorial, TutorialStep.OpenBag)], Nothing),
+        ]);
+
+        Assert.Empty(chain.Report(ObjectiveType.Tutorial, TutorialStep.OpenBag));
+
+        chain.Report(ObjectiveType.Tutorial, TutorialStep.SpendStat);
+        chain.Report(ObjectiveType.Tutorial, TutorialStep.SpendStat);
+        Assert.Equal("qst_points", chain.Active?.Id);
+
+        chain.Report(ObjectiveType.Tutorial, TutorialStep.SpendStat);
+        Assert.Equal("qst_bag", chain.Active?.Id);
+    }
 }

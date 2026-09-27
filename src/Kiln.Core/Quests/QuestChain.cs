@@ -128,6 +128,11 @@ public sealed class QuestChain
 
         foreach (var id in completed) _completed.Add(id);
 
+        // A finished quest means everything before it on the line is finished too. A save made
+        // before quests were added ahead of it (the training, the stone and boss hunts,
+        // 2026-09-27) would otherwise be sent back to the start of the chain.
+        foreach (var id in _completed.ToList()) Backfill(id);
+
         Active = Next();
         _progress = Fresh(Active);
 
@@ -139,6 +144,28 @@ public sealed class QuestChain
         for (var i = 0; i < _progress.Length && i < progress.Count; i++)
         {
             _progress[i] = Math.Clamp(progress[i], 0, Math.Max(0, Active.Goals[i].Count - 1));
+        }
+    }
+
+    /// <summary>
+    /// Marks quests finished without their rewards, and moves the chain on: the training for a
+    /// character who was already past it when it was added.
+    /// </summary>
+    public void Skip(IEnumerable<string> questIds)
+    {
+        foreach (var id in questIds) _completed.Add(id);
+
+        Active = Next();
+        _progress = Fresh(Active);
+    }
+
+    private void Backfill(string questId)
+    {
+        var quest = _quests.FirstOrDefault(q => q.Id == questId);
+
+        while (quest?.Prerequisite is { } before && _completed.Add(before))
+        {
+            quest = _quests.FirstOrDefault(q => q.Id == before);
         }
     }
 
