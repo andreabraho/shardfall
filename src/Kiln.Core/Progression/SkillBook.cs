@@ -43,10 +43,27 @@ public sealed class SkillBook
     /// </summary>
     public const int MaxSkills = 6;
 
-    /// <summary>Skills that do not count toward <see cref="MaxSkills"/>: the Guard, which has a key of its own.</summary>
+    /// <summary>
+    /// Skills every character knows from the start, at one point that costs nothing, and that do
+    /// not count toward <see cref="MaxSkills"/>: the Guard, which has a key of its own
+    /// (2026-09-27, at your call: it was on Shift from the start but unusable until bought).
+    /// </summary>
     private readonly HashSet<string> _free;
 
-    public SkillBook(IEnumerable<string>? free = null) => _free = new HashSet<string>(free ?? [], StringComparer.Ordinal);
+    public SkillBook(IEnumerable<string>? free = null)
+    {
+        _free = new HashSet<string>(free ?? [], StringComparer.Ordinal);
+        GrantFree();
+    }
+
+    /// <summary>Puts every free skill back at its one point, where it is missing.</summary>
+    private void GrantFree()
+    {
+        foreach (var id in _free)
+        {
+            if (!_known.ContainsKey(id)) _known[id] = new Entry { Points = 1 };
+        }
+    }
 
     private sealed class Entry
     {
@@ -109,16 +126,22 @@ public sealed class SkillBook
 
     public bool Forget(string skillId) => _known.Remove(skillId);
 
-    public void Clear() => _known.Clear();
+    public void Clear()
+    {
+        _known.Clear();
+        GrantFree();
+    }
 
     /// <summary>
     /// Returns every point spent, for a respec (FR-2.6). The skills are forgotten with them.
     /// </summary>
     public int Refund()
     {
-        var points = _known.Values.Sum(e => e.Points);
+        // The free point on a free skill was never the player's to spend, so it stays.
+        var points = _known.Sum(p => p.Value.Points - (_free.Contains(p.Key) ? 1 : 0));
 
         _known.Clear();
+        GrantFree();
 
         return points;
     }
@@ -206,6 +229,9 @@ public sealed class SkillBook
                 Points = Math.Clamp(points?.GetValueOrDefault(id, 1) ?? 1, 1, MaxPoints),
             };
         }
+
+        // A save from before the Guard came free has none; it gets its point like anyone.
+        GrantFree();
     }
 
     public Dictionary<string, int> Save()

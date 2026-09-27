@@ -54,6 +54,36 @@ public class SkillBookTests
     }
 
     [Fact]
+    public void TheGuard_IsKnownFromTheStart_AtOneFreePoint()
+    {
+        var book = new SkillBook(free: ["skl_guard"]);
+
+        Assert.True(book.IsUnlocked("skl_guard"));
+        Assert.Equal(1, book.PointsIn("skl_guard"));
+        Assert.Equal(0, book.Learned);
+
+        // Two bought on top: a respec returns those two, and the free one stays.
+        book.Invest("skl_guard");
+        book.Invest("skl_guard");
+        book.Invest("skl_0");
+
+        Assert.Equal(3, book.Refund());
+        Assert.Equal(1, book.PointsIn("skl_guard"));
+        Assert.False(book.IsUnlocked("skl_0"));
+    }
+
+    [Fact]
+    public void AnOldSaveWithoutTheGuard_GetsItOnLoad()
+    {
+        var book = new SkillBook(free: ["skl_guard"]);
+
+        book.Load(new Dictionary<string, int> { ["skl_0"] = 0 });
+
+        Assert.Equal(1, book.PointsIn("skl_guard"));
+        Assert.True(book.IsUnlocked("skl_0"));
+    }
+
+    [Fact]
     public void ARefund_FreesThePlaces()
     {
         var book = new SkillBook();

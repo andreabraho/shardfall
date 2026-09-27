@@ -358,9 +358,24 @@ public partial class SkillPanel : CanvasLayer
         if (_character is null) return;
 
         var book = _character.Skills;
-        var text = book.IsUnlocked(def.Id)
-            ? SkillText.Title(def, book) + "\n" + SkillText.Describe(def, book)
-            : GameItems.Localise(def.Name) + "\n" + L10n.T("Not learned. Spend a skill point on it with the +.");
+        string text;
+
+        if (book.IsUnlocked(def.Id))
+        {
+            text = SkillText.Title(def, book) + "\n" + SkillText.Describe(def, book);
+        }
+        else
+        {
+            // Everything it would do at its first point (2026-09-27, at your call), so the
+            // choice of which six to learn is made knowing what each one is.
+            var first = new SkillBook();
+            first.Invest(def.Id);
+
+            text = GameItems.Localise(def.Name) + "\n"
+                + L10n.T("Not learned yet. With its first point:") + "\n"
+                + SkillText.Describe(def, first) + "\n"
+                + L10n.T("Spend a skill point on it with the +.");
+        }
 
         _tip.Show(text, at);
     }
