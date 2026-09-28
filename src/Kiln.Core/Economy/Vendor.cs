@@ -95,7 +95,7 @@ public sealed class Vendor
     /// <summary>The level the shelf was last stocked for, or 0 before the first visit.</summary>
     public int StockedFor { get; private set; }
 
-    public static long BuyPrice(ItemSpec spec) => Math.Max(1, spec.SellValue);
+    public static long BuyPrice(ItemSpec spec) => Math.Max(1, spec.Price > 0 ? spec.Price : spec.SellValue);
 
     /// <summary>What the merchant pays for the whole stack.</summary>
     public static long SellPrice(ItemSpec spec, ItemInstance item) =>

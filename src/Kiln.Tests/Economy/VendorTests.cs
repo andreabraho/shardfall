@@ -42,6 +42,18 @@ public class VendorTests
     }
 
     [Fact]
+    public void AShopPrice_IsWhatTheMerchantAsks_AndLeavesTheSaleAlone()
+    {
+        // 2026-09-28: a scrap bought for 400 still sells for a quarter of its 40.
+        var scrap = new ItemSpec { Id = "mat_scrap", MaxStack = 99, SellValue = 40, Price = 400 };
+        var plain = new ItemSpec { Id = "mat_dust", MaxStack = 99, SellValue = 40 };
+
+        Assert.Equal(400, Vendor.BuyPrice(scrap));
+        Assert.Equal(40, Vendor.BuyPrice(plain));
+        Assert.Equal(10, Vendor.SellPrice(scrap, new ItemInstance(1, "mat_scrap") { Count = 1 }));
+    }
+
+    [Fact]
     public void Staples_SkipIdsThatDoNotExist()
     {
         var (vendor, _, _) = Setup();

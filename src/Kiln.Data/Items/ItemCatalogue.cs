@@ -79,6 +79,7 @@ public sealed class ItemCatalogue : IItemSpecs, IBonusPools
             Height = def.GridSize.Length > 1 ? Math.Max(1, def.GridSize[1]) : 1,
             MaxStack = def.Slot is null ? Math.Max(1, def.MaxStack) : 1,
             SellValue = def.SellValue,
+            Price = def.Price,
             Hands = def.Hands,
             WeaponDamageMin = Stat(def, WeaponDamageMin),
             WeaponDamageMax = Stat(def, WeaponDamageMax),

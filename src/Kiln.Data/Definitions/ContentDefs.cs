@@ -39,6 +39,10 @@ public sealed class ItemDef : ContentDefBase
     public string? BonusPool { get; init; }
     public string? UpgradePath { get; init; }
     public int SellValue { get; init; }
+
+    /// <summary>A merchant's asking price, when it is not the sell value. Zero means the sell value.</summary>
+    public int Price { get; init; }
+
     public string? Visual { get; init; }
 
     /// <summary>How many fit in one grid cell. 1 means the item never stacks; equipment never does.</summary>

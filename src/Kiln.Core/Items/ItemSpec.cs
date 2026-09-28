@@ -31,6 +31,14 @@ public sealed record ItemSpec
     public int MaxStack { get; init; } = 1;
 
     public int SellValue { get; init; }
+
+    /// <summary>
+    /// What a merchant asks for it, when that is not <see cref="SellValue"/> (2026-09-28): the
+    /// staples are priced on their own, so dearer draughts and stones do not also make every
+    /// scrap the player sells worth ten times more. Zero means the sell value.
+    /// </summary>
+    public int Price { get; init; }
+
     public double WeaponDamageMin { get; init; }
     public double WeaponDamageMax { get; init; }
     public double ArmorValue { get; init; }
