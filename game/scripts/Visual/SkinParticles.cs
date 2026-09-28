@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Godot;
 
 namespace Kiln.Game.Visual;
@@ -69,8 +68,8 @@ public static class SkinParticles
     {
         if (Texture("circle_05.png") is not { } point) yield break;
 
-        // No haze of the colour any more (2026-09-28, at your call): it washed over the steel and
-        // read as the sword changing colour. The aura is round the blade, not on it.
+        // A haze of the colour, soft and slow, so the blade sits in light and not only in dots.
+        yield return Particles("AuraHaze", 26, 0.6, Drift(colour with { A = 0.5f }, extents, 0f, 0.03f), Quad(point, 0.2f * shrink, shrinking: true), local: true);
 
         // The points: many, small, short-lived and slow, so the eye reads a steady shimmer
         // that clings to the blade.
@@ -91,34 +90,11 @@ public static class SkinParticles
         yield return Particles("AuraGlints", 14, 0.7, Drift(bright, extents, 0.02f, 0.08f, spin: 90f), Quad(spark, 0.11f * shrink, shrinking: true), local: true);
     }
 
-    /// <summary>
-    /// Points born in a sheath round a blade of <paramref name="extents"/> — a hollow cylinder
-    /// along its length, clear of the steel (2026-09-28) — drifting off a little every way.
-    /// Born inside the blade's box, as they were, they sat on the sword and coloured it.
-    /// </summary>
-    private static ParticleProcessMaterial Drift(Color colour, Vector3 extents, float speedMin, float speedMax, float spin = 0f)
+    /// <summary>Points born round a box and drifting off it a little every way, a touch upward.</summary>
+    private static ParticleProcessMaterial Drift(Color colour, Vector3 extents, float speedMin, float speedMax, float spin = 0f) => new()
     {
-        // The blade's length is its longest side; the sheath's width is the next.
-        var sides = new[] { (extents.X, Vector3.Right), (extents.Y, Vector3.Up), (extents.Z, Vector3.Back) }
-            .OrderByDescending(s => s.Item1)
-            .ToArray();
-
-        var (length, axis) = sides[0];
-        var width = sides[1].Item1;
-
-        var drift = DriftBody(colour, speedMin, speedMax, spin);
-
-        drift.EmissionShape = ParticleProcessMaterial.EmissionShapeEnum.Ring;
-        drift.EmissionRingAxis = axis;
-        drift.EmissionRingHeight = length * 2f;
-        drift.EmissionRingInnerRadius = width * 1.15f;
-        drift.EmissionRingRadius = width * 1.6f;
-
-        return drift;
-    }
-
-    private static ParticleProcessMaterial DriftBody(Color colour, float speedMin, float speedMax, float spin) => new()
-    {
+        EmissionShape = ParticleProcessMaterial.EmissionShapeEnum.Box,
+        EmissionBoxExtents = extents,
         Direction = Vector3.Up,
         Spread = 180f,
         InitialVelocityMin = speedMin,

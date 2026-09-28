@@ -5,20 +5,16 @@ using Kiln.Data.Definitions;
 namespace Kiln.Game.Visual;
 
 /// <summary>
-/// An aura look on a blade (REF-23): a full glow round the sword, as the original's sword
-/// aura — not a bubble round the player (2026-09-26), not a stream of points and not a coat of
-/// paint on the steel (2026-09-28, at your call). The same on the sword and the great sword,
-/// and beside a sword skin rather than in place of it.
+/// Light round a blade, in two kinds. A worn aura (REF-23) is a stream of points wrapped round
+/// the sword with a light of its colour, as the original's sword aura. The Blade Aura skill
+/// (REF-21) is a faceted glow instead (2026-09-28, at your call): two shells the blade's own
+/// shape, a little larger than it, lit towards their edges and stirred by a slow flow along
+/// the blade, so the steel keeps its colour.
 /// </summary>
 /// <remarks>
-/// Two shells the blade's own shape, a little larger than it, lit only towards their edges and
-/// stirred by a slow flow along the blade: the light hangs round the sword's outline while the
-/// face of the blade keeps its own colour. A node on the blade, so taking the aura off is
-/// taking the node away, and the shells follow every swing exactly.
-/// <para>
-/// The Blade Aura skill wraps the blade the same way while it lasts (REF-21), in its rank's
-/// colour and under a name of its own, so the look and the skill are both worn at once.
-/// </para>
+/// A node on the blade, so taking the aura off is taking the node away, and it follows every
+/// swing exactly. The two are worn under different names, so the look and the skill can be on
+/// at once.
 /// </remarks>
 public partial class BladeAura : Node3D
 {
@@ -77,9 +73,46 @@ public partial class BladeAura : Node3D
 
         Remove(blade, "Aura");
 
-        if (aura is null) return;
+        if (aura is null || blade.Mesh is null) return;
 
-        Wrap(blade, new Color(aura.Color), aura.Particles, "Aura");
+        // A worn aura keeps its stream of points and its light, as it was (2026-09-28, at your
+        // call: the Arcane Aura was right). Only the Blade Aura skill wears the faceted glow.
+        var node = new BladeAura { Name = "Aura" };
+        blade.AddChild(node);
+        node.Stream(blade, new Color(aura.Color), aura.Particles, light: 0.7f);
+    }
+
+    /// <summary>How far round the blade a worn aura's points are born, in the blade's own units.</summary>
+    private const float Margin = 0.035f;
+
+    /// <summary>A worn aura: a steady stream of points wrapped round the blade, and a light.</summary>
+    private void Stream(MeshInstance3D blade, Color colour, string kind, float light)
+    {
+        var box = blade.Mesh!.GetAabb();
+
+        // The blade's box, thickened on its thin sides so the points sit round the flat of the
+        // blade and its edge rather than inside the steel.
+        var half = box.Size * 0.5f;
+        var extents = new Vector3(half.X + Margin, half.Y + Margin, half.Z + Margin);
+
+        Position = box.GetCenter();
+
+        // The size of a point is in the blade's space, which the model may have scaled: undone
+        // here so a point is the same size on any model.
+        var scale = blade.GlobalTransform.Basis.Scale;
+        var shrink = 1f / Mathf.Max(0.01f, (scale.X + scale.Y + scale.Z) / 3f);
+
+        foreach (var layer in SkinParticles.SwordAura(kind, colour, extents, shrink)) AddChild(layer);
+
+        if (light <= 0) return;
+
+        AddChild(new OmniLight3D
+        {
+            LightColor = colour,
+            LightEnergy = light,
+            OmniRange = 1.4f,
+            ShadowEnabled = false,
+        });
     }
 
     /// <summary>Wraps a blade in a glow of <paramref name="colour"/>, as a node called <paramref name="name"/>.</summary>
