@@ -42,7 +42,7 @@ validating, Godot project building, headless import clean, content loading in-en
 | ENG-08 | Data pipeline: JSON loader, validator (9 rules), id-constant codegen, cross-reference checker | **[C]** | ✅ |
 | ENG-09 | Logging, debug overlay (FPS, frame time, draw calls, pluggable providers) | **[C]** | ✅ |
 | ENG-10 | Verify the CI artifact runs on your machine | **[You]** | ⬜ after ENG-11 |
-| ENG-11 | **Create the Windows export preset** in the Godot editor (Project → Export → Add → Windows Desktop). Set `export_path` to `../export/windows/Kiln.exe` and add `*.json` to the non-resource include filter, or game data will not ship in the build. This also auto-enables the CI export job. | **[You]** | ⬜ editor GUI, ~2 min (also downloads export templates) |
+| ENG-11 | Windows export preset (`game/export_presets.cfg`, `*.json` included, output `../export/windows/Temins.exe`) and `scripts/export.sh`, which zips the build with LEGGIMI, FEEDBACK and the asset credits | **[C]** | ✅ 2026-09-28, needs the 4.7.2 mono export templates installed |
 
 ---
 

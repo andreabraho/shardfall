@@ -9,6 +9,8 @@ config_version=5
 
 config/name="Temins"
 config/description="A single-player action RPG in the spirit of Metin2."
+; The build testers have. Also in export_presets.cfg (file and product version).
+config/version="1.0.0"
 run/main_scene="res://scenes/main_menu.tscn"
 config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 

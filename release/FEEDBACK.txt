@@ -1,0 +1,31 @@
+TEMINS v{VERSION} - FEEDBACK
+============================
+Scrivi sotto ogni voce; lascia vuoto quello che non sai.
+
+Nome / nick:
+PC (processore, scheda video, RAM):
+Ore giocate:
+Fin dove sei arrivato (mappa, livello):
+
+--- BUG ---
+(uno per blocco; copia il blocco se ne hai piu' di uno)
+Dove (mappa / menu):
+Cosa stavi facendo:
+Cosa ti aspettavi:
+Cosa e' successo:
+Succede sempre? (si / a volte / una volta):
+Screenshot o video (se li hai):
+
+--- DIFFICOLTA' ---
+Troppo facile / giusto / troppo difficile, e dove:
+Mostri o boss che ti sono sembrati sbilanciati:
+Soldi, oggetti, potenziamenti (troppi / giusti / pochi):
+
+--- ESPERIENZA ---
+Il tutorial era chiaro?
+Cosa ti e' piaciuto di piu':
+Cosa ti e' piaciuto di meno:
+Prestazioni (scatti, cali di FPS, dove):
+Altro:
+
+Allega anche la cartella %APPDATA%\Godot\app_userdata\Temins\logs
