@@ -451,7 +451,9 @@ public partial class AuraVisual : Node3D
         var breath = 0.5f + (Mathf.Sin((float)_spin * 3.4f) * 0.16f);
 
         // Iron Skin only tints the armour faintly: a body lit like the blade reads as the
-        // character changing colour, when all it should say is "harder to hurt".
-        Light(Kind == StatusKind.Frenzy ? 0f : Mathf.Min(1f, breath * glow) * _strength * (Kind == StatusKind.Fortify ? 0.16f : 1f));
+        // character changing colour, when all it should say is "harder to hurt". The Blade
+        // Aura lays nothing over the blade any more (2026-09-28, at your call: it turned the
+        // sword yellow) — its stream of points round the blade is the whole effect.
+        Light(Kind is StatusKind.Frenzy or StatusKind.Empower ? 0f : Mathf.Min(1f, breath * glow) * _strength * (Kind == StatusKind.Fortify ? 0.16f : 1f));
     }
 }
