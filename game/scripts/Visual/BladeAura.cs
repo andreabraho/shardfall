@@ -32,7 +32,8 @@ public partial class BladeAura : Node3D
 
         if (aura is null) return;
 
-        Wrap(blade, new Color(aura.Color), aura.Particles, "Aura");
+        // No light (2026-09-28, at your call): it tinted the steel. The points are the aura.
+        Wrap(blade, new Color(aura.Color), aura.Particles, "Aura", light: 0f);
     }
 
     /// <summary>
