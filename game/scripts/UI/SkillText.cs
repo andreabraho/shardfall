@@ -66,7 +66,11 @@ public static class SkillText
         if (Effect(skill) is { Length: > 0 } effect) lines.Add(effect);
 
         // The Guard, the one channelled skill, also cleanses as it is raised (2026-09-26).
-        if (def.CastType == "channel") lines.Add(L10n.T("Raising it clears poison, bleeding, slows, weakening and vulnerability."));
+        if (def.CastType == "channel")
+        {
+            lines.Add(L10n.T("Raising it clears poison, bleeding, slows, weakening and vulnerability."));
+            lines.Add(L10n.T("While it is up, no stun, poison, bleeding, slow, weakening or vulnerability takes hold."));
+        }
 
         lines.Add(L10n.F("{0:0} mana  ·  {1:0.#} s cooldown", skill.ManaCost, skill.Cooldown));
 

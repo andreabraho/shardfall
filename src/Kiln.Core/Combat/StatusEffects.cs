@@ -140,8 +140,16 @@ public sealed class StatusEffectSet
         * (Has(StatusKind.Fortify) ? Math.Max(0.1, 1 - _effects[StatusKind.Fortify].Magnitude) : 1.0)
         * (Has(StatusKind.Frenzy) ? 1 + FrenzyExposure : 1.0);
 
+    /// <summary>
+    /// While set, nothing harmful takes hold: the Warrior behind a raised guard
+    /// (2026-09-28, at your call). Buffs still land.
+    /// </summary>
+    public bool Warded { get; set; }
+
     public void Apply(StatusEffect effect)
     {
+        if (Warded && Array.IndexOf(Harmful, effect.Kind) >= 0) return;
+
         effect.Remaining = effect.Duration;
 
         if (!_effects.TryGetValue(effect.Kind, out var existing))

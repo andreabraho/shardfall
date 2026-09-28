@@ -215,6 +215,29 @@ public class StatusEffectTests
     }
 
     [Fact]
+    public void AWardedSet_RefusesEveryHarm_ButTakesBuffs()
+    {
+        // The raised guard (2026-09-28, at your call).
+        var set = new StatusEffectSet { Warded = true };
+
+        set.Apply(StatusEffectSet.Stun(1.0));
+        set.Apply(StatusEffectSet.Poison(5));
+        set.Apply(StatusEffectSet.Bleed(3));
+        set.Apply(StatusEffectSet.Slow(0.3));
+        set.Apply(StatusEffectSet.Weaken(0.2));
+        set.Apply(StatusEffectSet.Vulnerability(0.2));
+        set.Apply(StatusEffectSet.Fortify(0.35));
+
+        Assert.Equal(1, set.Count);
+        Assert.True(set.Has(StatusKind.Fortify));
+
+        // Lowered, harm lands again.
+        set.Warded = false;
+        set.Apply(StatusEffectSet.Stun(1.0));
+        Assert.True(set.IsStunned);
+    }
+
+    [Fact]
     public void EmptySet_IsCheapAndInert()
     {
         var set = new StatusEffectSet();

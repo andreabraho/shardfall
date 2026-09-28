@@ -133,6 +133,9 @@ public partial class DefensiveAbility : Node
         GetParent().GetNodeOrNull<PlayerCharacter>("PlayerCharacter")?.Skills.RecordUse(SkillId);
 
         _self.IncomingDamageMultiplier = 1.0 - values.Reduction;
+
+        // And nothing new takes hold while it is up (2026-09-28, at your call).
+        _self.Statuses.Warded = true;
         _motor.MovementLocked = true;
         _motor.Stop();
         _visual.SetGuarding(true);
@@ -158,6 +161,7 @@ public partial class DefensiveAbility : Node
     {
         _active = 0;
         _self.IncomingDamageMultiplier = 1.0;
+        _self.Statuses.Warded = false;
         _motor.MovementLocked = false;
         _visual.SetGuarding(false);
 
