@@ -71,6 +71,45 @@ public static class PanelMover
         }
     }
 
+    /// <summary>
+    /// Shrinks a window to its content and puts it back in its place (2026-09-28): where the
+    /// player left it, or else where its anchors and grow directions say — centred for a window
+    /// that grows both ways, its right edge kept for one that grows to the left.
+    /// </summary>
+    /// <remarks>
+    /// Needed because a container only ever grows: a wrapped line measured before the window
+    /// had its width made the shrine's window 3,600 pixels tall, and shrinking it with
+    /// <c>ResetSize</c> alone moves it half off the top of the screen.
+    /// </remarks>
+    public static void Settle(Control window, string key)
+    {
+        if (!GodotObject.IsInstanceValid(window) || !window.IsInsideTree()) return;
+
+        window.ResetSize();
+
+        var size = window.GetCombinedMinimumSize();
+
+        if (Placed.TryGetValue(key, out var at))
+        {
+            window.GlobalPosition = Clamp(window, at);
+            Keep(window);
+            return;
+        }
+
+        (window.OffsetLeft, window.OffsetRight) = Span(window.GrowHorizontal, window.OffsetLeft, window.OffsetRight, size.X);
+        (window.OffsetTop, window.OffsetBottom) = Span(window.GrowVertical, window.OffsetTop, window.OffsetBottom, size.Y);
+
+        window.GlobalPosition = Clamp(window, window.GlobalPosition);
+        Keep(window);
+    }
+
+    private static (float From, float To) Span(Control.GrowDirection grow, float from, float to, float length) => grow switch
+    {
+        Control.GrowDirection.Both => (-length * 0.5f, length * 0.5f),
+        Control.GrowDirection.Begin => (to - length, to),
+        _ => (from, from + length),
+    };
+
     private static void PassThrough(Node node)
     {
         foreach (var child in node.GetChildren())

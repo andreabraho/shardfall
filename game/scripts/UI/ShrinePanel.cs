@@ -267,6 +267,11 @@ public partial class ShrinePanel : CanvasLayer
 
     private void Refresh()
     {
+
+        // Shrunk back to its content once this frame's layout has settled (2026-09-28): a
+        // wrapped line measured before the window had a width is thousands of pixels tall,
+        // and a container grows to fit its children but never shrinks on its own.
+        Callable.From(() => PanelMover.Settle(_panel, "shrine")).CallDeferred();
         if (!GameWorld.IsLoaded) return;
 
         var shrine = GameWorld.Graph.Shrine(_here);
@@ -447,7 +452,7 @@ public partial class ShrinePanel : CanvasLayer
             return;
         }
 
-        _respecCost.Text = L10n.F("Free. Returns every attribute point you have placed, including the opening spread the game assigned for you. Level {0}, {1} point(s) placed.",
+        _respecCost.Text = L10n.F("Free. Returns every status point you have placed. Level {0}, {1} point(s) placed.",
             progression.Level, progression.Assigned.Total);
 
         _respec.Disabled = progression.Assigned.Total == 0;

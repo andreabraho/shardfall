@@ -351,6 +351,11 @@ public partial class WorkbenchPanel : CanvasLayer
 
     private void Refresh()
     {
+
+        // Shrunk back to its content once this frame's layout has settled (2026-09-28): a
+        // wrapped line measured before the window had a width is thousands of pixels tall,
+        // and a container grows to fit its children but never shrinks on its own.
+        Callable.From(() => PanelMover.Settle(_root, "workbench")).CallDeferred();
         if (_inventory is null || !Visible) return;
 
         if (_selected is not null && !Owned(_selected)) _selected = null;
