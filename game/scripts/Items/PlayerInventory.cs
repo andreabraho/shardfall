@@ -116,7 +116,8 @@ public partial class PlayerInventory : Node
             Cape: armour is not null && GameItems.Spec(armour.DefId)?.Rarity >= Rarity.Epic,
             SwordSkin: Cosmetics.Worn(Cosmetics.Sword),
             ArmourSkin: Cosmetics.Worn(Cosmetics.Armour),
-            Aura: Cosmetics.Worn(Cosmetics.Aura)));
+            Aura: Cosmetics.Worn(Cosmetics.Aura),
+            ArmourUpgrade: armour?.UpgradeLevel ?? 0));
     }
 
     /// <summary>

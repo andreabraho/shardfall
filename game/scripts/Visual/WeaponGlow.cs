@@ -3,8 +3,8 @@ using Godot;
 namespace Kiln.Game.Visual;
 
 /// <summary>
-/// The shine a blade takes on from +7, as in the original (REF-22): faint at +7, brighter and
-/// lit at +8, gold and pulsing at +9.
+/// The shine a blade takes on at +7, as in the original (REF-22): a faint breath of light.
+/// From +8 the blade gives off <see cref="UpgradeSparkles"/> instead (2026-09-28).
 /// </summary>
 /// <remarks>
 /// A shell a little larger than the blade, drawn additively over it, so the sword itself
@@ -28,7 +28,11 @@ public partial class WeaponGlow : Node
 
         blade.GetNodeOrNull<WeaponGlow>("Glow")?.Remove();
 
-        if (upgrade < 7) return;
+        // From +8 it is glints, white and pink, and no shell or light (2026-09-28, at your call:
+        // the +9 shell and its light were too much). The +7 keeps its faint shine.
+        UpgradeSparkles.OnBlade(blade, upgrade);
+
+        if (upgrade != 7) return;
 
         var glow = new WeaponGlow { Name = "Glow" };
         blade.AddChild(glow);

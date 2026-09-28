@@ -18,7 +18,8 @@ namespace Kiln.Game.Visual;
 /// No shield (2026-09-25, at your call): as in the original, a shield is worn for what it
 /// gives and never drawn.
 /// </remarks>
-public sealed record GearLook(int Hands, int Upgrade, bool Helmet, bool Cape, CosmeticDef? SwordSkin = null, CosmeticDef? ArmourSkin = null, CosmeticDef? Aura = null);
+/// <param name="ArmourUpgrade">The armour's upgrade level: from +8 it sparkles (2026-09-28).</param>
+public sealed record GearLook(int Hands, int Upgrade, bool Helmet, bool Cape, CosmeticDef? SwordSkin = null, CosmeticDef? ArmourSkin = null, CosmeticDef? Aura = null, int ArmourUpgrade = 0);
 
 /// <summary>
 /// The parts of a model that stand for worn gear, shown and hidden to match it (REF-22).
@@ -44,9 +45,13 @@ public sealed class GearRig
 
     private string _armourSkin = "";
     private string? _aura;
+    private readonly Node3D _model;
+    private int _armourUpgrade = -1;
 
     private GearRig(Node3D model, GearPartsDef parts)
     {
+        _model = model;
+
         // Before the swords are put in its hands: those are not the armour.
         foreach (var mesh in model.FindChildren("*", "MeshInstance3D", true, false).OfType<MeshInstance3D>())
         {
@@ -107,6 +112,16 @@ public sealed class GearRig
         WeaponGlow.Set(_twoHand, look.Hands == 2 ? look.Upgrade : 0, tint);
 
         DressArmour(look.ArmourSkin);
+
+        // The same glints round the body for +8 and +9 armour (2026-09-28). Rebuilt only when
+        // the level changes, so wearing something else does not restart them.
+        var armourGlints = look.ArmourUpgrade >= 9 ? 9 : look.ArmourUpgrade >= 8 ? 8 : 0;
+
+        if (armourGlints != _armourUpgrade)
+        {
+            _armourUpgrade = armourGlints;
+            UpgradeSparkles.OnBody(_model, _body, armourGlints);
+        }
     }
 
     /// <summary>
