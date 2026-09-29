@@ -379,7 +379,84 @@ test it, and only then do we move to the next. Order is yours to change.
 
 ---
 
-## Phases 9–13 — Tier B sketch (re-planned after the MVP)
+## After V1 — the plan (decided 2026-09-29)
+
+V1.0.0 went to testers on 2026-09-29 (tag `v1.0.0`). From here every piece of work lives on
+its own branch and reaches `main` only at your OK. Testers' feedback on V1 comes before any
+row below, whenever it arrives.
+
+Decided with you: the second act runs to **level 40**; its end is a **new dungeon, the
+Catacombs, at level 40**, separate from the Demon Tower; the new weapons are upgraded with
+**parts of the new maps' monsters** (spider eyes and the like — names our own); models are
+**made in Blender by me** wherever they come out good enough for the game. Also in: new
+classes, a character creator, pets, world bosses, a store page. Boss phases and the corner
+minimap were proposed and dropped — REF-05 and REF-19 already built them.
+
+Order: the Blender pipeline first, because what it can make decides how much of act 2 is
+original art; then classes and the creator, because every item and every balance number after
+them has to fit all the classes; then act 2, mounts, the Catacombs, and the extras.
+
+### P1 — Models from Blender
+
+Blender 5.0 is installed. I write the model as a Python script, Blender builds it headless and
+exports a `.glb`, Godot imports it like any other. Every model is original (an
+`ASSET-LICENSES.md` row: made for Temins, ours).
+
+| ID | Task | Owner | Notes |
+|---|---|---|---|
+| PIP-01 | The toolchain: `scripts/blender.sh`, a script folder, export settings, a turntable render to judge a model without opening Godot | **[C]** | |
+| PIP-02 | Test pieces: a weapon, a shard stone, a prop | **[C→You]** | You judge them next to the CC0 models already in the game |
+| PIP-03 | A creature: modelled, rigged, one walk and one attack | **[C→You]** | The hard case; decides whether act 2's monsters can be ours |
+| PIP-04 | The verdict: what Blender makes from here on and what stays CC0 | **[You]** | |
+
+### P2 — Classes and the character creator
+
+The design has four classes; only the Warrior exists. The other three take their models from
+KayKit Adventurers 2.0 (CC0, same pack and same animations as the Knight). Names are ours:
+the design doc's "Sura" and "Shaman" come from the original and are replaced.
+
+| ID | Task | Owner | Notes |
+|---|---|---|---|
+| CLS-01 | Several classes in the code: the class in the save, skills and starting gear per class, class-bound items, a class per skill tree | **[C]** | Old saves stay Warriors |
+| CLS-02 | **Character creator**: the class with a turning 3D preview and what it plays like, a look (clothes colours, Knight or Barbarian for the Warrior), name, difficulty | **[C↔You]** | How deep the look goes is yours to decide: the variants the packs have, or a modular pack for body, hair and sex |
+| CLS-03 | **Blade** — daggers and bow, fast; Shift: a step and a moment untouchable | **[C↔You]** | Proves the multi-class build end to end |
+| CLS-04 | Second class — sword and dark magic; Shift: a shield that absorbs | **[C↔You]** | Name to decide |
+| CLS-05 | Third class — magic at range, heals and blessings; Shift: a shield that also cleanses | **[C↔You]** | Name to decide |
+| CLS-06 | Balance: each class finishes act 1 and the tower alone, checked by the simulator | **[C]** | |
+
+### P3 — Act 2, levels 23–40
+
+| ID | Task | Owner | Notes |
+|---|---|---|---|
+| A2-01 | Three new maps, banded 23–40, perhaps a village as the act's base; themes to decide (the fire land can come back if Blender makes the lava) | **[C↔You]** | Each with its roster, three shards and a boss |
+| A2-02 | Quests: kill, shard and boss per map, as in act 1 | **[C]** | |
+| A2-03 | New gear 24–40 for every class, +0 to +9 | **[C]** | |
+| A2-04 | **Upgrade materials from monsters**: each map's creatures drop parts (spider eyes and the like) that the new gear's higher steps ask for | **[C↔You]** | Replaces the generic scrap on the new tier only |
+| A2-05 | Balance: experience, gold and drops for 23–40 | **[C]** | |
+
+### P4 — Mounts
+
+| ID | Task | Owner | Notes |
+|---|---|---|---|
+| MNT-01 | Mount, unlocked around level 28: +80% speed, a charge that knocks enemies aside, thrown off by a heavy blow | **[C↔You]** | The horse from Quaternius' animated animals (CC0) unless Blender does better |
+
+### P5 — The Catacombs, level 40
+
+| ID | Task | Owner | Notes |
+|---|---|---|---|
+| DNG-01 | A dungeon of several rooms, entered with a key, perhaps against the clock, a final boss in phases | **[C↔You]** | The tower's code still calls itself `catacombs`: renamed first so the two never mix |
+
+### P6 — Extras
+
+| ID | Task | Owner | Notes |
+|---|---|---|---|
+| EXT-01 | **Pets**: a small follower with a small bonus | **[C]** | After mounts, which share the follow code |
+| EXT-02 | **World bosses**: on a cycle, in the existing maps | **[C↔You]** | |
+| EXT-03 | **Store page** on itch.io, later Steam | **[You]** | When testers say the game holds up |
+
+---
+
+## Phases 9–13 — Tier B sketch (superseded by the plan above)
 
 Not detailed on purpose. Rough shape, ~10–16 months:
 
