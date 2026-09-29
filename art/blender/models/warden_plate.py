@@ -22,11 +22,18 @@ def build():
         t.sphere("stone", 0.05, ice, at=(0, -0.405, 1.15), subdivisions=0, squash=(1, 0.7, 1.3)),
     ]
 
-    # Three lames down the belly, each a little narrower.
+    # Three lames down the belly.
     spine = [
         a.band(f"lame_{i}", 0.425 - i * 0.003, 0.395 - i * 0.003, 0.87 - i * 0.105, 0.975 - i * 0.105,
                steel if i % 2 == 0 else dark, y=0.03)
         for i in range(3)
+    ]
+
+    # Its own cape, clear of the plates, deep blue with a gold hem: the Knight's own is
+    # hidden under a modelled armour, since it would pass through the breastplate.
+    spine += [
+        a.cape("cape", t.material("cape_blue", (0.09, 0.13, 0.32), rough=0.9)),
+        a.cape("hem", gold, top=(0.36, 0.556, 0.487), bottom=(0.28, 0.572, 0.50), rows=1, thickness=0.03),
     ]
 
     # The belt with its buckle, the tassets and the tabard hanging from it.

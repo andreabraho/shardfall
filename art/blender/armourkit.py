@@ -71,3 +71,34 @@ def finish(name, by_bone, folder="armour"):
             bpy.data.objects.remove(obj, do_unlink=True)
 
     return {"folder": folder, "name": name, "reference": KNIGHT}
+
+
+def cape(name, mat, top=(1.31, 0.40, 0.31), bottom=(0.28, 0.56, 0.50), curve=0.12, thickness=0.025, cols=8, rows=5):
+    """
+    A cape hanging behind, clear of the plates: from its top edge (z, y, half width) at the
+    shoulders to its bottom edge, curved round the back so its middle stands furthest out.
+    One rigid piece: worn on the spine, it sways with the body but never folds.
+    """
+    bm = bmesh.new()
+    grid = []
+
+    for r in range(rows + 1):
+        v = r / rows
+        z = top[0] + (bottom[0] - top[0]) * v
+        y = top[1] + (bottom[1] - top[1]) * v
+        half = top[2] + (bottom[2] - top[2]) * v
+        row = []
+        for c in range(cols + 1):
+            u = c / cols * 2 - 1
+            row.append(bm.verts.new((u * half, y - curve * u * u, z)))
+        grid.append(row)
+
+    for r in range(rows):
+        for c in range(cols):
+            bm.faces.new((grid[r][c], grid[r][c + 1], grid[r + 1][c + 1], grid[r + 1][c]))
+
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    obj = t.mesh_object(name, bm, mat)
+    solid = obj.modifiers.new("Solid", "SOLIDIFY")
+    solid.thickness = thickness
+    return obj
