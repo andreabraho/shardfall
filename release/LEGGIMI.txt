@@ -1,0 +1,51 @@
+TEMINS v{VERSION} - build per tester
+====================================
+
+Grazie per provare Temins, un action RPG single player.
+
+AVVIO
+-----
+1. Estrai tutto lo zip in una cartella (non avviarlo da dentro lo zip).
+2. Avvia Temins.exe.
+   Windows potrebbe mostrare "Windows ha protetto il PC": il gioco non e' firmato.
+   Clicca "Ulteriori informazioni" e poi "Esegui comunque".
+3. Non serve installare nulla: tieni Temins.exe e la cartella data_Kiln.Game_...
+   sempre insieme.
+
+Requisiti: Windows 10/11 64 bit, una scheda video degli ultimi anni (Vulkan o DirectX 12).
+
+COMANDI
+-------
+Clic sinistro / WASD   muoversi (clic su un nemico per attaccarlo)
+Spazio                 attacco
+Shift                  guardia (niente effetti negativi mentre e' alzata)
+1 - 6                  abilita'
+Q                      fiaschetta
+Z                      raccogli oggetti
+F                      interagisci (PNG, santuari, fabbro...)
+Alt                    mostra i nomi a terra
+I / C / K / M          borsa / personaggio / abilita' / mappa
+Tasto destro (trascina), frecce   ruota la camera
+Rotellina              zoom
+F10 / F12              salvataggio rapido / caricamento rapido
+F11                    schermo intero / finestra
+Esc                    menu
+
+La lista dei comandi e' anche in Impostazioni.
+
+SALVATAGGI E LOG
+----------------
+Salvataggi, impostazioni e log stanno in:
+  %APPDATA%\Godot\app_userdata\Temins
+(incolla questo percorso nella barra di Esplora file)
+
+  saves\          i salvataggi
+  logs\           i log: allegali quando segnali un problema
+  settings.cfg    le impostazioni
+
+SEGNALAZIONI
+------------
+Compila FEEDBACK.txt (c'e' un modello) e mandalo insieme alla cartella logs.
+Per un bug conta soprattutto: cosa stavi facendo, cosa ti aspettavi, cosa e' successo.
+
+Crediti delle risorse usate: ASSET-LICENSES.md

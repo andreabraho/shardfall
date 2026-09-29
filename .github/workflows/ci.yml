@@ -70,7 +70,7 @@ jobs:
     if: hashFiles('game/project.godot') != '' && hashFiles('game/export_presets.cfg') != ''
 
     container:
-      image: barichello/godot-ci:4.7.2
+      image: barichello/godot-ci:mono-4.7.2
     steps:
       - uses: actions/checkout@v4
         with:
@@ -79,7 +79,7 @@ jobs:
       - name: Set up export templates
         run: |
           mkdir -v -p ~/.local/share/godot/export_templates
-          mv /root/.local/share/godot/export_templates/* ~/.local/share/godot/export_templates/
+          mv /root/.local/share/godot/export_templates/* ~/.local/share/godot/export_templates/ || true
 
       - name: Headless import check
         # Catches broken .tscn/.tres references before anyone opens the editor.
@@ -88,11 +88,11 @@ jobs:
       - name: Export Windows build
         run: |
           mkdir -p export/windows
-          godot --headless --path game --export-release "Windows Desktop" ../export/windows/Kiln.exe
+          godot --headless --path game --export-release "Windows Desktop" ../export/windows/Temins.exe
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: sohan-windows
+          name: temins-windows
           path: export/windows/
           retention-days: 14

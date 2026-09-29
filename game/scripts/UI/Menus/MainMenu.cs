@@ -107,7 +107,7 @@ public partial class MainMenu : Control
 
         var spacer = new Control { SizeFlagsVertical = SizeFlags.ExpandFill };
         left.AddChild(spacer);
-        left.AddChild(MenuStyle.Label($"Godot {Engine.GetVersionInfo()["string"]}  ·  {(OS.IsDebugBuild() ? "debug" : "release")} build",
+        left.AddChild(MenuStyle.Label($"v{ProjectSettings.GetSetting("application/config/version")}  ·  Godot {Engine.GetVersionInfo()["string"]}  ·  {(OS.IsDebugBuild() ? "debug" : "release")} build",
             11, MenuStyle.Dim));
 
         _content = MenuStyle.Window("", () => _content.Visible = false, out _page, out _pageTitle);
