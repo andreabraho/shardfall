@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3]
+[gd_scene load_steps=19 format=3]
 
 ; zone_ember_hollow — the first village and the woods around it (WLD-06; rebuilt for the map
 ; themes, 2026-09-23: village and woods with animals).
@@ -28,8 +28,6 @@
 [ext_resource type="Script" path="res://scripts/World/ShardNode.cs" id="14_shard"]
 [ext_resource type="Script" path="res://scripts/World/ZoneBorder.cs" id="90_border"]
 [ext_resource type="Script" path="res://scripts/World/TrainingBarrier.cs" id="91_training"]
-[ext_resource type="PackedScene" path="res://assets/temins/shards/ember_shard.glb" id="92_test_shard"]
-[ext_resource type="PackedScene" path="res://assets/temins/props/brazier.glb" id="93_test_brazier"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_hollow"]
 vertices = PackedVector3Array()
@@ -802,12 +800,3 @@ PieceId = "kit_vil_path_4"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70, 1.1, -56)
 script = ExtResource("3_kit")
 PieceId = "kit_marker_post"
-
-; PIP-02 test pieces made in Blender, for you to walk round (2026-09-29). Temporary: they go
-; once you have judged them.
-
-[node name="TestEmberShard" parent="." instance=ExtResource("92_test_shard")]
-transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, -3.5, 0, -11)
-
-[node name="TestBrazier" parent="." instance=ExtResource("93_test_brazier")]
-transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 2.4, 0, -4.6)
