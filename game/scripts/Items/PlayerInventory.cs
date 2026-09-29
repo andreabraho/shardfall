@@ -118,11 +118,12 @@ public partial class PlayerInventory : Node
             ArmourSkin: Cosmetics.Worn(Cosmetics.Armour),
             Aura: Cosmetics.Worn(Cosmetics.Aura),
             ArmourUpgrade: armour?.UpgradeLevel ?? 0,
-            WeaponModel: weapon is null ? null : HeldModel(weapon.DefId)));
+            WeaponModel: weapon is null ? null : ModelOf(weapon.DefId),
+            ArmourModel: armour is null ? null : ModelOf(armour.DefId)));
     }
 
-    /// <summary>The model a weapon is held as: its visual's scene, when the visual is a model.</summary>
-    private static string? HeldModel(string defId) =>
+    /// <summary>The model an item is worn as: its visual's scene, when the visual is a model.</summary>
+    private static string? ModelOf(string defId) =>
         GameContent.Database.Items.TryGetValue(defId, out var def)
         && def.Visual is { } visual
         && GameContent.Database.Visuals.TryGetValue(visual, out var look)

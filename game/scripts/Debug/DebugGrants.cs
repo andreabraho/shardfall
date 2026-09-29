@@ -48,7 +48,7 @@ public partial class DebugGrants : Node
             return;
         }
 
-        GD.Print("[debug] F1 grants a level · F8 grants test gan, crafting materials and one of every weapon · F10 unlocks every cosmetic");
+        GD.Print("[debug] F1 grants a level · F8 grants test gan, crafting materials and every weapon and modelled armour · F10 unlocks every cosmetic");
     }
 
     public override void _UnhandledInput(InputEvent @event)
@@ -90,18 +90,23 @@ public partial class DebugGrants : Node
             if (!bag.Bag.TryGrant(id, count)) refused++;
         }
 
-        // One of every weapon, so each one's model can be seen in the hand (2026-09-29).
+        // One of every weapon, and every piece with a model of its own, so each look can be
+        // tried on (2026-09-29).
         var rng = GameItems.LootRng.Fork("debug-weapons");
         var weapons = 0;
 
-        foreach (var def in GameContent.Database.Items.Values.Where(d => d.Slot == EquipSlot.Weapon).OrderBy(d => d.LevelReq).Select(d => d.Id))
+        foreach (var def in GameContent.Database.Items.Values.Where(Tried).OrderBy(d => d.LevelReq).Select(d => d.Id))
         {
             if (bag.Bag.TryAdd(GameItems.Factory.Create(def, rng))) weapons++;
         }
 
-        GD.Print($"[debug] granted {Yang:N0} gan, {Kit.Length - refused}/{Kit.Length} material stacks and {weapons} weapons"
+        GD.Print($"[debug] granted {Yang:N0} gan, {Kit.Length - refused}/{Kit.Length} material stacks and {weapons} pieces of gear"
             + (refused > 0 ? " — bag is full" : ""));
     }
+
+    private static bool Tried(Kiln.Data.Definitions.ItemDef def) =>
+        def.Slot == EquipSlot.Weapon
+        || (def.Visual is { } visual && GameContent.Database.Visuals.TryGetValue(visual, out var look) && look.Primitive == "model");
 
     /// <summary>
     /// Exactly the experience the next level still wants, so one press is one level.

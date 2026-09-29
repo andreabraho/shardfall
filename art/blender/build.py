@@ -45,6 +45,9 @@ def main():
           f"{size[0]:.2f} x {size[1]:.2f} x {size[2]:.2f} m -> {os.path.relpath(out, ROOT)}")
 
     if render:
+        # Gear made to be worn is judged on who wears it.
+        if where.get("reference"):
+            bpy.ops.import_scene.gltf(filepath=where["reference"])
         turntable(render, where["name"], where.get("views", 4))
 
 
