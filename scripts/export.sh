@@ -8,6 +8,11 @@
 # The version comes from game/project.godot (application/config/version).
 set -euo pipefail
 
+# MSBuild would leave a build node running that holds this script's output open for ever.
+export MSBUILDDISABLENODEREUSE=1
+# Likewise the shared C# compiler server.
+export UseSharedCompilation=false
+
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 VERSION="$(sed -n 's/^config\/version="\(.*\)"$/\1/p' "$ROOT/game/project.godot")"
 NAME="Temins-v${VERSION}-windows"
@@ -29,6 +34,11 @@ echo "== Temins v$VERSION"
 
 rm -rf "$OUT" "$STAGE" "$ROOT/export/$NAME.zip"
 mkdir -p "$OUT"
+
+# The export saves project.godot through the editor, which strips its comments: put the
+# hand-written file back whatever happens.
+cp "$ROOT/game/project.godot" "$ROOT/export/project.godot.keep"
+trap 'mv -f "$ROOT/export/project.godot.keep" "$ROOT/game/project.godot"' EXIT
 
 # Import first so a fresh checkout has its .godot cache; then the release export, which
 # publishes the C# assembly in Release beside the exe.
