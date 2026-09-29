@@ -1,12 +1,14 @@
+using System.Linq;
 using Godot;
+using Kiln.Core.Foundation;
 using Kiln.Game.Input;
 using Kiln.Game.Items;
 
 namespace Kiln.Game.Debug;
 
 /// <summary>
-/// Hands the player what a system needs to be exercised: yang and materials (F8), and a
-/// level at a time (F1).
+/// Hands the player what a system needs to be exercised: yang, materials and one of every
+/// weapon (F8), and a level at a time (F1).
 /// </summary>
 /// <remarks>
 /// The upgrade ladder cannot be judged on a starting purse: reaching the first fallible rung
@@ -46,7 +48,7 @@ public partial class DebugGrants : Node
             return;
         }
 
-        GD.Print("[debug] F1 grants a level · F8 grants test gan and crafting materials · F10 unlocks every cosmetic");
+        GD.Print("[debug] F1 grants a level · F8 grants test gan, crafting materials and one of every weapon · F10 unlocks every cosmetic");
     }
 
     public override void _UnhandledInput(InputEvent @event)
@@ -88,7 +90,16 @@ public partial class DebugGrants : Node
             if (!bag.Bag.TryGrant(id, count)) refused++;
         }
 
-        GD.Print($"[debug] granted {Yang:N0} gan and {Kit.Length - refused}/{Kit.Length} material stacks"
+        // One of every weapon, so each one's model can be seen in the hand (2026-09-29).
+        var rng = GameItems.LootRng.Fork("debug-weapons");
+        var weapons = 0;
+
+        foreach (var def in GameContent.Database.Items.Values.Where(d => d.Slot == EquipSlot.Weapon).OrderBy(d => d.LevelReq).Select(d => d.Id))
+        {
+            if (bag.Bag.TryAdd(GameItems.Factory.Create(def, rng))) weapons++;
+        }
+
+        GD.Print($"[debug] granted {Yang:N0} gan, {Kit.Length - refused}/{Kit.Length} material stacks and {weapons} weapons"
             + (refused > 0 ? " — bag is full" : ""));
     }
 

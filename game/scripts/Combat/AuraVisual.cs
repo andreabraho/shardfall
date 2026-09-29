@@ -286,7 +286,8 @@ public partial class AuraVisual : Node3D
         var root = GetParent().GetNodeOrNull<Visual.VisualRoot>("VisualRoot");
         var model = root?.GetChildCount() > 0 ? root.GetChild<Node>(0) as Node3D : null;
 
-        if (model is null || (ReferenceEquals(model, _model) && _lit.Count > 0)) return;
+        // A weapon changed in hand leaves a freed mesh in the list: look again.
+        if (model is null || (ReferenceEquals(model, _model) && _lit.Count > 0 && _lit.TrueForAll(IsInstanceValid))) return;
 
         _model = model;
         _lit.Clear();
