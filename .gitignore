@@ -31,3 +31,6 @@ desktop.ini
 # Logs & local scratch
 *.log
 /scratch/
+
+# Blender's Python caches for the model scripts
+__pycache__/

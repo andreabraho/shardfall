@@ -10,6 +10,7 @@ attribution is required in-game.
 
 | Asset | Path | Source | Licence | Attribution required | Added |
 |---|---|---|---|---|---|
+| **Temins originals** — models made for this game in Blender 5.0 from the scripts in `art/blender/models/` (PIP-01/02 test pieces: the Fang Blade, the Ember Shard, a brazier). No third-party mesh, texture or reference file | `game/assets/temins/` | This repository: `scripts/blender.sh <model>` rebuilds each one | **Ours** (the project’s own work) | No | 2026-09-29 |
 | KayKit Dungeon Remastered 1.0 — 14 models (walls, floor, stairs, pillar, column, rubble, banner, torches) | `game/assets/kaykit/dungeon/` | [github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0](https://github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0) | **CC0 1.0** | No | 2026-09-20 |
 | KayKit Character Pack: Adventurers 1.0 — Barbarian (heavy enemies) | `game/assets/kaykit/characters/` | [github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0](https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0) | **CC0 1.0** | No | 2026-09-20 |
 | KayKit Character Pack: Skeletons 1.0 — Warrior (humanoid enemies), Minion (small enemies), Rogue (the Heart Keeper), Mage (the Vault Chorister) | `game/assets/kaykit/characters/` | [github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0](https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0) | **CC0 1.0** | No | 2026-09-20 |
