@@ -11,6 +11,11 @@ namespace Kiln.Game.UI;
 /// Icons are white shapes on a clear ground, tinted with the item's rarity where they are
 /// drawn, so one picture serves every rarity of a kind. An item with no icon is drawn with
 /// its name instead, which is what every item was before there were icons.
+/// <para>
+/// A weapon, armour or helmet with a model of its own has a painted icon (2026-09-30): a PNG
+/// rendered from that model (art/blender/icons.py), in its own colours and shaped like its
+/// cell. It is drawn as it is, never tinted.
+/// </para>
 /// </remarks>
 public static class ItemIcons
 {
@@ -20,7 +25,19 @@ public static class ItemIcons
     private static readonly Dictionary<string, Texture2D?> Cache = [];
 
     /// <summary>The icon for an item, or null when it has none.</summary>
-    public static Texture2D? For(string defId, ItemSpec spec) => Load(PictureOf(defId, spec));
+    public static Texture2D? For(string defId, ItemSpec spec) => IsPainted(defId) ? LoadPainted(defId) : Load(PictureOf(defId, spec));
+
+    /// <summary>Whether the item has a painted icon of its own, drawn untinted.</summary>
+    public static bool IsPainted(string defId) => ResourceLoader.Exists(Folder + defId + ".png");
+
+    private static Texture2D? LoadPainted(string defId)
+    {
+        var key = defId + ".png";
+
+        if (Cache.TryGetValue(key, out var known)) return known;
+
+        return Cache[key] = GD.Load<Texture2D>(Folder + key);
+    }
 
     /// <summary>
     /// Which picture an item is drawn with: its own, by id, when there is one, else the one

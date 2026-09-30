@@ -622,6 +622,12 @@ public sealed class CosmeticDef : ContentDefBase
 
     /// <summary>Companion: its size against the creature the visual was made for.</summary>
     public double Scale { get; init; } = 0.5;
+
+    /// <summary>
+    /// Companion: metres it flies above the ground, bobbing; 0 for one that walks. A winged
+    /// thing standing on the grass sank into it (2026-09-30).
+    /// </summary>
+    public double Hover { get; init; }
 }
 
 // ---------------------------------------------------------------------------
@@ -723,6 +729,21 @@ public sealed class GearPartsDef
 
     /// <summary>The face: the one mesh an armour skin (REF-23) leaves as it is.</summary>
     public string Face { get; init; } = string.Empty;
+
+    /// <summary>
+    /// A scene on the same rig whose unarmoured body is worn in place of the model's own
+    /// (2026-09-30): the armour is put on over plain clothes, not over armour.
+    /// </summary>
+    public string BodyScene { get; init; } = string.Empty;
+
+    /// <summary>The meshes taken from <see cref="BodyScene"/>.</summary>
+    public string[] BodyParts { get; init; } = [];
+
+    /// <summary>The model's own meshes they take the place of.</summary>
+    public string[] Replaces { get; init; } = [];
+
+    /// <summary>The torso, hidden under an armour with plates of its own, which covers it.</summary>
+    public string Torso { get; init; } = string.Empty;
 }
 
 // ---------------------------------------------------------------------------
@@ -815,6 +836,40 @@ public sealed class ZoneDef : ContentDefBase
     /// such as a dungeon.
     /// </summary>
     public BorderDef? Border { get; init; }
+
+    /// <summary>
+    /// How the ground is painted (2026-09-30). Null keeps the scene's single colour, as a
+    /// dungeon's stone floor does.
+    /// </summary>
+    public GroundDef? Ground { get; init; }
+}
+
+/// <summary>
+/// The paint on a map's ground (game/shaders/ground.gdshader): its own colour, from the scene,
+/// broken up into sunlit and shaded swathes, patches of something else, and specks.
+/// </summary>
+public sealed class GroundDef
+{
+    /// <summary>The sunlit swathes.</summary>
+    public string Light { get; init; } = "#6b8540";
+
+    /// <summary>The shaded, lusher swathes.</summary>
+    public string Dark { get; init; } = "#334f29";
+
+    /// <summary>The patches: bare earth in a meadow, ash in a burnt wood, gravel in sand.</summary>
+    public string Patch { get; init; } = "#5c4a30";
+
+    /// <summary>How much of the ground the patches cover, 0 to 1.</summary>
+    public double PatchAmount { get; init; } = 0.2;
+
+    /// <summary>The specks: flowers, pebbles, embers.</summary>
+    public string Speck { get; init; } = "#d9cc73";
+
+    /// <summary>How thick the specks lie, 0 to 0.3.</summary>
+    public double SpeckAmount { get; init; } = 0.03;
+
+    /// <summary>How strongly the fine grain lightens and darkens it, 0 to 0.5.</summary>
+    public double Grain { get; init; } = 0.16;
 }
 
 /// <summary>

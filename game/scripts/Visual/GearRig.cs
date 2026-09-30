@@ -19,7 +19,19 @@ namespace Kiln.Game.Visual;
 /// gives and never drawn.
 /// </remarks>
 /// <param name="ArmourUpgrade">The armour's upgrade level: from +8 it sparkles (2026-09-28).</param>
-public sealed record GearLook(int Hands, int Upgrade, bool Helmet, bool Cape, CosmeticDef? SwordSkin = null, CosmeticDef? ArmourSkin = null, CosmeticDef? Aura = null, int ArmourUpgrade = 0);
+/// <param name="WeaponModel">
+/// The weapon's own model (2026-09-29): every sword and great sword has one, made in Blender.
+/// Null keeps the model's default blade for that hand.
+/// </param>
+/// <param name="ArmourModel">
+/// The armour's own plates (2026-09-29): a scene of pieces named bone__&lt;bone&gt;, each hung on
+/// that bone. Null wears none over the model's own body.
+/// </param>
+/// <param name="HelmetModel">
+/// The helmet's own model (2026-09-30), pieces named the same way, worn in place of the model's
+/// own helmet. Null keeps the model's own.
+/// </param>
+public sealed record GearLook(int Hands, int Upgrade, bool Helmet, bool Cape, CosmeticDef? SwordSkin = null, CosmeticDef? ArmourSkin = null, CosmeticDef? Aura = null, int ArmourUpgrade = 0, string? WeaponModel = null, string? ArmourModel = null, string? HelmetModel = null);
 
 /// <summary>
 /// The parts of a model that stand for worn gear, shown and hidden to match it (REF-22).
@@ -35,10 +47,27 @@ public sealed class GearRig
     /// <summary>The bone a weapon is held on.</summary>
     private const string WeaponHand = "handslot.r";
 
-    private readonly MeshInstance3D? _oneHand;
-    private readonly MeshInstance3D? _twoHand;
+    private MeshInstance3D? _oneHand;
+    private MeshInstance3D? _twoHand;
+
+    /// <summary>The scene each hand holds now, so a blade is only swapped when the weapon's model changes.</summary>
+    private string _oneHandPath;
+    private string _twoHandPath;
+
+    private readonly GearPartsDef _parts;
+
+    /// <summary>The armour's plates on their bones, and the scene they came from.</summary>
+    private readonly List<MeshInstance3D> _plates = [];
+    private string _platesPath = "";
+
+    /// <summary>The same for a modelled helmet.</summary>
+    private readonly List<MeshInstance3D> _helm = [];
+    private string _helmPath = "";
     private readonly List<MeshInstance3D> _helmet = [];
     private readonly MeshInstance3D? _cape;
+
+    /// <summary>The unarmoured torso, hidden under a modelled armour.</summary>
+    private readonly MeshInstance3D? _torso;
 
     /// <summary>The model's own meshes but the face: what an armour skin recolours.</summary>
     private readonly List<MeshInstance3D> _body = [];
@@ -51,6 +80,11 @@ public sealed class GearRig
     private GearRig(Node3D model, GearPartsDef parts)
     {
         _model = model;
+        _parts = parts;
+
+        // Plain clothes in place of the model's painted armour, before anything is collected.
+        Graft(model, parts);
+        _torso = parts.Torso.Length > 0 ? model.FindChild(parts.Torso, recursive: true, owned: false) as MeshInstance3D : null;
 
         // Before the swords are put in its hands: those are not the armour.
         foreach (var mesh in model.FindChildren("*", "MeshInstance3D", true, false).OfType<MeshInstance3D>())
@@ -58,8 +92,10 @@ public sealed class GearRig
             if (mesh.Name != parts.Face) _body.Add(mesh);
         }
 
-        _oneHand = Part(model, parts.OneHand, WeaponHand);
-        _twoHand = Part(model, parts.TwoHand, WeaponHand);
+        _oneHand = Named(Part(model, parts.OneHand, WeaponHand));
+        _twoHand = Named(Part(model, parts.TwoHand, WeaponHand));
+        _oneHandPath = parts.OneHand;
+        _twoHandPath = parts.TwoHand;
         _cape = Part(model, parts.Cape, WeaponHand);
 
         foreach (var name in parts.Helmet)
@@ -86,12 +122,28 @@ public sealed class GearRig
 
     public void Wear(GearLook look)
     {
+        // The weapon's own model in the hand that holds it; the other hand keeps what it has.
+        var swapped = look.Hands switch
+        {
+            1 => Hold(ref _oneHand, ref _oneHandPath, look.WeaponModel ?? _parts.OneHand),
+            2 => Hold(ref _twoHand, ref _twoHandPath, look.WeaponModel ?? _parts.TwoHand),
+            _ => false,
+        };
+
+        // A new blade wears no aura yet: put the worn one on again below.
+        if (swapped) _aura = "";
+
         if (_oneHand is not null) _oneHand.Visible = look.Hands == 1;
         if (_twoHand is not null) _twoHand.Visible = look.Hands == 2;
 
-        foreach (var piece in _helmet) piece.Visible = look.Helmet;
+        // A modelled helmet is worn in place of the model's own.
+        foreach (var piece in _helmet) piece.Visible = look.Helmet && look.HelmetModel is null;
 
-        if (_cape is not null) _cape.Visible = look.Cape;
+        // A modelled armour covers the torso; without one the plain clothes show.
+        if (_torso is not null) _torso.Visible = look.ArmourModel is null;
+
+        // A modelled armour brings its own cape, if any: the model's would pass through its plates.
+        if (_cape is not null) _cape.Visible = look.Cape && look.ArmourModel is null;
 
         // A sword skin is on both blades, so changing blade keeps it (REF-23).
         BladeSkin.Set(_oneHand, look.SwordSkin);
@@ -112,6 +164,8 @@ public sealed class GearRig
         WeaponGlow.Set(_twoHand, look.Hands == 2 ? look.Upgrade : 0, tint);
 
         DressArmour(look.ArmourSkin);
+        DressPlates(look.ArmourModel, _plates, ref _platesPath);
+        DressPlates(look.Helmet ? look.HelmetModel : null, _helm, ref _helmPath);
 
         // The same glints round the body for +8 and +9 armour (2026-09-28). Rebuilt only when
         // the level changes, so wearing something else does not restart them.
@@ -167,6 +221,190 @@ public sealed class GearRig
                 mesh.SetSurfaceOverrideMaterial(s, copy);
             }
         }
+    }
+
+    /// <summary>
+    /// Puts the scene at <paramref name="wanted"/> in the weapon hand in place of
+    /// <paramref name="blade"/>. False when it is already held or does not load, which keeps
+    /// the blade there is.
+    /// </summary>
+    private bool Hold(ref MeshInstance3D? blade, ref string held, string wanted)
+    {
+        if (wanted.Length == 0 || wanted == held) return false;
+
+        if (Named(Part(_model, wanted, WeaponHand)) is not { } fresh) return false;
+
+        if (blade is not null && GodotObject.IsInstanceValid(blade))
+        {
+            // The whole scene that was put in the hand, not just its mesh.
+            Node node = blade;
+            while (node.GetParent() is { } parent && parent is not BoneAttachment3D) node = parent;
+
+            node.GetParent()?.RemoveChild(node);
+            node.QueueFree();
+        }
+
+        fresh.Visible = false;
+        blade = fresh;
+        held = wanted;
+        return true;
+    }
+
+    /// <summary>
+    /// A held blade's mesh named as a weapon, so what looks for the weapon by name — the Blade
+    /// Aura's light — finds it whatever the model called it.
+    /// </summary>
+    private static MeshInstance3D? Named(MeshInstance3D? blade)
+    {
+        if (blade is not null && !blade.Name.ToString().Contains("sword") && !blade.Name.ToString().Contains("weapon"))
+        {
+            blade.Name = $"weapon_{blade.Name}";
+        }
+
+        return blade;
+    }
+
+    /// <summary>
+    /// Hangs an armour's plates on the skeleton (2026-09-29): each piece called bone__&lt;bone&gt;
+    /// goes on that bone, placed as it sat on the model at rest, so it follows every move.
+    /// </summary>
+    /// <remarks>
+    /// The pieces were built round the model standing at rest, in the model's own space, so a
+    /// piece's place on its bone is its place in the model undone by the bone's rest. Measured
+    /// through the tree rather than in global space, so it holds before the model is shown.
+    /// </remarks>
+    private void DressPlates(string? path, List<MeshInstance3D> worn, ref string wornPath)
+    {
+        path ??= "";
+
+        if (path == wornPath) return;
+
+        wornPath = path;
+
+        foreach (var plate in worn)
+        {
+            if (!GodotObject.IsInstanceValid(plate)) continue;
+
+            plate.GetParent()?.RemoveChild(plate);
+            plate.QueueFree();
+        }
+
+        worn.Clear();
+
+        if (path.Length == 0) return;
+
+        var skeleton = _model.FindChildren("*", "Skeleton3D", true, false).OfType<Skeleton3D>().FirstOrDefault();
+
+        if (skeleton is null || ResourceLoader.Load<PackedScene>(path)?.Instantiate() is not Node3D suit)
+        {
+            GD.PushWarning($"[gear] armour '{path}' cannot be worn: no skeleton, or it did not load.");
+            return;
+        }
+
+        var skeletonInModel = Within(skeleton, _model);
+
+        foreach (var piece in suit.FindChildren("bone__*", "MeshInstance3D", true, false).OfType<MeshInstance3D>())
+        {
+            var bone = BoneOf(skeleton, piece.Name.ToString()["bone__".Length..]);
+
+            if (bone < 0)
+            {
+                GD.PushWarning($"[gear] armour '{path}': no bone for '{piece.Name}'.");
+                continue;
+            }
+
+            var place = Within(piece, suit);
+            var rest = skeletonInModel * skeleton.GetBoneGlobalRest(bone);
+            var slot = PlateSlot(skeleton, bone);
+
+            piece.GetParent().RemoveChild(piece);
+            piece.Owner = null;
+            slot.AddChild(piece);
+            piece.Transform = rest.AffineInverse() * place;
+            worn.Add(piece);
+        }
+
+        suit.QueueFree();
+    }
+
+    /// <summary>
+    /// Puts the unarmoured body of <see cref="GearPartsDef.BodyScene"/> on the model's skeleton
+    /// in place of the model's own (2026-09-30). Both are the same rig, and the skins bind by
+    /// bone name, so the grafted meshes follow every animation the model plays.
+    /// </summary>
+    private static void Graft(Node3D model, GearPartsDef parts)
+    {
+        if (parts.BodyScene.Length == 0) return;
+
+        var skeleton = model.FindChildren("*", "Skeleton3D", true, false).OfType<Skeleton3D>().FirstOrDefault();
+
+        if (skeleton is null || ResourceLoader.Load<PackedScene>(parts.BodyScene)?.Instantiate() is not Node3D donor)
+        {
+            GD.PushWarning($"[gear] body '{parts.BodyScene}' cannot be grafted: no skeleton, or it did not load.");
+            return;
+        }
+
+        var donorSkeleton = donor.FindChildren("*", "Skeleton3D", true, false).OfType<Skeleton3D>().FirstOrDefault();
+
+        foreach (var name in parts.BodyParts)
+        {
+            if (donor.FindChild(name, recursive: true, owned: false) is not MeshInstance3D mesh)
+            {
+                GD.PushWarning($"[gear] body '{parts.BodyScene}' has no part '{name}'.");
+                continue;
+            }
+
+            var place = donorSkeleton is null ? mesh.Transform : Within(mesh, donorSkeleton);
+
+            mesh.GetParent().RemoveChild(mesh);
+            mesh.Owner = null;
+            skeleton.AddChild(mesh);
+            mesh.Transform = place;
+            mesh.Skeleton = mesh.GetPathTo(skeleton);
+        }
+
+        donor.QueueFree();
+
+        foreach (var name in parts.Replaces)
+        {
+            if (model.FindChild(name, recursive: true, owned: false) is not MeshInstance3D old) continue;
+
+            old.GetParent().RemoveChild(old);
+            old.QueueFree();
+        }
+    }
+
+    /// <summary>A bone by its name as a node could carry it: "upperarm_l" is the bone "upperarm.l".</summary>
+    private static int BoneOf(Skeleton3D skeleton, string name)
+    {
+        var bone = skeleton.FindBone(name);
+        var dot = name.LastIndexOf('_');
+
+        return bone >= 0 || dot < 0 ? bone : skeleton.FindBone(name[..dot] + "." + name[(dot + 1)..]);
+    }
+
+    private static BoneAttachment3D PlateSlot(Skeleton3D skeleton, int bone)
+    {
+        var name = $"Plates_{skeleton.GetBoneName(bone).Replace('.', '_')}";
+
+        if (skeleton.GetNodeOrNull<BoneAttachment3D>(name) is { } slot) return slot;
+
+        slot = new BoneAttachment3D { Name = name, BoneName = skeleton.GetBoneName(bone) };
+        skeleton.AddChild(slot);
+        return slot;
+    }
+
+    /// <summary>Where <paramref name="node"/> sits in <paramref name="ancestor"/>'s space, through the tree.</summary>
+    private static Transform3D Within(Node3D node, Node ancestor)
+    {
+        var place = Transform3D.Identity;
+
+        for (Node? n = node; n is not null && n != ancestor; n = n.GetParent())
+        {
+            if (n is Node3D spatial) place = spatial.Transform * place;
+        }
+
+        return place;
     }
 
     private IEnumerable<MeshInstance3D> All()

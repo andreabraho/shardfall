@@ -32,6 +32,9 @@ public partial class ZoneRoot : Node3D
         GameWorld.EnterZone(ZoneId);
         Audio.AudioDirector.Music(GameContent.Database.Zones.TryGetValue(ZoneId, out var here) ? here.Music : "");
         Audio.AudioDirector.Ambience(here?.Ambience ?? "");
+
+        // After the mountains, which grass their slopes in the ground's own colour.
+        if (here is not null) ZoneGround.Paint(this, here);
         PlaceArrivingPlayer();
         StandShards();
         Audit();

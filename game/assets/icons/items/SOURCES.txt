@@ -27,3 +27,6 @@ mat_boring_stone.svg      Lorc         lorc/drill.svg
 mat_mutation_ink.svg      Lorc         lorc/quill-ink.svg
 mat_flask_draught.svg     Lorc         lorc/standing-potion.svg
 mat_blessing_scroll.svg   Lorc         lorc/scroll-unfurled.svg
+
+The painted icons, <item id>.png (2026-09-30), are not from game-icons.net: they are
+rendered from Temins' own models by art/blender/icons.py and are the project's own work.

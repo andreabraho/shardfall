@@ -117,8 +117,20 @@ public partial class PlayerInventory : Node
             SwordSkin: Cosmetics.Worn(Cosmetics.Sword),
             ArmourSkin: Cosmetics.Worn(Cosmetics.Armour),
             Aura: Cosmetics.Worn(Cosmetics.Aura),
-            ArmourUpgrade: armour?.UpgradeLevel ?? 0));
+            ArmourUpgrade: armour?.UpgradeLevel ?? 0,
+            WeaponModel: weapon is null ? null : ModelOf(weapon.DefId),
+            ArmourModel: armour is null ? null : ModelOf(armour.DefId),
+            HelmetModel: Gear.In(EquipSlot.Helmet) is { } helmet ? ModelOf(helmet.DefId) : null));
     }
+
+    /// <summary>The model an item is worn as: its visual's scene, when the visual is a model.</summary>
+    private static string? ModelOf(string defId) =>
+        GameContent.Database.Items.TryGetValue(defId, out var def)
+        && def.Visual is { } visual
+        && GameContent.Database.Visuals.TryGetValue(visual, out var look)
+        && look.Primitive == "model"
+            ? look.ModelPath
+            : null;
 
     /// <summary>
     /// Starting kit for the test character. A real new game starts empty and the prologue
@@ -218,6 +230,19 @@ public partial class PlayerInventory : Node
         }
 
         return EquipOutcome.Equipped;
+    }
+
+    /// <summary>
+    /// Mints a fresh <paramref name="defId"/> and wears it, the level still applying: for the
+    /// debug grants and for scripted checks, which cannot build an item themselves.
+    /// </summary>
+    public bool EquipNew(string defId)
+    {
+        if (!GameItems.IsLoaded) return false;
+
+        var item = GameItems.Factory.Create(defId, GameItems.LootRng.Fork("equip-new"));
+
+        return Bag.TryAdd(item) && Equip(item) == EquipOutcome.Equipped;
     }
 
     /// <summary>Takes off what is worn in a slot, into the bag. False when the bag has no room.</summary>
