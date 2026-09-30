@@ -104,6 +104,18 @@ public partial class DebugGrants : Node
             + (refused > 0 ? " — bag is full" : ""));
     }
 
+    /// <summary>
+    /// Unlocks every look and wears <paramref name="id"/> as <paramref name="kind"/> on the player:
+    /// for scripted checks of the cosmetics, which cannot reach the wardrobe themselves.
+    /// </summary>
+    public void TryOn(string kind, string id)
+    {
+        Cosmetics.UnlockAll();
+        PlayerProfile.Wardrobe.Wear(kind, string.IsNullOrEmpty(id) ? null : id);
+
+        if (GetTree().GetFirstNodeInGroup("player") is Node player) player.GetNodeOrNull<PlayerInventory>("PlayerInventory")?.ShowGear();
+    }
+
     private static bool Tried(Kiln.Data.Definitions.ItemDef def) =>
         def.Slot == EquipSlot.Weapon
         || (def.Visual is { } visual && GameContent.Database.Visuals.TryGetValue(visual, out var look) && look.Primitive == "model");
