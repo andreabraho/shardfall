@@ -412,18 +412,32 @@ style, kits, icons, getting it into the game, what the user liked and did not: `
 
 ### P2 — Classes and the character creator
 
-The design has four classes; only the Warrior exists. The other three take their models from
-KayKit Adventurers 2.0 (CC0, same pack and same animations as the Knight). Names are ours:
-the design doc's "Sura" and "Shaman" come from the original and are replaced.
+The design has four classes; only the Warrior exists. **Your call (2026-09-30): one class at a
+time, starting from the dagger fighter.** The four: the Warrior; a fighter with **daggers** and,
+as its second branch, the **bow**; a sword fighter with **magic weapons** (dark magic); a
+**shaman** (magic at range, heals, blessings). Names on screen are ours — "Sura", "Shaman" and
+the like are the original's; in the code they are `Blade`, `Sura`, `Shaman`, never shown.
+The creator gets **at least a woman from the start**. Analysis — what the packs have, how
+looks are made, how hair behaves under our helmets, the cost of each level of customisation:
+**`docs/08-classes-and-creator.md`**.
+
+Measured for it: every KayKit character shares the Knight's bones, so **our armours fit the
+Rogue (the pack's woman) unchanged** and the animations are shared; her hair falls out under
+our four helmets without piercing them. The animations the new classes need (two daggers,
+dodges, bow, spells) are in KayKit Character Animations 1.1, **already downloaded**.
 
 | ID | Task | Owner | Notes |
 |---|---|---|---|
-| CLS-01 | Several classes in the code: the class in the save, skills and starting gear per class, class-bound items, a class per skill tree | **[C]** | Old saves stay Warriors |
-| CLS-02 | **Character creator**: the class with a turning 3D preview and what it plays like, a look (clothes colours, Knight or Barbarian for the Warrior), name, difficulty | **[C↔You]** | How deep the look goes is yours to decide: the variants the packs have, or a modular pack for body, hair and sex |
-| CLS-03 | **Blade** — daggers and bow, fast; Shift: a step and a moment untouchable | **[C↔You]** | Proves the multi-class build end to end |
-| CLS-04 | Second class — sword and dark magic; Shift: a shield that absorbs | **[C↔You]** | Name to decide |
-| CLS-05 | Third class — magic at range, heals and blessings; Shift: a shield that also cleanses | **[C↔You]** | Name to decide |
-| CLS-06 | Balance: each class finishes act 1 and the tower alone, checked by the simulator | **[C]** | |
+| CLS-01 | Several classes in the code: the class in the save, skills and starting gear per class, class-bound items, a class per skill tree, two weapons in hand | **[C]** | Old saves stay Warriors |
+| CLS-02 | **Character creator, level A**: class (what it plays like), **man or woman**, face (4 men, 1 woman, the hooded look for the dagger class), hair colour, skin tone, name, difficulty; a turning 3D preview | **[C↔You]** | Heads swapped whole, colours by palette swatches: no new models |
+| CLS-02b | Creator level B: separate hairstyles made in Blender, each with its rule under a helm and a photo of every hair under every helm | **[C↔You]** | Later, if level A is not enough |
+| CLS-03 | **Dagger fighter** (class 2, first branch): skills, daggers (KayKit's, then ours), dual-wield blows, Shift: a short dash, a moment untouchable | **[C↔You]** | First; proves the multi-class build end to end |
+| CLS-04 | Dagger fighter, **bow** branch: bow, arrows, aim-draw-release | **[C↔You]** | To confirm: a branch of class 2 (my reading) or a class of its own |
+| CLS-05 | **Magic-weapons fighter** — sword and dark magic; Shift: a shield that absorbs | **[C↔You]** | Name to decide |
+| CLS-06 | **Shaman** — magic at range, heals and blessings; Shift: a shield that also cleanses | **[C↔You]** | Name to decide |
+| CLS-07 | Balance: each class finishes act 1 and the tower alone, checked by the simulator | **[C]** | After each class, not at the end |
+
+Open with you: dagger and bow as one class or two; the three names; creator level A first.
 
 ### P3 — Act 2, levels 23–40
 
