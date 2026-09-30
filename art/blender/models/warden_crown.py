@@ -19,7 +19,7 @@ def build():
         # Cheek guards hanging to the jaw, open over the face.
         a.gap_band("cheeks", cheek[0], cheek[1], 1.40, 1.56, steel, gap=62, y=a.HEAD[1], top=1.05),
         # The crown: a gold circlet round the brow with points standing up from it.
-        a.band("circlet", crown[0], crown[1], 1.98, 2.07, gold, sides=24, y=a.HEAD[1]),
+        a.band("circlet", crown[0], crown[1], 1.98, 2.07, gold, sides=40, y=a.HEAD[1]),
         t.sphere("stone", 0.06, ice, at=(0, a.HEAD[1] - crown[1] - 0.02, 2.03), subdivisions=0, squash=(1, 0.6, 1.3)),
     ]
 

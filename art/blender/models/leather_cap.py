@@ -12,7 +12,7 @@ def build():
     head = [
         # The crown, cut off above the ears, and a rolled band round its edge.
         a.shell("cap", leather, centre=(0, -0.02, 1.84), radii=(0.615, 0.585, 0.52), below=1.9, thickness=0.03),
-        a.band("band", 0.62, 0.59, 1.86, 1.95, dark, sides=20, y=-0.02),
+        a.band("band", 0.62, 0.59, 1.86, 1.95, dark, sides=40, y=-0.02),
         # Seams over the top, front to back and side to side.
         a.shell("seam_a", stitch, centre=(0, -0.02, 1.84), radii=(0.025, 0.60, 0.535), below=1.9, thickness=0.01, segments=6),
         a.shell("seam_b", stitch, centre=(0, -0.02, 1.84), radii=(0.63, 0.025, 0.535), below=1.9, thickness=0.01, segments=6),

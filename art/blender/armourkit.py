@@ -23,7 +23,7 @@ KNIGHT = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.ab
                       "game", "assets", "kaykit", "adventurers2", "Knight.glb")
 
 
-def band(name, rx, ry, z0, z1, mat, sides=14, top=1.0, y=0.0, bevel=0.012):
+def band(name, rx, ry, z0, z1, mat, sides=32, top=1.0, y=0.0, bevel=0.012):
     """
     A ring of plate round the body: an elliptic prism from z0 to z1, rx across and ry deep,
     its top scaled by `top` so a breastplate can narrow to the shoulders.
@@ -70,6 +70,7 @@ def finish(name, by_bone, folder="armour", focus=None):
 
     for bone, parts in by_bone.items():
         joined = t.join("bone__" + bone.replace(".", "_"), parts)
+        t.soften(joined)
         keep.add(joined)
 
     for obj in list(bpy.data.objects):
@@ -79,14 +80,14 @@ def finish(name, by_bone, folder="armour", focus=None):
     helmet = list(by_bone) == ["head"]
 
     if focus is None:
-        focus = ((0, 0, 1.75), 0.75) if helmet else ((0, 0, 0.9), 0.85)
+        focus = ((0, 0, 1.85), 0.85) if helmet else ((0, 0, 0.9), 0.85)
 
     replaces = ["Knight_Helmet", "Knight_HelmetVisor"] if helmet else ["Knight_Cape", "Knight_Helmet", "Knight_HelmetVisor"]
 
     return {"folder": folder, "name": name, "reference": KNIGHT, "focus": focus, "replaces": replaces}
 
 
-def cape(name, mat, top=(1.31, 0.40, 0.31), bottom=(0.28, 0.56, 0.50), curve=0.12, thickness=0.025, cols=8, rows=5):
+def cape(name, mat, top=(1.31, 0.40, 0.31), bottom=(0.28, 0.56, 0.50), curve=0.12, thickness=0.025, cols=16, rows=10):
     """
     A cape hanging behind, clear of the plates: from its top edge (z, y, half width) at the
     shoulders to its bottom edge, curved round the back so its middle stands furthest out.
@@ -117,7 +118,7 @@ def cape(name, mat, top=(1.31, 0.40, 0.31), bottom=(0.28, 0.56, 0.50), curve=0.1
     return obj
 
 
-def gap_band(name, rx, ry, z0, z1, mat, gap=70, sides=20, y=0.0, thickness=0.03, top=1.0, front=None):
+def gap_band(name, rx, ry, z0, z1, mat, gap=70, sides=40, y=0.0, thickness=0.03, top=1.0, front=None):
     """
     A band round the head or body left open over `gap` degrees at the front (-Y), for the
     face; with `front`, only that many degrees at the front are kept instead.
@@ -141,7 +142,7 @@ def gap_band(name, rx, ry, z0, z1, mat, gap=70, sides=20, y=0.0, thickness=0.03,
     return obj
 
 
-def shell(name, mat, centre, radii, below=None, opening=None, thickness=0.035, segments=18, rings=12, smooth=False):
+def shell(name, mat, centre, radii, below=None, opening=None, thickness=0.035, segments=32, rings=20, smooth=False):
     """
     A helmet's shell: an ellipsoid round the head, cut off below `below` and, with `opening`
     (half width, bottom, top), open over the face at the front.
@@ -168,11 +169,11 @@ def shell(name, mat, centre, radii, below=None, opening=None, thickness=0.035, s
 def roll(name, rx, ry, z0, z1, mat, y=0.03, top=1.0):
     """A padded roll of quilting: a band with its edges rounded right off."""
     obj = band(name, rx, ry, z0, z1, mat, top=top, y=y, bevel=0)
-    t.add_bevel(obj, (z1 - z0) * 0.4, segments=3)
+    t.add_bevel(obj, (z1 - z0) * 0.4, segments=4)
     return obj
 
 
-def sleeve(name, x0, x1, r0, r1, mat, z=1.11, sides=8, bevel=0.01, squash=1.0):
+def sleeve(name, x0, x1, r0, r1, mat, z=1.11, sides=16, bevel=0.01, squash=1.0):
     """A sleeve or bracer round the left arm from x0 to x1 (mirror it for the right)."""
     obj = t.cylinder(name, r0, x1 - x0, mat, at=((x0 + x1) / 2, 0, z), sides=sides, radius_top=r1, axis="X", bevel=bevel)
     obj.scale.y = squash
@@ -218,3 +219,57 @@ def around(centre, radii, z, grow=0.015):
 # The head a helmet goes round (2026-09-30): wide enough that no hair shows between its facets.
 HEAD = (0, -0.02, 1.76)
 HELM = (0.635, 0.60, 0.66)
+
+
+def lathe(name, mat, profile, y=0.0, opening=None, segments=40, thickness=0.035, tip=None):
+    """
+    A helmet turned on a lathe: rings at the heights in `profile` [(z, rx, ry), ...] from the
+    bottom up, joined into a shell and closed at the top by a point at `tip` (a height), open
+    over the face with `opening` (half width, bottom, top). The shape is what the profile
+    says, not a sphere: straight sides, a cone, a flare.
+    """
+    bm = bmesh.new()
+    rings = []
+
+    for z, rx, ry in profile:
+        ring = []
+        for i in range(segments):
+            a = 2 * math.pi * i / segments
+            ring.append(bm.verts.new((rx * math.sin(a), y - ry * math.cos(a), z)))
+        rings.append(ring)
+
+    for lower, upper in zip(rings, rings[1:]):
+        for i in range(segments):
+            j = (i + 1) % segments
+            bm.faces.new((lower[i], lower[j], upper[j], upper[i]))
+
+    if tip is not None:
+        point = bm.verts.new((0, y, tip))
+        for i in range(segments):
+            bm.faces.new((rings[-1][i], rings[-1][(i + 1) % segments], point))
+
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+
+    if opening is not None:
+        doomed = []
+        for f in bm.faces:
+            c = f.calc_center_median()
+            if c.y < y and abs(c.x) < opening[0] and opening[1] < c.z < opening[2]:
+                doomed.append(f)
+        bmesh.ops.delete(bm, geom=doomed, context="FACES")
+
+    obj = t.mesh_object(name, bm, mat)
+    obj.modifiers.new("Solid", "SOLIDIFY").thickness = thickness
+    return obj
+
+
+def rod(name, base, tip, radius, mat, sides=8):
+    """A bar of even thickness from `base` to `tip`: a rib, a strap standing proud."""
+    from mathutils import Vector
+
+    base, tip = Vector(base), Vector(tip)
+    length = (tip - base).length
+    obj = t.cylinder(name, radius, length, mat, at=(0, 0, length / 2), sides=sides)
+    obj.rotation_euler = (tip - base).to_track_quat("Z", "Y").to_euler()
+    obj.location = base
+    return obj

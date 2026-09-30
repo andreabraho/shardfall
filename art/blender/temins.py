@@ -238,3 +238,14 @@ def export_glb(path):
         export_yup=True,
         export_materials="EXPORT",
     )
+
+
+def soften(obj, angle=50):
+    """
+    Smooth shading on what is curved, a hard edge only where faces meet at more than `angle`
+    degrees: a band of plate reads as round steel, and its rim and corners stay crisp.
+    """
+    for poly in obj.data.polygons:
+        poly.use_smooth = True
+
+    obj.data.set_sharp_from_angle(angle=math.radians(angle))
