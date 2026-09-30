@@ -406,7 +406,7 @@ exports a `.glb`, Godot imports it like any other. Every model is original (an
 |---|---|---|---|
 | PIP-01 | The toolchain: `scripts/blender.sh`, a script folder, export settings, a turntable render to judge a model without opening Godot | **[C]** | |
 | PIP-02 | Test pieces: a weapon, a shard stone, a prop | **[C→You]** | You judge them next to the CC0 models already in the game |
-| PIP-03 | A creature: modelled, rigged, one walk and one attack | **[C→You]** | The hard case; decides whether act 2's monsters can be ours |
+| PIP-03 | A creature: modelled, rigged, one walk and one attack | **[C→You]** | The hard case; decides whether act 2's monsters can be ours. 2026-09-30: map one's four animals redone (`creaturekit.py`, `beast.py`) with Idle, Run, Attack, HitReact and Death — awaiting your verdict against the Quaternius ones |
 | PIP-04 | The verdict: what Blender makes from here on and what stays CC0 | **[You]** | |
 
 ### P2 — Classes and the character creator

@@ -28,6 +28,13 @@
   { "id": "mesh_q_rat",   "primitive": "model", "height": 0.55, "radius": 0.35, "color": "#8a7a68", "model_yaw": 180, "model_path": "res://assets/quaternius/animals/Rat.glb" },
   { "id": "mesh_q_fox",   "primitive": "model", "height": 0.85, "radius": 0.40, "color": "#c06a2a", "model_yaw": 180, "model_path": "res://assets/quaternius/animals/Fox.glb" },
   { "id": "mesh_q_wolf",  "primitive": "model", "height": 1.05, "radius": 0.45, "color": "#8a8a8a", "model_yaw": 180, "model_path": "res://assets/quaternius/animals/Wolf.glb" },
+
+  // Map-one animals of our own (PIP-03): lofted, rigged and animated in Blender, art/blender/models.
+  // The Quaternius ones above stay, to compare against and to fall back to.
+  { "id": "mesh_beast_rat",      "primitive": "model", "height": 0.85, "radius": 0.35, "color": "#8a7a68", "model_yaw": 180, "model_path": "res://assets/temins/creatures/field_rat.glb" },
+  { "id": "mesh_beast_fox",      "primitive": "model", "height": 0.85, "radius": 0.40, "color": "#c06a2a", "model_yaw": 180, "model_path": "res://assets/temins/creatures/fox.glb" },
+  { "id": "mesh_beast_wolf",     "primitive": "model", "height": 1.05, "radius": 0.45, "color": "#8a8a8a", "model_yaw": 180, "model_path": "res://assets/temins/creatures/wolf.glb" },
+  { "id": "mesh_beast_greymane", "primitive": "model", "height": 1.05, "radius": 0.45, "color": "#5a5a5e", "model_yaw": 180, "model_path": "res://assets/temins/creatures/greymane.glb" },
   { "id": "mesh_q_deer",  "primitive": "model", "height": 1.50, "radius": 0.50, "color": "#a07850", "model_yaw": 180, "model_path": "res://assets/quaternius/animals/Deer.glb" },
   { "id": "mesh_q_stag",  "primitive": "model", "height": 1.90, "radius": 0.55, "color": "#8a6040", "model_yaw": 180, "model_path": "res://assets/quaternius/animals/Stag.glb" },
   { "id": "mesh_q_bull",  "primitive": "model", "height": 1.70, "radius": 0.70, "color": "#5a4030", "model_yaw": 180, "model_path": "res://assets/quaternius/animals/Bull.glb" },
