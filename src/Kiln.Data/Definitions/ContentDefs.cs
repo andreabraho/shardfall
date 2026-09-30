@@ -723,6 +723,21 @@ public sealed class GearPartsDef
 
     /// <summary>The face: the one mesh an armour skin (REF-23) leaves as it is.</summary>
     public string Face { get; init; } = string.Empty;
+
+    /// <summary>
+    /// A scene on the same rig whose unarmoured body is worn in place of the model's own
+    /// (2026-09-30): the armour is put on over plain clothes, not over armour.
+    /// </summary>
+    public string BodyScene { get; init; } = string.Empty;
+
+    /// <summary>The meshes taken from <see cref="BodyScene"/>.</summary>
+    public string[] BodyParts { get; init; } = [];
+
+    /// <summary>The model's own meshes they take the place of.</summary>
+    public string[] Replaces { get; init; } = [];
+
+    /// <summary>The torso, hidden under an armour with plates of its own, which covers it.</summary>
+    public string Torso { get; init; } = string.Empty;
 }
 
 // ---------------------------------------------------------------------------

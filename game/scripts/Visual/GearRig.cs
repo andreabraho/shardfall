@@ -66,6 +66,9 @@ public sealed class GearRig
     private readonly List<MeshInstance3D> _helmet = [];
     private readonly MeshInstance3D? _cape;
 
+    /// <summary>The unarmoured torso, hidden under a modelled armour.</summary>
+    private readonly MeshInstance3D? _torso;
+
     /// <summary>The model's own meshes but the face: what an armour skin recolours.</summary>
     private readonly List<MeshInstance3D> _body = [];
 
@@ -78,6 +81,10 @@ public sealed class GearRig
     {
         _model = model;
         _parts = parts;
+
+        // Plain clothes in place of the model's painted armour, before anything is collected.
+        Graft(model, parts);
+        _torso = parts.Torso.Length > 0 ? model.FindChild(parts.Torso, recursive: true, owned: false) as MeshInstance3D : null;
 
         // Before the swords are put in its hands: those are not the armour.
         foreach (var mesh in model.FindChildren("*", "MeshInstance3D", true, false).OfType<MeshInstance3D>())
@@ -131,6 +138,9 @@ public sealed class GearRig
 
         // A modelled helmet is worn in place of the model's own.
         foreach (var piece in _helmet) piece.Visible = look.Helmet && look.HelmetModel is null;
+
+        // A modelled armour covers the torso; without one the plain clothes show.
+        if (_torso is not null) _torso.Visible = look.ArmourModel is null;
 
         // A modelled armour brings its own cape, if any: the model's would pass through its plates.
         if (_cape is not null) _cape.Visible = look.Cape && look.ArmourModel is null;
@@ -315,6 +325,53 @@ public sealed class GearRig
         }
 
         suit.QueueFree();
+    }
+
+    /// <summary>
+    /// Puts the unarmoured body of <see cref="GearPartsDef.BodyScene"/> on the model's skeleton
+    /// in place of the model's own (2026-09-30). Both are the same rig, and the skins bind by
+    /// bone name, so the grafted meshes follow every animation the model plays.
+    /// </summary>
+    private static void Graft(Node3D model, GearPartsDef parts)
+    {
+        if (parts.BodyScene.Length == 0) return;
+
+        var skeleton = model.FindChildren("*", "Skeleton3D", true, false).OfType<Skeleton3D>().FirstOrDefault();
+
+        if (skeleton is null || ResourceLoader.Load<PackedScene>(parts.BodyScene)?.Instantiate() is not Node3D donor)
+        {
+            GD.PushWarning($"[gear] body '{parts.BodyScene}' cannot be grafted: no skeleton, or it did not load.");
+            return;
+        }
+
+        var donorSkeleton = donor.FindChildren("*", "Skeleton3D", true, false).OfType<Skeleton3D>().FirstOrDefault();
+
+        foreach (var name in parts.BodyParts)
+        {
+            if (donor.FindChild(name, recursive: true, owned: false) is not MeshInstance3D mesh)
+            {
+                GD.PushWarning($"[gear] body '{parts.BodyScene}' has no part '{name}'.");
+                continue;
+            }
+
+            var place = donorSkeleton is null ? mesh.Transform : Within(mesh, donorSkeleton);
+
+            mesh.GetParent().RemoveChild(mesh);
+            mesh.Owner = null;
+            skeleton.AddChild(mesh);
+            mesh.Transform = place;
+            mesh.Skeleton = mesh.GetPathTo(skeleton);
+        }
+
+        donor.QueueFree();
+
+        foreach (var name in parts.Replaces)
+        {
+            if (model.FindChild(name, recursive: true, owned: false) is not MeshInstance3D old) continue;
+
+            old.GetParent().RemoveChild(old);
+            old.QueueFree();
+        }
     }
 
     /// <summary>A bone by its name as a node could carry it: "upperarm_l" is the bone "upperarm.l".</summary>

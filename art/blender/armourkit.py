@@ -62,6 +62,12 @@ def finish(name, by_bone, folder="armour", focus=None):
     """
     keep = set()
 
+    # Under a body armour, the wearer's torso is hidden (it would show through): a band of
+    # dark cloth over the hips covers the gap between the belt and the legs.
+    if "hips" in by_bone:
+        by_bone["hips"].append(band("underlay", 0.40, 0.36, 0.33, 0.60,
+                                    t.material("undercloth", (0.22, 0.19, 0.17), rough=0.9), y=0.02, bevel=0))
+
     for bone, parts in by_bone.items():
         joined = t.join("bone__" + bone.replace(".", "_"), parts)
         keep.add(joined)
