@@ -433,7 +433,7 @@ new class's **weapons and armour are ours from Blender from the start** (no KayK
 
 | ID | Task | Owner | Notes |
 |---|---|---|---|
-| CLS-00 | **The woman**: man or woman at a new game, the woman the KayKit Rogue's head and body on the Knight's skeleton (armour, helmets and animations unchanged), kept in the save, shown in the character list; the few Italian lines that speak to the player in the masculine ("sei morto") get their feminine | **[C→You]** | First. Old saves are men |
+| CLS-00 | **The woman**: man or woman at a new game, the woman the KayKit Rogue's head and body on the Knight's skeleton (armour, helmets and animations unchanged), kept in the save, shown in the character list; the few Italian lines that speak to the player in the masculine ("sei morto") get their feminine | **[C→You]** | 2026-09-30: built, awaiting your test. Old saves are men |
 | CLS-01 | Several classes in the code: the class in the save, skills and starting gear per class, class-bound items, a class per skill tree, two weapons in hand; a fifth class (Archer) in the enum | **[C]** | Old saves stay Warriors |
 | CLS-02 | **Character creator, level A**: class (what it plays like), man or woman, face (4 men, 1 woman, the hooded look for the Ninja), hair colour, skin tone, name, difficulty; a turning 3D preview | **[C↔You]** | Heads swapped whole, colours by palette swatches |
 | CLS-02b | Creator level B: separate hairstyles made in Blender, each with its rule under a helm and a photo of every hair under every helm | **[C↔You]** | Later, if level A is not enough |

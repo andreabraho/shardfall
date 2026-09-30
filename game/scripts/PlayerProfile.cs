@@ -165,9 +165,35 @@ public static class PlayerProfile
     public static Equipment AdoptGear(System.Func<Equipment> create) => _gear ??= create();
 
     /// <summary>Drops the character. Used by a new game, and by tests that need a clean slate.</summary>
+    /// <summary>A man's body, and the save's word for it.</summary>
+    public const string Man = "man";
+
+    /// <summary>A woman's body (CLS-00).</summary>
+    public const string Woman = "woman";
+
+    /// <summary>
+    /// Man or woman (CLS-00, 2026-09-30): which head and body the player wears, and how the
+    /// Italian speaks to them.
+    /// </summary>
+    public static string Body
+    {
+        get => _body;
+        set
+        {
+            _body = value == Woman ? Woman : Man;
+            Kiln.Core.Foundation.L10n.Feminine = _body == Woman;
+        }
+    }
+
+    private static string _body = Man;
+
+    /// <summary>The player's visual for their body: the Knight's skeleton wearing a man's or a woman's head and body.</summary>
+    public static string BodyVisual => Body == Woman ? Kiln.Data.Ids.Visuals.MeshPlayerWoman : Kiln.Data.Ids.Visuals.MeshPlaceholderPlayer;
+
     public static void Reset()
     {
         Exists = false;
+        Body = Man;
         _progression = null;
         _skills = null;
         _wardrobe = null;

@@ -72,6 +72,15 @@ public partial class PlayerMotor : CharacterBody3D
     /// <summary>True while a click-to-move order is still being executed.</summary>
     public bool HasActiveOrder => Mode == MoveMode.Destination && !_agent.IsNavigationFinished();
 
+    /// <summary>
+    /// A man's or a woman's head and body (CLS-00): chosen here, before the model is built,
+    /// since a parent enters the tree before its children are made ready.
+    /// </summary>
+    public override void _EnterTree()
+    {
+        if (GetNodeOrNull<Visual.VisualRoot>("VisualRoot") is { } visual) visual.VisualId = PlayerProfile.BodyVisual;
+    }
+
     public override void _Ready()
     {
         AddChild(new Audio.Footsteps { Name = "Footsteps" });

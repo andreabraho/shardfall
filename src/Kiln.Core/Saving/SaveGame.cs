@@ -24,6 +24,9 @@ public sealed class SaveGame
     /// <summary>The character's name (REF-18), for the character list. Empty in older saves.</summary>
     public string CharacterName { get; set; } = "";
 
+    /// <summary><c>man</c> or <c>woman</c> (CLS-00, 2026-09-30). Older saves are men.</summary>
+    public string Body { get; set; } = "man";
+
     /// <summary><c>Wanderer</c>, <c>Disciple</c>, <c>Adept</c> or <c>Shardbound</c>.</summary>
     public string Difficulty { get; set; } = "Disciple";
 

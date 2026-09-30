@@ -12,7 +12,7 @@ namespace Kiln.Game.UI.Menus;
 /// <remarks>
 /// "Continue" is first and does the obvious thing — the newest save that opens, the same one
 /// F12 loads in a map — and says underneath where that is, so pressing it is never a guess.
-/// A new game asks for a difficulty and nothing else: there is one class and no name to type.
+/// A new game asks for a man or a woman, a name and a difficulty; there is one class so far.
 /// </remarks>
 public partial class MainMenu : Control
 {
@@ -92,7 +92,7 @@ public partial class MainMenu : Control
         choices.AddChild(where);
         choices.AddChild(new Control { CustomMinimumSize = new Vector2(0, 4) });
 
-        choices.AddChild(MenuStyle.Big(L10n.T("New game"), () => Page(NewGamePage(), L10n.T("New game  ·  name your character and choose a difficulty"))));
+        choices.AddChild(MenuStyle.Big(L10n.T("New game"), () => Page(NewGamePage(), L10n.T("New game  ·  a man or a woman, a name and a difficulty"))));
         choices.AddChild(MenuStyle.Big(L10n.T("Load game"), () => Page(new CharacterList(page => Page(page)))));
         choices.AddChild(MenuStyle.Big(L10n.T("Settings"), () => Page(new SettingsView(inGame: false))));
         choices.AddChild(new Control { CustomMinimumSize = new Vector2(0, 4) });
@@ -135,6 +135,34 @@ public partial class MainMenu : Control
         var column = new VBoxContainer { CustomMinimumSize = new Vector2(560, 0) };
         column.AddThemeConstantOverride("separation", 10);
 
+        // A man or a woman (CLS-00, 2026-09-30), each shown as the game will dress them.
+        var body = PlayerProfile.Man;
+        var bodies = new HBoxContainer();
+        bodies.AddThemeConstantOverride("separation", 12);
+        var group = new ButtonGroup();
+
+        foreach (var (choice, label) in new[] { (PlayerProfile.Man, L10n.T("Man")), (PlayerProfile.Woman, L10n.T("Woman")) })
+        {
+            var card = new Button
+            {
+                ToggleMode = true,
+                ButtonGroup = group,
+                ButtonPressed = choice == body,
+                Text = label,
+                Icon = GD.Load<Texture2D>($"res://assets/ui/portrait_{choice}.png"),
+                ExpandIcon = true,
+                IconAlignment = HorizontalAlignment.Center,
+                VerticalIconAlignment = VerticalAlignment.Top,
+                CustomMinimumSize = new Vector2(150, 176),
+            };
+
+            card.AddThemeFontSizeOverride("font_size", 16);
+            card.Toggled += on => { if (on) body = choice; };
+            bodies.AddChild(card);
+        }
+
+        column.AddChild(bodies);
+
         // The character's name (REF-18): what the character list calls it.
         var name = new LineEdit
         {
@@ -176,7 +204,7 @@ public partial class MainMenu : Control
             card.AddChild(text);
 
             var chosen = tier.Tier;
-            card.Pressed += () => SaveService.Instance?.NewGame(chosen, name.Text);
+            card.Pressed += () => SaveService.Instance?.NewGame(chosen, name.Text, body);
 
             column.AddChild(card);
         }

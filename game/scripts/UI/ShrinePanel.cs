@@ -522,7 +522,7 @@ public partial class ShrinePanel : CanvasLayer
     {
         TravelRefusal.InCombat => L10n.T("Not while something is chasing you."),
         TravelRefusal.NotEnoughYang => L10n.T("Not enough gan."),
-        TravelRefusal.NotDiscovered => L10n.T("You have not stood at that shrine yet."),
+        TravelRefusal.NotDiscovered => L10n.P("You have not stood at that shrine yet."),
         TravelRefusal.NotATravelPoint => L10n.T("That is a checkpoint, not a shrine."),
         TravelRefusal.AlreadyHere => L10n.T("You are already here."),
         _ => L10n.T("You cannot travel there."),

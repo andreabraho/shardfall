@@ -112,7 +112,7 @@ public partial class DeathPanel : CanvasLayer
         column.AddThemeConstantOverride("separation", 12);
         root.AddChild(column);
 
-        var title = MenuStyle.Label(L10n.T("You have fallen"), 26, new Color(0.92f, 0.36f, 0.30f));
+        var title = MenuStyle.Label(L10n.P("You have fallen"), 26, new Color(0.92f, 0.36f, 0.30f));
         title.HorizontalAlignment = HorizontalAlignment.Center;
         column.AddChild(title);
 
