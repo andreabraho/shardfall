@@ -1,12 +1,14 @@
+using System.Linq;
 using Godot;
+using Kiln.Core.Foundation;
 using Kiln.Game.Input;
 using Kiln.Game.Items;
 
 namespace Kiln.Game.Debug;
 
 /// <summary>
-/// Hands the player what a system needs to be exercised: yang and materials (F8), and a
-/// level at a time (F1).
+/// Hands the player what a system needs to be exercised: yang, materials and one of every
+/// shield, pair of boots and jewel (F8), and a level at a time (F1).
 /// </summary>
 /// <remarks>
 /// The upgrade ladder cannot be judged on a starting purse: reaching the first fallible rung
@@ -46,7 +48,7 @@ public partial class DebugGrants : Node
             return;
         }
 
-        GD.Print("[debug] F1 grants a level · F8 grants test gan and crafting materials · F10 unlocks every cosmetic");
+        GD.Print("[debug] F1 grants a level · F8 grants test gan, crafting materials and every shield, pair of boots and jewel · F10 unlocks every cosmetic");
     }
 
     public override void _UnhandledInput(InputEvent @event)
@@ -88,9 +90,18 @@ public partial class DebugGrants : Node
             if (!bag.Bag.TryGrant(id, count)) refused++;
         }
 
-        // The gear once handed out here to try each model on is gone: the models are approved and
-        // it no longer left room in the bag for the materials (2026-09-30).
-        GD.Print($"[debug] granted {Yang:N0} gan and {Kit.Length - refused}/{Kit.Length} material stacks"
+        // The weapons and armours once handed out here to try each model on are gone: the models
+        // are approved and they left no room in the bag (2026-09-30). In their place, one of each
+        // shield, pair of boots and piece of jewellery, to see their painted icons.
+        var rng = GameItems.LootRng.Fork("debug-trinkets");
+        var trinkets = 0;
+
+        foreach (var def in GameContent.Database.Items.Values.Where(IsTrinket).OrderBy(d => d.Slot).ThenBy(d => d.LevelReq))
+        {
+            if (bag.Bag.TryAdd(GameItems.Factory.Create(def.Id, rng))) trinkets++;
+        }
+
+        GD.Print($"[debug] granted {Yang:N0} gan, {Kit.Length - refused}/{Kit.Length} material stacks and {trinkets} shields, boots and jewels"
             + (refused > 0 ? " — bag is full" : ""));
     }
 
@@ -105,6 +116,9 @@ public partial class DebugGrants : Node
 
         if (GetTree().GetFirstNodeInGroup("player") is Node player) player.GetNodeOrNull<PlayerInventory>("PlayerInventory")?.ShowGear();
     }
+
+    private static bool IsTrinket(Kiln.Data.Definitions.ItemDef def) =>
+        def.Slot is { } slot && slot is not (EquipSlot.Weapon or EquipSlot.Armor or EquipSlot.Helmet);
 
     /// <summary>
     /// Exactly the experience the next level still wants, so one press is one level.
