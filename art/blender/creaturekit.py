@@ -15,7 +15,7 @@ import math
 
 import bmesh
 import bpy
-from mathutils import Quaternion, Vector
+from mathutils import Matrix, Quaternion, Vector
 
 import temins as t
 
@@ -47,11 +47,11 @@ def _catmull(a, b, c, d, u):
     return 0.5 * ((2 * b) + (-a + c) * u + (2 * a - 5 * b + 4 * c - d) * u * u + (-a + 3 * b - 3 * c + d) * u ** 3)
 
 
-def loft(name, rings, mat, sides=16, per=2):
+def loft(name, rings, mat, sides=16, per=2, across=(1, 0, 0)):
     """
     A tube through `rings` — (centre, half width, half height) — closed at both ends. The
-    width lies along X where it can, the height across it, so a body's rings stand upright
-    and a leg's face forward.
+    width lies along `across` (X unless told otherwise) where it can, the height across it,
+    so a body's rings stand upright and a leg's face forward.
     """
     rings = smooth([(Vector(c), w, h) for c, w, h in rings], per)
     bm = bmesh.new()
@@ -60,7 +60,7 @@ def loft(name, rings, mat, sides=16, per=2):
         a = rings[max(i - 1, 0)][0]
         b = rings[min(i + 1, len(rings) - 1)][0]
         along = (b - a).normalized()
-        side = Vector((1, 0, 0))
+        side = Vector(across).normalized()
         side = side - along * side.dot(along)
         if side.length < 1e-4:
             side = Vector((0, 1, 0)) - along * along.y
@@ -88,6 +88,14 @@ def loft(name, rings, mat, sides=16, per=2):
 def blob(name, radii, mat, at, subdivisions=3):
     """An egg: a paw, an eye, a nose, a cheek."""
     return t.sphere(name, 1.0, mat, at=at, subdivisions=subdivisions, squash=radii, smooth=True)
+
+
+def turned(obj, pivot, axis, degrees):
+    """Turns a part's mesh about `pivot`, in place: a blob laid along a slope."""
+    pivot = Vector(pivot)
+    turn = Matrix.Translation(pivot) @ Matrix.Rotation(math.radians(degrees), 4, Vector(axis)) @ Matrix.Translation(-pivot)
+    obj.data.transform(turn)
+    return obj
 
 
 def paint(obj, mat, where):
