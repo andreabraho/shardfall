@@ -41,6 +41,7 @@ public partial class ItemView : Control
     public Action<Vector2, Variant>? Take { get; set; }
 
     private Texture2D? _icon;
+    private bool _painted;
     private Color _colour = Colors.White;
 
     public override void _Ready()
@@ -58,6 +59,7 @@ public partial class ItemView : Control
 
         _colour = World.LootDrop.RarityColour(spec?.Rarity ?? Rarity.Common);
         _icon = spec is null ? null : ItemIcons.For(item!.DefId, spec);
+        _painted = item is not null && ItemIcons.IsPainted(item.DefId);
 
         QueueRedraw();
     }
@@ -83,7 +85,16 @@ public partial class ItemView : Control
 
         DrawRect(rect, _colour * new Color(1, 1, 1, 0.16f));
 
-        if (_icon is not null)
+        if (_icon is not null && _painted)
+        {
+            // A painted icon keeps its own shape and colours: as large as the cell allows.
+            var room = Size - new Vector2(6, 6);
+            var fit = Mathf.Min(room.X / _icon.GetWidth(), room.Y / _icon.GetHeight());
+            var drawn = _icon.GetSize() * fit;
+
+            DrawTextureRect(_icon, new Rect2((Size - drawn) / 2, drawn), false);
+        }
+        else if (_icon is not null)
         {
             // Square, centred, as large as the shorter side allows with a little room.
             var side = Mathf.Min(Size.X, Size.Y) - 8;
