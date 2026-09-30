@@ -11,8 +11,9 @@ import wolf
 
 LOOKS = beast.Proportions(
     height=0.80, half_length=0.42, girth=0.20, depth=0.26, leg=1.12,
-    neck=0.30, neck_angle=34, head=0.36, skull=0.125, muzzle=1.08, head_tilt=10,
+    neck=0.30, neck_angle=50, head=0.36, skull=0.125, muzzle=1.08, head_tilt=10,
     eye=1.05, eyes_aside=0.35, brow=1.4,
+    snarl=1.0, lid=0.7, ears_back=0.45, hackles=0,
     ear=0.12, ear_width=0.05, tail=0.46, tail_bush=0.095, tail_droop=38, haunch=1.0,
 )
 
@@ -21,7 +22,7 @@ STYLE = {"stride": 30, "run_frames": 15, "bob": 0.05, "flex": 6, "lunge": 0.26, 
 
 def build():
     colours = wolf.coat(fur=(0.11, 0.11, 0.12), dark=(0.05, 0.05, 0.06), pale=(0.34, 0.33, 0.32),
-                        eye=(1.0, 0.16, 0.08), eye_glow=2.0, prefix="greymane")
+                        eye=(1.0, 0.14, 0.06), eye_glow=2.6, prefix="greymane")
     silver = t.material("greymane_mane", (0.23, 0.23, 0.25), rough=0.85)
     made = beast.make("greymane", LOOKS, colours)
     along, S = made.anchors["along"], made.anchors["S"]
@@ -48,7 +49,7 @@ def build():
             made.add(wolf.lock(f"mane{row}{k}", root, tip, 0.075, silver, out.cross(Vector((0, 1, 0)))), ["neck", "chest"])
 
     wolf.ruff(made, silver, count=4, length=1.25, thick=0.40)
-    beast.fangs(made, colours["tooth"], S * 0.30, spread=0.28)
+    beast.fangs(made, colours["tooth"], S * 0.36, spread=0.28)
 
     # Three scars raked down the left of the muzzle: long thin weals laid on the fur.
     scar = t.material("greymane_scar", (0.55, 0.36, 0.34), rough=0.8)

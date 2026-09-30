@@ -1,16 +1,20 @@
-"""Lupo Grigio — a lean grey wolf: a darker saddle, a pale throat, a ruff swept back from the cheeks."""
+"""Lupo Grigio — a lean grey wolf, head low, hackles up and lips drawn back off its teeth: a darker
+saddle, a pale throat, a ruff swept back from the cheeks, eyes glaring amber under a scowl."""
 
 from mathutils import Vector
 
 import beast
 import temins as t
 
-LOOKS = beast.Proportions()
+LOOKS = beast.Proportions(
+    neck_angle=52, head_tilt=9, brow=1.2,
+    snarl=0.8, lid=0.6, ears_back=0.35, hackles=7,
+)
 
 STYLE = {"stride": 34, "run_frames": 14, "bob": 0.05, "flex": 7, "lunge": 0.22, "bite": 34, "tail": 12, "side": 0.19}
 
 
-def coat(fur=(0.21, 0.21, 0.23), dark=(0.10, 0.10, 0.11), pale=(0.50, 0.48, 0.45), eye=(0.95, 0.62, 0.14), eye_glow=0.4, prefix="wolf"):
+def coat(fur=(0.21, 0.21, 0.23), dark=(0.10, 0.10, 0.11), pale=(0.50, 0.48, 0.45), eye=(1.0, 0.60, 0.10), eye_glow=1.3, prefix="wolf"):
     return {
         "fur": t.material(f"{prefix}_fur", fur, rough=0.9),
         "dark": t.material(f"{prefix}_saddle", dark, rough=0.9),
@@ -45,6 +49,6 @@ def build():
     colours = coat()
     made = beast.make("wolf", LOOKS, colours)
     ruff(made, colours["fur"], length=0.8)
-    beast.fangs(made, colours["tooth"], made.anchors["S"] * 0.20)
+    beast.fangs(made, colours["tooth"], made.anchors["S"] * 0.28)
     made.finish(STYLE)
     return {"folder": "creatures", "name": "wolf"}

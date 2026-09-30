@@ -5,8 +5,9 @@ import temins as t
 
 LOOKS = beast.Proportions(
     height=0.46, half_length=0.29, girth=0.115, depth=0.135, leg=0.85,
-    neck=0.20, neck_angle=40, head=0.27, skull=0.085, muzzle=0.78, head_tilt=4,
-    eye=1.1, eyes_aside=0.4, brow=0.6,
+    neck=0.20, neck_angle=48, head=0.27, skull=0.085, muzzle=0.78, head_tilt=6,
+    eye=1.1, eyes_aside=0.4, brow=0.9,
+    snarl=0.6, lid=0.5, ears_back=0.25, hackles=5,
     ear=0.13, ear_width=0.050, tail=0.50, tail_bush=0.09, tail_droop=22, haunch=1.0,
 )
 
@@ -22,7 +23,7 @@ def build():
         "nose": t.material("beast_nose", (0.04, 0.04, 0.05), rough=0.3),
         "mouth": t.material("beast_mouth", (0.32, 0.07, 0.08), rough=0.5),
         "tooth": t.material("tooth", (0.92, 0.89, 0.80), rough=0.4),
-        "eye": t.material("fox_eye", (0.98, 0.72, 0.18), rough=0.2, glow=0.35),
+        "eye": t.material("fox_eye", (1.0, 0.70, 0.12), rough=0.2, glow=1.0),
     }
     made = beast.make("fox", LOOKS, colours)
     H = LOOKS.height

@@ -43,6 +43,10 @@ class Proportions:
     tail_thin: bool = False       # a rodent's thin tail rather than a brush
     haunch: float = 1.0           # the hind quarters, as a share of the chest
     toes: int = 4                 # toes on each paw
+    snarl: float = 0.0            # 0..1: the lip drawn back, the teeth bared even at rest
+    lid: float = 0.0              # 0..1: a heavy upper lid narrowing the eye to a glare
+    ears_back: float = 0.0        # 0..1: the ears laid back against the skull
+    hackles: int = 0              # raised locks of fur along the spine
 
 
 class Made:
@@ -243,6 +247,25 @@ def make(name, p, coat):
                 low = along(u + 0.06, -0.42, (0.36 - 0.08 * i) * m * side)
                 parts.append((tuft(f"tooth_low{side}{i}", low - up * S * 0.08, low + up * S * 0.05, S * 0.045, coat["tooth"]), ["jaw"]))
 
+    # A snarl: the upper lip drawn back off a dark gum, a row of teeth bared along it and a
+    # lower fang standing up out of the jaw, the top of the muzzle wrinkled into ridges.
+    if p.snarl > 0 and "tooth" in coat:
+        gum = coat.get("mouth", nose_mat)
+        for side in (1, -1):
+            parts.append((c.loft(f"gum{side}", [(along(0.93, -0.32, 0.16 * m * side), S * 0.05, S * 0.05),
+                                                 (along(0.77, -0.37, 0.39 * m * side), S * 0.065, S * 0.065),
+                                                 (along(0.60, -0.40, 0.49 * m * side), S * 0.05, S * 0.05)], gum, sides=8), ["head"]))
+            for i, u in enumerate((0.63, 0.70, 0.77, 0.84, 0.91)):
+                across = (0.49 - 0.33 * (u - 0.60) / 0.33) * m * 1.04
+                root = along(u, -0.37, across * side)
+                length = S * (0.06 + 0.09 * p.snarl) * (1.6 if i == 4 else 1.0)
+                parts.append((tuft(f"bare{side}{i}", root, root - up * length, S * (0.05 if i == 4 else 0.04), coat["tooth"]), ["head"]))
+            low = along(0.84, -0.50, 0.26 * m * side)
+            parts.append((tuft(f"lowfang{side}", low, low + up * S * (0.16 + 0.10 * p.snarl), S * 0.06, coat["tooth"]), ["jaw"]))
+        for i, (u, middle, half) in enumerate(((0.58, -0.07, 0.52), (0.66, -0.09, 0.47), (0.74, -0.11, 0.42))):
+            ridge = c.blob(f"wrinkle{i}", (S * 0.30 * m * (1 - 0.12 * i), S * 0.035, S * 0.045), coat.get("dark", fur), along(u, middle + half * m * 0.9))
+            parts.append((ridge, ["head"]))
+
     # The eyes, and a brow over each.
     white = coat.get("glint") or t.material("eye_glint", (1.0, 1.0, 1.0), rough=0.1, glow=0.6)
     rim = coat.get("rim") or t.material("eye_rim", (0.03, 0.03, 0.03), rough=0.5)
@@ -252,8 +275,13 @@ def make(name, p, coat):
         if p.brow > 0:
             brow = c.blob(f"brow{side}", (r * 1.35 * p.brow, r * 0.9, r * 0.55 * p.brow), coat.get("dark", fur), centre + up * r * 1.05 + Vector((side * r * 0.1, 0, 0)) - ahead * r * 0.2)
             # Lower at the inner corner, so the look is a scowl rather than surprise.
-            c.turned(brow, centre, ahead, -14 * side * p.brow)
+            c.turned(brow, centre, ahead, (16 + 14 * p.lid) * side * min(p.brow, 1.2))
             parts.append((brow, ["head"]))
+        if p.lid > 0:
+            # A heavy lid over the top of the eye, slanting down to the nose: a glare.
+            lid = c.blob(f"lid{side}", (r * 1.3, r * 1.2, r * 0.75), coat.get("dark", fur), centre + up * r * (0.95 - 0.55 * p.lid) + look * r * 0.25)
+            c.turned(lid, centre, ahead, 30 * side)
+            parts.append((lid, ["head"]))
 
     # Ears, pointed or round, leaning back and out, with the inside of each paler.
     inner = coat.get("inner", under)
@@ -264,7 +292,8 @@ def make(name, p, coat):
             ear = c.loft(f"ear{side}", [(base, p.ear_width * 0.6, p.ear_width * 0.25), (base.lerp(tip, 0.5), p.ear_width, p.ear_width * 0.22), (tip, p.ear_width * 0.5, p.ear_width * 0.15)], fur, sides=14)
             cup = [(q - Vector((0, p.ear_width * 0.12, 0)), w * 0.78, h * 0.5) for q, w, h in ((base.lerp(tip, 0.2), p.ear_width * 0.6, p.ear_width * 0.2), (base.lerp(tip, 0.55), p.ear_width * 0.9, p.ear_width * 0.2), (base.lerp(tip, 0.9), p.ear_width * 0.45, p.ear_width * 0.12))]
         else:
-            tip = base + up * p.ear + Vector((0.18 * p.ear * side, 0.22 * p.ear, 0))
+            laid = p.ears_back
+            tip = base + up * p.ear * (1 - 0.45 * laid) + Vector((0.18 * p.ear * side * (1 + laid), (0.22 + 0.60 * laid) * p.ear, 0))
             ear = c.loft(f"ear{side}", [(base, p.ear_width, p.ear_width * 0.40), (base.lerp(tip, 0.5), p.ear_width * 0.72, p.ear_width * 0.28), (tip, p.ear_width * 0.05, p.ear_width * 0.04)], fur, sides=12)
             cup = [(q - Vector((0, p.ear_width * 0.2, 0)), w, h) for q, w, h in ((base.lerp(tip, 0.08), p.ear_width * 0.7, p.ear_width * 0.16), (base.lerp(tip, 0.5), p.ear_width * 0.48, p.ear_width * 0.12), (base.lerp(tip, 0.85), p.ear_width * 0.08, p.ear_width * 0.04))]
         parts.append((ear, ["head"]))
@@ -324,6 +353,16 @@ def make(name, p, coat):
     if "pale" in coat:
         c.paint(body, coat["pale"], lambda q, n: q.z < z - D * 0.42 or (q.y < -L * 0.95 and q.z < withers.z + D * 0.2 and n.y < 0.2 and abs(n.x) < 0.75))
         c.paint(head, coat["pale"], lambda q, n: lift_of(q) < -0.28)
+
+    # Hackles: the fur along the spine raised in a ridge, from the shoulders to the small of
+    # the back, each lock rooted in the body and standing back and up out of it.
+    for i in range(p.hackles):
+        u = i / max(p.hackles - 1, 1)
+        y = -L * 1.05 + u * L * 1.35
+        root = Vector((0, y, z + D * 0.50))
+        tip = root + Vector((0, D * 0.55, D * (0.62 - 0.12 * u) + D * 0.15 * (1 - abs(u - 0.3))))
+        parts.append((tuft(f"hackle{i}", root, tip, G * 0.34, coat.get("dark", fur), sides=8, flat=0.35),
+                      ["chest", "hips"] if y < 0 else ["hips", "chest"]))
 
     made.anchors.update({"poll": poll, "withers": withers, "tail": tail_points, "body": body, "head": head,
                          "tail_obj": tail, "legs_front": front, "legs_back": back, "lift_of": lift_of, "mid": mid})
