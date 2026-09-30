@@ -329,7 +329,9 @@ def quadruped_clips(arm, spec, style):
     def tail_wave(u, amount, key="rz", speed=1):
         return {b: {key: amount * s(tau * (u * speed - i * 0.12))} for i, b in enumerate(tails)}
 
-    # Idle: breathing, a slow look round, the tail swaying, the jaw working now and then.
+    # Idle: breathing, a slow look round, the jaw working now and then. The tail is held still
+    # and low, only rising and falling a little with the breath: swung side to side it read as
+    # a dog wagging for its owner (2026-09-30, at your call).
     def idle(u):
         return add(
             {
@@ -339,7 +341,7 @@ def quadruped_clips(arm, spec, style):
                 "head": {"rx": 3 * s(2 * tau * u), "rz": 4 * s(tau * u + 0.6)},
                 "jaw": {"rx": 3 * max(0.0, s(2 * tau * u))},
             },
-            tail_wave(u, tail),
+            {b: {"rx": 1.5 * s(tau * u - i * 0.3)} for i, b in enumerate(tails)},
         )
 
     # Run: a bound — the hind legs drive together, the fore legs reach together — with the
