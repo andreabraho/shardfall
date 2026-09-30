@@ -1,6 +1,6 @@
 """The player's portraits for the new-game page (CLS-00, 2026-09-30): a man and a woman, head
 and shoulders, as the game dresses them — the Knight's head on the Ranger's plain body, and the
-Rogue's head and body.
+Rogue's head and her lightened body (woman_body.py).
 
     blender -b --factory-startup --python art/blender/portraits.py
 
@@ -18,11 +18,14 @@ ROOT = os.path.dirname(os.path.dirname(HERE))
 KIT = os.path.join(ROOT, "game", "assets", "kaykit", "adventurers2")
 OUT = os.path.join(ROOT, "game", "assets", "ui")
 
+# Her lightened clothes (woman_body.py), as the game grafts them.
+WOMAN = os.path.join(ROOT, "game", "assets", "temins", "characters", "woman_body.glb")
+
 # Who is drawn: (file, parts kept) — the same pieces visuals.json grafts on the player.
 LOOKS = {
     "man": [("Knight.glb", ["Knight_Head"]),
             ("Ranger.glb", ["Ranger_Body", "Ranger_ArmLeft", "Ranger_ArmRight"])],
-    "woman": [("Rogue.glb", ["Rogue_Head", "Rogue_Body", "Rogue_ArmLeft", "Rogue_ArmRight"])],
+    "woman": [(WOMAN, ["Rogue_Head", "Rogue_Body", "Rogue_ArmLeft", "Rogue_ArmRight"])],
 }
 
 
