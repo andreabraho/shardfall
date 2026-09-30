@@ -99,6 +99,17 @@ def pommel(kind, size, mat, at, gem=None):
 
 
 def finish(name, parts, folder="weapons"):
+    # The hand holds the origin (2026-09-30): the sword is moved so the origin falls on its
+    # grip, not on its guard — six tenths up a one-handed grip, as the KayKit swords the hand
+    # was made for, four tenths up a great sword's, leaving room for the other hand above.
+    grip_part = next((p for p in parts if p.name == "grip"), None)
+    if grip_part is not None:
+        zs = [(grip_part.matrix_world @ v.co).z for v in grip_part.data.vertices]
+        bottom, length = min(zs), max(zs) - min(zs)
+        offset = -(bottom + length * (0.4 if length >= 0.38 else 0.6))
+        for part in parts:
+            part.location.z += offset
+
     # Smooth where it is round (grips, pommels, rings), crisp where a blade is ground: the
     # angle is low enough that the bevel down to the edge stays a hard line.
     t.soften(t.join(name, parts), angle=30)
