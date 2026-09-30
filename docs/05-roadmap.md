@@ -412,18 +412,39 @@ style, kits, icons, getting it into the game, what the user liked and did not: `
 
 ### P2 — Classes and the character creator
 
-The design has four classes; only the Warrior exists. The other three take their models from
-KayKit Adventurers 2.0 (CC0, same pack and same animations as the Knight). Names are ours:
-the design doc's "Sura" and "Shaman" come from the original and are replaced.
+The design has four classes; only the Warrior exists. **Your call (2026-09-30): one class at a
+time, starting from the dagger fighter.** The four: the Warrior; a fighter with **daggers** and,
+as its second branch, the **bow**; a sword fighter with **magic weapons** (dark magic); a
+**shaman** (magic at range, heals, blessings). Names on screen are ours — "Sura", "Shaman" and
+the like are the original's; in the code they are `Blade`, `Sura`, `Shaman`, never shown.
+The creator gets **at least a woman from the start**. Analysis — what the packs have, how
+looks are made, how hair behaves under our helmets, the cost of each level of customisation:
+**`docs/08-classes-and-creator.md`**.
+
+Measured for it: every KayKit character shares the Knight's bones, so **our armours fit the
+Rogue (the pack's woman) unchanged** and the animations are shared; her hair falls out under
+our four helmets without piercing them. The animations the new classes need (two daggers,
+dodges, bow, spells) are in KayKit Character Animations 1.1, **already downloaded**.
+
+**Decided 2026-09-30:** five classes, each its own — the **Warrior**, the **Ninja** (two
+daggers), the **Archer** / *Arciere* (bow), the **Asura** (magic weapons), the **Dragonseer** /
+*Dragoveggente* (magic at range, heals, blessings). The first step is **the woman**; and every
+new class's **weapons and armour are ours from Blender from the start** (no KayKit stand-ins).
 
 | ID | Task | Owner | Notes |
 |---|---|---|---|
-| CLS-01 | Several classes in the code: the class in the save, skills and starting gear per class, class-bound items, a class per skill tree | **[C]** | Old saves stay Warriors |
-| CLS-02 | **Character creator**: the class with a turning 3D preview and what it plays like, a look (clothes colours, Knight or Barbarian for the Warrior), name, difficulty | **[C↔You]** | How deep the look goes is yours to decide: the variants the packs have, or a modular pack for body, hair and sex |
-| CLS-03 | **Blade** — daggers and bow, fast; Shift: a step and a moment untouchable | **[C↔You]** | Proves the multi-class build end to end |
-| CLS-04 | Second class — sword and dark magic; Shift: a shield that absorbs | **[C↔You]** | Name to decide |
-| CLS-05 | Third class — magic at range, heals and blessings; Shift: a shield that also cleanses | **[C↔You]** | Name to decide |
-| CLS-06 | Balance: each class finishes act 1 and the tower alone, checked by the simulator | **[C]** | |
+| CLS-00 | **The woman**: man or woman at a new game, the woman the KayKit Rogue's head and body on the Knight's skeleton (armour, helmets and animations unchanged), kept in the save, shown in the character list; the few Italian lines that speak to the player in the masculine ("sei morto") get their feminine | **[C→You]** | First. Old saves are men |
+| CLS-01 | Several classes in the code: the class in the save, skills and starting gear per class, class-bound items, a class per skill tree, two weapons in hand; a fifth class (Archer) in the enum | **[C]** | Old saves stay Warriors |
+| CLS-02 | **Character creator, level A**: class (what it plays like), man or woman, face (4 men, 1 woman, the hooded look for the Ninja), hair colour, skin tone, name, difficulty; a turning 3D preview | **[C↔You]** | Heads swapped whole, colours by palette swatches |
+| CLS-02b | Creator level B: separate hairstyles made in Blender, each with its rule under a helm and a photo of every hair under every helm | **[C↔You]** | Later, if level A is not enough |
+| ART-01 | **Each new class's gear in Blender**, by the house guide (`art/blender/GUIDE.md`): weapons for every level band with icons, and an armour and helmet line of its own — the Ninja light and dark, the Archer leather and hood, the Asura dark plate, the Dragonseer robes | **[C→You]** | Before or alongside each class; the Warrior's seven armours stay his |
+| CLS-03 | **Ninja**: skills (two branches), dual-wield blows, Shift: a short dash, a moment untouchable | **[C↔You]** | First class; proves the multi-class build end to end |
+| CLS-04 | **Archer**: skills, bow, arrows, aim-draw-release, running with the bow | **[C↔You]** | |
+| CLS-05 | **Asura** — the weapon carries dark magic; Shift: a shield that absorbs | **[C↔You]** | |
+| CLS-06 | **Dragonseer** — magic at range, heals and blessings; Shift: a shield that also cleanses | **[C↔You]** | |
+| CLS-07 | Balance: each class finishes act 1 and the tower alone, checked by the simulator | **[C]** | After each class, not at the end |
+
+"Ninja" is your name for it (2026-09-30); it is also the original game's name for its dagger class — flagged, yours to change.
 
 ### P3 — Act 2, levels 23–40
 
