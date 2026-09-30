@@ -400,7 +400,8 @@ them has to fit all the classes; then act 2, mounts, the Catacombs, and the extr
 
 Blender 5.0 is installed. I write the model as a Python script, Blender builds it headless and
 exports a `.glb`, Godot imports it like any other. Every model is original (an
-`ASSET-LICENSES.md` row: made for Temins, ours).
+`ASSET-LICENSES.md` row: made for Temins, ours). **How to make one so it matches the rest —
+style, kits, icons, getting it into the game, what the user liked and did not: `art/blender/GUIDE.md`.**
 
 | ID | Task | Owner | Notes |
 |---|---|---|---|
