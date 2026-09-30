@@ -4,7 +4,7 @@ A creature is drawn as tubes (loft) whose rings follow its spine, legs, neck and
 body is one smooth shape rather than a pile of balls. Every part is weighted to the bones it
 lies along (bind), the nearest the most, so the body bends at its joints instead of breaking.
 
-The clips are what ModelAnimator looks for: Idle, Run, Attack, HitReact and Death. They are
+The clips are what ModelAnimator looks for: Idle, Walk, Run, Attack, HitReact and Death. They are
 built as poses — how far each bone turns about the world's axes — keyed a frame at a time, so
 a clip is a few lines of numbers rather than hand-placed keys.
 
@@ -310,7 +310,7 @@ def quadruped_rig(spec):
 
 def quadruped_clips(arm, spec, style):
     """
-    Idle, Run, Attack, HitReact and Death for a four-legged creature. `style` tunes them:
+    Idle, Walk, Run, Attack, HitReact and Death for a four-legged creature. `style` tunes them:
     stride (degrees a leg swings), run_frames (a stride, in frames), bob (metres the body
     rises), flex (degrees the back bends), bite (degrees the jaw opens), lunge (metres the
     body throws forward), tail (degrees the tail sways), side (how far the body lies from the
@@ -370,6 +370,30 @@ def quadruped_clips(arm, spec, style):
         pose["head"] = {"rx": 4}
         return add(pose, tail_wave(u, tail * 0.8, "rx", 1))
 
+    # Walk: an amble for roaming its ground — one foot at a time, hind then fore on each side,
+    # the head low and nodding with the step, the tail held still.
+    def walk(u):
+        pose = {}
+        for leg, lag in (("back.L", 0.0), ("front.L", 0.25), ("back.R", 0.5), ("front.R", 0.75)):
+            phase = tau * (u + lag)
+            swing = stride * 0.55 * s(phase)
+            fold = max(0.0, -math.cos(phase))
+            upper, lower, paw = leg_bones(leg)
+            if leg.startswith("front"):
+                pose[upper] = {"rx": swing}
+                pose[lower] = {"rx": 38 * fold}
+                pose[paw] = {"rx": 22 * fold - swing * 0.4}
+            else:
+                pose[upper] = {"rx": swing}
+                pose[lower] = {"rx": -26 * fold}
+                pose[paw] = {"rx": 18 * fold - swing * 0.3}
+        pose["body"] = {"move": (0, 0, bob * 0.25 * s(2 * tau * u)), "ry": 2.5 * s(tau * u)}
+        pose["chest"] = {"rz": 3 * s(tau * u + 0.8)}
+        pose["hips"] = {"rz": -3 * s(tau * u + 0.8)}
+        pose["neck"] = {"rx": -4 + 2.5 * s(2 * tau * u)}
+        pose["head"] = {"rx": 2 - 2 * s(2 * tau * u)}
+        return add(pose, {b: {"rx": 1.2 * s(2 * tau * u - i * 0.3)} for i, b in enumerate(tails)})
+
     # Attack: gathers back, throws itself forward with the jaws open, snaps them shut.
     rest = {}
     gather = {
@@ -421,6 +445,7 @@ def quadruped_clips(arm, spec, style):
     frames = style.get("run_frames", 14)
     clip(arm, "Idle", 48, idle)
     clip(arm, "Run", frames, run)
+    clip(arm, "Walk", style.get("walk_frames", frames * 2), walk)
     clip(arm, "Attack", style.get("attack_frames", 18), attack)
     clip(arm, "HitReact", 10, hurt)
     clip(arm, "Death", 30, death)

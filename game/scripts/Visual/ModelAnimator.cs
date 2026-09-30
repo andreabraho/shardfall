@@ -23,6 +23,13 @@ public partial class ModelAnimator : Node
     private const float MovingAbove = 0.35f;
 
     /// <summary>
+    /// Metres per second below which a creature is animated as walking rather than running:
+    /// an animal roaming its ground at an amble (2026-09-30), which run at that pace looked
+    /// like it was treading water. Only for enemies — the player moves at one speed.
+    /// </summary>
+    private const float WalkingBelow = 2.4f;
+
+    /// <summary>
     /// The one-handed melee swings, cycled in order.
     /// </summary>
     /// <remarks>
@@ -44,6 +51,7 @@ public partial class ModelAnimator : Node
     private string _idle = "";
     private string _idleTwoHand = "";
     private string _run = "";
+    private string _walk = "";
 
     /// <summary>
     /// Holding a great sword (REF-22): it stands, swings and casts two-handed.
@@ -72,9 +80,14 @@ public partial class ModelAnimator : Node
 
         if (_run.Length == 0) _run = _idle;
 
+        // A walk of its own where the model has one; otherwise it runs at every pace, as before.
+        _walk = _body is Combat.EnemyBrain ? Find(names, Walk) : "";
+
+        if (_walk.Length == 0) _walk = _run;
+
         // Looping is a property of the imported clip, and glTF does not carry one. Without
         // this every animation plays once and the character freezes on its last frame.
-        foreach (var name in new[] { _idle, _idleTwoHand, _run })
+        foreach (var name in new[] { _idle, _idleTwoHand, _run, _walk })
         {
             if (name.Length > 0) _player.GetAnimation(name).LoopMode = Animation.LoopModeEnum.Linear;
         }
@@ -91,6 +104,9 @@ public partial class ModelAnimator : Node
     private static readonly string[] Move =
         ["Running_A", "Running_B", "Run", "Gallop", "Rat_Run", "Fast_Flying", "Walking_A", "Walk",
          "Spider_Walk", "Snake_Walk", "Rat_Walk", "Wasp_Flying"];
+
+    private static readonly string[] Walk =
+        ["Walk", "Walking_A", "Walking_B", "Rat_Walk", "Spider_Walk", "Snake_Walk"];
 
     private static readonly string[] Strike =
         ["Attack", "Attack_Headbutt", "Attack_Kick", "Punch", "Bite_Front", "Headbutt",
@@ -398,7 +414,7 @@ public partial class ModelAnimator : Node
         // With a great sword in hand, standing still is its guard, not an empty-handed rest.
         var idle = TwoHanded && _idleTwoHand.Length > 0 ? _idleTwoHand : _idle;
 
-        Play(speed > MovingAbove ? _run : idle);
+        Play(speed <= MovingAbove ? idle : speed < WalkingBelow ? _walk : _run);
     }
 
     private void Play(string name)

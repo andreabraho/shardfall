@@ -971,6 +971,9 @@ public partial class EnemyBrain : CharacterBody3D
     /// <summary>Walks back to where it started, and resets on arrival.</summary>
     public BtStatus ReturnHome(double delta)
     {
+        // Nothing to fight and nothing to walk back from: it roams its own ground.
+        if (!_returning && WanderRadius > 0) return Wander(delta);
+
         if (GlobalPosition.DistanceTo(_home) < 1.0f)
         {
             Brake(delta);
@@ -998,6 +1001,79 @@ public partial class EnemyBrain : CharacterBody3D
         return BtStatus.Running;
     }
 
+    /// <summary>How far from where it was born a creature at peace strays, in metres.</summary>
+    [Export] public float WanderRadius { get; set; } = 4.5f;
+
+    /// <summary>Its pace while it strays, as a share of its running speed.</summary>
+    [Export] public float WanderPace { get; set; } = 0.3f;
+
+    private Vector3? _wanderTo;
+    private double _wanderRest = -1;
+    private double _wanderFor;
+
+    /// <summary>
+    /// A creature nobody is fighting ambles about the spot it was born on: a few steps to
+    /// somewhere near, a pause, a few steps more (2026-09-30).
+    /// </summary>
+    /// <remarks>
+    /// Standing stock still until the player came close made a camp look like a row of
+    /// statues. It never strays past <see cref="WanderRadius"/> from home, so a camp stays a
+    /// camp and the aggro and leash distances the design was tuned on still hold, and it
+    /// never steps onto safe ground. The pauses are drawn at random, and the first one too,
+    /// so a camp does not set off in step.
+    /// </remarks>
+    private BtStatus Wander(double delta)
+    {
+        if (_wanderTo is not { } to)
+        {
+            Brake(delta);
+
+            if (_wanderRest < 0) _wanderRest = GD.RandRange(0.5, 6.0);
+
+            _wanderRest -= delta;
+
+            if (_wanderRest > 0) return BtStatus.Running;
+
+            _wanderTo = WanderPoint();
+            _wanderFor = 8.0;
+            _wanderRest = GD.RandRange(2.5, 7.0);
+            return BtStatus.Running;
+        }
+
+        _wanderFor -= delta;
+
+        var left = (to - GlobalPosition) with { Y = 0 };
+
+        if (left.Length() < 0.4f || _wanderFor <= 0)
+        {
+            _wanderTo = null;
+            Brake(delta);
+            return BtStatus.Running;
+        }
+
+        _agent.TargetPosition = to;
+
+        var step = (_agent.GetNextPathPosition() - GlobalPosition) with { Y = 0 };
+
+        Steer(step.LengthSquared() < 0.0001f ? left : step, delta, WanderPace);
+        return BtStatus.Running;
+    }
+
+    /// <summary>A walkable spot near home, off safe ground; null to stay where it is.</summary>
+    private Vector3? WanderPoint()
+    {
+        var angle = GD.RandRange(0, Mathf.Tau);
+        var reach = GD.RandRange(1.5, WanderRadius);
+        var spot = _home + new Vector3((float)(Mathf.Cos(angle) * reach), 0, (float)(Mathf.Sin(angle) * reach));
+
+        spot = NavigationServer3D.MapGetClosestPoint(GetWorld3D().NavigationMap, spot);
+
+        if (spot.DistanceTo(_home) > WanderRadius + 0.5f) return null;
+        if (World.GameWorld.IsLoaded && World.GameWorld.IsSafe(spot)) return null;
+
+        return spot;
+    }
+
     /// <summary>
     /// Back at the spawn point: drop the leash and restore.
     /// <para>
@@ -1012,6 +1088,7 @@ public partial class EnemyBrain : CharacterBody3D
 
         _returning = false;
         _retreatBudget = RetreatSeconds;
+        _wanderTo = null;
 
         Self.Statuses.Clear();
 
@@ -1354,7 +1431,7 @@ public partial class EnemyBrain : CharacterBody3D
 
     // -- Movement helpers ---------------------------------------------------
 
-    private void Steer(Vector3 direction, double delta)
+    private void Steer(Vector3 direction, double delta, float pace = 1f)
     {
         if (direction.LengthSquared() < 0.0001f)
         {
@@ -1363,7 +1440,7 @@ public partial class EnemyBrain : CharacterBody3D
         }
 
         direction = direction.Normalized();
-        var speed = (float)(MoveSpeed * Self.Statuses.MoveSpeedMultiplier);
+        var speed = (float)(MoveSpeed * pace * Self.Statuses.MoveSpeedMultiplier);
 
         Velocity = Velocity with { X = direction.X * speed, Z = direction.Z * speed };
         Face(direction, delta);
