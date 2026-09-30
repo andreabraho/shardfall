@@ -23,7 +23,7 @@ def build():
             rib = t.profile_solid(f"rib_{side}_{i}", [
                 (0.0, -0.02), (reach * 0.6, -0.03), (reach, 0.06), (reach * 0.95, 0.16),
                 (reach * 0.85, 0.10), (reach * 0.55, 0.03), (0.0, 0.03),
-            ], 0.05, bone, bevel=0.008)
+            ], 0.05, bone, bevel=0.012, segments=3)
             parts.append(k.stand(rib, y=(i - 1) * 0.035, z=0.02 - i * 0.03, mirror=side))
 
     # Runes up the blade.

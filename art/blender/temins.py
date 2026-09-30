@@ -83,7 +83,7 @@ def mesh_object(name, bm, mat, smooth=False):
     return obj
 
 
-def profile_solid(name, outline, thickness, mat, bevel=0.0, edge=0.0):
+def profile_solid(name, outline, thickness, mat, bevel=0.0, edge=0.0, segments=1):
     """
     A flat shape (a blade, a guard) from an outline in the XY plane, given thickness along Z.
     edge > 0 thins the outline's rim to a sharp edge: the front and back faces are inset and
@@ -115,7 +115,7 @@ def profile_solid(name, outline, thickness, mat, bevel=0.0, edge=0.0):
     obj = mesh_object(name, bm, mat)
 
     if bevel > 0:
-        add_bevel(obj, bevel)
+        add_bevel(obj, bevel, segments)
 
     return obj
 

@@ -66,10 +66,10 @@ def crossguard(width, height, depth, mat, droop=0.0, flare=0.0, at=0.0, bevel=0.
         (w, at - droop - h * (0.5 + flare)), (w, at - droop + h * (0.5 + flare)),
         (w * 0.6, at + h * 0.5), (-w * 0.6, at + h * 0.5), (-w, at - droop + h * (0.5 + flare)),
     ]
-    return stand(t.profile_solid("guard", outline, depth, mat, bevel=bevel))
+    return stand(t.profile_solid("guard", outline, depth, mat, bevel=bevel * 1.6, segments=3))
 
 
-def grip(length, radius, leather, wrap=None, wraps=4, bottom=None, sides=8):
+def grip(length, radius, leather, wrap=None, wraps=4, bottom=None, sides=16):
     """The grip, from the guard down; bound in `wraps` bands of `wrap`."""
     bottom = -length if bottom is None else bottom
     parts = [t.cylinder("grip", radius, length, leather, at=(0, 0, bottom + length / 2), sides=sides)]
@@ -85,19 +85,21 @@ def grip(length, radius, leather, wrap=None, wraps=4, bottom=None, sides=8):
 def pommel(kind, size, mat, at, gem=None):
     """The knob at the grip's end: a disc, a ball, a faceted stone, or a cup holding a gem."""
     if kind == "disc":
-        return [t.cylinder("pommel", size, size * 0.7, mat, at=(0, 0, at), sides=10, axis="Y", bevel=size * 0.15)]
+        return [t.cylinder("pommel", size, size * 0.7, mat, at=(0, 0, at), sides=20, axis="Y", bevel=size * 0.15)]
     if kind == "ball":
-        return [t.sphere("pommel", size, mat, at=(0, 0, at), subdivisions=1)]
+        return [t.sphere("pommel", size, mat, at=(0, 0, at), subdivisions=2)]
     if kind == "facet":
         return [t.sphere("pommel", size, mat, at=(0, 0, at), subdivisions=0, squash=(1, 1, 1.3))]
     if kind == "cup":
         return [
-            t.cylinder("cup", size * 0.8, size * 0.8, mat, at=(0, 0, at + size * 0.3), sides=6, radius_top=size * 0.6),
+            t.cylinder("cup", size * 0.8, size * 0.8, mat, at=(0, 0, at + size * 0.3), sides=12, radius_top=size * 0.6),
             t.sphere("gem", size, gem or mat, at=(0, 0, at - size * 0.4), subdivisions=0, squash=(0.9, 0.9, 1.3)),
         ]
     raise ValueError(kind)
 
 
 def finish(name, parts, folder="weapons"):
-    t.join(name, parts)
+    # Smooth where it is round (grips, pommels, rings), crisp where a blade is ground: the
+    # angle is low enough that the bevel down to the edge stays a hard line.
+    t.soften(t.join(name, parts), angle=30)
     return {"folder": folder, "name": name}

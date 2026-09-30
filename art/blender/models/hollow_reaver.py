@@ -25,7 +25,7 @@ def build():
     for side in (False, True):
         h = t.profile_solid(f"horn_{side}", [
             (0.0, -0.04), (0.16, -0.05), (0.30, 0.04), (0.36, 0.22), (0.30, 0.12), (0.16, 0.05), (0.0, 0.05),
-        ], 0.08, horn, bevel=0.01)
+        ], 0.08, horn, bevel=0.016, segments=3)
         parts.append(k.stand(h, z=0.02, mirror=side))
 
     # A spike for a pommel, pointing down.
