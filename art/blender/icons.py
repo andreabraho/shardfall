@@ -25,6 +25,10 @@ OUT = os.path.join(ROOT, "game", "assets", "icons", "items")
 # Pixels per bag cell: crisp at the bag's size with room to spare.
 CELL = 128
 
+# The height, as the icon camera sees it, of the longest great sword: every weapon is drawn
+# at the scale that fits this one.
+WEAPON_HEIGHT = 2.62
+
 
 def load_json(path):
     """The content files carry // comments, which JSON does not."""
@@ -116,7 +120,12 @@ def render(item_id, path, cell):
     middle = Vector(((max(p.x for p in pts) + min(p.x for p in pts)) / 2, (max(p.y for p in pts) + min(p.y for p in pts)) / 2, 0))
     cam.location += cam.matrix_world.to_3x3() @ middle
     aspect = cell[0] / cell[1]
-    if aspect < 1:
+    if kind == "wpn":
+        # Every weapon at one scale, the longest great sword filling the cell: a sword is then
+        # plainly shorter than a great sword in the bag (2026-09-30, at your call).
+        cam.data.sensor_fit = "VERTICAL"
+        cam.data.ortho_scale = max(WEAPON_HEIGHT, width / aspect) * 1.06
+    elif aspect < 1:
         cam.data.sensor_fit = "VERTICAL"
         cam.data.ortho_scale = max(height, width / aspect) * 1.1
     else:
