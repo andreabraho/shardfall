@@ -836,6 +836,40 @@ public sealed class ZoneDef : ContentDefBase
     /// such as a dungeon.
     /// </summary>
     public BorderDef? Border { get; init; }
+
+    /// <summary>
+    /// How the ground is painted (2026-09-30). Null keeps the scene's single colour, as a
+    /// dungeon's stone floor does.
+    /// </summary>
+    public GroundDef? Ground { get; init; }
+}
+
+/// <summary>
+/// The paint on a map's ground (game/shaders/ground.gdshader): its own colour, from the scene,
+/// broken up into sunlit and shaded swathes, patches of something else, and specks.
+/// </summary>
+public sealed class GroundDef
+{
+    /// <summary>The sunlit swathes.</summary>
+    public string Light { get; init; } = "#6b8540";
+
+    /// <summary>The shaded, lusher swathes.</summary>
+    public string Dark { get; init; } = "#334f29";
+
+    /// <summary>The patches: bare earth in a meadow, ash in a burnt wood, gravel in sand.</summary>
+    public string Patch { get; init; } = "#5c4a30";
+
+    /// <summary>How much of the ground the patches cover, 0 to 1.</summary>
+    public double PatchAmount { get; init; } = 0.2;
+
+    /// <summary>The specks: flowers, pebbles, embers.</summary>
+    public string Speck { get; init; } = "#d9cc73";
+
+    /// <summary>How thick the specks lie, 0 to 0.3.</summary>
+    public double SpeckAmount { get; init; } = 0.03;
+
+    /// <summary>How strongly the fine grain lightens and darkens it, 0 to 0.5.</summary>
+    public double Grain { get; init; } = 0.16;
 }
 
 /// <summary>
