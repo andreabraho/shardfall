@@ -19,6 +19,10 @@ from mathutils import Vector
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
+sys.path.insert(0, HERE)
+
+import temins  # noqa: E402
+import trinkets  # noqa: E402
 DATA = os.path.join(ROOT, "game", "data")
 OUT = os.path.join(ROOT, "game", "assets", "icons", "items")
 
@@ -40,8 +44,12 @@ def load_json(path):
 def items():
     visuals = {v["id"]: v for v in load_json(os.path.join(DATA, "tables", "visuals.json"))}
     found = []
-    for name in ("weapons.json", "armor.json"):
+    for name in ("weapons.json", "armor.json", "accessories.json"):
         for item in load_json(os.path.join(DATA, "items", name)):
+            # Gear never drawn on the character is built for its icon alone.
+            if item["id"] in trinkets.BUILDERS:
+                found.append((item["id"], None, item.get("grid_size", [1, 1])))
+                continue
             look = visuals.get(item.get("visual", ""))
             if not look or look.get("primitive") != "model" or "/temins/" not in look.get("model_path", ""):
                 continue
@@ -51,7 +59,8 @@ def items():
 
 
 def clear():
-    bpy.ops.wm.read_factory_settings(use_empty=True)
+    # Through the kit, so its cache of materials is emptied with the scene.
+    temins.reset()
 
 
 def meshes():
@@ -67,7 +76,10 @@ def bounds(objs):
 
 def render(item_id, path, cell):
     clear()
-    bpy.ops.import_scene.gltf(filepath=path)
+    if path is None:
+        trinkets.build(item_id)
+    else:
+        bpy.ops.import_scene.gltf(filepath=path)
 
     # Forearm bracers stand out sideways in the rest pose: an armour's icon is its body.
     for o in list(bpy.data.objects):
@@ -105,7 +117,10 @@ def render(item_id, path, cell):
 
     # A sword seen on the flat of its blade, turned a little so it has depth; worn gear from a
     # little to the right of the front and a little above.
-    yaw, pitch = (18, 4) if kind == "wpn" else (24, 5)
+    yaw, pitch = {
+        "wpn": (18, 4), "rng": (20, 32), "ear": (20, 10), "nck": (8, 6),
+        "shd": (22, 8), "bts": (35, 16), "brc": (22, 18),
+    }.get(kind, (24, 5))
     direction = Vector((math.sin(math.radians(yaw)), -math.cos(math.radians(yaw)), math.tan(math.radians(pitch)))).normalized()
     cam.location = centre + direction * 10
     cam.rotation_euler = (centre - cam.location).to_track_quat("-Z", "Y").to_euler()
@@ -135,7 +150,8 @@ def render(item_id, path, cell):
     os.makedirs(OUT, exist_ok=True)
     scene.render.filepath = os.path.join(OUT, item_id + ".png")
     bpy.ops.render.render(write_still=True)
-    print(f"[icon] {item_id} {cell[0]}x{cell[1]} <- {os.path.relpath(path, ROOT)}")
+    source = os.path.relpath(path, ROOT) if path else "built for the icon"
+    print(f"[icon] {item_id} {cell[0]}x{cell[1]} <- {source}")
 
 
 def main():
