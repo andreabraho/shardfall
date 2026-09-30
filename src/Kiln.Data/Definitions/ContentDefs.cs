@@ -622,6 +622,12 @@ public sealed class CosmeticDef : ContentDefBase
 
     /// <summary>Companion: its size against the creature the visual was made for.</summary>
     public double Scale { get; init; } = 0.5;
+
+    /// <summary>
+    /// Companion: metres it flies above the ground, bobbing; 0 for one that walks. A winged
+    /// thing standing on the grass sank into it (2026-09-30).
+    /// </summary>
+    public double Hover { get; init; }
 }
 
 // ---------------------------------------------------------------------------

@@ -99,7 +99,17 @@ public partial class Companion : CharacterBody3D
         var target = flat.LengthSquared() > 0.01f ? Mathf.Atan2(-flat.X, -flat.Z) : Yaw(_player);
 
         _visual.Rotation = _visual.Rotation with { Y = Mathf.LerpAngle(_visual.Rotation.Y, target, Mathf.Min(1f, 10f * (float)delta)) };
+
+        // One that flies keeps its height over the ground, rising and falling a little as its
+        // wings beat.
+        if (_look.Hover > 0)
+        {
+            _flight += delta;
+            _visual.Position = _visual.Position with { Y = (float)(_look.Hover + (0.08 * System.Math.Sin(_flight * 2.4))) };
+        }
     }
+
+    private double _flight;
 
     /// <summary>Where the player faces: their model turns, their body does not.</summary>
     private static float Yaw(Node3D player) => player.GetNodeOrNull<Node3D>("VisualRoot")?.Rotation.Y ?? 0f;

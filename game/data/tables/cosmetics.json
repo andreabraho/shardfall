@@ -5,7 +5,7 @@
   //
   // kind: sword (on the sword and the great sword alike) | armour (the whole Knight but its
   // face) | aura (a stream of points round the blade, either blade, beside any sword skin) |
-  // companion (walks beside the player).
+  // companion (walks beside the player; with hover, flies that many metres over the ground).
   // texture: the model's own texture, recoloured — see game/assets/cosmetics/SOURCES.txt.
   // particles: frost | venom | embers | arcane.
 
@@ -34,5 +34,5 @@
     "texture": "res://assets/cosmetics/sword_hellfire.png", "color": "#ff6a2a", "emission": 0.45, "particles": "embers" },
 
   { "id": "cos_imp",            "name": "$cos.cos_imp.name",            "kind": "companion", "boss": "mob_demon_lord",          "chance": 0.5,  "duplicate_gan": 8000,
-    "visual": "mesh_q_imp", "scale": 0.32 }
+    "visual": "mesh_q_imp", "scale": 0.32, "hover": 0.75 }
 ]

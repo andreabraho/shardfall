@@ -105,8 +105,10 @@ public partial class ModelAnimator : Node
         ["Running_A", "Running_B", "Run", "Gallop", "Rat_Run", "Fast_Flying", "Walking_A", "Walk",
          "Spider_Walk", "Snake_Walk", "Rat_Walk", "Wasp_Flying"];
 
+    // A creature that flies has no walk: roaming, it drifts on its hover rather than beating
+    // along at full tilt in slow motion (the ghosts, imps, golelings and tribal masks).
     private static readonly string[] Walk =
-        ["Walk", "Walking_A", "Walking_B", "Rat_Walk", "Spider_Walk", "Snake_Walk"];
+        ["Walk", "Walking_A", "Walking_B", "Rat_Walk", "Spider_Walk", "Snake_Walk", "Flying_Idle"];
 
     private static readonly string[] Strike =
         ["Attack", "Attack_Headbutt", "Attack_Kick", "Punch", "Bite_Front", "Headbutt",
