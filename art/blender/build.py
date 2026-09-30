@@ -48,7 +48,11 @@ def main():
         # Gear made to be worn is judged on who wears it.
         if where.get("reference"):
             bpy.ops.import_scene.gltf(filepath=where["reference"])
-        turntable(render, where["name"], where.get("views", 4))
+            # Without what the piece replaces on the wearer (the Knight's own helmet, its cape).
+            for obj in list(bpy.data.objects):
+                if obj.name in where.get("replaces", ()):
+                    bpy.data.objects.remove(obj, do_unlink=True)
+        turntable(render, where["name"], where.get("views", 4), where.get("focus"))
 
 
 def bounds():
@@ -64,11 +68,15 @@ def bounds():
     return hi - lo, lo, hi
 
 
-def turntable(folder, name, views):
+def turntable(folder, name, views, focus=None):
     os.makedirs(folder, exist_ok=True)
     size, lo, hi = bounds()
     centre = (lo + hi) / 2
     reach = max(size) * 0.62
+
+    # A piece worn on part of a body is framed on that part: (centre, reach).
+    if focus is not None:
+        centre, reach = Vector(focus[0]), focus[1]
 
     scene = bpy.context.scene
     for engine in ("BLENDER_EEVEE", "BLENDER_EEVEE_NEXT"):

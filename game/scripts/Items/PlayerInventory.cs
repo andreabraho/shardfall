@@ -119,7 +119,8 @@ public partial class PlayerInventory : Node
             Aura: Cosmetics.Worn(Cosmetics.Aura),
             ArmourUpgrade: armour?.UpgradeLevel ?? 0,
             WeaponModel: weapon is null ? null : ModelOf(weapon.DefId),
-            ArmourModel: armour is null ? null : ModelOf(armour.DefId)));
+            ArmourModel: armour is null ? null : ModelOf(armour.DefId),
+            HelmetModel: Gear.In(EquipSlot.Helmet) is { } helmet ? ModelOf(helmet.DefId) : null));
     }
 
     /// <summary>The model an item is worn as: its visual's scene, when the visual is a model.</summary>

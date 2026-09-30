@@ -55,7 +55,7 @@ def mirror_x(obj):
     return copy
 
 
-def finish(name, by_bone, folder="armour"):
+def finish(name, by_bone, folder="armour", focus=None):
     """
     Joins each bone's pieces into one object called bone__<bone> ('.' becomes '_', which
     Godot's node names cannot hold) and leaves nothing else in the scene to export.
@@ -70,7 +70,14 @@ def finish(name, by_bone, folder="armour"):
         if obj not in keep:
             bpy.data.objects.remove(obj, do_unlink=True)
 
-    return {"folder": folder, "name": name, "reference": KNIGHT}
+    helmet = list(by_bone) == ["head"]
+
+    if focus is None:
+        focus = ((0, 0, 1.75), 0.75) if helmet else ((0, 0, 0.9), 0.85)
+
+    replaces = ["Knight_Helmet", "Knight_HelmetVisor"] if helmet else ["Knight_Cape", "Knight_Helmet", "Knight_HelmetVisor"]
+
+    return {"folder": folder, "name": name, "reference": KNIGHT, "focus": focus, "replaces": replaces}
 
 
 def cape(name, mat, top=(1.31, 0.40, 0.31), bottom=(0.28, 0.56, 0.50), curve=0.12, thickness=0.025, cols=8, rows=5):
@@ -102,3 +109,106 @@ def cape(name, mat, top=(1.31, 0.40, 0.31), bottom=(0.28, 0.56, 0.50), curve=0.1
     solid = obj.modifiers.new("Solid", "SOLIDIFY")
     solid.thickness = thickness
     return obj
+
+
+def gap_band(name, rx, ry, z0, z1, mat, gap=70, sides=20, y=0.0, thickness=0.03, top=1.0, front=None):
+    """
+    A band round the head or body left open over `gap` degrees at the front (-Y), for the
+    face; with `front`, only that many degrees at the front are kept instead.
+    """
+    bm = bmesh.new()
+    bmesh.ops.create_cone(bm, cap_ends=False, cap_tris=False, segments=sides,
+                          radius1=rx, radius2=rx * top, depth=z1 - z0)
+    bmesh.ops.scale(bm, vec=(1, ry / rx, 1), verts=bm.verts)
+    bmesh.ops.translate(bm, vec=(0, y, (z0 + z1) / 2), verts=bm.verts)
+
+    doomed = []
+    for f in bm.faces:
+        c = f.calc_center_median()
+        angle = math.degrees(math.atan2(c.x, -(c.y - y)))
+        if (front is None and abs(angle) < gap / 2) or (front is not None and abs(angle) > front / 2):
+            doomed.append(f)
+
+    bmesh.ops.delete(bm, geom=doomed, context="FACES")
+    obj = t.mesh_object(name, bm, mat)
+    obj.modifiers.new("Solid", "SOLIDIFY").thickness = thickness
+    return obj
+
+
+def shell(name, mat, centre, radii, below=None, opening=None, thickness=0.035, segments=18, rings=12, smooth=False):
+    """
+    A helmet's shell: an ellipsoid round the head, cut off below `below` and, with `opening`
+    (half width, bottom, top), open over the face at the front.
+    """
+    bm = bmesh.new()
+    bmesh.ops.create_uvsphere(bm, u_segments=segments, v_segments=rings, radius=1.0)
+    bmesh.ops.scale(bm, vec=radii, verts=bm.verts)
+    bmesh.ops.translate(bm, vec=centre, verts=bm.verts)
+
+    doomed = []
+    for f in bm.faces:
+        c = f.calc_center_median()
+        if below is not None and c.z < below:
+            doomed.append(f)
+        elif opening is not None and c.y < centre[1] and abs(c.x) < opening[0] and opening[1] < c.z < opening[2]:
+            doomed.append(f)
+
+    bmesh.ops.delete(bm, geom=doomed, context="FACES")
+    obj = t.mesh_object(name, bm, mat, smooth=smooth)
+    obj.modifiers.new("Solid", "SOLIDIFY").thickness = thickness
+    return obj
+
+
+def roll(name, rx, ry, z0, z1, mat, y=0.03, top=1.0):
+    """A padded roll of quilting: a band with its edges rounded right off."""
+    obj = band(name, rx, ry, z0, z1, mat, top=top, y=y, bevel=0)
+    t.add_bevel(obj, (z1 - z0) * 0.4, segments=3)
+    return obj
+
+
+def sleeve(name, x0, x1, r0, r1, mat, z=1.11, sides=8, bevel=0.01, squash=1.0):
+    """A sleeve or bracer round the left arm from x0 to x1 (mirror it for the right)."""
+    obj = t.cylinder(name, r0, x1 - x0, mat, at=((x0 + x1) / 2, 0, z), sides=sides, radius_top=r1, axis="X", bevel=bevel)
+    obj.scale.y = squash
+    return obj
+
+
+def spike(name, base, tip, radius, mat, sides=5):
+    """A cone from `base` to `tip`."""
+    from mathutils import Vector
+
+    base, tip = Vector(base), Vector(tip)
+    length = (tip - base).length
+    obj = t.cylinder(name, radius, length, mat, at=(0, 0, length / 2), sides=sides, radius_top=0.0)
+    obj.rotation_euler = (tip - base).to_track_quat("Z", "Y").to_euler()
+    obj.location = base
+    return obj
+
+
+def scales(name, rx, ry, z, mat, count, size=(0.1, 0.02, 0.1), y=0.03, offset=0.0, tilt=18, alt=None):
+    """
+    A row of overlapping scales round the body at height z, each standing a little out at its
+    foot; `alt` gives every other scale another material.
+    """
+    parts = []
+    for i in range(count):
+        a = 2 * math.pi * (i + offset) / count
+        px, py = rx * math.sin(a), ry * -math.cos(a)
+        nx, ny = px / (rx * rx), py / (ry * ry)
+        # No bevel: a hauberk has hundreds of these, and a bevelled box is four times the triangles.
+        scale = t.box(f"{name}_{i}", size, alt if alt is not None and i % 2 else mat)
+        scale.rotation_euler = (math.radians(tilt), 0, math.atan2(-nx, ny))
+        scale.location = (px * 1.02, py * 1.02 + y, z)
+        parts.append(scale)
+    return parts
+
+
+def around(centre, radii, z, grow=0.015):
+    """The half width and depth of a shell at height z, a little out from it: for a band to sit on it."""
+    k = max(0.0, 1 - ((z - centre[2]) / radii[2]) ** 2) ** 0.5
+    return radii[0] * k + grow, radii[1] * k + grow
+
+
+# The head a helmet goes round (2026-09-30): wide enough that no hair shows between its facets.
+HEAD = (0, -0.02, 1.76)
+HELM = (0.635, 0.60, 0.66)
