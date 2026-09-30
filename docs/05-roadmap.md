@@ -426,18 +426,25 @@ Rogue (the pack's woman) unchanged** and the animations are shared; her hair fal
 our four helmets without piercing them. The animations the new classes need (two daggers,
 dodges, bow, spells) are in KayKit Character Animations 1.1, **already downloaded**.
 
+**Decided 2026-09-30:** five classes, each its own — the **Warrior**, the **Ninja** (two
+daggers), the **Archer** / *Arciere* (bow), the **Asura** (magic weapons), the **Dragonseer** /
+*Dragoveggente* (magic at range, heals, blessings). The first step is **the woman**; and every
+new class's **weapons and armour are ours from Blender from the start** (no KayKit stand-ins).
+
 | ID | Task | Owner | Notes |
 |---|---|---|---|
-| CLS-01 | Several classes in the code: the class in the save, skills and starting gear per class, class-bound items, a class per skill tree, two weapons in hand | **[C]** | Old saves stay Warriors |
-| CLS-02 | **Character creator, level A**: class (what it plays like), **man or woman**, face (4 men, 1 woman, the hooded look for the dagger class), hair colour, skin tone, name, difficulty; a turning 3D preview | **[C↔You]** | Heads swapped whole, colours by palette swatches: no new models |
+| CLS-00 | **The woman**: man or woman at a new game, the woman the KayKit Rogue's head and body on the Knight's skeleton (armour, helmets and animations unchanged), kept in the save, shown in the character list; the few Italian lines that speak to the player in the masculine ("sei morto") get their feminine | **[C→You]** | First. Old saves are men |
+| CLS-01 | Several classes in the code: the class in the save, skills and starting gear per class, class-bound items, a class per skill tree, two weapons in hand; a fifth class (Archer) in the enum | **[C]** | Old saves stay Warriors |
+| CLS-02 | **Character creator, level A**: class (what it plays like), man or woman, face (4 men, 1 woman, the hooded look for the Ninja), hair colour, skin tone, name, difficulty; a turning 3D preview | **[C↔You]** | Heads swapped whole, colours by palette swatches |
 | CLS-02b | Creator level B: separate hairstyles made in Blender, each with its rule under a helm and a photo of every hair under every helm | **[C↔You]** | Later, if level A is not enough |
-| CLS-03 | **Dagger fighter** (class 2, first branch): skills, daggers (KayKit's, then ours), dual-wield blows, Shift: a short dash, a moment untouchable | **[C↔You]** | First; proves the multi-class build end to end |
-| CLS-04 | Dagger fighter, **bow** branch: bow, arrows, aim-draw-release | **[C↔You]** | To confirm: a branch of class 2 (my reading) or a class of its own |
-| CLS-05 | **Magic-weapons fighter** — sword and dark magic; Shift: a shield that absorbs | **[C↔You]** | Name to decide |
-| CLS-06 | **Shaman** — magic at range, heals and blessings; Shift: a shield that also cleanses | **[C↔You]** | Name to decide |
+| ART-01 | **Each new class's gear in Blender**, by the house guide (`art/blender/GUIDE.md`): weapons for every level band with icons, and an armour and helmet line of its own — the Ninja light and dark, the Archer leather and hood, the Asura dark plate, the Dragonseer robes | **[C→You]** | Before or alongside each class; the Warrior's seven armours stay his |
+| CLS-03 | **Ninja**: skills (two branches), dual-wield blows, Shift: a short dash, a moment untouchable | **[C↔You]** | First class; proves the multi-class build end to end |
+| CLS-04 | **Archer**: skills, bow, arrows, aim-draw-release, running with the bow | **[C↔You]** | |
+| CLS-05 | **Asura** — the weapon carries dark magic; Shift: a shield that absorbs | **[C↔You]** | |
+| CLS-06 | **Dragonseer** — magic at range, heals and blessings; Shift: a shield that also cleanses | **[C↔You]** | |
 | CLS-07 | Balance: each class finishes act 1 and the tower alone, checked by the simulator | **[C]** | After each class, not at the end |
 
-Open with you: dagger and bow as one class or two; the three names; creator level A first.
+"Ninja" is your name for it (2026-09-30); it is also the original game's name for its dagger class — flagged, yours to change.
 
 ### P3 — Act 2, levels 23–40
 

@@ -136,3 +136,15 @@ New game → **class** (only the ones built; others shown as "coming") with what
 3. The creator: **level A first** (recommended), B later?
 4. The dagger class's feel: its Shift (a short dash with a moment untouchable, as designed),
    and whether its first weapons are KayKit's dagger or ours from Blender straight away.
+
+---
+
+## 4. Your answers (2026-09-30)
+
+1. **Two classes**, not one with two branches: the dagger fighter and the archer are separate.
+2. **Names**: Ninja, Arciere (Archer), Asura, Dragoveggente (Dragonseer). "Ninja" is also the
+   original's name for its dagger class — flagged, kept unless you change it.
+3. **The woman first** — before the other classes and before the full creator.
+4. **Every new class's weapons and armour made in Blender from the start**, no KayKit stand-ins.
+
+The roadmap's P2 rows (CLS-00 … CLS-07, ART-01) follow these.
