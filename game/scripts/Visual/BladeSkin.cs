@@ -9,7 +9,7 @@ namespace Kiln.Game.Visual;
 /// </summary>
 /// <remarks>
 /// A wash, not a new coat (2026-09-30, at your call): every sword has its own model now, and the
-/// skin tints it by a quarter, so the sword still shows through. The skin's texture was a
+/// skin tints it by under a fifth, so the sword still shows through. The skin's texture was a
 /// recolouring of the KayKit sword and is no longer drawn on a blade.
 /// <para>
 /// A node on the blade, as the upgrade glow is, so taking the skin off is taking the node away:
@@ -19,7 +19,7 @@ namespace Kiln.Game.Visual;
 public partial class BladeSkin : Node3D
 {
     /// <summary>How far a skin tints the blade's own colours toward its own.</summary>
-    private const float Wash = 0.25f;
+    private const float Wash = 0.18f;
 
     private MeshInstance3D _blade = null!;
 
@@ -59,7 +59,7 @@ public partial class BladeSkin : Node3D
             {
                 copy.EmissionEnabled = true;
                 copy.Emission = colour;
-                copy.EmissionEnergyMultiplier = (float)skin.Emission * 0.12f;
+                copy.EmissionEnergyMultiplier = (float)skin.Emission * 0.08f;
             }
 
             blade.SetSurfaceOverrideMaterial(s, copy);
