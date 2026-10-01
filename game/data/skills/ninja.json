@@ -4,7 +4,7 @@
   // of poison and a poisoned blade thrown — under names of our own. Three of the body, three of the mind.
 
   // A heavy blow on one target, worth twice as much struck from out of the Shadow Veil ("magnitude").
-  { "id": "skl_shadow_strike",   "name": "$skill.skl_shadow_strike.name", "color": "#c9b6ff", "sound": "snd_skl_heavy",  "class": "blade", "tree": "body",   "suggested_level": 1,  "mana_cost": 14, "cooldown": 5.0,  "cast_type": "instant", "targeting": "single_target", "radius": 0,   "damage_coef": 2.00, "hits": 1, "motion": "slice",
+  { "id": "skl_shadow_strike",   "name": "$skill.skl_shadow_strike.name", "color": "#c9b6ff", "sound": "snd_skl_heavy",  "class": "blade", "tree": "body",   "suggested_level": 1,  "mana_cost": 14, "cooldown": 5.0,  "cast_type": "instant", "targeting": "single_target", "radius": 0,   "damage_coef": 2.00, "hits": 1, "motion": "charge",
     "magnitude": 1.00,
     "mastery": {
       "master":       { "damage_coef": 2.30, "note": "$skill.skl_shadow_strike.m" },
