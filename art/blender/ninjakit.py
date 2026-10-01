@@ -151,3 +151,31 @@ def straps(mat, z0=0.86, z1=1.19, width=0.06):
 def finish(name, by_bone):
     """As armourkit's, worn over the Ninja's clothes: nothing under it, shown on the Ninja."""
     return a.finish(name, by_bone, underlay=False, reference=WEARER, replaces=[], focus=((0, 0, 0.75), 0.95))
+
+
+# What goes round the head: the brow of both the woman's hair and the man's hood, measured
+# between z 1.84 and 1.95 — half the width, half the depth, and how far forward its middle is.
+BROW = (0.50, 0.565, -0.005)
+
+
+def headband(mat, z0=1.85, z1=1.935, grow=0.0, ends=None, lengths=(0.34, 0.26)):
+    """A band tied round the brow; with `ends`, knotted behind one ear with two ends hanging."""
+    rx, ry, y = BROW
+    parts = [a.roll("headband", rx + grow, ry + grow, z0, z1, mat, y=y)]
+    if ends is not None:
+        x, back, z = -0.36, 0.42, (z0 + z1) / 2
+        parts.append(t.sphere("band_knot", 0.06, mat, at=(x, back, z), subdivisions=2, squash=(1, 1, 0.8)))
+        for i, length in enumerate(lengths):
+            parts.append(strip(f"band_end_{i}", (x - 0.01, back + 0.02, z), (x - 0.06 - 0.05 * i, back + 0.10 + 0.04 * i, z - length), 0.07, ends))
+    return parts
+
+
+def brow_plate(mat, z0=1.83, z1=1.955, width=64, grow=0.012):
+    """A plate over the forehead, on the band: `width` degrees of its front."""
+    rx, ry, y = BROW
+    return a.gap_band("brow_plate", rx + grow, ry + grow, z0, z1, mat, front=width, y=y, thickness=0.03)
+
+
+def finish_head(name, parts):
+    """A piece of headgear, shown on the Ninja's head."""
+    return a.finish(name, {"head": parts}, underlay=False, reference=WEARER, replaces=[], focus=((0, 0, 1.75), 0.8))

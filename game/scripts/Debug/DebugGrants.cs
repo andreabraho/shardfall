@@ -7,7 +7,7 @@ using Kiln.Game.Items;
 namespace Kiln.Game.Debug;
 
 /// <summary>
-/// Hands the player what a system needs to be exercised: every dagger and armour of the Ninja
+/// Hands the player what a system needs to be exercised: every dagger, armour and headpiece of the Ninja
 /// (F8, 2026-10-01: all it gives, at your call), and a level at a time (F1).
 /// </summary>
 /// <remarks>
@@ -26,7 +26,7 @@ public partial class DebugGrants : Node
             return;
         }
 
-        GD.Print("[debug] F1 grants a level · F8 grants every dagger and armour of the Ninja · F10 unlocks every cosmetic");
+        GD.Print("[debug] F1 grants a level · F8 grants every dagger, armour and headpiece of the Ninja · F10 unlocks every cosmetic");
     }
 
     public override void _UnhandledInput(InputEvent @event)
@@ -63,7 +63,7 @@ public partial class DebugGrants : Node
         var gear = GameContent.Database.Items.Values.Where(IsNinjaGear).OrderBy(d => d.Slot).ThenBy(d => d.LevelReq).ToList();
         var given = gear.Count(def => bag.Bag.TryAdd(GameItems.Factory.Create(def.Id, rng)));
 
-        var report = $"[debug] {given}/{gear.Count} Ninja daggers and armours" + (given < gear.Count ? " — the bag is full" : "");
+        var report = $"[debug] {given}/{gear.Count} Ninja daggers, armours and headpieces" + (given < gear.Count ? " — the bag is full" : "");
 
         GD.Print(report);
         UI.WorldNotice.Show(GetTree(), report);
@@ -82,7 +82,7 @@ public partial class DebugGrants : Node
     }
 
     private static bool IsNinjaGear(Kiln.Data.Definitions.ItemDef def) =>
-        def.Slot is EquipSlot.Weapon or EquipSlot.Armor && def.ClassRestriction.Contains("blade");
+        def.Slot is EquipSlot.Weapon or EquipSlot.Armor or EquipSlot.Helmet && def.ClassRestriction.Contains("blade");
 
     /// <summary>
     /// Exactly the experience the next level still wants, so one press is one level.

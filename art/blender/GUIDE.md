@@ -99,7 +99,7 @@ Knight's T-pose (measurements in the file's docstring). `band`, `gap_band`, `she
 ### `ninjakit.py` — the Ninja's armours
 Built on `armourkit`, round the Rogue's body the Ninja wears and **over its clothes**, which stay
 on (`"own_clothes"` in `visuals.json`): `vest`, `binding`, `sash`, `tails`, `collar`, `pad`, `wraps`,
-`bracer`, `shin`, `tassets`, `straps`, then `finish(name, {bone: [parts]})`, which shows it on the
+`bracer`, `shin`, `tassets`, `straps`, `headband` and `brow_plate` (headgear, ended with `finish_head`), then `finish(name, {bone: [parts]})`, which shows it on the
 Ninja woman. Nothing covers the waist or the head, and shoulder pieces stand **out** past the
 chibi head (x ≥ 0.40) or it hides them. Daggers are swords from `swordkit`, about 0.6–0.85 long,
 two cells tall in the bag.

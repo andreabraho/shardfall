@@ -187,7 +187,7 @@ public sealed class GearRig
 
         DressArmour(look.ArmourSkin);
         DressPlates(look.ArmourModel, _plates, ref _platesPath);
-        DressPlates(look.Helmet ? look.HelmetModel : null, _helm, ref _helmPath);
+        DressPlates(look.Helmet ? look.HelmetModel : null, _helm, ref _helmPath, _parts.HelmetFit);
 
         // The same glints round the body for +8 and +9 armour (2026-09-28). Rebuilt only when
         // the level changes, so wearing something else does not restart them.
@@ -319,7 +319,7 @@ public sealed class GearRig
     /// piece's place on its bone is its place in the model undone by the bone's rest. Measured
     /// through the tree rather than in global space, so it holds before the model is shown.
     /// </remarks>
-    private void DressPlates(string? path, List<MeshInstance3D> worn, ref string wornPath)
+    private void DressPlates(string? path, List<MeshInstance3D> worn, ref string wornPath, float[]? fit = null)
     {
         path ??= "";
 
@@ -360,6 +360,16 @@ public sealed class GearRig
             }
 
             var place = Within(piece, suit);
+
+            // A head narrower or wider than the piece was made for: the piece is scaled about a
+            // point, in the model's space, before it is hung.
+            if (fit is { Length: 6 })
+            {
+                var about = new Vector3(fit[3], fit[4], fit[5]);
+
+                place = new Transform3D(Basis.Identity, about) * new Transform3D(Basis.FromScale(new Vector3(fit[0], fit[1], fit[2])), Vector3.Zero)
+                    * new Transform3D(Basis.Identity, -about) * place;
+            }
             var rest = skeletonInModel * skeleton.GetBoneGlobalRest(bone);
             var slot = PlateSlot(skeleton, bone);
 

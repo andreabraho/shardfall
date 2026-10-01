@@ -773,6 +773,13 @@ public sealed class GearPartsDef
     /// the same way always.
     /// </summary>
     public float[] RestGrip { get; init; } = [];
+
+    /// <summary>
+    /// How a modelled helmet is fitted to this body's head: a scale on x, y and z and the point it
+    /// is scaled about, in the model's space (the Ninja man's hood is narrower at the brow than the
+    /// woman's hair the headbands were made round). Empty: worn as made.
+    /// </summary>
+    public float[] HelmetFit { get; init; } = [];
 }
 
 // ---------------------------------------------------------------------------
