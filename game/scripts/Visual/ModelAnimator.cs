@@ -279,8 +279,19 @@ public partial class ModelAnimator : Node
     {
         if (_player is null) return 0;
 
+        // With a blade in each hand (CLS-03) a blow is struck with both where there is a clip for it.
+        string[] dual = !DualWield ? [] : motion switch
+        {
+            "chop" or "slam" => ["Melee_Dualwield_Attack_Chop"],
+            "slice" or "wave" => ["Melee_Dualwield_Attack_Slice"],
+            "charge" => ["Melee_Dualwield_Attack_Stab"],
+            _ => [],
+        };
+
         string[] wanted = motion switch
         {
+            // Something thrown from the hand: the Viper Fang.
+            "throw" => ["Throw"],
             "chop" => TwoHanded ? ["Melee_2H_Attack_Chop", "2H_Melee_Attack_Chop"] : ["Melee_1H_Attack_Chop", "1H_Melee_Attack_Chop"],
             "slice" => TwoHanded ? ["Melee_2H_Attack_Slice", "2H_Melee_Attack_Slice"] : ["Melee_1H_Attack_Slice_Horizontal", "1H_Melee_Attack_Slice_Horizontal"],
             "bash" => ["Melee_Block_Attack", "Block_Attack"],
@@ -296,7 +307,7 @@ public partial class ModelAnimator : Node
             _ => [],
         };
 
-        var clip = wanted.Length == 0 ? "" : Pick(_player.GetAnimationList(), wanted);
+        var clip = wanted.Length == 0 ? "" : Pick(_player.GetAnimationList(), [.. dual, .. wanted]);
 
         if (clip.Length == 0) return motion is "brace" or "raise" or "roar" ? Flourish() : Attack();
 

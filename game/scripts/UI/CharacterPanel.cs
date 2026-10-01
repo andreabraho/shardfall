@@ -342,7 +342,7 @@ public partial class CharacterPanel : CanvasLayer
         var points = progression.UnspentAttributePoints;
 
         _name.Text = Saving.SaveService.CharacterName is { Length: > 0 } given ? given : Saving.SaveService.DefaultName();
-        _level.Text = L10n.F("{0}  ·  level {1}", L10n.T("Warrior"), progression.Level);
+        _level.Text = L10n.F("{0}  ·  level {1}", L10n.T(PlayerProfile.Class == Kiln.Core.Foundation.CharacterClass.Blade ? "Ninja" : "Warrior"), progression.Level);
 
         _expBar.Value = progression.IsMaxLevel ? 1 : progression.LevelProgress;
         _expText.Text = progression.IsMaxLevel

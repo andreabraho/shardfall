@@ -32,6 +32,13 @@ public enum StatusKind
     /// Frenzy (REF-21). The magnitude is the attack-speed gain; the step gains half of it.
     /// </summary>
     Frenzy,
+
+    /// <summary>
+    /// Unseen (CLS-03, the Ninja's Shadow Veil): creatures lose whoever wears it and do not find them
+    /// again until it ends — with its time, or with the wearer's first blow, which the magnitude
+    /// makes that much stronger.
+    /// </summary>
+    Stealth,
 }
 
 /// <summary>How repeated applications of the same status combine.</summary>
@@ -93,6 +100,7 @@ public sealed class StatusEffectSet
         [StatusKind.Vulnerability] = StackRule.Strongest,
         [StatusKind.Fortify] = StackRule.Strongest,
         [StatusKind.Empower] = StackRule.Strongest,
+        [StatusKind.Stealth] = StackRule.Strongest,
         [StatusKind.Frenzy] = StackRule.Strongest,
     };
 
@@ -112,6 +120,9 @@ public sealed class StatusEffectSet
     public int Count => _effects.Count;
 
     public bool Has(StatusKind kind) => _effects.ContainsKey(kind);
+
+    /// <summary>How strong a status is on its wearer, or 0 without it.</summary>
+    public double MagnitudeOf(StatusKind kind) => _effects.TryGetValue(kind, out var effect) ? effect.Magnitude : 0;
 
     public StatusEffect? Get(StatusKind kind) => _effects.GetValueOrDefault(kind);
 
@@ -292,4 +303,7 @@ public sealed class StatusEffectSet
 
     public static StatusEffect Frenzy(double fraction, double duration = 20) =>
         new() { Kind = StatusKind.Frenzy, Magnitude = fraction, Duration = duration };
+
+    public static StatusEffect Stealth(double firstBlow, double duration = 8) =>
+        new() { Kind = StatusKind.Stealth, Magnitude = firstBlow, Duration = duration };
 }

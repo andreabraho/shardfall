@@ -21,7 +21,7 @@ public static class ContentValidator
     public const int MaxLevel = 60;
 
     /// <summary>The moves a skill can be swung with (REF-22); empty is a plain swing.</summary>
-    public static readonly string[] SkillMotions = ["", "spin", "chop", "slice", "bash", "slam", "brace", "raise", "wave", "roar", "triple", "charge"];
+    public static readonly string[] SkillMotions = ["", "spin", "chop", "slice", "bash", "slam", "brace", "raise", "wave", "roar", "triple", "charge", "dash", "throw"];
 
     public static ValidationReport Validate(ContentDatabase db)
     {
@@ -1731,7 +1731,7 @@ public static class ContentValidator
     /// </summary>
     private static void StunRules(ContentDatabase db, ValidationReport report)
     {
-        string[] kinds = ["poison", "bleed", "stun", "slow", "weaken", "vulnerability", "fortify", "empower", "frenzy"];
+        string[] kinds = ["poison", "bleed", "stun", "slow", "weaken", "vulnerability", "fortify", "empower", "frenzy", "stealth"];
 
         foreach (var skill in db.Skills.Values.Where(s => s.Applies is not null))
         {
@@ -1782,10 +1782,10 @@ public static class ContentValidator
 
         foreach (var skill in db.Skills.Values.Where(s => s.Targeting == SkillTargeting.Self && s.CastType != "channel"))
         {
-            if (skill.Applies is not { Kind: "fortify" or "empower" or "frenzy" })
+            if (skill.Applies is not { Kind: "fortify" or "empower" or "frenzy" or "stealth" })
             {
                 report.Error("skill-effect", skill.SourceFile, $"'{skill.Id}' targets the caster and applies nothing.",
-                    "A self skill applies fortify (less damage taken), empower (more damage dealt) or frenzy (faster blows and step).");
+                    "A self skill applies fortify (less damage taken), empower (more damage dealt), frenzy (faster blows and step) or stealth (unseen).");
 
                 continue;
             }

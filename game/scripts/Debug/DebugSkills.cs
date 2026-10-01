@@ -147,7 +147,7 @@ public partial class DebugSkills : Node
         var uses = new Dictionary<string, int>(System.StringComparer.Ordinal);
         var points = new Dictionary<string, int>(System.StringComparer.Ordinal);
 
-        foreach (var def in UI.SkillText.WarriorSkills())
+        foreach (var def in UI.SkillText.ClassSkills())
         {
             points[def.Id] = rank == MasteryRank.Normal ? 1 : SkillBook.MaxPoints;
 

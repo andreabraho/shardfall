@@ -208,6 +208,7 @@ public partial class SkillCaster : Node
 
         ProcessPulses(delta);
         UpdateAiming();
+        ShowUnseen();
     }
 
     private void UpdateAiming()
@@ -500,8 +501,12 @@ public partial class SkillCaster : Node
             "fortify" => StatusEffectSet.Fortify(skill.Magnitude, skill.Duration),
             "empower" => StatusEffectSet.Empower(skill.Magnitude, skill.Duration),
             "frenzy" => StatusEffectSet.Frenzy(skill.Magnitude, skill.Duration),
+            "stealth" => StatusEffectSet.Stealth(skill.Magnitude, skill.Duration),
             _ => null,
         };
+
+        // Going unseen lets go of whatever was being fought: the next blow is chosen, not owed.
+        if (kind == "stealth") GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat")?.ClearTarget();
 
         // The moment of the cast (REF-21); the aura that follows is the status's own.
         var at = _motor.GlobalPosition;
@@ -511,6 +516,7 @@ public partial class SkillCaster : Node
             case "fortify": SkillFx.Harden(this, at, FxColour(skill), FxBright(skill)); break;
             case "empower": SkillFx.Sharpen(this, at, FxColour(skill), FxBright(skill)); break;
             case "frenzy": SkillFx.Frenzy(this, at, FxColour(skill), FxBright(skill)); break;
+            case "stealth": SkillFx.Harden(this, at, FxColour(skill), FxBright(skill)); break;
         }
 
         if (effect is null)
@@ -534,10 +540,13 @@ public partial class SkillCaster : Node
     /// Whirlwind's turns, the Triple Cut's three cuts, and the Piercing Blow's thrust once its
     /// charge is spent (REF-21).
     /// </summary>
-    private static bool PerHit(string motion) => motion is "spin" or "triple" or "charge";
+    private static bool PerHit(string motion) => motion is "spin" or "triple" or "charge" or "dash";
 
     /// <summary>The Triple Cut's three moves, one per hit: across, down on the diagonal, and overhead.</summary>
     private static readonly string[] TripleMoves = ["slice", "wave", "chop"];
+
+    /// <summary>How far a single-target skill reaches for a creature when none is chosen.</summary>
+    private const float UnaimedReach = 3.5f;
 
     /// <summary>How long a self-buff plants the character. Long enough to read as a cast.</summary>
     private const double SelfCastHold = 0.6;
@@ -567,6 +576,15 @@ public partial class SkillCaster : Node
             // already show the turn.
             _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Spin(skill.HitInterval, pulse.Index);
             Audio.AudioDirector.Play(SoundOf(skill.Id), _motor.GlobalPosition);
+        }
+
+        // The Flash Step (CLS-03): the Ninja goes through what stands in the line, to its end or to
+        // whatever stops the body, striking with both blades on the way.
+        if (skill.Motion == "dash")
+        {
+            _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove("charge", aim, 0.35, colour);
+            Audio.AudioDirector.Play(SoundOf(skill.Id), _motor.GlobalPosition);
+            Dash(aim, (float)skill.Radius);
         }
 
         // The Piercing Blow's thrust, as the charge is let go.
@@ -603,7 +621,7 @@ public partial class SkillCaster : Node
                 SkillFx.Cut(this, center, aim, (float)skill.Radius, pulse.Index, colour, bright);
                 break;
 
-            case SkillTargeting.Line when skill.Motion == "charge":
+            case SkillTargeting.Line when skill.Motion is "charge" or "dash":
                 targets = AreaQuery.Line(_motor, center, aim, (float)skill.Radius, (float)skill.Width);
                 SkillFx.Pierce(this, center, aim, (float)skill.Radius, colour, bright);
                 break;
@@ -625,6 +643,14 @@ public partial class SkillCaster : Node
 
             case SkillTargeting.SingleTarget:
                 var single = GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat")?.Target;
+
+                // With nothing chosen (CLS-03: out of the veil nothing is), the nearest creature within
+                // reach in front takes it.
+                single ??= AreaQuery.Cone(_motor, center, aim, UnaimedReach, 140f)
+                    .Where(t => t.IsAlive)
+                    .OrderBy(t => t.Body.GlobalPosition.DistanceSquaredTo(center))
+                    .FirstOrDefault();
+
                 targets = single is { IsAlive: true } ? [single] : [];
 
                 // The blow landing on the one target, in the rank's colour (REF-03, REF-21).
@@ -651,6 +677,15 @@ public partial class SkillCaster : Node
                 .ToList();
         }
 
+        // Out of the Shadow Veil (CLS-03): the first blow ends it and is worth more — what the veil
+        // gives, or what the skill itself gives for being struck unseen, whichever is more.
+        var unseen = _self.Statuses.Has(StatusKind.Stealth);
+        var ambush = unseen
+            ? 1 + System.Math.Max(_self.Statuses.MagnitudeOf(StatusKind.Stealth), skill.Applies is null && skill.Targeting == SkillTargeting.SingleTarget ? skill.Magnitude : 0)
+            : 1.0;
+
+        if (unseen) _self.Statuses.Remove(StatusKind.Stealth);
+
         var sparks = 0;
 
         foreach (var target in targets)
@@ -664,12 +699,71 @@ public partial class SkillCaster : Node
                 SkillFx.Impact(this, target.Body.GlobalPosition, colour, 0.8f, bright);
             }
 
-            target.TakeAttack(_self, skillCoef: skill.DamageCoef, skill: true, pierce: skill.Pierces);
+            var dealt = target.TakeAttack(_self, skillCoef: skill.DamageCoef * ambush, skill: true, pierce: skill.Pierces);
 
             // What is not a creature — a shard — cannot be stunned, but can be weakened.
             var resist = (target.Body as EnemyBrain)?.StunResist ?? 1.0;
 
+            // A poison or a bleeding the skill gives a strength of its own is a share of the blow
+            // that put it there, every tick, so it grows with the blade and the points (CLS-03).
+            if (skill.Applies is { Kind: "poison" or "bleed" } dot && skill.Magnitude > 0)
+            {
+                if (target.IsAlive && !dealt.Evaded && GameSession.CombatRng.Chance(dot.Chance))
+                {
+                    var tick = System.Math.Max(1.0, dealt.Amount * skill.Magnitude);
+
+                    target.Statuses.Apply(dot.Kind == "poison" ? StatusEffectSet.Poison(tick, dot.Duration) : StatusEffectSet.Bleed(tick, dot.Duration));
+                }
+
+                continue;
+            }
+
             StatusApplication.Try(skill.Applies, target, resist);
+        }
+    }
+
+    /// <summary>How long the Flash Step takes to cross its line.</summary>
+    private const double DashSeconds = 0.14;
+
+    /// <summary>How far short of a wall the dash stops.</summary>
+    private const float DashMargin = 0.4f;
+
+    /// <summary>
+    /// Carries the body along <paramref name="aim"/>, up to <paramref name="reach"/> metres, through
+    /// creatures but not through the world: as far as a ray at chest height finds clear.
+    /// </summary>
+    private void Dash(Vector3 aim, float reach)
+    {
+        var from = _motor.GlobalPosition;
+        var chest = from + (Vector3.Up * 0.9f);
+        var query = PhysicsRayQueryParameters3D.Create(chest, chest + (aim * reach), Layers.World);
+        query.CollideWithAreas = false;
+
+        var hit = _motor.GetWorld3D().DirectSpaceState.IntersectRay(query);
+        var far = hit.Count == 0 ? reach : System.Math.Max(0f, chest.DistanceTo(hit["position"].AsVector3()) - DashMargin);
+
+        if (far < 0.5f) return;
+
+        var tween = _motor.CreateTween();
+        tween.TweenProperty(_motor, "global_position", from + (aim * far), DashSeconds).SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+    }
+
+    private bool _unseenShown;
+
+    /// <summary>The body drawn faint while the Shadow Veil is on, and whole again when it ends.</summary>
+    private void ShowUnseen()
+    {
+        var unseen = _self.Statuses.Has(StatusKind.Stealth);
+
+        if (unseen == _unseenShown) return;
+
+        _unseenShown = unseen;
+
+        if (_motor.GetNodeOrNull<Node>("VisualRoot") is not { } visual) return;
+
+        foreach (var mesh in visual.FindChildren("*", "GeometryInstance3D", true, false).OfType<GeometryInstance3D>())
+        {
+            mesh.Transparency = unseen ? 0.7f : 0f;
         }
     }
 

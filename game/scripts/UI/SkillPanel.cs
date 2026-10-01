@@ -239,7 +239,7 @@ public partial class SkillPanel : CanvasLayer
         // The two groups, as the original splits a class's skills.
         foreach (var (tree, heading) in new[] { ("body", L10n.T("Body")), ("mental", L10n.T("Mind")) })
         {
-            var skills = SkillText.WarriorSkills().Where(d => d.Tree == tree).ToList();
+            var skills = SkillText.ClassSkills().Where(d => d.Tree == tree).ToList();
 
             if (skills.Count == 0) continue;
 

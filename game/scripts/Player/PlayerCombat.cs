@@ -313,7 +313,12 @@ public partial class PlayerCombat : Node
             if (!LineOfSight(victim.Body)) continue;
 
             landed++;
-            victim.TakeAttack(_self);
+
+            // Out of the Shadow Veil (CLS-03): the blow that ends it is worth that much more.
+            var veil = _self.Statuses.MagnitudeOf(StatusKind.Stealth);
+
+            _self.Statuses.Remove(StatusKind.Stealth);
+            victim.TakeAttack(_self, weaponCoef: 1 + veil);
 
             // Thrown back, unless it is a boss: the sweep is crowd control, not a way to
             // shove a boss out of its own arena.

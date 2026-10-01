@@ -21,12 +21,12 @@ namespace Kiln.Game.UI;
 /// </remarks>
 public static class SkillText
 {
-    /// <summary>The Warrior's skills in the order they become available.</summary>
-    public static IEnumerable<SkillDef> WarriorSkills() =>
+    /// <summary>The skills of the class played, in the order they become available.</summary>
+    public static IEnumerable<SkillDef> ClassSkills() =>
         !GameContent.IsLoaded
             ? []
             : GameContent.Database.Skills.Values
-                .Where(s => s.Class == CharacterClass.Warrior)
+                .Where(s => s.Class == PlayerProfile.Class)
                 .OrderBy(s => s.SuggestedLevel)
                 .ThenBy(s => s.Id, System.StringComparer.Ordinal);
 
@@ -62,6 +62,12 @@ public static class SkillText
         }
 
         lines.Add(Shape(skill));
+
+        // The Shadow Strike: a blow that is worth more from out of the veil (CLS-03).
+        if (skill.Targeting == SkillTargeting.SingleTarget && skill.Magnitude > 0 && skill.Applies is null)
+        {
+            lines.Add(L10n.F("Struck while unseen, it deals {0:P0} more damage.", skill.Magnitude));
+        }
 
         if (Effect(skill) is { Length: > 0 } effect) lines.Add(effect);
 
@@ -106,6 +112,10 @@ public static class SkillText
         {
             parts.Add(L10n.F("+{0:P0} attack speed", skill.Magnitude));
         }
+        else if (skill.Applies is { Kind: "stealth" })
+        {
+            parts.Add(L10n.F("unseen {0:0.#} s", skill.Duration));
+        }
         else if (skill.Magnitude > 0)
         {
             parts.Add(L10n.F("blocks {0:P0}", skill.Magnitude));
@@ -134,8 +144,8 @@ public static class SkillText
 
         // The self-buffs take their strength from the resolved skill, so investment reaches
         // them; everything else applies exactly what the data says.
-        var magnitude = applies.Kind is "fortify" or "empower" or "frenzy" ? skill.Magnitude : applies.Magnitude;
-        var duration = applies.Kind is "fortify" or "empower" or "frenzy" ? skill.Duration : applies.Duration;
+        var magnitude = applies.Kind is "fortify" or "empower" or "frenzy" or "stealth" ? skill.Magnitude : applies.Magnitude;
+        var duration = applies.Kind is "fortify" or "empower" or "frenzy" or "stealth" ? skill.Duration : applies.Duration;
 
         var body = applies.Kind switch
         {
@@ -143,10 +153,12 @@ public static class SkillText
             "frenzy" => L10n.F("Attack {0:P0} faster and move {1:P0} faster for {2:0.#} s, taking {3:P0} more damage.",
                 magnitude, magnitude * 0.5, duration, StatusEffectSet.FrenzyExposure),
             "empower" => L10n.F("Deal {0:P0} more damage for {1:0.#} s.", magnitude, duration),
+            "stealth" => L10n.F("Unseen for {0:0.#} s: creatures lose you. Your first blow ends it and deals {1:P0} more damage.", duration, magnitude),
             "stun" => L10n.F("Stuns for {0:0.#} s.", duration),
             "vulnerability" => L10n.F("The target takes {0:P0} more damage for {1:0.#} s.", magnitude, duration),
             "slow" => L10n.F("Slows by {0:P0} for {1:0.#} s.", magnitude, duration),
             "weaken" => L10n.F("The target deals {0:P0} less damage for {1:0.#} s.", magnitude, duration),
+            "poison" when skill.Magnitude > 0 => L10n.F("Poisons for {0:0.#} s: {1:P0} of the blow every second, up to five times over.", duration, skill.Magnitude),
             "poison" => L10n.F("Poisons for {0:0.#} s.", duration),
             "bleed" => L10n.F("Makes the target bleed for {0:0.#} s.", duration),
             _ => "",
