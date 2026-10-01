@@ -58,9 +58,12 @@ public partial class DebugGrants : Node
         if (bag is null || !GameItems.IsLoaded) return;
 
         // The Ninja's gear and nothing else (2026-10-01): the gan, the materials and the trinkets once
-        // handed out here are gone. Daggers first, each kind from the lowest level up.
+        // handed out here are gone. The largest first, so the bag packs tight and all of it fits; each kind from the lowest level up.
         var rng = GameItems.LootRng.Fork("debug-ninja");
-        var gear = GameContent.Database.Items.Values.Where(IsNinjaGear).OrderBy(d => d.Slot).ThenBy(d => d.LevelReq).ToList();
+        // What is already worn or in the bag is not handed out again: with it the bag would not hold the rest.
+        var owned = bag.Gear.Worn.Values.Concat(bag.Bag.Items.Select(p => p.Item)).Select(i => i.DefId).ToHashSet();
+        var gear = GameContent.Database.Items.Values.Where(d => IsNinjaGear(d) && !owned.Contains(d.Id))
+            .OrderByDescending(d => d.GridSize[0] * d.GridSize[1]).ThenBy(d => d.LevelReq).ToList();
         var given = gear.Count(def => bag.Bag.TryAdd(GameItems.Factory.Create(def.Id, rng)));
 
         var report = $"[debug] {given}/{gear.Count} Ninja daggers, armours and headpieces" + (given < gear.Count ? " — the bag is full" : "");
