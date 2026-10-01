@@ -207,7 +207,7 @@
   "$skill.skl_flash_step.m": "Hits harder.",
   "$skill.skl_flash_step.g": "Goes further.",
   "$skill.skl_flash_step.p": "Hits hardest, and comes back sooner.",
-  "$skill.skl_whirling_blades.name": "Whirling Blades",
+  "$skill.skl_whirling_blades.name": "Blade Vortex",
   "$skill.skl_whirling_blades.m": "One more turn.",
   "$skill.skl_whirling_blades.g": "Wider reach.",
   "$skill.skl_whirling_blades.p": "One more turn again, and comes back sooner.",

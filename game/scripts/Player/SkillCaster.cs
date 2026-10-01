@@ -425,7 +425,7 @@ public partial class SkillCaster : Node
         var aim = skill.Targeting == SkillTargeting.GroundAoe ? AimDirection(origin) : _motor.Facing;
 
         if (GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat")?.Target is { IsAlive: true } target
-            && skill.Targeting is SkillTargeting.SingleTarget or SkillTargeting.Cone or SkillTargeting.Line)
+            && (skill.Targeting is SkillTargeting.SingleTarget or SkillTargeting.Cone or SkillTargeting.Line || skill.Motion == "roll"))
         {
             var toTarget = (target.Body.GlobalPosition - origin) with { Y = 0 };
 
@@ -458,7 +458,7 @@ public partial class SkillCaster : Node
             Skill = skill,
             Center = center,
             Aim = aim,
-            FollowsCaster = false,
+            FollowsCaster = skill.Motion == "roll",
             Remaining = System.Math.Max(1, skill.Hits),
             Timer = 0,
         };
@@ -540,7 +540,7 @@ public partial class SkillCaster : Node
     /// Whirlwind's turns, the Triple Cut's three cuts, and the Piercing Blow's thrust once its
     /// charge is spent (REF-21).
     /// </summary>
-    private static bool PerHit(string motion) => motion is "spin" or "triple" or "charge" or "dash";
+    private static bool PerHit(string motion) => motion is "spin" or "roll" or "triple" or "charge" or "dash";
 
     /// <summary>The Triple Cut's three moves, one per hit: across, down on the diagonal, and overhead.</summary>
     private static readonly string[] TripleMoves = ["slice", "wave", "chop"];
@@ -570,12 +570,15 @@ public partial class SkillCaster : Node
 
         // A spinning skill turns the body on every hit and makes its sound each time (REF-21:
         // all the way round, 360°).
-        if (skill.Motion == "spin")
+        if (skill.Motion is "spin" or "roll")
         {
             // No ribbon: a blade turning all the way round draws a disc, and the rings of wind
             // already show the turn.
             _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Spin(skill.HitInterval, pulse.Index);
             Audio.AudioDirector.Play(SoundOf(skill.Id), _motor.GlobalPosition);
+
+            // The Blade Vortex (CLS-03): each turn carries the Ninja on, through whatever is there.
+            if (skill.Motion == "roll") Dash(aim, (float)skill.Width, skill.HitInterval, Tween.TransitionType.Linear);
         }
 
         // The Flash Step (CLS-03): the Ninja goes through what stands in the line, to its end or to
@@ -606,7 +609,7 @@ public partial class SkillCaster : Node
 
         switch (skill.Targeting)
         {
-            case SkillTargeting.SelfAoe when skill.Motion == "spin":
+            case SkillTargeting.SelfAoe when skill.Motion is "spin" or "roll":
                 targets = AreaQuery.Sphere(_motor, center, (float)skill.Radius);
                 SkillFx.Whirl(this, center, (float)skill.Radius, colour, skill.HitInterval, pulse.Index, bright);
                 break;
@@ -732,7 +735,7 @@ public partial class SkillCaster : Node
     /// Carries the body along <paramref name="aim"/>, up to <paramref name="reach"/> metres, through
     /// creatures but not through the world: as far as a ray at chest height finds clear.
     /// </summary>
-    private void Dash(Vector3 aim, float reach)
+    private void Dash(Vector3 aim, float reach, double seconds = DashSeconds, Tween.TransitionType ease = Tween.TransitionType.Quad)
     {
         var from = _motor.GlobalPosition;
         var chest = from + (Vector3.Up * 0.9f);
@@ -742,10 +745,10 @@ public partial class SkillCaster : Node
         var hit = _motor.GetWorld3D().DirectSpaceState.IntersectRay(query);
         var far = hit.Count == 0 ? reach : System.Math.Max(0f, chest.DistanceTo(hit["position"].AsVector3()) - DashMargin);
 
-        if (far < 0.5f) return;
+        if (far < 0.2f) return;
 
         var tween = _motor.CreateTween();
-        tween.TweenProperty(_motor, "global_position", from + (aim * far), DashSeconds).SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+        tween.TweenProperty(_motor, "global_position", from + (aim * far), seconds).SetTrans(ease).SetEase(Tween.EaseType.Out);
     }
 
     private bool _unseenShown;

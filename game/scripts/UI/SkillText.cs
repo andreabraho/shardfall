@@ -63,6 +63,12 @@ public static class SkillText
 
         lines.Add(Shape(skill));
 
+        // The Blade Vortex: it goes forward as it turns (CLS-03).
+        if (skill.Motion == "roll")
+        {
+            lines.Add(L10n.F("You go {0:0.#} m forward as you turn, through whatever stands in the way.", skill.Width * System.Math.Max(1, skill.Hits)));
+        }
+
         // The Shadow Strike: a blow that is worth more from out of the veil (CLS-03).
         if (skill.Targeting == SkillTargeting.SingleTarget && skill.Magnitude > 0 && skill.Applies is null)
         {

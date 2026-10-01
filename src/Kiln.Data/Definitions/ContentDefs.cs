@@ -306,7 +306,7 @@ public sealed class SkillDef : ContentDefBase
 
     /// <summary>
     /// How wide a line-targeted skill is, in metres (REF-21); its radius is how far it reaches.
-    /// Ignored by every other shape.
+    /// For a skill that rolls ("roll"), how far each turn carries the caster. Ignored otherwise.
     /// </summary>
     public double Width { get; init; } = 2.0;
 
