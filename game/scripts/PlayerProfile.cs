@@ -187,13 +187,25 @@ public static class PlayerProfile
 
     private static string _body = Man;
 
-    /// <summary>The player's visual for their body: the Knight's skeleton wearing a man's or a woman's head and body.</summary>
-    public static string BodyVisual => Body == Woman ? Kiln.Data.Ids.Visuals.MeshPlayerWoman : Kiln.Data.Ids.Visuals.MeshPlaceholderPlayer;
+    /// <summary>
+    /// The class played (CLS-01, 2026-10-01): the Warrior, or the Ninja — <c>Blade</c> in the code,
+    /// as the enum has had it from the start. Chosen at a new game and kept in the save.
+    /// </summary>
+    public static Kiln.Core.Foundation.CharacterClass Class { get; set; } = Kiln.Core.Foundation.CharacterClass.Warrior;
+
+    /// <summary>
+    /// The player's visual: the Knight's skeleton wearing the head and body of their class and of
+    /// a man or a woman.
+    /// </summary>
+    public static string BodyVisual => Class == Kiln.Core.Foundation.CharacterClass.Blade
+        ? Body == Woman ? Kiln.Data.Ids.Visuals.MeshPlayerNinjaWoman : Kiln.Data.Ids.Visuals.MeshPlayerNinja
+        : Body == Woman ? Kiln.Data.Ids.Visuals.MeshPlayerWoman : Kiln.Data.Ids.Visuals.MeshPlaceholderPlayer;
 
     public static void Reset()
     {
         Exists = false;
         Body = Man;
+        Class = Kiln.Core.Foundation.CharacterClass.Warrior;
         _progression = null;
         _skills = null;
         _wardrobe = null;

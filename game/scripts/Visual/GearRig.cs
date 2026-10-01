@@ -50,6 +50,12 @@ public sealed class GearRig
     private MeshInstance3D? _oneHand;
     private MeshInstance3D? _twoHand;
 
+    /// <summary>The same blade in the other hand, for a body that fights with two (CLS-03).</summary>
+    private readonly MeshInstance3D? _offHand;
+
+    /// <summary>True for a body that holds a blade in each hand.</summary>
+    public bool DualWield => _offHand is not null;
+
     /// <summary>The scene each hand holds now, so a blade is only swapped when the weapon's model changes.</summary>
     private string _oneHandPath;
     private string _twoHandPath;
@@ -93,6 +99,7 @@ public sealed class GearRig
         }
 
         _oneHand = Named(Part(model, parts.OneHand, WeaponHand));
+        _offHand = parts.OffHand.Length > 0 && parts.Blade.Length > 0 ? Part(model, parts.Blade, parts.OffHand) : null;
         _twoHand = Named(Part(model, parts.TwoHand, WeaponHand));
         _oneHandPath = parts.OneHand;
         _twoHandPath = parts.TwoHand;
@@ -122,6 +129,12 @@ public sealed class GearRig
 
     public void Wear(GearLook look)
     {
+        // A body with a blade of its own (the Ninja's daggers, CLS-03) holds it whatever the
+        // weapon, one in each hand.
+        if (_parts.Blade.Length > 0) look = look with { Hands = look.Hands > 0 ? 1 : 0, WeaponModel = _parts.Blade };
+
+        if (_offHand is not null) _offHand.Visible = look.Hands > 0;
+
         // The weapon's own model in the hand that holds it; the other hand keeps what it has.
         var swapped = look.Hands switch
         {
@@ -409,7 +422,7 @@ public sealed class GearRig
 
     private IEnumerable<MeshInstance3D> All()
     {
-        foreach (var part in new[] { _oneHand, _twoHand, _cape })
+        foreach (var part in new[] { _oneHand, _twoHand, _offHand, _cape })
         {
             if (part is not null) yield return part;
         }

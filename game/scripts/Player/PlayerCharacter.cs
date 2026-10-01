@@ -141,7 +141,7 @@ public partial class PlayerCharacter : Node
         var stats = new StatBlock
         {
             Level = Progression.Level,
-            Class = CharacterClass.Warrior,
+            Class = PlayerProfile.Class,
             Family = MonsterFamily.Human,
             Attributes = Progression.TotalAttributes,
 

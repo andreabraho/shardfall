@@ -12,7 +12,7 @@ namespace Kiln.Game.UI.Menus;
 /// <remarks>
 /// "Continue" is first and does the obvious thing — the newest save that opens, the same one
 /// F12 loads in a map — and says underneath where that is, so pressing it is never a guess.
-/// A new game asks for a man or a woman, a name and a difficulty; there is one class so far.
+/// A new game asks for a class (the Warrior or the Ninja), a man or a woman, a name and a difficulty.
 /// </remarks>
 public partial class MainMenu : Control
 {
@@ -92,7 +92,7 @@ public partial class MainMenu : Control
         choices.AddChild(where);
         choices.AddChild(new Control { CustomMinimumSize = new Vector2(0, 4) });
 
-        choices.AddChild(MenuStyle.Big(L10n.T("New game"), () => Page(NewGamePage(), L10n.T("New game  ·  a man or a woman, a name and a difficulty"))));
+        choices.AddChild(MenuStyle.Big(L10n.T("New game"), () => Page(NewGamePage(), L10n.T("New game  ·  a class, a man or a woman, a name and a difficulty"))));
         choices.AddChild(MenuStyle.Big(L10n.T("Load game"), () => Page(new CharacterList(page => Page(page)))));
         choices.AddChild(MenuStyle.Big(L10n.T("Settings"), () => Page(new SettingsView(inGame: false))));
         choices.AddChild(new Control { CustomMinimumSize = new Vector2(0, 4) });
@@ -134,6 +134,30 @@ public partial class MainMenu : Control
     {
         var column = new VBoxContainer { CustomMinimumSize = new Vector2(560, 0) };
         column.AddThemeConstantOverride("separation", 10);
+
+        // The class (CLS-01, 2026-10-01): the Warrior, or the Ninja with a dagger in each hand.
+        var played = CharacterClass.Warrior;
+        var classes = new HBoxContainer();
+        classes.AddThemeConstantOverride("separation", 12);
+        var classGroup = new ButtonGroup();
+
+        foreach (var (choice, label) in new[] { (CharacterClass.Warrior, L10n.T("Warrior")), (CharacterClass.Blade, L10n.T("Ninja")) })
+        {
+            var card = new Button
+            {
+                ToggleMode = true,
+                ButtonGroup = classGroup,
+                ButtonPressed = choice == played,
+                Text = label,
+                CustomMinimumSize = new Vector2(150, 40),
+            };
+
+            card.AddThemeFontSizeOverride("font_size", 16);
+            card.Toggled += on => { if (on) played = choice; };
+            classes.AddChild(card);
+        }
+
+        column.AddChild(classes);
 
         // A man or a woman (CLS-00, 2026-09-30), each shown as the game will dress them.
         var body = PlayerProfile.Man;
@@ -204,7 +228,7 @@ public partial class MainMenu : Control
             card.AddChild(text);
 
             var chosen = tier.Tier;
-            card.Pressed += () => SaveService.Instance?.NewGame(chosen, name.Text, body);
+            card.Pressed += () => SaveService.Instance?.NewGame(chosen, name.Text, body, played);
 
             column.AddChild(card);
         }

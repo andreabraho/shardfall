@@ -27,6 +27,9 @@ public sealed class SaveGame
     /// <summary><c>man</c> or <c>woman</c> (CLS-00, 2026-09-30). Older saves are men.</summary>
     public string Body { get; set; } = "man";
 
+    /// <summary><c>warrior</c> or <c>blade</c>, the ninja (CLS-01, 2026-10-01). Older saves are warriors.</summary>
+    public string Class { get; set; } = "warrior";
+
     /// <summary><c>Wanderer</c>, <c>Disciple</c>, <c>Adept</c> or <c>Shardbound</c>.</summary>
     public string Difficulty { get; set; } = "Disciple";
 

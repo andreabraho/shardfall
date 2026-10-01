@@ -213,7 +213,7 @@ public partial class PlayerInventory : Node
         var character = GetParent().GetNodeOrNull<Player.PlayerCharacter>("PlayerCharacter");
         var level = character?.Progression.Level ?? 1;
 
-        var outcome = Gear.TryEquip(item, level, CharacterClass.Warrior, out var displaced);
+        var outcome = Gear.TryEquip(item, level, PlayerProfile.Class, out var displaced);
 
         if (outcome != EquipOutcome.Equipped) return outcome;
 
@@ -223,7 +223,7 @@ public partial class PlayerInventory : Node
         // eating it — a full bag must never cost the player their old weapon.
         if (displaced is not null && !Bag.TryAdd(displaced))
         {
-            Gear.TryEquip(displaced, level, CharacterClass.Warrior, out _);
+            Gear.TryEquip(displaced, level, PlayerProfile.Class, out _);
             Bag.TryAdd(item);
 
             return EquipOutcome.NotEquipment;

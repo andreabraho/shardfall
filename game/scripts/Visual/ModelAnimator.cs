@@ -57,6 +57,9 @@ public partial class ModelAnimator : Node
     /// Holding a great sword (REF-22): it stands, swings and casts two-handed.
     /// </summary>
     public bool TwoHanded { get; set; }
+
+    /// <summary>True while a blade is held in each hand (the Ninja, CLS-03): the blows are the two-weapon ones.</summary>
+    public bool DualWield { get; set; }
     private int _swing;
     private double _attackFor;
 
@@ -217,6 +220,15 @@ public partial class ModelAnimator : Node
         ["Melee_1H_Attack_Slice_Horizontal", "1H_Melee_Attack_Slice_Horizontal"],
     ];
 
+    // Two blades (CLS-03): a cut with both, a thrust, a chop, and a spin to close.
+    private static readonly string[][] DualChain =
+    [
+        ["Melee_Dualwield_Attack_Slice", "Melee_1H_Attack_Slice_Diagonal"],
+        ["Melee_Dualwield_Attack_Stab", "Melee_1H_Attack_Stab"],
+        ["Melee_Dualwield_Attack_Chop", "Melee_1H_Attack_Chop"],
+        ["Melee_2H_Attack_Spinning", "Melee_Dualwield_Attack_Slice", "Melee_1H_Attack_Slice_Horizontal"],
+    ];
+
     private static readonly string[][] TwoHandChain =
     [
         ["Melee_2H_Attack_Slice", "2H_Melee_Attack_Slice"],
@@ -238,7 +250,7 @@ public partial class ModelAnimator : Node
     {
         if (_player is null) return 0;
 
-        var chain = TwoHanded ? TwoHandChain : OneHandChain;
+        var chain = DualWield ? DualChain : TwoHanded ? TwoHandChain : OneHandChain;
         var clip = Pick(_player.GetAnimationList(), chain[(((blow - 1) % chain.Length) + chain.Length) % chain.Length]);
 
         return clip.Length == 0 ? Attack() : PlayTimed(clip, windup, interval);

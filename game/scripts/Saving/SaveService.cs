@@ -286,6 +286,7 @@ public partial class SaveService : Node
             Label = label,
             CharacterName = CharacterName,
             Body = PlayerProfile.Body,
+            Class = PlayerProfile.Class.ToString().ToLowerInvariant(),
             Difficulty = GameSession.Difficulty.Tier.ToString(),
             Seed = GameSession.Seed,
             PlayTime = PlayerProfile.PlayTime,
@@ -420,6 +421,7 @@ public partial class SaveService : Node
     {
         PlayerProfile.Reset();
         PlayerProfile.Body = save.Body;
+        PlayerProfile.Class = Enum.TryParse<CharacterClass>(save.Class, ignoreCase: true, out var played) ? played : CharacterClass.Warrior;
 
         if (Enum.TryParse<Difficulty>(save.Difficulty, out var tier))
         {
@@ -539,26 +541,27 @@ public partial class SaveService : Node
     // ------------------------------------------------------------------ new game and leaving
 
     /// <summary>
-    /// Starts a new character in the village, a man or a woman, on the chosen difficulty, with a folder of its
+    /// Starts a new character in the village, a man or a woman of the chosen class, on the chosen difficulty, with a folder of its
     /// own (REF-18). Every other character's saves are left alone.
     /// </summary>
     /// <remarks>
     /// A fresh seed each time, so a second character does not meet the first one's merchant
     /// shelves and loot rolls in the same order.
     /// </remarks>
-    public void NewGame(Difficulty tier, string name = "", string body = PlayerProfile.Man)
+    public void NewGame(Difficulty tier, string name = "", string body = PlayerProfile.Man, CharacterClass played = CharacterClass.Warrior)
     {
         Begin(name);
         _sinceSaved = 0;
         PlayerProfile.Reset();
         PlayerProfile.Body = body;
+        PlayerProfile.Class = played;
         GameWorld.Travel.Load([], null);
         GameSession.SetDifficulty(DifficultySettings.For(tier));
         GameSession.SetSeed((ulong)DateTime.UtcNow.Ticks ^ 0x9E3779B97F4A7C15UL);
         _pendingPosition = null;
         _loading = false;
 
-        GD.Print($"[save] new game — {CharacterName} ({CharacterId}), a {PlayerProfile.Body}, {tier}, seed {GameSession.Seed}");
+        GD.Print($"[save] new game — {CharacterName} ({CharacterId}), a {PlayerProfile.Body} {PlayerProfile.Class}, {tier}, seed {GameSession.Seed}");
 
         GetTree().Paused = false;
         GetTree().CallDeferred(SceneTree.MethodName.ChangeSceneToFile, StartScene);

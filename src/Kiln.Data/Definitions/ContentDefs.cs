@@ -744,6 +744,15 @@ public sealed class GearPartsDef
 
     /// <summary>The torso, hidden under an armour with plates of its own, which covers it.</summary>
     public string Torso { get; init; } = string.Empty;
+
+    /// <summary>
+    /// A blade the body always holds, whatever weapon is worn (the Ninja's dagger, CLS-03): a
+    /// res:// scene. Empty: the weapon's own model.
+    /// </summary>
+    public string Blade { get; init; } = string.Empty;
+
+    /// <summary>The bone a second <see cref="Blade"/> is held on, for a body that fights with two.</summary>
+    public string OffHand { get; init; } = string.Empty;
 }
 
 // ---------------------------------------------------------------------------

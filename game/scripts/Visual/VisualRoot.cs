@@ -140,7 +140,11 @@ public partial class VisualRoot : Node3D
         _look = look;
         _gear?.Wear(look);
 
-        if (_animator is not null) _animator.TwoHanded = look.Hands == 2;
+        if (_animator is null) return;
+
+        // A body with a blade in each hand fights with both, whatever the weapon worn (CLS-03).
+        _animator.DualWield = _gear?.DualWield == true;
+        _animator.TwoHanded = look.Hands == 2 && !_animator.DualWield;
     }
 
     /// <summary>
