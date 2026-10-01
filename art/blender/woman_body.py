@@ -221,8 +221,9 @@ def top_half(body, arm, skin_uv, teal_uv, leather_uv, crop=False):
     bpy.ops.object.join()
 
 
-def build(out=OUT, crop=False, trim=None, dye=None):
-    """The body to `out`. `trim` is the colour of the hems in place of leather; `dye(image)` returns the texture to wear."""
+def build(out=OUT, crop=False, trim=None, dye=None, style=None):
+    """The body to `out`. `trim` is the colour of the hems in place of leather; `style(arm, image)`
+    restyles her further; `dye(image)` returns the texture to wear."""
     bpy.ops.wm.read_factory_settings(use_empty=True)
     bpy.ops.import_scene.gltf(filepath=SOURCE)
 
@@ -273,6 +274,9 @@ def build(out=OUT, crop=False, trim=None, dye=None):
         bpy.ops.object.join()
 
     top_half(body, arm, skin_uv, teal_uv, leather_uv, crop)
+
+    if style:
+        style(arm, image)
 
     if dye:
         wear(dye(image))
