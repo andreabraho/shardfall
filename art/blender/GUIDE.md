@@ -189,7 +189,7 @@ ours, and every item in `trinkets.BUILDERS`.
 - Each kind has its angle (`kind → (yaw, pitch)` in `icons.py`): a sword flat on and turned a
   little, a ring from above, boots from the side. A new kind of item gets its own angle there.
 - Forearm pieces are dropped from armour icons (they stand out sideways in the T-pose).
-- Check the whole set together — `F8` in a debug build gives every dagger and armour of the Ninja (2026-10-01); open the bag.
+- Check the whole set together — `F8` in a debug build gives every armour and headpiece of the Ninja (2026-10-01); open the bag.
 
 ---
 
