@@ -753,6 +753,12 @@ public sealed class GearPartsDef
 
     /// <summary>The bone a second <see cref="Blade"/> is held on, for a body that fights with two.</summary>
     public string OffHand { get; init; } = string.Empty;
+
+    /// <summary>
+    /// True for a body that keeps its own clothes whatever armour is worn (the Ninja, until it has
+    /// armours of its own): the plates made for the Warrior are not drawn on it.
+    /// </summary>
+    public bool OwnClothes { get; init; }
 }
 
 // ---------------------------------------------------------------------------

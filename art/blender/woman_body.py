@@ -152,8 +152,20 @@ def painted(obj, uv_at, material):
         poly.use_smooth = True
 
 
-def top_half(body, arm, skin_uv, teal_uv, leather_uv):
-    """Her skin from the waist to the neck, a bodice over it and two straps over the shoulders."""
+def wear(image):
+    """Every material's texture swapped for `image`."""
+    for material in bpy.data.materials:
+        if material.node_tree:
+            for node in material.node_tree.nodes:
+                if node.type == "TEX_IMAGE":
+                    node.image = image
+
+
+def top_half(body, arm, skin_uv, teal_uv, leather_uv, crop=False):
+    """Her skin from the waist to the neck, a bodice over it and two straps over the shoulders.
+
+    With `crop` the bodice stops under the chest and her midriff is bare (the Ninja, ninja_body.py).
+    """
     material = body.data.materials[0]
     parts = []
 
@@ -167,8 +179,9 @@ def top_half(body, arm, skin_uv, teal_uv, leather_uv):
     parts.append((torso, ["hips", "spine", "chest"]))
 
     # The bodice: from inside the skirt up to under the arms, its top edge straight across.
-    bodice = c.loft("bodice", [
-        ring_path(0.58, 0.345, 0.295), ring_path(0.72, 0.372, 0.318), ring_path(0.86, 0.380, 0.323),
+    low = [ring_path(0.83, 0.372, 0.317), ring_path(0.845, 0.380, 0.323), ring_path(0.88, 0.381, 0.324)] if crop else [
+        ring_path(0.58, 0.345, 0.295), ring_path(0.72, 0.372, 0.318), ring_path(0.86, 0.380, 0.323)]
+    bodice = c.loft("bodice", low + [
         ring_path(0.95, 0.372, 0.318), ring_path(1.00, 0.362, 0.308), ring_path(1.035, 0.350, 0.300),
     ], material, sides=28, per=3)
     painted(bodice, teal_uv, material)
@@ -192,6 +205,11 @@ def top_half(body, arm, skin_uv, teal_uv, leather_uv):
     painted(hem, leather_uv, material)
     parts.append((hem, ["spine", "chest"]))
 
+    if crop:
+        foot = c.loft("foot", [(Vector((0, 0, 0.825)), 0.376, 0.320), (Vector((0, 0, 0.85)), 0.386, 0.328)], material, sides=28, per=1)
+        painted(foot, leather_uv, material)
+        parts.append((foot, ["spine", "chest"]))
+
     for obj, bones in parts:
         weigh(obj, arm, bones)
 
@@ -203,7 +221,8 @@ def top_half(body, arm, skin_uv, teal_uv, leather_uv):
     bpy.ops.object.join()
 
 
-def main():
+def build(out=OUT, crop=False, trim=None, dye=None):
+    """The body to `out`. `trim` is the colour of the hems in place of leather; `dye(image)` returns the texture to wear."""
     bpy.ops.wm.read_factory_settings(use_empty=True)
     bpy.ops.import_scene.gltf(filepath=SOURCE)
 
@@ -218,7 +237,7 @@ def main():
 
     skin_uv = swatch(left, image, SKIN)
     teal_uv = swatch(body, image, TEAL)
-    leather_uv = swatch(body, image, LEATHER)
+    leather_uv = swatch(body, image, trim or LEATHER)
 
     # Off the body: the tunic's upper half (teal, reaching above the waist), the scarf and
     # the lacing on the chest. The skirt, the belt, its buckle and pouches stay.
@@ -253,12 +272,16 @@ def main():
         bpy.context.view_layer.objects.active = limb
         bpy.ops.object.join()
 
-    top_half(body, arm, skin_uv, teal_uv, leather_uv)
+    top_half(body, arm, skin_uv, teal_uv, leather_uv, crop)
 
-    os.makedirs(os.path.dirname(OUT), exist_ok=True)
-    bpy.ops.export_scene.gltf(filepath=OUT, export_format="GLB", use_selection=False,
+    if dye:
+        wear(dye(image))
+
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    bpy.ops.export_scene.gltf(filepath=out, export_format="GLB", use_selection=False,
                               export_animations=False, export_skins=True, export_yup=True)
-    print(f"[woman] -> {os.path.relpath(OUT, ROOT)}")
+    print(f"[woman] -> {os.path.relpath(out, ROOT)}")
 
 
-main()
+if __name__ == "__main__":
+    build()

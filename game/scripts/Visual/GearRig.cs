@@ -133,6 +133,9 @@ public sealed class GearRig
         // weapon, one in each hand.
         if (_parts.Blade.Length > 0) look = look with { Hands = look.Hands > 0 ? 1 : 0, WeaponModel = _parts.Blade };
 
+        // And one that keeps its own clothes wears no plates over them.
+        if (_parts.OwnClothes) look = look with { ArmourModel = null };
+
         if (_offHand is not null) _offHand.Visible = look.Hands > 0;
 
         // The weapon's own model in the hand that holds it; the other hand keeps what it has.
