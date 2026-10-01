@@ -505,8 +505,9 @@ public partial class SkillCaster : Node
             _ => null,
         };
 
-        // Going unseen lets go of whatever was being fought: the next blow is chosen, not owed.
-        if (kind == "stealth") GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat")?.ClearTarget();
+        // Going unseen stops the fight with whatever was being fought: the next blow is chosen,
+        // not owed. The target stays chosen.
+        if (kind == "stealth") GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat")?.Disengage();
 
         // The moment of the cast (REF-21); the aura that follows is the status's own.
         var at = _motor.GlobalPosition;
@@ -544,6 +545,9 @@ public partial class SkillCaster : Node
 
     /// <summary>The Triple Cut's three moves, one per hit: across, down on the diagonal, and overhead.</summary>
     private static readonly string[] TripleMoves = ["slice", "wave", "chop"];
+
+    /// <summary>How far a single-target skill lands on the creature chosen.</summary>
+    private const float SingleReach = 4.5f;
 
     /// <summary>How far a single-target skill reaches for a creature when none is chosen.</summary>
     private const float UnaimedReach = 3.5f;
@@ -647,7 +651,11 @@ public partial class SkillCaster : Node
             case SkillTargeting.SingleTarget:
                 var single = GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat")?.Target;
 
-                // With nothing chosen (CLS-03: out of the veil nothing is), the nearest creature within
+                // A target can be chosen from afar (the right click, 2026-10-01), but a blow of the
+                // hand lands only on what is within its reach.
+                if (single is not null && single.Body.GlobalPosition.DistanceTo(center) > SingleReach) single = null;
+
+                // With nothing chosen, or the chosen one out of reach, the nearest creature within
                 // reach in front takes it.
                 single ??= AreaQuery.Cone(_motor, center, aim, UnaimedReach, 140f)
                     .Where(t => t.IsAlive)

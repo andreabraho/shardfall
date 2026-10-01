@@ -484,6 +484,8 @@
   "Lock up to 1 line: it is kept, and the others are rolled again.": "Blocca fino a 1 riga: resta com'è e le altre vengono ritirate.",
   "Lock up to {0} lines: they are kept, and the others are rolled again.": "Blocca fino a {0} righe: restano come sono e le altre vengono ritirate.",
   "Look around (hold)": "Guardati intorno (tieni premuto)",
+  "Choose a target (click)": "Scegli un bersaglio (clic)",
+  "Right mouse button": "Tasto destro del mouse",
   "Lower it on a slow machine: the world renders smaller, the text stays sharp.": "Abbassala su un computer lento: il mondo si disegna più piccolo, il testo resta nitido.",
   "Lv. {0}": "Liv. {0}",
   "M or Esc to close": "M o Esc per chiudere",

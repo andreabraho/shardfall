@@ -220,6 +220,7 @@ public partial class SettingsView : ScrollContainer
         (L10n.T("Show labels (hold)"), Key(GameActions.RevealLabels)),
         (L10n.T("Turn camera"), $"{Key(GameActions.CameraRotateLeft)} / {Key(GameActions.CameraRotateRight)}"),
         (L10n.T("Look around (hold)"), Key(GameActions.CameraDrag)),
+        (L10n.T("Choose a target (click)"), L10n.T("Right mouse button")),
         (L10n.T("Pause, close a panel"), Key(GameActions.Cancel)),
         (L10n.T("Save  /  load newest"), $"{Key(GameActions.QuickSave)}  /  {Key(GameActions.QuickLoad)}"),
     ];
