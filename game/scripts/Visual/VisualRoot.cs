@@ -144,6 +144,7 @@ public partial class VisualRoot : Node3D
 
         // A body with a blade in each hand fights with both, whatever the weapon worn (CLS-03).
         _animator.DualWield = _gear?.DualWield == true;
+        _animator.Gear = _gear;
         _animator.TwoHanded = look.Hands == 2 && !_animator.DualWield;
     }
 

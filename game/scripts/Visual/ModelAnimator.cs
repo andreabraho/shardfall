@@ -60,6 +60,18 @@ public partial class ModelAnimator : Node
 
     /// <summary>True while a blade is held in each hand (the Ninja, CLS-03): the blows are the two-weapon ones.</summary>
     public bool DualWield { get; set; }
+
+    /// <summary>The gear whose blades are carried one way and struck with another (the Ninja's daggers).</summary>
+    public GearRig? Gear { get; set; }
+
+    /// <summary>How far the blades are turned to their carrying grip, 0 to 1.</summary>
+    private float _carry = 1f;
+
+    /// <summary>Seconds a blade takes to turn in the hand.</summary>
+    private const float TurnTime = 0.12f;
+
+    /// <summary>True while the clip holding the body is a flinch, not a blow: the blades stay as carried.</summary>
+    private bool _flinch;
     private int _swing;
     private double _attackFor;
 
@@ -310,6 +322,7 @@ public partial class ModelAnimator : Node
 
         speed = System.Math.Clamp(speed, 0.8, 3.0);
 
+        _flinch = false;
         animation.LoopMode = Animation.LoopModeEnum.None;
         _player.Play(clip, customBlend: 0.08, customSpeed: (float)speed);
         _player.Seek(0, update: true);
@@ -409,11 +422,18 @@ public partial class ModelAnimator : Node
 
         _player.Play(clip);
         _attackFor = System.Math.Min(_player.GetAnimation(clip).Length, 0.4);
+        _flinch = true;
     }
 
     public override void _Process(double delta)
     {
         if (_player is null || _dead) return;
+
+        if (DualWield && Gear is not null)
+        {
+            _carry = Mathf.MoveToward(_carry, _attackFor > 0 && !_flinch ? 0f : 1f, (float)delta / TurnTime);
+            Gear.Carry(_carry);
+        }
 
         // An attack owns the body until it finishes. Cutting back to a run mid-swing is what
         // makes an attack read as a twitch rather than a blow.
@@ -423,10 +443,13 @@ public partial class ModelAnimator : Node
             return;
         }
 
+        _flinch = false;
+
         var speed = _body is null ? 0f : (_body.Velocity with { Y = 0 }).Length();
 
-        // With a great sword in hand, standing still is its guard, not an empty-handed rest.
-        var idle = TwoHanded && _idleTwoHand.Length > 0 ? _idleTwoHand : _idle;
+        // With a great sword in hand, standing still is its guard, not an empty-handed rest; with
+        // two blades it is the same guard, the hands together in front.
+        var idle = (TwoHanded || DualWield) && _idleTwoHand.Length > 0 ? _idleTwoHand : _idle;
 
         Play(speed <= MovingAbove ? idle : speed < WalkingBelow ? _walk : _run);
     }

@@ -195,6 +195,30 @@ public sealed class GearRig
     }
 
     /// <summary>
+    /// Turns the blades between how they strike (0) and how they are carried (1): the rest grip
+    /// of <see cref="GearPartsDef.RestGrip"/>, mirrored in the other hand. Nothing on a body without one.
+    /// </summary>
+    public void Carry(float amount)
+    {
+        if (_parts.RestGrip.Length < 3) return;
+
+        var turn = _parts.RestGrip;
+
+        foreach (var (blade, side) in new[] { (_oneHand, 1f), (_offHand, -1f) })
+        {
+            if (blade is null || !GodotObject.IsInstanceValid(blade)) continue;
+
+            // The whole scene that was put in the hand, not just its mesh.
+            Node3D held = blade;
+            while (held.GetParent() is Node3D parent && parent is not BoneAttachment3D) held = parent;
+
+            var rest = Quaternion.FromEuler(new Vector3(Mathf.DegToRad(turn[0]), Mathf.DegToRad(turn[1]) * side, Mathf.DegToRad(turn[2]) * side));
+
+            held.Quaternion = Quaternion.Identity.Slerp(rest, amount);
+        }
+    }
+
+    /// <summary>
     /// A ribbon behind the blade in hand (REF-21), from <paramref name="delay"/> seconds from
     /// now for <paramref name="seconds"/>. Nothing with no blade drawn.
     /// </summary>

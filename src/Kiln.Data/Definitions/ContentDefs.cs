@@ -759,6 +759,13 @@ public sealed class GearPartsDef
     /// armours of its own): the plates made for the Warrior are not drawn on it.
     /// </summary>
     public bool OwnClothes { get; init; }
+
+    /// <summary>
+    /// How the <see cref="Blade"/> is turned in the hand while no blow is being struck, as degrees
+    /// about x, y and z (the Ninja's daggers reversed, lying back along the forearms). Empty: held
+    /// the same way always.
+    /// </summary>
+    public float[] RestGrip { get; init; } = [];
 }
 
 // ---------------------------------------------------------------------------
