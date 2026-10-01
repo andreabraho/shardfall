@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using Kiln.Core.Combat;
@@ -137,6 +138,16 @@ public partial class MainMenu : Control
 
         // The class (CLS-01, 2026-10-01): the Warrior, or the Ninja with a dagger in each hand.
         var played = CharacterClass.Warrior;
+        // The portraits follow the class: the Ninja's are its own (CLS-03).
+        var portraits = new List<(Button Card, string Body)>();
+
+        void Portray()
+        {
+            var prefix = played == CharacterClass.Blade ? "ninja_" : "";
+
+            foreach (var (shown, of) in portraits) shown.Icon = GD.Load<Texture2D>($"res://assets/ui/portrait_{prefix}{of}.png");
+        }
+
         var classes = new HBoxContainer();
         classes.AddThemeConstantOverride("separation", 12);
         var classGroup = new ButtonGroup();
@@ -153,7 +164,13 @@ public partial class MainMenu : Control
             };
 
             card.AddThemeFontSizeOverride("font_size", 16);
-            card.Toggled += on => { if (on) played = choice; };
+            card.Toggled += on =>
+            {
+                if (!on) return;
+
+                played = choice;
+                Portray();
+            };
             classes.AddChild(card);
         }
 
@@ -183,6 +200,7 @@ public partial class MainMenu : Control
             card.AddThemeFontSizeOverride("font_size", 16);
             card.Toggled += on => { if (on) body = choice; };
             bodies.AddChild(card);
+            portraits.Add((card, choice));
         }
 
         column.AddChild(bodies);

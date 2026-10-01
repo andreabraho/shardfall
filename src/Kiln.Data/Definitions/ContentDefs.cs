@@ -28,6 +28,13 @@ public abstract class ContentDefBase : IContentDef
 public sealed class ItemDef : ContentDefBase
 {
     public string Name { get; init; } = string.Empty;
+
+    /// <summary>
+    /// The piece another class is given in place of this one, by class name (CLS-03): where a
+    /// drop, a shop, a reward or the starting kit names a sword, the Ninja gets its daggers.
+    /// </summary>
+    public Dictionary<string, string> Twins { get; init; } = [];
+
     public EquipSlot? Slot { get; init; }
     public string[] ClassRestriction { get; init; } = [];
     public int LevelReq { get; init; }
@@ -755,8 +762,8 @@ public sealed class GearPartsDef
     public string OffHand { get; init; } = string.Empty;
 
     /// <summary>
-    /// True for a body that keeps its own clothes whatever armour is worn (the Ninja, until it has
-    /// armours of its own): the plates made for the Warrior are not drawn on it.
+    /// True for a body whose armours are worn over its clothes (the Ninja): the torso stays
+    /// under the plates instead of being hidden by them.
     /// </summary>
     public bool OwnClothes { get; init; }
 

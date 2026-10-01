@@ -145,7 +145,7 @@ public partial class PlayerInventory : Node
         // Anything that cannot be worn now goes in the bag instead of nowhere.
         foreach (var id in new[] { "wpn_worn_blade", "arm_padded_coat" })
         {
-            var piece = GameItems.Factory.Create(id, rng);
+            var piece = GameItems.Factory.Create(GameItems.ForClass(id), rng);
 
             if (Equip(piece) != EquipOutcome.Equipped) Bag.TryAdd(piece);
         }
@@ -240,7 +240,7 @@ public partial class PlayerInventory : Node
     {
         if (!GameItems.IsLoaded) return false;
 
-        var item = GameItems.Factory.Create(defId, GameItems.LootRng.Fork("equip-new"));
+        var item = GameItems.Factory.Create(GameItems.ForClass(defId), GameItems.LootRng.Fork("equip-new"));
 
         return Bag.TryAdd(item) && Equip(item) == EquipOutcome.Equipped;
     }

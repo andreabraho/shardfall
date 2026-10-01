@@ -686,6 +686,19 @@ public static class ContentValidator
             {
                 report.Error("item-hands", item.SourceFile, $"'{item.Id}' is two-handed but is not a weapon.");
             }
+
+            // CLS-03: a twin is an item, of the same slot, the other class may wear.
+            foreach (var (cls, twin) in item.Twins)
+            {
+                if (!db.Items.TryGetValue(twin, out var other))
+                {
+                    report.Error("item-twin", item.SourceFile, $"'{item.Id}' names '{twin}' as its twin for {cls}, which is no item.");
+                }
+                else if (other.Slot != item.Slot || !other.ClassRestriction.Contains(cls))
+                {
+                    report.Error("item-twin", item.SourceFile, $"'{item.Id}': its twin '{twin}' is not a piece for the same slot that {cls} may wear.");
+                }
+            }
         }
     }
 

@@ -139,7 +139,8 @@ def render(item_id, path, cell):
         # Every weapon at one scale, the longest great sword filling the cell: a sword is then
         # plainly shorter than a great sword in the bag (2026-09-30, at your call).
         cam.data.sensor_fit = "VERTICAL"
-        cam.data.ortho_scale = max(WEAPON_HEIGHT, width / aspect) * 1.06
+        # A shorter cell shows less of that height: a dagger, two cells tall, at the same scale.
+        cam.data.ortho_scale = max(WEAPON_HEIGHT * cell[1] / 3, width / aspect) * 1.06
     elif aspect < 1:
         cam.data.sensor_fit = "VERTICAL"
         cam.data.ortho_scale = max(height, width / aspect) * 1.1

@@ -55,7 +55,7 @@ def mirror_x(obj):
     return copy
 
 
-def finish(name, by_bone, folder="armour", focus=None):
+def finish(name, by_bone, folder="armour", focus=None, underlay=True, reference=KNIGHT, replaces=None):
     """
     Joins each bone's pieces into one object called bone__<bone> ('.' becomes '_', which
     Godot's node names cannot hold) and leaves nothing else in the scene to export.
@@ -64,7 +64,7 @@ def finish(name, by_bone, folder="armour", focus=None):
 
     # Under a body armour, the wearer's torso is hidden (it would show through): a band of
     # dark cloth over the hips covers the gap between the belt and the legs.
-    if "hips" in by_bone:
+    if underlay and "hips" in by_bone:
         by_bone["hips"].append(band("underlay", 0.40, 0.36, 0.33, 0.60,
                                     t.material("undercloth", (0.22, 0.19, 0.17), rough=0.9), y=0.02, bevel=0))
 
@@ -82,9 +82,10 @@ def finish(name, by_bone, folder="armour", focus=None):
     if focus is None:
         focus = ((0, 0, 1.85), 0.85) if helmet else ((0, 0, 0.9), 0.85)
 
-    replaces = ["Knight_Helmet", "Knight_HelmetVisor"] if helmet else ["Knight_Cape", "Knight_Helmet", "Knight_HelmetVisor"]
+    if replaces is None:
+        replaces = ["Knight_Helmet", "Knight_HelmetVisor"] if helmet else ["Knight_Cape", "Knight_Helmet", "Knight_HelmetVisor"]
 
-    return {"folder": folder, "name": name, "reference": KNIGHT, "focus": focus, "replaces": replaces}
+    return {"folder": folder, "name": name, "reference": reference, "focus": focus, "replaces": replaces}
 
 
 def cape(name, mat, top=(1.31, 0.40, 0.31), bottom=(0.28, 0.56, 0.50), curve=0.12, thickness=0.025, cols=16, rows=10):

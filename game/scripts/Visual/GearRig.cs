@@ -51,7 +51,8 @@ public sealed class GearRig
     private MeshInstance3D? _twoHand;
 
     /// <summary>The same blade in the other hand, for a body that fights with two (CLS-03).</summary>
-    private readonly MeshInstance3D? _offHand;
+    private MeshInstance3D? _offHand;
+    private string _offHandPath = "";
 
     /// <summary>True for a body that holds a blade in each hand.</summary>
     public bool DualWield => _offHand is not null;
@@ -100,6 +101,7 @@ public sealed class GearRig
 
         _oneHand = Named(Part(model, parts.OneHand, WeaponHand));
         _offHand = parts.OffHand.Length > 0 && parts.Blade.Length > 0 ? Part(model, parts.Blade, parts.OffHand) : null;
+        _offHandPath = parts.Blade;
         _twoHand = Named(Part(model, parts.TwoHand, WeaponHand));
         _oneHandPath = parts.OneHand;
         _twoHandPath = parts.TwoHand;
@@ -129,20 +131,21 @@ public sealed class GearRig
 
     public void Wear(GearLook look)
     {
-        // A body with a blade of its own (the Ninja's daggers, CLS-03) holds it whatever the
-        // weapon, one in each hand.
-        if (_parts.Blade.Length > 0) look = look with { Hands = look.Hands > 0 ? 1 : 0, WeaponModel = _parts.Blade };
+        // A body that fights with two blades (the Ninja, CLS-03) holds the weapon's model in each
+        // hand, or its own blade for a weapon without one.
+        if (_parts.Blade.Length > 0) look = look with { Hands = look.Hands > 0 ? 1 : 0, WeaponModel = look.WeaponModel ?? _parts.Blade };
 
-        // And one that keeps its own clothes wears no plates over them.
-        if (_parts.OwnClothes) look = look with { ArmourModel = null };
-
-        if (_offHand is not null) _offHand.Visible = look.Hands > 0;
+        if (_offHand is not null)
+        {
+            Hold(ref _offHand, ref _offHandPath, look.WeaponModel ?? _parts.Blade, _parts.OffHand);
+            _offHand.Visible = look.Hands > 0;
+        }
 
         // The weapon's own model in the hand that holds it; the other hand keeps what it has.
         var swapped = look.Hands switch
         {
-            1 => Hold(ref _oneHand, ref _oneHandPath, look.WeaponModel ?? _parts.OneHand),
-            2 => Hold(ref _twoHand, ref _twoHandPath, look.WeaponModel ?? _parts.TwoHand),
+            1 => Hold(ref _oneHand, ref _oneHandPath, look.WeaponModel ?? _parts.OneHand, WeaponHand),
+            2 => Hold(ref _twoHand, ref _twoHandPath, look.WeaponModel ?? _parts.TwoHand, WeaponHand),
             _ => false,
         };
 
@@ -155,8 +158,9 @@ public sealed class GearRig
         // A modelled helmet is worn in place of the model's own.
         foreach (var piece in _helmet) piece.Visible = look.Helmet && look.HelmetModel is null;
 
-        // A modelled armour covers the torso; without one the plain clothes show.
-        if (_torso is not null) _torso.Visible = look.ArmourModel is null;
+        // A modelled armour covers the torso; without one the plain clothes show — as they do
+        // under an armour made to be worn over them.
+        if (_torso is not null) _torso.Visible = look.ArmourModel is null || _parts.OwnClothes;
 
         // A modelled armour brings its own cape, if any: the model's would pass through its plates.
         if (_cape is not null) _cape.Visible = look.Cape && look.ArmourModel is null;
@@ -164,6 +168,7 @@ public sealed class GearRig
         // A sword skin is on both blades, so changing blade keeps it (REF-23).
         BladeSkin.Set(_oneHand, look.SwordSkin);
         BladeSkin.Set(_twoHand, look.SwordSkin);
+        BladeSkin.Set(_offHand, look.SwordSkin);
 
         // So is the aura: round the sword, as the original's (2026-09-26), not round the feet.
         if (look.Aura?.Id != _aura)
@@ -178,6 +183,7 @@ public sealed class GearRig
         Color? tint = look.SwordSkin is { } sword ? new Color(sword.Color) : null;
         WeaponGlow.Set(_oneHand, look.Hands == 1 ? look.Upgrade : 0, tint);
         WeaponGlow.Set(_twoHand, look.Hands == 2 ? look.Upgrade : 0, tint);
+        WeaponGlow.Set(_offHand, look.Hands == 1 ? look.Upgrade : 0, tint);
 
         DressArmour(look.ArmourSkin);
         DressPlates(look.ArmourModel, _plates, ref _platesPath);
@@ -264,15 +270,15 @@ public sealed class GearRig
     }
 
     /// <summary>
-    /// Puts the scene at <paramref name="wanted"/> in the weapon hand in place of
+    /// Puts the scene at <paramref name="wanted"/> on <paramref name="bone"/> in place of
     /// <paramref name="blade"/>. False when it is already held or does not load, which keeps
     /// the blade there is.
     /// </summary>
-    private bool Hold(ref MeshInstance3D? blade, ref string held, string wanted)
+    private bool Hold(ref MeshInstance3D? blade, ref string held, string wanted, string bone)
     {
         if (wanted.Length == 0 || wanted == held) return false;
 
-        if (Named(Part(_model, wanted, WeaponHand)) is not { } fresh) return false;
+        if (Named(Part(_model, wanted, bone)) is not { } fresh) return false;
 
         if (blade is not null && GodotObject.IsInstanceValid(blade))
         {

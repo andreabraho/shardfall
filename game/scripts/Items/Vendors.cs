@@ -27,7 +27,9 @@ public static class Vendors
         {
             var stock = npc.Stock ?? new StockDef();
 
-            vendor = new Vendor(npc.Id, GameItems.Catalogue, stock.Staples, GameItems.Catalogue.Specs,
+            // What the player's class may wear (CLS-03): its own twins of the staples, and no gear of another class.
+            vendor = new Vendor(npc.Id, GameItems.Catalogue, stock.Staples.Select(GameItems.ForClass).Distinct(),
+                GameItems.Catalogue.Specs.Where(s => s.AllowedFor(PlayerProfile.Class)),
                 stock.Rotating, stock.MaxRarity);
 
             Open[npc.Id] = vendor;

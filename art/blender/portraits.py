@@ -26,6 +26,11 @@ LOOKS = {
     "man": [("Knight.glb", ["Knight_Head"]),
             ("Ranger.glb", ["Ranger_Body", "Ranger_ArmLeft", "Ranger_ArmRight"])],
     "woman": [(WOMAN, ["Rogue_Head", "Rogue_Body", "Rogue_ArmLeft", "Rogue_ArmRight"])],
+    # The Ninja (CLS-03), in the dark clothes of ninja_body.py.
+    "ninja_man": [(os.path.join(ROOT, "game", "assets", "temins", "characters", "ninja_man_body.glb"),
+                   ["RogueHooded_Head", "RogueHooded_Mask", "RogueHooded_Body", "RogueHooded_ArmLeft", "RogueHooded_ArmRight"])],
+    "ninja_woman": [(os.path.join(ROOT, "game", "assets", "temins", "characters", "ninja_woman_body.glb"),
+                     ["Rogue_Head", "Rogue_Body", "Rogue_ArmLeft", "Rogue_ArmRight"])],
 }
 
 

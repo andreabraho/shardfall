@@ -74,6 +74,18 @@ public static class GameItems
 
     public static ItemSpec? Spec(string id) => _catalogue is not null && _catalogue.TryGet(id, out var spec) ? spec : null;
 
+    /// <summary>
+    /// The piece the player's class is given where <paramref name="id"/> is named (CLS-03): the
+    /// item itself when the class may wear it or it has no twin for the class, else that twin.
+    /// </summary>
+    public static string ForClass(string id)
+    {
+        if (Spec(id) is not { } spec || spec.AllowedFor(PlayerProfile.Class)) return id;
+
+        return GameContent.Database.Items.TryGetValue(id, out var def)
+            && def.Twins.TryGetValue(PlayerProfile.Class.ToString().ToLowerInvariant(), out var twin) ? twin : id;
+    }
+
     /// <summary>Display name for an item, resolving the localisation key for now by trimming it.</summary>
     public static string NameOf(ItemInstance item)
     {
@@ -175,6 +187,8 @@ public static class LootRoller
 
     private static ItemInstance Mint(string itemId, int count, DeterministicRng rng)
     {
+        itemId = GameItems.ForClass(itemId);
+
         var spec = GameItems.Spec(itemId);
 
         // Equipment is rolled — bonus lines and socket slots; everything else is a plain
