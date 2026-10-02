@@ -167,11 +167,11 @@ public static class Ids
         public const string SklToxicCloud = "skl_toxic_cloud";
         public const string SklTripleCut = "skl_triple_cut";
         public const string SklViperFang = "skl_viper_fang";
-        public const string SklWarCharge = "skl_war_charge";
+        public const string SklWarCry = "skl_war_cry";
         public const string SklWhirlingBlades = "skl_whirling_blades";
         public const string SklWhirlwind = "skl_whirlwind";
 
-        public static readonly string[] All = ["skl_battle_frenzy", "skl_blade_aura", "skl_blade_wave", "skl_cleave", "skl_flash_step", "skl_ground_slam", "skl_guard_stance", "skl_heavy_strike", "skl_iron_skin", "skl_piercing_blow", "skl_shadow_step", "skl_shadow_strike", "skl_shadow_veil", "skl_shield_bash", "skl_toxic_cloud", "skl_triple_cut", "skl_viper_fang", "skl_war_charge", "skl_whirling_blades", "skl_whirlwind"];
+        public static readonly string[] All = ["skl_battle_frenzy", "skl_blade_aura", "skl_blade_wave", "skl_cleave", "skl_flash_step", "skl_ground_slam", "skl_guard_stance", "skl_heavy_strike", "skl_iron_skin", "skl_piercing_blow", "skl_shadow_step", "skl_shadow_strike", "skl_shadow_veil", "skl_shield_bash", "skl_toxic_cloud", "skl_triple_cut", "skl_viper_fang", "skl_war_cry", "skl_whirling_blades", "skl_whirlwind"];
     }
 
     public static class Quests

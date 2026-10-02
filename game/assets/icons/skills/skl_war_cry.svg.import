@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cq8bmn837vlr0"
-path="res://.godot/imported/skl_war_charge.svg-6cf52ffdbd7efe4b173917a2e25b73c1.ctex"
+uid="uid://bqopqhre54hie"
+path="res://.godot/imported/skl_war_cry.svg-c3c8bd41134ee0f5eb34540384396946.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/icons/skills/skl_war_charge.svg"
-dest_files=["res://.godot/imported/skl_war_charge.svg-6cf52ffdbd7efe4b173917a2e25b73c1.ctex"]
+source_file="res://assets/icons/skills/skl_war_cry.svg"
+dest_files=["res://.godot/imported/skl_war_cry.svg-c3c8bd41134ee0f5eb34540384396946.ctex"]
 
 [params]
 
