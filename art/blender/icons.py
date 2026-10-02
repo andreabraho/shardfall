@@ -92,10 +92,11 @@ def render(item_id, path, cell):
 
     kind = item_id.split("_")[0]
 
-    # A bow lies along Y, as the hand holds it (bowkit.py): stood up for its picture, as a sword stands.
+    # A bow lies along Y, as the hand holds it (bowkit.py): stood up for its picture, as a sword stands,
+    # its long limb — the one the hand holds upwards, towards -Y — at the top.
     if item_id.endswith("_bow"):
         for o in meshes():
-            o.matrix_world = Matrix.Rotation(math.radians(90), 4, "X") @ o.matrix_world
+            o.matrix_world = Matrix.Rotation(math.radians(-90), 4, "X") @ o.matrix_world
         bpy.context.view_layer.update()
 
     # A fan is held with its leaf facing forward (fankit.py): turned flat on for its picture.

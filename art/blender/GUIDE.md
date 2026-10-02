@@ -108,15 +108,24 @@ Ninja woman. Nothing covers the waist or the head, and shoulder pieces stand **o
 chibi head (x ≥ 0.40) or it hides them. Daggers are swords from `swordkit`, about 0.6–0.85 long,
 two cells tall in the bag.
 
-### `bowkit.py`, `fankit.py`, `swordkit.cursed`, `classkit.py` — the Archer, the Asura, the Dragonseer
+### `bowkit.py`, `fankit.py`, `hexkit.py`, `classkit.py` — the Archer, the Asura, the Dragonseer
 
-- **Bows lie along Y**, the string towards -X, flat in Z, the grip at the origin — as KayKit's bow,
-  the way the left hand (`handslot.l`, visuals.json `weapon_hand`) was rigged to hold one. Not a
-  sword's layout: `icons.py` stands a `_bow` up for its picture.
-- **Fans are held as swords** (grip at the origin, up Z) but turned a quarter turn, the leaf facing
-  forward; `icons.py` turns a `_fan` back flat on. Drawn larger than worn: `fan()` shrinks them.
-- **A cursed sword is the Warrior's, re-forged**: `k.cursed("<source model>", "<name>")` — dark steel,
-  crimson cord, violet light down the blade. No new shape to model.
+- **Every weapon of the three is its own design** (2026-10-02, at your call — they were one shape a
+  class in other colours, and the Asura's were the Warrior's swords recoloured): one small function a
+  weapon inside `build(name)` of its kit, the model file three lines that call it.
+- **Bows** (`bowkit.py`) — "big, heavy, with many branches": two thick limbs and what grows from their
+  backs (`branch`: antlers, leaves, thorns, horns, feathers, blades, ribs, roots, crystals, flames —
+  `SHAPES`, with `twigs`, a lit `tip`, an `inner` colour). They lie along Y, flat in Z, the grip at the
+  origin, as KayKit's bow, the way the left hand (`handslot.l`) holds one — and **the end towards +Y
+  points down in the hand**: it is the short limb (`LOWER`), or a bow this long stands in the ground.
+  `icons.py` stands a `_bow` up, long limb at the top.
+- **Fans** (`fankit.py`) — "showy": drawn flat in XY round the pivot (`sector` with a cut edge —
+  `scallop`, `petal`, `flame`, `torn` — `plume`, `stick`, `disc`, `crescent`, `rays`, `tassel`), stood
+  up, turned a quarter turn so the leaf faces forward, and held as a sword (the part named `grip`).
+  Drawn larger than worn: `SCALE`. `icons.py` turns a `_fan` back flat on.
+- **Cursed swords** (`hexkit.py`) — "dark magic swords": swordkit's pieces with shapes of their own
+  (split round a core of light, toothed, flamed, hooked, crystal), `runes`, a `crack` of light, an
+  `eye` in the guard, `shardlet`s hanging loose. A dark steel and a light of its own colour each.
 - **Suits and headpieces** are in `classkit.py`: **one function a suit** since 2026-10-02 ("more their
   own, and better made" — all seven of a class were one function in other colours before, and read
   as one suit), each with a shape nobody else has: a straw cape, a rib cage, a collar of feathers, a

@@ -177,3 +177,27 @@ calls). Every suit is its own design now (`art/blender/classkit.py`):
 belly bare. The Asura woman's own bodice is cut short as the Ninja's; the Dragonseer woman no longer
 wears the Mage's robe — an ivory bodice, bare shoulders and arms, a jade wrap round the hips over bare
 legs. The men are as they were.
+
+## Weapons, redrawn (2026-10-02)
+
+"The same for the weapons": "big, heavy bows with many branches for the Archer, showy fans for the
+Dragonseer, dark magic swords for the Asura" (your call). Twelve each, each its own design
+(`bowkit.py`, `fankit.py`, `hexkit.py`):
+
+| Tier | Bow | Fan | Cursed sword |
+|---|---|---|---|
+| Worn | a heavy stave with the stubs of its boughs | mended paper, a frayed edge | a chipped black blade, a lit crack |
+| Hunter's | crowned with antlers | seven pheasant feathers | a curved fang, bone guard, venom |
+| Bronze | bronze laurel leaves | a round fan, the sun in a bronze rim | a leaf of dark bronze, four runes |
+| Iron | hooks and thorns of iron | a war fan of iron slats, the red sun | a black chopper, red edge |
+| Ridge | ram's horns curling back | seven broad green leaves | a midnight blade in waves, ice in the groove |
+| Warden | a pair of silver wings | blue silk, the moon and the star | a blade split round a bar of violet light |
+| Steel | all blades | nine steel blades, no leaf | a saw-toothed executioner's blade, an eye in the guard |
+| Grave | a spine and its ribs | a bat's wing on fingers of bone | vertebrae down the spine, a skull pommel |
+| Ember | a burnt bough still alight | a leaf of flame | black glass with fire in the cracks |
+| Hollow | black briar with two red hooks | torn black, an eye of red light | half sword, half sickle |
+| Shard | silver grown through with crystal | a spray of crystal shards | a spire of crystal, splinters adrift |
+| Kiln | the firebird, every feather a flame | the firebird's tail, jade and gold | open on a core of light, winged guard, the tip come apart |
+
+A bow is held below its middle, the lower limb about half the upper, so it clears the ground.
+F8 (debug) empties the bag and gives the class's armours and headpieces; pressed again, its weapons.

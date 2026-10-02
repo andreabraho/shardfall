@@ -1,7 +1,7 @@
-"""One of the twelve cursed swords of the Asura (CLS-05): ridge_blade re-forged (swordkit.cursed)."""
+"""One of the twelve cursed swords of the Asura (CLS-05): see hexkit.build."""
 
-import swordkit as k
+import hexkit
 
 
 def build():
-    return k.cursed("ridge_blade", "ridge_hexblade")
+    return hexkit.build("ridge_hexblade")

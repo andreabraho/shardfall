@@ -26,7 +26,7 @@ public partial class DebugGrants : Node
             return;
         }
 
-        GD.Print("[debug] F1 grants a level · F8 empties the bag and grants every armour and headpiece of the class played · F10 unlocks every cosmetic");
+        GD.Print("[debug] F1 grants a level · F8 empties the bag and grants every armour and headpiece of the class played, then its weapons, in turn · F10 unlocks every cosmetic");
     }
 
     public override void _UnhandledInput(InputEvent @event)
@@ -63,11 +63,17 @@ public partial class DebugGrants : Node
         // The bag is emptied first (2026-10-02, at your call), so all of it always fits; what is worn stays worn.
         foreach (var placed in bag.Bag.Items.ToList()) bag.Bag.Remove(placed.Item);
 
-        var gear = GameContent.Database.Items.Values.Where(IsClassGear)
+        // Armour and weapons do not fit the bag together (2026-10-02, the weapons at your call): one press gives the
+        // armours and headpieces, the next the weapons, and so on in turn.
+        var weapons = _weaponsNext;
+        _weaponsNext = !_weaponsNext;
+
+        var gear = GameContent.Database.Items.Values.Where(d => weapons ? IsClassWeapon(d) : IsClassGear(d))
             .OrderByDescending(d => d.GridSize[0] * d.GridSize[1]).ThenBy(d => d.LevelReq).ToList();
         var given = gear.Count(def => bag.Bag.TryAdd(GameItems.Factory.Create(def.Id, rng)));
 
-        var report = $"[debug] {given}/{gear.Count} armours and headpieces of the {PlayerProfile.ClassName}" + (given < gear.Count ? " — the bag is full" : "");
+        var report = $"[debug] {given}/{gear.Count} {(weapons ? "weapons" : "armours and headpieces")} of the {PlayerProfile.ClassName}"
+            + (given < gear.Count ? " — the bag is full" : "") + $" · F8 again for the {(weapons ? "armours" : "weapons")}";
 
         GD.Print(report);
         UI.WorldNotice.Show(GetTree(), report);
@@ -84,6 +90,13 @@ public partial class DebugGrants : Node
 
         if (GetTree().GetFirstNodeInGroup("player") is Node player) player.GetNodeOrNull<PlayerInventory>("PlayerInventory")?.ShowGear();
     }
+
+    /// <summary>True when the next press of F8 gives the weapons, false when the armours.</summary>
+    private bool _weaponsNext;
+
+    /// <summary>A weapon of the class played.</summary>
+    private static bool IsClassWeapon(Kiln.Data.Definitions.ItemDef def) =>
+        def.Slot is EquipSlot.Weapon && def.ClassRestriction.Contains(PlayerProfile.Class.ToString().ToLowerInvariant());
 
     /// <summary>An armour or a headpiece of the class played (2026-10-02: every class has its own).</summary>
     private static bool IsClassGear(Kiln.Data.Definitions.ItemDef def) =>

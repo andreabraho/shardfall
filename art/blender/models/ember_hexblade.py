@@ -1,7 +1,7 @@
-"""One of the twelve cursed swords of the Asura (CLS-05): ember_edge re-forged (swordkit.cursed)."""
+"""One of the twelve cursed swords of the Asura (CLS-05): see hexkit.build."""
 
-import swordkit as k
+import hexkit
 
 
 def build():
-    return k.cursed("ember_edge", "ember_hexblade")
+    return hexkit.build("ember_hexblade")
