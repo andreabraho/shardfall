@@ -8,5 +8,14 @@
   { "id": "mat_mutation_ink",   "name": "$item.mat_mutation_ink.name",   "level_req": 1,  "rarity": "rare",   "grid_size": [1, 1], "max_stack": 20, "sell_value": 700, "price": 3000,  "visual": "mesh_armor_a" },
   { "id": "mat_blessing_scroll", "name": "$item.mat_blessing_scroll.name", "level_req": 1, "rarity": "epic",   "grid_size": [1, 1], "max_stack": 20, "sell_value": 1500, "visual": "mesh_armor_a" },
 
-  { "id": "mat_flask_draught", "name": "$item.mat_flask_draught.name", "level_req": 1,  "rarity": "common", "grid_size": [1, 1], "max_stack": 20, "sell_value": 250, "price": 500,  "visual": "mesh_armor_a" }
+  { "id": "mat_flask_draught", "name": "$item.mat_flask_draught.name", "level_req": 1,  "rarity": "common", "grid_size": [1, 1], "max_stack": 20, "sell_value": 250, "price": 500,  "visual": "mesh_armor_a" },
+
+  // Act 2's parts (A2-04, 2026-10-02): what each new map's creatures leave, and the only thing its new gear
+  // upgrades with — a common one off any creature, a rare one off the boss and the shards.
+  { "id": "mat_slate_fang",     "name": "$item.mat_slate_fang.name",     "level_req": 1, "rarity": "fine", "grid_size": [1, 1], "max_stack": 99, "sell_value": 900,  "visual": "mesh_armor_a" },
+  { "id": "mat_stag_crystal",   "name": "$item.mat_stag_crystal.name",   "level_req": 1, "rarity": "epic", "grid_size": [1, 1], "max_stack": 50, "sell_value": 6000, "visual": "mesh_armor_a" },
+  { "id": "mat_bog_marrow",     "name": "$item.mat_bog_marrow.name",     "level_req": 1, "rarity": "fine", "grid_size": [1, 1], "max_stack": 99, "sell_value": 1100, "visual": "mesh_armor_a" },
+  { "id": "mat_kings_pearl",    "name": "$item.mat_kings_pearl.name",    "level_req": 1, "rarity": "epic", "grid_size": [1, 1], "max_stack": 50, "sell_value": 7500, "visual": "mesh_armor_a" },
+  { "id": "mat_ember_gland",    "name": "$item.mat_ember_gland.name",    "level_req": 1, "rarity": "fine", "grid_size": [1, 1], "max_stack": 99, "sell_value": 1300, "visual": "mesh_armor_a" },
+  { "id": "mat_warlord_slag",   "name": "$item.mat_warlord_slag.name",   "level_req": 1, "rarity": "epic", "grid_size": [1, 1], "max_stack": 50, "sell_value": 9000, "visual": "mesh_armor_a" }
 ]

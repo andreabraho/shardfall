@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using Kiln.Data.Definitions;
 
@@ -220,6 +221,8 @@ public partial class KitPiece : StaticBody3D
 
             AddChild(instance);
 
+            if (def.Recolour.Length > 0) Paint(instance, def);
+
             if (def.Fit == "height")
             {
                 Visual.ModelFit.ByHeight(instance, size.Y);
@@ -232,6 +235,33 @@ public partial class KitPiece : StaticBody3D
             // Side by side along the piece's length, the run centred on the node like every
             // other piece.
             if (copies > 1) instance.Position += new Vector3((-size.X * 0.5f) + (step * (i + 0.5f)), 0, 0);
+        }
+    }
+
+    /// <summary>One flat colour over the whole of a model (A2-01): petrified wood, burnt rock, a crystal that glows.</summary>
+    private static void Paint(Node model, KitPieceDef def)
+    {
+        var key = $"{def.Id}:paint";
+
+        if (!Materials.TryGetValue(key, out var found) || found is not StandardMaterial3D paint)
+        {
+            var colour = new Color(def.Recolour);
+
+            paint = new StandardMaterial3D
+            {
+                AlbedoColor = colour,
+                Roughness = def.Glow > 0 ? 0.35f : 0.95f,
+                EmissionEnabled = def.Glow > 0,
+                Emission = colour,
+                EmissionEnergyMultiplier = (float)def.Glow,
+            };
+
+            Materials[key] = paint;
+        }
+
+        foreach (var mesh in model.FindChildren("*", "MeshInstance3D", true, false).OfType<MeshInstance3D>().Append(model as MeshInstance3D).Where(m => m is not null))
+        {
+            mesh!.MaterialOverride = paint;
         }
     }
 

@@ -91,6 +91,8 @@ public static class BalanceCommand
 
         if (Array.IndexOf(args, "--upgrade") is >= 0 and var at && at + 1 < args.Length && int.TryParse(args[at + 1], out var plus)) _upgrade = plus;
 
+        if (Program.OptionValue(args, "--save") is { } path) return Reference(db, path, double.TryParse(Program.OptionValue(args, "--family"), System.Globalization.CultureInfo.InvariantCulture, out var share) ? share : 0.5, Program.OptionValue(args, "--only"), args);
+
         Console.WriteLine($"Gear at +{_upgrade}, no bonus lines, no stones, no jewellery.");
         var drift = new List<string>();
         var power = Builds.ToDictionary(b => b.Name, _ => new List<double>());
@@ -165,6 +167,43 @@ public static class BalanceCommand
         foreach (var line in drift) Console.Error.WriteLine($"  drift: {line}");
 
         return 1;
+    }
+
+    /// <summary>
+    /// A saved character against every stage (A2-05): its points, its skills and what it wears, bonus lines and
+    /// stones and all. Its best bonus against a family is counted against every creature, by <paramref name="share"/> —
+    /// a player who has re-stoned for the map, more or less.
+    /// </summary>
+    private static int Reference(ContentDatabase db, string path, double share, string? only, string[] args)
+    {
+        var read = Kiln.Core.Saving.SaveCodec.Decode(File.ReadAllText(path));
+
+        if (!read.Ok)
+        {
+            Console.Error.WriteLine($"  {path}: {read.Message}");
+            return 1;
+        }
+
+        var hero = Hero.From(db, read.Save!, share, int.TryParse(Program.OptionValue(args, "--levels"), out var more) ? more : 0);
+        var stats = hero.Stats;
+
+        Console.WriteLine($"{read.Save!.CharacterName}, level {stats.Level}: attack {stats.AttackPower:0}, health {stats.MaxHp:0}, defence {stats.Defense:0}, "
+            + $"{stats.AttacksPerSecond:0.00} blows/s, crit {stats.CritChance:P0}, +{stats.Modifiers.DamagePct:P0} blows, +{stats.Modifiers.SkillDamagePct:P0} skills, "
+            + $"+{stats.Modifiers.VsFamilyBonus(MonsterFamily.Animal):P0} against the family ({share:P0} of its best).");
+        Console.WriteLine($"  {string.Join(", ", hero.Skills.Select(s => $"{s.Def.Id[4..]}:{s.Points} {s.Skill.Rank}"))}");
+        Console.WriteLine();
+        Console.WriteLine($"  {"",-28} {"lvl",3} {"hp",7} {"one s",6} {"pack s",7} {"hurt",5}");
+
+        foreach (var enemy in db.Enemies.Values.Where(e => only is null || e.Id.Contains(only, StringComparison.Ordinal)).OrderBy(e => e.Level).ThenBy(e => e.Stats.Hp))
+        {
+            var boss = enemy.Boss || enemy.BossBar;
+            var one = new Fight(db, hero, enemy, 1, 1).Run();
+            var pack = boss ? one : new Fight(db, hero, enemy, PackSize, Packs).Run();
+
+            Console.WriteLine($"  {enemy.Id,-28} {enemy.Level,3} {enemy.Stats.Hp,7:0} {one.Time,6:0.0} {(boss ? "boss" : $"{pack.Time:0.0}"),7} {pack.Hurt,5:0.00}");
+        }
+
+        return 0;
     }
 
     /// <summary>The least hurt that counts: below a twentieth of a health bar the difference is noise.</summary>
@@ -285,6 +324,85 @@ public static class BalanceCommand
                 Shift = db.Skills.TryGetValue(build.Shift, out var shift) ? Learn(shift, 1) : null,
             };
         }
+
+        /// <summary>The character of a save, as the game would build it.</summary>
+        public static Hero From(ContentDatabase db, Kiln.Core.Saving.SaveGame save, double share, int levels = 0)
+        {
+            var catalogue = new Kiln.Data.Items.ItemCatalogue(db);
+            var gear = new Kiln.Core.Items.Equipment(catalogue);
+            var cls = Enum.Parse<CharacterClass>(save.Class, ignoreCase: true);
+            var worn = new Dictionary<EquipSlot, Kiln.Core.Items.ItemInstance>();
+
+            foreach (var (slot, uid) in save.Player.Worn)
+            {
+                if (save.Player.Items.FirstOrDefault(i => i.Uid == uid) is { } saved
+                    && Kiln.Core.Saving.ItemSnapshots.Restore(saved, catalogue, catalogue) is { } item)
+                {
+                    worn[Enum.Parse<EquipSlot>(slot)] = item;
+                }
+            }
+
+            gear.Load(worn);
+
+            var a = save.Player.Assigned;
+            var stats = new StatBlock
+            {
+                // Levels still to come (--levels) go where the rest went: into what it strikes with.
+                Level = save.Player.Level + levels,
+                Class = cls,
+                Attributes = Attributes.Starting + new Attributes(a[0], a[1], a[2], a[3]) + PrimaryPoints(cls, levels * Attributes.PointsPerLevel),
+            };
+
+            gear.ApplyTo(stats);
+            stats.Attributes = stats.Modifiers.Raise(stats.Attributes);
+
+            // Its best bonus against a family, by the share asked, against every family.
+            var best = stats.Modifiers.VsFamily.Count > 0 ? stats.Modifiers.VsFamily.Values.Max() : 0;
+
+            foreach (var family in Enum.GetValues<MonsterFamily>()) stats.Modifiers.VsFamily[family] = best * share;
+
+            var mental = save.Path == "mental";
+
+            stats.SkillAttackBonus = cls == CharacterClass.Warrior && mental ? stats.Attributes.Vit * Attributes.MentalSkillPerVit
+                : cls == CharacterClass.Sura ? stats.Attributes.Int * Attributes.AsuraSkillPerInt : 0;
+
+            var shift = cls switch
+            {
+                CharacterClass.Blade => "skl_shadow_step",
+                CharacterClass.Archer => "skl_backstep",
+                CharacterClass.Sura => "skl_backlash",
+                CharacterClass.Shaman => "skl_pure_seal",
+                _ => "skl_guard_stance",
+            };
+
+            Known Learn(SkillDef def, int points)
+            {
+                var uses = save.Player.Skills.GetValueOrDefault(def.Id);
+                var rank = points < SkillBook.MaxPoints ? MasteryRank.Normal
+                    : uses >= SkillBook.PerfectUses ? MasteryRank.Perfect
+                    : uses >= SkillBook.GrandMasterUses ? MasteryRank.GrandMaster : MasteryRank.Master;
+
+                return new Known(def, ResolvedSkill.For(def, rank, points), points);
+            }
+
+            return new Hero
+            {
+                Build = new Build(save.CharacterName, cls, save.Path, 1, shift, 0, 0, 0, 0),
+                Stats = stats,
+                Skills = save.Player.SkillPointsSpent
+                    .Where(p => p.Key != shift && db.Skills.TryGetValue(p.Key, out var def) && def.Class == cls)
+                    .Select(p => Learn(db.Skills[p.Key], p.Value))
+                    .ToList(),
+                Shift = db.Skills.TryGetValue(shift, out var guard) ? Learn(guard, 1) : null,
+            };
+        }
+
+        private static Attributes PrimaryPoints(CharacterClass cls, int points) => cls switch
+        {
+            CharacterClass.Blade or CharacterClass.Archer => new Attributes(0, points, 0, 0),
+            CharacterClass.Shaman => new Attributes(0, 0, points, 0),
+            _ => new Attributes(points, 0, 0, 0),
+        };
 
         /// <summary>The ordinary blow alone, against this creature, a second.</summary>
         public double BlowPerSecond(EnemyDef enemy) =>

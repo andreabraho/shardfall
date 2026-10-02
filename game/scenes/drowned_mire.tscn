@@ -1,0 +1,954 @@
+[gd_scene load_steps=18 format=3]
+
+; zone_drowned_mire — the drowned village (act 2, map two; A2-01, 2026-10-02), band 31–35.
+;
+; The stone gives way to black water and reeds. A causeway crosses the marsh from the south-west
+; corner to the north-east. Crawlers come out of the shallows by the way in, the drowned still walk
+; the streets of their village, serpents keep the reed beds, spitters the graveyard, the witches and
+; the brutes the sunken chapel. The Drowned King sits in what is left of his hall in the south-east,
+; walls on three sides, behind his guard.
+;
+; Everything the player walks on or into is a kit piece naming an id; woods and clutter are
+; ScatterNodes, seeded. Every creature is tuning in game/data/zones/act2.json. This file is
+; coordinates. Written by `kiln scenes` from src/Kiln.Tools/Commands/Act2Layouts.cs: change the
+; layout, not this file.
+
+[ext_resource type="Script" path="res://scripts/World/ZoneRoot.cs" id="1_zoneroot"]
+[ext_resource type="Script" path="res://scripts/World/NavBaker.cs" id="2_navbaker"]
+[ext_resource type="Script" path="res://scripts/World/KitPiece.cs" id="3_kit"]
+[ext_resource type="Script" path="res://scripts/World/SpawnFieldNode.cs" id="5_spawnfield"]
+[ext_resource type="Script" path="res://scripts/World/ShrineNode.cs" id="6_shrine"]
+[ext_resource type="Script" path="res://scripts/Visual/VisualRoot.cs" id="7_visualroot"]
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="8_player"]
+[ext_resource type="PackedScene" path="res://scenes/session.tscn" id="9_session"]
+[ext_resource type="Script" path="res://scripts/World/ZoneGate.cs" id="10_gate"]
+[ext_resource type="Script" path="res://scripts/World/ZoneArrival.cs" id="11_arrival"]
+[ext_resource type="Script" path="res://scripts/World/ScatterNode.cs" id="13_scatter"]
+[ext_resource type="Script" path="res://scripts/World/ShardNode.cs" id="14_shard"]
+[ext_resource type="Script" path="res://scripts/World/SafeZoneNode.cs" id="16_safe"]
+[ext_resource type="Script" path="res://scripts/World/ZoneBorder.cs" id="90_border"]
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_zone"]
+vertices = PackedVector3Array()
+cell_size = 0.15
+cell_height = 0.15
+agent_height = 1.8
+agent_radius = 0.45
+agent_max_climb = 0.3
+agent_max_slope = 45.0
+geometry_parsed_geometry_type = 1
+geometry_collision_mask = 1
+geometry_source_geometry_mode = 1
+geometry_source_group_name = "navsource"
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+size = Vector2(180, 180)
+
+[sub_resource type="StandardMaterial3D" id="Material_ground"]
+albedo_color = Color(0.227, 0.275, 0.188, 1)
+roughness = 1
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
+size = Vector3(180, 1, 180)
+
+[sub_resource type="Environment" id="Environment_zone"]
+background_mode = 1
+background_color = Color(0.337, 0.392, 0.361, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.486, 0.549, 0.502, 1)
+ambient_light_energy = 0.7
+fog_enabled = true
+fog_light_color = Color(0.384, 0.455, 0.416, 1)
+fog_density = 0.011
+
+[node name="DrownedMire" type="Node3D"]
+script = ExtResource("1_zoneroot")
+ZoneId = "zone_drowned_mire"
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_zone")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.8660254, -0.3213938, 0.3830222, 0, 0.7660444, 0.6427876, -0.5, -0.5566704, 0.6634139, 0, 14, 0)
+light_color = Color(0.812, 0.878, 0.816, 1)
+light_energy = 0.85
+shadow_enabled = true
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("NavigationMesh_zone")
+script = ExtResource("2_navbaker")
+
+; The mountains round the map: their look is the zone's "border" in act2.json.
+
+[node name="Border" type="Node3D" parent="NavigationRegion3D"]
+script = ExtResource("90_border")
+
+[node name="Ground" type="StaticBody3D" parent="NavigationRegion3D" groups=["navsource"]]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Ground"]
+mesh = SubResource("PlaneMesh_ground")
+surface_material_override/0 = SubResource("Material_ground")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Ground"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = SubResource("BoxShape3D_ground")
+
+; -- The road, worn through in places --
+
+[node name="Trail" type="Node3D" parent="NavigationRegion3D"]
+
+[node name="Trail2" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.877896, 0, 0.478852, 0, 1, 0, -0.478852, 0, 0.877896, -74, 0.06, 62)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail3" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.877896, 0, 0.478852, 0, 1, 0, -0.478852, 0, 0.877896, -70.488, 0.06, 60.085)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail4" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.877896, 0, 0.478852, 0, 1, 0, -0.478852, 0, 0.877896, -66.977, 0.06, 58.169)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail5" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.877896, 0, 0.478852, 0, 1, 0, -0.478852, 0, 0.877896, -63.465, 0.06, 56.254)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail6" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.877896, 0, 0.478852, 0, 1, 0, -0.478852, 0, 0.877896, -59.954, 0.06, 54.338)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail7" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.877896, 0, 0.478852, 0, 1, 0, -0.478852, 0, 0.877896, -52.931, 0.06, 50.508)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail8" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.83205, 0, 0.5547, 0, 1, 0, -0.5547, 0, 0.83205, -45.344, 0.06, 45.562)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail9" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.83205, 0, 0.5547, 0, 1, 0, -0.5547, 0, 0.83205, -42.015, 0.06, 43.344)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail10" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.83205, 0, 0.5547, 0, 1, 0, -0.5547, 0, 0.83205, -38.687, 0.06, 41.125)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail11" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.83205, 0, 0.5547, 0, 1, 0, -0.5547, 0, 0.83205, -35.359, 0.06, 38.906)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail12" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.83205, 0, 0.5547, 0, 1, 0, -0.5547, 0, 0.83205, -32.031, 0.06, 36.687)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail13" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.83205, 0, 0.5547, 0, 1, 0, -0.5547, 0, 0.83205, -28.703, 0.06, 34.468)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail14" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, -28, 0.06, 34)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail15" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, -22.343, 0.06, 28.343)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail16" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, -19.515, 0.06, 25.515)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail17" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, -13.858, 0.06, 19.858)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail18" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, -11.029, 0.06, 17.029)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail19" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, -8.201, 0.06, 14.201)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail20" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, -5.373, 0.06, 11.373)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail21" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.768221, 0, 0.640184, 0, 1, 0, -0.640184, 0, 0.768221, -0.927, 0.06, 7.439)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail22" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.768221, 0, 0.640184, 0, 1, 0, -0.640184, 0, 0.768221, 2.146, 0.06, 4.879)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail23" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.768221, 0, 0.640184, 0, 1, 0, -0.640184, 0, 0.768221, 14.437, 0.06, -5.364)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail24" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.650791, 0, 0.759257, 0, 1, 0, -0.759257, 0, 0.650791, 22.603, 0.06, -13.037)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail25" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.650791, 0, 0.759257, 0, 1, 0, -0.759257, 0, 0.650791, 27.809, 0.06, -19.111)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail26" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.650791, 0, 0.759257, 0, 1, 0, -0.759257, 0, 0.650791, 30.413, 0.06, -22.148)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail27" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.650791, 0, 0.759257, 0, 1, 0, -0.759257, 0, 0.650791, 35.619, 0.06, -28.222)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail28" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.650791, 0, 0.759257, 0, 1, 0, -0.759257, 0, 0.650791, 40.825, 0.06, -34.296)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail29" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.650791, 0, 0.759257, 0, 1, 0, -0.759257, 0, 0.650791, 43.428, 0.06, -37.333)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail30" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.675725, 0, 0.737154, 0, 1, 0, -0.737154, 0, 0.675725, 44, 0.06, -38)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail31" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.675725, 0, 0.737154, 0, 1, 0, -0.737154, 0, 0.675725, 46.703, 0.06, -40.949)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail32" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.675725, 0, 0.737154, 0, 1, 0, -0.737154, 0, 0.675725, 52.109, 0.06, -46.846)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail33" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.675725, 0, 0.737154, 0, 1, 0, -0.737154, 0, 0.675725, 57.514, 0.06, -52.743)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail34" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(0.675725, 0, 0.737154, 0, 1, 0, -0.737154, 0, 0.675725, 60.217, 0.06, -55.692)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail35" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66, 0.06, -62)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail36" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70, 0.06, -62)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+; -- The shallows by the way in: black pools, reeds, what the water gave back --
+
+[node name="Shallows" type="Node3D" parent="NavigationRegion3D"]
+
+[node name="Pool" type="StaticBody3D" parent="NavigationRegion3D/Shallows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0.045, 64)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_pool"
+
+[node name="Pool2" type="StaticBody3D" parent="NavigationRegion3D/Shallows"]
+transform = Transform3D(0.766044, 0, 0.642788, 0, 1, 0, -0.642788, 0, 0.766044, -14, 0.045, 56)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_pool"
+
+[node name="Reeds" type="StaticBody3D" parent="NavigationRegion3D/Shallows"]
+transform = Transform3D(-0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, -0.866025, -10.6, 0.85, 55.5)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Reeds2" type="StaticBody3D" parent="NavigationRegion3D/Shallows"]
+transform = Transform3D(-0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, -0.866025, -16.4, 0.85, 65)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Reeds3" type="StaticBody3D" parent="NavigationRegion3D/Shallows"]
+transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, -16.2, 0.85, 50.4)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Reeds4" type="StaticBody3D" parent="NavigationRegion3D/Shallows"]
+transform = Transform3D(-0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.5, -20.5, 0.85, 55)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Reeds5" type="StaticBody3D" parent="NavigationRegion3D/Shallows"]
+transform = Transform3D(-0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.5, -11.7, 0.85, 57.3)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Piece" type="StaticBody3D" parent="NavigationRegion3D/Shallows"]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, -26.3, 0.25, 66)
+script = ExtResource("3_kit")
+PieceId = "kit_bones"
+
+[node name="Piece2" type="StaticBody3D" parent="NavigationRegion3D/Shallows"]
+transform = Transform3D(0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, -25.2, 0.25, 59.4)
+script = ExtResource("3_kit")
+PieceId = "kit_bones"
+
+[node name="Log" type="StaticBody3D" parent="NavigationRegion3D/Shallows"]
+transform = Transform3D(0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.5, -24.5, 0.375, 61.7)
+script = ExtResource("3_kit")
+PieceId = "kit_un_log"
+
+[node name="Coffin" type="StaticBody3D" parent="NavigationRegion3D/Shallows"]
+transform = Transform3D(-0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, -0.866025, -19.5, 0.5, 53)
+script = ExtResource("3_kit")
+PieceId = "kit_hb_coffin"
+
+; -- The village: houses fallen in, fences, a cart nobody came back for --
+
+[node name="Village" type="Node3D" parent="NavigationRegion3D"]
+
+[node name="HouseSmall" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(0.939693, 0, 0.34202, 0, 1, 0, -0.34202, 0, 0.939693, -36, 1.69, 4)
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_house_small"
+
+[node name="HouseLong" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(-0.087156, 0, 0.996195, 0, 1, 0, -0.996195, 0, -0.087156, -24, 1.69, 2)
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_house_long"
+
+[node name="HouseCottage" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(-0.939693, 0, -0.34202, 0, 1, 0, 0.34202, 0, -0.939693, -30, 1.69, 16)
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_house_cottage"
+
+[node name="HouseSmall2" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(-0.34202, 0, -0.939693, 0, 1, 0, 0.939693, 0, -0.34202, -40, 1.69, 14)
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_house_small"
+
+[node name="Wagon" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, -29, 0.775, 9)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_wagon"
+
+[node name="Fence4" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(0.984808, 0, 0.173648, 0, 1, 0, -0.173648, 0, 0.984808, -22, 0.45, 12)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_fence_4"
+
+[node name="Fence42" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(-0.173648, 0, 0.984808, 0, 1, 0, -0.984808, 0, -0.173648, -34, 0.45, -4)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_fence_4"
+
+[node name="Pile" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27, 0.4, 6)
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_pile"
+
+[node name="Pile2" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -37, 0.4, 10)
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_pile"
+
+[node name="Beam" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, -32, 0.4, 3)
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_beam"
+
+; -- The reed beds: water to the knee, and the serpents in it --
+
+[node name="Reeds6" type="Node3D" parent="NavigationRegion3D"]
+
+[node name="Pool3" type="StaticBody3D" parent="NavigationRegion3D/Reeds6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.045, 38)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_pool"
+
+[node name="Pool4" type="StaticBody3D" parent="NavigationRegion3D/Reeds6"]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 14, 0.045, 32)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_pool"
+
+[node name="Pool5" type="StaticBody3D" parent="NavigationRegion3D/Reeds6"]
+transform = Transform3D(0.939693, 0, 0.34202, 0, 1, 0, -0.34202, 0, 0.939693, 2, 0.045, 30)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_pool"
+
+[node name="Reeds7" type="StaticBody3D" parent="NavigationRegion3D/Reeds6"]
+transform = Transform3D(-0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, -0.866025, 16.5, 0.85, 38.1)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Reeds8" type="StaticBody3D" parent="NavigationRegion3D/Reeds6"]
+transform = Transform3D(0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.5, -2.1, 0.85, 37.9)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Reeds9" type="StaticBody3D" parent="NavigationRegion3D/Reeds6"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, 3, 0.85, 35.5)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Reeds10" type="StaticBody3D" parent="NavigationRegion3D/Reeds6"]
+transform = Transform3D(-0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.5, 15.2, 0.85, 30.9)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Reeds11" type="StaticBody3D" parent="NavigationRegion3D/Reeds6"]
+transform = Transform3D(0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.5, 16.5, 0.85, 38.9)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Reeds12" type="StaticBody3D" parent="NavigationRegion3D/Reeds6"]
+transform = Transform3D(0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, 12.8, 0.85, 40.7)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Reeds13" type="StaticBody3D" parent="NavigationRegion3D/Reeds6"]
+transform = Transform3D(-0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.5, 4.2, 0.85, 27)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Reeds14" type="StaticBody3D" parent="NavigationRegion3D/Reeds6"]
+transform = Transform3D(0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, 13.7, 0.85, 32.1)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Log2" type="StaticBody3D" parent="NavigationRegion3D/Reeds6"]
+transform = Transform3D(-0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.5, 4.8, 0.375, 41.1)
+script = ExtResource("3_kit")
+PieceId = "kit_un_log"
+
+[node name="Rock" type="StaticBody3D" parent="NavigationRegion3D/Reeds6"]
+transform = Transform3D(0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.5, 0.7, 1.1, 28.7)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_rock"
+
+; -- The graveyard: stones leaning in the mud, coffins come up, a lamp still lit --
+
+[node name="Graves" type="Node3D" parent="NavigationRegion3D"]
+
+[node name="Gravestone" type="StaticBody3D" parent="NavigationRegion3D/Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, -26)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_gravestone"
+
+[node name="Gravestone2" type="StaticBody3D" parent="NavigationRegion3D/Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.55, -30)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_gravestone"
+
+[node name="Gravestone3" type="StaticBody3D" parent="NavigationRegion3D/Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0.55, -27)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_gravestone"
+
+[node name="Gravestone4" type="StaticBody3D" parent="NavigationRegion3D/Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.55, -32)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_gravestone"
+
+[node name="Gravestone5" type="StaticBody3D" parent="NavigationRegion3D/Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0.55, -32)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_gravestone"
+
+[node name="Gravestone6" type="StaticBody3D" parent="NavigationRegion3D/Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.55, -23)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_gravestone"
+
+[node name="Grave" type="StaticBody3D" parent="NavigationRegion3D/Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1.05, -35)
+script = ExtResource("3_kit")
+PieceId = "kit_hb_grave"
+
+[node name="Grave2" type="StaticBody3D" parent="NavigationRegion3D/Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1.05, -36)
+script = ExtResource("3_kit")
+PieceId = "kit_hb_grave"
+
+[node name="Coffin2" type="StaticBody3D" parent="NavigationRegion3D/Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.5, -22)
+script = ExtResource("3_kit")
+PieceId = "kit_hb_coffin"
+
+[node name="Coffin3" type="StaticBody3D" parent="NavigationRegion3D/Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.5, -25)
+script = ExtResource("3_kit")
+PieceId = "kit_hb_coffin"
+
+[node name="Crypt" type="StaticBody3D" parent="NavigationRegion3D/Graves"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -6, 2.2, -30)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_crypt"
+
+[node name="Lamp" type="StaticBody3D" parent="NavigationRegion3D/Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1.6, -27)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_lamp"
+
+[node name="FenceBroken" type="StaticBody3D" parent="NavigationRegion3D/Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.8, -18)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_fence_broken"
+
+[node name="FenceBroken2" type="StaticBody3D" parent="NavigationRegion3D/Graves"]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 12, 0.8, -20)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_fence_broken"
+
+[node name="Fire" type="StaticBody3D" parent="NavigationRegion3D/Graves"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.95, -31)
+script = ExtResource("3_kit")
+PieceId = "kit_ghost_fire"
+
+; -- The sunken chapel: an arch, an altar, candles the witches keep --
+
+[node name="Chapel" type="Node3D" parent="NavigationRegion3D"]
+
+[node name="CryptLarge" type="StaticBody3D" parent="NavigationRegion3D/Chapel"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 44, 3.5, -4)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_crypt_large"
+
+[node name="Arch" type="StaticBody3D" parent="NavigationRegion3D/Chapel"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 36, 2.205, -6)
+script = ExtResource("3_kit")
+PieceId = "kit_hb_arch"
+
+[node name="Altar" type="StaticBody3D" parent="NavigationRegion3D/Chapel"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 40, 0.5, -6)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_altar"
+
+[node name="Candles" type="StaticBody3D" parent="NavigationRegion3D/Chapel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38, 0.9, -2)
+script = ExtResource("3_kit")
+PieceId = "kit_hb_candles"
+
+[node name="Candles2" type="StaticBody3D" parent="NavigationRegion3D/Chapel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38, 0.9, -10)
+script = ExtResource("3_kit")
+PieceId = "kit_hb_candles"
+
+[node name="Fire2" type="StaticBody3D" parent="NavigationRegion3D/Chapel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34, 0.95, 0)
+script = ExtResource("3_kit")
+PieceId = "kit_ghost_fire"
+
+[node name="Fire3" type="StaticBody3D" parent="NavigationRegion3D/Chapel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34, 0.95, -12)
+script = ExtResource("3_kit")
+PieceId = "kit_ghost_fire"
+
+[node name="Obelisk" type="StaticBody3D" parent="NavigationRegion3D/Chapel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42, 1.7, 4)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_obelisk"
+
+[node name="Obelisk2" type="StaticBody3D" parent="NavigationRegion3D/Chapel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42, 1.7, -14)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_obelisk"
+
+[node name="Pool6" type="StaticBody3D" parent="NavigationRegion3D/Chapel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32, 0.045, -6)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_pool"
+
+; -- The causeway's far end: the road on stilts of stone, the flies thick over it --
+
+[node name="Causeway" type="Node3D" parent="NavigationRegion3D"]
+
+[node name="StoneWallBroken" type="StaticBody3D" parent="NavigationRegion3D/Causeway"]
+transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, 26, 1.3, -52)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_stone_wall_broken"
+
+[node name="StoneWallBroken2" type="StaticBody3D" parent="NavigationRegion3D/Causeway"]
+transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, 34, 1.3, -58)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_stone_wall_broken"
+
+[node name="Pool7" type="StaticBody3D" parent="NavigationRegion3D/Causeway"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0.045, -58)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_pool"
+
+[node name="Pool8" type="StaticBody3D" parent="NavigationRegion3D/Causeway"]
+transform = Transform3D(0.642788, 0, 0.766044, 0, 1, 0, -0.766044, 0, 0.642788, 36, 0.045, -50)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_pool"
+
+[node name="Reeds15" type="StaticBody3D" parent="NavigationRegion3D/Causeway"]
+transform = Transform3D(-0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, -0.866025, 35.6, 0.85, -46.7)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Reeds16" type="StaticBody3D" parent="NavigationRegion3D/Causeway"]
+transform = Transform3D(-0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.5, 26.9, 0.85, -46.1)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Reeds17" type="StaticBody3D" parent="NavigationRegion3D/Causeway"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.2, 0.85, -49.5)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Reeds18" type="StaticBody3D" parent="NavigationRegion3D/Causeway"]
+transform = Transform3D(-0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, -0.866025, 24.4, 0.85, -49.5)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Piece3" type="StaticBody3D" parent="NavigationRegion3D/Causeway"]
+transform = Transform3D(-0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.5, 33.7, 0.25, -62.1)
+script = ExtResource("3_kit")
+PieceId = "kit_bones"
+
+[node name="Coffin4" type="StaticBody3D" parent="NavigationRegion3D/Causeway"]
+transform = Transform3D(-0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.5, 26.7, 0.5, -57.8)
+script = ExtResource("3_kit")
+PieceId = "kit_hb_coffin"
+
+[node name="Fire4" type="StaticBody3D" parent="NavigationRegion3D/Causeway"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 31.3, 0.95, -59.4)
+script = ExtResource("3_kit")
+PieceId = "kit_ghost_fire"
+
+; -- The Drowned King's hall: three walls standing, open to the west, his throne of stone --
+
+[node name="Hall" type="Node3D" parent="NavigationRegion3D"]
+
+[node name="StoneWallBroken3" type="StaticBody3D" parent="NavigationRegion3D/Hall"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 70, 1.3, 46)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_stone_wall_broken"
+
+[node name="StoneWallBroken4" type="StaticBody3D" parent="NavigationRegion3D/Hall"]
+transform = Transform3D(0.309017, 0, 0.951057, 0, 1, 0, -0.951057, 0, 0.309017, 69.315, 1.3, 50.326)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_stone_wall_broken"
+
+[node name="StoneWallBroken5" type="StaticBody3D" parent="NavigationRegion3D/Hall"]
+transform = Transform3D(0.587785, 0, 0.809017, 0, 1, 0, -0.809017, 0, 0.587785, 67.326, 1.3, 54.229)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_stone_wall_broken"
+
+[node name="StoneWallBroken6" type="StaticBody3D" parent="NavigationRegion3D/Hall"]
+transform = Transform3D(0.809017, 0, 0.587785, 0, 1, 0, -0.587785, 0, 0.809017, 64.229, 1.3, 57.326)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_stone_wall_broken"
+
+[node name="StoneWallBroken7" type="StaticBody3D" parent="NavigationRegion3D/Hall"]
+transform = Transform3D(0.951057, 0, 0.309017, 0, 1, 0, -0.309017, 0, 0.951057, 60.326, 1.3, 59.315)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_stone_wall_broken"
+
+[node name="StoneWallBroken8" type="StaticBody3D" parent="NavigationRegion3D/Hall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 56, 1.3, 60)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_stone_wall_broken"
+
+[node name="StoneWallBroken9" type="StaticBody3D" parent="NavigationRegion3D/Hall"]
+transform = Transform3D(0.951057, 0, -0.309017, 0, 1, 0, 0.309017, 0, 0.951057, 51.674, 1.3, 59.315)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_stone_wall_broken"
+
+[node name="StoneWallBroken10" type="StaticBody3D" parent="NavigationRegion3D/Hall"]
+transform = Transform3D(0.809017, 0, -0.587785, 0, 1, 0, 0.587785, 0, 0.809017, 47.771, 1.3, 57.326)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_stone_wall_broken"
+
+[node name="StoneWallBroken11" type="StaticBody3D" parent="NavigationRegion3D/Hall"]
+transform = Transform3D(0.587785, 0, -0.809017, 0, 1, 0, 0.809017, 0, 0.587785, 44.674, 1.3, 54.229)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_stone_wall_broken"
+
+[node name="StoneWallBroken12" type="StaticBody3D" parent="NavigationRegion3D/Hall"]
+transform = Transform3D(-0.587785, 0, -0.809017, 0, 1, 0, 0.809017, 0, -0.587785, 44.674, 1.3, 37.771)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_stone_wall_broken"
+
+[node name="StoneWallBroken13" type="StaticBody3D" parent="NavigationRegion3D/Hall"]
+transform = Transform3D(-0.809017, 0, -0.587785, 0, 1, 0, 0.587785, 0, -0.809017, 47.771, 1.3, 34.674)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_stone_wall_broken"
+
+[node name="StoneWallBroken14" type="StaticBody3D" parent="NavigationRegion3D/Hall"]
+transform = Transform3D(-0.951057, 0, -0.309017, 0, 1, 0, 0.309017, 0, -0.951057, 51.674, 1.3, 32.685)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_stone_wall_broken"
+
+[node name="StoneWallBroken15" type="StaticBody3D" parent="NavigationRegion3D/Hall"]
+transform = Transform3D(-1, 0, -0, 0, 1, 0, 0, 0, -1, 56, 1.3, 32)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_stone_wall_broken"
+
+[node name="StoneWallBroken16" type="StaticBody3D" parent="NavigationRegion3D/Hall"]
+transform = Transform3D(-0.951057, 0, 0.309017, 0, 1, 0, -0.309017, 0, -0.951057, 60.326, 1.3, 32.685)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_stone_wall_broken"
+
+[node name="StoneWallBroken17" type="StaticBody3D" parent="NavigationRegion3D/Hall"]
+transform = Transform3D(-0.809017, 0, 0.587785, 0, 1, 0, -0.587785, 0, -0.809017, 64.229, 1.3, 34.674)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_stone_wall_broken"
+
+[node name="StoneWallBroken18" type="StaticBody3D" parent="NavigationRegion3D/Hall"]
+transform = Transform3D(-0.587785, 0, 0.809017, 0, 1, 0, -0.809017, 0, -0.587785, 67.326, 1.3, 37.771)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_stone_wall_broken"
+
+[node name="StoneWallBroken19" type="StaticBody3D" parent="NavigationRegion3D/Hall"]
+transform = Transform3D(-0.309017, 0, 0.951057, 0, 1, 0, -0.951057, 0, -0.309017, 69.315, 1.3, 41.674)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_stone_wall_broken"
+
+[node name="Crypt2" type="StaticBody3D" parent="NavigationRegion3D/Hall"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 63, 2.2, 46)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_crypt"
+
+[node name="Piece4" type="StaticBody3D" parent="NavigationRegion3D/Hall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52, 2, 40)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Piece5" type="StaticBody3D" parent="NavigationRegion3D/Hall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52, 2, 52)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Piece6" type="StaticBody3D" parent="NavigationRegion3D/Hall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 60, 2, 38)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Piece7" type="StaticBody3D" parent="NavigationRegion3D/Hall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 60, 2, 54)
+script = ExtResource("3_kit")
+PieceId = "kit_pillar"
+
+[node name="Fire5" type="StaticBody3D" parent="NavigationRegion3D/Hall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58, 0.95, 42)
+script = ExtResource("3_kit")
+PieceId = "kit_ghost_fire"
+
+[node name="Fire6" type="StaticBody3D" parent="NavigationRegion3D/Hall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58, 0.95, 50)
+script = ExtResource("3_kit")
+PieceId = "kit_ghost_fire"
+
+[node name="Pool9" type="StaticBody3D" parent="NavigationRegion3D/Hall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54, 0.045, 46)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_pool"
+
+; -- What grows and lies about, seeded, clear of the road and of every camp --
+
+[node name="MarshTrees" type="Node3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+script = ExtResource("13_scatter")
+Pieces = PackedStringArray("kit_sw_tree", "kit_hb_dead_tree", "kit_un_dead_tree", "kit_hb_dead_tree")
+Count = 170
+InnerRadius = 8.0
+OuterRadius = 78.0
+Spacing = 6
+Seed = 67
+Clearings = PackedVector3Array(-74, 62, 5, -70.488, 60.085, 5, -66.977, 58.169, 5, -63.465, 56.254, 5, -59.954, 54.338, 5, -56.442, 52.423, 5, -52.931, 50.508, 5, -52, 50, 5, -48.672, 47.781, 5, -45.344, 45.562, 5, -42.015, 43.344, 5, -38.687, 41.125, 5, -35.359, 38.906, 5, -32.031, 36.687, 5, -28.703, 34.468, 5, -28, 34, 5, -25.172, 31.172, 5, -22.343, 28.343, 5, -19.515, 25.515, 5, -16.686, 22.686, 5, -13.858, 19.858, 5, -11.029, 17.029, 5, -8.201, 14.201, 5, -5.373, 11.373, 5, -4, 10, 5, -0.927, 7.439, 5, 2.146, 4.879, 5, 5.219, 2.318, 5, 8.292, -0.243, 5, 11.364, -2.804, 5, 14.437, -5.364, 5, 17.51, -7.925, 5, 20, -10, 5, 22.603, -13.037, 5, 25.206, -16.074, 5, 27.809, -19.111, 5, 30.413, -22.148, 5, 33.016, -25.185, 5, 35.619, -28.222, 5, 38.222, -31.259, 5, 40.825, -34.296, 5, 43.428, -37.333, 5, 44, -38, 5, 46.703, -40.949, 5, 49.406, -43.897, 5, 52.109, -46.846, 5, 54.812, -49.794, 5, 57.514, -52.743, 5, 60.217, -55.692, 5, 62.92, -58.64, 5, 65.623, -61.589, 5, 66, -62, 5, 70, -62, 5, 56, 46, 17, 38, 44, 9, -66, 62, 14, 26, -2, 5, 56, -56, 5, -15, 60, 12, -31, 9, 14, 8, 35, 12, 4, -28, 12, 40, -6, 12, 30, -54, 12, 38, 44, 8, 56, 46, 6, -74, 74, 10, -74, 62, 9, 74, -74, 10, 74, -62, 9)
+
+[node name="Pools" type="Node3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+script = ExtResource("13_scatter")
+Pieces = PackedStringArray("kit_sw_pool")
+Count = 16
+InnerRadius = 14.0
+OuterRadius = 72.0
+Spacing = 20
+Seed = 68
+Clearings = PackedVector3Array(-74, 62, 5, -70.488, 60.085, 5, -66.977, 58.169, 5, -63.465, 56.254, 5, -59.954, 54.338, 5, -56.442, 52.423, 5, -52.931, 50.508, 5, -52, 50, 5, -48.672, 47.781, 5, -45.344, 45.562, 5, -42.015, 43.344, 5, -38.687, 41.125, 5, -35.359, 38.906, 5, -32.031, 36.687, 5, -28.703, 34.468, 5, -28, 34, 5, -25.172, 31.172, 5, -22.343, 28.343, 5, -19.515, 25.515, 5, -16.686, 22.686, 5, -13.858, 19.858, 5, -11.029, 17.029, 5, -8.201, 14.201, 5, -5.373, 11.373, 5, -4, 10, 5, -0.927, 7.439, 5, 2.146, 4.879, 5, 5.219, 2.318, 5, 8.292, -0.243, 5, 11.364, -2.804, 5, 14.437, -5.364, 5, 17.51, -7.925, 5, 20, -10, 5, 22.603, -13.037, 5, 25.206, -16.074, 5, 27.809, -19.111, 5, 30.413, -22.148, 5, 33.016, -25.185, 5, 35.619, -28.222, 5, 38.222, -31.259, 5, 40.825, -34.296, 5, 43.428, -37.333, 5, 44, -38, 5, 46.703, -40.949, 5, 49.406, -43.897, 5, 52.109, -46.846, 5, 54.812, -49.794, 5, 57.514, -52.743, 5, 60.217, -55.692, 5, 62.92, -58.64, 5, 65.623, -61.589, 5, 66, -62, 5, 70, -62, 5, 56, 46, 17, 38, 44, 9, -66, 62, 14, 26, -2, 5, 56, -56, 5, -15, 60, 12, -31, 9, 14, 8, 35, 12, 4, -28, 12, 40, -6, 12, 30, -54, 12, 38, 44, 8, 56, 46, 6, -74, 74, 10, -74, 62, 9, 74, -74, 10, 74, -62, 9)
+
+[node name="ReedBeds" type="Node3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+script = ExtResource("13_scatter")
+Pieces = PackedStringArray("kit_sw_reeds", "kit_sw_reeds", "kit_un_grass")
+Count = 170
+InnerRadius = 6.0
+OuterRadius = 76.0
+Spacing = 3
+Seed = 69
+Clearings = PackedVector3Array(-74, 62, 5, -70.488, 60.085, 5, -66.977, 58.169, 5, -63.465, 56.254, 5, -59.954, 54.338, 5, -56.442, 52.423, 5, -52.931, 50.508, 5, -52, 50, 5, -48.672, 47.781, 5, -45.344, 45.562, 5, -42.015, 43.344, 5, -38.687, 41.125, 5, -35.359, 38.906, 5, -32.031, 36.687, 5, -28.703, 34.468, 5, -28, 34, 5, -25.172, 31.172, 5, -22.343, 28.343, 5, -19.515, 25.515, 5, -16.686, 22.686, 5, -13.858, 19.858, 5, -11.029, 17.029, 5, -8.201, 14.201, 5, -5.373, 11.373, 5, -4, 10, 5, -0.927, 7.439, 5, 2.146, 4.879, 5, 5.219, 2.318, 5, 8.292, -0.243, 5, 11.364, -2.804, 5, 14.437, -5.364, 5, 17.51, -7.925, 5, 20, -10, 5, 22.603, -13.037, 5, 25.206, -16.074, 5, 27.809, -19.111, 5, 30.413, -22.148, 5, 33.016, -25.185, 5, 35.619, -28.222, 5, 38.222, -31.259, 5, 40.825, -34.296, 5, 43.428, -37.333, 5, 44, -38, 5, 46.703, -40.949, 5, 49.406, -43.897, 5, 52.109, -46.846, 5, 54.812, -49.794, 5, 57.514, -52.743, 5, 60.217, -55.692, 5, 62.92, -58.64, 5, 65.623, -61.589, 5, 66, -62, 5, 70, -62, 5, 56, 46, 17, 38, 44, 9, -66, 62, 14, 26, -2, 5, 56, -56, 5, -15, 60, 12, -31, 9, 14, 8, 35, 12, 4, -28, 12, 40, -6, 12, 30, -54, 12, 38, 44, 8, 56, 46, 6, -74, 74, 10, -74, 62, 9, 74, -74, 10, 74, -62, 9)
+
+[node name="Wrack" type="Node3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+script = ExtResource("13_scatter")
+Pieces = PackedStringArray("kit_sw_rock", "kit_un_log", "kit_un_stump", "kit_bones")
+Count = 60
+InnerRadius = 8.0
+OuterRadius = 76.0
+Spacing = 7
+Seed = 70
+Clearings = PackedVector3Array(-74, 62, 5, -70.488, 60.085, 5, -66.977, 58.169, 5, -63.465, 56.254, 5, -59.954, 54.338, 5, -56.442, 52.423, 5, -52.931, 50.508, 5, -52, 50, 5, -48.672, 47.781, 5, -45.344, 45.562, 5, -42.015, 43.344, 5, -38.687, 41.125, 5, -35.359, 38.906, 5, -32.031, 36.687, 5, -28.703, 34.468, 5, -28, 34, 5, -25.172, 31.172, 5, -22.343, 28.343, 5, -19.515, 25.515, 5, -16.686, 22.686, 5, -13.858, 19.858, 5, -11.029, 17.029, 5, -8.201, 14.201, 5, -5.373, 11.373, 5, -4, 10, 5, -0.927, 7.439, 5, 2.146, 4.879, 5, 5.219, 2.318, 5, 8.292, -0.243, 5, 11.364, -2.804, 5, 14.437, -5.364, 5, 17.51, -7.925, 5, 20, -10, 5, 22.603, -13.037, 5, 25.206, -16.074, 5, 27.809, -19.111, 5, 30.413, -22.148, 5, 33.016, -25.185, 5, 35.619, -28.222, 5, 38.222, -31.259, 5, 40.825, -34.296, 5, 43.428, -37.333, 5, 44, -38, 5, 46.703, -40.949, 5, 49.406, -43.897, 5, 52.109, -46.846, 5, 54.812, -49.794, 5, 57.514, -52.743, 5, 60.217, -55.692, 5, 62.92, -58.64, 5, 65.623, -61.589, 5, 66, -62, 5, 70, -62, 5, 56, 46, 17, 38, 44, 9, -66, 62, 14, 26, -2, 5, 56, -56, 5, -15, 60, 12, -31, 9, 14, 8, 35, 12, 4, -28, 12, 40, -6, 12, 30, -54, 12, 38, 44, 8, 56, 46, 6, -74, 74, 10, -74, 62, 9, 74, -74, 10, 74, -62, 9)
+
+; -- Session, player and population --
+
+[node name="Player" parent="." instance=ExtResource("8_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -74, 0.1, 62)
+
+[node name="Session" parent="." instance=ExtResource("9_session")]
+
+[node name="Enemies" type="Node3D" parent="."]
+
+[node name="ShrineCamp" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -70, 0.1, 59)
+script = ExtResource("6_shrine")
+ShrineId = "shr_mire_camp"
+
+[node name="VisualRoot" type="Node3D" parent="ShrineCamp"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+script = ExtResource("7_visualroot")
+VisualId = "mesh_placeholder_shrine"
+
+[node name="ShrineChapel" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0.1, -2)
+script = ExtResource("6_shrine")
+ShrineId = "shr_mire_chapel"
+
+[node name="VisualRoot" type="Node3D" parent="ShrineChapel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+script = ExtResource("7_visualroot")
+VisualId = "mesh_placeholder_shrine"
+
+[node name="ShrineCauseway" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 56, 0.1, -56)
+script = ExtResource("6_shrine")
+ShrineId = "shr_mire_causeway"
+
+[node name="VisualRoot" type="Node3D" parent="ShrineCauseway"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+script = ExtResource("7_visualroot")
+VisualId = "mesh_placeholder_shrine"
+
+; Camps of creatures. What is in each and how fast it comes back is data; these are the level design.
+
+[node name="Shallows2" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0, 60)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_mire_shallows"
+
+[node name="VillageStreets" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -31, 0, 9)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_mire_village"
+
+[node name="ReedBed" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 35)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_mire_reeds"
+
+[node name="Graveyard" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -28)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_mire_graves"
+
+[node name="SunkenChapel" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0, -6)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_mire_chapel"
+
+[node name="CausewayEnd" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, -54)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_mire_causeway"
+
+[node name="KingsGuard" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38, 0, 44)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_mire_guard"
+
+[node name="King" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 56, 0, 46)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_mire_king"
+
+; The shards are not placed here: the zone stands them at random spots.
+
+; -- The camp at the way in: safe ground, a shrine, a fire, a shelter and a banner --
+
+[node name="SafeCamp" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -66, 0, 62)
+script = ExtResource("16_safe")
+RegionId = "saf_mire_camp"
+
+[node name="CampFire" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -64, 0.175, 58)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_fire"
+
+[node name="CampShelter" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -60, 1.425, 55)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_shelter"
+
+[node name="CampBanner" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -73, 2.3, 64)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_banner"
+
+[node name="CampBench" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -62, 0.265, 61)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_bench"
+
+[node name="GateToStonewood" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -74, 0, 74)
+script = ExtResource("10_gate")
+ToZone = "zone_stonewood"
+
+[node name="ArrivalFromStonewood" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -74, 0.1, 62)
+script = ExtResource("11_arrival")
+FromZone = "zone_stonewood"
+
+[node name="GateToCinderlands" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 74, 0, -74)
+script = ExtResource("10_gate")
+ToZone = "zone_cinderlands"
+
+[node name="ArrivalFromCinderlands" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 74, 0.1, -62)
+script = ExtResource("11_arrival")
+FromZone = "zone_cinderlands"

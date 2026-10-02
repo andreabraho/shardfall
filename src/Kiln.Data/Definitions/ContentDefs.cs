@@ -131,6 +131,18 @@ public sealed class EnemyDef : ContentDefBase
     public string? VisualTint { get; init; }
 
     /// <summary>
+    /// A colour its model is turned toward (A2-01): act 1's creatures in act 2's lands — an orc of the fire, a
+    /// wolf of slate. Every colour of the model keeps how light or dark it was and takes this hue, by
+    /// <see cref="VisualRecolourAmount"/>. Empty leaves the model as it was made.
+    /// </summary>
+    public string VisualRecolour { get; init; } = string.Empty;
+
+    public double VisualRecolourAmount { get; init; } = 0.55;
+
+    /// <summary>How much the recoloured model shines of its own light: embers, crystal.</summary>
+    public double VisualGlow { get; init; }
+
+    /// <summary>
     /// The kind of voice it has (REF-20): <c>vox_canine</c> means the sounds
     /// <c>vox_canine_alert</c>, when it sets on the player, and <c>vox_canine_death</c>.
     /// </summary>
@@ -1186,6 +1198,15 @@ public sealed class KitPieceDef : ContentDefBase
     public double[] Size { get; init; } = [1, 1, 1];
 
     public string Color { get; init; } = "#6b7280";
+
+    /// <summary>
+    /// A model painted over in one flat colour (A2-01): a tree turned to stone, a rock burnt black. Empty
+    /// leaves the model its own colours.
+    /// </summary>
+    public string Recolour { get; init; } = string.Empty;
+
+    /// <summary>How much a recoloured model shines of its own light: 0 for stone, more for a crystal or an ember.</summary>
+    public double Glow { get; init; }
 
     /// <summary>False for decoration the player walks through — grass, banners, decals.</summary>
     public bool Solid { get; init; } = true;

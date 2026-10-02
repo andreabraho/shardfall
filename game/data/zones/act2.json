@@ -1,0 +1,357 @@
+[
+  // Act 2 (A2-01, 2026-10-02): three maps past the Demon Tower, levels 27 to 40. The creatures are of act 1's
+  // families — every bonus against them keeps its worth — in three new lands: a forest turned to stone, a
+  // drowned village, a land of fire. Each has its camp at the way in, three shrines, a shard and a boss.
+  {
+    "id": "zone_stonewood",
+    "music": "mus_wilds",
+    "ambience": "amb_haunted",
+    "footsteps": "stp_stone",
+    "border": { "height": [26, 44], "rise": 10, "terrace": 5, "rock": "#7c807e", "rock_alt": "#6c706f", "grass_line": 3, "cover": ["kit_st_tree", "kit_st_pine", "kit_st_rock"], "cover_count": 170, "cover_height": 16, "wall": "kit_ruin_wall", "seed": 61 },
+    "ground": { "light": "#9a9d94", "dark": "#5f6660", "patch": "#4d6b46", "patch_amount": 0.12, "speck": "#58e0d0", "speck_amount": 0.012, "grain": 0.14 },
+    "name": "$zone.zone_stonewood.name",
+    "kind": "wilds",
+    "level_band": [24, 31],
+    "scene": "res://scenes/stonewood.tscn",
+    "exits": [
+      { "to": "zone_broken_gate" },
+      { "to": "zone_drowned_mire", "required_level": 30, "required_quest": "qst_stonewood_stag" }
+    ],
+    "shrines": [
+      { "id": "shr_stonewood_camp", "name": "$shrine.shr_stonewood_camp.name", "fast_travel": true },
+      { "id": "shr_stonewood_grove", "name": "$shrine.shr_stonewood_grove.name", "fast_travel": true },
+      { "id": "shr_stonewood_pass", "name": "$shrine.shr_stonewood_pass.name", "fast_travel": true }
+    ],
+    "safe_regions": [
+      { "id": "saf_stonewood_camp", "name": "$safe.saf_stonewood_camp.name", "radius": 11 }
+    ],
+    "spawn_fields": [
+      {
+        "id": "spf_stonewood_wolves",
+        "entries": [
+          { "enemy": "mob_slate_wolf", "weight": 2 },
+          { "enemy": "mob_shard_spider", "weight": 1 }
+        ],
+        "count": 6,
+        "respawn_seconds": 30,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      {
+        "id": "spf_stonewood_webs",
+        "entries": [
+          { "enemy": "mob_shard_spider", "weight": 1 }
+        ],
+        "count": 8,
+        "respawn_seconds": 28,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      {
+        "id": "spf_stonewood_grove",
+        "entries": [
+          { "enemy": "mob_basalt_adder", "weight": 1 },
+          { "enemy": "mob_slate_wolf", "weight": 2 }
+        ],
+        "count": 6,
+        "respawn_seconds": 32,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      {
+        "id": "spf_stonewood_circle",
+        "entries": [
+          { "enemy": "mob_moss_golem", "weight": 1 },
+          { "enemy": "mob_lichen_cap", "weight": 1 },
+          { "enemy": "mob_slate_wolf", "weight": 2 }
+        ],
+        "count": 6,
+        "respawn_seconds": 34,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      {
+        "id": "spf_stonewood_glade",
+        "entries": [
+          { "enemy": "mob_lichen_cap", "weight": 1 },
+          { "enemy": "mob_moss_golem", "weight": 1 },
+          { "enemy": "mob_shard_spider", "weight": 2 }
+        ],
+        "count": 6,
+        "respawn_seconds": 34,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      {
+        "id": "spf_stonewood_geodes",
+        "entries": [
+          { "enemy": "mob_geode_goleling", "weight": 1 },
+          { "enemy": "mob_basalt_adder", "weight": 1 },
+          { "enemy": "mob_slate_wolf", "weight": 2 }
+        ],
+        "count": 6,
+        "respawn_seconds": 34,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      {
+        "id": "spf_stonewood_guard",
+        "entries": [
+          { "enemy": "mob_moss_golem", "weight": 1 },
+          { "enemy": "mob_basalt_adder", "weight": 1 },
+          { "enemy": "mob_lichen_cap", "weight": 1 }
+        ],
+        "count": 4,
+        "respawn_seconds": 40,
+        "activation_radius": 60,
+        "radius": 5
+      },
+      {
+        "id": "spf_stonewood_stag",
+        "entries": [
+          { "enemy": "mob_stone_stag", "weight": 1 }
+        ],
+        "count": 1,
+        "respawn_seconds": 300,
+        "activation_radius": 60,
+        "radius": 3
+      }
+    ],
+    "shards": ["shd_petrified_heart"],
+    "shard_count": 4
+  },
+  {
+    "id": "zone_drowned_mire",
+    "music": "mus_wilds",
+    "ambience": "amb_haunted",
+    "footsteps": "stp_dirt",
+    "border": { "height": [14, 26], "rise": 14, "rock": "#3f4a3c", "rock_alt": "#364034", "grass": "#3d5a34", "grass_line": 12, "cover": ["kit_sw_tree", "kit_hb_dead_tree", "kit_un_dead_tree"], "cover_count": 240, "cover_height": 12, "wall": "kit_camp_palisade_4", "seed": 67 },
+    "ground": { "light": "#58683a", "dark": "#28382a", "patch": "#3a3226", "patch_amount": 0.34, "speck": "#7ac89a", "speck_amount": 0.02, "grain": 0.20 },
+    "name": "$zone.zone_drowned_mire.name",
+    "kind": "wilds",
+    "level_band": [31, 35],
+    "scene": "res://scenes/drowned_mire.tscn",
+    "exits": [
+      { "to": "zone_stonewood" },
+      { "to": "zone_cinderlands", "required_level": 34, "required_quest": "qst_mire_king" }
+    ],
+    "shrines": [
+      { "id": "shr_mire_camp", "name": "$shrine.shr_mire_camp.name", "fast_travel": true },
+      { "id": "shr_mire_chapel", "name": "$shrine.shr_mire_chapel.name", "fast_travel": true },
+      { "id": "shr_mire_causeway", "name": "$shrine.shr_mire_causeway.name", "fast_travel": true }
+    ],
+    "safe_regions": [
+      { "id": "saf_mire_camp", "name": "$safe.saf_mire_camp.name", "radius": 11 }
+    ],
+    "spawn_fields": [
+      {
+        "id": "spf_mire_shallows",
+        "entries": [
+          { "enemy": "mob_mire_crawler", "weight": 1 }
+        ],
+        "count": 8,
+        "respawn_seconds": 28,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      {
+        "id": "spf_mire_village",
+        "entries": [
+          { "enemy": "mob_drowned", "weight": 2 },
+          { "enemy": "mob_mire_crawler", "weight": 1 }
+        ],
+        "count": 6,
+        "respawn_seconds": 30,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      {
+        "id": "spf_mire_reeds",
+        "entries": [
+          { "enemy": "mob_bog_serpent", "weight": 2 },
+          { "enemy": "mob_bloat_fly", "weight": 1 }
+        ],
+        "count": 6,
+        "respawn_seconds": 32,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      {
+        "id": "spf_mire_graves",
+        "entries": [
+          { "enemy": "mob_bog_spitter", "weight": 1 },
+          { "enemy": "mob_drowned", "weight": 2 }
+        ],
+        "count": 6,
+        "respawn_seconds": 34,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      {
+        "id": "spf_mire_chapel",
+        "entries": [
+          { "enemy": "mob_fen_witch", "weight": 1 },
+          { "enemy": "mob_marsh_brute", "weight": 1 },
+          { "enemy": "mob_drowned", "weight": 2 }
+        ],
+        "count": 6,
+        "respawn_seconds": 34,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      {
+        "id": "spf_mire_causeway",
+        "entries": [
+          { "enemy": "mob_bloat_fly", "weight": 1 },
+          { "enemy": "mob_bog_spitter", "weight": 1 },
+          { "enemy": "mob_bog_serpent", "weight": 2 }
+        ],
+        "count": 6,
+        "respawn_seconds": 34,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      {
+        "id": "spf_mire_guard",
+        "entries": [
+          { "enemy": "mob_marsh_brute", "weight": 1 },
+          { "enemy": "mob_bog_spitter", "weight": 1 },
+          { "enemy": "mob_fen_witch", "weight": 1 }
+        ],
+        "count": 4,
+        "respawn_seconds": 40,
+        "activation_radius": 60,
+        "radius": 5
+      },
+      {
+        "id": "spf_mire_king",
+        "entries": [
+          { "enemy": "mob_drowned_king", "weight": 1 }
+        ],
+        "count": 1,
+        "respawn_seconds": 300,
+        "activation_radius": 60,
+        "radius": 3
+      }
+    ],
+    "shards": ["shd_drowned_bell"],
+    "shard_count": 4
+  },
+  {
+    "id": "zone_cinderlands",
+    "music": "mus_wilds",
+    "ambience": "amb_desert",
+    "footsteps": "stp_stone",
+    "border": { "height": [30, 56], "rise": 8, "terrace": 7, "rock": "#2b2523", "rock_alt": "#3a2a24", "grass_line": 0, "cap": "#ff5a1a", "cap_from": 0.82, "cover": ["kit_em_tree", "kit_em_rock", "kit_em_rock"], "cover_count": 110, "cover_height": 14, "wall": "kit_orc_spikes", "seed": 71 },
+    "ground": { "light": "#4a403a", "dark": "#231d1b", "patch": "#7a2a12", "patch_amount": 0.10, "speck": "#ff7a2a", "speck_amount": 0.02, "grain": 0.18 },
+    "name": "$zone.zone_cinderlands.name",
+    "kind": "wilds",
+    "level_band": [35, 40],
+    "scene": "res://scenes/cinderlands.tscn",
+    "exits": [
+      { "to": "zone_drowned_mire" }
+    ],
+    "shrines": [
+      { "id": "shr_cinder_camp", "name": "$shrine.shr_cinder_camp.name", "fast_travel": true },
+      { "id": "shr_cinder_rift", "name": "$shrine.shr_cinder_rift.name", "fast_travel": true },
+      { "id": "shr_cinder_forge", "name": "$shrine.shr_cinder_forge.name", "fast_travel": true }
+    ],
+    "safe_regions": [
+      { "id": "saf_cinder_camp", "name": "$safe.saf_cinder_camp.name", "radius": 11 }
+    ],
+    "spawn_fields": [
+      {
+        "id": "spf_cinder_hounds",
+        "entries": [
+          { "enemy": "mob_ember_hound", "weight": 1 }
+        ],
+        "count": 8,
+        "respawn_seconds": 28,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      {
+        "id": "spf_cinder_camp_south",
+        "entries": [
+          { "enemy": "mob_ember_orc", "weight": 2 },
+          { "enemy": "mob_ember_hound", "weight": 1 }
+        ],
+        "count": 6,
+        "respawn_seconds": 30,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      {
+        "id": "spf_cinder_rift",
+        "entries": [
+          { "enemy": "mob_salamander", "weight": 1 },
+          { "enemy": "mob_blaze_wasp", "weight": 1 },
+          { "enemy": "mob_ember_hound", "weight": 2 }
+        ],
+        "count": 6,
+        "respawn_seconds": 32,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      {
+        "id": "spf_cinder_camp_east",
+        "entries": [
+          { "enemy": "mob_cinder_thrower", "weight": 1 },
+          { "enemy": "mob_ember_orc", "weight": 2 }
+        ],
+        "count": 6,
+        "respawn_seconds": 34,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      {
+        "id": "spf_cinder_shrine",
+        "entries": [
+          { "enemy": "mob_ash_shaman", "weight": 1 },
+          { "enemy": "mob_magma_brute", "weight": 1 },
+          { "enemy": "mob_ember_orc", "weight": 2 }
+        ],
+        "count": 6,
+        "respawn_seconds": 34,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      {
+        "id": "spf_cinder_flats",
+        "entries": [
+          { "enemy": "mob_blaze_wasp", "weight": 1 },
+          { "enemy": "mob_salamander", "weight": 1 },
+          { "enemy": "mob_ember_orc", "weight": 2 }
+        ],
+        "count": 6,
+        "respawn_seconds": 34,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      {
+        "id": "spf_cinder_guard",
+        "entries": [
+          { "enemy": "mob_magma_brute", "weight": 1 },
+          { "enemy": "mob_cinder_thrower", "weight": 1 },
+          { "enemy": "mob_ash_shaman", "weight": 1 }
+        ],
+        "count": 4,
+        "respawn_seconds": 40,
+        "activation_radius": 60,
+        "radius": 5
+      },
+      {
+        "id": "spf_cinder_warlord",
+        "entries": [
+          { "enemy": "mob_burning_warlord", "weight": 1 }
+        ],
+        "count": 1,
+        "respawn_seconds": 300,
+        "activation_radius": 60,
+        "radius": 3
+      }
+    ],
+    "shards": ["shd_cinder_anvil"],
+    "shard_count": 4
+  }
+]

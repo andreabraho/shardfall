@@ -322,5 +322,11 @@
   { "id": "mesh_shield_a",              "primitive": "box",      "height": 0.70, "radius": 0.26, "color": "#7f8c99" },
   { "id": "mesh_boots_a",               "primitive": "box",      "height": 0.30, "radius": 0.16, "color": "#6b533c" },
   { "id": "mesh_trinket_a",             "primitive": "sphere",   "height": 0.16, "radius": 0.08, "color": "#e0c979" },
-  { "id": "mesh_stone_a",               "primitive": "sphere",   "height": 0.18, "radius": 0.09, "color": "#8fa2b5" }
+  { "id": "mesh_stone_a",               "primitive": "sphere",   "height": 0.18, "radius": 0.09, "color": "#8fa2b5" },
+
+  // Act 2's shards (A2-01, 2026-10-02): stand-ins on act 1's stones until their own are made.
+  { "id": "mesh_shard_heart", "primitive": "model", "fit": "stretch", "height": 4.40, "radius": 1.20, "color": "#58e0d0", "model_yaw": 0, "model_path": "res://assets/quaternius/nature/Rock_Medium_3.gltf" },
+  { "id": "mesh_shard_bell",  "primitive": "model", "height": 4.20, "radius": 1.30, "color": "#7ac89a", "model_yaw": 0, "model_path": "res://assets/prefabs/undead/FrostStone.tscn" },
+  { "id": "mesh_shard_anvil", "primitive": "model", "height": 4.30, "radius": 1.30, "color": "#ff7a2a", "model_yaw": 0, "model_path": "res://assets/prefabs/orc/OrcStone.tscn" }
+
 ]
