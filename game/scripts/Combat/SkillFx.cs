@@ -222,6 +222,47 @@ public static class SkillFx
         streak.Hold = 0.4f;
     }
 
+    /// <summary>
+    /// The Blade Wave since it strikes one (2026-10-02): a point of light flying from the Warrior to
+    /// the one it lands on, a thin ray drawn between the two, and a ring closing on the target — or,
+    /// with nothing in its way, the ray alone running out to its end.
+    /// </summary>
+    public static void Bolt(Node context, Vector3 origin, Vector3 to, bool landed, Color colour, float bright = 1f)
+    {
+        const double flight = 0.14;
+
+        var span = (to - origin) with { Y = 0 };
+        var length = span.Length();
+
+        if (length < 0.05f) return;
+
+        var forward = span / length;
+        var yaw = Yaw(forward);
+        var chest = origin + (Vector3.Up * 1.0f);
+
+        var head = Billboard(context, "star_06.png", chest + (forward * 0.5f), 1.3f, colour.Lerp(Colors.White, 0.3f), flight, bright * 1.4f);
+        head.Velocity = forward * ((length - 0.5f) / (float)flight);
+        head.FadeIn = 0.02f;
+        head.Hold = 0.9f;
+
+        var ray = Flat(context, "trace_06.png", chest + (forward * length * 0.5f), 1f, colour, 0.3, bright * 1.4f);
+        ray.Rotation = new Vector3(0, yaw, 0);
+        ray.Shape = new Vector2(0.55f, length);
+        ray.FadeIn = 0.03f;
+        ray.Hold = 0.3f;
+
+        Billboard(context, "muzzle_02.png", chest + (forward * 0.6f), 1.0f, colour, 0.15, bright);
+
+        if (!landed) return;
+
+        var mark = Flat(context, "circle_03.png", to + (Vector3.Up * 0.1f), 2.6f, colour, 0.4, bright);
+        mark.From = 1.1f;
+        mark.To = 0.3f;
+        mark.FadeIn = 0.02f;
+
+        Billboard(context, "star_06.png", to + (Vector3.Up * 1.0f), 2.2f, colour, 0.25, bright * 1.2f);
+    }
+
     /// <summary>A blow that lands on one target: Heavy Strike, Shield Bash.</summary>
     public static void Strike(Node context, Vector3 at, Color colour, bool bash, float bright = 1f)
     {
@@ -315,6 +356,7 @@ public static class SkillFx
         Cleave(context, at, ahead, 3f, 100f, faint);
         Whirl(context, at, 3f, faint, 0.3, 0);
         Wave(context, at, ahead, 4f, 2f, faint);
+        Bolt(context, at, at + (ahead * 4f), landed: true, faint);
         Cut(context, at, ahead, 3f, 2, faint);
         Gather(context, at, ahead, 0.2, faint);
         Pierce(context, at, ahead, 4f, faint);

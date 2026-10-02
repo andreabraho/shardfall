@@ -657,6 +657,20 @@ public partial class SkillCaster : Node
                 SkillFx.Cleave(this, center, aim, (float)skill.Radius, (float)skill.ConeAngle, colour, bright);
                 break;
 
+            // The Blade Wave strikes one (2026-10-02): the chosen target if it stands in the ray's way,
+            // else the nearest that does — and the ray is drawn to that one, so it reads as one struck.
+            case SkillTargeting.Line when skill.MaxTargets == 1 && skill.Motion == "wave":
+                var picked = GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat")?.Target;
+                var struck = AreaQuery.Line(_motor, center, aim, (float)skill.Radius, (float)skill.Width)
+                    .Where(t => t.IsAlive)
+                    .OrderBy(t => ReferenceEquals(t, picked) ? 0 : 1)
+                    .ThenBy(t => t.Body.GlobalPosition.DistanceSquaredTo(center))
+                    .FirstOrDefault();
+
+                targets = struck is null ? [] : [struck];
+                SkillFx.Bolt(this, center, struck?.Body.GlobalPosition ?? center + (aim * (float)skill.Radius), struck is not null, colour, bright);
+                break;
+
             case SkillTargeting.Line:
                 targets = AreaQuery.Line(_motor, center, aim, (float)skill.Radius, (float)skill.Width);
                 SkillFx.Wave(this, center, aim, (float)skill.Radius, (float)skill.Width, colour, bright);
