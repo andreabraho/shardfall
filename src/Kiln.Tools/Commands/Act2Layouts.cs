@@ -87,7 +87,7 @@ public static class Act2Layouts
             .Put("kit_st_wolf", -50, 47, 120).Put("kit_st_wolf", -53, 56, 60).Put("kit_bones", -57, 46).Put("kit_bones", -52, 52)
             .Clear(-44, 36, 9);
 
-        map.Scatter("StoneTrees", 150, 8, 78, 6, 61, "kit_st_tree", "kit_st_tree", "kit_st_pine", "kit_st_tree_dead")
+        map.Scatter("StoneTrees", 150, 8, 78, 6, 61, "kit_st_pine", "kit_st_tree_dead", "kit_st_pine", "kit_st_tree_dead", "kit_st_pine", "kit_st_tree")
             .Scatter("Rocks", 46, 8, 78, 9, 62, "kit_st_rock", "kit_st_rock", "kit_st_crag")
             .Scatter("Undergrowth", 130, 6, 76, 3, 63, "kit_st_fern", "kit_st_bush", "kit_st_stump", "kit_st_log", "kit_st_fern")
             .Scatter("Crystals", 26, 12, 74, 11, 64, "kit_st_crystal");

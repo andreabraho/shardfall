@@ -283,3 +283,21 @@ ours, and every item in `trinkets.BUILDERS`.
   wagging tails, anything under the ground (a flier must fly).
 - The other maps' monsters (Quaternius) are liked and **stay** for now; new monsters (act 2)
   are ours.
+
+---
+
+## 8. Act 2 (2026-10-02): a new land from act 1's models
+
+- **A map piece in one colour:** `"recolour": "#rrggbb"` (and `"glow"`) on a kit piece in
+  `world_kit.json` paints the whole model flat — a tree turned to stone, a rock burnt black, a
+  crystal that shines. Leafy trees turn into a pile of cards up close: use pines and dead trees.
+- **A creature in another land's colours:** `"visual_recolour"` (and `"visual_glow"`) on an enemy
+  turns every colour of its model toward one hue, keeping how light or dark each was.
+  `visual_tint` alone does nothing to a model.
+- **Shard stones** are plain `temins` and `armourkit` pieces joined (`models/petrified_heart.py`,
+  `drowned_bell.py`, `cinder_anvil.py`): `band` for anything turned (a bell), `spike` for anything
+  that points (a root, a flame, a crystal).
+- **A new headpiece for a class** is one line in its kit's table of heads (`classkit.build`,
+  `shadowkit.build`) and a three-line model file; the Warrior's is a model file of its own
+  (`models/drowned_crown.py`). Keep helms pointed, not domed.
+- **Scenes** come from `kiln scenes` (docs/10-act-2.md §5), not from Blender.

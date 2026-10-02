@@ -42,6 +42,11 @@ def mats():
         "storm": t.material("storm", (0.45, 0.50, 1.0), glow=0.9, rough=0.15),
         "violet": t.material("crystal", (0.55, 0.28, 1.0), glow=0.7, rough=0.15),
         "crimson": t.material("crimson", (0.50, 0.07, 0.06), rough=0.8),
+        # Act 2 (A2-03): the Stonewood's slate and crystal, the Cinderlands' black iron and open fire.
+        "slate": t.material("slate", (0.30, 0.32, 0.34), rough=0.7),
+        "crystal": t.material("stone_crystal", (0.25, 0.90, 0.82), glow=0.9, rough=0.15),
+        "cinder": t.material("cinder_iron", (0.07, 0.06, 0.06), metal=0.55, rough=0.5),
+        "lava": t.material("lava", (1.0, 0.36, 0.06), glow=1.6, rough=0.4),
     }
 
 
@@ -362,6 +367,47 @@ def ear_stormglass(m):
         gem("crystal", 0.06, m["storm"], at=(0, 0, -0.07), squash=(0.7, 0.7, 1.8)),
         torus("cap", 0.03, 0.01, m["silver"], at=(0, 0, 0.02), segments=16, ring=6),
     ]
+
+
+# -- Act 2 (A2-03): one earring from the Stonewood, a shield and boots from the Cinderlands. --
+
+def ear_stoneheart(m):
+    """A heart of crystal in a cage of slate, on a silver hook."""
+    parts = hook(m, m["silver"]) + [
+        gem("heart", 0.075, m["crystal"], at=(0, 0, -0.085), squash=(0.8, 0.8, 1.5)),
+        torus("cage_a", 0.062, 0.012, m["slate"], at=(0, 0, -0.085), rot=(math.pi / 2, 0, 0), segments=20, ring=6),
+        torus("cage_b", 0.062, 0.012, m["slate"], at=(0, 0, -0.085), rot=(math.pi / 2, 0, math.pi / 2), segments=20, ring=6),
+        gem("drop", 0.028, m["crystal"], at=(0, 0, -0.21), squash=(0.7, 0.7, 1.6)),
+    ]
+    return parts
+
+
+def shd_cinder_bulwark(m):
+    """Black iron cracked through with fire: a kite of cinder, a rim of bronze, the forge's eye at its heart."""
+    parts = [
+        kite("face", m["cinder"], 0.40, 0.54, -0.64),
+        kite("frame", m["bronze"], 0.44, 0.58, -0.70, depth=0.05),
+        disc("eye_rim", 0.17, 0.05, m["bronze"], at=(0, -0.04, 0.08)),
+        disc("eye", 0.11, 0.06, m["lava"], at=(0, -0.05, 0.08)),
+    ]
+    # Cracks of fire running out from the eye toward the rim.
+    for i, (x, z) in enumerate(((-0.24, 0.40), (0.26, 0.36), (-0.20, -0.26), (0.20, -0.30), (0.0, -0.52), (0.0, 0.46))):
+        parts.append(a.spike(f"crack_{i}", (x * 0.45, -0.05, 0.08 + (z - 0.08) * 0.45), (x, -0.045, z), 0.022, m["lava"]))
+    for side in (-1, 1):
+        parts.append(a.spike(f"horn_{side}", (side * 0.30, -0.02, 0.44), (side * 0.44, -0.02, 0.66), 0.045, m["bronze"]))
+    return parts
+
+
+def bts_ember_treads(m):
+    """Tall boots of black iron, fire in the seams and under the sole, a spur of bronze."""
+    parts = []
+    for x in (-0.12, 0.12):
+        parts += boot(f"b{x}", m["cinder"], m["cinder"], x, tall=0.48, sole=m["lava"])
+        parts.append(t.cylinder(f"seam_a{x}", 0.092, 0.022, m["lava"], at=(x, 0, 0.24), sides=24))
+        parts.append(t.cylinder(f"seam_b{x}", 0.092, 0.022, m["lava"], at=(x, 0, 0.40), sides=24))
+        parts.append(t.sphere(f"knee{x}", 0.09, m["bronze"], at=(x, -0.06, 0.56), subdivisions=2, squash=(1, 0.8, 1), smooth=True))
+        parts.append(a.spike(f"spur{x}", (x, 0.10, 0.08), (x, 0.24, 0.14), 0.03, m["bronze"]))
+    return parts
 
 
 BUILDERS = {name: fn for name, fn in globals().items()

@@ -324,9 +324,17 @@
   { "id": "mesh_trinket_a",             "primitive": "sphere",   "height": 0.16, "radius": 0.08, "color": "#e0c979" },
   { "id": "mesh_stone_a",               "primitive": "sphere",   "height": 0.18, "radius": 0.09, "color": "#8fa2b5" },
 
-  // Act 2's shards (A2-01, 2026-10-02): stand-ins on act 1's stones until their own are made.
-  { "id": "mesh_shard_heart", "primitive": "model", "fit": "stretch", "height": 4.40, "radius": 1.20, "color": "#58e0d0", "model_yaw": 0, "model_path": "res://assets/quaternius/nature/Rock_Medium_3.gltf" },
-  { "id": "mesh_shard_bell",  "primitive": "model", "height": 4.20, "radius": 1.30, "color": "#7ac89a", "model_yaw": 0, "model_path": "res://assets/prefabs/undead/FrostStone.tscn" },
-  { "id": "mesh_shard_anvil", "primitive": "model", "height": 4.30, "radius": 1.30, "color": "#ff7a2a", "model_yaw": 0, "model_path": "res://assets/prefabs/orc/OrcStone.tscn" }
+  // Act 2's shards (A2-01, 2026-10-02): ours, made in Blender (art/blender/models). Their colour is the colour
+  // they glow (ShardGlow).
+  { "id": "mesh_shard_heart", "primitive": "model", "height": 4.40, "radius": 1.20, "color": "#58e0d0", "model_yaw": 0, "model_path": "res://assets/temins/shards/petrified_heart.glb" },
+  { "id": "mesh_shard_bell",  "primitive": "model", "height": 4.20, "radius": 1.30, "color": "#7ac89a", "model_yaw": 0, "model_path": "res://assets/temins/shards/drowned_bell.glb" },
+  { "id": "mesh_shard_anvil", "primitive": "model", "height": 4.30, "radius": 1.30, "color": "#ff7a2a", "model_yaw": 0, "model_path": "res://assets/temins/shards/cinder_anvil.glb" }
+,
 
+  // Act 2's headpieces (A2-03, 2026-10-02): the Drowned Mire's, one for each class.
+  { "id": "mesh_hlm_drowned_crown", "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#1a5a4a", "model_path": "res://assets/temins/armour/drowned_crown.glb" },
+  { "id": "mesh_hlm_drowned_veil",  "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#1a5a4a", "model_path": "res://assets/temins/armour/drowned_veil.glb" },
+  { "id": "mesh_hlm_drowned_hood",  "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#1a5a4a", "model_path": "res://assets/temins/armour/drowned_hood.glb" },
+  { "id": "mesh_hlm_drowned_horns", "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#1a5a4a", "model_path": "res://assets/temins/armour/drowned_horns.glb" },
+  { "id": "mesh_hlm_drowned_tiara", "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#1a5a4a", "model_path": "res://assets/temins/armour/drowned_tiara.glb" }
 ]

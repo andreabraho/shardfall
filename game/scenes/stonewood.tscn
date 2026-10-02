@@ -793,7 +793,7 @@ PieceId = "kit_bones"
 [node name="StoneTrees" type="Node3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 script = ExtResource("13_scatter")
-Pieces = PackedStringArray("kit_st_tree", "kit_st_tree", "kit_st_pine", "kit_st_tree_dead")
+Pieces = PackedStringArray("kit_st_pine", "kit_st_tree_dead", "kit_st_pine", "kit_st_tree_dead", "kit_st_pine", "kit_st_tree")
 Count = 150
 InnerRadius = 8.0
 OuterRadius = 78.0

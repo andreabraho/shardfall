@@ -305,5 +305,9 @@ def build(name):
         # Corna Cineree: a brow of black iron, two horns over it, an ember between them.
         "ashen_horns": lambda: head(name, soot, trim=m("shroud_iron", (0.26, 0.26, 0.29), metal=0.65, rough=0.42), plate=m("shroud_iron", (0.26, 0.26, 0.29), metal=0.65, rough=0.42),
                                     horns=m("ash_horn", (0.34, 0.30, 0.26), rough=0.6), gem=ember, ends=soot),
+        # Velo Annegato (act 2, the Mire): deep teal, a brow of verdigris, a pearl, fins of coral at the temples.
+        "drowned_veil": lambda: head(name, m("mire_deep", (0.03, 0.09, 0.11)), trim=m("mire_verdigris", (0.16, 0.44, 0.36), metal=0.6, rough=0.4),
+                                     plate=m("mire_verdigris", (0.16, 0.44, 0.36), metal=0.6, rough=0.4), wings=m("mire_coral", (0.80, 0.30, 0.26), rough=0.6),
+                                     gem=m("mire_pearl", (0.92, 0.95, 0.90), glow=0.5, rough=0.2), ends=m("mire_teal", (0.04, 0.17, 0.19)), lengths=(0.50, 0.38)),
     }
     return heads[name]()
