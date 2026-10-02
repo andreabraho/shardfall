@@ -1,4 +1,6 @@
 {
+  "+{0:N0} exp": "+{0:N0} exp",
+  "Level {0}!": "Livello {0}!",
   "$item.wpn_worn_greatblade.name": "Spadone Consunto",
   "$item.wpn_iron_greatsword.name": "Spadone di Ferro",
   "$item.wpn_steel_greatsword.name": "Spadone d'Acciaio",

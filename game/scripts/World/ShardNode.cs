@@ -113,6 +113,11 @@ public partial class ShardNode : StaticBody3D
         CollisionMask = 0;
 
         _self = new Combatant { Name = "Combatant", IsEncounter = true };
+
+        // The blows it takes are shown as on any creature (2026-10-02): nothing listened, so striking
+        // a stone showed no numbers at all.
+        _self.Damaged += (amount, critical, evaded) =>
+            CombatFeedback.Number(GlobalPosition + (Vector3.Up * 2.4f), amount, critical, evaded);
         AddChild(_self);
 
         _visual = GetNodeOrNull<VisualRoot>("VisualRoot");
@@ -345,7 +350,7 @@ public partial class ShardNode : StaticBody3D
 
             case ShardEventKind.ReclamationCompleted:
                 _self.Heal((int)(_self.Stats.MaxHp * evt.Duration));
-                CombatFeedback.Number(GlobalPosition + (Vector3.Up * 3.2f), (int)(evt.Duration * 100), true, false);
+                CombatFeedback.Callout(GlobalPosition + (Vector3.Up * 3.2f), $"+{(int)(evt.Duration * 100)}%", new Color("7ee07a"));
                 GD.Print("[shard] reclamation completed — the shard healed");
                 break;
 

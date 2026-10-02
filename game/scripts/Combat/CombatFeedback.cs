@@ -21,8 +21,11 @@ public partial class CombatFeedback : Node3D
 
     private double _hitStopRemaining;
 
+    /// <summary>The critical burst's picture is this many pixels across.</summary>
+    private const float CritIconPixels = 128f;
+
     /// <summary>How long a number lives.</summary>
-    [Export] public double Lifetime { get; set; } = 0.6;
+    [Export] public double Lifetime { get; set; } = 1.5;
 
     /// <summary>
     /// World size per font pixel. This is the knob that actually controls how big numbers
@@ -30,8 +33,8 @@ public partial class CombatFeedback : Node3D
     /// </summary>
     [Export] public float PixelSize { get; set; } = 0.0075f;
 
-    [Export] public int NormalFontSize { get; set; } = 32;
-    [Export] public int CritFontSize { get; set; } = 42;
+    [Export] public int NormalFontSize { get; set; } = 38;
+    [Export] public int CritFontSize { get; set; } = 50;
     [Export] public int OutlineSize { get; set; } = 5;
 
     /// <summary>How far a number drifts upward before expiring.</summary>
@@ -44,11 +47,11 @@ public partial class CombatFeedback : Node3D
     /// Hard cap on numbers on screen at once. Beyond this the oldest is recycled: past a
     /// dozen the numbers stop being information and become an obstacle.
     /// </summary>
-    [Export] public int MaxActive { get; set; } = 14;
+    [Export] public int MaxActive { get; set; } = 30;
 
-    [Export] public Color NormalColor { get; set; } = new(1f, 0.95f, 0.85f);
-    [Export] public Color CritColor { get; set; } = new(1f, 0.72f, 0.25f);
-    [Export] public Color PlayerHurtColor { get; set; } = new(1f, 0.4f, 0.4f);
+    [Export] public Color NormalColor { get; set; } = new(1f, 1f, 1f);
+    [Export] public Color CritColor { get; set; } = new(1f, 0.42f, 0.12f);
+    [Export] public Color PlayerHurtColor { get; set; } = new(1f, 0.16f, 0.2f);
 
     public override void _Ready()
     {
@@ -96,6 +99,15 @@ public partial class CombatFeedback : Node3D
 
     private static readonly Color ManaColor = new("6fa8e8");
 
+    /// <summary>
+    /// Experience gained (2026-10-02), over the player and in a colour nothing else wears, so it is
+    /// never read as a blow given or taken.
+    /// </summary>
+    public static void Experience(Vector3 worldPosition, long amount)
+        => _instance?.SpawnText(worldPosition, L10n.F("+{0:N0} exp", amount), ExperienceColor, _instance.NormalFontSize - 8);
+
+    private static readonly Color ExperienceColor = new("c79bff");
+
     /// <summary>A word over a creature: it enrages, it gets back up.</summary>
     public static void Callout(Vector3 worldPosition, string text, Color colour)
         => _instance?.SpawnCallout(worldPosition, text, colour);
@@ -128,15 +140,16 @@ public partial class CombatFeedback : Node3D
 
     private void Spawn(Vector3 worldPosition, int amount, bool critical, bool evaded, bool onPlayer)
     {
-        var text = evaded ? L10n.T("miss") : amount.ToString(System.Globalization.CultureInfo.InvariantCulture);
+// What is taken reads as a loss at a glance (2026-10-02): red, and with its minus.
+        var text = evaded ? L10n.T("miss") : (onPlayer ? "-" : "") + amount.ToString(System.Globalization.CultureInfo.InvariantCulture);
         var colour = evaded
             ? new Color(0.75f, 0.78f, 0.82f)
             : onPlayer ? PlayerHurtColor : critical ? CritColor : NormalColor;
 
-        SpawnText(worldPosition, text, colour, critical ? CritFontSize : NormalFontSize);
+        SpawnText(worldPosition, text, colour, critical ? CritFontSize : NormalFontSize, burst: critical && !evaded && !onPlayer);
     }
 
-    private void SpawnText(Vector3 worldPosition, string text, Color colour, int fontSize)
+    private void SpawnText(Vector3 worldPosition, string text, Color colour, int fontSize, bool burst = false)
     {
         // Recycle the oldest rather than letting numbers pile up over the fight.
         while (_active.Count >= MaxActive)
@@ -156,6 +169,22 @@ public partial class CombatFeedback : Node3D
         label.FontSize = fontSize;
         label.GlobalPosition = worldPosition;
         label.Visible = true;
+
+        // A critical blow (2026-10-02): its own colour, and a burst beside the number. The label
+        // faces the camera in its shader, so the burst is set to its left as the camera sees it.
+        var mark = label.GetNode<Sprite3D>("Crit");
+
+        mark.Visible = burst;
+
+        if (burst)
+        {
+            var right = GetViewport().GetCamera3D()?.GlobalBasis.X ?? Vector3.Right;
+            var height = fontSize * PixelSize;
+
+            mark.PixelSize = height * 1.15f / CritIconPixels;
+            mark.Modulate = colour;
+            mark.Position = -right * ((text.Length * height * 0.31f) + (height * 0.62f));
+        }
 
         var drift = new Vector3(
             (float)GD.RandRange(-Scatter, Scatter),
@@ -187,6 +216,17 @@ public partial class CombatFeedback : Node3D
         };
 
         AddChild(label);
+
+        label.AddChild(new Sprite3D
+        {
+            Name = "Crit",
+            Texture = GD.Load<Texture2D>("res://assets/icons/fx/crit.svg"),
+            Billboard = BaseMaterial3D.BillboardModeEnum.Enabled,
+            NoDepthTest = true,
+            RenderPriority = 10,
+            Visible = false,
+        });
+
         return label;
     }
 
@@ -226,6 +266,8 @@ public partial class CombatFeedback : Node3D
             var eased = 1f - Mathf.Pow(1f - t, 2f);
             label.GlobalPosition = origin + (drift * eased);
             label.Modulate = label.Modulate with { A = t < 0.66f ? 1f : 1f - ((t - 0.66f) / 0.34f) };
+
+            if (label.GetNode<Sprite3D>("Crit") is { Visible: true } mark) mark.Modulate = mark.Modulate with { A = label.Modulate.A };
 
             _active[i] = (label, elapsed, origin, drift);
         }

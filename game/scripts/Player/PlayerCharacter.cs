@@ -225,6 +225,8 @@ public partial class PlayerCharacter : Node
 
         var levels = Progression.Grant(amount);
 
+        Combat.CombatFeedback.Experience(_motor.GlobalPosition + (Vector3.Up * 2.7f), amount);
+
         EmitSignal(SignalName.ExperienceChanged);
 
         if (levels.Count == 0) return;
@@ -246,8 +248,8 @@ public partial class PlayerCharacter : Node
 
         // Level-up restores and is announced loudly: it is the reward beat of the loop.
         Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndLevelUp);
-        Combat.CombatFeedback.Number(
-            _motor.GlobalPosition + (Vector3.Up * 2.6f), Progression.Level, critical: true, evaded: false);
+        Combat.CombatFeedback.Callout(_motor.GlobalPosition + (Vector3.Up * 3.0f),
+            Kiln.Core.Foundation.L10n.F("Level {0}!", Progression.Level), new Color("9fe07a"));
     }
 
     /// <summary>
