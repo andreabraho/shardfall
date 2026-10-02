@@ -1,7 +1,7 @@
-"""Lama del Crinale — the Ridge Greatblade cut down to one hand (swordkit.variant)."""
+"""One of the Warrior's swords or great swords: see bladekit.build."""
 
-import swordkit as k
+import bladekit
 
 
 def build():
-    return k.variant("ridge_greatblade", "ridge_blade", great=False)
+    return bladekit.build("ridge_blade")

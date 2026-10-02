@@ -213,6 +213,9 @@ public partial class PlayerInventory : Node
         var character = GetParent().GetNodeOrNull<Player.PlayerCharacter>("PlayerCharacter");
         var level = character?.Progression.Level ?? 1;
 
+        // A sword for the Body Warrior, a great sword for the Mental (2026-10-02).
+        if (!PlayerProfile.Wields(GameItems.Spec(item.DefId))) return EquipOutcome.WrongClass;
+
         var outcome = Gear.TryEquip(item, level, PlayerProfile.Class, out var displaced);
 
         if (outcome != EquipOutcome.Equipped) return outcome;

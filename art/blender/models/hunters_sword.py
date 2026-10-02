@@ -1,7 +1,7 @@
-"""Spada del Cacciatore — the Hunter's Greatsword cut down to one hand (swordkit.variant)."""
+"""One of the Warrior's swords or great swords: see bladekit.build."""
 
-import swordkit as k
+import bladekit
 
 
 def build():
-    return k.variant("hunters_greatsword", "hunters_sword", great=False)
+    return bladekit.build("hunters_sword")

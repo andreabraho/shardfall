@@ -1,7 +1,7 @@
-"""Grande Filo di Brace — the Ember Edge grown to two hands (swordkit.variant)."""
+"""One of the Warrior's swords or great swords: see bladekit.build."""
 
-import swordkit as k
+import bladekit
 
 
 def build():
-    return k.variant("ember_edge", "ember_greatedge", great=True)
+    return bladekit.build("ember_greatedge")

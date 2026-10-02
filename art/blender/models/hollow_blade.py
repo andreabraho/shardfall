@@ -1,7 +1,7 @@
-"""Lama della Conca — the Hollow Reaver cut down to one hand (swordkit.variant)."""
+"""One of the Warrior's swords or great swords: see bladekit.build."""
 
-import swordkit as k
+import bladekit
 
 
 def build():
-    return k.variant("hollow_reaver", "hollow_blade", great=False)
+    return bladekit.build("hollow_blade")

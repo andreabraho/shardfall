@@ -77,10 +77,9 @@ Outlines are drawn in XY (X across, Y along) and stood up with `stand()`. `blade
 - **The hand holds the grip, not the guard.** `finish` moves the sword so the origin sits
   6/10 up a one-handed grip, 4/10 up a great sword's. The grip part **must be named `grip`**.
 - Sizes: one-handed ≈ 1.4 up, 0.37 down; great sword ≈ 1.95 up, 0.42 across the guard.
-- **Every sword has its pair** (2026-10-02): a great sword of it, or a sword of the great sword. Do not model
-  it twice: a three-line model file calling `k.variant("<source model>", "<name>", great=True|False)` stretches
-  or shrinks the same pieces about the guard. The two items name each other with `"pair"` in weapons.json,
-  and a drop that names one gives either.
+- **Every sword has its pair** (2026-10-02): a great sword of it, or a sword of the great sword — one theme,
+  two designs (`bladekit.py`; `k.variant` stretched one into the other at first, and read as the same sword).
+  The two items name each other with `"pair"` in weapons.json, and a drop that names one gives either.
 - Each sword is a character: a silhouette you could tell at a glance (a hooked tip, antler
   guard, ribs, horns), a material story (worn steel, grave steel, ember-black), one accent.
 - Skins recolour a sword by **tinting** it (`BladeSkin`, `Wash` = 0.18) — keep a sword's own
@@ -152,6 +151,21 @@ two cells tall in the bag.
   smaller: visuals.json `armour_fit` and `helmet_fit` scale the trunk's pieces and the headpiece
   for each body, so a suit is made once.
 - Never plate on the Archer or metal on the Dragonseer; the Asura is the one in dark plate.
+
+### `warkit.py`, `shadowkit.py`, `bladekit.py`, `daggerkit.py` — the Warrior and the Ninja, redrawn
+
+"The same work on the Warrior and the Ninja" (2026-10-02): their gear had a file each but one
+silhouette, the women wore the men's, and a great sword was its sword stretched.
+- **`warkit.py`** — the Warrior's seven suits, one function each, in two cuts. The men's is built round
+  the Knight (`KX`, `KY`, `kat`) and worn in place of the body's torso, a dark cloth at the hips
+  (tagged "m"); the women's is classkit's band round the chest over her own clothes — her visuals
+  carry `"own_clothes": true` and `"cut": "w"`, and her bodice is cut short (`woman_body.py`).
+  The four helmets are as they were (the pointed iron helm is liked).
+- **`shadowkit.py`** — the Ninja's seven suits and four headpieces, over its own clothes, two cuts.
+- **`bladekit.py`** — twelve swords and twelve great swords: one function a pair, `great` choosing the
+  design. A great sword is drawn, not stretched — `swordkit.variant` is no longer used for them.
+- **`daggerkit.py`** — the Ninja's twelve daggers.
+- The model files of all of these are three lines that call the kit.
 
 ### `trinkets.py` — gear that is never worn visibly
 Shields, boots, bracelets, necklaces, earrings, rings: built only for their icon. Add a

@@ -1,4 +1,8 @@
 {
+  "A Body Warrior fights with a sword, not a great sword.": "Il Guerriero Corporale combatte con la spada, non con lo spadone.",
+  "A Mental Warrior fights with a great sword, not a sword.": "Il Guerriero Mentale combatte con lo spadone, non con la spada.",
+  "Great sword · Mental Warrior": "Spadone · Guerriero Mentale",
+  "Sword · Body Warrior": "Spada · Guerriero Corporale",
   "For {0:0.##} s the next blow that would land on you does nothing, and dark force bursts round you: {1:P0} of your attack power to everything within {2:0.#} m. You stay free to move and to fight.": "Per {0:0.##} s il prossimo colpo che ti arriverebbe non fa nulla, e una forza oscura esplode intorno a te: il {1:P0} della tua potenza d'attacco a tutto ciò che sta entro {2:0.#} m. Resti libero di muoverti e combattere.",
   "turns a blow back, {0:P0}": "rimanda un colpo, {0:P0}",
   "$skill.skl_backlash.name": "Contraccolpo",

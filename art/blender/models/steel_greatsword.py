@@ -1,7 +1,7 @@
-"""Spadone d'Acciaio — the Steel Sword grown to two hands (swordkit.variant)."""
+"""One of the Warrior's swords or great swords: see bladekit.build."""
 
-import swordkit as k
+import bladekit
 
 
 def build():
-    return k.variant("steel_sword", "steel_greatsword", great=True)
+    return bladekit.build("steel_greatsword")

@@ -238,42 +238,9 @@ public partial class SkillPanel : CanvasLayer
 
         // One branch a character (2026-10-02, at your call), so one list: the Warrior chose the
         // body or the mind at the start, the Ninja's skills are a single branch.
-        if (PlayerProfile.Path.Length > 0 || PlayerProfile.Class != Kiln.Core.Foundation.CharacterClass.Warrior)
-        {
-            foreach (var def in SkillText.ClassSkills()) _list.AddChild(BuildRow(def));
-
-            Refresh();
-            return;
-        }
-
-        // A Warrior saved before the choice existed keeps both groups, as the original splits them.
-        foreach (var (tree, heading) in new[] { ("body", L10n.T("Body")), ("mental", L10n.T("Mind")) })
-        {
-            var skills = SkillText.ClassSkills().Where(d => d.Tree == tree).ToList();
-
-            if (skills.Count == 0) continue;
-
-            _list.AddChild(Heading(heading));
-
-            foreach (var def in skills) _list.AddChild(BuildRow(def));
-        }
+        foreach (var def in SkillText.ClassSkills()) _list.AddChild(BuildRow(def));
 
         Refresh();
-    }
-
-    private static Control Heading(string text)
-    {
-        var box = new VBoxContainer();
-        box.AddThemeConstantOverride("separation", 2);
-
-        var label = new Label { Text = text };
-        label.AddThemeFontSizeOverride("font_size", 13);
-        label.AddThemeColorOverride("font_color", new Color(0.85f, 0.72f, 0.45f));
-        box.AddChild(label);
-
-        box.AddChild(new ColorRect { Color = new Color(Frame, 0.6f), CustomMinimumSize = new Vector2(0, 1) });
-
-        return box;
     }
 
     private Control BuildRow(SkillDef def)

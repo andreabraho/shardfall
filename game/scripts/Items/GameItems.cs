@@ -80,10 +80,17 @@ public static class GameItems
     /// </summary>
     public static string ForClass(string id)
     {
-        if (Spec(id) is not { } spec || spec.AllowedFor(PlayerProfile.Class)) return id;
+        if (Spec(id) is not { } spec) return id;
 
-        return GameContent.Database.Items.TryGetValue(id, out var def)
-            && def.Twins.TryGetValue(PlayerProfile.Class.ToString().ToLowerInvariant(), out var twin) ? twin : id;
+        if (!spec.AllowedFor(PlayerProfile.Class))
+        {
+            return GameContent.Database.Items.TryGetValue(id, out var def)
+                && def.Twins.TryGetValue(PlayerProfile.Class.ToString().ToLowerInvariant(), out var twin) ? twin : id;
+        }
+
+        // The Warrior's branch has its weapon (2026-10-02): where a sword is named the Mental Warrior
+        // is given its great sword, and the Body Warrior the sword of a great sword.
+        return !PlayerProfile.Wields(spec) && GameContent.Database.Items.TryGetValue(id, out var named) && named.Pair is { Length: > 0 } pair ? pair : id;
     }
 
     /// <summary>Display name for an item, resolving the localisation key for now by trimming it.</summary>
@@ -188,6 +195,8 @@ public static class LootRoller
     private static ItemInstance Mint(string itemId, int count, DeterministicRng rng)
     {
         // A sword or its great sword (2026-10-02), by chance: only an item that has a pair rolls for it.
+        // The roll is made whoever plays, so every other drop of the session stays where it was; a Warrior
+        // of one branch is then given the one of the two it can hold (ForClass).
         if (GameContent.Database.Items.TryGetValue(itemId, out var named) && named.Pair is { Length: > 0 } pair && rng.NextDouble(0, 1) < 0.5)
         {
             itemId = pair;

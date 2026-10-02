@@ -159,4 +159,4 @@ def woman_style(arm, image):
 
 
 man()
-w.build(os.path.join(OUT, "mental_woman_body.glb"), style=woman_style)
+w.build(os.path.join(OUT, "mental_woman_body.glb"), crop=True, style=woman_style)
