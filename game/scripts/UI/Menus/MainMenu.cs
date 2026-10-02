@@ -215,7 +215,7 @@ public partial class MainMenu : Control
         column.AddChild(bodies);
 
         // The character's name (REF-18): what the character list calls it. It must be given (2026-10-02,
-        // at your call): until it is, no tier can be chosen.
+        // at your call): until it is, the game cannot be begun.
         var name = new LineEdit
         {
             PlaceholderText = L10n.T("Character name"),
@@ -227,55 +227,62 @@ public partial class MainMenu : Control
         name.AddThemeFontSizeOverride("font_size", 16);
         column.AddChild(name);
 
-        var unnamed = MenuStyle.Label(L10n.T("Give your character a name to begin."), 12, MenuStyle.Gold, wrap: true);
-        column.AddChild(unnamed);
-        var tiers = new List<Button>();
-        column.AddChild(MenuStyle.Label(L10n.T("It can be changed at any time from the pause menu. Loot and experience are the same on every tier."),
-            12, MenuStyle.Dim, wrap: true));
+        // The difficulty (2026-10-02, at your call): a row of names, each telling what it is only
+        // when the pointer rests on it — the four cards with their text ran off the screen.
+        column.AddChild(MenuStyle.Label(L10n.T("Difficulty"), 13, MenuStyle.Dim));
+
+        var difficulty = Difficulty.Disciple;
+        var tiers = new HBoxContainer();
+        tiers.AddThemeConstantOverride("separation", 8);
+        var tierGroup = new ButtonGroup();
 
         foreach (var tier in DifficultySettings.All)
         {
+            var chosen = tier.Tier;
             var card = new Button
             {
-                CustomMinimumSize = new Vector2(0, 94),
-                Alignment = HorizontalAlignment.Left,
-                ClipText = false,
-                Disabled = true,
+                ToggleMode = true,
+                ButtonGroup = tierGroup,
+                ButtonPressed = chosen == difficulty,
+                Text = Words.Of(chosen),
+                TooltipText = (chosen == Difficulty.Disciple ? L10n.F("{0}  ·  recommended", Words.Of(chosen)) + "\n" : "") + MenuStyle.Describe(tier).Replace(". ", ".\n").Replace("; ", ";\n"),
+                CustomMinimumSize = new Vector2(128, 38),
             };
 
-            var text = new VBoxContainer { MouseFilter = MouseFilterEnum.Ignore };
-            text.SetAnchorsPreset(LayoutPreset.FullRect);
-            text.OffsetLeft = 14;
-            text.OffsetTop = 8;
-            text.OffsetRight = -14;
-
-            var label = tier.Tier == Difficulty.Disciple ? L10n.F("{0}  ·  recommended", Words.Of(tier.Tier)) : Words.Of(tier.Tier);
-            var title = MenuStyle.Label(label, 17, MenuStyle.Gold);
-            title.MouseFilter = MouseFilterEnum.Ignore;
-
-            var about = MenuStyle.Label(MenuStyle.Describe(tier), 12, MenuStyle.Text, wrap: true);
-            about.MouseFilter = MouseFilterEnum.Ignore;
-
-            text.AddChild(title);
-            text.AddChild(about);
-            card.AddChild(text);
-
-            var chosen = tier.Tier;
-            card.Pressed += () =>
-            {
-                if (name.Text.Trim().Length > 0) SaveService.Instance?.NewGame(chosen, name.Text.Trim(), body, played, path);
-            };
-            tiers.Add(card);
-
-            column.AddChild(card);
+            card.AddThemeFontSizeOverride("font_size", 15);
+            card.Toggled += on => { if (on) difficulty = chosen; };
+            tiers.AddChild(card);
         }
+
+        column.AddChild(tiers);
+        column.AddChild(MenuStyle.Label(L10n.T("It can be changed at any time from the pause menu. Loot and experience are the same on every tier."),
+            12, MenuStyle.Dim, wrap: true));
+
+        // And the one way in: Begin, once the character has a name.
+        var unnamed = MenuStyle.Label(L10n.T("Give your character a name to begin."), 12, MenuStyle.Gold, wrap: true);
+        column.AddChild(unnamed);
+
+        var begin = new Button
+        {
+            Text = L10n.T("Begin"),
+            Disabled = true,
+            CustomMinimumSize = new Vector2(220, 46),
+            SizeFlagsHorizontal = SizeFlags.ShrinkBegin,
+        };
+
+        begin.AddThemeFontSizeOverride("font_size", 18);
+        begin.Pressed += () =>
+        {
+            if (name.Text.Trim().Length > 0) SaveService.Instance?.NewGame(difficulty, name.Text.Trim(), body, played, path);
+        };
+        column.AddChild(begin);
 
         name.TextChanged += typed =>
         {
             var named = typed.Trim().Length > 0;
 
             unnamed.Visible = !named;
-            foreach (var card in tiers) card.Disabled = !named;
+            begin.Disabled = !named;
         };
 
         if (SaveService.AnySave())
