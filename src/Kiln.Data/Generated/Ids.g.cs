@@ -816,9 +816,13 @@ public static class Ids
         public const string NpcCorwen = "npc_corwen";
         public const string NpcHesk = "npc_hesk";
         public const string NpcIdra = "npc_idra";
+        public const string NpcKetta = "npc_ketta";
+        public const string NpcMarek = "npc_marek";
+        public const string NpcOswin = "npc_oswin";
+        public const string NpcSella = "npc_sella";
         public const string NpcTobin = "npc_tobin";
 
-        public static readonly string[] All = ["npc_brann", "npc_corwen", "npc_hesk", "npc_idra", "npc_tobin"];
+        public static readonly string[] All = ["npc_brann", "npc_corwen", "npc_hesk", "npc_idra", "npc_ketta", "npc_marek", "npc_oswin", "npc_sella", "npc_tobin"];
     }
 
     public static class Sounds
@@ -908,15 +912,19 @@ public static class Ids
     {
         public const string CosArcaneAura = "cos_arcane_aura";
         public const string CosBoneArmour = "cos_bone_armour";
+        public const string CosCinderAura = "cos_cinder_aura";
+        public const string CosEmberCub = "cos_ember_cub";
         public const string CosFrostBlade = "cos_frost_blade";
         public const string CosHellfireBlade = "cos_hellfire_blade";
         public const string CosImp = "cos_imp";
+        public const string CosMireAura = "cos_mire_aura";
         public const string CosRaiderArmour = "cos_raider_armour";
+        public const string CosStoneFawn = "cos_stone_fawn";
         public const string CosVenomBlade = "cos_venom_blade";
         public const string CosWarbronzeArmour = "cos_warbronze_armour";
         public const string CosWolfCub = "cos_wolf_cub";
 
-        public static readonly string[] All = ["cos_arcane_aura", "cos_bone_armour", "cos_frost_blade", "cos_hellfire_blade", "cos_imp", "cos_raider_armour", "cos_venom_blade", "cos_warbronze_armour", "cos_wolf_cub"];
+        public static readonly string[] All = ["cos_arcane_aura", "cos_bone_armour", "cos_cinder_aura", "cos_ember_cub", "cos_frost_blade", "cos_hellfire_blade", "cos_imp", "cos_mire_aura", "cos_raider_armour", "cos_stone_fawn", "cos_venom_blade", "cos_warbronze_armour", "cos_wolf_cub"];
     }
 
 }
