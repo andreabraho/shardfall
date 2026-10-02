@@ -17,6 +17,22 @@
               "body_scene": "res://assets/temins/characters/woman_body.glb", "torso": "Rogue_Body",
               "body_parts": ["Rogue_Body", "Rogue_ArmLeft", "Rogue_ArmRight", "Rogue_LegLeft", "Rogue_LegRight", "Rogue_Head"],
               "replaces": ["Knight_Body", "Knight_ArmLeft", "Knight_ArmRight", "Knight_LegLeft", "Knight_LegRight", "Knight_Head"] } },
+  // The Mental Warrior (CLS-03b, 2026-10-02): the Warrior's own bodies with black hair and wine red
+  // and slate cloth (art/blender/mental_body.py) — the man's head comes with the body, to wear its hair.
+  { "id": "mesh_player_mental",       "primitive": "model",    "height": 1.80, "radius": 0.38, "color": "#4fa3d0", "model_yaw": 180, "model_path": "res://assets/kaykit/adventurers2/Knight.glb",
+    "animations": ["res://assets/kaykit/adventurers2/animations/Rig_Medium_General.glb", "res://assets/kaykit/adventurers2/animations/Rig_Medium_MovementBasic.glb", "res://assets/kaykit/adventurers2/animations/Rig_Medium_CombatMelee.glb", "res://assets/kaykit/adventurers2/animations/Rig_Medium_Simulation.glb"],
+    "gear": { "one_hand": "res://assets/kaykit/adventurers2/sword_1handed.gltf", "two_hand": "res://assets/kaykit/adventurers2/sword_2handed.gltf",
+              "helmet": ["Knight_Helmet", "Knight_HelmetVisor"], "cape": "Knight_Cape", "face": "Mental_Head",
+              "body_scene": "res://assets/temins/characters/mental_man_body.glb", "torso": "Ranger_Body",
+              "body_parts": ["Ranger_Body", "Ranger_ArmLeft", "Ranger_ArmRight", "Ranger_LegLeft", "Ranger_LegRight", "Mental_Head"],
+              "replaces": ["Knight_Body", "Knight_ArmLeft", "Knight_ArmRight", "Knight_LegLeft", "Knight_LegRight", "Knight_Head"] } },
+  { "id": "mesh_player_mental_woman",   "primitive": "model",    "height": 1.80, "radius": 0.38, "color": "#4fa3d0", "model_yaw": 180, "model_path": "res://assets/kaykit/adventurers2/Knight.glb",
+    "animations": ["res://assets/kaykit/adventurers2/animations/Rig_Medium_General.glb", "res://assets/kaykit/adventurers2/animations/Rig_Medium_MovementBasic.glb", "res://assets/kaykit/adventurers2/animations/Rig_Medium_CombatMelee.glb", "res://assets/kaykit/adventurers2/animations/Rig_Medium_Simulation.glb"],
+    "gear": { "one_hand": "res://assets/kaykit/adventurers2/sword_1handed.gltf", "two_hand": "res://assets/kaykit/adventurers2/sword_2handed.gltf",
+              "helmet": ["Knight_Helmet", "Knight_HelmetVisor"], "cape": "Knight_Cape", "face": "Rogue_Head",
+              "body_scene": "res://assets/temins/characters/mental_woman_body.glb", "torso": "Rogue_Body",
+              "body_parts": ["Rogue_Body", "Rogue_ArmLeft", "Rogue_ArmRight", "Rogue_LegLeft", "Rogue_LegRight", "Rogue_Head"],
+              "replaces": ["Knight_Body", "Knight_ArmLeft", "Knight_ArmRight", "Knight_LegLeft", "Knight_LegRight", "Knight_Head"] } },
   // The Ninja (CLS-03, 2026-10-01): the same skeleton, animations, armour and helmets again, wearing
   // the hooded and masked Rogue as a man and the Rogue as a woman, both in dark cloth of ours
   // (art/blender/ninja_body.py) and never under the Warrior's plates ("own_clothes"), a dagger of

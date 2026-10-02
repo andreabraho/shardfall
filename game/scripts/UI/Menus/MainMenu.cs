@@ -141,12 +141,12 @@ public partial class MainMenu : Control
 
         // And its one branch of skills (2026-10-02): the Warrior is of the body or of the mind.
         var path = PlayerProfile.BodyPath;
-        // The portraits follow the class: the Ninja's are its own (CLS-03).
+        // The portraits follow the class: the Ninja's are its own (CLS-03), and the Mental Warrior's.
         var portraits = new List<(Button Card, string Body)>();
 
         void Portray()
         {
-            var prefix = played == CharacterClass.Blade ? "ninja_" : "";
+            var prefix = played == CharacterClass.Blade ? "ninja_" : path == PlayerProfile.MentalPath ? "mental_" : "";
 
             foreach (var (shown, of) in portraits) shown.Icon = GD.Load<Texture2D>($"res://assets/ui/portrait_{prefix}{of}.png");
         }

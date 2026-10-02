@@ -31,6 +31,11 @@ LOOKS = {
                    ["RogueHooded_Head", "RogueHooded_Mask", "RogueHooded_Body", "RogueHooded_ArmLeft", "RogueHooded_ArmRight"])],
     "ninja_woman": [(os.path.join(ROOT, "game", "assets", "temins", "characters", "ninja_woman_body.glb"),
                      ["Rogue_Head", "Rogue_Body", "Rogue_ArmLeft", "Rogue_ArmRight"])],
+    # The Mental Warrior (CLS-03b), in the colours of mental_body.py.
+    "mental_man": [(os.path.join(ROOT, "game", "assets", "temins", "characters", "mental_man_body.glb"),
+                    ["Mental_Head", "Ranger_Body", "Ranger_ArmLeft", "Ranger_ArmRight"])],
+    "mental_woman": [(os.path.join(ROOT, "game", "assets", "temins", "characters", "mental_woman_body.glb"),
+                      ["Rogue_Head", "Rogue_Body", "Rogue_ArmLeft", "Rogue_ArmRight"])],
 }
 
 

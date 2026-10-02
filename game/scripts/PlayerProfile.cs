@@ -209,6 +209,7 @@ public static class PlayerProfile
     /// </summary>
     public static string BodyVisual => Class == Kiln.Core.Foundation.CharacterClass.Blade
         ? Body == Woman ? Kiln.Data.Ids.Visuals.MeshPlayerNinjaWoman : Kiln.Data.Ids.Visuals.MeshPlayerNinja
+        : Path == MentalPath ? Body == Woman ? Kiln.Data.Ids.Visuals.MeshPlayerMentalWoman : Kiln.Data.Ids.Visuals.MeshPlayerMental
         : Body == Woman ? Kiln.Data.Ids.Visuals.MeshPlayerWoman : Kiln.Data.Ids.Visuals.MeshPlaceholderPlayer;
 
     public static void Reset()
