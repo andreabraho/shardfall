@@ -1,4 +1,6 @@
 {
+  "Character name": "Nome del personaggio",
+  "Give your character a name to begin.": "Dai un nome al personaggio per cominciare.",
   "$cos.cos_arcane_aura.name": "Aura Arcana",
   "$cos.cos_bone_armour.name": "Armatura d'Ossa",
   "$cos.cos_frost_blade.name": "Lama del Gelo",

@@ -214,10 +214,11 @@ public partial class MainMenu : Control
 
         column.AddChild(bodies);
 
-        // The character's name (REF-18): what the character list calls it.
+        // The character's name (REF-18): what the character list calls it. It must be given (2026-10-02,
+        // at your call): until it is, no tier can be chosen.
         var name = new LineEdit
         {
-            PlaceholderText = SaveService.DefaultName(),
+            PlaceholderText = L10n.T("Character name"),
             MaxLength = SaveService.NameLength,
             CustomMinimumSize = new Vector2(280, 34),
             SizeFlagsHorizontal = SizeFlags.ShrinkBegin,
@@ -225,6 +226,10 @@ public partial class MainMenu : Control
 
         name.AddThemeFontSizeOverride("font_size", 16);
         column.AddChild(name);
+
+        var unnamed = MenuStyle.Label(L10n.T("Give your character a name to begin."), 12, MenuStyle.Gold, wrap: true);
+        column.AddChild(unnamed);
+        var tiers = new List<Button>();
         column.AddChild(MenuStyle.Label(L10n.T("It can be changed at any time from the pause menu. Loot and experience are the same on every tier."),
             12, MenuStyle.Dim, wrap: true));
 
@@ -235,6 +240,7 @@ public partial class MainMenu : Control
                 CustomMinimumSize = new Vector2(0, 94),
                 Alignment = HorizontalAlignment.Left,
                 ClipText = false,
+                Disabled = true,
             };
 
             var text = new VBoxContainer { MouseFilter = MouseFilterEnum.Ignore };
@@ -255,10 +261,22 @@ public partial class MainMenu : Control
             card.AddChild(text);
 
             var chosen = tier.Tier;
-            card.Pressed += () => SaveService.Instance?.NewGame(chosen, name.Text, body, played, path);
+            card.Pressed += () =>
+            {
+                if (name.Text.Trim().Length > 0) SaveService.Instance?.NewGame(chosen, name.Text.Trim(), body, played, path);
+            };
+            tiers.Add(card);
 
             column.AddChild(card);
         }
+
+        name.TextChanged += typed =>
+        {
+            var named = typed.Trim().Length > 0;
+
+            unnamed.Visible = !named;
+            foreach (var card in tiers) card.Disabled = !named;
+        };
 
         if (SaveService.AnySave())
         {
