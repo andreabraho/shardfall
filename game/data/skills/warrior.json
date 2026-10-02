@@ -1,5 +1,5 @@
 [
-  { "id": "skl_heavy_strike",  "name": "$skill.skl_heavy_strike.name", "color": "#ffd9a0", "sound": "snd_skl_heavy",  "class": "warrior", "tree": "mental",   "suggested_level": 1,  "mana_cost": 14, "cooldown": 4.0,  "cast_type": "instant", "targeting": "line",          "radius": 8.0, "width": 1.6, "damage_coef": 1.80, "hits": 1, "motion": "leap", "windup": 0.5,
+  { "id": "skl_heavy_strike",  "name": "$skill.skl_heavy_strike.name", "color": "#ffd9a0", "sound": "snd_skl_heavy",  "class": "warrior", "tree": "mental",   "suggested_level": 1,  "mana_cost": 14, "cooldown": 4.0,  "cast_type": "instant", "targeting": "line",          "radius": 8.0, "width": 1.3, "damage_coef": 1.80, "hits": 1, "motion": "leap", "windup": 0.5,
     "mastery": {
       "master":       { "damage_coef": 2.05, "note": "$skill.skl_heavy_strike.m" },
       "grand_master": { "damage_coef": 2.20, "note": "$skill.skl_heavy_strike.g" },
@@ -69,7 +69,7 @@
       "perfect":      { "cooldown": 6.0, "damage_coef": 2.70, "note": "$skill.skl_blade_wave.p" }
     } },
 
-  { "id": "skl_piercing_blow", "name": "$skill.skl_piercing_blow.name", "color": "#bfe0ff", "sound": "snd_skl_pierce", "class": "warrior", "tree": "mental", "suggested_level": 12, "mana_cost": 30, "cooldown": 12.0, "cast_type": "instant", "targeting": "line",          "radius": 10.0, "width": 2.6, "damage_coef": 4.80, "hits": 1, "motion": "charge",
+  { "id": "skl_piercing_blow", "name": "$skill.skl_piercing_blow.name", "color": "#bfe0ff", "sound": "snd_skl_pierce", "class": "warrior", "tree": "mental", "suggested_level": 12, "mana_cost": 30, "cooldown": 12.0, "cast_type": "instant", "targeting": "line",          "radius": 10.0, "width": 3.0, "damage_coef": 4.80, "hits": 1, "motion": "charge",
     "windup": 0.45, "pierces": true,
     "applies": { "kind": "stun", "duration": 1.0, "chance": 0.35 },
     "mastery": {
