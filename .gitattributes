@@ -38,3 +38,4 @@
 *.otf   filter=lfs diff=lfs merge=lfs -text
 
 # NOTE: game/icon.svg and UI SVGs stay as text so they diff normally.
+src/Kiln.Tools/Fixtures/*.sav -text
