@@ -227,7 +227,7 @@ public static class SkillFx
     /// the one it lands on, a thin ray drawn between the two, and a ring closing on the target — or,
     /// with nothing in its way, the ray alone running out to its end.
     /// </summary>
-    public static void Bolt(Node context, Vector3 origin, Vector3 to, bool landed, Color colour, float bright = 1f)
+    public static void Bolt(Node context, Vector3 origin, Vector3 to, bool landed, Color colour, float bright = 1f, float scale = 1f)
     {
         const double flight = 0.14;
 
@@ -240,14 +240,14 @@ public static class SkillFx
         var yaw = Yaw(forward);
         var chest = origin + (Vector3.Up * 1.0f);
 
-        var head = Billboard(context, "star_06.png", chest + (forward * 0.5f), 1.3f, colour.Lerp(Colors.White, 0.3f), flight, bright * 1.4f);
+        var head = Billboard(context, "star_06.png", chest + (forward * 0.5f), 1.3f * scale, colour.Lerp(Colors.White, 0.3f), flight, bright * 1.4f);
         head.Velocity = forward * ((length - 0.5f) / (float)flight);
         head.FadeIn = 0.02f;
         head.Hold = 0.9f;
 
         var ray = Flat(context, "trace_06.png", chest + (forward * length * 0.5f), 1f, colour, 0.3, bright * 1.4f);
         ray.Rotation = new Vector3(0, yaw, 0);
-        ray.Shape = new Vector2(0.55f, length);
+        ray.Shape = new Vector2(0.55f * scale, length);
         ray.FadeIn = 0.03f;
         ray.Hold = 0.3f;
 
@@ -255,12 +255,12 @@ public static class SkillFx
 
         if (!landed) return;
 
-        var mark = Flat(context, "circle_03.png", to + (Vector3.Up * 0.1f), 2.6f, colour, 0.4, bright);
+        var mark = Flat(context, "circle_03.png", to + (Vector3.Up * 0.1f), 2.6f * scale, colour, 0.4, bright);
         mark.From = 1.1f;
         mark.To = 0.3f;
         mark.FadeIn = 0.02f;
 
-        Billboard(context, "star_06.png", to + (Vector3.Up * 1.0f), 2.2f, colour, 0.25, bright * 1.2f);
+        Billboard(context, "star_06.png", to + (Vector3.Up * 1.0f), 2.2f * scale, colour, 0.25, bright * 1.2f);
     }
 
     /// <summary>
@@ -353,6 +353,42 @@ public static class SkillFx
         Burst(context, center + (Vector3.Up * 0.3f), "circle_05.png", colour, 40, 0.11f, 1.4f, 2.8f, 0.8, Vector3.Up, 18f, -0.5f,
             emitRadius: radius, ring: true, radial: radius > 1f ? 2.4f : 0f, bright: bright);
         Billboard(context, "star_06.png", center + (Vector3.Up * 1.1f), 1.4f, colour, 0.25, bright);
+    }
+
+    /// <summary>
+    /// Fire standing up off the ground over a circle (CLS-06, the Flame Roar, and along the Dragon's
+    /// Breath): tongues of flame, so the fire is seen and not only its ring.
+    /// </summary>
+    public static void Flames(Node context, Vector3 center, float radius, Color colour, float bright = 1f)
+    {
+        Burst(context, center + (Vector3.Up * 0.2f), "muzzle_02.png", colour, (int)(18 + (radius * 7)), 1.25f, 1.6f, 3.4f, 0.75, Vector3.Up, 16f, 1.2f,
+            emitRadius: radius * 0.75f, bright: bright);
+    }
+
+    /// <summary>
+    /// A ball of light held before the chest, between the open hand and the weapon, for as long as
+    /// a blessing takes to say (CLS-06, the Dragon's Blessing, at your call): it swells, turns, and
+    /// sheds points as it goes.
+    /// </summary>
+    public static void Orb(Node context, Vector3 center, Vector3 forward, double seconds, Color colour, float bright = 1f)
+    {
+        var at = center + (Vector3.Up * 1.05f) + (forward * 0.55f);
+
+        var glow = Billboard(context, "light_02.png", at, 1.25f, colour, seconds, bright * 1.3f);
+        glow.From = 0.15f;
+        glow.To = 1.0f;
+        glow.FadeIn = 0.15f;
+        glow.Hold = 0.7f;
+
+        var core = Billboard(context, "star_06.png", at, 0.75f, colour.Lerp(Colors.White, 0.5f), seconds, bright * 1.5f);
+        core.From = 0.2f;
+        core.To = 1.0f;
+        core.Spin = 2.5f;
+        core.FadeIn = 0.15f;
+        core.Hold = 0.7f;
+
+        Burst(context, at, "circle_05.png", colour, 30, 0.08f, 0.3f, 0.9f, System.Math.Max(0.5, seconds), Vector3.Up, 180f, 0.4f,
+            emitRadius: 0.2f, bright: bright);
     }
 
     /// <summary>A blow that lands on one target: Heavy Strike, Shield Bash.</summary>
@@ -453,6 +489,8 @@ public static class SkillFx
         Rain(context, at, 2f, faint);
         Claw(context, at, faint);
         Kindle(context, at, faint);
+        Flames(context, at, 1f, faint);
+        Orb(context, at, ahead, 0.2, faint);
         Shroud(context, at, 0.6f, faint);
         Cut(context, at, ahead, 3f, 2, faint);
         Gather(context, at, ahead, 0.2, faint);

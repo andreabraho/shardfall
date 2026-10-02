@@ -91,7 +91,7 @@ public partial class AuraVisual : Node3D
 
     private Color Base => Kind switch
     {
-        StatusKind.Fortify => Skin,
+        StatusKind.Fortify => Blessing ? Jade : Skin,
         StatusKind.Frenzy => Rage,
         StatusKind.Leech => Hex[0],
         StatusKind.Thorns => Mail[0],
@@ -100,7 +100,12 @@ public partial class AuraVisual : Node3D
     };
 
     /// <summary>An aura of points round the whole body, shoulder-high, rather than embers off a ring at the feet.</summary>
-    private bool Shrouds => Kind is StatusKind.Thorns or StatusKind.Dread;
+    private bool Shrouds => Kind is StatusKind.Thorns or StatusKind.Dread || Blessing;
+
+    /// <summary>The Dragonseer's blessing (CLS-06, at your call): the same status as Iron Skin, worn as an aura round the body.</summary>
+    private bool Blessing => Kind == StatusKind.Fortify && PlayerProfile.Class == Kiln.Core.Foundation.CharacterClass.Shaman;
+
+    private static readonly Color Jade = new(0.50f, 1.0f, 0.78f);
 
     /// <summary>
     /// The Asura wears its own three: the Warrior's — which its Hexed Blade and its Arcane Mail also
@@ -116,7 +121,7 @@ public partial class AuraVisual : Node3D
     /// A frenzy wears flames round the body and no rings (REF-21): three buffs up at once would
     /// otherwise stand the Warrior in six rings.
     /// </summary>
-    private bool Rings => Kind is StatusKind.Empower or StatusKind.Fortify;
+    private bool Rings => Kind is StatusKind.Empower or StatusKind.Fortify && !Shrouds;
 
     private Color Tint => Own ?? MasteryStyle.Tint(Base, Rank);
 

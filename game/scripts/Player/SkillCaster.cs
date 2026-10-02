@@ -133,7 +133,12 @@ public partial class SkillCaster : Node
         return Visual.MasteryStyle.Tint(own, skill.Rank).Lerp(Visual.MasteryStyle.Accent(own, skill.Rank), 0.3f);
     }
 
-    private static float FxBright(ResolvedSkill skill) => Visual.MasteryStyle.Brightness(skill.Rank);
+    private static float FxBright(ResolvedSkill skill) => Visual.MasteryStyle.Brightness(skill.Rank) * CasterBoost;
+
+    /// <summary>The Dragonseer's magic is drawn brighter and larger than a blade's (2026-10-02, at your call).</summary>
+    private static float CasterBoost => PlayerProfile.Class == CharacterClass.Shaman ? 1.5f : 1f;
+
+    private static float CasterScale => PlayerProfile.Class == CharacterClass.Shaman ? 1.8f : 1f;
 
     private static string SoundOf(string skillId) =>
         GameContent.Database.Skills.TryGetValue(skillId, out var def) ? def.Sound : Kiln.Data.Ids.Sounds.SndSkill;
@@ -584,6 +589,8 @@ public partial class SkillCaster : Node
 
         switch (kind)
         {
+            // The Dragon's Blessing (CLS-06, at your call): an aura thrown up round the Dragonseer, not a ring.
+            case "fortify" when PlayerProfile.Class == CharacterClass.Shaman: SkillFx.Shroud(this, at, 0.7f, FxColour(skill), FxBright(skill)); break;
             case "fortify": SkillFx.Harden(this, at, FxColour(skill), FxBright(skill)); break;
             case "empower": SkillFx.Sharpen(this, at, FxColour(skill), FxBright(skill)); break;
             case "frenzy": SkillFx.Frenzy(this, at, FxColour(skill), FxBright(skill)); break;
@@ -592,7 +599,8 @@ public partial class SkillCaster : Node
             case "hex": SkillFx.Kindle(this, at, FxColour(skill), FxBright(skill)); break;
             case "mail": SkillFx.Shroud(this, at, 0.6f, FxColour(skill), FxBright(skill)); break;
             case "haste": SkillFx.Frenzy(this, at, FxColour(skill), FxBright(skill)); break;
-            case "focus": SkillFx.Sharpen(this, at, FxColour(skill), FxBright(skill)); break;
+            // The Dragon's Eye (CLS-06, at your call): a ball of light between the hand and the fan while it is said.
+            case "focus": SkillFx.Orb(this, at, _motor.Facing, SelfCastHold, FxColour(skill), FxBright(skill)); break;
         }
 
         if (effect is null)
@@ -642,8 +650,11 @@ public partial class SkillCaster : Node
 
     private const float UnaimedReach = 3.5f;
 
-    /// <summary>How long a self-buff plants the character. Long enough to read as a cast.</summary>
-    private const double SelfCastHold = 0.6;
+    /// <summary>
+    /// How long a self-buff plants the character. Long enough to read as a cast — and twice as long
+    /// for the Dragonseer, whose blessings are spoken, not shouted (2026-10-02, at your call).
+    /// </summary>
+    private static double SelfCastHold => PlayerProfile.Class == CharacterClass.Shaman ? 1.2 : 0.6;
 
     /// <summary>How long a skill holds the character: every pulse, and a beat after the last.</summary>
     private static double CastHold(ResolvedSkill skill) =>
@@ -742,6 +753,10 @@ public partial class SkillCaster : Node
             case SkillTargeting.SelfAoe:
                 targets = AreaQuery.Sphere(_motor, center, (float)skill.Radius);
                 SkillFx.Slam(this, center, (float)skill.Radius, colour, bright);
+
+                // The Flame Roar (CLS-06): the fire itself, standing up all over its circle.
+                if (skill.Element == DamageElement.Fire) SkillFx.Flames(this, center, (float)skill.Radius, colour, bright);
+
                 break;
 
             case SkillTargeting.Cone when skill.Motion == "triple":
@@ -776,6 +791,16 @@ public partial class SkillCaster : Node
             case SkillTargeting.Line:
                 targets = AreaQuery.Line(_motor, center, aim, (float)skill.Radius, (float)skill.Width);
                 SkillFx.Wave(this, center, aim, (float)skill.Radius, (float)skill.Width, colour, bright);
+
+                // The Dragon's Breath (CLS-06): fire all the way down its line.
+                if (skill.Motion == "breath")
+                {
+                    for (var step = 1; step <= 5; step++)
+                    {
+                        SkillFx.Flames(this, center + (aim * ((float)skill.Radius * step / 5.5f)), (float)skill.Width * 0.6f, colour, bright);
+                    }
+                }
+
                 break;
 
             case SkillTargeting.GroundAoe:
@@ -808,7 +833,7 @@ public partial class SkillCaster : Node
                 }
                 else if (skill.Motion is "seals" or "cast")
                 {
-                    SkillFx.Bolt(this, center, lands, marked is not null, colour, bright);
+                    SkillFx.Bolt(this, center, lands, marked is not null, colour, bright, CasterScale);
                 }
                 else
                 {
@@ -833,7 +858,7 @@ public partial class SkillCaster : Node
 
                         if (next is null) break;
 
-                        SkillFx.Bolt(this, from, next.Body.GlobalPosition, true, colour, bright);
+                        SkillFx.Bolt(this, from, next.Body.GlobalPosition, true, colour, bright, CasterScale);
                         targets.Add(next);
                         last = next;
                     }
