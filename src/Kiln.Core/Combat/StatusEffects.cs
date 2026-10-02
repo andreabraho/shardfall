@@ -56,10 +56,16 @@ public enum StatusKind
     Focus,
 
     /// <summary>
-    /// Less damage taken while what stands near is cowed (CLS-05, the Dread). A status of its own,
-    /// not Fortify: it has no weight on the feet, and it is drawn differently.
+    /// Defence added, in points, while what stands near is cowed (CLS-05, the Dread, at your call:
+    /// defence, not a share less damage). The magnitude is the points.
     /// </summary>
     Dread,
+
+    /// <summary>
+    /// Attack power added, in points, to blows and skills alike (CLS-05, the Hexed Blade, at your
+    /// call: attack, not average damage). The magnitude is the points.
+    /// </summary>
+    Might,
 }
 
 /// <summary>How repeated applications of the same status combine.</summary>
@@ -129,6 +135,7 @@ public sealed class StatusEffectSet
         [StatusKind.Haste] = StackRule.Strongest,
         [StatusKind.Focus] = StackRule.Strongest,
         [StatusKind.Dread] = StackRule.Strongest,
+        [StatusKind.Might] = StackRule.Strongest,
     };
 
     /// <summary>What a frenzy costs: this much more damage taken while it lasts (REF-21, at your call).</summary>
@@ -186,7 +193,6 @@ public sealed class StatusEffectSet
     public double DamageTakenMultiplier =>
         (Has(StatusKind.Vulnerability) ? 1 + _effects[StatusKind.Vulnerability].Magnitude : 1.0)
         * (Has(StatusKind.Fortify) ? Math.Max(0.1, 1 - _effects[StatusKind.Fortify].Magnitude) : 1.0)
-        * (Has(StatusKind.Dread) ? Math.Max(0.1, 1 - _effects[StatusKind.Dread].Magnitude) : 1.0)
         * (Has(StatusKind.Frenzy) ? 1 + FrenzyExposure : 1.0);
 
     /// <summary>
@@ -357,8 +363,11 @@ public sealed class StatusEffectSet
     public static StatusEffect Haste(double fraction, double duration = 15) =>
         new() { Kind = StatusKind.Haste, Magnitude = fraction, Duration = duration };
 
-    public static StatusEffect Dread(double fraction, double duration = 10) =>
-        new() { Kind = StatusKind.Dread, Magnitude = fraction, Duration = duration };
+    public static StatusEffect Might(double points, double duration = 25) =>
+        new() { Kind = StatusKind.Might, Magnitude = points, Duration = duration };
+
+    public static StatusEffect Dread(double points, double duration = 10) =>
+        new() { Kind = StatusKind.Dread, Magnitude = points, Duration = duration };
 
     public static StatusEffect Focus(double chance, double duration = 30) =>
         new() { Kind = StatusKind.Focus, Magnitude = chance, Duration = duration };

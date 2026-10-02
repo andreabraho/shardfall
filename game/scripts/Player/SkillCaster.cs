@@ -98,7 +98,7 @@ public partial class SkillCaster : Node
 
         // One aura per buff, so both can be worn at once. They belong to the skills rather
         // than to the scene, so they are built here instead of being placed in player.tscn.
-        foreach (var kind in new[] { StatusKind.Empower, StatusKind.Fortify, StatusKind.Frenzy, StatusKind.Leech, StatusKind.Thorns, StatusKind.Dread })
+        foreach (var kind in new[] { StatusKind.Empower, StatusKind.Fortify, StatusKind.Frenzy, StatusKind.Leech, StatusKind.Thorns, StatusKind.Dread, StatusKind.Focus })
         {
             _motor.CallDeferred(Node.MethodName.AddChild,
                 new Combat.AuraVisual { Name = $"Aura{kind}", Kind = kind });
@@ -456,12 +456,12 @@ public partial class SkillCaster : Node
             if (toTarget.LengthSquared() > 0.0001f) aim = toTarget.Normalized();
         }
 
-        // The Dread (CLS-05): while what stands near strikes weaker, the Asura takes less.
+        // The Dread (CLS-05): while what stands near strikes weaker, the Asura's defence is raised.
         if (GameContent.Database.Skills.TryGetValue(skill.Id, out var cast) && cast.Guards > 0)
         {
             if (_motor.GetNodeOrNull<Combat.AuraVisual>($"Aura{StatusKind.Dread}") is { } dread) dread.Rank = skill.Rank;
 
-            _self.Statuses.Apply(StatusEffectSet.Dread(cast.Guards, cast.Duration));
+            _self.Statuses.Apply(StatusEffectSet.Dread(cast.Guards + (_self.Stats.Attributes.Int * Attributes.AsuraGuardPerInt), cast.Duration));
         }
 
         // The Warrior stands still while a skill plays out (REF-01): held for every pulse it
@@ -546,14 +546,28 @@ public partial class SkillCaster : Node
         _motor.HoldFor(SelfCastHold);
         _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove(skill.Motion, _motor.Facing, SelfCastHold);
 
+        // The Dragonseer's blessings grow with its intelligence (CLS-06, at your call).
+        if (PlayerProfile.Class == CharacterClass.Shaman)
+        {
+            var mind = _self.Stats.Attributes.Int;
+
+            if (kind == "fortify") skill = skill with { Magnitude = Attributes.SeerScaled(skill.Magnitude, mind, Attributes.SeerBlessingPerInt, Attributes.SeerBlessingCap) };
+            if (kind == "focus") skill = skill with { Magnitude = Attributes.SeerScaled(skill.Magnitude, mind, Attributes.SeerEyePerInt, Attributes.SeerEyeCap) };
+        }
+
+        // And so does everything of the Asura's (CLS-05, at your call).
+        var asura = PlayerProfile.Class == CharacterClass.Sura;
+        var wit = _self.Stats.Attributes.Int;
+
         var effect = kind switch
         {
+            // The Hexed Blade: attack power, in points — not average damage — and more for every point of intelligence.
+            "hex" => StatusEffectSet.Might(skill.Magnitude + (wit * Attributes.AsuraBladePerInt), skill.Duration),
+            "mail" when asura => StatusEffectSet.Fortify(Attributes.SeerScaled(skill.Magnitude, wit, Attributes.AsuraSharePerInt, Attributes.AsuraMailCap), skill.Duration),
             "fortify" => StatusEffectSet.Fortify(skill.Magnitude, skill.Duration),
             "empower" => StatusEffectSet.Empower(skill.Magnitude, skill.Duration),
             "frenzy" => StatusEffectSet.Frenzy(skill.Magnitude, skill.Duration),
             "stealth" => StatusEffectSet.Stealth(skill.Magnitude, skill.Duration),
-            // The Hexed Blade (CLS-05): stronger blows, and health back from them.
-            "hex" => StatusEffectSet.Empower(skill.Magnitude, skill.Duration),
             // The Arcane Mail (CLS-05): less taken, and a share thrown back.
             "mail" => StatusEffectSet.Fortify(skill.Magnitude, skill.Duration),
             "haste" => StatusEffectSet.Haste(skill.Magnitude, skill.Duration),
@@ -565,7 +579,9 @@ public partial class SkillCaster : Node
         var second = kind switch
         {
             "hex" => StatusEffectSet.Leech(skill.Applies!.Magnitude, skill.Duration),
-            "mail" => StatusEffectSet.Thorns(skill.Applies!.Magnitude, skill.Duration),
+            "mail" => StatusEffectSet.Thorns(asura
+                ? Attributes.SeerScaled(skill.Applies!.Magnitude, wit, Attributes.AsuraThornsPerInt, Attributes.AsuraThornsCap)
+                : skill.Applies!.Magnitude, skill.Duration),
             _ => null,
         };
 
@@ -966,7 +982,22 @@ public partial class SkillCaster : Node
                 continue;
             }
 
-            StatusApplication.Try(skill.Applies, target, resist);
+            // What the Asura leaves on what it hits grows with its intelligence too: the Dread, the Spellbreak.
+            var mark = skill.Applies;
+
+            if (mark is { Kind: "weaken" or "vulnerability" } && PlayerProfile.Class == CharacterClass.Sura)
+            {
+                mark = new StatusApplicationDef
+                {
+                    Kind = mark.Kind,
+                    Duration = mark.Duration,
+                    Chance = mark.Chance,
+                    Magnitude = Attributes.SeerScaled(mark.Magnitude, _self.Stats.Attributes.Int, Attributes.AsuraSharePerInt,
+                        mark.Kind == "weaken" ? Attributes.AsuraDreadCap : Attributes.AsuraBreakCap),
+                };
+            }
+
+            StatusApplication.Try(mark, target, resist);
         }
     }
 

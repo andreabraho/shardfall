@@ -96,6 +96,7 @@ public partial class AuraVisual : Node3D
         StatusKind.Leech => Hex[0],
         StatusKind.Thorns => Mail[0],
         StatusKind.Dread => Fear[0],
+        StatusKind.Focus => Eye,
         _ => Blade,
     };
 
@@ -182,6 +183,65 @@ public partial class AuraVisual : Node3D
         }
 
         Visible = false;
+    }
+
+    private static readonly Color Eye = new(1.0f, 0.82f, 0.36f);
+
+    private readonly List<Node3D> _orbs = [];
+
+    /// <summary>
+    /// The Dragon's Eye (CLS-06, at your call): a small ball of light where the hand meets the fan,
+    /// there for as long as the blessing lasts and going wherever the hand goes.
+    /// </summary>
+    private void Orb(bool on)
+    {
+        if (Kind != StatusKind.Focus) return;
+
+        if (on && _orbs.Count > 0 && _orbs.TrueForAll(IsInstanceValid)) return;
+
+        foreach (var old in _orbs)
+        {
+            if (!IsInstanceValid(old)) continue;
+
+            old.GetParent()?.RemoveChild(old);
+            old.QueueFree();
+        }
+
+        _orbs.Clear();
+
+        if (!on) return;
+
+        foreach (var lit in _lit)
+        {
+            if (lit is not MeshInstance3D mesh || !IsInstanceValid(mesh) || !IsWeapon(mesh.Name)) continue;
+
+            var orb = new Node3D { Name = "EyeOrb" };
+
+            foreach (var (texture, size, strength) in new[] { ("light_02.png", 0.62f, 0.75f), ("star_06.png", 0.36f, 1.0f) })
+            {
+                var path = "res://assets/particles/" + texture;
+
+                orb.AddChild(new MeshInstance3D
+                {
+                    Mesh = new QuadMesh { Size = new Vector2(size, size) },
+                    MaterialOverride = new StandardMaterial3D
+                    {
+                        ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
+                        Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
+                        BlendMode = BaseMaterial3D.BlendModeEnum.Add,
+                        BillboardMode = BaseMaterial3D.BillboardModeEnum.Enabled,
+                        AlbedoColor = Tint with { A = strength },
+                        AlbedoTexture = ResourceLoader.Exists(path) ? ResourceLoader.Load<Texture2D>(path) : null,
+                        NoDepthTest = true,
+                    },
+                    CastShadow = GeometryInstance3D.ShadowCastingSetting.Off,
+                });
+            }
+
+            // The weapon's origin is its grip: the hand.
+            mesh.AddChild(orb);
+            _orbs.Add(orb);
+        }
     }
 
     /// <summary>
@@ -437,7 +497,7 @@ public partial class AuraVisual : Node3D
 
         foreach (var mesh in meshes)
         {
-            if (IsWeapon(mesh.Name) == (Kind is StatusKind.Empower or StatusKind.Leech)) _lit.Add(mesh);
+            if (IsWeapon(mesh.Name) == (Kind is StatusKind.Empower or StatusKind.Leech or StatusKind.Focus)) _lit.Add(mesh);
         }
 
         // Nothing matched: light the lot rather than nothing.
@@ -548,7 +608,7 @@ public partial class AuraVisual : Node3D
 
         // Emission stops the moment the buff does, so the last motes finish their climb
         // instead of being cut off with the rings.
-        if (_motes is not null) _motes.Emitting = wanted > 0 && Kind != StatusKind.Leech;
+        if (_motes is not null) _motes.Emitting = wanted > 0 && Kind is not (StatusKind.Leech or StatusKind.Focus);
 
         if (_strength <= 0.01f)
         {
@@ -556,6 +616,7 @@ public partial class AuraVisual : Node3D
 
             Stream(false);
             Sparkle(false);
+            Orb(false);
             Visible = false;
             return;
         }
@@ -566,6 +627,13 @@ public partial class AuraVisual : Node3D
         FindGear();
         Stream(wanted > 0);
         Sparkle(wanted > 0);
+        Orb(wanted > 0);
+
+        // The ball breathes.
+        foreach (var orb in _orbs)
+        {
+            if (IsInstanceValid(orb)) orb.Scale = Vector3.One * (1f + (Mathf.Sin((float)_spin * 4f) * 0.12f)) * _strength;
+        }
 
         _inner.Visible = Rings;
         _outer.Visible = Rings;
@@ -596,6 +664,6 @@ public partial class AuraVisual : Node3D
         // character changing colour, when all it should say is "harder to hurt". The Blade
         // Aura lays nothing over the blade any more (2026-09-28, at your call: it turned the
         // sword yellow) — its stream of points round the blade is the whole effect.
-        Light(Kind is StatusKind.Frenzy or StatusKind.Empower or StatusKind.Leech || Shrouds ? 0f : Mathf.Min(1f, breath * glow) * _strength * (Kind == StatusKind.Fortify ? 0.16f : 1f));
+        Light(Kind is StatusKind.Frenzy or StatusKind.Empower or StatusKind.Leech or StatusKind.Focus || Shrouds ? 0f : Mathf.Min(1f, breath * glow) * _strength * (Kind == StatusKind.Fortify ? 0.16f : 1f));
     }
 }

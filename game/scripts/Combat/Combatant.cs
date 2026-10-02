@@ -183,6 +183,8 @@ public partial class Combatant : Node
             AlwaysPierces = pierce,
             Element = element,
             BonusCritChance = attacker.Statuses.MagnitudeOf(StatusKind.Focus),
+            BonusAttackPower = attacker.Statuses.MagnitudeOf(StatusKind.Might),
+            BonusDefense = Statuses.MagnitudeOf(StatusKind.Dread),
             // Difficulty raises what the player takes, never what they deal.
             DifficultyDamageMultiplier = attacker.IsPlayer ? 1.0 : GameSession.Difficulty.EnemyDamageMultiplier,
         };

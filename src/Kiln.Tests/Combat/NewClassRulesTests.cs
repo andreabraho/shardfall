@@ -100,4 +100,19 @@ public class NewClassRulesTests
         // Far more than the attacker's own 3%, and never past the cap of a half.
         Assert.InRange(crits, 900, 1100);
     }
+
+    [Theory]
+    [InlineData(0.18, 0, 0.18)]
+    [InlineData(0.18, 50, 0.24)]
+    [InlineData(0.18, 500, 0.40)]
+    public void ABlessingGrowsWithIntelligence_UpToItsCap(double strength, int intelligence, double expected)
+    {
+        Assert.Equal(expected, Attributes.SeerScaled(strength, intelligence, Attributes.SeerBlessingPerInt, Attributes.SeerBlessingCap), 6);
+    }
+
+    [Fact]
+    public void ABlessingAlreadyPastItsCap_IsNotCutBack()
+    {
+        Assert.Equal(0.45, Attributes.SeerScaled(0.45, 100, Attributes.SeerBlessingPerInt, Attributes.SeerBlessingCap), 6);
+    }
 }

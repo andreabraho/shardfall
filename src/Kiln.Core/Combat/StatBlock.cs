@@ -99,9 +99,10 @@ public sealed class StatBlock
     /// which is exactly the gear-check spiral a click-to-move game must avoid (doc 06 §4).
     /// </para>
     /// </summary>
-    public double DamageReductionAgainst(int attackerLevel)
+    /// <param name="bonusDefense">Defence added for the moment, on top of the block's own (the Dread).</param>
+    public double DamageReductionAgainst(int attackerLevel, double bonusDefense = 0)
     {
-        var defense = Math.Max(0, Defense);
+        var defense = Math.Max(0, Defense + bonusDefense);
         var reduction = defense / (defense + 60 + (14.0 * attackerLevel));
         return Math.Min(reduction, MitigationCap);
     }

@@ -380,8 +380,8 @@ public sealed class SkillDef : ContentDefBase
     public Kiln.Core.Combat.DamageElement Element { get; init; } = Kiln.Core.Combat.DamageElement.Physical;
 
     /// <summary>
-    /// A share less damage its caster takes for the skill's duration, besides what it does to what
-    /// it hits (CLS-05, the Dread, at your call): zero for none.
+    /// Defence, in points, its caster gains for the skill's duration, besides what it does to what
+    /// it hits (CLS-05, the Dread, at your call: defence, not a share less damage): zero for none.
     /// </summary>
     public double Guards { get; init; }
 

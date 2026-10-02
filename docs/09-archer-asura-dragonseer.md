@@ -91,8 +91,9 @@ cloth and black leather with deep violet at the neck and hems; the **left arm vi
 within**, the mark. The man the Knight's face on the Ranger's body, the woman the Rogue. Its suits
 are black plate with flared shoulders, violet-black cloth, and violet stones lit on every one.
 
-**Attribute.** Strength for the sword; **its skills take from intelligence too** (1.2 attack
-power a point, skills only), as the Mental Warrior's take from vitality.
+**Attribute.** Strength for the sword; **every skill scales with intelligence** (at your call): 1.2
+attack power a point on what deals damage, 0.6 a point on the Hexed Blade, and every share — the
+mail, its thorns, the dread, the ward, the spellbreak — a little larger a point, up to a cap.
 
 **Weapon.** One-handed cursed swords: each is the Warrior's sword of that tier re-forged — a
 dark blade with a violet edge that glows. Twelve.
@@ -104,8 +105,8 @@ Asura's place, up to 30% of its maximum health. 10 mana, 12 s.
 |---|---|---|---|
 | **Artiglio d'Ombra** (Shadow Claw) | finger strike | A claw from the ground under a target up to 10 m off: 210%, ignoring its defence. Needs a target. Lands 0.45 s in. | a blow of the marked hand, about a second |
 | **Vortice Oscuro** (Dark Vortex) | dragon swirl | One turn, dark flame on everything within 3.2 m: one hit of 240%, half a second in. | one turn of a second |
-| **Lama Stregata** (Hexed Blade) | enchanted blade | 25 s: blows 20% stronger, and 8% of the damage of every blow comes back as health. | a spell worked over the blade with both hands |
-| **Terrore** (Dread) | fear | Everything within 6 m strikes 25% weaker for 10 s, and the Asura takes 15% less for as long. | a long summoning |
+| **Lama Stregata** (Hexed Blade) | enchanted blade | 25 s: +5 attack power and 0.6 more a point of INT — attack, not average damage (at your call) — and 8% of the damage of every blow comes back as health. | a spell worked over the blade with both hands |
+| **Terrore** (Dread) | fear | Everything within 6 m strikes 25% weaker for 10 s, and the Asura gains 10 defence and 0.8 more a point of INT for as long (defence, not a share less damage, at your call). | a long summoning |
 | **Corazza Arcana** (Arcane Mail) | enchanted armour | 20 s: 20% less damage taken, and 25% of every blow taken from close by thrown back. | power drawn up with both arms |
 | **Spezzaincanti** (Spellbreak) | dispel | A bolt at a target up to 12 m off: 160%, strips its rage and its shield, and leaves it taking 25% more for 8 s. Needs a target. | a throw |
 

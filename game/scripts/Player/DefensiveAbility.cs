@@ -256,7 +256,12 @@ public partial class DefensiveAbility : Node
         _visual.Rank = book?.RankOf(SkillId) ?? Kiln.Core.Progression.MasteryRank.Normal;
         _visual.SetGuarding(true);
 
-        _self.Barrier = _self.Stats.MaxHp * skill.Magnitude;
+        // The Pure Seal grows with intelligence, as every blessing of the Dragonseer does — and the Shadow Ward, as everything of the Asura's.
+        var share = SkillId == SealId
+            ? Kiln.Core.Combat.Attributes.SeerScaled(skill.Magnitude, _self.Stats.Attributes.Int, Kiln.Core.Combat.Attributes.SeerSealPerInt, Kiln.Core.Combat.Attributes.SeerSealCap)
+            : Kiln.Core.Combat.Attributes.SeerScaled(skill.Magnitude, _self.Stats.Attributes.Int, Kiln.Core.Combat.Attributes.AsuraWardPerInt, Kiln.Core.Combat.Attributes.AsuraWardCap);
+
+        _self.Barrier = _self.Stats.MaxHp * share;
         _warding = true;
         _active = skill.Duration;
         _cooldown = skill.Cooldown;

@@ -52,6 +52,7 @@ public static class Words
         StatusKind.Haste => L10n.T("Light step"),
         StatusKind.Focus => L10n.T("Dragon's eye"),
         StatusKind.Dread => L10n.T("Dread"),
+        StatusKind.Might => L10n.T("Hexed blade"),
         StatusKind.Stealth => L10n.T("Unseen"),
         _ => L10n.T("Vulnerable"),
     };

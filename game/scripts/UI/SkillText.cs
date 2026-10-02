@@ -32,6 +32,19 @@ public static class SkillText
                 .OrderBy(s => s.SuggestedLevel)
                 .ThenBy(s => s.Id, System.StringComparer.Ordinal);
 
+    /// <summary>
+    /// The intelligence of the character as it stands — what is worn counted — or what was placed
+    /// when there is no character in the world to ask.
+    /// </summary>
+    private static int Mind() =>
+        (Engine.GetMainLoop() as SceneTree)?.GetFirstNodeInGroup("player")?.GetNodeOrNull<Combat.Combatant>("Combatant")?.Stats.Attributes.Int
+        ?? PlayerProfile.Progression?.TotalAttributes.Int
+        ?? Attributes.StartingValue;
+
+    /// <summary>One line saying what a share takes from intelligence, and what it comes to with the player's.</summary>
+    private static string Grown(string what, double strength, double perPoint, double cap) =>
+        L10n.F("{0}: {1:0.##}% more for each point of INT, up to {2:P0}. With yours: {3:P1}.", what, perPoint * 100, cap, Attributes.SeerScaled(strength, Mind(), perPoint, cap));
+
     /// <summary>Name, rank and points: the one line that says how far a skill has come.</summary>
     public static string Title(SkillDef def, SkillBook book)
     {
@@ -69,10 +82,16 @@ public static class SkillText
             lines.Add(L10n.F("Skills also take {0:0.#} attack power from each point of VIT.", Attributes.MentalSkillPerVit));
         }
 
+        // The Dragonseer (CLS-06): everything it strikes with comes from intelligence.
+        if (skill.DamageCoef > 0 && def.Class == CharacterClass.Shaman)
+        {
+            lines.Add(L10n.F("Your attack power takes {0:0.#} from each point of INT. With yours: +{1:0}.", Attributes.AttackPerPoint, Mind() * Attributes.AttackPerPoint));
+        }
+
         // The Asura (CLS-05): its skills take from intelligence besides.
         if (skill.DamageCoef > 0 && def.Class == CharacterClass.Sura)
         {
-            lines.Add(L10n.F("Skills also take {0:0.#} attack power from each point of INT.", Attributes.AsuraSkillPerInt));
+            lines.Add(L10n.F("Skills also take {0:0.#} attack power from each point of INT. With yours: +{1:0}.", Attributes.AsuraSkillPerInt, Mind() * Attributes.AsuraSkillPerInt));
         }
 
         // The Storm Orb (CLS-06): what its radius is for is the leap, not a burst.
@@ -88,7 +107,7 @@ public static class SkillText
 
         if (def.Element == DamageElement.Dark) lines.Add(L10n.T("Dark damage."));
 
-        if (def.Guards > 0) lines.Add(L10n.F("You take {0:P0} less damage for {1:0.#} s.", def.Guards, def.Duration));
+        if (def.Guards > 0) lines.Add(L10n.F("+{0:0} defence for {1:0.#} s, and {2:0.#} more for each point of INT. With yours: +{3:0}.", def.Guards, def.Duration, Attributes.AsuraGuardPerInt, def.Guards + (Mind() * Attributes.AsuraGuardPerInt)));
 
         if (def.Dispels) lines.Add(L10n.T("Strips the target's rage and any shield held over it."));
 
@@ -109,6 +128,38 @@ public static class SkillText
         }
 
         if (Effect(skill) is { Length: > 0 } effect) lines.Add(effect);
+
+        // Everything of the Asura's that is a share grows with intelligence (CLS-05).
+        if (def.Class == CharacterClass.Sura)
+        {
+            switch (def.Applies?.Kind)
+            {
+                case "hex":
+                    lines.Add(L10n.F("With your INT: +{0:0} attack power.", skill.Magnitude + (Mind() * Attributes.AsuraBladePerInt)));
+                    break;
+                case "mail":
+                    lines.Add(Grown(L10n.T("Damage taken"), skill.Magnitude, Attributes.AsuraSharePerInt, Attributes.AsuraMailCap));
+                    lines.Add(Grown(L10n.T("Thrown back"), def.Applies.Magnitude, Attributes.AsuraThornsPerInt, Attributes.AsuraThornsCap));
+                    break;
+                case "weaken":
+                    lines.Add(Grown(L10n.T("Enemy damage"), def.Applies.Magnitude, Attributes.AsuraSharePerInt, Attributes.AsuraDreadCap));
+                    break;
+                case "vulnerability":
+                    lines.Add(Grown(L10n.T("Damage it takes"), def.Applies.Magnitude, Attributes.AsuraSharePerInt, Attributes.AsuraBreakCap));
+                    break;
+            }
+
+            if (def.Id == Player.DefensiveAbility.WardId) lines.Add(Grown(L10n.T("The shell"), skill.Magnitude, Attributes.AsuraWardPerInt, Attributes.AsuraWardCap));
+        }
+
+        // The Dragonseer's blessings grow with intelligence (CLS-06).
+        if (def.Class == CharacterClass.Shaman && (def.Applies?.Kind is "fortify" or "focus" || def.Id == Player.DefensiveAbility.SealId))
+        {
+            var (per, cap) = def.Applies?.Kind == "fortify" ? (Attributes.SeerBlessingPerInt, Attributes.SeerBlessingCap)
+                : def.Applies?.Kind == "focus" ? (Attributes.SeerEyePerInt, Attributes.SeerEyeCap)
+                : (Attributes.SeerSealPerInt, Attributes.SeerSealCap);
+            lines.Add(L10n.F("Grows with INT: {0:0.##}% more a point, up to {1:P0}. With yours: {2:P1}.", per * 100, cap, Attributes.SeerScaled(skill.Magnitude, Mind(), per, cap)));
+        }
 
         // The Shadow Step (CLS-03): a channelled skill that goes somewhere.
         if (def.CastType == "channel" && def.Radius > 0)
@@ -174,7 +225,7 @@ public static class SkillText
         }
         else if (skill.Applies is { Kind: "hex" })
         {
-            parts.Add(L10n.F("+{0:P0} average damage", skill.Magnitude));
+            parts.Add(L10n.F("+{0:0} attack", skill.Magnitude));
         }
         else if (skill.Applies is { Kind: "mail" })
         {
@@ -256,7 +307,7 @@ public static class SkillText
             "bleed" => L10n.F("Makes the target bleed for {0:0.#} s.", duration),
             "burn" when skill.Magnitude > 0 => L10n.F("Burns for {0:0.#} s: {1:P0} of the blow every second, up to three times over.", duration, skill.Magnitude),
             "burn" => L10n.F("Burns for {0:0.#} s.", duration),
-            "hex" => L10n.F("Your blows — not your skills — deal {0:P0} more damage for {1:0.#} s, and {2:P0} of the damage of each comes back as health.", magnitude, duration, applies.Magnitude),
+            "hex" => L10n.F("+{0:0} attack power for {1:0.#} s, and {2:0.#} more for each point of INT; {3:P0} of the damage of each blow comes back as health.", magnitude, duration, Attributes.AsuraBladePerInt, applies.Magnitude),
             "mail" => L10n.F("Take {0:P0} less damage for {1:0.#} s, moving {2:P0} slower; {3:P0} of every blow taken from close by is thrown back.", magnitude, duration, StatusEffectSet.FortifyDrag, applies.Magnitude),
             "haste" => L10n.F("Move {0:P0} faster for {1:0.#} s, and one blow in ten finds nothing.", magnitude, duration),
             "focus" => L10n.F("+{0:P0} critical chance for {1:0.#} s.", magnitude, duration),
