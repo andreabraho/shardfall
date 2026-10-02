@@ -43,7 +43,7 @@ def bow(name, wood, grip, height=0.9, curve=0.36, recurve=0.0, width=0.085, stri
         for y in (-0.165, 0.165):
             parts.append(t.box("riser", (width + 0.035, 0.06, 0.082), riser, at=(centre(y / height, curve, recurve), y, 0), bevel=0.008))
 
-    parts.append(t.cylinder("string", 0.007, height * 1.96, string or t.material("bowstring", (0.86, 0.84, 0.74)), at=(tip, 0, 0), sides=6, axis="Y"))
+    parts.append(t.cylinder("string", 0.013, height * 1.96, string or t.material("bowstring", (0.86, 0.84, 0.74)), at=(tip, 0, 0), sides=6, axis="Y"))
 
     if caps is not None:
         for side in (-1, 1):

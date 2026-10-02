@@ -190,7 +190,7 @@ public sealed class GearRig
         WeaponGlow.Set(_offHand, look.Hands == 1 ? look.Upgrade : 0, tint);
 
         DressArmour(look.ArmourSkin);
-        DressPlates(look.ArmourModel, _plates, ref _platesPath);
+        DressPlates(look.ArmourModel, _plates, ref _platesPath, _parts.ArmourFit, torsoOnly: true);
         DressPlates(look.Helmet ? look.HelmetModel : null, _helm, ref _helmPath, _parts.HelmetFit);
 
         // The same glints round the body for +8 and +9 armour (2026-09-28). Rebuilt only when
@@ -323,7 +323,7 @@ public sealed class GearRig
     /// piece's place on its bone is its place in the model undone by the bone's rest. Measured
     /// through the tree rather than in global space, so it holds before the model is shown.
     /// </remarks>
-    private void DressPlates(string? path, List<MeshInstance3D> worn, ref string wornPath, float[]? fit = null)
+    private void DressPlates(string? path, List<MeshInstance3D> worn, ref string wornPath, float[]? fit = null, bool torsoOnly = false)
     {
         path ??= "";
 
@@ -367,7 +367,8 @@ public sealed class GearRig
 
             // A head narrower or wider than the piece was made for: the piece is scaled about a
             // point, in the model's space, before it is hung.
-            if (fit is { Length: 6 })
+            // An armour is fitted round the trunk only: what rides an arm or a leg is where the limb is.
+            if (fit is { Length: 6 } && (!torsoOnly || skeleton.GetBoneName(bone) is "spine" or "chest"))
             {
                 var about = new Vector3(fit[3], fit[4], fit[5]);
 

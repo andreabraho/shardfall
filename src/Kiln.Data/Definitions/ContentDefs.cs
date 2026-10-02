@@ -812,6 +812,13 @@ public sealed class GearPartsDef
     /// </summary>
     public float[] HelmetFit { get; init; } = [];
 
+    /// <summary>
+    /// How an armour's pieces round the trunk are fitted to this body, as <see cref="HelmetFit"/>
+    /// (CLS-04): the suits were made round the Rogue's chest, and the Ranger's and the Mage's are
+    /// narrower. Empty: worn as made.
+    /// </summary>
+    public float[] ArmourFit { get; init; } = [];
+
     /// <summary>The bone the weapon is held on. The bow hand is the left (CLS-04).</summary>
     public string WeaponHand { get; init; } = "handslot.r";
 
