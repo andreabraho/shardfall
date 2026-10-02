@@ -57,8 +57,8 @@ public static class SkillText
         if (skill.DamageCoef > 0)
         {
             lines.Add(skill.Hits > 1
-                ? L10n.F("{0:P0} weapon damage, {1} times", skill.DamageCoef, skill.Hits)
-                : L10n.F("{0:P0} weapon damage", skill.DamageCoef));
+                ? L10n.F("{0:P0} of your attack power, {1} times", skill.DamageCoef, skill.Hits)
+                : L10n.F("{0:P0} of your attack power", skill.DamageCoef));
         }
 
         lines.Add(Shape(skill));

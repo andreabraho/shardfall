@@ -128,7 +128,7 @@ public partial class PlayerCharacter : Node
         {
             var remaining = Progression.UnspentAttributePoints;
 
-            Progression.SpendAttributePoint(AttributeKind.Str);
+            Progression.SpendAttributePoint(PlayerProfile.Class == Kiln.Core.Foundation.CharacterClass.Blade ? AttributeKind.Dex : AttributeKind.Str);
             if (remaining % 2 == 0) Progression.SpendAttributePoint(AttributeKind.Vit);
         }
     }

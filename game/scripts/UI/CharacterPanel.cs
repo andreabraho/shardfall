@@ -320,8 +320,11 @@ public partial class CharacterPanel : CanvasLayer
     /// <remarks>A property, so the words are read in whatever language is current.</remarks>
     private static (AttributeKind Kind, string Blurb)[] Blurbs =>
     [
-        (AttributeKind.Str, L10n.T("attack power")),
-        (AttributeKind.Dex, L10n.T("crit, pierce, evasion, attack speed")),
+        // The Ninja strikes with dexterity, and takes a little from strength (2026-10-02).
+        (AttributeKind.Str, PlayerProfile.Class == Kiln.Core.Foundation.CharacterClass.Blade ? L10n.T("a little attack power") : L10n.T("attack power")),
+        (AttributeKind.Dex, PlayerProfile.Class == Kiln.Core.Foundation.CharacterClass.Blade
+            ? L10n.T("attack power, crit, pierce, evasion, attack speed")
+            : L10n.T("crit, pierce, evasion, attack speed")),
         (AttributeKind.Int, L10n.T("mana pool and regeneration")),
         (AttributeKind.Vit, L10n.T("health, defence, regeneration")),
     ];

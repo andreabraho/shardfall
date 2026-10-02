@@ -1,4 +1,5 @@
 using Kiln.Core.Combat;
+using Kiln.Core.Foundation;
 using Kiln.Core.Progression;
 using Xunit;
 
@@ -280,5 +281,22 @@ public class CharacterProgressionTests
 
         Assert.True(stats.MaxHp > baseline.MaxHp);
         Assert.True(stats.AttackPower > baseline.AttackPower);
+    }
+
+    [Fact]
+    public void TheNinjaStrikesWithDexterity_AndALittleWithStrength()
+    {
+        // 2026-10-02: dexterity gives the Ninja its attack at the full rate, strength a third of it;
+        // the Warrior takes nothing from dexterity.
+        var even = new Attributes(10, 10, 10, 10);
+        var nimble = new Attributes(10, 20, 10, 10);
+        var strong = new Attributes(20, 10, 10, 10);
+
+        double Attack(CharacterClass cls, Attributes a) => new StatBlock { Class = cls, Level = 1, Attributes = a }.AttackPower;
+
+        Assert.Equal(10 * Attributes.AttackPerPoint, Attack(CharacterClass.Blade, nimble) - Attack(CharacterClass.Blade, even), 6);
+        Assert.Equal(10 * Attributes.BladeAttackPerStr, Attack(CharacterClass.Blade, strong) - Attack(CharacterClass.Blade, even), 6);
+        Assert.Equal(0, Attack(CharacterClass.Warrior, nimble) - Attack(CharacterClass.Warrior, even), 6);
+        Assert.Equal(10 * Attributes.AttackPerPoint, Attack(CharacterClass.Warrior, strong) - Attack(CharacterClass.Warrior, even), 6);
     }
 }

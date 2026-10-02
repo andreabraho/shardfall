@@ -63,7 +63,7 @@ public sealed class StatBlock
     public double ManaRegenInCombat => ManaRegenPerSecond * 0.30;
 
     public double AttackPower => FlatAttackPower
-        ?? (WeaponDamage + (Primary * 1.8) + (Level * 1.2) + Modifiers.AttackPowerFlat);
+        ?? (WeaponDamage + Attributes.AttackFrom(Class, Attributes) + (Level * 1.2) + Modifiers.AttackPowerFlat);
 
     public double MagicPower => WeaponDamage + (Attributes.Int * 2.1) + (Level * 1.2) + Modifiers.AttackPowerFlat;
 
