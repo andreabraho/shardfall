@@ -1,3 +1,4 @@
+using Kiln.Core.Combat;
 using Kiln.Core.Foundation;
 using Kiln.Core.Progression;
 
@@ -31,7 +32,9 @@ public readonly record struct ResolvedSkill(
     double Width = 2.0,
     double Windup = 0,
     int MaxTargets = 0,
-    bool Pierces = false)
+    bool Pierces = false,
+    double Range = 0,
+    DamageElement Element = DamageElement.Physical)
 {
     /// <summary>
     /// What each point beyond the first adds, as a fraction (REF-03).
@@ -89,6 +92,6 @@ public readonly record struct ResolvedSkill(
 
         return new ResolvedSkill(def.Id, def.Targeting, radius, cone, cooldown, mana, damage, hits,
             duration, magnitude, rank, Math.Max(1, points), def.Applies, def.HitInterval, def.Motion, def.Width,
-            def.Windup, def.MaxTargets, def.Pierces);
+            def.Windup, def.MaxTargets, def.Pierces, def.Range, def.Element);
     }
 }

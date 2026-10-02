@@ -146,13 +146,22 @@ public partial class MainMenu : Control
 
         void Portray()
         {
-            var prefix = played == CharacterClass.Blade ? "ninja_" : path == PlayerProfile.MentalPath ? "mental_" : "";
+            var prefix = played switch
+            {
+                CharacterClass.Blade => "ninja_",
+                CharacterClass.Archer => "archer_",
+                CharacterClass.Sura => "asura_",
+                CharacterClass.Shaman => "seer_",
+                _ => path == PlayerProfile.MentalPath ? "mental_" : "",
+            };
 
             foreach (var (shown, of) in portraits) shown.Icon = GD.Load<Texture2D>($"res://assets/ui/portrait_{prefix}{of}.png");
         }
 
-        var classes = new HBoxContainer();
-        classes.AddThemeConstantOverride("separation", 12);
+        // Six of them (CLS-04, 05, 06): two rows of three.
+        var classes = new GridContainer { Columns = 3 };
+        classes.AddThemeConstantOverride("h_separation", 12);
+        classes.AddThemeConstantOverride("v_separation", 8);
         var classGroup = new ButtonGroup();
 
         foreach (var (choice, branch, label) in new[]
@@ -160,6 +169,9 @@ public partial class MainMenu : Control
             (CharacterClass.Warrior, PlayerProfile.BodyPath, L10n.T("Body Warrior")),
             (CharacterClass.Warrior, PlayerProfile.MentalPath, L10n.T("Mental Warrior")),
             (CharacterClass.Blade, "", L10n.T("Ninja")),
+            (CharacterClass.Archer, "", L10n.T("Archer")),
+            (CharacterClass.Sura, "", L10n.T("Asura")),
+            (CharacterClass.Shaman, "", L10n.T("Dragonseer")),
         })
         {
             var card = new Button

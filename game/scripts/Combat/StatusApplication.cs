@@ -28,6 +28,7 @@ public static class StatusApplication
         {
             "poison" => StatusEffectSet.Poison(spec.Magnitude, spec.Duration),
             "bleed" => StatusEffectSet.Bleed(spec.Magnitude, spec.Duration),
+            "burn" => StatusEffectSet.Burn(spec.Magnitude, spec.Duration),
             "stun" => StatusEffectSet.Stun(spec.Duration),
             "slow" => StatusEffectSet.Slow(spec.Magnitude, spec.Duration),
             "weaken" => StatusEffectSet.Weaken(spec.Magnitude, spec.Duration),

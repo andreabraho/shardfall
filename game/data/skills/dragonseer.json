@@ -1,0 +1,67 @@
+[
+  // The Dragonseer's skills (CLS-06, 2026-10-02), after the original's dragon shaman and the lightning of its
+  // other branch, under names of our own (docs/09-archer-asura-dragonseer.md): seals thrown, a breath of
+  // fire down a line, a roar of flame, a blessing, a ball of lightning that leaps and an eye for the weak place — and on Shift a
+  // shell that also cleanses.
+
+  { "id": "skl_pure_seal", "name": "$skill.skl_pure_seal.name", "color": "#bff0e0", "sound": "snd_skl_iron", "class": "shaman", "tree": "dragon", "suggested_level": 3, "mana_cost": 12, "cooldown": 12,
+    "cast_type": "channel", "targeting": "self", "radius": 0, "damage_coef": 0.00, "hits": 0, "motion": "ward", "duration": 3.0, "magnitude": 0.25,
+    "mastery": {
+      "master":       { "magnitude": 0.30, "note": "$skill.skl_pure_seal.m" },
+      "grand_master": { "duration": 4.0, "note": "$skill.skl_pure_seal.g" },
+      "perfect":      { "cooldown": 9.5, "magnitude": 0.35, "note": "$skill.skl_pure_seal.p" }
+    } },
+
+  { "id": "skl_flying_seals", "name": "$skill.skl_flying_seals.name", "color": "#9fe8ff", "sound": "snd_skl_wave", "class": "shaman", "tree": "dragon", "suggested_level": 1, "mana_cost": 14, "cooldown": 5,
+    "cast_type": "instant", "targeting": "single_target", "radius": 0, "range": 13.0, "damage_coef": 0.80, "hits": 3, "hit_interval": 0.42, "motion": "seals", "needs_target": true, "element": "fire",
+    "mastery": {
+      "master":       { "hits": 4, "note": "$skill.skl_flying_seals.m" },
+      "grand_master": { "damage_coef": 0.92, "note": "$skill.skl_flying_seals.g" },
+      "perfect":      { "cooldown": 4.0, "hits": 5, "note": "$skill.skl_flying_seals.p" }
+    } },
+
+  { "id": "skl_dragon_breath", "name": "$skill.skl_dragon_breath.name", "color": "#ff7a30", "sound": "snd_skl_slam", "class": "shaman", "tree": "dragon", "suggested_level": 6, "mana_cost": 30, "cooldown": 9,
+    "cast_type": "instant", "targeting": "line", "radius": 13.0, "width": 2.6, "damage_coef": 2.20, "hits": 1, "motion": "breath", "windup": 0.65, "element": "fire",
+    "mastery": {
+      "master":       { "damage_coef": 2.50, "note": "$skill.skl_dragon_breath.m" },
+      "grand_master": { "radius": 15.0, "note": "$skill.skl_dragon_breath.g" },
+      "perfect":      { "cooldown": 7.0, "damage_coef": 2.90, "note": "$skill.skl_dragon_breath.p" }
+    } },
+
+  { "id": "skl_flame_roar", "name": "$skill.skl_flame_roar.name", "color": "#ff5a2a", "sound": "snd_skl_frenzy", "class": "shaman", "tree": "dragon", "suggested_level": 10, "mana_cost": 32, "cooldown": 11,
+    "cast_type": "instant", "targeting": "self_aoe", "radius": 5.0, "damage_coef": 1.70, "hits": 1, "motion": "roar", "windup": 0.50, "element": "fire", "magnitude": 0.15,
+    "applies": { "kind": "burn", "magnitude": 1, "duration": 5.0, "chance": 1.0 },
+    "mastery": {
+      "master":       { "damage_coef": 1.95, "note": "$skill.skl_flame_roar.m" },
+      "grand_master": { "radius": 5.8, "note": "$skill.skl_flame_roar.g" },
+      "perfect":      { "cooldown": 9.0, "magnitude": 0.20, "note": "$skill.skl_flame_roar.p" }
+    } },
+
+  { "id": "skl_dragon_blessing", "name": "$skill.skl_dragon_blessing.name", "color": "#9ee8d0", "sound": "snd_skl_iron", "class": "shaman", "tree": "dragon", "suggested_level": 5, "mana_cost": 30, "cooldown": 45,
+    "cast_type": "instant", "targeting": "self", "radius": 0, "damage_coef": 0.00, "hits": 0, "motion": "raise", "duration": 40.0, "magnitude": 0.18,
+    "applies": { "kind": "fortify", "magnitude": 0.18, "duration": 40.0, "chance": 1.0 },
+    "mastery": {
+      "master":       { "magnitude": 0.21, "note": "$skill.skl_dragon_blessing.m" },
+      "grand_master": { "duration": 50.0, "note": "$skill.skl_dragon_blessing.g" },
+      "perfect":      { "cooldown": 40.0, "magnitude": 0.25, "note": "$skill.skl_dragon_blessing.p" }
+    } },
+
+  // A ball of lightning thrown at one target, leaping from it to the nearest three within "radius" (at
+  // your call, 2026-10-02, in place of the heal).
+  { "id": "skl_storm_orb", "name": "$skill.skl_storm_orb.name", "color": "#9fd8ff", "sound": "snd_skl_aura", "class": "shaman", "tree": "dragon", "suggested_level": 8, "mana_cost": 30, "cooldown": 9,
+    "cast_type": "instant", "targeting": "single_target", "radius": 6.0, "range": 13.0, "damage_coef": 1.50, "hits": 1, "motion": "cast", "windup": 0.40, "element": "lightning", "bounces": 3,
+    "mastery": {
+      "master":       { "damage_coef": 1.75, "note": "$skill.skl_storm_orb.m" },
+      "grand_master": { "radius": 7.5, "note": "$skill.skl_storm_orb.g" },
+      "perfect":      { "cooldown": 7.0, "damage_coef": 2.05, "note": "$skill.skl_storm_orb.p" }
+    } },
+
+  { "id": "skl_dragon_eye", "name": "$skill.skl_dragon_eye.name", "color": "#ffcf5a", "sound": "snd_skl_aura", "class": "shaman", "tree": "dragon", "suggested_level": 14, "mana_cost": 24, "cooldown": 40,
+    "cast_type": "instant", "targeting": "self", "radius": 0, "damage_coef": 0.00, "hits": 0, "motion": "raise", "duration": 30.0, "magnitude": 0.15,
+    "applies": { "kind": "focus", "magnitude": 0.15, "duration": 30.0, "chance": 1.0 },
+    "mastery": {
+      "master":       { "magnitude": 0.18, "note": "$skill.skl_dragon_eye.m" },
+      "grand_master": { "duration": 36.0, "note": "$skill.skl_dragon_eye.g" },
+      "perfect":      { "cooldown": 34.0, "magnitude": 0.22, "note": "$skill.skl_dragon_eye.p" }
+    } }
+]

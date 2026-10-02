@@ -44,8 +44,11 @@ public sealed record GearLook(int Hands, int Upgrade, bool Helmet, bool Cape, Co
 /// </remarks>
 public sealed class GearRig
 {
-    /// <summary>The bone a weapon is held on.</summary>
-    private const string WeaponHand = "handslot.r";
+    /// <summary>The bone a weapon is held on: the right hand, or the left for a bow (CLS-04).</summary>
+    private readonly string WeaponHand;
+
+    /// <summary>How the body stands and strikes with what it holds: "", "bow" or "caster".</summary>
+    public string Stance => _parts.Stance;
 
     private MeshInstance3D? _oneHand;
     private MeshInstance3D? _twoHand;
@@ -88,6 +91,7 @@ public sealed class GearRig
     {
         _model = model;
         _parts = parts;
+        WeaponHand = parts.WeaponHand.Length > 0 ? parts.WeaponHand : "handslot.r";
 
         // Plain clothes in place of the model's painted armour, before anything is collected.
         Graft(model, parts);
@@ -186,7 +190,7 @@ public sealed class GearRig
         WeaponGlow.Set(_offHand, look.Hands == 1 ? look.Upgrade : 0, tint);
 
         DressArmour(look.ArmourSkin);
-        DressPlates(look.ArmourModel, _plates, ref _platesPath);
+        DressPlates(look.ArmourModel, _plates, ref _platesPath, _parts.ArmourFit, torsoOnly: true);
         DressPlates(look.Helmet ? look.HelmetModel : null, _helm, ref _helmPath, _parts.HelmetFit);
 
         // The same glints round the body for +8 and +9 armour (2026-09-28). Rebuilt only when
@@ -319,7 +323,7 @@ public sealed class GearRig
     /// piece's place on its bone is its place in the model undone by the bone's rest. Measured
     /// through the tree rather than in global space, so it holds before the model is shown.
     /// </remarks>
-    private void DressPlates(string? path, List<MeshInstance3D> worn, ref string wornPath, float[]? fit = null)
+    private void DressPlates(string? path, List<MeshInstance3D> worn, ref string wornPath, float[]? fit = null, bool torsoOnly = false)
     {
         path ??= "";
 
@@ -349,9 +353,21 @@ public sealed class GearRig
 
         var skeletonInModel = Within(skeleton, _model);
 
+        var cut = _parts.Cut.Length == 0 ? "m" : _parts.Cut;
+
         foreach (var piece in suit.FindChildren("bone__*", "MeshInstance3D", true, false).OfType<MeshInstance3D>())
         {
-            var bone = BoneOf(skeleton, piece.Name.ToString()["bone__".Length..]);
+            var named = piece.Name.ToString()["bone__".Length..];
+
+            // A piece cut for one body only (bone__chest__w): worn by that cut, left off by the other.
+            if (named.LastIndexOf("__", System.StringComparison.Ordinal) is var mark and > 0)
+            {
+                if (named[(mark + 2)..] != cut) continue;
+
+                named = named[..mark];
+            }
+
+            var bone = BoneOf(skeleton, named);
 
             if (bone < 0)
             {
@@ -363,7 +379,8 @@ public sealed class GearRig
 
             // A head narrower or wider than the piece was made for: the piece is scaled about a
             // point, in the model's space, before it is hung.
-            if (fit is { Length: 6 })
+            // An armour is fitted round the trunk only: what rides an arm or a leg is where the limb is.
+            if (fit is { Length: 6 } && (!torsoOnly || skeleton.GetBoneName(bone) is "spine" or "chest"))
             {
                 var about = new Vector3(fit[3], fit[4], fit[5]);
 

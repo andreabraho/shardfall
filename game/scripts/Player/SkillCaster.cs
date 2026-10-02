@@ -98,7 +98,7 @@ public partial class SkillCaster : Node
 
         // One aura per buff, so both can be worn at once. They belong to the skills rather
         // than to the scene, so they are built here instead of being placed in player.tscn.
-        foreach (var kind in new[] { StatusKind.Empower, StatusKind.Fortify, StatusKind.Frenzy })
+        foreach (var kind in new[] { StatusKind.Empower, StatusKind.Fortify, StatusKind.Frenzy, StatusKind.Leech, StatusKind.Thorns, StatusKind.Dread, StatusKind.Focus })
         {
             _motor.CallDeferred(Node.MethodName.AddChild,
                 new Combat.AuraVisual { Name = $"Aura{kind}", Kind = kind });
@@ -133,7 +133,12 @@ public partial class SkillCaster : Node
         return Visual.MasteryStyle.Tint(own, skill.Rank).Lerp(Visual.MasteryStyle.Accent(own, skill.Rank), 0.3f);
     }
 
-    private static float FxBright(ResolvedSkill skill) => Visual.MasteryStyle.Brightness(skill.Rank);
+    private static float FxBright(ResolvedSkill skill) => Visual.MasteryStyle.Brightness(skill.Rank) * CasterBoost;
+
+    /// <summary>The Dragonseer's magic is drawn brighter and larger than a blade's (2026-10-02, at your call).</summary>
+    private static float CasterBoost => PlayerProfile.Class == CharacterClass.Shaman ? 1.5f : 1f;
+
+    private static float CasterScale => PlayerProfile.Class == CharacterClass.Shaman ? 1.8f : 1f;
 
     private static string SoundOf(string skillId) =>
         GameContent.Database.Skills.TryGetValue(skillId, out var def) ? def.Sound : Kiln.Data.Ids.Sounds.SndSkill;
@@ -245,7 +250,7 @@ public partial class SkillCaster : Node
             {
                 // Ground-targeted skills aim while held and fire on release, so the area is
                 // visible before committing. Everything else fires immediately.
-                if (IsGroundTargeted(id) && CanCast(id))
+                if (IsGroundTargeted(id) && CanCast(id) && GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat")?.Target is not { IsAlive: true })
                 {
                     _aiming = id;
                 }
@@ -331,7 +336,7 @@ public partial class SkillCaster : Node
                 return;
             }
 
-            if (def.Targeting == SkillTargeting.SingleTarget && chosen.Body.GlobalPosition.DistanceTo(_motor.GlobalPosition) > SingleReach)
+            if (def.Targeting == SkillTargeting.SingleTarget && chosen.Body.GlobalPosition.DistanceTo(_motor.GlobalPosition) > ReachOf(skill))
             {
                 UI.WorldNotice.Show(GetTree(), L10n.T("Too far."));
                 return;
@@ -444,11 +449,19 @@ public partial class SkillCaster : Node
         var aim = skill.Targeting == SkillTargeting.GroundAoe ? AimDirection(origin) : _motor.Facing;
 
         if (GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat")?.Target is { IsAlive: true } target
-            && (skill.Targeting is SkillTargeting.SingleTarget or SkillTargeting.Cone or SkillTargeting.Line || skill.Motion == "roll"))
+            && (skill.Targeting is SkillTargeting.SingleTarget or SkillTargeting.Cone or SkillTargeting.Line or SkillTargeting.GroundAoe || skill.Motion == "roll"))
         {
             var toTarget = (target.Body.GlobalPosition - origin) with { Y = 0 };
 
             if (toTarget.LengthSquared() > 0.0001f) aim = toTarget.Normalized();
+        }
+
+        // The Dread (CLS-05): while what stands near strikes weaker, the Asura's defence is raised.
+        if (GameContent.Database.Skills.TryGetValue(skill.Id, out var cast) && cast.Guards > 0)
+        {
+            if (_motor.GetNodeOrNull<Combat.AuraVisual>($"Aura{StatusKind.Dread}") is { } dread) dread.Rank = skill.Rank;
+
+            _self.Statuses.Apply(StatusEffectSet.Dread(cast.Guards + (_self.Stats.Attributes.Int * Attributes.AsuraGuardPerInt), cast.Duration));
         }
 
         // The Warrior stands still while a skill plays out (REF-01): held for every pulse it
@@ -461,6 +474,13 @@ public partial class SkillCaster : Node
         // A slow skill's move (2026-10-02) is played to land as its wait ends, not at once.
         if (!PerHit(skill.Motion) && !Charged(skill)) _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove(skill.Motion, aim, CastHold(skill), FxColour(skill), skill.Windup);
 
+        // One slow turn (CLS-05, the Dark Vortex): the body goes round once through the whole of the
+        // cast, and the blow lands as it comes round.
+        if (skill.Motion == "spin" && skill.Windup > 0)
+        {
+            _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Spin(CastHold(skill), 0, FxColour(skill));
+        }
+
         // A charged skill gathers itself first: the Warrior draws back, light gathers at the
         // blade, and the blow goes when the windup is spent (REF-21, the Piercing Blow).
         if (Charged(skill))
@@ -469,9 +489,19 @@ public partial class SkillCaster : Node
             SkillFx.Gather(this, origin, aim, skill.Windup, FxColour(skill), FxBright(skill));
         }
 
-        var center = skill.Targeting == SkillTargeting.GroundAoe
-            ? GroundPoint(origin, aim, (float)skill.Radius)
-            : origin;
+        var center = origin;
+
+        // An area placed on the ground goes on the chosen target, if it is within the skill's
+        // range (CLS-04, the Rain of Shafts) — otherwise where the cursor points, as ever.
+        if (skill.Targeting == SkillTargeting.GroundAoe)
+        {
+            var chosen = GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat")?.Target;
+            var range = skill.Range > 0 ? (float)skill.Range : (float)skill.Radius * 2f;
+
+            center = chosen is { IsAlive: true } && chosen.Body.GlobalPosition.DistanceTo(origin) <= range
+                ? chosen.Body.GlobalPosition
+                : GroundPoint(origin, aim, skill.Range > 0 ? (float)skill.Range * 0.5f : (float)skill.Radius);
+        }
 
         var pulse = new Pulse
         {
@@ -516,14 +546,55 @@ public partial class SkillCaster : Node
         _motor.HoldFor(SelfCastHold);
         _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove(skill.Motion, _motor.Facing, SelfCastHold);
 
+        // The Dragonseer's blessings grow with its intelligence (CLS-06, at your call).
+        if (PlayerProfile.Class == CharacterClass.Shaman)
+        {
+            var mind = _self.Stats.Attributes.Int;
+
+            if (kind == "fortify") skill = skill with { Magnitude = Attributes.SeerScaled(skill.Magnitude, mind, Attributes.SeerBlessingPerInt, Attributes.SeerBlessingCap) };
+            if (kind == "focus") skill = skill with { Magnitude = Attributes.SeerScaled(skill.Magnitude, mind, Attributes.SeerEyePerInt, Attributes.SeerEyeCap) };
+        }
+
+        // And so does everything of the Asura's (CLS-05, at your call).
+        var asura = PlayerProfile.Class == CharacterClass.Sura;
+        var wit = _self.Stats.Attributes.Int;
+
         var effect = kind switch
         {
+            // The Hexed Blade: attack power, in points — not average damage — and more for every point of intelligence.
+            "hex" => StatusEffectSet.Might(skill.Magnitude + (wit * Attributes.AsuraBladePerInt), skill.Duration),
+            "mail" when asura => StatusEffectSet.Fortify(Attributes.SeerScaled(skill.Magnitude, wit, Attributes.AsuraSharePerInt, Attributes.AsuraMailCap), skill.Duration),
             "fortify" => StatusEffectSet.Fortify(skill.Magnitude, skill.Duration),
             "empower" => StatusEffectSet.Empower(skill.Magnitude, skill.Duration),
             "frenzy" => StatusEffectSet.Frenzy(skill.Magnitude, skill.Duration),
             "stealth" => StatusEffectSet.Stealth(skill.Magnitude, skill.Duration),
+            // The Arcane Mail (CLS-05): less taken, and a share thrown back.
+            "mail" => StatusEffectSet.Fortify(skill.Magnitude, skill.Duration),
+            "haste" => StatusEffectSet.Haste(skill.Magnitude, skill.Duration),
+            "focus" => StatusEffectSet.Focus(skill.Magnitude, skill.Duration),
             _ => null,
         };
+
+        // What rides with it: the share a hexed blade drinks, the share a mail throws back.
+        var second = kind switch
+        {
+            "hex" => StatusEffectSet.Leech(skill.Applies!.Magnitude, skill.Duration),
+            "mail" => StatusEffectSet.Thorns(asura
+                ? Attributes.SeerScaled(skill.Applies!.Magnitude, wit, Attributes.AsuraThornsPerInt, Attributes.AsuraThornsCap)
+                : skill.Applies!.Magnitude, skill.Duration),
+            _ => null,
+        };
+
+        // A heal: health back at once, a share of the whole (made for the Dragonseer, CLS-06; no skill uses it since the Storm Orb took its place).
+        if (kind == "heal")
+        {
+            var mended = (int)System.Math.Round(_self.Stats.MaxHp * skill.Magnitude);
+
+            _self.Heal(mended);
+            Combat.CombatFeedback.Heal(_motor.GlobalPosition + (Vector3.Up * 2.0f), mended);
+            SkillFx.Cleanse(this, _motor.GlobalPosition);
+            return;
+        }
 
         // Going unseen stops the fight with whatever was being fought: the next blow is chosen,
         // not owed. The target stays chosen.
@@ -534,10 +605,18 @@ public partial class SkillCaster : Node
 
         switch (kind)
         {
+            // The Dragon's Blessing (CLS-06, at your call): an aura thrown up round the Dragonseer, not a ring.
+            case "fortify" when PlayerProfile.Class == CharacterClass.Shaman: SkillFx.Shroud(this, at, 0.7f, FxColour(skill), FxBright(skill)); break;
             case "fortify": SkillFx.Harden(this, at, FxColour(skill), FxBright(skill)); break;
             case "empower": SkillFx.Sharpen(this, at, FxColour(skill), FxBright(skill)); break;
             case "frenzy": SkillFx.Frenzy(this, at, FxColour(skill), FxBright(skill)); break;
             case "stealth": SkillFx.Harden(this, at, FxColour(skill), FxBright(skill)); break;
+            // The Asura's (CLS-05): nothing drawn on the ground — light at the blade, a shroud round the body.
+            case "hex": SkillFx.Kindle(this, at, FxColour(skill), FxBright(skill)); break;
+            case "mail": SkillFx.Shroud(this, at, 0.6f, FxColour(skill), FxBright(skill)); break;
+            case "haste": SkillFx.Frenzy(this, at, FxColour(skill), FxBright(skill)); break;
+            // The Dragon's Eye (CLS-06, at your call): a ball of light between the hand and the fan while it is said.
+            case "focus": SkillFx.Orb(this, at, _motor.Facing, SelfCastHold, FxColour(skill), FxBright(skill)); break;
         }
 
         if (effect is null)
@@ -554,6 +633,14 @@ public partial class SkillCaster : Node
         }
 
         _self.Statuses.Apply(effect);
+
+        if (second is not null)
+        {
+            // What rides with it wears the same rank: its colour and how much of it there is.
+            if (_motor.GetNodeOrNull<Combat.AuraVisual>($"Aura{second.Kind}") is { } worn) worn.Rank = skill.Rank;
+
+            _self.Statuses.Apply(second);
+        }
     }
 
     /// <summary>
@@ -561,7 +648,7 @@ public partial class SkillCaster : Node
     /// Whirlwind's turns, the Triple Cut's three cuts, and the Piercing Blow's thrust once its
     /// charge is spent (REF-21).
     /// </summary>
-    private static bool PerHit(string motion) => motion is "spin" or "roll" or "triple" or "charge" or "dash";
+    private static bool PerHit(string motion) => motion is "spin" or "roll" or "triple" or "charge" or "dash" or "volley" or "seals";
 
     /// <summary>The Triple Cut's three moves, one per hit: across, down on the diagonal, and overhead.</summary>
     private static readonly string[] TripleMoves = ["slice", "wave", "chop"];
@@ -572,11 +659,18 @@ public partial class SkillCaster : Node
     /// <summary>How far a single-target skill lands on the creature chosen.</summary>
     private const float SingleReach = 4.5f;
 
+    /// <summary>How far this skill lands on the creature chosen: its own range, or a blade's reach.</summary>
+    private static float ReachOf(ResolvedSkill skill) => skill.Range > 0 ? (float)skill.Range : SingleReach;
+
     /// <summary>How far a single-target skill reaches for a creature when none is chosen.</summary>
+
     private const float UnaimedReach = 3.5f;
 
-    /// <summary>How long a self-buff plants the character. Long enough to read as a cast.</summary>
-    private const double SelfCastHold = 0.6;
+    /// <summary>
+    /// How long a self-buff plants the character. Long enough to read as a cast — and twice as long
+    /// for the Dragonseer, whose blessings are spoken, not shouted (2026-10-02, at your call).
+    /// </summary>
+    private static double SelfCastHold => PlayerProfile.Class == CharacterClass.Shaman ? 1.2 : 0.6;
 
     /// <summary>How long a skill holds the character: every pulse, and a beat after the last.</summary>
     private static double CastHold(ResolvedSkill skill) =>
@@ -586,7 +680,7 @@ public partial class SkillCaster : Node
     /// Whether a skill with a wait gathers itself and is then let go — the Piercing Blow, the Blade
     /// Wave — rather than playing one slow move through it, as the Heavy Strike and the Ground Slam do.
     /// </summary>
-    private static bool Charged(ResolvedSkill skill) => skill.Windup > 0 && skill.Motion is "charge" or "wave";
+    private static bool Charged(ResolvedSkill skill) => skill.Windup > 0 && skill.Motion is "charge" or "wave" or "breath";
 
     private void FirePulse(Pulse pulse)
     {
@@ -607,7 +701,8 @@ public partial class SkillCaster : Node
         {
             // No ribbon: a blade turning all the way round draws a disc, and the rings of wind
             // already show the turn.
-            _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Spin(skill.HitInterval, pulse.Index);
+            if (skill.Windup <= 0) _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Spin(skill.HitInterval, pulse.Index);
+
             Audio.AudioDirector.Play(SoundOf(skill.Id), _motor.GlobalPosition);
 
             // The Blade Vortex (CLS-03): each turn carries the Ninja on, through whatever is there.
@@ -615,7 +710,7 @@ public partial class SkillCaster : Node
 
             // The Whirlwind carries the Warrior three metres on in all (2026-10-02, at the user's call), a
             // share of it each turn.
-            if (skill.Motion == "spin") Dash(aim, WhirlAdvance / System.Math.Max(1, skill.Hits), skill.HitInterval, Tween.TransitionType.Linear);
+            if (skill.Motion == "spin" && PlayerProfile.Class == CharacterClass.Warrior) Dash(aim, WhirlAdvance / System.Math.Max(1, skill.Hits), skill.HitInterval, Tween.TransitionType.Linear);
         }
 
         // The Flash Step (CLS-03): the Ninja goes through what stands in the line, to its end or to
@@ -640,7 +735,15 @@ public partial class SkillCaster : Node
             Audio.AudioDirector.Play(SoundOf(skill.Id), _motor.GlobalPosition);
         }
 
+        // The Volley and the Flying Seals (CLS-04, CLS-06): a shot, or a seal thrown, on every hit.
+        if (skill.Motion is "volley" or "seals")
+        {
+            _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove(skill.Motion, aim, skill.HitInterval);
+            Audio.AudioDirector.Play(SoundOf(skill.Id), _motor.GlobalPosition);
+        }
+
         // The Triple Cut: a different cut each hit, each with its sound and its ribbon.
+
         if (skill.Motion == "triple")
         {
             _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove(
@@ -657,9 +760,19 @@ public partial class SkillCaster : Node
                 SkillFx.Whirl(this, center, (float)skill.Radius, colour, skill.HitInterval, pulse.Index, bright);
                 break;
 
+            // The Dread (CLS-05): a shroud thrown out from the Asura, and no ring on the ground.
+            case SkillTargeting.SelfAoe when skill.Motion == "dread":
+                targets = AreaQuery.Sphere(_motor, center, (float)skill.Radius);
+                SkillFx.Shroud(this, center, (float)skill.Radius * 0.5f, colour, bright);
+                break;
+
             case SkillTargeting.SelfAoe:
                 targets = AreaQuery.Sphere(_motor, center, (float)skill.Radius);
                 SkillFx.Slam(this, center, (float)skill.Radius, colour, bright);
+
+                // The Flame Roar (CLS-06): the fire itself, standing up all over its circle.
+                if (skill.Element == DamageElement.Fire) SkillFx.Flames(this, center, (float)skill.Radius, colour, bright);
+
                 break;
 
             case SkillTargeting.Cone when skill.Motion == "triple":
@@ -667,9 +780,13 @@ public partial class SkillCaster : Node
                 SkillFx.Cut(this, center, aim, (float)skill.Radius, pulse.Index, colour, bright);
                 break;
 
-            case SkillTargeting.Line when skill.Motion is "charge" or "dash":
+            case SkillTargeting.Line when skill.Motion is "charge" or "dash" or "shoot":
                 targets = AreaQuery.Line(_motor, center, aim, (float)skill.Radius, (float)skill.Width);
                 SkillFx.Pierce(this, center, aim, (float)skill.Radius, colour, bright);
+
+                // The Venom Shaft (CLS-04): what it leaves hanging in the air behind it.
+                if (skill.Motion == "shoot" && skill.Applies is { Kind: "poison" }) SkillFx.Venom(this, center, aim, (float)skill.Radius, colour, bright);
+
                 break;
 
             case SkillTargeting.Cone:
@@ -694,11 +811,93 @@ public partial class SkillCaster : Node
             case SkillTargeting.Line:
                 targets = AreaQuery.Line(_motor, center, aim, (float)skill.Radius, (float)skill.Width);
                 SkillFx.Wave(this, center, aim, (float)skill.Radius, (float)skill.Width, colour, bright);
+
+                // The Dragon's Breath (CLS-06): fire all the way down its line.
+                if (skill.Motion == "breath")
+                {
+                    for (var step = 1; step <= 5; step++)
+                    {
+                        SkillFx.Flames(this, center + (aim * ((float)skill.Radius * step / 5.5f)), (float)skill.Width * 0.6f, colour, bright);
+                    }
+                }
+
                 break;
 
             case SkillTargeting.GroundAoe:
                 targets = AreaQuery.Sphere(_motor, center, (float)skill.Radius);
                 AoeVisual.Circle(center, (float)skill.Radius, hostile: false, skill.Rank);
+
+                // Loosed upward, it comes down as a rain (CLS-04).
+                if (skill.Motion == "shoot_up") SkillFx.Rain(this, center, (float)skill.Radius, colour, bright);
+
+                break;
+
+            // A shot, a seal, a claw: at the chosen target from as far as the skill reaches, or at
+            // the nearest in front within that reach — and, for one that bursts, at everything
+            // round where it lands (CLS-04, CLS-05, CLS-06).
+            case SkillTargeting.SingleTarget when skill.Range > 0:
+                var marked = GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat")?.Target;
+
+                if (marked is not null && (!marked.IsAlive || marked.Body.GlobalPosition.DistanceTo(center) > skill.Range + 1.5)) marked = null;
+
+                marked ??= AreaQuery.Cone(_motor, center, aim, (float)skill.Range, 70f)
+                    .Where(t => t.IsAlive)
+                    .OrderBy(t => t.Body.GlobalPosition.DistanceSquaredTo(center))
+                    .FirstOrDefault();
+
+                var lands = marked?.Body.GlobalPosition ?? center + (aim * (float)skill.Range);
+
+                if (skill.Motion == "claw")
+                {
+                    if (marked is not null) SkillFx.Claw(this, lands, colour, bright);
+                }
+                else if (skill.Motion == "seals")
+                {
+                    SkillFx.Seal(this, center, lands, marked is not null, pulse.Index, colour, bright);
+                }
+                else if (skill.Motion == "cast")
+                {
+                    SkillFx.Bolt(this, center, lands, marked is not null, colour, bright, CasterScale);
+                }
+                else
+                {
+                    // The Thunder Shot (CLS-04): a thicker shaft, and the bolt where it lands.
+                    var thunder = skill.Applies is { Kind: "stun" };
+
+                    SkillFx.Arrow(this, center, lands, colour, thunder ? bright * 1.5f : bright, thunder ? 0.42f : 0.2f);
+
+                    if (thunder && marked is not null) SkillFx.Thunder(this, lands, colour, bright);
+                }
+
+                targets = marked is null ? [] : [marked];
+
+                // The Storm Orb (CLS-06): from the one it strikes it leaps to the nearest not yet
+                // struck within its radius, and on from that one, as many times as it has leaps.
+                if (marked is not null && GameContent.Database.Skills.TryGetValue(skill.Id, out var orb) && orb.Bounces > 0)
+                {
+                    var last = marked;
+
+                    for (var leap = 0; leap < orb.Bounces; leap++)
+                    {
+                        var from = last.Body.GlobalPosition;
+                        var next = AreaQuery.Sphere(_motor, from, (float)skill.Radius)
+                            .Where(t => t.IsAlive && !targets.Contains(t))
+                            .OrderBy(t => t.Body.GlobalPosition.DistanceSquaredTo(from))
+                            .FirstOrDefault();
+
+                        if (next is null) break;
+
+                        SkillFx.Bolt(this, from, next.Body.GlobalPosition, true, colour, bright, CasterScale);
+                        targets.Add(next);
+                        last = next;
+                    }
+                }
+                else if (marked is not null && skill.Radius > 0)
+                {
+                    SkillFx.Slam(this, lands, (float)skill.Radius, colour, bright, quiet: true);
+                    targets = [marked, .. AreaQuery.Sphere(_motor, lands, (float)skill.Radius).Where(t => !ReferenceEquals(t, marked))];
+                }
+
                 break;
 
             case SkillTargeting.SingleTarget:
@@ -766,26 +965,52 @@ public partial class SkillCaster : Node
                 SkillFx.Impact(this, target.Body.GlobalPosition, colour, 0.8f, bright);
             }
 
-            var dealt = target.TakeAttack(_self, skillCoef: skill.DamageCoef * ambush, skill: true, pierce: skill.Pierces);
+            // A skill that deals nothing only leaves its mark: the Dread (CLS-05).
+            var dealt = skill.DamageCoef > 0
+                ? target.TakeAttack(_self, skillCoef: skill.DamageCoef * ambush, skill: true, pierce: skill.Pierces, element: skill.Element)
+                : new DamageResult(0, false, false, false, 0);
+
+            // The Spellbreak (CLS-05): what it had raised is gone.
+            if (target.IsAlive && !dealt.Evaded && target.Body is EnemyBrain raised
+                && GameContent.Database.Skills.TryGetValue(skill.Id, out var cast) && cast.Dispels)
+            {
+                raised.Dispel();
+            }
 
             // What is not a creature — a shard — cannot be stunned, but can be weakened.
             var resist = (target.Body as EnemyBrain)?.StunResist ?? 1.0;
 
             // A poison or a bleeding the skill gives a strength of its own is a share of the blow
             // that put it there, every tick, so it grows with the blade and the points (CLS-03).
-            if (skill.Applies is { Kind: "poison" or "bleed" } dot && skill.Magnitude > 0)
+            if (skill.Applies is { Kind: "poison" or "bleed" or "burn" } dot && skill.Magnitude > 0)
             {
                 if (target.IsAlive && !dealt.Evaded && GameSession.CombatRng.Chance(dot.Chance))
                 {
                     var tick = System.Math.Max(1.0, dealt.Amount * skill.Magnitude);
 
-                    target.Statuses.Apply(dot.Kind == "poison" ? StatusEffectSet.Poison(tick, dot.Duration) : StatusEffectSet.Bleed(tick, dot.Duration));
+                    target.Statuses.Apply(dot.Kind == "poison" ? StatusEffectSet.Poison(tick, dot.Duration)
+                        : dot.Kind == "burn" ? StatusEffectSet.Burn(tick, dot.Duration) : StatusEffectSet.Bleed(tick, dot.Duration));
                 }
 
                 continue;
             }
 
-            StatusApplication.Try(skill.Applies, target, resist);
+            // What the Asura leaves on what it hits grows with its intelligence too: the Dread, the Spellbreak.
+            var mark = skill.Applies;
+
+            if (mark is { Kind: "weaken" or "vulnerability" } && PlayerProfile.Class == CharacterClass.Sura)
+            {
+                mark = new StatusApplicationDef
+                {
+                    Kind = mark.Kind,
+                    Duration = mark.Duration,
+                    Chance = mark.Chance,
+                    Magnitude = Attributes.SeerScaled(mark.Magnitude, _self.Stats.Attributes.Int, Attributes.AsuraSharePerInt,
+                        mark.Kind == "weaken" ? Attributes.AsuraDreadCap : Attributes.AsuraBreakCap),
+                };
+            }
+
+            StatusApplication.Try(mark, target, resist);
         }
     }
 

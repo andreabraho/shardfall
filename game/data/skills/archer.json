@@ -1,0 +1,65 @@
+[
+  // The Archer's skills (CLS-04, 2026-10-02), after the original's bow fighter, under names of our own
+  // (docs/09-archer-asura-dragonseer.md): a volley, a rain, a burning arrow, a lighter step, a poisoned
+  // shaft and one heavy shot — and on Shift a leap back.
+
+  { "id": "skl_backstep", "name": "$skill.skl_backstep.name", "color": "#d8f0c0", "sound": "snd_skl_whirl", "class": "archer", "tree": "bow", "suggested_level": 3, "mana_cost": 0, "cooldown": 6,
+    "cast_type": "channel", "targeting": "self", "radius": 4.5, "damage_coef": 0.00, "hits": 0, "motion": "backstep", "duration": 0.45, "magnitude": 1.00,
+    "mastery": {
+      "master":       { "duration": 0.55, "note": "$skill.skl_backstep.m" },
+      "grand_master": { "radius": 5.5, "note": "$skill.skl_backstep.g" },
+      "perfect":      { "cooldown": 4.5, "duration": 0.65, "note": "$skill.skl_backstep.p" }
+    } },
+
+  { "id": "skl_volley", "name": "$skill.skl_volley.name", "color": "#fff0c8", "sound": "snd_skl_pierce", "class": "archer", "tree": "bow", "suggested_level": 1, "mana_cost": 14, "cooldown": 5,
+    "cast_type": "instant", "targeting": "single_target", "radius": 0, "range": 14.0, "damage_coef": 0.60, "hits": 4, "hit_interval": 0.16, "motion": "volley", "needs_target": true,
+    "mastery": {
+      "master":       { "hits": 5, "note": "$skill.skl_volley.m" },
+      "grand_master": { "damage_coef": 0.70, "note": "$skill.skl_volley.g" },
+      "perfect":      { "cooldown": 4.0, "hits": 6, "note": "$skill.skl_volley.p" }
+    } },
+
+  { "id": "skl_arrow_rain", "name": "$skill.skl_arrow_rain.name", "color": "#e6f2ff", "sound": "snd_skl_wave", "class": "archer", "tree": "bow", "suggested_level": 6, "mana_cost": 26, "cooldown": 9,
+    "cast_type": "instant", "targeting": "ground_aoe", "radius": 4.0, "range": 13.0, "damage_coef": 0.85, "hits": 3, "hit_interval": 0.30, "motion": "shoot_up",
+    "mastery": {
+      "master":       { "damage_coef": 1.00, "note": "$skill.skl_arrow_rain.m" },
+      "grand_master": { "radius": 4.8, "note": "$skill.skl_arrow_rain.g" },
+      "perfect":      { "cooldown": 7.5, "hits": 4, "note": "$skill.skl_arrow_rain.p" }
+    } },
+
+  { "id": "skl_blazing_arrow", "name": "$skill.skl_blazing_arrow.name", "color": "#ff8a3a", "sound": "snd_skl_slam", "class": "archer", "tree": "bow", "suggested_level": 10, "mana_cost": 24, "cooldown": 8,
+    "cast_type": "instant", "targeting": "single_target", "radius": 3.0, "range": 14.0, "damage_coef": 2.30, "hits": 1, "motion": "shoot", "windup": 0.35, "element": "fire", "magnitude": 0.12,
+    "applies": { "kind": "burn", "magnitude": 1, "duration": 5.0, "chance": 1.0 },
+    "mastery": {
+      "master":       { "damage_coef": 2.60, "note": "$skill.skl_blazing_arrow.m" },
+      "grand_master": { "magnitude": 0.16, "note": "$skill.skl_blazing_arrow.g" },
+      "perfect":      { "cooldown": 6.5, "damage_coef": 2.90, "note": "$skill.skl_blazing_arrow.p" }
+    } },
+
+  { "id": "skl_light_step", "name": "$skill.skl_light_step.name", "color": "#b8ffd8", "sound": "snd_skl_aura", "class": "archer", "tree": "bow", "suggested_level": 8, "mana_cost": 20, "cooldown": 28,
+    "cast_type": "instant", "targeting": "self", "radius": 0, "damage_coef": 0.00, "hits": 0, "motion": "raise", "duration": 15.0, "magnitude": 0.35,
+    "applies": { "kind": "haste", "magnitude": 0.35, "duration": 15.0, "chance": 1.0 },
+    "mastery": {
+      "master":       { "duration": 18.0, "note": "$skill.skl_light_step.m" },
+      "grand_master": { "magnitude": 0.42, "note": "$skill.skl_light_step.g" },
+      "perfect":      { "cooldown": 22.0, "duration": 20.0, "note": "$skill.skl_light_step.p" }
+    } },
+
+  { "id": "skl_venom_shaft", "name": "$skill.skl_venom_shaft.name", "color": "#8fe04a", "sound": "snd_skl_pierce", "class": "archer", "tree": "bow", "suggested_level": 14, "mana_cost": 28, "cooldown": 10,
+    "cast_type": "instant", "targeting": "line", "radius": 14.0, "width": 1.6, "damage_coef": 1.40, "hits": 1, "motion": "shoot", "magnitude": 0.18,
+    "applies": { "kind": "poison", "magnitude": 1, "duration": 6.0, "chance": 1.0 },
+    "mastery": {
+      "master":       { "damage_coef": 1.60, "note": "$skill.skl_venom_shaft.m" },
+      "grand_master": { "magnitude": 0.22, "note": "$skill.skl_venom_shaft.g" },
+      "perfect":      { "cooldown": 8.0, "damage_coef": 1.85, "note": "$skill.skl_venom_shaft.p" }
+    } },
+
+  { "id": "skl_thunder_shot", "name": "$skill.skl_thunder_shot.name", "color": "#ffe66a", "sound": "snd_skl_heavy", "class": "archer", "tree": "bow", "suggested_level": 18, "mana_cost": 34, "cooldown": 14,
+    "cast_type": "instant", "targeting": "single_target", "radius": 0, "range": 15.0, "damage_coef": 3.20, "hits": 1, "motion": "shoot", "windup": 0.60, "needs_target": true,
+    "applies": { "kind": "stun", "duration": 1.2, "chance": 0.40 },
+    "mastery": {
+      "master":       { "damage_coef": 3.60, "note": "$skill.skl_thunder_shot.m" },
+      "grand_master": { "cooldown": 12.0, "note": "$skill.skl_thunder_shot.g" },
+      "perfect":      { "cooldown": 10.0, "damage_coef": 4.10, "note": "$skill.skl_thunder_shot.p" }
+    } }
+]

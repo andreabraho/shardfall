@@ -25,6 +25,7 @@ public readonly record struct Attributes(int Str, int Dex, int Int, int Vit)
         CharacterClass.Blade => attributes.Dex,
         CharacterClass.Sura => attributes.Str,
         CharacterClass.Shaman => attributes.Int,
+        CharacterClass.Archer => attributes.Dex,
         _ => attributes.Str,
     };
 
@@ -45,12 +46,61 @@ public readonly record struct Attributes(int Str, int Dex, int Int, int Vit)
     public const double MentalSkillPerVit = 0.6;
 
     /// <summary>
+    /// Attack power the Asura's skills, and only its skills, take from each point of intelligence
+    /// (CLS-05, 2026-10-02): the sword strikes with strength, the magic in it with the mind.
+    /// </summary>
+    public const double AsuraSkillPerInt = 1.2;
+
+    /// <summary>
+    /// What each point of intelligence adds to the Dragonseer's blessings (CLS-06, 2026-10-02, at
+    /// your call: "all of its skills scale with INT, the critical and the damage reduced too") —
+    /// its fire already strikes with intelligence — and where each stops growing.
+    /// </summary>
+    public const double SeerBlessingPerInt = 0.0012;
+
+    public const double SeerBlessingCap = 0.40;
+
+    public const double SeerEyePerInt = 0.0015;
+
+    public const double SeerEyeCap = 0.35;
+
+    public const double SeerSealPerInt = 0.002;
+
+    public const double SeerSealCap = 0.50;
+
+    /// <summary>
+    /// What each point of intelligence adds to the Asura's skills besides their damage (CLS-05,
+    /// 2026-10-02, at your call: "all of the Asura's skills scale with INT"): attack power on the
+    /// Hexed Blade, and a share on everything that is a share, each up to a cap.
+    /// </summary>
+    public const double AsuraBladePerInt = 0.6;
+
+    public const double AsuraSharePerInt = 0.001;
+
+    public const double AsuraThornsPerInt = 0.0025;
+
+    public const double AsuraMailCap = 0.40;
+
+    public const double AsuraThornsCap = 0.60;
+
+    public const double AsuraDreadCap = 0.45;
+
+    /// <summary>Defence the Dread gives its caster for each point of intelligence, on top of its own.</summary>
+    public const double AsuraGuardPerInt = 0.8;
+
+    public const double AsuraBreakCap = 0.45;
+
+    /// <summary>A blessing's strength at this much intelligence: its own, and a little for every point, up to its cap.</summary>
+    public static double SeerScaled(double strength, int intelligence, double perPoint, double cap) =>
+        Math.Min(Math.Max(strength, cap), strength + (Math.Max(0, intelligence) * perPoint));
+
+    /// <summary>
     /// The attack power a class draws from its attributes: its own attribute at the full rate,
-    /// and for the Ninja a third of that from strength besides.
+    /// and for the Ninja and the Archer a third of that from strength besides.
     /// </summary>
     public static double AttackFrom(CharacterClass characterClass, Attributes attributes) =>
         (PrimaryFor(characterClass, attributes) * AttackPerPoint)
-        + (characterClass == CharacterClass.Blade ? attributes.Str * BladeAttackPerStr : 0);
+        + (characterClass is CharacterClass.Blade or CharacterClass.Archer ? attributes.Str * BladeAttackPerStr : 0);
 }
 
 /// <summary>Damage element, for the resistance step of the pipeline.</summary>

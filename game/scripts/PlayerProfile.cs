@@ -207,12 +207,31 @@ public static class PlayerProfile
     /// The player's visual: the Knight's skeleton wearing the head and body of their class and of
     /// a man or a woman.
     /// </summary>
-    public static string BodyVisual => Class == Kiln.Core.Foundation.CharacterClass.Blade
+    public static string BodyVisual => Class switch
+    {
+        Kiln.Core.Foundation.CharacterClass.Archer => Body == Woman ? Kiln.Data.Ids.Visuals.MeshPlayerArcherWoman : Kiln.Data.Ids.Visuals.MeshPlayerArcher,
+        Kiln.Core.Foundation.CharacterClass.Sura => Body == Woman ? Kiln.Data.Ids.Visuals.MeshPlayerAsuraWoman : Kiln.Data.Ids.Visuals.MeshPlayerAsura,
+        Kiln.Core.Foundation.CharacterClass.Shaman => Body == Woman ? Kiln.Data.Ids.Visuals.MeshPlayerSeerWoman : Kiln.Data.Ids.Visuals.MeshPlayerSeer,
+        _ => WarriorOrNinja,
+    };
+
+    private static string WarriorOrNinja => Class == Kiln.Core.Foundation.CharacterClass.Blade
         ? Body == Woman ? Kiln.Data.Ids.Visuals.MeshPlayerNinjaWoman : Kiln.Data.Ids.Visuals.MeshPlayerNinja
         : Path == MentalPath ? Body == Woman ? Kiln.Data.Ids.Visuals.MeshPlayerMentalWoman : Kiln.Data.Ids.Visuals.MeshPlayerMental
         : Body == Woman ? Kiln.Data.Ids.Visuals.MeshPlayerWoman : Kiln.Data.Ids.Visuals.MeshPlaceholderPlayer;
 
+    /// <summary>The name of the class played as the player reads it, in English: the key to translate.</summary>
+    public static string ClassName => Class switch
+    {
+        Kiln.Core.Foundation.CharacterClass.Blade => "Ninja",
+        Kiln.Core.Foundation.CharacterClass.Archer => "Archer",
+        Kiln.Core.Foundation.CharacterClass.Sura => "Asura",
+        Kiln.Core.Foundation.CharacterClass.Shaman => "Dragonseer",
+        _ => Path == BodyPath ? "Body Warrior" : Path == MentalPath ? "Mental Warrior" : "Warrior",
+    };
+
     public static void Reset()
+
     {
         Exists = false;
         Body = Man;

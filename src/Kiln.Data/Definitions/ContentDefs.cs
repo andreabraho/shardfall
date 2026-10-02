@@ -370,6 +370,31 @@ public sealed class SkillDef : ContentDefBase
     public bool Pierces { get; init; }
 
     /// <summary>
+    /// How far a single-target skill reaches, in metres (CLS-04: a shot, a thrown seal). Zero for a
+    /// blow of the hand, which lands only on what stands within reach. For an area placed on the
+    /// ground, how far off it can be put.
+    /// </summary>
+    public double Range { get; init; }
+
+    /// <summary>The element its damage is: physical | fire | ice | lightning | dark.</summary>
+    public Kiln.Core.Combat.DamageElement Element { get; init; } = Kiln.Core.Combat.DamageElement.Physical;
+
+    /// <summary>
+    /// Defence, in points, its caster gains for the skill's duration, besides what it does to what
+    /// it hits (CLS-05, the Dread, at your call: defence, not a share less damage): zero for none.
+    /// </summary>
+    public double Guards { get; init; }
+
+    /// <summary>
+    /// How many more creatures a shot leaps on to after the one it strikes, each within the skill's
+    /// radius of the last (CLS-06, the Storm Orb, at your call). Zero for none.
+    /// </summary>
+    public int Bounces { get; init; }
+
+    /// <summary>Whether it strips the rage and the shield of what it hits (CLS-05, the Spellbreak).</summary>
+    public bool Dispels { get; init; }
+
+    /// <summary>
     /// A status the skill puts on what it hits (REF-01): Ground Slam's stun, Shield Bash's
     /// defence debuff. Physical skills control, mental skills weaken.
     /// </summary>
@@ -798,6 +823,29 @@ public sealed class GearPartsDef
     /// woman's hair the headbands were made round). Empty: worn as made.
     /// </summary>
     public float[] HelmetFit { get; init; } = [];
+
+    /// <summary>
+    /// How an armour's pieces round the trunk are fitted to this body, as <see cref="HelmetFit"/>
+    /// (CLS-04): the suits were made round the Rogue's chest, and the Ranger's and the Mage's are
+    /// narrower. Empty: worn as made.
+    /// </summary>
+    public float[] ArmourFit { get; init; } = [];
+
+    /// <summary>
+    /// Which cut of a suit this body wears (2026-10-02, at your call: "the women a little more
+    /// uncovered"): a suit may hold pieces for one cut only, named bone__&lt;bone&gt;__m or __w, and
+    /// a body wears those of its own cut and every piece with no cut. Empty is "m".
+    /// </summary>
+    public string Cut { get; init; } = "";
+
+    /// <summary>The bone the weapon is held on. The bow hand is the left (CLS-04).</summary>
+    public string WeaponHand { get; init; } = "handslot.r";
+
+    /// <summary>
+    /// How the body stands, runs and strikes with what it holds: empty for a blade, "bow" for the
+    /// Archer, "caster" for the Dragonseer.
+    /// </summary>
+    public string Stance { get; init; } = string.Empty;
 }
 
 // ---------------------------------------------------------------------------

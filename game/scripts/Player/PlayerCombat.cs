@@ -72,7 +72,25 @@ public partial class PlayerCombat : Node
     private TargetRing? _ring;
     private bool _committed;
 
-    [Export] public float AttackRange { get; set; } = 2.4f;
+    /// <summary>How far a blade reaches.</summary>
+    [Export] public float MeleeRange { get; set; } = 2.4f;
+
+    /// <summary>How far the Archer's arrow goes (CLS-04).</summary>
+    public const float BowRange = 13f;
+
+    /// <summary>
+    /// True for a class whose ordinary blow is a shot at one target, not an arc of a blade: the
+    /// Archer. The Dragonseer strikes with its fan, hand to hand, as the original's does
+    /// (2026-10-02, at your call): its magic is in its skills.
+    /// </summary>
+    public static bool Ranged => PlayerProfile.Class is Kiln.Core.Foundation.CharacterClass.Archer;
+
+    /// <summary>How far the ordinary blow of the class played reaches.</summary>
+    public float AttackRange => PlayerProfile.Class switch
+    {
+        Kiln.Core.Foundation.CharacterClass.Archer => BowRange,
+        _ => MeleeRange,
+    };
 
     public Combatant? Target => _target;
 
@@ -236,7 +254,8 @@ public partial class PlayerCombat : Node
             return;
         }
 
-        if (distance > AttackRange)
+        // A shot also wants the target in sight: round the corner first.
+        if (distance > AttackRange || (Ranged && !LineOfSight(body)))
         {
             // Approach: re-issued every frame so a moving target is followed.
             _motor.CommandMoveTo(body.GlobalPosition);
@@ -307,6 +326,12 @@ public partial class PlayerCombat : Node
 
         _swingTarget = null;
 
+        if (Ranged)
+        {
+            Loose(aimed);
+            return;
+        }
+
         var origin = _motor.GlobalPosition;
         var reach = AttackRange + HitTolerance;
         var victims = new System.Collections.Generic.List<Combatant>();
@@ -365,7 +390,35 @@ public partial class PlayerCombat : Node
         }
     }
 
+    /// <summary>
+    /// The shot leaves (CLS-04): at the one it was aimed at, if it is still in range and in
+    /// sight, and at nothing else. Aimed at nothing,
+    /// it flies its length and is lost.
+    /// </summary>
+    private void Loose(Combatant? aimed)
+    {
+        var origin = _motor.GlobalPosition;
+        var colour = new Color("fff3d6");
+        var hit = aimed is not null && IsInstanceValid(aimed) && aimed.IsAlive
+            && origin.DistanceTo(aimed.Body.GlobalPosition) <= AttackRange + HitTolerance + 1.0f
+            && LineOfSight(aimed.Body);
+
+        _blow++;
+
+        var to = hit ? aimed!.Body.GlobalPosition : origin + (_motor.Facing * AttackRange);
+
+        SkillFx.Arrow(this, origin, to, colour);
+
+        if (!hit) return;
+
+        var veil = _self.Statuses.MagnitudeOf(StatusKind.Stealth);
+
+        _self.Statuses.Remove(StatusKind.Stealth);
+        aimed!.TakeAttack(_self, weaponCoef: 1 + veil);
+    }
+
     private bool LineOfSight(Node3D target)
+
     {
         var from = _motor.GlobalPosition + (Vector3.Up * 1.2f);
         var to = target.GlobalPosition + (Vector3.Up * 1.0f);
@@ -385,7 +438,7 @@ public partial class PlayerCombat : Node
         var origin = _motor.GlobalPosition;
         var facing = _motor.Facing;
 
-        var victim = AreaQuery.Cone(_motor, origin, facing, AttackRange + HitTolerance, ArcDegrees)
+        var victim = AreaQuery.Cone(_motor, origin, facing, AttackRange + HitTolerance, Ranged ? 50f : ArcDegrees)
             .Where(c => c.IsAlive)
             .OrderBy(c => origin.DistanceTo(c.Body.GlobalPosition))
             .FirstOrDefault();

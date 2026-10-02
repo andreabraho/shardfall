@@ -46,6 +46,14 @@ public static class Words
         StatusKind.Fortify => L10n.T("Ironclad"),
         StatusKind.Empower => L10n.T("Sharpened"),
         StatusKind.Frenzy => L10n.T("Frenzied"),
+        StatusKind.Burn => L10n.T("Burning"),
+        StatusKind.Leech => L10n.T("Hexed blade"),
+        StatusKind.Thorns => L10n.T("Arcane mail"),
+        StatusKind.Haste => L10n.T("Light step"),
+        StatusKind.Focus => L10n.T("Dragon's eye"),
+        StatusKind.Dread => L10n.T("Dread"),
+        StatusKind.Might => L10n.T("Hexed blade"),
+        StatusKind.Stealth => L10n.T("Unseen"),
         _ => L10n.T("Vulnerable"),
     };
 

@@ -35,6 +35,15 @@ public readonly record struct DamageRequest
 
     public bool CanCrit { get; init; } = true;
 
+    /// <summary>Attack power added for this one attack, on top of the attacker's own (the Hexed Blade).</summary>
+    public double BonusAttackPower { get; init; }
+
+    /// <summary>Defence added to the defender for this one attack, on top of its own (the Dread).</summary>
+    public double BonusDefense { get; init; }
+
+    /// <summary>Critical chance added for this one attack, on top of the attacker's own (the Dragon's Eye).</summary>
+    public double BonusCritChance { get; init; }
+
     /// <summary>Skips the evade roll. Used by unavoidable effects such as shard pulses.</summary>
     public bool Unavoidable { get; init; }
 
@@ -85,7 +94,7 @@ public static class DamagePipeline
         }
 
         // 1-2. Base and flat.
-        var damage = ((attacker.AttackPower + (request.IsSkill ? attacker.SkillAttackBonus : 0)) * request.WeaponCoef * request.SkillCoef) + request.FlatBonus;
+        var damage = ((attacker.AttackPower + request.BonusAttackPower + (request.IsSkill ? attacker.SkillAttackBonus : 0)) * request.WeaponCoef * request.SkillCoef) + request.FlatBonus;
 
         // 3. Percentage bonuses: average damage on a basic attack, skill damage on a skill
         //    (2026-09-25, as in the original) — never both.
@@ -95,12 +104,12 @@ public static class DamagePipeline
         damage *= 1 + attacker.Modifiers.VsFamilyBonus(defender.Family);
 
         // 5. Crit.
-        var critical = request.CanCrit && rng.Chance(attacker.CritChance);
+        var critical = request.CanCrit && rng.Chance(Math.Min(StatBlock.CritChanceCap, attacker.CritChance + request.BonusCritChance));
         if (critical) damage *= attacker.CritDamage;
 
         // 6-7. Pierce skips mitigation entirely.
         var pierced = request.AlwaysPierces || rng.Chance(attacker.PierceChance);
-        var mitigation = pierced ? 0 : defender.DamageReductionAgainst(attacker.Level);
+        var mitigation = pierced ? 0 : defender.DamageReductionAgainst(attacker.Level, request.BonusDefense);
         damage *= 1 - mitigation;
 
         // 8. Elemental resistance.
@@ -128,7 +137,7 @@ public static class DamagePipeline
         var attacker = request.Attacker;
         var defender = request.Defender;
 
-        var damage = ((attacker.AttackPower + (request.IsSkill ? attacker.SkillAttackBonus : 0)) * request.WeaponCoef * request.SkillCoef) + request.FlatBonus;
+        var damage = ((attacker.AttackPower + request.BonusAttackPower + (request.IsSkill ? attacker.SkillAttackBonus : 0)) * request.WeaponCoef * request.SkillCoef) + request.FlatBonus;
 
         damage *= 1 + (request.IsSkill ? attacker.Modifiers.SkillDamagePct : attacker.Modifiers.DamagePct);
 
@@ -139,7 +148,7 @@ public static class DamagePipeline
             damage *= 1 + (attacker.CritChance * (attacker.CritDamage - 1));
         }
 
-        var mitigation = defender.DamageReductionAgainst(attacker.Level);
+        var mitigation = defender.DamageReductionAgainst(attacker.Level, request.BonusDefense);
         damage *= 1 - (mitigation * (1 - attacker.PierceChance));
 
         damage *= 1 - defender.ResistTo(request.Element);

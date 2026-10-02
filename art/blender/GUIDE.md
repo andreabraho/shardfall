@@ -108,6 +108,51 @@ Ninja woman. Nothing covers the waist or the head, and shoulder pieces stand **o
 chibi head (x ≥ 0.40) or it hides them. Daggers are swords from `swordkit`, about 0.6–0.85 long,
 two cells tall in the bag.
 
+### `bowkit.py`, `fankit.py`, `hexkit.py`, `classkit.py` — the Archer, the Asura, the Dragonseer
+
+- **Every weapon of the three is its own design** (2026-10-02, at your call — they were one shape a
+  class in other colours, and the Asura's were the Warrior's swords recoloured): one small function a
+  weapon inside `build(name)` of its kit, the model file three lines that call it.
+- **Bows** (`bowkit.py`) — "big, heavy, with many branches": two thick limbs and what grows from their
+  backs (`branch`: antlers, leaves, thorns, horns, feathers, blades, ribs, roots, crystals, flames —
+  `SHAPES`, with `twigs`, a lit `tip`, an `inner` colour). They lie along Y, flat in Z, the grip at the
+  origin, as KayKit's bow, the way the left hand (`handslot.l`) holds one — and **the end towards +Y
+  points down in the hand**: it is the short limb (`LOWER`), or a bow this long stands in the ground.
+  `icons.py` stands a `_bow` up, long limb at the top.
+- **Fans** (`fankit.py`) — "showy": drawn flat in XY round the pivot (`sector` with a cut edge —
+  `scallop`, `petal`, `flame`, `torn` — `plume`, `stick`, `disc`, `crescent`, `rays`, `tassel`), stood
+  up, turned a quarter turn so the leaf faces forward, and held as a sword (the part named `grip`).
+  Drawn larger than worn: `SCALE`. `icons.py` turns a `_fan` back flat on.
+- **Cursed swords** (`hexkit.py`) — "dark magic swords": swordkit's pieces with shapes of their own
+  (split round a core of light, toothed, flamed, hooked, crystal), `runes`, a `crack` of light, an
+  `eye` in the guard, `shardlet`s hanging loose. A dark steel and a light of its own colour each.
+- **Suits and headpieces** are in `classkit.py`: **one function a suit** since 2026-10-02 ("more their
+  own, and better made" — all seven of a class were one function in other colours before, and read
+  as one suit), each with a shape nobody else has: a straw cape, a rib cage, a collar of feathers, a
+  wing of blades. Three headpiece functions, one a class. What they share is the first half of the
+  file: `patch` (a curved sheet that follows the body, with a cut hem: `pointed`, `swallow`,
+  `zigzag`, `ragged`), `leaves` (a row of pointed scales, feathers or fur; `arm_frame` puts a row
+  round an arm), `tube` and `curve` (horns, antlers, ribs, cords, ribbons), `hoop`, `fin`, `blade`,
+  `feather`, `cloak`, `necklace`, `seal`, and `Suit`, which collects the pieces bone by bone.
+  Use `classkit.mirror`, not armourkit's, for anything turned: armourkit's flips a turned piece wrong.
+- **Two cuts of one suit** (2026-10-02, "the women a little more uncovered"): `s.add(bone, parts, "m")`
+  is worn by the men only, `"w"` by the women only, and no tag by both; the pieces are exported as
+  `bone__<bone>__m` / `__w` and a body wears its own cut (visuals.json `"cut": "w"`). The men wear a
+  vest from the belly to the shoulders; the women a band round the chest (`bust`, heights `BUST`),
+  shoulders and belly bare — so what lies on the vest above 1.07 or below 0.86 is tagged "m" and cut
+  again for the band. Icons draw the full cut.
+- **What stands up on an arm in the rest pose points sideways in the game**: the arms hang. A horn or
+  a blade meant to rise beside the head rides the chest, not the upper arm.
+- **The Archer carries a quiver across the back**: nothing of the Archer's hangs there above the belt
+  (a cape from the belt, a mantle on the bow arm).
+- **The Asura is dark, not violet**: each suit has a second dark colour of its own — wine, blood red,
+  petrol green, midnight blue, old gold and crimson, bone and ash, violet and gold ("they are all one
+  colour", your call).
+  The men's trunks are narrower (the Ranger's by a sixth, the Mage's a little) and their heads
+  smaller: visuals.json `armour_fit` and `helmet_fit` scale the trunk's pieces and the headpiece
+  for each body, so a suit is made once.
+- Never plate on the Archer or metal on the Dragonseer; the Asura is the one in dark plate.
+
 ### `trinkets.py` — gear that is never worn visibly
 Shields, boots, bracelets, necklaces, earrings, rings: built only for their icon. Add a
 builder named like the item id (`shd_…`, `bts_…`, `brc_…`, `nck_…`, `ear_…`, `rng_…`) to

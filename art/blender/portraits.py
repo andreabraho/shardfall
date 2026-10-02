@@ -36,6 +36,13 @@ LOOKS = {
                     ["Mental_Head", "Ranger_Body", "Ranger_ArmLeft", "Ranger_ArmRight"])],
     "mental_woman": [(os.path.join(ROOT, "game", "assets", "temins", "characters", "mental_woman_body.glb"),
                       ["Rogue_Head", "Rogue_Body", "Rogue_ArmLeft", "Rogue_ArmRight"])],
+    # The Archer, the Asura and the Dragonseer (CLS-04, 05, 06), in the bodies of class_bodies.py.
+    "archer_man": [(os.path.join(ROOT, "game", "assets", "temins", "characters", "archer_man_body.glb"), ["RogueHooded_Head", "RogueHooded_Mask", "RogueHooded_Body", "RogueHooded_ArmLeft", "RogueHooded_ArmRight"])],
+    "archer_woman": [(os.path.join(ROOT, "game", "assets", "temins", "characters", "archer_woman_body.glb"), ["Rogue_Head", "Rogue_Body", "Rogue_ArmLeft", "Rogue_ArmRight"])],
+    "asura_man": [(os.path.join(ROOT, "game", "assets", "temins", "characters", "asura_man_body.glb"), ["Asura_Head", "Ranger_Body", "Ranger_ArmLeft", "Ranger_ArmRight"])],
+    "asura_woman": [(os.path.join(ROOT, "game", "assets", "temins", "characters", "asura_woman_body.glb"), ["Rogue_Head", "Rogue_Body", "Rogue_ArmLeft", "Rogue_ArmRight"])],
+    "seer_man": [(os.path.join(ROOT, "game", "assets", "temins", "characters", "seer_man_body.glb"), ["Seer_Head", "Mage_Body", "Mage_ArmLeft", "Mage_ArmRight"])],
+    "seer_woman": [(os.path.join(ROOT, "game", "assets", "temins", "characters", "seer_woman_body.glb"), ["Rogue_Head", "Rogue_Body", "Rogue_ArmLeft", "Rogue_ArmRight"])],
 }
 
 

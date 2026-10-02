@@ -69,23 +69,65 @@ public partial class AuraVisual : Node3D
     /// </summary>
     public MasteryRank Rank { get; set; } = MasteryRank.Normal;
 
+    // The Asura's three (CLS-05, 2026-10-02, at your call): a glow of small points round the sword for
+    // the Hexed Blade, an aura round the body for the Arcane Mail and for the Dread — and no rings.
+    // Each has a colour of its own at every rank — Normal, Master, Grand Master, Perfect — and no two
+    // of the three ever share one (at your call): rose, ember, magenta, gold for the blade; azure,
+    // cyan, indigo, ice for the mail; violet, green, teal, bright violet for the dread.
+    private static readonly Color[] Hex = [new(1.0f, 0.30f, 0.55f), new(1.0f, 0.48f, 0.18f), new(1.0f, 0.20f, 0.88f), new(1.0f, 0.86f, 0.36f)];
+    private static readonly Color[] Mail = [new(0.34f, 0.64f, 1.0f), new(0.28f, 0.92f, 0.96f), new(0.46f, 0.44f, 1.0f), new(0.86f, 0.96f, 1.0f)];
+    private static readonly Color[] Fear = [new(0.62f, 0.20f, 0.92f), new(0.46f, 0.88f, 0.34f), new(0.14f, 0.78f, 0.58f), new(0.74f, 0.34f, 1.0f)];
+
+    /// <summary>The Asura's own colour for this aura at its rank, or null for an aura that takes the usual shift.</summary>
+    private Color? Own => Kind switch
+    {
+        StatusKind.Leech => Hex[RankIndex],
+        StatusKind.Thorns => Mail[RankIndex],
+        StatusKind.Dread => Fear[RankIndex],
+        _ => null,
+    };
+
+    private int RankIndex => System.Math.Clamp((int)Rank, 0, 3);
+
     private Color Base => Kind switch
     {
-        StatusKind.Fortify => Skin,
+        StatusKind.Fortify => Blessing ? Jade : Skin,
         StatusKind.Frenzy => Rage,
+        StatusKind.Leech => Hex[0],
+        StatusKind.Thorns => Mail[0],
+        StatusKind.Dread => Fear[0],
+        StatusKind.Focus => Eye,
         _ => Blade,
     };
+
+    /// <summary>An aura of points round the whole body, shoulder-high, rather than embers off a ring at the feet.</summary>
+    private bool Shrouds => Kind is StatusKind.Thorns or StatusKind.Dread || Blessing;
+
+    /// <summary>The Dragonseer's blessing (CLS-06, at your call): the same status as Iron Skin, worn as an aura round the body.</summary>
+    private bool Blessing => Kind == StatusKind.Fortify && PlayerProfile.Class == Kiln.Core.Foundation.CharacterClass.Shaman;
+
+    private static readonly Color Jade = new(0.50f, 1.0f, 0.78f);
+
+    /// <summary>
+    /// The Asura wears its own three: the Warrior's — which its Hexed Blade and its Arcane Mail also
+    /// raise, for what they do — are not drawn on it.
+    /// </summary>
+    private bool Hidden => PlayerProfile.Class == Kiln.Core.Foundation.CharacterClass.Sura && Kind is StatusKind.Empower or StatusKind.Fortify;
+
+    /// <summary>The points of light round each blade while the Hexed Blade is on.</summary>
+    private readonly List<GpuParticles3D> _sparkles = [];
+    private MasteryRank? _sparkleRank;
 
     /// <summary>
     /// A frenzy wears flames round the body and no rings (REF-21): three buffs up at once would
     /// otherwise stand the Warrior in six rings.
     /// </summary>
-    private bool Rings => Kind != StatusKind.Frenzy;
+    private bool Rings => Kind is StatusKind.Empower or StatusKind.Fortify && !Shrouds;
 
-    private Color Tint => MasteryStyle.Tint(Base, Rank);
+    private Color Tint => Own ?? MasteryStyle.Tint(Base, Rank);
 
     /// <summary>What the gear burns: the same colour, except at Perfect, where it is gold.</summary>
-    private Color GearTint => MasteryStyle.Accent(Base, Rank);
+    private Color GearTint => Own ?? MasteryStyle.Accent(Base, Rank);
 
     public override void _Ready()
     {
@@ -124,7 +166,164 @@ public partial class AuraVisual : Node3D
             _motes.Lifetime = 0.8;
         }
 
+        // An aura round the body: points born all the way up it, turning slowly as they rise.
+        if (Shrouds && _motes.ProcessMaterial is ParticleProcessMaterial shroud)
+        {
+            var fear = Kind == StatusKind.Dread;
+
+            shroud.EmissionRingRadius = fear ? 0.85f : 0.55f;
+            shroud.EmissionRingInnerRadius = fear ? 0.6f : 0.42f;
+            shroud.EmissionRingHeight = fear ? 0.5f : 1.3f;
+            shroud.InitialVelocityMin = fear ? 0.15f : 0.3f;
+            shroud.InitialVelocityMax = fear ? 0.4f : 0.6f;
+            shroud.OrbitVelocityMin = fear ? 0.5f : 0.2f;
+            shroud.OrbitVelocityMax = fear ? 0.8f : 0.4f;
+            _motes.Position = new Vector3(0, fear ? 0.45f : 0.8f, 0);
+            _motes.Lifetime = 1.5;
+        }
+
         Visible = false;
+    }
+
+    private static readonly Color Eye = new(1.0f, 0.82f, 0.36f);
+
+    private readonly List<Node3D> _orbs = [];
+
+    /// <summary>
+    /// The Dragon's Eye (CLS-06, at your call): a small ball of light where the hand meets the fan,
+    /// there for as long as the blessing lasts and going wherever the hand goes.
+    /// </summary>
+    private void Orb(bool on)
+    {
+        if (Kind != StatusKind.Focus) return;
+
+        if (on && _orbs.Count > 0 && _orbs.TrueForAll(IsInstanceValid)) return;
+
+        foreach (var old in _orbs)
+        {
+            if (!IsInstanceValid(old)) continue;
+
+            old.GetParent()?.RemoveChild(old);
+            old.QueueFree();
+        }
+
+        _orbs.Clear();
+
+        if (!on) return;
+
+        foreach (var lit in _lit)
+        {
+            if (lit is not MeshInstance3D mesh || !IsInstanceValid(mesh) || !IsWeapon(mesh.Name)) continue;
+
+            var orb = new Node3D { Name = "EyeOrb" };
+
+            foreach (var (texture, size, strength) in new[] { ("light_02.png", 0.62f, 0.75f), ("star_06.png", 0.36f, 1.0f) })
+            {
+                var path = "res://assets/particles/" + texture;
+
+                orb.AddChild(new MeshInstance3D
+                {
+                    Mesh = new QuadMesh { Size = new Vector2(size, size) },
+                    MaterialOverride = new StandardMaterial3D
+                    {
+                        ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
+                        Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
+                        BlendMode = BaseMaterial3D.BlendModeEnum.Add,
+                        BillboardMode = BaseMaterial3D.BillboardModeEnum.Enabled,
+                        AlbedoColor = Tint with { A = strength },
+                        AlbedoTexture = ResourceLoader.Exists(path) ? ResourceLoader.Load<Texture2D>(path) : null,
+                        NoDepthTest = true,
+                    },
+                    CastShadow = GeometryInstance3D.ShadowCastingSetting.Off,
+                });
+            }
+
+            // The weapon's origin is its grip: the hand.
+            mesh.AddChild(orb);
+            _orbs.Add(orb);
+        }
+    }
+
+    /// <summary>
+    /// The Hexed Blade (CLS-05): small points of light drifting round each blade in hand, following
+    /// it — not the Blade Aura's glowing shell.
+    /// </summary>
+    private void Sparkle(bool on)
+    {
+        if (Kind != StatusKind.Leech) return;
+
+        if (on && _sparkleRank == Rank && _sparkles.Count > 0 && _sparkles.TrueForAll(IsInstanceValid)) return;
+
+        foreach (var old in _sparkles)
+        {
+            if (!IsInstanceValid(old)) continue;
+
+            old.GetParent()?.RemoveChild(old);
+            old.QueueFree();
+        }
+
+        _sparkles.Clear();
+        _sparkleRank = null;
+
+        if (!on) return;
+
+        _sparkleRank = Rank;
+
+        foreach (var lit in _lit)
+        {
+            if (lit is not MeshInstance3D mesh || !IsInstanceValid(mesh) || !IsWeapon(mesh.Name) || mesh.Mesh is null) continue;
+
+            var box = mesh.Mesh.GetAabb();
+            var colour = Tint;
+            var fade = new Gradient();
+
+            fade.SetColor(0, colour with { A = 0f });
+            fade.SetColor(1, colour with { A = 0f });
+            fade.AddPoint(0.3f, colour with { A = 0.95f });
+
+            var sparks = new GpuParticles3D
+            {
+                Name = "HexSparkle",
+                Amount = 110 + (60 * RankIndex),
+                Lifetime = 0.9,
+                Randomness = 0.7f,
+                LocalCoords = true,
+                Position = box.GetCenter(),
+                ProcessMaterial = new ParticleProcessMaterial
+                {
+                    EmissionShape = ParticleProcessMaterial.EmissionShapeEnum.Box,
+                    EmissionBoxExtents = (box.Size * 0.5f) + new Vector3(0.08f, 0.08f, 0.08f),
+                    Direction = Vector3.Up,
+                    Spread = 180f,
+                    Gravity = Vector3.Zero,
+                    InitialVelocityMin = 0.05f,
+                    InitialVelocityMax = 0.25f,
+                    ScaleMin = 0.5f,
+                    ScaleMax = 1.0f,
+                    Color = colour,
+                    ColorRamp = new GradientTexture1D { Gradient = fade },
+                },
+                DrawPass1 = new QuadMesh
+                {
+                    Size = new Vector2(0.075f, 0.075f),
+                    Material = new StandardMaterial3D
+                    {
+                        ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
+                        Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
+                        BlendMode = BaseMaterial3D.BlendModeEnum.Add,
+                        BillboardMode = BaseMaterial3D.BillboardModeEnum.Enabled,
+                        VertexColorUseAsAlbedo = true,
+                        AlbedoColor = colour,
+                        AlbedoTexture = MoteTexture(),
+                        CullMode = BaseMaterial3D.CullModeEnum.Disabled,
+                    },
+                },
+                CastShadow = GeometryInstance3D.ShadowCastingSetting.Off,
+            };
+
+            mesh.AddChild(sparks);
+            _sparkles.Add(sparks);
+        }
     }
 
     private static StandardMaterial3D Glow(Color colour, float alpha) => new()
@@ -212,7 +411,7 @@ public partial class AuraVisual : Node3D
             {
                 // Soft points of light since REF-21 (they were bare squares), and for a frenzy
                 // tongues of flame licking up the body.
-                Size = Kind == StatusKind.Frenzy ? new Vector2(0.5f, 0.5f) : new Vector2(0.13f, 0.13f),
+                Size = Kind == StatusKind.Frenzy ? new Vector2(0.5f, 0.5f) : Kind == StatusKind.Dread ? new Vector2(0.2f, 0.2f) : new Vector2(0.13f, 0.13f),
                 Material = new StandardMaterial3D
                 {
                     ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
@@ -298,7 +497,7 @@ public partial class AuraVisual : Node3D
 
         foreach (var mesh in meshes)
         {
-            if (IsWeapon(mesh.Name) == (Kind == StatusKind.Empower)) _lit.Add(mesh);
+            if (IsWeapon(mesh.Name) == (Kind is StatusKind.Empower or StatusKind.Leech or StatusKind.Focus)) _lit.Add(mesh);
         }
 
         // Nothing matched: light the lot rather than nothing.
@@ -385,8 +584,8 @@ public partial class AuraVisual : Node3D
         // rings sit wider. This is the part the player reads across a field.
         if (_motes is not null)
         {
-            _motes.Amount = BaseEmbers + MasteryStyle.Embers(Rank);
-            _motes.Lifetime = (Kind == StatusKind.Frenzy ? 0.8 : 1.3) + (MasteryStyle.Brightness(Rank) - 1f) * 0.5;
+            _motes.Amount = Shrouds ? 170 + (80 * RankIndex) : BaseEmbers + MasteryStyle.Embers(Rank);
+            _motes.Lifetime = (Kind == StatusKind.Frenzy ? 0.8 : Shrouds ? 1.5 : 1.3) + (MasteryStyle.Brightness(Rank) - 1f) * 0.5;
         }
 
         var spread = MasteryStyle.Flourish(Rank);
@@ -403,19 +602,21 @@ public partial class AuraVisual : Node3D
 
         // Fades in and out rather than snapping, so the end of a buff is something the eye
         // catches instead of a frame where it was simply gone.
-        var wanted = _self.IsAlive && _self.Statuses.Has(Kind) ? 1f : 0f;
+        var wanted = _self.IsAlive && _self.Statuses.Has(Kind) && !Hidden ? 1f : 0f;
 
         _strength = Mathf.MoveToward(_strength, wanted, (float)delta * 3.2f);
 
         // Emission stops the moment the buff does, so the last motes finish their climb
         // instead of being cut off with the rings.
-        if (_motes is not null) _motes.Emitting = wanted > 0;
+        if (_motes is not null) _motes.Emitting = wanted > 0 && Kind is not (StatusKind.Leech or StatusKind.Focus);
 
         if (_strength <= 0.01f)
         {
             if (Visible) Light(0);
 
             Stream(false);
+            Sparkle(false);
+            Orb(false);
             Visible = false;
             return;
         }
@@ -425,6 +626,14 @@ public partial class AuraVisual : Node3D
 
         FindGear();
         Stream(wanted > 0);
+        Sparkle(wanted > 0);
+        Orb(wanted > 0);
+
+        // The ball breathes.
+        foreach (var orb in _orbs)
+        {
+            if (IsInstanceValid(orb)) orb.Scale = Vector3.One * (1f + (Mathf.Sin((float)_spin * 4f) * 0.12f)) * _strength;
+        }
 
         _inner.Visible = Rings;
         _outer.Visible = Rings;
@@ -455,6 +664,6 @@ public partial class AuraVisual : Node3D
         // character changing colour, when all it should say is "harder to hurt". The Blade
         // Aura lays nothing over the blade any more (2026-09-28, at your call: it turned the
         // sword yellow) — its stream of points round the blade is the whole effect.
-        Light(Kind is StatusKind.Frenzy or StatusKind.Empower ? 0f : Mathf.Min(1f, breath * glow) * _strength * (Kind == StatusKind.Fortify ? 0.16f : 1f));
+        Light(Kind is StatusKind.Frenzy or StatusKind.Empower or StatusKind.Leech or StatusKind.Focus || Shrouds ? 0f : Mathf.Min(1f, breath * glow) * _strength * (Kind == StatusKind.Fortify ? 0.16f : 1f));
     }
 }
