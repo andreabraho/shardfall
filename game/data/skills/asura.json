@@ -16,7 +16,7 @@
     } },
 
   { "id": "skl_shadow_claw", "name": "$skill.skl_shadow_claw.name", "color": "#b06cff", "sound": "snd_skl_cleave", "class": "sura", "tree": "dark", "suggested_level": 1, "mana_cost": 16, "cooldown": 5,
-    "cast_type": "instant", "targeting": "single_target", "radius": 0, "range": 10.0, "damage_coef": 2.10, "hits": 1, "motion": "claw", "windup": 0.45, "needs_target": true, "pierces": true, "element": "dark",
+    "cast_type": "instant", "targeting": "single_target", "radius": 1.8, "range": 10.0, "damage_coef": 2.10, "hits": 1, "motion": "claw", "windup": 0.45, "needs_target": true, "pierces": true, "element": "dark",
     "mastery": {
       "master":       { "damage_coef": 2.40, "note": "$skill.skl_shadow_claw.m" },
       "grand_master": { "cooldown": 4.2, "note": "$skill.skl_shadow_claw.g" },
@@ -59,11 +59,11 @@
     } },
 
   { "id": "skl_spellbreak", "name": "$skill.skl_spellbreak.name", "color": "#c8a0ff", "sound": "snd_skl_bash", "class": "sura", "tree": "dark", "suggested_level": 18, "mana_cost": 24, "cooldown": 10,
-    "cast_type": "instant", "targeting": "single_target", "radius": 0, "range": 12.0, "damage_coef": 1.60, "hits": 1, "motion": "cast", "windup": 0.30, "needs_target": true, "element": "dark", "dispels": true,
+    "cast_type": "instant", "targeting": "single_target", "radius": 0, "range": 12.0, "damage_coef": 0.50, "hits": 1, "motion": "cast", "windup": 0.30, "needs_target": true, "element": "dark", "dispels": true,
     "applies": { "kind": "vulnerability", "magnitude": 0.25, "duration": 8.0, "chance": 1.0 },
     "mastery": {
-      "master":       { "damage_coef": 1.85, "note": "$skill.skl_spellbreak.m" },
+      "master":       { "damage_coef": 0.60, "note": "$skill.skl_spellbreak.m" },
       "grand_master": { "cooldown": 8.5, "note": "$skill.skl_spellbreak.g" },
-      "perfect":      { "cooldown": 7.0, "damage_coef": 2.15, "note": "$skill.skl_spellbreak.p" }
+      "perfect":      { "cooldown": 7.0, "damage_coef": 0.75, "note": "$skill.skl_spellbreak.p" }
     } }
 ]

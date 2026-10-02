@@ -104,12 +104,12 @@ A shell that took blows at first; changed at your call (2026-10-02).
 
 | Skill | After | What it does | Motion |
 |---|---|---|---|
-| **Artiglio d'Ombra** (Shadow Claw) | finger strike | A claw from the ground under a target up to 10 m off: 210%, ignoring its defence. Needs a target. Lands 0.45 s in. | a blow of the marked hand, about a second |
+| **Artiglio d'Ombra** (Shadow Claw) | finger strike | A claw from the ground under a target up to 10 m off and everything within 1.8 m of it: 210%, ignoring defence. Needs a target. Lands 0.45 s in. | a blow of the marked hand, about a second |
 | **Vortice Oscuro** (Dark Vortex) | dragon swirl | One turn, dark flame on everything within 3.2 m: one hit of 240%, half a second in. | one turn of a second |
 | **Lama Stregata** (Hexed Blade) | enchanted blade | 25 s: +5 attack power and 0.6 more a point of INT — attack, not average damage (at your call) — and 8% of the damage of every blow comes back as health. | a spell worked over the blade with both hands |
 | **Terrore** (Dread) | fear | Everything within 6 m strikes 25% weaker for 10 s, and the Asura gains 10 defence and 0.8 more a point of INT for as long (defence, not a share less damage, at your call). | a long summoning |
 | **Corazza Arcana** (Arcane Mail) | enchanted armour | 20 s: 20% less damage taken, and 25% of every blow taken from close by thrown back. | power drawn up with both arms |
-| **Spezzaincanti** (Spellbreak) | dispel | A bolt at a target up to 12 m off: 160%, strips its rage and its shield, and leaves it taking 25% more for 8 s. Needs a target. | a throw |
+| **Spezzaincanti** (Spellbreak) | dispel | A bolt at a target up to 12 m off: 50% — it is cast for what it leaves, not for the blow — strips its rage and its shield, and leaves it taking 25% more for 8 s. Needs a target. | a throw |
 
 ### 2.4 The Dragonseer
 
