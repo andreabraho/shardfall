@@ -91,6 +91,9 @@ public sealed class ItemCatalogue : IItemSpecs, IBonusPools
             UpgradePathId = def.UpgradePath,
             ClassRestriction = [.. def.ClassRestriction.Select(ParseClass).Where(c => c is not null).Select(c => c!.Value)],
             Grants = grants,
+            Innate = def.Innate is { Stats.Length: > 0 } born
+                ? new ItemInnate([.. born.Stats.Where(s => BonusStat.TryParse(s, out _, out _)).Select(BonusStat.Parse)], born.Magnitude, born.Ladder)
+                : null,
         };
     }
 

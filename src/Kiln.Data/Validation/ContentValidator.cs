@@ -633,6 +633,22 @@ public static class ContentValidator
                     $"'{item.Id}' base_stats '{key}': {error}.",
                     "Use a frame key (weapon_damage_min/max, armor_value) or a modifier key.");
             }
+
+            foreach (var key in item.Innate?.Stats ?? [])
+            {
+                if (BonusStat.TryParse(key, out _, out var error)) continue;
+
+                report.Error("stat-key", item.SourceFile,
+                    $"'{item.Id}' innate '{key}': {error}.",
+                    "See BonusStat for the accepted keys, e.g. damage_pct, strength.");
+            }
+
+            if (item.Innate is { Ladder.Length: > 0 and not 10 })
+            {
+                report.Error("stat-key", item.SourceFile,
+                    $"'{item.Id}' innate ladder has {item.Innate.Ladder.Length} steps.",
+                    "Give ten: one for each upgrade level from +0 to +9.");
+            }
         }
     }
 

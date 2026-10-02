@@ -92,6 +92,13 @@ public static class ItemText
             }
         }
 
+        // The stat it was born with (2026-10-02), under what every copy gives.
+        if (item.InnateFor(spec) is { } innate)
+        {
+            text.Append(spec.Grants.Count > 0 || spec.WeaponDamageMax > 0 || spec.ArmorValue > 0 ? "\n" : "\n\n");
+            text.Append(C(innate.Describe(), Grant));
+        }
+
         if (item.UpgradeLevel > 0)
         {
             text.Append("  ").Append(C(L10n.F("(+{0:0}% from +{1})", UpgradeScaling.BonusPercent(item.UpgradeLevel), item.UpgradeLevel), Muted));

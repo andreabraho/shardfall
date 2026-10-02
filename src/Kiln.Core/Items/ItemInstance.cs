@@ -102,6 +102,8 @@ public sealed class ItemInstance
             grant.Stat.Apply(mods, ScaledGrant(grant));
         }
 
+        if (InnateFor(spec) is { } innate) innate.Stat.Apply(mods, innate.Magnitude);
+
         foreach (var line in _bonuses)
         {
             line.Stat.Apply(mods, line.Magnitude);
@@ -118,6 +120,28 @@ public sealed class ItemInstance
         }
 
         return mods;
+    }
+
+    /// <summary>
+    /// The stat this copy was born with and what it is worth at its upgrade level, or null for an
+    /// item that has none (2026-10-02).
+    /// </summary>
+    /// <remarks>
+    /// Which of the item's stats it is comes from the copy's own uid, scrambled: random from one
+    /// drop to the next, the same for the life of the copy, and nothing more to save — so a ring
+    /// from a save made before rings had one has one too.
+    /// </remarks>
+    public BonusLine? InnateFor(ItemSpec spec)
+    {
+        if (spec.Innate is not { Stats.Count: > 0 } innate) return null;
+
+        var pick = (int)((unchecked((ulong)Uid * 0x9E3779B97F4A7C15UL) >> 33) % (ulong)innate.Stats.Count);
+        var level = Math.Clamp(UpgradeLevel, 0, UpgradeScaling.MaxLevel);
+        var worth = innate.Ladder.Count > 0
+            ? innate.Ladder[Math.Min(level, innate.Ladder.Count - 1)]
+            : innate.Magnitude * UpgradeScaling.Multiplier(level);
+
+        return new BonusLine("innate", innate.Stats[pick], worth);
     }
 
     /// <summary>

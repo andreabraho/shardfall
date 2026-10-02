@@ -143,8 +143,6 @@ public partial class PlayerCharacter : Node
             Level = Progression.Level,
             Class = PlayerProfile.Class,
             // The Mental Warrior's skills take a little from vitality too; strength stays what it strikes with.
-            SkillAttackBonus = PlayerProfile.Class == Kiln.Core.Foundation.CharacterClass.Warrior && PlayerProfile.Path == PlayerProfile.MentalPath
-                ? Progression.TotalAttributes.Vit * Attributes.MentalSkillPerVit : 0,
             Family = MonsterFamily.Human,
             Attributes = Progression.TotalAttributes,
 
@@ -155,6 +153,13 @@ public partial class PlayerCharacter : Node
         };
 
         GetParent().GetNodeOrNull<Items.PlayerInventory>("PlayerInventory")?.Gear?.ApplyTo(stats);
+
+        // The attributes worn (2026-10-02: a bracelet's, an earring's) count as points placed.
+        stats.Attributes = stats.Modifiers.Raise(stats.Attributes);
+
+        // The Mental Warrior's skills take a little from vitality too; strength stays what it strikes with.
+        stats.SkillAttackBonus = PlayerProfile.Class == Kiln.Core.Foundation.CharacterClass.Warrior && PlayerProfile.Path == PlayerProfile.MentalPath
+            ? stats.Attributes.Vit * Attributes.MentalSkillPerVit : 0;
 
         _combatant.Configure(stats, "$player.name");
 

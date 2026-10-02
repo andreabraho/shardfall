@@ -35,6 +35,15 @@ public enum BonusStatKind
     /// earring's base stat (2026-09-24): it pays the player who keeps fighting.
     /// </summary>
     KillRegenPct,
+
+    /// <summary>
+    /// A point of an attribute (2026-10-02): what a bracelet or an earring carries as the stat it
+    /// was born with, worth exactly what a point placed on the character sheet is.
+    /// </summary>
+    Strength,
+    Dexterity,
+    Intelligence,
+    Vitality,
 }
 
 /// <summary>The rules of kill regeneration.</summary>
@@ -115,6 +124,10 @@ public readonly record struct BonusStat(BonusStatKind Kind, MonsterFamily Family
                 "move_speed_pct" => BonusStatKind.MoveSpeedPct,
                 "resist_all" => BonusStatKind.ResistAll,
                 "kill_regen_pct" => BonusStatKind.KillRegenPct,
+                "strength" => BonusStatKind.Strength,
+                "dexterity" => BonusStatKind.Dexterity,
+                "intelligence" => BonusStatKind.Intelligence,
+                "vitality" => BonusStatKind.Vitality,
                 _ => (BonusStatKind?)null,
             };
 
@@ -207,6 +220,10 @@ public readonly record struct BonusStat(BonusStatKind Kind, MonsterFamily Family
             case BonusStatKind.AttackSpeed: mods.AttackSpeedFlat += value; break;
             case BonusStatKind.MoveSpeedPct: mods.MoveSpeedPct += value; break;
             case BonusStatKind.KillRegenPct: mods.KillRegenPct += value; break;
+            case BonusStatKind.Strength: mods.Str += value; break;
+            case BonusStatKind.Dexterity: mods.Dex += value; break;
+            case BonusStatKind.Intelligence: mods.Int += value; break;
+            case BonusStatKind.Vitality: mods.Vit += value; break;
 
             case BonusStatKind.VsFamily:
                 mods.VsFamily[Family] = mods.VsFamilyBonus(Family) + value;
@@ -253,6 +270,10 @@ public readonly record struct BonusStat(BonusStatKind Kind, MonsterFamily Family
             BonusStatKind.ResistElement => L10n.F("+{0}% {1} resistance", n, ElementName(Element)),
             BonusStatKind.ResistAll => L10n.F("+{0}% resistance to all elements", n),
             BonusStatKind.KillRegenPct => L10n.F("Heals {0}% of maximum health every 3 seconds, for 10 seconds after a kill", n),
+            BonusStatKind.Strength => L10n.F("+{0} STR", n),
+            BonusStatKind.Dexterity => L10n.F("+{0} DEX", n),
+            BonusStatKind.Intelligence => L10n.F("+{0} INT", n),
+            BonusStatKind.Vitality => L10n.F("+{0} VIT", n),
             _ => $"+{n} {Key}",
         };
     }

@@ -361,7 +361,10 @@ public partial class CharacterPanel : CanvasLayer
         {
             var row = _rows[kind];
 
-            row.Value.Text = Value(attributes, kind).ToString();
+// What is worn on top of the points placed (2026-10-02: a bracelet, an earring) is shown beside them.
+            var worn = _combatant is null ? 0 : Value(_combatant.Stats.Attributes, kind) - Value(attributes, kind);
+
+            row.Value.Text = worn > 0 ? $"{Value(attributes, kind)} +{worn}" : Value(attributes, kind).ToString();
             row.Plus.Disabled = points <= 0;
             row.Plus.Visible = points > 0;
         }

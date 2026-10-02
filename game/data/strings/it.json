@@ -1,4 +1,8 @@
 {
+  "+{0} STR": "+{0} FOR",
+  "+{0} DEX": "+{0} DES",
+  "+{0} INT": "+{0} INT",
+  "+{0} VIT": "+{0} VIT",
   "Begin": "Inizia",
   "Character name": "Nome del personaggio",
   "Give your character a name to begin.": "Dai un nome al personaggio per cominciare.",
