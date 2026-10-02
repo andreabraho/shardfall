@@ -333,6 +333,28 @@ public static class SkillFx
         Billboard(context, "star_06.png", at + (Vector3.Up * 1.0f), 2.0f, colour, 0.22, bright);
     }
 
+    /// <summary>
+    /// The Hexed Blade cast (CLS-05): a flash where the blade is raised and small points of light
+    /// thrown off it. Nothing on the ground.
+    /// </summary>
+    public static void Kindle(Node context, Vector3 center, Color colour, float bright = 1f)
+    {
+        Billboard(context, "star_06.png", center + (Vector3.Up * 1.5f), 1.6f, colour, 0.3, bright);
+        Burst(context, center + (Vector3.Up * 1.3f), "circle_05.png", colour, 26, 0.07f, 0.6f, 1.6f, 0.7, Vector3.Up, 180f, 0.6f,
+            emitRadius: 0.25f, bright: bright);
+    }
+
+    /// <summary>
+    /// A shroud thrown up round the caster (CLS-05, the Arcane Mail and the Dread): points of light
+    /// rising in a ring as wide as <paramref name="radius"/>. Nothing on the ground.
+    /// </summary>
+    public static void Shroud(Node context, Vector3 center, float radius, Color colour, float bright = 1f)
+    {
+        Burst(context, center + (Vector3.Up * 0.3f), "circle_05.png", colour, 40, 0.11f, 1.4f, 2.8f, 0.8, Vector3.Up, 18f, -0.5f,
+            emitRadius: radius, ring: true, radial: radius > 1f ? 2.4f : 0f, bright: bright);
+        Billboard(context, "star_06.png", center + (Vector3.Up * 1.1f), 1.4f, colour, 0.25, bright);
+    }
+
     /// <summary>A blow that lands on one target: Heavy Strike, Shield Bash.</summary>
     public static void Strike(Node context, Vector3 at, Color colour, bool bash, float bright = 1f)
     {
@@ -430,6 +452,8 @@ public static class SkillFx
         Arrow(context, at, at + (ahead * 4f), faint);
         Rain(context, at, 2f, faint);
         Claw(context, at, faint);
+        Kindle(context, at, faint);
+        Shroud(context, at, 0.6f, faint);
         Cut(context, at, ahead, 3f, 2, faint);
         Gather(context, at, ahead, 0.2, faint);
         Pierce(context, at, ahead, 4f, faint);

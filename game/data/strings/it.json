@@ -1,4 +1,5 @@
 {
+  "Dread": "Terrore",
   "One target up to {0:0.#} m away; then it leaps to up to {1} more, each within {2:0.#} m of the last.": "Un bersaglio fino a {0:0.#} m; poi salta su altri {1} al massimo, ognuno entro {2:0.#} m dal precedente.",
   "Lightning damage.": "Danno da fulmine.",
   "$skill.skl_storm_orb.name": "Globo di Folgore",

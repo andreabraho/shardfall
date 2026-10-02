@@ -98,7 +98,7 @@ public partial class SkillCaster : Node
 
         // One aura per buff, so both can be worn at once. They belong to the skills rather
         // than to the scene, so they are built here instead of being placed in player.tscn.
-        foreach (var kind in new[] { StatusKind.Empower, StatusKind.Fortify, StatusKind.Frenzy })
+        foreach (var kind in new[] { StatusKind.Empower, StatusKind.Fortify, StatusKind.Frenzy, StatusKind.Leech, StatusKind.Thorns, StatusKind.Dread })
         {
             _motor.CallDeferred(Node.MethodName.AddChild,
                 new Combat.AuraVisual { Name = $"Aura{kind}", Kind = kind });
@@ -454,7 +454,7 @@ public partial class SkillCaster : Node
         // The Dread (CLS-05): while what stands near strikes weaker, the Asura takes less.
         if (GameContent.Database.Skills.TryGetValue(skill.Id, out var cast) && cast.Guards > 0)
         {
-            _self.Statuses.Apply(StatusEffectSet.Fortify(cast.Guards, cast.Duration));
+            _self.Statuses.Apply(StatusEffectSet.Dread(cast.Guards, cast.Duration));
         }
 
         // The Warrior stands still while a skill plays out (REF-01): held for every pulse it
@@ -579,8 +579,9 @@ public partial class SkillCaster : Node
             case "empower": SkillFx.Sharpen(this, at, FxColour(skill), FxBright(skill)); break;
             case "frenzy": SkillFx.Frenzy(this, at, FxColour(skill), FxBright(skill)); break;
             case "stealth": SkillFx.Harden(this, at, FxColour(skill), FxBright(skill)); break;
-            case "hex": SkillFx.Sharpen(this, at, FxColour(skill), FxBright(skill)); break;
-            case "mail": SkillFx.Harden(this, at, FxColour(skill), FxBright(skill)); break;
+            // The Asura's (CLS-05): nothing drawn on the ground — light at the blade, a shroud round the body.
+            case "hex": SkillFx.Kindle(this, at, FxColour(skill), FxBright(skill)); break;
+            case "mail": SkillFx.Shroud(this, at, 0.6f, FxColour(skill), FxBright(skill)); break;
             case "haste": SkillFx.Frenzy(this, at, FxColour(skill), FxBright(skill)); break;
             case "focus": SkillFx.Sharpen(this, at, FxColour(skill), FxBright(skill)); break;
         }
@@ -714,6 +715,12 @@ public partial class SkillCaster : Node
             case SkillTargeting.SelfAoe when skill.Motion is "spin" or "roll":
                 targets = AreaQuery.Sphere(_motor, center, (float)skill.Radius);
                 SkillFx.Whirl(this, center, (float)skill.Radius, colour, skill.HitInterval, pulse.Index, bright);
+                break;
+
+            // The Dread (CLS-05): a shroud thrown out from the Asura, and no ring on the ground.
+            case SkillTargeting.SelfAoe when skill.Motion == "dread":
+                targets = AreaQuery.Sphere(_motor, center, (float)skill.Radius);
+                SkillFx.Shroud(this, center, (float)skill.Radius * 0.5f, colour, bright);
                 break;
 
             case SkillTargeting.SelfAoe:
