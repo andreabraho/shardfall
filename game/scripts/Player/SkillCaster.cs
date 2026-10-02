@@ -567,7 +567,7 @@ public partial class SkillCaster : Node
     private static readonly string[] TripleMoves = ["slice", "wave", "chop"];
 
     /// <summary>How far the Whirlwind carries the Warrior forward over all its turns, in metres.</summary>
-    private const float WhirlAdvance = 1.0f;
+    private const float WhirlAdvance = 3.0f;
 
     /// <summary>How far a single-target skill lands on the creature chosen.</summary>
     private const float SingleReach = 4.5f;
@@ -613,7 +613,7 @@ public partial class SkillCaster : Node
             // The Blade Vortex (CLS-03): each turn carries the Ninja on, through whatever is there.
             if (skill.Motion == "roll") Dash(aim, (float)skill.Width, skill.HitInterval, Tween.TransitionType.Linear);
 
-            // The Whirlwind carries the Warrior a metre on in all (2026-10-02, at the user's call), a
+            // The Whirlwind carries the Warrior three metres on in all (2026-10-02, at the user's call), a
             // share of it each turn.
             if (skill.Motion == "spin") Dash(aim, WhirlAdvance / System.Math.Max(1, skill.Hits), skill.HitInterval, Tween.TransitionType.Linear);
         }
