@@ -25,7 +25,7 @@ public partial class CombatFeedback : Node3D
     private const float CritIconPixels = 128f;
 
     /// <summary>How long a number lives.</summary>
-    [Export] public double Lifetime { get; set; } = 0.6;
+    [Export] public double Lifetime { get; set; } = 1.1;
 
     /// <summary>
     /// World size per font pixel. This is the knob that actually controls how big numbers
@@ -47,11 +47,11 @@ public partial class CombatFeedback : Node3D
     /// Hard cap on numbers on screen at once. Beyond this the oldest is recycled: past a
     /// dozen the numbers stop being information and become an obstacle.
     /// </summary>
-    [Export] public int MaxActive { get; set; } = 14;
+    [Export] public int MaxActive { get; set; } = 22;
 
-    [Export] public Color NormalColor { get; set; } = new(1f, 0.95f, 0.85f);
+    [Export] public Color NormalColor { get; set; } = new(1f, 1f, 1f);
     [Export] public Color CritColor { get; set; } = new(1f, 0.42f, 0.12f);
-    [Export] public Color PlayerHurtColor { get; set; } = new(1f, 0.4f, 0.4f);
+    [Export] public Color PlayerHurtColor { get; set; } = new(1f, 0.16f, 0.2f);
 
     public override void _Ready()
     {
@@ -99,6 +99,15 @@ public partial class CombatFeedback : Node3D
 
     private static readonly Color ManaColor = new("6fa8e8");
 
+    /// <summary>
+    /// Experience gained (2026-10-02), over the player and in a colour nothing else wears, so it is
+    /// never read as a blow given or taken.
+    /// </summary>
+    public static void Experience(Vector3 worldPosition, long amount)
+        => _instance?.SpawnText(worldPosition, L10n.F("+{0:N0} exp", amount), ExperienceColor, _instance.NormalFontSize - 8);
+
+    private static readonly Color ExperienceColor = new("c79bff");
+
     /// <summary>A word over a creature: it enrages, it gets back up.</summary>
     public static void Callout(Vector3 worldPosition, string text, Color colour)
         => _instance?.SpawnCallout(worldPosition, text, colour);
@@ -131,7 +140,8 @@ public partial class CombatFeedback : Node3D
 
     private void Spawn(Vector3 worldPosition, int amount, bool critical, bool evaded, bool onPlayer)
     {
-        var text = evaded ? L10n.T("miss") : amount.ToString(System.Globalization.CultureInfo.InvariantCulture);
+// What is taken reads as a loss at a glance (2026-10-02): red, and with its minus.
+        var text = evaded ? L10n.T("miss") : (onPlayer ? "-" : "") + amount.ToString(System.Globalization.CultureInfo.InvariantCulture);
         var colour = evaded
             ? new Color(0.75f, 0.78f, 0.82f)
             : onPlayer ? PlayerHurtColor : critical ? CritColor : NormalColor;
