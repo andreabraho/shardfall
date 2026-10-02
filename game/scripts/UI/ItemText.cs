@@ -67,6 +67,12 @@ public static class ItemText
             text.Append(C(" · ", Muted)).Append(C(L10n.F("level {0}", spec.LevelReq), playerLevel < spec.LevelReq ? Loss : Muted));
         }
 
+        // Whose weapon it is, of the two Warriors (2026-10-02): red when it is the other's.
+        if (spec.Slot == EquipSlot.Weapon && spec.ClassRestriction.Contains(CharacterClass.Warrior))
+        {
+            text.Append('\n').Append(C(spec.Hands == 2 ? L10n.T("Great sword · Mental Warrior") : L10n.T("Sword · Body Warrior"), PlayerProfile.Wields(spec) ? Muted : Loss));
+        }
+
         // Frame numbers, already scaled by the upgrade level.
         if (spec.WeaponDamageMax > 0)
         {

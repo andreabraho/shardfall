@@ -575,7 +575,8 @@ public partial class InventoryPanel : CanvasLayer
                 break;
 
             case EquipOutcome.WrongClass:
-                Notify(L10n.T("Your class cannot use this."));
+                Notify(PlayerProfile.Wields(spec) ? L10n.T("Your class cannot use this.")
+                    : PlayerProfile.WarriorHands == 1 ? L10n.T("A Body Warrior fights with a sword, not a great sword.") : L10n.T("A Mental Warrior fights with a great sword, not a sword."));
                 break;
 
             default:

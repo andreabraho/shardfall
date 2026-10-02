@@ -204,6 +204,19 @@ public static class PlayerProfile
     public static string Path { get; set; } = "";
 
     /// <summary>
+    /// How many hands the weapon of the Warrior played takes (2026-10-02, at your call): the Body
+    /// Warrior fights with a sword, the Mental Warrior with a great sword. Null for every other
+    /// class, and for a Warrior saved before the branches, who keeps both.
+    /// </summary>
+    public static int? WarriorHands => Class != Kiln.Core.Foundation.CharacterClass.Warrior ? null
+        : Path == BodyPath ? 1 : Path == MentalPath ? 2 : null;
+
+    /// <summary>True when the class and the branch played may hold this: any item but a weapon of the other branch.</summary>
+    public static bool Wields(Kiln.Core.Items.ItemSpec? spec) =>
+        spec is null || spec.Slot != Kiln.Core.Foundation.EquipSlot.Weapon || WarriorHands is not { } hands || spec.Hands == hands
+        || !spec.ClassRestriction.Contains(Kiln.Core.Foundation.CharacterClass.Warrior);
+
+    /// <summary>
     /// The player's visual: the Knight's skeleton wearing the head and body of their class and of
     /// a man or a woman.
     /// </summary>

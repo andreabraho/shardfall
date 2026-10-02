@@ -96,7 +96,7 @@ public partial class DebugGrants : Node
 
     /// <summary>A weapon of the class played.</summary>
     private static bool IsClassWeapon(Kiln.Data.Definitions.ItemDef def) =>
-        def.Slot is EquipSlot.Weapon && def.ClassRestriction.Contains(PlayerProfile.Class.ToString().ToLowerInvariant());
+        def.Slot is EquipSlot.Weapon && def.ClassRestriction.Contains(PlayerProfile.Class.ToString().ToLowerInvariant()) && PlayerProfile.Wields(GameItems.Spec(def.Id));
 
     /// <summary>An armour or a headpiece of the class played (2026-10-02: every class has its own).</summary>
     private static bool IsClassGear(Kiln.Data.Definitions.ItemDef def) =>
