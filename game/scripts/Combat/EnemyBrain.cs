@@ -719,6 +719,22 @@ public partial class EnemyBrain : CharacterBody3D
         AcquireTarget(force: true);
     }
 
+    private bool _roused;
+
+    /// <summary>
+    /// A creature called to a fight (2026-10-02): a stone's guard sets on the player at once and from
+    /// further off than its kind would, and fights even if its kind only fights back — a wave of the
+    /// Hollow's grazing animals stood round the stone and watched.
+    /// </summary>
+    public void Rouse()
+    {
+        _roused = true;
+        AggroRadius = Mathf.Max(AggroRadius, RousedAggro);
+        AcquireTarget(force: true, alert: false);
+    }
+
+    private const float RousedAggro = 16f;
+
     private void RefreshTarget()
     {
         // Whatever brought it here — a camp placed too close, a shove, a future bug — nothing
@@ -805,7 +821,7 @@ public partial class EnemyBrain : CharacterBody3D
         if (!force && GlobalPosition.DistanceTo(player.GlobalPosition) > AggroRadius) return;
 
         // A passive creature only fights back: the small animals of the Hollow graze until hit.
-        if (!force && _traits.Passive) return;
+        if (!force && _traits.Passive && !_roused) return;
 
         // Either side of the line ends it: a forced acquisition from inside the village, and
         // a creature that has somehow ended up standing in one.
