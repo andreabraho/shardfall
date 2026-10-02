@@ -259,9 +259,13 @@ public partial class KitPiece : StaticBody3D
             Materials[key] = paint;
         }
 
-        foreach (var mesh in model.FindChildren("*", "MeshInstance3D", true, false).OfType<MeshInstance3D>().Append(model as MeshInstance3D).Where(m => m is not null))
+        // Surface by surface, over whatever the model or its scene had put there: an override of the whole
+        // mesh on top of a scene's own surface overrides left the renderer asking for a material that was gone.
+        foreach (var mesh in model.FindChildren("*", "MeshInstance3D", true, false).OfType<MeshInstance3D>().Append(model as MeshInstance3D))
         {
-            mesh!.MaterialOverride = paint;
+            if (mesh?.Mesh is null) continue;
+
+            for (var surface = 0; surface < mesh.Mesh.GetSurfaceCount(); surface++) mesh.SetSurfaceOverrideMaterial(surface, paint);
         }
     }
 
