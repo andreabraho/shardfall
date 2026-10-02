@@ -108,6 +108,22 @@ Ninja woman. Nothing covers the waist or the head, and shoulder pieces stand **o
 chibi head (x ≥ 0.40) or it hides them. Daggers are swords from `swordkit`, about 0.6–0.85 long,
 two cells tall in the bag.
 
+### `bowkit.py`, `fankit.py`, `swordkit.cursed`, `classkit.py` — the Archer, the Asura, the Dragonseer
+
+- **Bows lie along Y**, the string towards -X, flat in Z, the grip at the origin — as KayKit's bow,
+  the way the left hand (`handslot.l`, visuals.json `weapon_hand`) was rigged to hold one. Not a
+  sword's layout: `icons.py` stands a `_bow` up for its picture.
+- **Fans are held as swords** (grip at the origin, up Z) but turned a quarter turn, the leaf facing
+  forward; `icons.py` turns a `_fan` back flat on. Drawn larger than worn: `fan()` shrinks them.
+- **A cursed sword is the Warrior's, re-forged**: `k.cursed("<source model>", "<name>")` — dark steel,
+  crimson cord, violet light down the blade. No new shape to model.
+- **Suits and headpieces** are tables in `classkit.build`: one function a class (`archer_suit`,
+  `asura_suit`, `seer_suit`, and the three `_head`), made of ninjakit's pieces round the Rogue.
+  The men's trunks are narrower (the Ranger's by a sixth, the Mage's a little) and their heads
+  smaller: visuals.json `armour_fit` and `helmet_fit` scale the trunk's pieces and the headpiece
+  for each body, so a suit is made once.
+- Never plate on the Archer or metal on the Dragonseer; the Asura is the one in dark plate.
+
 ### `trinkets.py` — gear that is never worn visibly
 Shields, boots, bracelets, necklaces, earrings, rings: built only for their icon. Add a
 builder named like the item id (`shd_…`, `bts_…`, `brc_…`, `nck_…`, `ear_…`, `rng_…`) to

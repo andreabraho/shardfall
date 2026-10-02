@@ -94,6 +94,12 @@ def render(item_id, path, cell):
             o.matrix_world = Matrix.Rotation(math.radians(90), 4, "X") @ o.matrix_world
         bpy.context.view_layer.update()
 
+    # A fan is held with its leaf facing forward (fankit.py): turned flat on for its picture.
+    if item_id.endswith("_fan"):
+        for o in meshes():
+            o.matrix_world = Matrix.Rotation(math.radians(-90), 4, "Z") @ o.matrix_world
+        bpy.context.view_layer.update()
+
     objs = meshes()
     lo, hi = bounds(objs)
     centre = (lo + hi) / 2

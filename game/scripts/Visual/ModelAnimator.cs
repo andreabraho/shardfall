@@ -495,7 +495,10 @@ public partial class ModelAnimator : Node
     {
         if (_player is null) return false;
 
-        var clip = Find(_player.GetAnimationList(), Charge);
+        // A caster gathers a spell between its hands (CLS-06, the Dragon's Breath); a blade is drawn back.
+        var clip = _stance == "caster" ? Pick(_player.GetAnimationList(), "Ranged_Magic_Spellcasting_Long", "Ranged_Magic_Spellcasting") : "";
+
+        if (clip.Length == 0) clip = Find(_player.GetAnimationList(), Charge);
 
         if (clip.Length == 0) return false;
 

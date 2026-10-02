@@ -23,3 +23,9 @@ The six Ninja skill icons (CLS-03, 2026-10-01) are our own, drawn by hand as SVG
 game and released with it — no outside source:
 skl_shadow_strike.svg, skl_flash_step.svg, skl_whirling_blades.svg, skl_shadow_veil.svg,
 skl_toxic_cloud.svg, skl_viper_fang.svg, skl_shadow_step.svg, skl_war_cry.svg (the Body Warrior, 2026-10-02)
+
+The twenty-one skill icons of the Archer, the Asura and the Dragonseer (CLS-04, 05, 06 — 2026-10-02) are
+our own too, drawn by hand as SVG paths: skl_backstep, skl_volley, skl_arrow_rain, skl_blazing_arrow,
+skl_light_step, skl_venom_shaft, skl_thunder_shot; skl_shadow_ward, skl_shadow_claw, skl_dark_vortex,
+skl_hexed_blade, skl_dread, skl_arcane_mail, skl_spellbreak; skl_pure_seal, skl_flying_seals,
+skl_dragon_breath, skl_flame_roar, skl_dragon_blessing, skl_mending_touch, skl_dragon_eye.

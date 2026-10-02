@@ -90,7 +90,7 @@
   { "id": "mesh_player_seer", "primitive": "model", "height": 1.80, "radius": 0.38, "color": "#4fa3d0", "model_yaw": 180, "model_path": "res://assets/kaykit/adventurers2/Knight.glb",
     "animations": ["res://assets/kaykit/adventurers2/animations/Rig_Medium_General.glb", "res://assets/kaykit/adventurers2/animations/Rig_Medium_MovementBasic.glb", "res://assets/kaykit/adventurers2/animations/Rig_Medium_MovementAdvanced.glb", "res://assets/kaykit/adventurers2/animations/Rig_Medium_CombatMelee.glb", "res://assets/kaykit/adventurers2/animations/Rig_Medium_CombatRanged.glb", "res://assets/kaykit/adventurers2/animations/Rig_Medium_Simulation.glb"],
     "gear": { "one_hand": "res://assets/temins/weapons/worn_fan.glb", "two_hand": "res://assets/temins/weapons/worn_fan.glb", "stance": "caster",
-              "helmet": ["Knight_Helmet", "Knight_HelmetVisor"], "cape": "Knight_Cape", "face": "Seer_Head", "own_clothes": true, "armour_fit": [0.93, 1.0, 1.0, 0, 1.0, 0], "helmet_fit": [0.88, 1.0, 0.87, 0, 1.89, 0],
+              "helmet": ["Knight_Helmet", "Knight_HelmetVisor"], "cape": "Knight_Cape", "face": "Seer_Head", "own_clothes": true, "armour_fit": [0.93, 1.0, 1.0, 0, 1.0, 0], "helmet_fit": [0.90, 1.0, 0.84, 0, 1.89, 0.3],
               "body_scene": "res://assets/temins/characters/seer_man_body.glb", "torso": "Mage_Body",
               "body_parts": ["Mage_Body", "Mage_ArmLeft", "Mage_ArmRight", "Mage_LegLeft", "Mage_LegRight", "Seer_Head"],
               "replaces": ["Knight_Body", "Knight_ArmLeft", "Knight_ArmRight", "Knight_LegLeft", "Knight_LegRight", "Knight_Head"] } },

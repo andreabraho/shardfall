@@ -71,6 +71,15 @@ def fan(name, paper, sticks, grip, radius=0.82, spread=130, ribs=7, band=None, s
         parts.append(t.cylinder("cord", 0.012, 0.16, tassel, at=(0, 0, -0.40), sides=6))
         parts.append(t.cylinder("tassel", 0.04, 0.16, tassel, at=(0, 0, -0.55), sides=8, radius_top=0.018))
 
+    # The leaf faces the way the Dragonseer does: a sword's flat is turned to the side, and a fan
+    # held so showed only its edge from the front.
+    for part in parts:
+        part.rotation_euler.z = math.pi / 2
+        bpy.context.view_layer.objects.active = part
+        part.select_set(True)
+        bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+        part.select_set(False)
+
     return k.finish(name, parts)
 
 
