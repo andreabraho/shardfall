@@ -47,5 +47,5 @@
     "color": "#ff7a2a", "particles": "embers" },
 
   { "id": "cos_ember_cub",      "name": "$cos.cos_ember_cub.name",      "kind": "companion", "boss": "mob_burning_warlord",     "chance": 0.5,  "duplicate_gan": 12000,
-    "visual": "mesh_beast_wolf", "scale": 0.45, "recolour": "#c0502a", "glow": 0.2 }
+    "visual": "mesh_beast_ember_hound", "scale": 0.45 }
 ]

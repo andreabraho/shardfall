@@ -47,10 +47,9 @@
     "leash_radius": 24,
     "xp": 445,
     "drop_table": "dt_stonewood",
-    "visual": "mesh_beast_wolf",
-    "visual_scale": 1.25,
-    "visual_tint": "#7a8088",
-    "visual_recolour": "#7a8088"
+    "visual": "mesh_beast_slate_wolf",
+    "visual_scale": 1,
+    "visual_tint": "#7a8088"
   },
   {
     "id": "mob_basalt_adder",
@@ -165,9 +164,8 @@
     "leash_radius": 24,
     "xp": 6890,
     "drop_table": "dt_boss_stag",
-    "visual": "mesh_q_stag",
-    "visual_scale": 2.2,
-    "visual_tint": "#8a8f94",
-    "visual_recolour": "#8a8f94"
+    "visual": "mesh_beast_stone_stag",
+    "visual_scale": 1,
+    "visual_tint": "#8a8f94"
   }
 ]

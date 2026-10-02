@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://1mhvgmqsy25h"
-path="res://.godot/imported/mat_stag_crystal.svg-086fee20bf4ce2b29b1e8597df7630ec.ctex"
+uid="uid://cwxhhmw5jlmfd"
+path="res://.godot/imported/mat_slate_fang.png-69a894099b770fc2a74f6e7d241be3a0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/icons/items/mat_stag_crystal.svg"
-dest_files=["res://.godot/imported/mat_stag_crystal.svg-086fee20bf4ce2b29b1e8597df7630ec.ctex"]
+source_file="res://assets/icons/items/mat_slate_fang.png"
+dest_files=["res://.godot/imported/mat_slate_fang.png-69a894099b770fc2a74f6e7d241be3a0.ctex"]
 
 [params]
 
@@ -38,6 +38,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

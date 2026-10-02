@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://plk1xeb17r28"
-path="res://.godot/imported/mat_bog_marrow.svg-e1509a647c8ff730ef164b47da78d7ee.ctex"
+uid="uid://fq4pfpp1m3uy"
+path="res://.godot/imported/mat_bog_marrow.png-312c8c114dd12cdf6c9ad96285b0c84f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/icons/items/mat_bog_marrow.svg"
-dest_files=["res://.godot/imported/mat_bog_marrow.svg-e1509a647c8ff730ef164b47da78d7ee.ctex"]
+source_file="res://assets/icons/items/mat_bog_marrow.png"
+dest_files=["res://.godot/imported/mat_bog_marrow.png-312c8c114dd12cdf6c9ad96285b0c84f.ctex"]
 
 [params]
 
@@ -38,6 +38,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

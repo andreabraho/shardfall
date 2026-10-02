@@ -301,3 +301,11 @@ ours, and every item in `trinkets.BUILDERS`.
   `shadowkit.build`) and a three-line model file; the Warrior's is a model file of its own
   (`models/drowned_crown.py`). Keep helms pointed, not domed.
 - **Scenes** come from `kiln scenes` (docs/10-act-2.md §5), not from Blender.
+- **A beast of another land** is a model file on the wolf's (`models/slate_wolf.py`, `ember_hound.py`,
+  `stone_stag.py`): its own `Proportions` and coat, then what makes it that land's — slabs and crystal
+  (`slate_wolf.stone_parts`), flame — as `beast.tuft`s rooted in the body and weighted to its bones.
+  Antlers are a `loft` for the beam and `tuft`s for the tines, on the head bone.
+- **A two-legged boss** keeps act 1's body and wears pieces of ours (`bosskit.py`): each built round the
+  origin in units of what it sits on (a head of radius 1), and hung on a bone by the visual's
+  `"attachments"` — `scale`, `up` and `forward` are shares of how high that bone stands, so they are
+  tuned by looking, in the game. A recolour leaves hung pieces alone.

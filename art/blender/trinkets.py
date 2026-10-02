@@ -47,6 +47,10 @@ def mats():
         "crystal": t.material("stone_crystal", (0.25, 0.90, 0.82), glow=0.9, rough=0.15),
         "cinder": t.material("cinder_iron", (0.07, 0.06, 0.06), metal=0.55, rough=0.5),
         "lava": t.material("lava", (1.0, 0.36, 0.06), glow=1.6, rough=0.4),
+        "marsh": t.material("marsh_light", (0.35, 1.0, 0.62), glow=1.2, rough=0.3),
+        "kelp": t.material("mire_kelp", (0.10, 0.30, 0.16), rough=0.8),
+        "pearl": t.material("mire_pearl", (0.92, 0.95, 0.90), glow=0.35, rough=0.15),
+        "verdigris": t.material("mire_verdigris", (0.16, 0.44, 0.36), metal=0.6, rough=0.4),
     }
 
 
@@ -410,8 +414,72 @@ def bts_ember_treads(m):
     return parts
 
 
+# -- Act 2's parts (A2-04): what the creatures of each map leave, drawn as the gear is. --
+
+def mat_slate_fang(m):
+    """A wolf's fang of slate, its root still in a knuckle of bone."""
+    return [
+        a.spike("fang_root", (0.0, 0, 0.0), (0.05, 0, 0.16), 0.075, m["slate"], sides=10),
+        a.spike("fang", (0.04, 0, 0.10), (0.20, 0, 0.42), 0.062, m["slate"], sides=10),
+        t.sphere("knuckle", 0.09, m["bone"], at=(-0.01, 0, -0.03), subdivisions=2, squash=(1.15, 0.9, 0.7)),
+        a.spike("glint", (0.085, -0.03, 0.16), (0.19, -0.02, 0.39), 0.018, m["crystal"], sides=4),
+    ]
+
+
+def mat_stag_crystal(m):
+    """Three points of the Stag's crystal on a chip of the stone they grew from."""
+    return [
+        t.rock("chip", 0.14, m["slate"], at=(0, 0, 0.0), seed=4, squash=(1.2, 1.0, 0.45), roughness=0.2, subdivisions=1),
+        a.spike("point_a", (0.0, 0, 0.02), (0.02, 0, 0.44), 0.075, m["crystal"], sides=6),
+        a.spike("point_b", (-0.08, 0.01, 0.02), (-0.19, 0.02, 0.28), 0.055, m["crystal"], sides=6),
+        a.spike("point_c", (0.08, -0.01, 0.02), (0.17, -0.03, 0.22), 0.05, m["crystal"], sides=6),
+    ]
+
+
+def mat_bog_marrow(m):
+    """A bone the marsh kept, snapped: what is inside it still gives light."""
+    return [
+        t.cylinder("shaft", 0.055, 0.34, m["bone"], at=(0, 0, 0.0), sides=14, smooth=True),
+        t.sphere("knob_a", 0.085, m["bone"], at=(-0.045, 0, -0.19), subdivisions=2),
+        t.sphere("knob_b", 0.085, m["bone"], at=(0.045, 0, -0.19), subdivisions=2),
+        t.cylinder("marrow", 0.04, 0.06, m["marsh"], at=(0, 0, 0.18), sides=12),
+        t.sphere("drip", 0.03, m["marsh"], at=(0.03, -0.03, 0.10), subdivisions=1, squash=(1, 1, 1.6)),
+        torus("weed", 0.058, 0.014, m["kelp"], at=(0, 0, -0.04), segments=16, ring=6),
+    ]
+
+
+def mat_kings_pearl(m):
+    """A pearl from the Drowned King's crown, in a claw of green bronze."""
+    parts = [t.sphere("pearl", 0.15, m["pearl"], at=(0, 0, 0.06), subdivisions=3),
+             torus("seat", 0.11, 0.022, m["verdigris"], at=(0, 0, -0.04), segments=24, ring=8)]
+    for i in range(4):
+        rad = math.pi / 4 + i * math.pi / 2
+        x, y = math.cos(rad) * 0.11, math.sin(rad) * 0.11
+        parts.append(a.spike(f"claw_{i}", (x, y, -0.05), (x * 0.75, y * 0.75, 0.16), 0.022, m["verdigris"], sides=6))
+    return parts
+
+
+def mat_ember_gland(m):
+    """A gland of fire cut from an ember hound: a dark skin, the heat showing through."""
+    return [
+        t.sphere("sac", 0.15, m["lava"], at=(0, 0, 0.0), subdivisions=3, squash=(0.9, 0.8, 1.15)),
+        torus("vein_a", 0.136, 0.016, m["cinder"], at=(0, 0, 0.02), rot=(0.5, 0.2, 0), segments=20, ring=6),
+        torus("vein_b", 0.132, 0.016, m["cinder"], at=(0, 0, -0.02), rot=(1.3, 0.5, 0), segments=20, ring=6),
+        a.spike("stem", (0, 0, 0.14), (0.05, 0, 0.26), 0.035, m["cinder"], sides=8),
+    ]
+
+
+def mat_warlord_slag(m):
+    """A lump struck from the Warlord's armour: black iron run together, fire in its cracks."""
+    parts = [t.rock("lump", 0.19, m["cinder"], at=(0, 0, 0), seed=12, squash=(1.2, 0.9, 0.85), roughness=0.3, subdivisions=1)]
+    for i, (rad, lift) in enumerate(((0.3, 0.7), (1.9, -0.2), (3.4, 0.5), (4.8, 0.1), (5.6, -0.6))):
+        x, y = math.cos(rad), math.sin(rad)
+        parts.append(a.spike(f"crack_{i}", (x * 0.10, y * 0.08, lift * 0.08), (x * 0.27, y * 0.21, lift * 0.19), 0.045, m["lava"], sides=5))
+    return parts
+
+
 BUILDERS = {name: fn for name, fn in globals().items()
-            if callable(fn) and name.split("_")[0] in ("shd", "bts", "brc", "nck", "ear", "rng")}
+            if callable(fn) and name.split("_")[0] in ("shd", "bts", "brc", "nck", "ear", "rng", "mat")}
 
 
 def build(item_id):

@@ -707,8 +707,33 @@ public sealed class CosmeticDef : ContentDefBase
 /// code ever names a mesh directly, so swapping placeholders for real art is a data edit
 /// and never a code edit.
 /// </summary>
+/// <summary>
+/// A model of ours hung on a creature by one of its bones (A2-01): a crown on a head, plates on shoulders. The
+/// piece is built round its origin in units of what it sits on; sizes here are shares of how high the bone stands
+/// above the creature's feet, so the same piece fits a body of any scale.
+/// </summary>
+public sealed class AttachmentDef
+{
+    public string Bone { get; init; } = string.Empty;
+    public string ModelPath { get; init; } = string.Empty;
+
+    /// <summary>The size of one of the piece's units.</summary>
+    public double Scale { get; init; } = 0.1;
+
+    /// <summary>Above the bone (up), in front of it (forward), as shares of the bone's height.</summary>
+    public double Up { get; init; }
+
+    public double Forward { get; init; }
+
+    /// <summary>Degrees it is tipped forward: a crown worn on a bowed head.</summary>
+    public double Pitch { get; init; }
+}
+
 public sealed class VisualDef : ContentDefBase
 {
+    /// <summary>Pieces of ours hung on the model's bones (A2-01).</summary>
+    public AttachmentDef[] Attachments { get; init; } = [];
+
     /// <summary>"capsule", "box", "cylinder", "sphere", "monolith" — or "model" once art exists.</summary>
     public string Primitive { get; init; } = "capsule";
 

@@ -20,11 +20,9 @@
     "leash_radius": 24,
     "xp": 359,
     "drop_table": "dt_cinder",
-    "visual": "mesh_beast_wolf",
-    "visual_scale": 1.1,
-    "visual_tint": "#c0502a",
-    "visual_recolour": "#c0502a",
-    "visual_glow": 0.12
+    "visual": "mesh_beast_ember_hound",
+    "visual_scale": 1,
+    "visual_tint": "#c0502a"
   },
   {
     "id": "mob_ember_orc",
@@ -188,7 +186,7 @@
     "leash_radius": 24,
     "xp": 11041,
     "drop_table": "dt_boss_burnlord",
-    "visual": "mesh_q_orc",
+    "visual": "mesh_boss_burning_warlord",
     "visual_scale": 2.2,
     "visual_tint": "#d0401a",
     "visual_recolour": "#d0401a",

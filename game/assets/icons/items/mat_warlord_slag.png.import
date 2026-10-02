@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b06ocldbgd4ck"
-path="res://.godot/imported/mat_warlord_slag.svg-3fb3b7f0d18fb86983fa17bed4cc454d.ctex"
+uid="uid://dgbl3g8688p1m"
+path="res://.godot/imported/mat_warlord_slag.png-2f4654bbfb8a01b1d13b4d521eda92aa.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/icons/items/mat_warlord_slag.svg"
-dest_files=["res://.godot/imported/mat_warlord_slag.svg-3fb3b7f0d18fb86983fa17bed4cc454d.ctex"]
+source_file="res://assets/icons/items/mat_warlord_slag.png"
+dest_files=["res://.godot/imported/mat_warlord_slag.png-2f4654bbfb8a01b1d13b4d521eda92aa.ctex"]
 
 [params]
 
@@ -38,6 +38,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

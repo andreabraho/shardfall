@@ -336,5 +336,22 @@
   { "id": "mesh_hlm_drowned_veil",  "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#1a5a4a", "model_path": "res://assets/temins/armour/drowned_veil.glb" },
   { "id": "mesh_hlm_drowned_hood",  "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#1a5a4a", "model_path": "res://assets/temins/armour/drowned_hood.glb" },
   { "id": "mesh_hlm_drowned_horns", "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#1a5a4a", "model_path": "res://assets/temins/armour/drowned_horns.glb" },
-  { "id": "mesh_hlm_drowned_tiara", "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#1a5a4a", "model_path": "res://assets/temins/armour/drowned_tiara.glb" }
+  { "id": "mesh_hlm_drowned_tiara", "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#1a5a4a", "model_path": "res://assets/temins/armour/drowned_tiara.glb" },
+
+  // Act 2's beasts (A2-01, 2026-10-02): ours, from the creature kit (art/blender/models).
+  { "id": "mesh_beast_slate_wolf",  "primitive": "model", "height": 1.15, "radius": 0.50, "color": "#5a6068", "model_yaw": 180, "model_path": "res://assets/temins/creatures/slate_wolf.glb" },
+  { "id": "mesh_beast_ember_hound", "primitive": "model", "height": 1.00, "radius": 0.42, "color": "#2a1a18", "model_yaw": 180, "model_path": "res://assets/temins/creatures/ember_hound.glb" },
+  { "id": "mesh_beast_stone_stag",  "primitive": "model", "height": 3.30, "radius": 0.95, "color": "#6a7078", "model_yaw": 180, "model_path": "res://assets/temins/creatures/stone_stag.glb" },
+
+  // Act 2's two-legged bosses (A2-01, 2026-10-02): act 1's bodies, and pieces of ours hung on their bones.
+  { "id": "mesh_boss_drowned_king", "primitive": "model", "height": 2.10, "radius": 0.60, "color": "#2a5a6a", "model_yaw": 180, "model_path": "res://assets/quaternius/zombies/Zombie_Chubby.gltf",
+    "attachments": [
+      { "bone": "Head", "model_path": "res://assets/temins/creatures/king_crown.glb", "scale": 0.13, "up": 0.16, "forward": 0.02 },
+      { "bone": "Neck", "model_path": "res://assets/temins/creatures/king_mantle.glb", "scale": 0.42, "up": -0.02 }
+    ] },
+  { "id": "mesh_boss_burning_warlord", "primitive": "model", "height": 1.90, "radius": 0.50, "color": "#d0401a", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Orc.glb",
+    "attachments": [
+      { "bone": "Head", "model_path": "res://assets/temins/creatures/warlord_helm.glb", "scale": 0.34, "up": 0.20, "forward": 0.02 },
+      { "bone": "Neck", "model_path": "res://assets/temins/creatures/warlord_pauldrons.glb", "scale": 0.46, "up": -0.14 }
+    ] }
 ]

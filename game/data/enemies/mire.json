@@ -183,7 +183,7 @@
     "leash_radius": 24,
     "xp": 8624,
     "drop_table": "dt_boss_king",
-    "visual": "mesh_z_brute",
+    "visual": "mesh_boss_drowned_king",
     "visual_scale": 2.3,
     "visual_tint": "#2a5a6a",
     "visual_recolour": "#2a5a6a"

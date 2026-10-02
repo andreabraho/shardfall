@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cw2peq653jtqn"
-path="res://.godot/imported/mat_slate_fang.svg-c2b7bdc6b6857fd44dff009424ee93c9.ctex"
+uid="uid://divx3s2phcr3e"
+path="res://.godot/imported/mat_kings_pearl.png-7eeab704bafbc9f2f8069795235eb645.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/icons/items/mat_slate_fang.svg"
-dest_files=["res://.godot/imported/mat_slate_fang.svg-c2b7bdc6b6857fd44dff009424ee93c9.ctex"]
+source_file="res://assets/icons/items/mat_kings_pearl.png"
+dest_files=["res://.godot/imported/mat_kings_pearl.png-7eeab704bafbc9f2f8069795235eb645.ctex"]
 
 [params]
 
@@ -38,6 +38,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

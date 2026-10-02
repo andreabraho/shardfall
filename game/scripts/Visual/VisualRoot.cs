@@ -413,6 +413,9 @@ public partial class VisualRoot : Node3D
         {
             if (node is not MeshInstance3D mesh || mesh.Mesh is null) continue;
 
+            // A piece hung on a bone keeps the colours it was made in.
+            if (_current.GetPathTo(mesh).ToString().Contains(VisualRegistry.AttachedPrefix)) continue;
+
             for (var surface = 0; surface < mesh.Mesh.GetSurfaceCount(); surface++)
             {
                 if (mesh.GetActiveMaterial(surface) is not BaseMaterial3D made) continue;

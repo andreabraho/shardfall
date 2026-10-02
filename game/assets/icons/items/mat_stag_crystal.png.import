@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://biat34iji0bbv"
-path="res://.godot/imported/mat_ember_gland.svg-667a3d9b412891ae86b3090c58b0eabe.ctex"
+uid="uid://cq0bkvxoejtd3"
+path="res://.godot/imported/mat_stag_crystal.png-4181700247881e5cf0199f8fcc017c19.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/icons/items/mat_ember_gland.svg"
-dest_files=["res://.godot/imported/mat_ember_gland.svg-667a3d9b412891ae86b3090c58b0eabe.ctex"]
+source_file="res://assets/icons/items/mat_stag_crystal.png"
+dest_files=["res://.godot/imported/mat_stag_crystal.png-4181700247881e5cf0199f8fcc017c19.ctex"]
 
 [params]
 
@@ -38,6 +38,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false
