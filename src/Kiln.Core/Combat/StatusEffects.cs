@@ -39,6 +39,21 @@ public enum StatusKind
     /// makes that much stronger.
     /// </summary>
     Stealth,
+
+    /// <summary>Damage over time from fire, stacks (CLS-04, CLS-06): the Blazing Arrow, the Flame Roar.</summary>
+    Burn,
+
+    /// <summary>A share of the damage of every basic blow comes back as health (CLS-05, the Hexed Blade).</summary>
+    Leech,
+
+    /// <summary>A share of every blow taken from close by is thrown back (CLS-05, the Arcane Mail).</summary>
+    Thorns,
+
+    /// <summary>Faster on foot and harder to hit (CLS-04, the Light Step). The magnitude is the speed gained.</summary>
+    Haste,
+
+    /// <summary>More critical hits (CLS-06, the Dragon's Eye). The magnitude is the chance added.</summary>
+    Focus,
 }
 
 /// <summary>How repeated applications of the same status combine.</summary>
@@ -102,10 +117,18 @@ public sealed class StatusEffectSet
         [StatusKind.Empower] = StackRule.Strongest,
         [StatusKind.Stealth] = StackRule.Strongest,
         [StatusKind.Frenzy] = StackRule.Strongest,
+        [StatusKind.Burn] = StackRule.Stack,
+        [StatusKind.Leech] = StackRule.Strongest,
+        [StatusKind.Thorns] = StackRule.Strongest,
+        [StatusKind.Haste] = StackRule.Strongest,
+        [StatusKind.Focus] = StackRule.Strongest,
     };
 
     /// <summary>What a frenzy costs: this much more damage taken while it lasts (REF-21, at your call).</summary>
     public const double FrenzyExposure = 0.03;
+
+    /// <summary>The chance to evade a blow outright while the Light Step is on.</summary>
+    public const double HasteEvasion = 0.10;
 
     /// <summary>What Iron Skin costs: this much slower on foot while it lasts (REF-21, at your call).</summary>
     public const double FortifyDrag = 0.05;
@@ -134,7 +157,8 @@ public sealed class StatusEffectSet
     public double MoveSpeedMultiplier =>
         (Has(StatusKind.Slow) ? Math.Max(0.2, 1 - _effects[StatusKind.Slow].Magnitude) : 1.0)
         * (Has(StatusKind.Fortify) ? 1 - FortifyDrag : 1.0)
-        * (Has(StatusKind.Frenzy) ? 1 + (_effects[StatusKind.Frenzy].Magnitude * 0.5) : 1.0);
+        * (Has(StatusKind.Frenzy) ? 1 + (_effects[StatusKind.Frenzy].Magnitude * 0.5) : 1.0)
+        * (Has(StatusKind.Haste) ? 1 + _effects[StatusKind.Haste].Magnitude : 1.0);
 
     /// <summary>Attack speed multiplier: a frenzy's gain. 1.0 when unaffected.</summary>
     public double AttackSpeedMultiplier =>
@@ -204,7 +228,7 @@ public sealed class StatusEffectSet
     /// <summary>Removes one harmful status. Used by the Shaman's cleanse (doc 02 §2.2).</summary>
     public bool CleanseOne()
     {
-        foreach (var kind in (StatusKind[])[StatusKind.Stun, StatusKind.Poison, StatusKind.Bleed, StatusKind.Slow, StatusKind.Weaken])
+        foreach (var kind in (StatusKind[])[StatusKind.Stun, StatusKind.Poison, StatusKind.Bleed, StatusKind.Burn, StatusKind.Slow, StatusKind.Weaken])
         {
             if (_effects.Remove(kind)) return true;
         }
@@ -214,7 +238,7 @@ public sealed class StatusEffectSet
 
     /// <summary>The statuses that hurt whoever carries them.</summary>
     public static readonly StatusKind[] Harmful =
-        [StatusKind.Stun, StatusKind.Poison, StatusKind.Bleed, StatusKind.Slow, StatusKind.Weaken, StatusKind.Vulnerability];
+        [StatusKind.Stun, StatusKind.Poison, StatusKind.Bleed, StatusKind.Burn, StatusKind.Slow, StatusKind.Weaken, StatusKind.Vulnerability];
 
     /// <summary>
     /// Removes every harmful status at once and says how many went — the Guard's cleanse
@@ -312,4 +336,19 @@ public sealed class StatusEffectSet
 
     public static StatusEffect Stealth(double firstBlow, double duration = 8) =>
         new() { Kind = StatusKind.Stealth, Magnitude = firstBlow, Duration = duration };
+
+    public static StatusEffect Burn(double damagePerTick, double duration = 5, int maxStacks = 3) =>
+        new() { Kind = StatusKind.Burn, Magnitude = damagePerTick, Duration = duration, MaxStacks = maxStacks, TickInterval = 1.0, TickTimer = 1.0 };
+
+    public static StatusEffect Leech(double fraction, double duration = 25) =>
+        new() { Kind = StatusKind.Leech, Magnitude = fraction, Duration = duration };
+
+    public static StatusEffect Thorns(double fraction, double duration = 20) =>
+        new() { Kind = StatusKind.Thorns, Magnitude = fraction, Duration = duration };
+
+    public static StatusEffect Haste(double fraction, double duration = 15) =>
+        new() { Kind = StatusKind.Haste, Magnitude = fraction, Duration = duration };
+
+    public static StatusEffect Focus(double chance, double duration = 30) =>
+        new() { Kind = StatusKind.Focus, Magnitude = chance, Duration = duration };
 }

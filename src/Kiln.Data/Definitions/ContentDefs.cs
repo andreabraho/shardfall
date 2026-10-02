@@ -370,6 +370,19 @@ public sealed class SkillDef : ContentDefBase
     public bool Pierces { get; init; }
 
     /// <summary>
+    /// How far a single-target skill reaches, in metres (CLS-04: a shot, a thrown seal). Zero for a
+    /// blow of the hand, which lands only on what stands within reach. For an area placed on the
+    /// ground, how far off it can be put.
+    /// </summary>
+    public double Range { get; init; }
+
+    /// <summary>The element its damage is: physical | fire | ice | lightning | dark.</summary>
+    public Kiln.Core.Combat.DamageElement Element { get; init; } = Kiln.Core.Combat.DamageElement.Physical;
+
+    /// <summary>Whether it strips the rage and the shield of what it hits (CLS-05, the Spellbreak).</summary>
+    public bool Dispels { get; init; }
+
+    /// <summary>
     /// A status the skill puts on what it hits (REF-01): Ground Slam's stun, Shield Bash's
     /// defence debuff. Physical skills control, mental skills weaken.
     /// </summary>
@@ -798,6 +811,15 @@ public sealed class GearPartsDef
     /// woman's hair the headbands were made round). Empty: worn as made.
     /// </summary>
     public float[] HelmetFit { get; init; } = [];
+
+    /// <summary>The bone the weapon is held on. The bow hand is the left (CLS-04).</summary>
+    public string WeaponHand { get; init; } = "handslot.r";
+
+    /// <summary>
+    /// How the body stands, runs and strikes with what it holds: empty for a blade, "bow" for the
+    /// Archer, "caster" for the Dragonseer.
+    /// </summary>
+    public string Stance { get; init; } = string.Empty;
 }
 
 // ---------------------------------------------------------------------------

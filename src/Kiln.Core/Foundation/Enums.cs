@@ -79,6 +79,9 @@ public enum CharacterClass
     Blade,
     Sura,
     Shaman,
+
+    /// <summary>The bow fighter (CLS-04, 2026-10-02). Last, so the numbers of the others stay.</summary>
+    Archer,
 }
 
 public enum SkillTargeting

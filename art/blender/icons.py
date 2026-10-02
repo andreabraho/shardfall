@@ -15,7 +15,7 @@ import re
 import sys
 
 import bpy
-from mathutils import Vector
+from mathutils import Matrix, Vector
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
@@ -87,6 +87,13 @@ def render(item_id, path, cell):
             bpy.data.objects.remove(o, do_unlink=True)
 
     kind = item_id.split("_")[0]
+
+    # A bow lies along Y, as the hand holds it (bowkit.py): stood up for its picture, as a sword stands.
+    if item_id.endswith("_bow"):
+        for o in meshes():
+            o.matrix_world = Matrix.Rotation(math.radians(90), 4, "X") @ o.matrix_world
+        bpy.context.view_layer.update()
+
     objs = meshes()
     lo, hi = bounds(objs)
     centre = (lo + hi) / 2

@@ -25,6 +25,7 @@ public readonly record struct Attributes(int Str, int Dex, int Int, int Vit)
         CharacterClass.Blade => attributes.Dex,
         CharacterClass.Sura => attributes.Str,
         CharacterClass.Shaman => attributes.Int,
+        CharacterClass.Archer => attributes.Dex,
         _ => attributes.Str,
     };
 
@@ -45,12 +46,18 @@ public readonly record struct Attributes(int Str, int Dex, int Int, int Vit)
     public const double MentalSkillPerVit = 0.6;
 
     /// <summary>
+    /// Attack power the Asura's skills, and only its skills, take from each point of intelligence
+    /// (CLS-05, 2026-10-02): the sword strikes with strength, the magic in it with the mind.
+    /// </summary>
+    public const double AsuraSkillPerInt = 1.2;
+
+    /// <summary>
     /// The attack power a class draws from its attributes: its own attribute at the full rate,
-    /// and for the Ninja a third of that from strength besides.
+    /// and for the Ninja and the Archer a third of that from strength besides.
     /// </summary>
     public static double AttackFrom(CharacterClass characterClass, Attributes attributes) =>
         (PrimaryFor(characterClass, attributes) * AttackPerPoint)
-        + (characterClass == CharacterClass.Blade ? attributes.Str * BladeAttackPerStr : 0);
+        + (characterClass is CharacterClass.Blade or CharacterClass.Archer ? attributes.Str * BladeAttackPerStr : 0);
 }
 
 /// <summary>Damage element, for the resistance step of the pipeline.</summary>

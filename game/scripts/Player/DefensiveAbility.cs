@@ -52,12 +52,34 @@ public partial class DefensiveAbility : Node
     /// <summary>The Ninja's: a dash and a moment untouched, in place of a guard held.</summary>
     public const string StepId = "skl_shadow_step";
 
-    /// <summary>True for the class that steps aside rather than standing behind a guard.</summary>
-    private static bool Steps => PlayerProfile.Class == Kiln.Core.Foundation.CharacterClass.Blade;
+    /// <summary>The Archer's (CLS-04): a leap away from where it faces, and a moment untouched.</summary>
+    public const string BackstepId = "skl_backstep";
+
+    /// <summary>The Asura's (CLS-05): a shell that takes blows in its place.</summary>
+    public const string WardId = "skl_shadow_ward";
+
+    /// <summary>The Dragonseer's (CLS-06): a shell, and every harmful effect gone as it is raised.</summary>
+    public const string SealId = "skl_pure_seal";
+
+    /// <summary>True for a class that moves out of the way rather than standing behind a guard.</summary>
+    private static bool Steps => PlayerProfile.Class is Kiln.Core.Foundation.CharacterClass.Blade or Kiln.Core.Foundation.CharacterClass.Archer;
+
+    /// <summary>True for a class whose defence is a shell that takes blows, and leaves it free to move.</summary>
+    private static bool Wards => PlayerProfile.Class is Kiln.Core.Foundation.CharacterClass.Sura or Kiln.Core.Foundation.CharacterClass.Shaman;
+
+    /// <summary>The defence on Shift of the class played.</summary>
+    public static string SkillOf(Kiln.Core.Foundation.CharacterClass played) => played switch
+    {
+        Kiln.Core.Foundation.CharacterClass.Blade => StepId,
+        Kiln.Core.Foundation.CharacterClass.Archer => BackstepId,
+        Kiln.Core.Foundation.CharacterClass.Sura => WardId,
+        Kiln.Core.Foundation.CharacterClass.Shaman => SealId,
+        _ => "skl_guard_stance",
+    };
 
     public override void _Ready()
     {
-        if (Steps) SkillId = StepId;
+        SkillId = SkillOf(PlayerProfile.Class);
 
         _motor = GetParent<PlayerMotor>();
         _self = GetParent().GetNode<Combatant>("Combatant");
@@ -117,6 +139,12 @@ public partial class DefensiveAbility : Node
             return;
         }
 
+        if (Wards)
+        {
+            Ward();
+            return;
+        }
+
         var values = Values();
 
         if (!_self.Mana.TrySpend(values.Mana))
@@ -165,10 +193,10 @@ public partial class DefensiveAbility : Node
     /// </summary>
     private void Step()
     {
-        if (!GameContent.IsLoaded || !GameContent.Database.Skills.TryGetValue(StepId, out var def)) return;
+        if (!GameContent.IsLoaded || !GameContent.Database.Skills.TryGetValue(SkillId, out var def)) return;
 
         var book = GetParent().GetNodeOrNull<PlayerCharacter>("PlayerCharacter")?.Skills;
-        var skill = Kiln.Data.Definitions.ResolvedSkill.For(def, book?.RankOf(StepId) ?? Kiln.Core.Progression.MasteryRank.Normal);
+        var skill = Kiln.Data.Definitions.ResolvedSkill.For(def, book?.RankOf(SkillId) ?? Kiln.Core.Progression.MasteryRank.Normal);
 
         if (!_self.Mana.TrySpend(skill.ManaCost))
         {
@@ -177,28 +205,72 @@ public partial class DefensiveAbility : Node
         }
 
         var going = _motor.Velocity with { Y = 0 };
-        var aim = going.LengthSquared() > 0.25f ? going.Normalized() : _motor.Facing;
+        var back = def.Motion == "backstep";
+
+        // The Ninja goes the way it is going; the Archer away from what it faces, still facing it.
+        var aim = back ? -_motor.Facing : going.LengthSquared() > 0.25f ? going.Normalized() : _motor.Facing;
 
         Audio.AudioDirector.Play(def.Sound, _motor.GlobalPosition);
         Combat.SkillFx.Pierce(this, _motor.GlobalPosition, aim, (float)skill.Radius, new Color(def.Color), 0.7f);
 
         _motor.Stop();
         _motor.HoldFor(StepSeconds);
-        _motor.FaceTowards(aim);
-        _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove("step", aim, StepSeconds);
+        _motor.FaceTowards(back ? -aim : aim);
+        _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove(back ? "backstep" : "step", aim, back ? StepSeconds + 0.14 : StepSeconds);
         GetParent().GetNodeOrNull<SkillCaster>("SkillCaster")?.Dash(aim, (float)skill.Radius, StepSeconds);
 
         _active = skill.Duration;
         _cooldown = skill.Cooldown;
         CooldownTotal = System.Math.Max(0.01, skill.Cooldown);
-        book?.RecordUse(StepId);
+        book?.RecordUse(SkillId);
 
         _self.Untouchable = true;
 
         EmitSignal(SignalName.GuardChanged, true);
     }
 
+    /// <summary>
+    /// The Shadow Ward and the Pure Seal (CLS-05, CLS-06): a shell worth a share of maximum health
+    /// that takes blows in the caster's place for the skill's duration. The body stays free to
+    /// move and to fight. The seal also clears every harmful effect as it is raised.
+    /// </summary>
+    private void Ward()
+    {
+        if (!GameContent.IsLoaded || !GameContent.Database.Skills.TryGetValue(SkillId, out var def)) return;
+
+        var book = GetParent().GetNodeOrNull<PlayerCharacter>("PlayerCharacter")?.Skills;
+        var skill = Kiln.Data.Definitions.ResolvedSkill.For(def, book?.RankOf(SkillId) ?? Kiln.Core.Progression.MasteryRank.Normal);
+
+        if (!_self.Mana.TrySpend(skill.ManaCost))
+        {
+            GD.Print($"[ward] not enough mana ({_self.Mana})");
+            return;
+        }
+
+        Audio.AudioDirector.Play(def.Sound, _motor.GlobalPosition);
+
+        if (SkillId == SealId && _self.Statuses.CleanseAll() > 0) Combat.SkillFx.Cleanse(this, _motor.GlobalPosition);
+
+        _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove("raise", _motor.Facing, 0.4);
+
+        _visual.Rank = book?.RankOf(SkillId) ?? Kiln.Core.Progression.MasteryRank.Normal;
+        _visual.SetGuarding(true);
+
+        _self.Barrier = _self.Stats.MaxHp * skill.Magnitude;
+        _warding = true;
+        _active = skill.Duration;
+        _cooldown = skill.Cooldown;
+        CooldownTotal = System.Math.Max(0.01, skill.Cooldown);
+        book?.RecordUse(SkillId);
+
+        EmitSignal(SignalName.GuardChanged, true);
+    }
+
+    /// <summary>True while a shell is up: it ends early when it is spent.</summary>
+    private bool _warding;
+
     /// <summary>How long the step takes to cross its distance.</summary>
+
     private const double StepSeconds = 0.18;
 
     public override void _Process(double delta)
@@ -209,8 +281,8 @@ public partial class DefensiveAbility : Node
 
         _active -= delta;
 
-        // Dying mid-guard must not leave the player permanently rooted.
-        if (_active > 0 && _self.IsAlive) return;
+        // Dying mid-guard must not leave the player permanently rooted; a shell ends when it is spent.
+        if (_active > 0 && _self.IsAlive && !(_warding && _self.Barrier <= 0)) return;
 
         EndGuard();
     }
@@ -219,6 +291,8 @@ public partial class DefensiveAbility : Node
     {
         _active = 0;
         _self.Untouchable = false;
+        _self.Barrier = 0;
+        _warding = false;
         _self.IncomingDamageMultiplier = 1.0;
         _self.Statuses.Warded = false;
         _motor.MovementLocked = false;

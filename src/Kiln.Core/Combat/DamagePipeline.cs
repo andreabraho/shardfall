@@ -35,6 +35,9 @@ public readonly record struct DamageRequest
 
     public bool CanCrit { get; init; } = true;
 
+    /// <summary>Critical chance added for this one attack, on top of the attacker's own (the Dragon's Eye).</summary>
+    public double BonusCritChance { get; init; }
+
     /// <summary>Skips the evade roll. Used by unavoidable effects such as shard pulses.</summary>
     public bool Unavoidable { get; init; }
 
@@ -95,7 +98,7 @@ public static class DamagePipeline
         damage *= 1 + attacker.Modifiers.VsFamilyBonus(defender.Family);
 
         // 5. Crit.
-        var critical = request.CanCrit && rng.Chance(attacker.CritChance);
+        var critical = request.CanCrit && rng.Chance(Math.Min(StatBlock.CritChanceCap, attacker.CritChance + request.BonusCritChance));
         if (critical) damage *= attacker.CritDamage;
 
         // 6-7. Pierce skips mitigation entirely.

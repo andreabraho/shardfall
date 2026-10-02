@@ -61,6 +61,45 @@ public partial class ModelAnimator : Node
     /// <summary>True while a blade is held in each hand (the Ninja, CLS-03): the blows are the two-weapon ones.</summary>
     public bool DualWield { get; set; }
 
+    /// <summary>
+    /// How the body stands, runs and strikes (CLS-04, CLS-06): "bow" for the Archer — the bow low
+    /// in the left hand, every shot a draw and a release — "caster" for the Dragonseer, empty for
+    /// a blade.
+    /// </summary>
+    public string Stance
+    {
+        get => _stance;
+        set
+        {
+            if (_stance == value) return;
+
+            _stance = value;
+            Restance();
+        }
+    }
+
+    private string _stance = "";
+    private string _idleBow = "";
+    private string _runBow = "";
+
+    /// <summary>A clip played as the one before it ends: the release after the draw.</summary>
+    private (string Clip, float Speed, double Seconds)? _then;
+
+    private void Restance()
+    {
+        if (_player is null) return;
+
+        var names = _player.GetAnimationList();
+
+        _idleBow = Pick(names, "Ranged_Bow_Idle");
+        _runBow = Pick(names, "Running_HoldingBow");
+
+        foreach (var name in new[] { _idleBow, _runBow })
+        {
+            if (name.Length > 0) _player.GetAnimation(name).LoopMode = Animation.LoopModeEnum.Linear;
+        }
+    }
+
     /// <summary>The gear whose blades are carried one way and struck with another (the Ninja's daggers).</summary>
     public GearRig? Gear { get; set; }
 
@@ -107,6 +146,7 @@ public partial class ModelAnimator : Node
             if (name.Length > 0) _player.GetAnimation(name).LoopMode = Animation.LoopModeEnum.Linear;
         }
 
+        Restance();
         Play(_idle);
     }
 
@@ -262,6 +302,11 @@ public partial class ModelAnimator : Node
     {
         if (_player is null) return 0;
 
+        // A shot is a draw through the windup and a release as it lands; a bolt is thrown from the hand.
+        if (_stance == "bow") return DrawAndLoose("Ranged_Bow_Draw", "Ranged_Bow_Release", windup, interval - windup);
+
+        if (_stance == "caster" && Pick(_player.GetAnimationList(), "Ranged_Magic_Shoot") is { Length: > 0 } bolt) return PlayTimed(bolt, windup, interval);
+
         var chain = DualWield ? DualChain : TwoHanded ? TwoHandChain : OneHandChain;
         var clip = Pick(_player.GetAnimationList(), chain[(((blow - 1) % chain.Length) + chain.Length) % chain.Length]);
 
@@ -279,6 +324,16 @@ public partial class ModelAnimator : Node
     {
         if (_player is null) return 0;
 
+        // The bow (CLS-04): every shot is a draw and a release, the rain is loosed upward.
+        if (_stance == "bow" && motion is "shoot" or "volley" or "shoot_up")
+        {
+            var draw = landBy > 0 ? landBy : motion == "volley" ? 0.07 : 0.16;
+
+            return motion == "shoot_up"
+                ? DrawAndLoose("Ranged_Bow_Draw_Up", "Ranged_Bow_Release_Up", draw, System.Math.Max(0.2, seconds - draw))
+                : DrawAndLoose("Ranged_Bow_Draw", "Ranged_Bow_Release", draw, System.Math.Max(0.12, seconds - draw));
+        }
+
         // With a blade in each hand (CLS-03) a blow is struck with both where there is a clip for it.
         string[] dual = !DualWield ? [] : motion switch
         {
@@ -290,6 +345,14 @@ public partial class ModelAnimator : Node
 
         string[] wanted = motion switch
         {
+            // Magic from the hand (CLS-05, CLS-06): a bolt thrown, a seal swept forward, a claw called up;
+            // a spell worked with both hands; a long one, for a heal or a rain.
+            "cast" or "seals" or "claw" or "breath" => ["Ranged_Magic_Shoot", "Throw"],
+            "spell" => ["Ranged_Magic_Spellcasting", "Ranged_Magic_Raise", "Cheering"],
+            "summon" => ["Ranged_Magic_Spellcasting_Long", "Ranged_Magic_Raise", "Cheering"],
+            // A leap back (CLS-04): the Backstep.
+            "backstep" => ["Dodge_Backward", "Jump_Full_Short"],
+            "shoot" or "volley" or "shoot_up" => ["Throw"],
             // Something thrown from the hand: the Viper Fang.
             "throw" => ["Throw"],
             // A hop aside: the Shadow Step.
@@ -303,7 +366,7 @@ public partial class ModelAnimator : Node
             "leap" => ["Melee_1H_Attack_Jump_Chop", "Melee_2H_Attack_Chop", "2H_Melee_Attack_Chop", "Melee_1H_Attack_Chop"],
             "slam" => ["Melee_1H_Attack_Jump_Chop", "Melee_2H_Attack_Chop", "2H_Melee_Attack_Chop"],
             "brace" => ["Melee_Block", "Block"],
-            "raise" => ["Cheering", "Cheer", "Spellcast_Raise"],
+            "raise" => _stance == "caster" ? ["Ranged_Magic_Raise", "Cheering"] : ["Cheering", "Cheer", "Spellcast_Raise"],
             // REF-21: the Blade Wave is a diagonal cut thrown forward, the Battle Frenzy a
             // shout with the arms up.
             "wave" => TwoHanded ? ["Melee_2H_Attack_Slice", "2H_Melee_Attack_Slice"] : ["Melee_1H_Attack_Slice_Diagonal", "1H_Melee_Attack_Slice_Diagonal"],
@@ -315,13 +378,45 @@ public partial class ModelAnimator : Node
 
         var clip = wanted.Length == 0 ? "" : Pick(_player.GetAnimationList(), [.. dual, .. wanted]);
 
-        if (clip.Length == 0) return motion is "brace" or "raise" or "roar" ? Flourish() : Attack();
+        if (clip.Length == 0) return motion is "brace" or "raise" or "roar" or "spell" or "summon" ? Flourish() : Attack();
 
         // A buff is raised, not struck: it has the whole hold to play out.
         // A slow skill says when it lands; any other lands quickly.
-        var impact = motion is "brace" or "raise" or "roar" ? seconds * 0.6 : landBy > 0 ? landBy : SkillImpact;
+        var impact = motion is "brace" or "raise" or "roar" or "spell" or "summon" ? seconds * 0.6 : landBy > 0 ? landBy : SkillImpact;
 
         return PlayTimed(clip, impact, seconds);
+    }
+
+    /// <summary>
+    /// A shot (CLS-04): <paramref name="draw"/> played to be drawn in <paramref name="drawSeconds"/>,
+    /// then <paramref name="release"/> over <paramref name="after"/>. The ordinary swing on a model
+    /// without the clips.
+    /// </summary>
+    private double DrawAndLoose(string draw, string release, double drawSeconds, double after)
+    {
+        var names = _player!.GetAnimationList();
+
+        if (!names.Contains(draw) || !names.Contains(release)) return Attack();
+
+        var drawing = _player.GetAnimation(draw);
+        var loosing = _player.GetAnimation(release);
+        var speed = (float)System.Math.Clamp(drawing.Length / System.Math.Max(0.05, drawSeconds), 0.8, 8.0);
+
+        _flinch = false;
+        drawing.LoopMode = Animation.LoopModeEnum.None;
+        loosing.LoopMode = Animation.LoopModeEnum.None;
+        _player.Play(draw, customBlend: 0.05, customSpeed: speed);
+        _player.Seek(0, update: true);
+
+        _attackFor = drawing.Length / speed;
+
+        // The release at its own pace, or quicker if the next shot is due before it would end.
+        var hold = System.Math.Max(0.1, after);
+        var loose = (float)System.Math.Clamp(loosing.Length / hold, 1.0, 4.0);
+
+        _then = (release, loose, System.Math.Min(hold, loosing.Length / loose));
+
+        return _attackFor + _then.Value.Seconds;
     }
 
     /// <summary>Seconds into a skill's move its blow should appear to land.</summary>
@@ -341,6 +436,7 @@ public partial class ModelAnimator : Node
         speed = System.Math.Clamp(speed, 0.8, 3.0);
 
         _flinch = false;
+        _then = null;
         animation.LoopMode = Animation.LoopModeEnum.None;
         _player.Play(clip, customBlend: 0.08, customSpeed: (float)speed);
         _player.Seek(0, update: true);
@@ -423,7 +519,11 @@ public partial class ModelAnimator : Node
         return _attackFor;
     }
 
-    public void CancelAttack() => _attackFor = 0;
+    public void CancelAttack()
+    {
+        _attackFor = 0;
+        _then = null;
+    }
 
     /// <summary>
     /// The model's hit reaction, if it carries one — but never over its own attack: a creature
@@ -461,15 +561,26 @@ public partial class ModelAnimator : Node
             return;
         }
 
+        // The release, once the draw is done.
+        if (_then is { } next)
+        {
+            _then = null;
+            _player.Play(next.Clip, customBlend: 0.03, customSpeed: next.Speed);
+            _attackFor = next.Seconds;
+            return;
+        }
+
         _flinch = false;
 
         var speed = _body is null ? 0f : (_body.Velocity with { Y = 0 }).Length();
 
         // With a great sword in hand, standing still is its guard, not an empty-handed rest; with
         // two blades it is the same guard, the hands together in front.
-        var idle = (TwoHanded || DualWield) && _idleTwoHand.Length > 0 ? _idleTwoHand : _idle;
+        var idle = _stance == "bow" && _idleBow.Length > 0 ? _idleBow
+            : (TwoHanded || DualWield) && _idleTwoHand.Length > 0 ? _idleTwoHand : _idle;
+        var run = _stance == "bow" && _runBow.Length > 0 ? _runBow : _run;
 
-        Play(speed <= MovingAbove ? idle : speed < WalkingBelow ? _walk : _run);
+        Play(speed <= MovingAbove ? idle : speed < WalkingBelow ? _walk : run);
     }
 
     private void Play(string name)

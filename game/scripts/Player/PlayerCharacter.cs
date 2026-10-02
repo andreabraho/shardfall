@@ -128,7 +128,12 @@ public partial class PlayerCharacter : Node
         {
             var remaining = Progression.UnspentAttributePoints;
 
-            Progression.SpendAttributePoint(PlayerProfile.Class == Kiln.Core.Foundation.CharacterClass.Blade ? AttributeKind.Dex : AttributeKind.Str);
+            Progression.SpendAttributePoint(PlayerProfile.Class switch
+            {
+                Kiln.Core.Foundation.CharacterClass.Blade or Kiln.Core.Foundation.CharacterClass.Archer => AttributeKind.Dex,
+                Kiln.Core.Foundation.CharacterClass.Shaman => AttributeKind.Int,
+                _ => AttributeKind.Str,
+            });
             if (remaining % 2 == 0) Progression.SpendAttributePoint(AttributeKind.Vit);
         }
     }
@@ -158,8 +163,10 @@ public partial class PlayerCharacter : Node
         stats.Attributes = stats.Modifiers.Raise(stats.Attributes);
 
         // The Mental Warrior's skills take a little from vitality too; strength stays what it strikes with.
+        // The Asura's take more from intelligence: the magic in the sword (CLS-05).
         stats.SkillAttackBonus = PlayerProfile.Class == Kiln.Core.Foundation.CharacterClass.Warrior && PlayerProfile.Path == PlayerProfile.MentalPath
-            ? stats.Attributes.Vit * Attributes.MentalSkillPerVit : 0;
+            ? stats.Attributes.Vit * Attributes.MentalSkillPerVit
+            : PlayerProfile.Class == Kiln.Core.Foundation.CharacterClass.Sura ? stats.Attributes.Int * Attributes.AsuraSkillPerInt : 0;
 
         _combatant.Configure(stats, "$player.name");
 

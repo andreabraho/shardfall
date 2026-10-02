@@ -371,6 +371,22 @@ public partial class EnemyBrain : CharacterBody3D
         Enrage();
     }
 
+    /// <summary>
+    /// Stripped of what it had raised (CLS-05, the Spellbreak): its rage is spent — it does not
+    /// come back — and whatever shield an ally held over it is dropped until that ally holds it again.
+    /// </summary>
+    public void Dispel()
+    {
+        if (_enraged && Self.OutgoingDamageMultiplier > 1.0)
+        {
+            MoveSpeed /= (float)System.Math.Max(0.01, _traits.EnrageSpeed);
+            Self.OutgoingDamageMultiplier = 1.0;
+        }
+
+        Self.IncomingDamageMultiplier = 1.0;
+        ShowShieldRing(false);
+    }
+
     private void Enrage()
     {
         if (_enraged) return;

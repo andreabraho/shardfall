@@ -44,8 +44,11 @@ public sealed record GearLook(int Hands, int Upgrade, bool Helmet, bool Cape, Co
 /// </remarks>
 public sealed class GearRig
 {
-    /// <summary>The bone a weapon is held on.</summary>
-    private const string WeaponHand = "handslot.r";
+    /// <summary>The bone a weapon is held on: the right hand, or the left for a bow (CLS-04).</summary>
+    private readonly string WeaponHand;
+
+    /// <summary>How the body stands and strikes with what it holds: "", "bow" or "caster".</summary>
+    public string Stance => _parts.Stance;
 
     private MeshInstance3D? _oneHand;
     private MeshInstance3D? _twoHand;
@@ -88,6 +91,7 @@ public sealed class GearRig
     {
         _model = model;
         _parts = parts;
+        WeaponHand = parts.WeaponHand.Length > 0 ? parts.WeaponHand : "handslot.r";
 
         // Plain clothes in place of the model's painted armour, before anything is collected.
         Graft(model, parts);

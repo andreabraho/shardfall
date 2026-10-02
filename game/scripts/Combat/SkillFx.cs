@@ -263,6 +263,76 @@ public static class SkillFx
         Billboard(context, "star_06.png", to + (Vector3.Up * 1.0f), 2.2f, colour, 0.25, bright * 1.2f);
     }
 
+    /// <summary>
+    /// A shot (CLS-04): a shaft of light flying from the bow to where it lands. The same for the
+    /// Archer's ordinary arrow and for a skill's, the skill's brighter and in its own colour.
+    /// </summary>
+    public static void Arrow(Node context, Vector3 origin, Vector3 to, Color colour, float bright = 1f, float thick = 0.14f)
+    {
+        const double flight = 0.11;
+
+        var span = (to - origin) with { Y = 0 };
+        var length = span.Length();
+
+        if (length < 0.6f) return;
+
+        var forward = span / length;
+        var shaft = Flat(context, "trace_06.png", origin + (Vector3.Up * 1.15f) + (forward * 0.9f), 1f, colour, flight, bright * 1.5f);
+
+        shaft.Rotation = new Vector3(0, Yaw(forward), 0);
+        shaft.Shape = new Vector2(thick, 1.7f);
+        shaft.Velocity = forward * ((length - 0.9f) / (float)flight);
+        shaft.FadeIn = 0.02f;
+        shaft.Hold = 0.95f;
+    }
+
+    /// <summary>
+    /// The Rain of Shafts (CLS-04): arrows coming down all over a circle, and the dust they raise.
+    /// </summary>
+    public static void Rain(Node context, Vector3 center, float radius, Color colour, float bright = 1f)
+    {
+        for (var i = 0; i < 9; i++)
+        {
+            var angle = (float)GD.RandRange(0, Mathf.Tau);
+            var out_ = radius * Mathf.Sqrt((float)GD.Randf());
+            var at = center + new Vector3(Mathf.Cos(angle) * out_, 0, Mathf.Sin(angle) * out_);
+            var shaft = Billboard(context, "trace_06.png", at + (Vector3.Up * 4.2f), 1f, colour, 0.2, bright * 1.4f);
+
+            shaft.Shape = new Vector2(0.14f, 1.6f);
+            shaft.Velocity = Vector3.Down * 20f;
+            shaft.FadeIn = 0.02f;
+            shaft.Hold = 0.9f;
+        }
+
+        Burst(context, center, "smoke_04.png", Dust, 10, 0.9f, 0f, 0f, 0.6, Vector3.Up, 10f, 0f,
+            emitRadius: radius * 0.6f, radial: 1.5f, additive: false, ring: true);
+    }
+
+    /// <summary>
+    /// The Shadow Claw (CLS-05): a ring closing on the ground under the target and three talons of
+    /// dark light driven up through it.
+    /// </summary>
+    public static void Claw(Node context, Vector3 at, Color colour, float bright = 1f)
+    {
+        var ring = Flat(context, "circle_03.png", at + (Vector3.Up * 0.1f), 3.0f, colour, 0.35, bright);
+
+        ring.From = 1.1f;
+        ring.To = 0.25f;
+        ring.FadeIn = 0.02f;
+
+        for (var i = -1; i <= 1; i++)
+        {
+            var talon = Billboard(context, "trace_06.png", at + new Vector3(i * 0.38f, 0.2f, 0), 1f, colour, 0.3, bright * 1.4f);
+
+            talon.Shape = new Vector2(0.3f, 2.2f);
+            talon.Velocity = Vector3.Up * 4.5f;
+            talon.FadeIn = 0.03f;
+            talon.Hold = 0.5f;
+        }
+
+        Billboard(context, "star_06.png", at + (Vector3.Up * 1.0f), 2.0f, colour, 0.22, bright);
+    }
+
     /// <summary>A blow that lands on one target: Heavy Strike, Shield Bash.</summary>
     public static void Strike(Node context, Vector3 at, Color colour, bool bash, float bright = 1f)
     {
@@ -357,6 +427,9 @@ public static class SkillFx
         Whirl(context, at, 3f, faint, 0.3, 0);
         Wave(context, at, ahead, 4f, 2f, faint);
         Bolt(context, at, at + (ahead * 4f), landed: true, faint);
+        Arrow(context, at, at + (ahead * 4f), faint);
+        Rain(context, at, 2f, faint);
+        Claw(context, at, faint);
         Cut(context, at, ahead, 3f, 2, faint);
         Gather(context, at, ahead, 0.2, faint);
         Pierce(context, at, ahead, 4f, faint);

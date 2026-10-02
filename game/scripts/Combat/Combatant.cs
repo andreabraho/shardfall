@@ -43,6 +43,12 @@ public partial class Combatant : Node
     public bool Untouchable { get; set; }
 
     /// <summary>
+    /// Points of damage a shell takes in this combatant's place before any reaches its health
+    /// (CLS-05, CLS-06: the Shadow Ward, the Pure Seal). Held, and cleared, by whatever raised it.
+    /// </summary>
+    public double Barrier { get; set; }
+
+    /// <summary>
     /// Alive while at least one whole hit point is left.
     /// </summary>
     /// <remarks>
@@ -144,7 +150,8 @@ public partial class Combatant : Node
     /// </summary>
     /// <param name="skill">A skill or a special ability, not a basic attack: it takes skill damage, not average damage.</param>
     /// <param name="pierce">Ignores this combatant's defence (REF-21, the Piercing Blow).</param>
-    public DamageResult TakeAttack(Combatant attacker, double weaponCoef = 1.0, double skillCoef = 1.0, bool skill = false, bool pierce = false)
+    public DamageResult TakeAttack(Combatant attacker, double weaponCoef = 1.0, double skillCoef = 1.0, bool skill = false, bool pierce = false,
+        DamageElement element = DamageElement.Physical)
     {
         if (!IsAlive) return DamageResult.Miss;
 
@@ -159,6 +166,13 @@ public partial class Combatant : Node
         // the player sees matches what happened: the blow arrived and did nothing.
         if (IsPlayer && !attacker.IsPlayer && OnSafeGround) return DamageResult.Miss;
 
+        // Light on its feet (CLS-04, the Light Step): now and then the blow finds nothing.
+        if (Statuses.Has(StatusKind.Haste) && GameSession.CombatRng.Chance(StatusEffectSet.HasteEvasion))
+        {
+            EmitSignal(SignalName.Damaged, 0, false, true);
+            return DamageResult.Miss;
+        }
+
         var request = new DamageRequest
         {
             Attacker = attacker.Stats,
@@ -167,6 +181,8 @@ public partial class Combatant : Node
             SkillCoef = skillCoef,
             IsSkill = skill,
             AlwaysPierces = pierce,
+            Element = element,
+            BonusCritChance = attacker.Statuses.MagnitudeOf(StatusKind.Focus),
             // Difficulty raises what the player takes, never what they deal.
             DifficultyDamageMultiplier = attacker.IsPlayer ? 1.0 : GameSession.Difficulty.EnemyDamageMultiplier,
         };
@@ -196,10 +212,20 @@ public partial class Combatant : Node
 
         // Thorns prick only what stands close: a thrown blade or a spell from across the field
         // is not touching the spines.
-        if (Thorns > 0 && attacker.IsPlayer && attacker.IsAlive
+// The Arcane Mail (CLS-05) is the same thing worn by the player: a status, thrown back at
+        // whatever struck from close by.
+        var thorns = attacker.IsPlayer ? Thorns : IsPlayer ? Statuses.MagnitudeOf(StatusKind.Thorns) : 0;
+
+        if (thorns > 0 && attacker.IsAlive
             && attacker.Body.GlobalPosition.DistanceTo(Body.GlobalPosition) <= ThornsReach)
         {
-            attacker.ApplyDamage((int)Math.Max(1, Math.Round(scaled * Thorns)));
+            attacker.ApplyDamage((int)Math.Max(1, Math.Round(scaled * thorns)));
+        }
+
+        // The Hexed Blade (CLS-05): a share of every basic blow comes back as health.
+        if (!skill && attacker.Statuses.MagnitudeOf(StatusKind.Leech) is > 0 and var leech)
+        {
+            attacker.Heal((int)Math.Round(scaled * leech));
         }
         return result with { Amount = scaled };
     }
@@ -214,6 +240,22 @@ public partial class Combatant : Node
         // village with a stack of poison on and dying at the well would make the promise
         // technically kept and completely broken.
         if (IsPlayer && OnSafeGround) return;
+
+        // A shell takes it first, as far as it holds.
+        if (Barrier > 0)
+        {
+            var taken = Math.Min(Barrier, amount);
+
+            Barrier -= taken;
+            amount -= (int)taken;
+
+            if (amount <= 0)
+            {
+                _sinceCombat = 0;
+                CombatFeedback.Callout(Body.GlobalPosition + (Vector3.Up * 2.1f), L10n.T("absorbed"), new Color("b8a8ff"));
+                return;
+            }
+        }
 
         _sinceCombat = 0;
         Health.Remove(amount);
