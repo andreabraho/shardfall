@@ -1,7 +1,7 @@
-"""Spada del Frammento — the Shard Claymore cut down to one hand (swordkit.variant)."""
+"""One of the Warrior's swords or great swords: see bladekit.build."""
 
-import swordkit as k
+import bladekit
 
 
 def build():
-    return k.variant("shard_claymore", "shard_sword", great=False)
+    return bladekit.build("shard_sword")

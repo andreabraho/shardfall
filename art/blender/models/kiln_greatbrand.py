@@ -1,7 +1,7 @@
-"""Gran Brando della Fornace — the Kiln Brand grown to two hands (swordkit.variant)."""
+"""One of the Warrior's swords or great swords: see bladekit.build."""
 
-import swordkit as k
+import bladekit
 
 
 def build():
-    return k.variant("kiln_brand", "kiln_greatbrand", great=True)
+    return bladekit.build("kiln_greatbrand")

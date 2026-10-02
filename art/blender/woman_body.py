@@ -287,5 +287,7 @@ def build(out=OUT, crop=False, trim=None, dye=None, style=None):
     print(f"[woman] -> {os.path.relpath(out, ROOT)}")
 
 
+# The Warrior woman wears the bodice cut short too (2026-10-02, at your call: "the women a little more
+# uncovered" — so the women's cut of an armour leaves her belly bare, as on every other class).
 if __name__ == "__main__":
-    build()
+    build(crop=True)

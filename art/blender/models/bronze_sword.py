@@ -1,7 +1,7 @@
-"""Spada di Bronzo — the Bronze Greatsword cut down to one hand (swordkit.variant)."""
+"""One of the Warrior's swords or great swords: see bladekit.build."""
 
-import swordkit as k
+import bladekit
 
 
 def build():
-    return k.variant("bronze_greatsword", "bronze_sword", great=False)
+    return bladekit.build("bronze_sword")

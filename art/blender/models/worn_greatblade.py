@@ -1,7 +1,7 @@
-"""Spadone Consunto — the Worn Blade grown to two hands (swordkit.variant)."""
+"""One of the Warrior's swords or great swords: see bladekit.build."""
 
-import swordkit as k
+import bladekit
 
 
 def build():
-    return k.variant("worn_blade", "worn_greatblade", great=True)
+    return bladekit.build("worn_greatblade")

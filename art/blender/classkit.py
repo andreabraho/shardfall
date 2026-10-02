@@ -35,6 +35,8 @@ WEARER = {
     "archer": os.path.join(BODIES, "archer_woman_body.glb"),
     "asura": os.path.join(BODIES, "asura_woman_body.glb"),
     "seer": os.path.join(BODIES, "seer_woman_body.glb"),
+    "warrior": os.path.join(BODIES, "woman_body.glb"),
+    "ninja": os.path.join(BODIES, "ninja_woman_body.glb"),
 }
 
 RX, RY = n.RX, n.RY
