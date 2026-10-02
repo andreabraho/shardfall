@@ -31,6 +31,7 @@ public static class Program
                 "codegen" => CodegenCommand.Run(rest),
                 "simulate" => SimulateCommand.Run(rest),
                 "economy" => EconomyCommand.Run(rest),
+                "balance" => BalanceCommand.Run(rest),
                 "strings" => StringsCommand.Run(rest),
                 _ => Unknown(command),
             };
@@ -72,6 +73,10 @@ public static class Program
           economy  [--verbose]                Walk the campaign yang budget and check the player
                                               is money-constrained early and comfortable late.
                                               Exit code 1 if the economy has drifted.
+
+          balance  [--verbose] [--upgrade <n>] Fight every class against the packs and bosses of act 1
+                                              on averages (CLS-07). Exit code 1 if one stands more
+                                              than 15% from the middle of the six.
 
         Options:
           --data <dir>   Path to game/data. Defaults to searching upward from the current

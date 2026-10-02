@@ -18,6 +18,9 @@ dotnet run --project src/Kiln.Tools --no-build -- simulate
 echo "== campaign economy =="
 dotnet run --project src/Kiln.Tools --no-build -- economy
 
+echo "== class balance =="
+dotnet run --project src/Kiln.Tools --no-build -- balance | tail -n 10
+
 echo "== strings =="
 # Every content key has English, and no interpolated string is handed to L10n (UIX-06).
 dotnet run --project src/Kiln.Tools --no-build -- strings

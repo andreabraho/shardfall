@@ -99,17 +99,17 @@ mail, its thorns, the dread, the ward, the spellbreak — a little larger a poin
 dark blade with a violet edge that glows. Twelve.
 
 **Shift — Contraccolpo (Backlash).** For 1 s the next blow that would land does nothing, and dark
-force bursts round the Asura: 250% to everything within 4 m. Free to move meanwhile. 10 mana, 10 s.
+force bursts round the Asura: 180% to everything within 4 m. Free to move meanwhile. 10 mana, 10 s.
 A shell that took blows at first; changed at your call (2026-10-02).
 
 | Skill | After | What it does | Motion |
 |---|---|---|---|
-| **Artiglio d'Ombra** (Shadow Claw) | finger strike | A claw from the ground under a target up to 10 m off and everything within 1.8 m of it: 210%, ignoring defence. Needs a target. Lands 0.45 s in. | a blow of the marked hand, about a second |
-| **Vortice Oscuro** (Dark Vortex) | dragon swirl | One turn, dark flame on everything within 3.2 m: one hit of 240%, half a second in. | one turn of a second |
-| **Lama Stregata** (Hexed Blade) | enchanted blade | 25 s: +5 attack power and 0.6 more a point of INT — attack, not average damage (at your call) — and 8% of the damage of every blow comes back as health. | a spell worked over the blade with both hands |
-| **Terrore** (Dread) | fear | Everything within 6 m strikes 25% weaker for 10 s, and the Asura gains 10 defence and 0.8 more a point of INT for as long (defence, not a share less damage, at your call). | a long summoning |
+| **Artiglio d'Ombra** (Shadow Claw) | finger strike | A claw from the ground under a target up to 10 m off and everything within 1.8 m of it: 185%, ignoring defence. Needs a target. Lands 0.45 s in. | a blow of the marked hand, about a second |
+| **Vortice Oscuro** (Dark Vortex) | dragon swirl | One turn, dark flame on everything within 3.2 m: one hit of 200%, half a second in. | one turn of a second |
+| **Lama Stregata** (Hexed Blade) | enchanted blade | 25 s: +5 attack power and 0.6 more a point of INT — attack, not average damage (at your call) — and 6% of the damage of every blow comes back as health. | a spell worked over the blade with both hands |
+| **Terrore** (Dread) | fear | Everything within 6 m strikes 20% weaker for 10 s, and the Asura gains 10 defence and 0.8 more a point of INT for as long (defence, not a share less damage, at your call). | a long summoning |
 | **Corazza Arcana** (Arcane Mail) | enchanted armour | 20 s: 20% less damage taken, and 25% of every blow taken from close by thrown back. | power drawn up with both arms |
-| **Spezzaincanti** (Spellbreak) | dispel | A bolt at a target up to 12 m off: 50% — it is cast for what it leaves, not for the blow — strips its rage and its shield, and leaves it taking 25% more for 8 s. Needs a target. | a throw |
+| **Spezzaincanti** (Spellbreak) | dispel | A bolt at a target up to 12 m off: 50% — it is cast for what it leaves, not for the blow — strips its rage and its shield, and leaves it taking 18% more for 8 s. Needs a target. | a throw |
 
 ### 2.4 The Dragonseer
 
@@ -127,14 +127,17 @@ health, and on raising it every harmful effect falls away. 12 mana, 12 s.
 
 | Skill | After | What it does | Motion |
 |---|---|---|---|
-| **Sigilli Volanti** (Flying Seals) | flying talisman | 3 paper seals at the chosen target, 80% each. Needs a target, 13 m. | the fan swept forward |
-| **Soffio del Drago** (Dragon's Breath) | shooting dragon | Fire down a 13 m line through everything: 220%. | both hands pushed out, after a breath |
-| **Ruggito di Fiamma** (Flame Roar) | dragon's roar | Fire on everything within 5 m: 170%, and it burns — 15% of the hit each second for 5 s. | arms thrown wide |
+| **Sigilli Volanti** (Flying Seals) | flying talisman | 3 paper seals at the chosen target, 88% each. Needs a target, 13 m. | the fan swept forward |
+| **Soffio del Drago** (Dragon's Breath) | shooting dragon | Fire down a 13 m line through everything: 240%. | both hands pushed out, after a breath |
+| **Ruggito di Fiamma** (Flame Roar) | dragon's roar | Fire on everything within 5 m: 220%, and it burns — 18% of the hit each second for 5 s. | arms thrown wide |
 | **Benedizione del Drago** (Dragon's Blessing) | blessing | 40 s: 18% less damage taken. | hands raised; an aura of points round the body while it lasts |
-| **Globo di Folgore** (Storm Orb) | lightning throw | A ball of lightning at a target up to 13 m off, 150%, leaping from it to the nearest three within 6 m of each other. In place of the heal, at your call (2026-10-02). | a throw from the hand |
+| **Globo di Folgore** (Storm Orb) | lightning throw | A ball of lightning at a target up to 13 m off, 180%, leaping from it to the nearest four within 6 m of each other. In place of the heal, at your call (2026-10-02). | a throw from the hand |
 | **Occhio del Drago** (Dragon's Eye) | dragon's aid | 30 s: +15% critical chance. | hands raised, a ball of light between the hand and the fan |
 
 *Reflect* is left with the Asura's mail: one class with it is enough for a game played alone.
+
+The numbers of the three are those the balance tool left them with (CLS-07, 2026-10-02; `kiln balance`):
+the Asura's blows and what it leaves on a creature brought down, the Dragonseer's fire brought up.
 
 ### 2.5 What the game has to learn
 

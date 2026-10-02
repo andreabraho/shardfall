@@ -83,12 +83,12 @@ public readonly record struct Attributes(int Str, int Dex, int Int, int Vit)
 
     public const double AsuraThornsCap = 0.60;
 
-    public const double AsuraDreadCap = 0.45;
+    public const double AsuraDreadCap = 0.35;
 
     /// <summary>Defence the Dread gives its caster for each point of intelligence, on top of its own.</summary>
     public const double AsuraGuardPerInt = 0.8;
 
-    public const double AsuraBreakCap = 0.45;
+    public const double AsuraBreakCap = 0.35;
 
     /// <summary>A blessing's strength at this much intelligence: its own, and a little for every point, up to its cap.</summary>
     public static double SeerScaled(double strength, int intelligence, double perPoint, double cap) =>
