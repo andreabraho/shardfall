@@ -341,7 +341,7 @@ public partial class SkillCaster : Node
         _self.Mana.TrySpend(skill.ManaCost);
 
         // Its own sound (REF-21); a skill that moves on every hit makes it every hit instead.
-        if (!PerHit(def.Motion)) Audio.AudioDirector.Play(def.Sound, _motor.GlobalPosition);
+        if (!PerHit(def.Motion) && skill.Windup <= 0) Audio.AudioDirector.Play(def.Sound, _motor.GlobalPosition);
         _cooldowns[skillId] = skill.Cooldown;
         _cooldownTotals[skillId] = System.Math.Max(0.01, skill.Cooldown);
 
@@ -458,11 +458,12 @@ public partial class SkillCaster : Node
         _motor.FaceTowards(aim);
 
         // Its own move (REF-22); a spinning skill turns on each of its hits instead.
-        if (!PerHit(skill.Motion)) _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove(skill.Motion, aim, CastHold(skill), FxColour(skill));
+        // A slow skill's move (2026-10-02) is played to land as its wait ends, not at once.
+        if (!PerHit(skill.Motion) && !Charged(skill)) _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove(skill.Motion, aim, CastHold(skill), FxColour(skill), skill.Windup);
 
         // A charged skill gathers itself first: the Warrior draws back, light gathers at the
         // blade, and the blow goes when the windup is spent (REF-21, the Piercing Blow).
-        if (skill.Windup > 0)
+        if (Charged(skill))
         {
             _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.WindUp(skill.Windup);
             SkillFx.Gather(this, origin, aim, skill.Windup, FxColour(skill), FxBright(skill));
@@ -477,7 +478,7 @@ public partial class SkillCaster : Node
             Skill = skill,
             Center = center,
             Aim = aim,
-            FollowsCaster = skill.Motion == "roll",
+            FollowsCaster = skill.Motion is "roll" or "spin",
             Remaining = System.Math.Max(1, skill.Hits),
             Timer = 0,
         };
@@ -565,6 +566,9 @@ public partial class SkillCaster : Node
     /// <summary>The Triple Cut's three moves, one per hit: across, down on the diagonal, and overhead.</summary>
     private static readonly string[] TripleMoves = ["slice", "wave", "chop"];
 
+    /// <summary>How far the Whirlwind carries the Warrior forward over all its turns, in metres.</summary>
+    private const float WhirlAdvance = 1.0f;
+
     /// <summary>How far a single-target skill lands on the creature chosen.</summary>
     private const float SingleReach = 4.5f;
 
@@ -576,7 +580,13 @@ public partial class SkillCaster : Node
 
     /// <summary>How long a skill holds the character: every pulse, and a beat after the last.</summary>
     private static double CastHold(ResolvedSkill skill) =>
-        skill.Windup + ((System.Math.Max(1, skill.Hits) - 1) * skill.HitInterval) + 0.35;
+        skill.Windup + ((System.Math.Max(1, skill.Hits) - 1) * skill.HitInterval) + (skill.Windup > 0 && !Charged(skill) ? 0.5 : 0.35);
+
+    /// <summary>
+    /// Whether a skill with a wait gathers itself and is then let go — the Piercing Blow, the Blade
+    /// Wave — rather than playing one slow move through it, as the Heavy Strike and the Ground Slam do.
+    /// </summary>
+    private static bool Charged(ResolvedSkill skill) => skill.Windup > 0 && skill.Motion is "charge" or "wave";
 
     private void FirePulse(Pulse pulse)
     {
@@ -602,6 +612,10 @@ public partial class SkillCaster : Node
 
             // The Blade Vortex (CLS-03): each turn carries the Ninja on, through whatever is there.
             if (skill.Motion == "roll") Dash(aim, (float)skill.Width, skill.HitInterval, Tween.TransitionType.Linear);
+
+            // The Whirlwind carries the Warrior a metre on in all (2026-10-02, at the user's call), a
+            // share of it each turn.
+            if (skill.Motion == "spin") Dash(aim, WhirlAdvance / System.Math.Max(1, skill.Hits), skill.HitInterval, Tween.TransitionType.Linear);
         }
 
         // The Flash Step (CLS-03): the Ninja goes through what stands in the line, to its end or to
@@ -614,9 +628,15 @@ public partial class SkillCaster : Node
         }
 
         // The Piercing Blow's thrust, as the charge is let go.
-        if (skill.Motion == "charge")
+        if (skill.Motion == "charge" || Charged(skill))
         {
-            _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove("charge", aim, 0.35, colour);
+            _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove(skill.Motion, aim, 0.35, colour);
+            Audio.AudioDirector.Play(SoundOf(skill.Id), _motor.GlobalPosition);
+        }
+
+        // A slow skill that is not a charge makes its sound as it lands.
+        if (skill.Windup > 0 && !Charged(skill) && !PerHit(skill.Motion) && pulse.Index == 0)
+        {
             Audio.AudioDirector.Play(SoundOf(skill.Id), _motor.GlobalPosition);
         }
 

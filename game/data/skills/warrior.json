@@ -1,5 +1,5 @@
 [
-  { "id": "skl_heavy_strike",  "name": "$skill.skl_heavy_strike.name", "color": "#ffd9a0", "sound": "snd_skl_heavy",  "class": "warrior", "tree": "mental",   "suggested_level": 1,  "mana_cost": 14, "cooldown": 4.0,  "cast_type": "instant", "targeting": "line",          "radius": 8.0, "width": 1.6, "damage_coef": 1.80, "hits": 1, "motion": "chop",
+  { "id": "skl_heavy_strike",  "name": "$skill.skl_heavy_strike.name", "color": "#ffd9a0", "sound": "snd_skl_heavy",  "class": "warrior", "tree": "mental",   "suggested_level": 1,  "mana_cost": 14, "cooldown": 4.0,  "cast_type": "instant", "targeting": "line",          "radius": 8.0, "width": 1.6, "damage_coef": 1.80, "hits": 1, "motion": "leap", "windup": 0.5,
     "mastery": {
       "master":       { "damage_coef": 2.05, "note": "$skill.skl_heavy_strike.m" },
       "grand_master": { "damage_coef": 2.20, "note": "$skill.skl_heavy_strike.g" },
@@ -54,7 +54,7 @@
       "perfect":      { "radius": 7.5, "cooldown": 7.0, "note": "$skill.skl_whirlwind.p" }
     } },
 
-  { "id": "skl_ground_slam",   "name": "$skill.skl_ground_slam.name", "color": "#ffcf8a", "sound": "snd_skl_slam",   "class": "warrior", "tree": "mental",   "suggested_level": 20, "mana_cost": 40, "cooldown": 14.0, "cast_type": "instant", "targeting": "self_aoe",      "radius": 5.0, "damage_coef": 2.10, "hits": 1, "motion": "slam",
+  { "id": "skl_ground_slam",   "name": "$skill.skl_ground_slam.name", "color": "#ffcf8a", "sound": "snd_skl_slam",   "class": "warrior", "tree": "mental",   "suggested_level": 20, "mana_cost": 40, "cooldown": 14.0, "cast_type": "instant", "targeting": "self_aoe",      "radius": 5.0, "damage_coef": 2.10, "hits": 1, "motion": "slam", "windup": 0.4,
     "applies": { "kind": "stun", "duration": 1.5, "chance": 0.30 },
     "mastery": {
       "master":       { "damage_coef": 2.40, "note": "$skill.skl_ground_slam.m" },
@@ -62,7 +62,7 @@
       "perfect":      { "cooldown": 11.0, "damage_coef": 2.80, "note": "$skill.skl_ground_slam.p" }
     } },
 
-  { "id": "skl_blade_wave",    "name": "$skill.skl_blade_wave.name", "color": "#8fd0ff", "sound": "snd_skl_wave",    "class": "warrior", "tree": "mental", "suggested_level": 10, "mana_cost": 24, "cooldown": 8.0,  "cast_type": "instant", "targeting": "line",          "radius": 12.0, "width": 1.4, "damage_coef": 2.00, "hits": 1, "motion": "wave", "max_targets": 1,
+  { "id": "skl_blade_wave",    "name": "$skill.skl_blade_wave.name", "color": "#8fd0ff", "sound": "snd_skl_wave",    "class": "warrior", "tree": "mental", "suggested_level": 10, "mana_cost": 24, "cooldown": 8.0,  "cast_type": "instant", "targeting": "line",          "radius": 12.0, "width": 1.4, "damage_coef": 2.00, "hits": 1, "motion": "wave", "windup": 0.4, "max_targets": 1,
     "mastery": {
       "master":       { "damage_coef": 2.30, "note": "$skill.skl_blade_wave.m" },
       "grand_master": { "radius": 15.0, "note": "$skill.skl_blade_wave.g" },

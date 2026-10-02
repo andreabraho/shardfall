@@ -21,7 +21,7 @@ public static class ContentValidator
     public const int MaxLevel = 60;
 
     /// <summary>The moves a skill can be swung with (REF-22); empty is a plain swing.</summary>
-    public static readonly string[] SkillMotions = ["", "spin", "chop", "slice", "bash", "slam", "brace", "raise", "wave", "roar", "triple", "charge", "dash", "throw", "roll", "pounce"];
+    public static readonly string[] SkillMotions = ["", "spin", "chop", "slice", "bash", "slam", "brace", "raise", "wave", "roar", "triple", "charge", "dash", "throw", "roll", "pounce", "leap"];
 
     public static ValidationReport Validate(ContentDatabase db)
     {

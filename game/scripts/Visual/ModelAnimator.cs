@@ -275,14 +275,14 @@ public partial class ModelAnimator : Node
     /// is cast, so its move is played to land quickly and to be over by the time the Warrior
     /// may move again.
     /// </summary>
-    public double SkillMove(string motion, double seconds)
+    public double SkillMove(string motion, double seconds, double landBy = 0)
     {
         if (_player is null) return 0;
 
         // With a blade in each hand (CLS-03) a blow is struck with both where there is a clip for it.
         string[] dual = !DualWield ? [] : motion switch
         {
-            "chop" or "slam" => ["Melee_Dualwield_Attack_Chop"],
+            "chop" or "slam" or "leap" => ["Melee_Dualwield_Attack_Chop"],
             "slice" or "wave" => ["Melee_Dualwield_Attack_Slice"],
             "charge" => ["Melee_Dualwield_Attack_Stab"],
             _ => [],
@@ -299,6 +299,8 @@ public partial class ModelAnimator : Node
             "chop" => TwoHanded ? ["Melee_2H_Attack_Chop", "2H_Melee_Attack_Chop"] : ["Melee_1H_Attack_Chop", "1H_Melee_Attack_Chop"],
             "slice" => TwoHanded ? ["Melee_2H_Attack_Slice", "2H_Melee_Attack_Slice"] : ["Melee_1H_Attack_Slice_Horizontal", "1H_Melee_Attack_Slice_Horizontal"],
             "bash" => ["Melee_Block_Attack", "Block_Attack"],
+            // A leap and the blade brought down on the ground: the Heavy Strike (2026-10-02).
+            "leap" => ["Melee_1H_Attack_Jump_Chop", "Melee_2H_Attack_Chop", "2H_Melee_Attack_Chop", "Melee_1H_Attack_Chop"],
             "slam" => ["Melee_1H_Attack_Jump_Chop", "Melee_2H_Attack_Chop", "2H_Melee_Attack_Chop"],
             "brace" => ["Melee_Block", "Block"],
             "raise" => ["Cheering", "Cheer", "Spellcast_Raise"],
@@ -316,9 +318,10 @@ public partial class ModelAnimator : Node
         if (clip.Length == 0) return motion is "brace" or "raise" or "roar" ? Flourish() : Attack();
 
         // A buff is raised, not struck: it has the whole hold to play out.
-        var landBy = motion is "brace" or "raise" or "roar" ? seconds * 0.6 : SkillImpact;
+        // A slow skill says when it lands; any other lands quickly.
+        var impact = motion is "brace" or "raise" or "roar" ? seconds * 0.6 : landBy > 0 ? landBy : SkillImpact;
 
-        return PlayTimed(clip, landBy, seconds);
+        return PlayTimed(clip, impact, seconds);
     }
 
     /// <summary>Seconds into a skill's move its blow should appear to land.</summary>
