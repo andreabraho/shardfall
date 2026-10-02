@@ -70,6 +70,8 @@ public sealed class Layout
 
     private sealed record Shrine(string Name, string Id, double X, double Z);
 
+    private sealed record Person(string Name, string Id, double X, double Z);
+
     private sealed record Gate(string Name, string Zone, double X, double Z, double ArriveX, double ArriveZ);
 
     private readonly List<Section> _sections = [];
@@ -77,6 +79,7 @@ public sealed class Layout
     private readonly List<Field> _fields = [];
     private readonly List<Shrine> _shrines = [];
     private readonly List<Gate> _gates = [];
+    private readonly List<Person> _people = [];
     private readonly List<(double X, double Z, double R)> _clear = [];
     private readonly List<Placed> _camp = [];
     private readonly Dictionary<string, int> _names = [];
@@ -206,14 +209,24 @@ public sealed class Layout
     /// <summary>The camp at the way in: safe ground, its shrine, a fire, a shelter, a banner and a bench.</summary>
     public Layout Camp(string safeId, string shrineId, double x, double z)
     {
+        // Further into the corner, behind the fire: where a smith or a pedlar sets up.
+        _camp.Add(new Placed("CampStall", "kit_camp_stall", x + 7, z + 4, 0));
         _safe = (safeId, x, z);
         _shrines.Add(new Shrine(Name("ShrineCamp"), shrineId, x - 4, z - 3));
-        _camp.Add(new Placed("CampFire", "kit_camp_fire", x + 2, z - 4, 0));
+        _camp.Add(new Placed("CampFire", "kit_camp_fire", x - 1, z + 4, 0));
         _camp.Add(new Placed("CampShelter", "kit_camp_shelter", x + 6, z - 7, 0));
         _camp.Add(new Placed("CampBanner", "kit_camp_banner", x - 7, z + 2, 0));
         _camp.Add(new Placed("CampBench", "kit_camp_bench", x + 4, z - 1, 0));
 
         return Clear(x, z, 14);
+    }
+
+    /// <summary>Somebody who stands in the camp: a smith, a merchant. Who they are is data (npcs).</summary>
+    public Layout Npc(string name, string id, double x, double z)
+    {
+        _people.Add(new Person(Name(name), id, x, z));
+
+        return Clear(x, z, 3);
     }
 
     public Layout Way(string name, string zone, double x, double z)
@@ -278,7 +291,7 @@ public sealed class Layout
             Line();
         }
 
-        Line("[gd_scene load_steps=18 format=3]");
+        Line("[gd_scene load_steps=19 format=3]");
         Line();
         foreach (var line in About.Split('\n')) Line($"; {line}".TrimEnd());
         Line(";");
@@ -297,6 +310,7 @@ public sealed class Layout
         Line("[ext_resource type=\"PackedScene\" path=\"res://scenes/session.tscn\" id=\"9_session\"]");
         Line("[ext_resource type=\"Script\" path=\"res://scripts/World/ZoneGate.cs\" id=\"10_gate\"]");
         Line("[ext_resource type=\"Script\" path=\"res://scripts/World/ZoneArrival.cs\" id=\"11_arrival\"]");
+        Line("[ext_resource type=\"Script\" path=\"res://scripts/World/NpcNode.cs\" id=\"12_npc\"]");
         Line("[ext_resource type=\"Script\" path=\"res://scripts/World/ScatterNode.cs\" id=\"13_scatter\"]");
         Line("[ext_resource type=\"Script\" path=\"res://scripts/World/ShardNode.cs\" id=\"14_shard\"]");
         Line("[ext_resource type=\"Script\" path=\"res://scripts/World/SafeZoneNode.cs\" id=\"16_safe\"]");
@@ -456,6 +470,17 @@ public sealed class Layout
             Line();
 
             foreach (var piece in _camp) Piece(piece, ".");
+        }
+
+        foreach (var person in _people)
+        {
+            if (!db.Npcs.TryGetValue(person.Id, out var npc) || npc.Zone != ZoneId) throw new InvalidOperationException($"{File}: '{person.Id}' is not one of this zone's people.");
+
+            Line($"[node name=\"{person.Name}\" type=\"Area3D\" parent=\".\"]");
+            Line($"transform = {At(person.X, 0.1, person.Z)}");
+            Line("script = ExtResource(\"12_npc\")");
+            Line($"NpcId = \"{person.Id}\"");
+            Line();
         }
 
         foreach (var gate in _gates)

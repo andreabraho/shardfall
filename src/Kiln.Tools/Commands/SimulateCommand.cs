@@ -79,6 +79,8 @@ public static class SimulateCommand
         failures += ReportShare("shards", Share(shardXp, total), ShardShareTarget);
         failures += ReportShare("trash", Share(trashXp, total), TrashShareTarget);
 
+        failures += Act2(verbose);
+
         if (failures > 0)
         {
             Console.Error.WriteLine($"FAILED: {failures} pacing problem(s).");
@@ -87,6 +89,45 @@ public static class SimulateCommand
 
         Console.WriteLine("OK: pacing within tolerance — the campaign needs no farming.");
         return 0;
+    }
+
+    /// <summary>Act 2, walked from the level the tower leaves a player who stayed to gear up (A2-05).</summary>
+    private static int Act2(bool verbose)
+    {
+        var progression = new CharacterProgression();
+        var failures = 0;
+
+        progression.Load(CampaignModel.Act2EntryLevel, 0, 0, 0, new Kiln.Core.Combat.Attributes(0, 0, 0, 0));
+
+        Console.WriteLine("Act 2, from level " + CampaignModel.Act2EntryLevel);
+        Console.WriteLine("  zone                 band   level on entry   verdict");
+        Console.WriteLine("  ----------------------------------------------------------");
+
+        foreach (var zone in CampaignModel.Act2)
+        {
+            var delta = progression.Level - zone.Band;
+            var verdict = delta switch { < -2 => "UNDER-LEVELLED", > 4 => "OVER-LEVELLED", _ => "ok" };
+
+            if (verdict != "ok") failures++;
+
+            Console.WriteLine($"  {zone.Name,-20} {zone.Band,4}   {progression.Level,6} ({delta,+3})   {verdict}");
+
+            Award(progression, zone, Source.Quest, ref verbose);
+            Award(progression, zone, Source.Shard, ref verbose);
+            Award(progression, zone, Source.Trash, ref verbose);
+        }
+
+        Console.WriteLine();
+        Console.WriteLine($"  Final level: {progression.Level} ({progression.LevelProgress:P0} to next), wanted {CampaignModel.Act2EndLevel} give or take one");
+        Console.WriteLine();
+
+        if (Math.Abs(progression.Level - CampaignModel.Act2EndLevel) > 1)
+        {
+            Console.Error.WriteLine($"  act 2 ends at level {progression.Level}, not {CampaignModel.Act2EndLevel}.");
+            failures++;
+        }
+
+        return failures;
     }
 
     private enum Source

@@ -34,5 +34,18 @@
     "texture": "res://assets/cosmetics/sword_hellfire.png", "color": "#ff6a2a", "emission": 0.45, "particles": "embers" },
 
   { "id": "cos_imp",            "name": "$cos.cos_imp.name",            "kind": "companion", "boss": "mob_demon_lord",          "chance": 0.5,  "duplicate_gan": 8000,
-    "visual": "mesh_q_imp", "scale": 0.32, "hover": 0.75 }
+    "visual": "mesh_q_imp", "scale": 0.32, "hover": 0.75 },
+
+  // Act 2's bosses (A2-01, 2026-10-02): a fawn of stone, the marsh's light, and from the Warlord a fire and a cub.
+  { "id": "cos_stone_fawn",     "name": "$cos.cos_stone_fawn.name",     "kind": "companion", "boss": "mob_stone_stag",          "chance": 0.5,  "duplicate_gan": 9000,
+    "visual": "mesh_q_deer", "scale": 0.5, "recolour": "#8a8f94" },
+
+  { "id": "cos_mire_aura",      "name": "$cos.cos_mire_aura.name",      "kind": "aura",      "boss": "mob_drowned_king",        "chance": 0.5,  "duplicate_gan": 10000,
+    "color": "#5affc0", "particles": "venom" },
+
+  { "id": "cos_cinder_aura",    "name": "$cos.cos_cinder_aura.name",    "kind": "aura",      "boss": "mob_burning_warlord",     "chance": 0.5,  "duplicate_gan": 12000,
+    "color": "#ff7a2a", "particles": "embers" },
+
+  { "id": "cos_ember_cub",      "name": "$cos.cos_ember_cub.name",      "kind": "companion", "boss": "mob_burning_warlord",     "chance": 0.5,  "duplicate_gan": 12000,
+    "visual": "mesh_beast_wolf", "scale": 0.45, "recolour": "#c0502a", "glow": 0.2 }
 ]

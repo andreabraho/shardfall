@@ -1,0 +1,47 @@
+[
+  // Act 2's people (A2-01, 2026-10-02): an outpost at the Stonewood's way in — a smith, so the new gear is upgraded
+  // where its parts drop, and a merchant — and a pedlar at each of the two camps beyond.
+
+  { "id": "npc_marek", "name": "$npc.npc_marek.name", "title": "$npc.title.smith",
+    "role": "smith", "zone": "zone_stonewood", "visual": "mesh_villager_hesk",
+    "lines": [
+      "$npc.npc_marek.line_1",
+      "$npc.npc_marek.line_2"
+    ] },
+
+  { "id": "npc_sella", "name": "$npc.npc_sella.name", "title": "$npc.title.merchant",
+    "role": "merchant", "zone": "zone_stonewood", "visual": "mesh_villager_idra",
+    "lines": [
+      "$npc.npc_sella.line_1",
+      "$npc.npc_sella.line_2"
+    ],
+    "stock": {
+      "staples": ["mat_flask_draught", "mat_iron_scrap", "mat_tempering_oil", "mat_boring_stone", "mat_mutation_ink"],
+      "rotating": 5,
+      "max_rarity": "fine"
+    } },
+
+  { "id": "npc_oswin", "name": "$npc.npc_oswin.name", "title": "$npc.title.pedlar",
+    "role": "merchant", "zone": "zone_drowned_mire", "visual": "mesh_villager_tobin",
+    "lines": [
+      "$npc.npc_oswin.line_1",
+      "$npc.npc_oswin.line_2"
+    ],
+    "stock": {
+      "staples": ["mat_flask_draught", "mat_iron_scrap", "mat_tempering_oil", "mat_boring_stone", "mat_mutation_ink"],
+      "rotating": 5,
+      "max_rarity": "fine"
+    } },
+
+  { "id": "npc_ketta", "name": "$npc.npc_ketta.name", "title": "$npc.title.pedlar",
+    "role": "merchant", "zone": "zone_cinderlands", "visual": "mesh_villager_tobin",
+    "lines": [
+      "$npc.npc_ketta.line_1",
+      "$npc.npc_ketta.line_2"
+    ],
+    "stock": {
+      "staples": ["mat_flask_draught", "mat_iron_scrap", "mat_tempering_oil", "mat_boring_stone", "mat_mutation_ink"],
+      "rotating": 5,
+      "max_rarity": "fine"
+    } }
+]

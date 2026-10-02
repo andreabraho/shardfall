@@ -690,6 +690,11 @@ public sealed class CosmeticDef : ContentDefBase
     /// thing standing on the grass sank into it (2026-09-30).
     /// </summary>
     public double Hover { get; init; }
+
+    /// <summary>Companion: a colour its model is turned toward, as an act 2 creature's is (A2-01), and how much it glows.</summary>
+    public string Recolour { get; init; } = string.Empty;
+
+    public double Glow { get; init; }
 }
 
 // ---------------------------------------------------------------------------

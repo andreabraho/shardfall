@@ -56,6 +56,9 @@ public static class Act2Layouts
 
         map.Road("kit_path_4", 61, (74, 62), (56, 48), (30, 30), (6, 6), (-20, -12), (-44, -40), (-66, -62), (-74, -62));
 
+        map.Part("Outpost", "The outpost at the way in: the smith's anvil and his fire")
+            .Put("kit_camp_anvil", 59.6, 66.2, 20).Put("kit_brazier", 60, 68).Put("kit_camp_weapons", 62.5, 68.2, 160).Put("kit_camp_crate", 58.6, 64.4);
+
         map.Part("Wolves", "The wolves' run by the way in: fallen trunks and the deer they were hunting, stone as they are")
             .Put("kit_st_deer", 26, 61, 40).Put("kit_st_deer", 29, 63, 70).Put("kit_st_stag", 19, 53, 200)
             .Strew(11, 16, 56, 9, "kit_st_log", "kit_st_log", "kit_st_stump", "kit_st_tree_dead", "kit_st_rock", "kit_bones", "kit_bones");
@@ -93,6 +96,8 @@ public static class Act2Layouts
             .Scatter("Crystals", 26, 12, 74, 11, 64, "kit_st_crystal");
 
         map.Camp("saf_stonewood_camp", "shr_stonewood_camp", 66, 62)
+            .Npc("SmithMarek", "npc_marek", 61, 66)
+            .Npc("MerchantSella", "npc_sella", 71.5, 65)
             .ShrineAt("ShrineGrove", "shr_stonewood_grove", 2, 12)
             .ShrineAt("ShrinePass", "shr_stonewood_pass", -60, -52)
             .Spawn("WolfRun", "spf_stonewood_wolves", 16, 56)
@@ -176,6 +181,7 @@ public static class Act2Layouts
             .Scatter("Wrack", 60, 8, 76, 7, 70, "kit_sw_rock", "kit_un_log", "kit_un_stump", "kit_bones");
 
         map.Camp("saf_mire_camp", "shr_mire_camp", -66, 62)
+            .Npc("PedlarOswin", "npc_oswin", -60.5, 65)
             .ShrineAt("ShrineChapel", "shr_mire_chapel", 26, -2)
             .ShrineAt("ShrineCauseway", "shr_mire_causeway", 56, -56)
             .Spawn("Shallows", "spf_mire_shallows", -15, 60)
@@ -257,6 +263,7 @@ public static class Act2Layouts
             .Scatter("Ash", 110, 6, 76, 3, 75, "kit_em_grass", "kit_em_grass", "kit_bones");
 
         map.Camp("saf_cinder_camp", "shr_cinder_camp", 66, 62)
+            .Npc("PedlarKetta", "npc_ketta", 71.5, 65)
             .ShrineAt("ShrineRift", "shr_cinder_rift", 6, 22)
             .ShrineAt("ShrineForge", "shr_cinder_forge", -34, -24)
             .Spawn("HoundGround", "spf_cinder_hounds", 16, 58)
