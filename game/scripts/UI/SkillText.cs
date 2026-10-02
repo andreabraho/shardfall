@@ -95,7 +95,7 @@ public static class SkillText
         }
 
         // The Storm Orb (CLS-06): what its radius is for is the leap, not a burst.
-        lines.Add(def.Bounces > 0
+        if (def.Motion != "counter") lines.Add(def.Bounces > 0
             ? L10n.F("One target up to {0:0.#} m away; then it leaps to up to {1} more, each within {2:0.#} m of the last.", skill.Range, def.Bounces, skill.Radius)
             : Shape(skill));
 
@@ -149,7 +149,6 @@ public static class SkillText
                     break;
             }
 
-            if (def.Id == Player.DefensiveAbility.WardId) lines.Add(Grown(L10n.T("The shell"), skill.Magnitude, Attributes.AsuraWardPerInt, Attributes.AsuraWardCap));
         }
 
         // The Dragonseer's blessings grow with intelligence (CLS-06).
@@ -162,7 +161,13 @@ public static class SkillText
         }
 
         // The Shadow Step (CLS-03): a channelled skill that goes somewhere.
-        if (def.CastType == "channel" && def.Radius > 0)
+        // The Backlash (CLS-05): a blow turned back.
+        if (def.CastType == "channel" && def.Motion == "counter")
+        {
+            lines.Add(L10n.F("For {0:0.##} s the next blow that would land on you does nothing, and dark force bursts round you: {1:P0} of your attack power to everything within {2:0.#} m. You stay free to move and to fight.", skill.Duration, skill.DamageCoef, skill.Radius));
+        }
+
+        if (def.CastType == "channel" && def.Radius > 0 && def.Motion != "counter")
         {
             lines.Add(def.Motion == "backstep"
                 ? L10n.F("A leap of {0:0.#} m away from what you face. Nothing touches you for {1:0.##} s.", skill.Radius, skill.Duration)
@@ -178,7 +183,7 @@ public static class SkillText
         }
 
         // The Guard, the other channelled skill, also cleanses as it is raised (2026-09-26).
-        if (def.CastType == "channel" && def.Radius <= 0 && def.Motion != "ward")
+        if (def.CastType == "channel" && def.Radius <= 0 && def.Motion is not ("ward" or "counter"))
         {
 
             lines.Add(L10n.T("Raising it clears poison, bleeding, slows, weakening and vulnerability."));
@@ -246,6 +251,11 @@ public static class SkillText
         else if (skill.Applies is { Kind: "weaken" })
         {
             parts.Add(L10n.F("−{0:P0} enemy damage", skill.Applies.Magnitude));
+        }
+        else if (def.CastType == "channel" && def.Motion == "counter")
+        {
+            parts.Clear();
+            parts.Add(L10n.F("turns a blow back, {0:P0}", skill.DamageCoef));
         }
         else if (def.CastType == "channel" && def.Motion == "ward")
         {

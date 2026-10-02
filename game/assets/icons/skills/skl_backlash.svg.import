@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bsw7w50s74cpg"
-path="res://.godot/imported/skl_shadow_ward.svg-1a0c957c0888dbb357ff6067c00fbb32.ctex"
+uid="uid://dxuv5liiiauhl"
+path="res://.godot/imported/skl_backlash.svg-4f1208d051e15c56c4b6c5d773cca8b6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/icons/skills/skl_shadow_ward.svg"
-dest_files=["res://.godot/imported/skl_shadow_ward.svg-1a0c957c0888dbb357ff6067c00fbb32.ctex"]
+source_file="res://assets/icons/skills/skl_backlash.svg"
+dest_files=["res://.godot/imported/skl_backlash.svg-4f1208d051e15c56c4b6c5d773cca8b6.ctex"]
 
 [params]
 

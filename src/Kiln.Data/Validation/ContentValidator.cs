@@ -22,7 +22,7 @@ public static class ContentValidator
 
     /// <summary>The moves a skill can be swung with (REF-22); empty is a plain swing.</summary>
     public static readonly string[] SkillMotions = ["", "spin", "chop", "slice", "bash", "slam", "brace", "raise", "wave", "roar", "triple", "charge", "dash", "throw", "roll", "pounce", "leap",
-        "shoot", "shoot_up", "volley", "cast", "seals", "spell", "summon", "claw", "breath", "backstep", "ward", "invoke", "dread"];
+        "shoot", "shoot_up", "volley", "cast", "seals", "spell", "summon", "claw", "breath", "backstep", "ward", "invoke", "dread", "counter"];
 
     public static ValidationReport Validate(ContentDatabase db)
     {

@@ -55,8 +55,11 @@ public partial class DefensiveAbility : Node
     /// <summary>The Archer's (CLS-04): a leap away from where it faces, and a moment untouched.</summary>
     public const string BackstepId = "skl_backstep";
 
-    /// <summary>The Asura's (CLS-05): a shell that takes blows in its place.</summary>
-    public const string WardId = "skl_shadow_ward";
+    /// <summary>
+    /// The Asura's (CLS-05, 2026-10-02, at your call — a shell before): a moment in which the next
+    /// blow does nothing and is answered with a burst of dark force round the Asura.
+    /// </summary>
+    public const string BacklashId = "skl_backlash";
 
     /// <summary>The Dragonseer's (CLS-06): a shell, and every harmful effect gone as it is raised.</summary>
     public const string SealId = "skl_pure_seal";
@@ -65,14 +68,17 @@ public partial class DefensiveAbility : Node
     private static bool Steps => PlayerProfile.Class is Kiln.Core.Foundation.CharacterClass.Blade or Kiln.Core.Foundation.CharacterClass.Archer;
 
     /// <summary>True for a class whose defence is a shell that takes blows, and leaves it free to move.</summary>
-    private static bool Wards => PlayerProfile.Class is Kiln.Core.Foundation.CharacterClass.Sura or Kiln.Core.Foundation.CharacterClass.Shaman;
+    private static bool Wards => PlayerProfile.Class is Kiln.Core.Foundation.CharacterClass.Shaman;
+
+    /// <summary>True for the class that turns a blow back.</summary>
+    private static bool Counters => PlayerProfile.Class is Kiln.Core.Foundation.CharacterClass.Sura;
 
     /// <summary>The defence on Shift of the class played.</summary>
     public static string SkillOf(Kiln.Core.Foundation.CharacterClass played) => played switch
     {
         Kiln.Core.Foundation.CharacterClass.Blade => StepId,
         Kiln.Core.Foundation.CharacterClass.Archer => BackstepId,
-        Kiln.Core.Foundation.CharacterClass.Sura => WardId,
+        Kiln.Core.Foundation.CharacterClass.Sura => BacklashId,
         Kiln.Core.Foundation.CharacterClass.Shaman => SealId,
         _ => "skl_guard_stance",
     };
@@ -97,6 +103,9 @@ public partial class DefensiveAbility : Node
         _self.Damaged += (_, _, evaded) =>
         {
             if (IsGuarding && !evaded && !Steps) _visual.Flash();
+
+            // The blow the Backlash was waiting for: it found nothing, and is answered.
+            if (_countering && evaded) Backlash();
         };
 
     }
@@ -142,6 +151,12 @@ public partial class DefensiveAbility : Node
         if (Wards)
         {
             Ward();
+            return;
+        }
+
+        if (Counters)
+        {
+            Counter();
             return;
         }
 
@@ -256,10 +271,10 @@ public partial class DefensiveAbility : Node
         _visual.Rank = book?.RankOf(SkillId) ?? Kiln.Core.Progression.MasteryRank.Normal;
         _visual.SetGuarding(true);
 
-        // The Pure Seal grows with intelligence, as every blessing of the Dragonseer does — and the Shadow Ward, as everything of the Asura's.
+        // The Pure Seal grows with intelligence, as every blessing of the Dragonseer does.
         var share = SkillId == SealId
             ? Kiln.Core.Combat.Attributes.SeerScaled(skill.Magnitude, _self.Stats.Attributes.Int, Kiln.Core.Combat.Attributes.SeerSealPerInt, Kiln.Core.Combat.Attributes.SeerSealCap)
-            : Kiln.Core.Combat.Attributes.SeerScaled(skill.Magnitude, _self.Stats.Attributes.Int, Kiln.Core.Combat.Attributes.AsuraWardPerInt, Kiln.Core.Combat.Attributes.AsuraWardCap);
+            : skill.Magnitude;
 
         _self.Barrier = _self.Stats.MaxHp * share;
         _warding = true;
@@ -270,6 +285,68 @@ public partial class DefensiveAbility : Node
 
         EmitSignal(SignalName.GuardChanged, true);
     }
+
+    /// <summary>
+    /// The Backlash raised: for the skill's duration nothing lands, and the first blow that tries
+    /// is answered. Free to move and to fight meanwhile.
+    /// </summary>
+    private void Counter()
+    {
+        if (!GameContent.IsLoaded || !GameContent.Database.Skills.TryGetValue(SkillId, out var def)) return;
+
+        var book = GetParent().GetNodeOrNull<PlayerCharacter>("PlayerCharacter")?.Skills;
+        var skill = Kiln.Data.Definitions.ResolvedSkill.For(def, book?.RankOf(SkillId) ?? Kiln.Core.Progression.MasteryRank.Normal);
+
+        if (!_self.Mana.TrySpend(skill.ManaCost))
+        {
+            GD.Print($"[backlash] not enough mana ({_self.Mana})");
+            return;
+        }
+
+        Audio.AudioDirector.Play(def.Sound, _motor.GlobalPosition);
+        Combat.SkillFx.Shroud(this, _motor.GlobalPosition, 0.6f, new Color(def.Color));
+
+        _visual.Rank = book?.RankOf(SkillId) ?? Kiln.Core.Progression.MasteryRank.Normal;
+        _visual.SetGuarding(true);
+
+        _answer = skill;
+        _countering = true;
+        _self.Untouchable = true;
+        _active = skill.Duration;
+        _cooldown = skill.Cooldown;
+        CooldownTotal = System.Math.Max(0.01, skill.Cooldown);
+        book?.RecordUse(SkillId);
+
+        EmitSignal(SignalName.GuardChanged, true);
+    }
+
+    /// <summary>The answer: dark force on everything round the Asura, once, and the moment is over.</summary>
+    private void Backlash()
+    {
+        _countering = false;
+
+        var at = _motor.GlobalPosition;
+        var colour = GameContent.Database.Skills.TryGetValue(SkillId, out var def) ? new Color(def.Color) : new Color("b07cff");
+
+        Combat.SkillFx.Slam(this, at, (float)_answer.Radius, colour, 1.3f);
+        Combat.SkillFx.Shroud(this, at, (float)_answer.Radius * 0.5f, colour, 1.3f);
+        Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndSklSlam, at);
+        _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove("dread", _motor.Facing, 0.5);
+
+        foreach (var target in AreaQuery.Sphere(_motor, at, (float)_answer.Radius))
+        {
+            if (!target.IsAlive) continue;
+
+            Combat.SkillFx.Impact(this, target.Body.GlobalPosition, colour, 1f, 1.3f);
+            target.TakeAttack(_self, skillCoef: _answer.DamageCoef, skill: true, element: _answer.Element);
+        }
+
+        EndGuard();
+    }
+
+    /// <summary>True while the Backlash waits for a blow, and the skill it answers with.</summary>
+    private bool _countering;
+    private Kiln.Data.Definitions.ResolvedSkill _answer;
 
     /// <summary>True while a shell is up: it ends early when it is spent.</summary>
     private bool _warding;
@@ -298,6 +375,7 @@ public partial class DefensiveAbility : Node
         _self.Untouchable = false;
         _self.Barrier = 0;
         _warding = false;
+        _countering = false;
         _self.IncomingDamageMultiplier = 1.0;
         _self.Statuses.Warded = false;
         _motor.MovementLocked = false;

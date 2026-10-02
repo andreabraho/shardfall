@@ -98,8 +98,9 @@ mail, its thorns, the dread, the ward, the spellbreak — a little larger a poin
 **Weapon.** One-handed cursed swords: each is the Warrior's sword of that tier re-forged — a
 dark blade with a violet edge that glows. Twelve.
 
-**Shift — Scudo d'Ombra (Shadow Ward).** 4 s: a shell that takes the next blows in the
-Asura's place, up to 30% of its maximum health. 10 mana, 12 s.
+**Shift — Contraccolpo (Backlash).** For 1 s the next blow that would land does nothing, and dark
+force bursts round the Asura: 250% to everything within 4 m. Free to move meanwhile. 10 mana, 10 s.
+A shell that took blows at first; changed at your call (2026-10-02).
 
 | Skill | After | What it does | Motion |
 |---|---|---|---|

@@ -79,8 +79,6 @@ public readonly record struct Attributes(int Str, int Dex, int Int, int Vit)
 
     public const double AsuraThornsPerInt = 0.0025;
 
-    public const double AsuraWardPerInt = 0.002;
-
     public const double AsuraMailCap = 0.40;
 
     public const double AsuraThornsCap = 0.60;
@@ -91,8 +89,6 @@ public readonly record struct Attributes(int Str, int Dex, int Int, int Vit)
     public const double AsuraGuardPerInt = 0.8;
 
     public const double AsuraBreakCap = 0.45;
-
-    public const double AsuraWardCap = 0.55;
 
     /// <summary>A blessing's strength at this much intelligence: its own, and a little for every point, up to its cap.</summary>
     public static double SeerScaled(double strength, int intelligence, double perPoint, double cap) =>

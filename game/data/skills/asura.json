@@ -2,14 +2,17 @@
   // The Asura's skills (CLS-05, 2026-10-02), after the original's cursed sword fighter, under names of
   // our own (docs/09-archer-asura-dragonseer.md): a claw from the ground, a turn of dark flame, a hexed
   // blade, a dread on what stands near, a mail that throws blows back, a bolt that strips — and on Shift
-  // a shell that takes blows.
+  // a moment in which a blow is turned back on everything near.
 
-  { "id": "skl_shadow_ward", "name": "$skill.skl_shadow_ward.name", "color": "#a890ff", "sound": "snd_skl_iron", "class": "sura", "tree": "dark", "suggested_level": 3, "mana_cost": 10, "cooldown": 12,
-    "cast_type": "channel", "targeting": "self", "radius": 0, "damage_coef": 0.00, "hits": 0, "motion": "ward", "duration": 4.0, "magnitude": 0.30,
+
+  // On Shift (at your call, 2026-10-02, in place of the shell): for "duration" seconds the next blow that
+  // would land does nothing, and dark force bursts round the Asura — "damage_coef" to everything within "radius".
+  { "id": "skl_backlash", "name": "$skill.skl_backlash.name", "color": "#b07cff", "sound": "snd_skl_iron", "class": "sura", "tree": "dark", "suggested_level": 3, "mana_cost": 10, "cooldown": 10,
+    "cast_type": "channel", "targeting": "self", "radius": 4.0, "damage_coef": 2.50, "hits": 1, "motion": "counter", "duration": 1.0, "magnitude": 1.00, "element": "dark",
     "mastery": {
-      "master":       { "magnitude": 0.36, "note": "$skill.skl_shadow_ward.m" },
-      "grand_master": { "duration": 5.0, "note": "$skill.skl_shadow_ward.g" },
-      "perfect":      { "cooldown": 9.5, "magnitude": 0.42, "note": "$skill.skl_shadow_ward.p" }
+      "master":       { "damage_coef": 2.90, "note": "$skill.skl_backlash.m" },
+      "grand_master": { "duration": 1.25, "note": "$skill.skl_backlash.g" },
+      "perfect":      { "cooldown": 8.0, "damage_coef": 3.40, "note": "$skill.skl_backlash.p" }
     } },
 
   { "id": "skl_shadow_claw", "name": "$skill.skl_shadow_claw.name", "color": "#b06cff", "sound": "snd_skl_cleave", "class": "sura", "tree": "dark", "suggested_level": 1, "mana_cost": 16, "cooldown": 5,
