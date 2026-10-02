@@ -454,6 +454,8 @@ public partial class SkillCaster : Node
         // The Dread (CLS-05): while what stands near strikes weaker, the Asura takes less.
         if (GameContent.Database.Skills.TryGetValue(skill.Id, out var cast) && cast.Guards > 0)
         {
+            if (_motor.GetNodeOrNull<Combat.AuraVisual>($"Aura{StatusKind.Dread}") is { } dread) dread.Rank = skill.Rank;
+
             _self.Statuses.Apply(StatusEffectSet.Dread(cast.Guards, cast.Duration));
         }
 
@@ -601,7 +603,13 @@ public partial class SkillCaster : Node
 
         _self.Statuses.Apply(effect);
 
-        if (second is not null) _self.Statuses.Apply(second);
+        if (second is not null)
+        {
+            // What rides with it wears the same rank: its colour and how much of it there is.
+            if (_motor.GetNodeOrNull<Combat.AuraVisual>($"Aura{second.Kind}") is { } worn) worn.Rank = skill.Rank;
+
+            _self.Statuses.Apply(second);
+        }
     }
 
     /// <summary>

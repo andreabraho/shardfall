@@ -71,17 +71,31 @@ public partial class AuraVisual : Node3D
 
     // The Asura's three (CLS-05, 2026-10-02, at your call): a glow of small points round the sword for
     // the Hexed Blade, an aura round the body for the Arcane Mail and for the Dread — and no rings.
-    private static readonly Color Hex = new(0.78f, 0.48f, 1.0f);
-    private static readonly Color Mail = new(0.60f, 0.56f, 1.0f);
-    private static readonly Color Fear = new(0.66f, 0.18f, 0.86f);
+    // Each has a colour of its own at every rank — Normal, Master, Grand Master, Perfect — and no two
+    // of the three ever share one (at your call): rose, ember, magenta, gold for the blade; azure,
+    // cyan, indigo, ice for the mail; violet, green, teal, bright violet for the dread.
+    private static readonly Color[] Hex = [new(1.0f, 0.30f, 0.55f), new(1.0f, 0.48f, 0.18f), new(1.0f, 0.20f, 0.88f), new(1.0f, 0.86f, 0.36f)];
+    private static readonly Color[] Mail = [new(0.34f, 0.64f, 1.0f), new(0.28f, 0.92f, 0.96f), new(0.46f, 0.44f, 1.0f), new(0.86f, 0.96f, 1.0f)];
+    private static readonly Color[] Fear = [new(0.62f, 0.20f, 0.92f), new(0.46f, 0.88f, 0.34f), new(0.14f, 0.78f, 0.58f), new(0.74f, 0.34f, 1.0f)];
+
+    /// <summary>The Asura's own colour for this aura at its rank, or null for an aura that takes the usual shift.</summary>
+    private Color? Own => Kind switch
+    {
+        StatusKind.Leech => Hex[RankIndex],
+        StatusKind.Thorns => Mail[RankIndex],
+        StatusKind.Dread => Fear[RankIndex],
+        _ => null,
+    };
+
+    private int RankIndex => System.Math.Clamp((int)Rank, 0, 3);
 
     private Color Base => Kind switch
     {
         StatusKind.Fortify => Skin,
         StatusKind.Frenzy => Rage,
-        StatusKind.Leech => Hex,
-        StatusKind.Thorns => Mail,
-        StatusKind.Dread => Fear,
+        StatusKind.Leech => Hex[0],
+        StatusKind.Thorns => Mail[0],
+        StatusKind.Dread => Fear[0],
         _ => Blade,
     };
 
@@ -96,6 +110,7 @@ public partial class AuraVisual : Node3D
 
     /// <summary>The points of light round each blade while the Hexed Blade is on.</summary>
     private readonly List<GpuParticles3D> _sparkles = [];
+    private MasteryRank? _sparkleRank;
 
     /// <summary>
     /// A frenzy wears flames round the body and no rings (REF-21): three buffs up at once would
@@ -103,10 +118,10 @@ public partial class AuraVisual : Node3D
     /// </summary>
     private bool Rings => Kind is StatusKind.Empower or StatusKind.Fortify;
 
-    private Color Tint => MasteryStyle.Tint(Base, Rank);
+    private Color Tint => Own ?? MasteryStyle.Tint(Base, Rank);
 
     /// <summary>What the gear burns: the same colour, except at Perfect, where it is gold.</summary>
-    private Color GearTint => MasteryStyle.Accent(Base, Rank);
+    private Color GearTint => Own ?? MasteryStyle.Accent(Base, Rank);
 
     public override void _Ready()
     {
@@ -172,7 +187,7 @@ public partial class AuraVisual : Node3D
     {
         if (Kind != StatusKind.Leech) return;
 
-        if (on && _sparkles.Count > 0 && _sparkles.TrueForAll(IsInstanceValid)) return;
+        if (on && _sparkleRank == Rank && _sparkles.Count > 0 && _sparkles.TrueForAll(IsInstanceValid)) return;
 
         foreach (var old in _sparkles)
         {
@@ -183,8 +198,11 @@ public partial class AuraVisual : Node3D
         }
 
         _sparkles.Clear();
+        _sparkleRank = null;
 
         if (!on) return;
+
+        _sparkleRank = Rank;
 
         foreach (var lit in _lit)
         {
@@ -201,7 +219,7 @@ public partial class AuraVisual : Node3D
             var sparks = new GpuParticles3D
             {
                 Name = "HexSparkle",
-                Amount = 46,
+                Amount = 110 + (60 * RankIndex),
                 Lifetime = 0.9,
                 Randomness = 0.7f,
                 LocalCoords = true,
@@ -501,7 +519,7 @@ public partial class AuraVisual : Node3D
         // rings sit wider. This is the part the player reads across a field.
         if (_motes is not null)
         {
-            _motes.Amount = (Shrouds ? BaseEmbers * 2 : BaseEmbers) + MasteryStyle.Embers(Rank);
+            _motes.Amount = Shrouds ? 170 + (80 * RankIndex) : BaseEmbers + MasteryStyle.Embers(Rank);
             _motes.Lifetime = (Kind == StatusKind.Frenzy ? 0.8 : Shrouds ? 1.5 : 1.3) + (MasteryStyle.Brightness(Rank) - 1f) * 0.5;
         }
 
@@ -573,6 +591,6 @@ public partial class AuraVisual : Node3D
         // character changing colour, when all it should say is "harder to hurt". The Blade
         // Aura lays nothing over the blade any more (2026-09-28, at your call: it turned the
         // sword yellow) — its stream of points round the blade is the whole effect.
-        Light(Kind is StatusKind.Frenzy or StatusKind.Empower or StatusKind.Leech ? 0f : Mathf.Min(1f, breath * glow) * _strength * (Kind == StatusKind.Fortify || Shrouds ? 0.16f : 1f));
+        Light(Kind is StatusKind.Frenzy or StatusKind.Empower or StatusKind.Leech || Shrouds ? 0f : Mathf.Min(1f, breath * glow) * _strength * (Kind == StatusKind.Fortify ? 0.16f : 1f));
     }
 }
