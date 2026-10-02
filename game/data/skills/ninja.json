@@ -60,4 +60,15 @@
       "grand_master": { "magnitude": 0.28, "note": "$skill.skl_viper_fang.g" },
       "perfect":      { "cooldown": 9.5, "damage_coef": 2.20, "note": "$skill.skl_viper_fang.p" }
     } }
+,
+
+  // On Shift, in place of the Warrior's Guard (free, and not one of the six): a dash of "radius" metres the
+  // way the Ninja is going, nothing touching it for "duration" seconds.
+  { "id": "skl_shadow_step",     "name": "$skill.skl_shadow_step.name", "color": "#b9a8ff", "sound": "snd_skl_pierce", "class": "blade", "tree": "mental", "suggested_level": 3,  "mana_cost": 8,  "cooldown": 6.0,  "cast_type": "channel", "targeting": "self",          "radius": 4.5, "damage_coef": 0.00, "hits": 0,
+    "duration": 0.45, "magnitude": 1.00,
+    "mastery": {
+      "master":       { "duration": 0.55, "note": "$skill.skl_shadow_step.m" },
+      "grand_master": { "radius": 5.5, "note": "$skill.skl_shadow_step.g" },
+      "perfect":      { "cooldown": 4.5, "duration": 0.65, "note": "$skill.skl_shadow_step.p" }
+    } }
 ]

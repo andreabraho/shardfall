@@ -77,8 +77,14 @@ public static class SkillText
 
         if (Effect(skill) is { Length: > 0 } effect) lines.Add(effect);
 
-        // The Guard, the one channelled skill, also cleanses as it is raised (2026-09-26).
-        if (def.CastType == "channel")
+        // The Shadow Step (CLS-03): a channelled skill that goes somewhere.
+        if (def.CastType == "channel" && def.Radius > 0)
+        {
+            lines.Add(L10n.F("A dash of {0:0.#} m the way you are going. Nothing touches you for {1:0.##} s.", skill.Radius, skill.Duration));
+        }
+
+        // The Guard, the other channelled skill, also cleanses as it is raised (2026-09-26).
+        if (def.CastType == "channel" && def.Radius <= 0)
         {
             lines.Add(L10n.T("Raising it clears poison, bleeding, slows, weakening and vulnerability."));
             lines.Add(L10n.T("While it is up, no stun, poison, bleeding, slow, weakening or vulnerability takes hold."));
@@ -121,6 +127,10 @@ public static class SkillText
         else if (skill.Applies is { Kind: "stealth" })
         {
             parts.Add(L10n.F("unseen {0:0.#} s", skill.Duration));
+        }
+        else if (def.CastType == "channel" && def.Radius > 0)
+        {
+            parts.Add(L10n.F("{0:0.#} m, untouched {1:0.##} s", skill.Radius, skill.Duration));
         }
         else if (skill.Magnitude > 0)
         {

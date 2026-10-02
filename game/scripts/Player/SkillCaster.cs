@@ -743,7 +743,7 @@ public partial class SkillCaster : Node
     /// Carries the body along <paramref name="aim"/>, up to <paramref name="reach"/> metres, through
     /// creatures but not through the world: as far as a ray at chest height finds clear.
     /// </summary>
-    private void Dash(Vector3 aim, float reach, double seconds = DashSeconds, Tween.TransitionType ease = Tween.TransitionType.Quad)
+    public void Dash(Vector3 aim, float reach, double seconds = DashSeconds, Tween.TransitionType ease = Tween.TransitionType.Quad)
     {
         var from = _motor.GlobalPosition;
         var chest = from + (Vector3.Up * 0.9f);

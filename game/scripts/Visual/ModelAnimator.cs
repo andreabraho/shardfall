@@ -292,6 +292,8 @@ public partial class ModelAnimator : Node
         {
             // Something thrown from the hand: the Viper Fang.
             "throw" => ["Throw"],
+            // A hop aside: the Shadow Step.
+            "step" => ["Jump_Full_Short", "Jump_Start", "Running_B"],
             // A leap onto the target, the blades coming down with the landing: the Shadow Strike.
             "pounce" => ["Melee_1H_Attack_Jump_Chop", "Melee_Dualwield_Attack_Chop", "Melee_1H_Attack_Chop"],
             "chop" => TwoHanded ? ["Melee_2H_Attack_Chop", "2H_Melee_Attack_Chop"] : ["Melee_1H_Attack_Chop", "1H_Melee_Attack_Chop"],

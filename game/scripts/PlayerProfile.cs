@@ -45,7 +45,7 @@ public static class PlayerProfile
     public static CharacterProgression Progression => _progression ??= new CharacterProgression();
 
     /// <summary>The skills known, six at most; the Guard, on its own key, is not one of the six.</summary>
-    public static SkillBook Skills => _skills ??= new SkillBook(free: [Kiln.Data.Ids.Skills.SklGuardStance]);
+    public static SkillBook Skills => _skills ??= new SkillBook(free: [Kiln.Data.Ids.Skills.SklGuardStance, Kiln.Data.Ids.Skills.SklShadowStep]);
 
     private static Kiln.Core.Cosmetics.Wardrobe? _wardrobe;
 
