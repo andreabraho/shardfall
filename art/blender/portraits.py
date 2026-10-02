@@ -42,7 +42,7 @@ LOOKS = {
     "asura_man": [(os.path.join(ROOT, "game", "assets", "temins", "characters", "asura_man_body.glb"), ["Asura_Head", "Ranger_Body", "Ranger_ArmLeft", "Ranger_ArmRight"])],
     "asura_woman": [(os.path.join(ROOT, "game", "assets", "temins", "characters", "asura_woman_body.glb"), ["Rogue_Head", "Rogue_Body", "Rogue_ArmLeft", "Rogue_ArmRight"])],
     "seer_man": [(os.path.join(ROOT, "game", "assets", "temins", "characters", "seer_man_body.glb"), ["Seer_Head", "Mage_Body", "Mage_ArmLeft", "Mage_ArmRight"])],
-    "seer_woman": [(os.path.join(ROOT, "game", "assets", "temins", "characters", "seer_woman_body.glb"), ["Seer_Head", "Mage_Body", "Mage_ArmLeft", "Mage_ArmRight"])],
+    "seer_woman": [(os.path.join(ROOT, "game", "assets", "temins", "characters", "seer_woman_body.glb"), ["Rogue_Head", "Rogue_Body", "Rogue_ArmLeft", "Rogue_ArmRight"])],
 }
 
 

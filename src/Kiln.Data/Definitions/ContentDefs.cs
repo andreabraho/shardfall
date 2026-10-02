@@ -831,6 +831,13 @@ public sealed class GearPartsDef
     /// </summary>
     public float[] ArmourFit { get; init; } = [];
 
+    /// <summary>
+    /// Which cut of a suit this body wears (2026-10-02, at your call: "the women a little more
+    /// uncovered"): a suit may hold pieces for one cut only, named bone__&lt;bone&gt;__m or __w, and
+    /// a body wears those of its own cut and every piece with no cut. Empty is "m".
+    /// </summary>
+    public string Cut { get; init; } = "";
+
     /// <summary>The bone the weapon is held on. The bow hand is the left (CLS-04).</summary>
     public string WeaponHand { get; init; } = "handslot.r";
 

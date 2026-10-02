@@ -2,19 +2,19 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b4ujyw25x2rag"
-path="res://.godot/imported/seer_woman_body_seer_cloth.png-e00ec91eae7250db8040880fee4ec510.ctex"
+uid="uid://c3gxgsml7fx5y"
+path="res://.godot/imported/seer_woman_body_seer_woman_cloth.png-b5f2ec365e24bc3e3bcee61c4c2ba513.ctex"
 metadata={
 "vram_texture": false
 }
 generator_parameters={
-"md5": "dbb9293771d40b99cd75171fa4e74e61"
+"md5": "6d79ab3265568bcc230dbcdb4054c698"
 }
 
 [deps]
 
-source_file="res://assets/temins/characters/seer_woman_body_seer_cloth.png"
-dest_files=["res://.godot/imported/seer_woman_body_seer_cloth.png-e00ec91eae7250db8040880fee4ec510.ctex"]
+source_file="res://assets/temins/characters/seer_woman_body_seer_woman_cloth.png"
+dest_files=["res://.godot/imported/seer_woman_body_seer_woman_cloth.png-b5f2ec365e24bc3e3bcee61c4c2ba513.ctex"]
 
 [params]
 

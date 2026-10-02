@@ -83,6 +83,10 @@ def render(item_id, path, cell):
 
     # Forearm bracers stand out sideways in the rest pose: an armour's icon is its body.
     for o in list(bpy.data.objects):
+        # A suit is drawn in its full cut: the pieces made for the women only are left out.
+        if o.name.endswith("__w"):
+            bpy.data.objects.remove(o, do_unlink=True)
+            continue
         if o.name.startswith("bone__lowerarm"):
             bpy.data.objects.remove(o, do_unlink=True)
 

@@ -353,9 +353,21 @@ public sealed class GearRig
 
         var skeletonInModel = Within(skeleton, _model);
 
+        var cut = _parts.Cut.Length == 0 ? "m" : _parts.Cut;
+
         foreach (var piece in suit.FindChildren("bone__*", "MeshInstance3D", true, false).OfType<MeshInstance3D>())
         {
-            var bone = BoneOf(skeleton, piece.Name.ToString()["bone__".Length..]);
+            var named = piece.Name.ToString()["bone__".Length..];
+
+            // A piece cut for one body only (bone__chest__w): worn by that cut, left off by the other.
+            if (named.LastIndexOf("__", System.StringComparison.Ordinal) is var mark and > 0)
+            {
+                if (named[(mark + 2)..] != cut) continue;
+
+                named = named[..mark];
+            }
+
+            var bone = BoneOf(skeleton, named);
 
             if (bone < 0)
             {

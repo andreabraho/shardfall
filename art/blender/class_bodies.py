@@ -15,8 +15,11 @@ were:
   white hair and violet eyes; black cloth and black leather with deep violet at the neck and the
   hems; the left arm — the mark — violet and lit from within. The man the Knight's face on the
   Ranger's body, the woman the Rogue;
-- the Dragonseer: the Mage without his hat, the robe ivory and jade with a gold belt; the woman
-  the Rogue's face, dark-haired, on the same robe.
+- the Dragonseer: the Mage without his hat, the robe ivory and jade with a gold belt. The woman
+  was the Rogue's face on the same robe; at your call ("the women a little more uncovered",
+  2026-10-02) she is the lightened Rogue now, as the Ninja woman is: an ivory bodice cut short over a
+  bare midriff, bare shoulders and arms, a jade wrap round the hips over bare legs, her hair dark.
+  The Asura woman's bodice is cut short the same way.
 
 Writes game/assets/temins/characters/<class>_<man|woman>_body.glb, which visuals.json grafts on
 the player.
@@ -61,6 +64,7 @@ DYES = {
     "D": (0.10, 0.34, 0.32),  # dark jade
     "G": (0.95, 0.74, 0.25),  # gold
     "N": (0.20, 0.24, 0.40),  # blue-black hair
+    "S": (0.62, 0.42, 0.16),  # soft gold leather
 }
 
 # Each texture is a sheet of swatches, 8 across and 4 down; "." stays as it is.
@@ -82,6 +86,8 @@ SHEETS = {
     "dark_hair": [". N . . . N N N", ". . . . . N N N", ". . . N N N N N", ". . . . . . . ."],
     # The Mage: the purple robe, its dark lining, the magenta, the orange belt.
     "seer_cloth": [". . . . . G . .", "I I J . . . . D", ". J . . . . . .", ". . . . . . . ."],
+    # The Rogue as the Dragonseer woman: the bodice and the wrap ivory, the hems jade, the leathers gold.
+    "seer_woman_cloth": [". S . . . S S I", "I J . . . S S I", ". J . S S S I S", ". . . . . . . ."],
 }
 
 
@@ -191,14 +197,10 @@ def seer_man():
     export("seer_man_body")
 
 
-def seer_woman():
-    bpy.ops.wm.read_factory_settings(use_empty=True)
-    arm = take("Mage.glb", MAGE)
-    take("Rogue.glb", ["Rogue_Head"], arm)
-    bpy.data.objects["Rogue_Head"].name = "Seer_Head"
-    wear(["Seer_Head"], "dark_hair")
-    wear(MAGE, "seer_cloth")
-    export("seer_woman_body")
+def seer_woman_style(arm, image):
+    nb.bare_legs(arm, image)
+    wear([n for n in w.KEEP if n != "Rogue_Head"], "seer_woman_cloth")
+    wear(["Rogue_Head"], "dark_hair")
 
 
 def asura_woman_style(arm, image):
@@ -209,7 +211,7 @@ def asura_woman_style(arm, image):
 
 asura_man()
 seer_man()
-seer_woman()
 nb.man("archer_man_body", ARCHER, quiver)
 nb.woman("archer_woman_body", ARCHER, quiver)
-w.build(os.path.join(OUT, "asura_woman_body.glb"), style=asura_woman_style)
+w.build(os.path.join(OUT, "asura_woman_body.glb"), crop=True, style=asura_woman_style)
+w.build(os.path.join(OUT, "seer_woman_body.glb"), crop=True, style=seer_woman_style)

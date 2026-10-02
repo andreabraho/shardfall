@@ -117,8 +117,28 @@ two cells tall in the bag.
   forward; `icons.py` turns a `_fan` back flat on. Drawn larger than worn: `fan()` shrinks them.
 - **A cursed sword is the Warrior's, re-forged**: `k.cursed("<source model>", "<name>")` — dark steel,
   crimson cord, violet light down the blade. No new shape to model.
-- **Suits and headpieces** are tables in `classkit.build`: one function a class (`archer_suit`,
-  `asura_suit`, `seer_suit`, and the three `_head`), made of ninjakit's pieces round the Rogue.
+- **Suits and headpieces** are in `classkit.py`: **one function a suit** since 2026-10-02 ("more their
+  own, and better made" — all seven of a class were one function in other colours before, and read
+  as one suit), each with a shape nobody else has: a straw cape, a rib cage, a collar of feathers, a
+  wing of blades. Three headpiece functions, one a class. What they share is the first half of the
+  file: `patch` (a curved sheet that follows the body, with a cut hem: `pointed`, `swallow`,
+  `zigzag`, `ragged`), `leaves` (a row of pointed scales, feathers or fur; `arm_frame` puts a row
+  round an arm), `tube` and `curve` (horns, antlers, ribs, cords, ribbons), `hoop`, `fin`, `blade`,
+  `feather`, `cloak`, `necklace`, `seal`, and `Suit`, which collects the pieces bone by bone.
+  Use `classkit.mirror`, not armourkit's, for anything turned: armourkit's flips a turned piece wrong.
+- **Two cuts of one suit** (2026-10-02, "the women a little more uncovered"): `s.add(bone, parts, "m")`
+  is worn by the men only, `"w"` by the women only, and no tag by both; the pieces are exported as
+  `bone__<bone>__m` / `__w` and a body wears its own cut (visuals.json `"cut": "w"`). The men wear a
+  vest from the belly to the shoulders; the women a band round the chest (`bust`, heights `BUST`),
+  shoulders and belly bare — so what lies on the vest above 1.07 or below 0.86 is tagged "m" and cut
+  again for the band. Icons draw the full cut.
+- **What stands up on an arm in the rest pose points sideways in the game**: the arms hang. A horn or
+  a blade meant to rise beside the head rides the chest, not the upper arm.
+- **The Archer carries a quiver across the back**: nothing of the Archer's hangs there above the belt
+  (a cape from the belt, a mantle on the bow arm).
+- **The Asura is dark, not violet**: each suit has a second dark colour of its own — wine, blood red,
+  petrol green, midnight blue, old gold and crimson, bone and ash, violet and gold ("they are all one
+  colour", your call).
   The men's trunks are narrower (the Ranger's by a sixth, the Mage's a little) and their heads
   smaller: visuals.json `armour_fit` and `helmet_fit` scale the trunk's pieces and the headpiece
   for each body, so a suit is made once.

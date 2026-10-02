@@ -156,3 +156,24 @@ health, and on raising it every harmful effect falls away. 12 mana, 12 s.
   tower alone) is still to run for all of them.
 - **Shields, boots and jewellery** stay shared by every class.
 - **The creator** (faces, hair colour, skin) stays as it is: class, man or woman, name.
+
+## Armour, redrawn (2026-10-02)
+
+"Review the armours of the three classes: more their own, and better made", then "the Asura's are
+all one colour — other dark colours too" and "the women's can be a little more uncovered" (your
+calls). Every suit is its own design now (`art/blender/classkit.py`):
+
+| | Archer | Asura | Dragonseer |
+|---|---|---|---|
+| 1 | Trail Jerkin: laced linen, green scarf, pouch | Branded Wraps: black bindings, paper wards, wine sash, rings of light on the marked arm | Pilgrim's Mantle: linen, rope belt, wooden beads, a gourd |
+| 6 | Hunter's Hide: fur collar, bone toggles, a tail at the belt | Bloodied Leathers: crossed belts on an iron ring, studs, a torn blood-red cape | Reed Mantle: a rain cape of reeds in tiers, a reed skirt |
+| 10 | Fletcher's Scales: green and bronze leaves on chest, bow arm and hips | Hexscale Hauberk: petrol-green scales throat to thigh, a blade on each shoulder, a green stone | Jadescale Vestment: a cape of jade scales, a jade ring at the breast, bell sleeves |
+| 14 | Ridge Ranger: cowl, harness of pouches, iron on the bow arm, a cape from the belt | Ridge Dreadmail: blue-black plate with a keel and lames, midnight cape, eyes of ice on the breast | Ridge Oracle: fur, a bronze mirror, streamers of three colours, bells |
+| 18 | Warden's Mantle: a pointed mantle over the bow shoulder, silver breast guard, swallow-tailed cape | Wardenbane Plate: black and old gold, a standing collar, gold chevrons, crimson cape | Warden's Benediction: two-tiered mantle scalloped in gold, the sun on a blue panel, a wheel of rays on the back |
+| 22 | Ashen Stalker: torn black, a mask of cloth, antler on the shoulder, embers in the seams | Ashen Tyrant: a cage of ashen ribs over black, spines down the back, horned shoulders, an ember heart | Ashen Vigil: charred robes torn at every hem, a burning censer, ember beads, burnt prayers |
+| 24 | Kiln Plume: a collar of gold feathers, feathered arms, a tail of red plumes tipped with fire | Kiln Fiend: violet-black and gold, a lit sigil, horned shoulders, a wing of three blades behind each | Kiln Dragon: gold dragon scales, gold antlers, the pearl in a claw, a red sash of heaven behind |
+
+**The women's cut.** The same suits, with a band round the chest in place of the vest: shoulders and
+belly bare. The Asura woman's own bodice is cut short as the Ninja's; the Dragonseer woman no longer
+wears the Mage's robe — an ivory bodice, bare shoulders and arms, a jade wrap round the hips over bare
+legs. The men are as they were.

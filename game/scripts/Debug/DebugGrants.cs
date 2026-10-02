@@ -8,7 +8,7 @@ namespace Kiln.Game.Debug;
 
 /// <summary>
 /// Hands the player what a system needs to be exercised: every armour and headpiece of the class played
-/// (F8, 2026-10-01: all it gives, at your call), and a level at a time (F1).
+/// (F8, 2026-10-01: all it gives, at your call; the bag emptied first since 2026-10-02), and a level at a time (F1).
 /// </summary>
 /// <remarks>
 /// <para>
@@ -26,7 +26,7 @@ public partial class DebugGrants : Node
             return;
         }
 
-        GD.Print("[debug] F1 grants a level · F8 grants every armour and headpiece of the class played · F10 unlocks every cosmetic");
+        GD.Print("[debug] F1 grants a level · F8 empties the bag and grants every armour and headpiece of the class played · F10 unlocks every cosmetic");
     }
 
     public override void _UnhandledInput(InputEvent @event)
@@ -60,9 +60,10 @@ public partial class DebugGrants : Node
         // The armours and headpieces of the class played and nothing else (2026-10-01, the Ninja's; every class's since 2026-10-02; the daggers too at first, then taken off at your call): the gan, the materials and the trinkets once
         // handed out here are gone. The largest first, so the bag packs tight and all of it fits; each kind from the lowest level up.
         var rng = GameItems.LootRng.Fork("debug-ninja");
-        // What is already worn or in the bag is not handed out again: with it the bag would not hold the rest.
-        var owned = bag.Gear.Worn.Values.Concat(bag.Bag.Items.Select(p => p.Item)).Select(i => i.DefId).ToHashSet();
-        var gear = GameContent.Database.Items.Values.Where(d => IsClassGear(d) && !owned.Contains(d.Id))
+        // The bag is emptied first (2026-10-02, at your call), so all of it always fits; what is worn stays worn.
+        foreach (var placed in bag.Bag.Items.ToList()) bag.Bag.Remove(placed.Item);
+
+        var gear = GameContent.Database.Items.Values.Where(IsClassGear)
             .OrderByDescending(d => d.GridSize[0] * d.GridSize[1]).ThenBy(d => d.LevelReq).ToList();
         var given = gear.Count(def => bag.Bag.TryAdd(GameItems.Factory.Create(def.Id, rng)));
 
