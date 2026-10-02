@@ -58,6 +58,12 @@ public sealed record ItemSpec
     /// </summary>
     public IReadOnlyList<BonusLine> Grants { get; init; } = [];
 
+    /// <summary>
+    /// The stat a copy is born with, one of several (2026-10-02): a ring's average damage or skill
+    /// damage, a bracelet's or an earring's attribute. Null for an item that has none.
+    /// </summary>
+    public ItemInnate? Innate { get; init; }
+
     public bool IsEquipment => Slot is not null;
 
     public bool IsStackable => MaxStack > 1;
@@ -69,6 +75,13 @@ public sealed record ItemSpec
 
     public int Cells => Width * Height;
 }
+
+/// <summary>
+/// What a copy of an item is born with (2026-10-02): one stat out of <see cref="Stats"/>, the same
+/// for the life of the copy, worth <see cref="Magnitude"/> grown as every base stat grows with the
+/// upgrade level — or, with a <see cref="Ladder"/>, exactly the ladder's number for that level.
+/// </summary>
+public sealed record ItemInnate(IReadOnlyList<BonusStat> Stats, double Magnitude, IReadOnlyList<double> Ladder);
 
 /// <summary>
 /// Lookup of item kinds by id. Implemented over the content database in the game, and over a

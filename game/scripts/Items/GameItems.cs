@@ -187,6 +187,12 @@ public static class LootRoller
 
     private static ItemInstance Mint(string itemId, int count, DeterministicRng rng)
     {
+        // A sword or its great sword (2026-10-02), by chance: only an item that has a pair rolls for it.
+        if (GameContent.Database.Items.TryGetValue(itemId, out var named) && named.Pair is { Length: > 0 } pair && rng.NextDouble(0, 1) < 0.5)
+        {
+            itemId = pair;
+        }
+
         itemId = GameItems.ForClass(itemId);
 
         var spec = GameItems.Spec(itemId);

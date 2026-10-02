@@ -35,12 +35,24 @@ public sealed class ItemDef : ContentDefBase
     /// </summary>
     public Dictionary<string, string> Twins { get; init; } = [];
 
+    /// <summary>
+    /// The same weapon for the other number of hands (2026-10-02): every sword has its great sword
+    /// and every great sword its sword, and a drop that names one gives either.
+    /// </summary>
+    public string? Pair { get; init; }
+
     public EquipSlot? Slot { get; init; }
     public string[] ClassRestriction { get; init; } = [];
     public int LevelReq { get; init; }
     public Rarity Rarity { get; init; }
     public int[] GridSize { get; init; } = [1, 1];
     public Dictionary<string, double> BaseStats { get; init; } = [];
+
+    /// <summary>
+    /// The stat a copy is born with, one of `stats` (2026-10-02): worth `magnitude`, grown with the
+    /// upgrade level as base stats are, or the number `ladder` gives for each level from +0.
+    /// </summary>
+    public InnateDef? Innate { get; init; }
     public int Sockets { get; init; }
     public int[] BonusLineCount { get; init; } = [0, 0];
     public string? BonusPool { get; init; }
@@ -1186,4 +1198,12 @@ public sealed class KitPieceDef : ContentDefBase
     /// its trunk, not by its crown. Empty means the box itself.
     /// </summary>
     public double[] CollisionSize { get; init; } = [];
+}
+
+/// <summary>An item's born stat: see <see cref="ItemDef.Innate"/>.</summary>
+public sealed record InnateDef
+{
+    public string[] Stats { get; init; } = [];
+    public double Magnitude { get; init; }
+    public double[] Ladder { get; init; } = [];
 }

@@ -633,6 +633,22 @@ public static class ContentValidator
                     $"'{item.Id}' base_stats '{key}': {error}.",
                     "Use a frame key (weapon_damage_min/max, armor_value) or a modifier key.");
             }
+
+            foreach (var key in item.Innate?.Stats ?? [])
+            {
+                if (BonusStat.TryParse(key, out _, out var error)) continue;
+
+                report.Error("stat-key", item.SourceFile,
+                    $"'{item.Id}' innate '{key}': {error}.",
+                    "See BonusStat for the accepted keys, e.g. damage_pct, strength.");
+            }
+
+            if (item.Innate is { Ladder.Length: > 0 and not 10 })
+            {
+                report.Error("stat-key", item.SourceFile,
+                    $"'{item.Id}' innate ladder has {item.Innate.Ladder.Length} steps.",
+                    "Give ten: one for each upgrade level from +0 to +9.");
+            }
         }
     }
 
@@ -698,6 +714,13 @@ public static class ContentValidator
                 {
                     report.Error("item-twin", item.SourceFile, $"'{item.Id}': its twin '{twin}' is not a piece for the same slot that {cls} may wear.");
                 }
+            }
+
+            // A sword and its great sword name each other (2026-10-02).
+            if (item.Pair is { Length: > 0 } pair
+                && (!db.Items.TryGetValue(pair, out var paired) || paired.Pair != item.Id || paired.Hands == item.Hands || paired.Slot != item.Slot))
+            {
+                report.Error("item-pair", item.SourceFile, $"'{item.Id}' names '{pair}' as its pair, which is not a weapon for the other number of hands naming it back.");
             }
         }
     }

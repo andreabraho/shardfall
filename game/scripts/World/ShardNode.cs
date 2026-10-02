@@ -410,7 +410,9 @@ public partial class ShardNode : StaticBody3D
 
         _adds.Add(add);
 
+        // A tower's guards hunt the length of the floor; a field stone's set on whoever woke it.
         if (HuntingAdds) add.Hunt();
+        else add.Rouse();
 
         if (isAnchor)
         {

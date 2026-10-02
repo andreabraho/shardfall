@@ -41,6 +41,23 @@ public class RealContentTests
     }
 
     [Fact]
+    public void EveryBraceletEarringAndRing_IsBornWithAStat()
+    {
+        var db = ContentLoader.LoadFromDirectory(DataRoot()).Database;
+        var worn = db.Items.Values.Where(i => i.Id.StartsWith("brc_") || i.Id.StartsWith("ear_") || i.Id.StartsWith("rng_")).ToList();
+
+        Assert.NotEmpty(worn);
+
+        foreach (var def in worn)
+        {
+            var spec = Kiln.Data.Items.ItemCatalogue.ToSpec(def);
+            var born = new Kiln.Core.Items.ItemInstance(1, def.Id).InnateFor(spec);
+
+            Assert.True(born is { Magnitude: > 0 }, def.Id);
+        }
+    }
+
+    [Fact]
     public void GameContent_IsNotEmpty()
     {
         var db = ContentLoader.LoadFromDirectory(DataRoot()).Database;
