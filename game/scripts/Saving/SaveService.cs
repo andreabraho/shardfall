@@ -91,34 +91,6 @@ public partial class SaveService : Node
     {
         _instance = this;
         ProcessMode = ProcessModeEnum.Always;
-        Migrate();
-    }
-
-    /// <summary>
-    /// Moves saves written before characters had folders (REF-18) into a folder of their own,
-    /// so they show up as one character in the list.
-    /// </summary>
-    private static void Migrate()
-    {
-        try
-        {
-            if (!Directory.Exists(Folder)) return;
-
-            var loose = Directory.GetFiles(Folder, "*.sav");
-
-            if (loose.Length == 0) return;
-
-            var target = System.IO.Path.Combine(Folder, $"char_{DateTime.UtcNow.Ticks}");
-            Directory.CreateDirectory(target);
-
-            foreach (var file in loose) File.Move(file, System.IO.Path.Combine(target, System.IO.Path.GetFileName(file)));
-
-            GD.Print($"[save] moved {loose.Length} older save(s) into {target}");
-        }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-        {
-            GD.PushWarning($"[save] could not move the older saves: {ex.Message}");
-        }
     }
 
     /// <summary>The play clock: only in a map, only while not paused.</summary>
@@ -557,7 +529,7 @@ public partial class SaveService : Node
         PlayerProfile.Reset();
         PlayerProfile.Body = body;
         PlayerProfile.Class = played;
-        PlayerProfile.Path = played == CharacterClass.Warrior ? path : "";
+        PlayerProfile.Path = played != CharacterClass.Warrior ? "" : path.Length > 0 ? path : PlayerProfile.BodyPath;
         GameWorld.Travel.Load([], null);
         GameSession.SetDifficulty(DifficultySettings.For(tier));
         GameSession.SetSeed((ulong)DateTime.UtcNow.Ticks ^ 0x9E3779B97F4A7C15UL);

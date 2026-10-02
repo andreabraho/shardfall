@@ -32,7 +32,7 @@ public sealed class SaveGame
 
     /// <summary>
     /// The one branch of skills the character follows (2026-10-02): "body" or "mental" for a
-    /// Warrior. Empty for a class with one branch only, and in a save from before, which keeps both.
+    /// Warrior. Empty for a class with one branch only.
     /// </summary>
     public string Path { get; set; } = "";
 

@@ -198,18 +198,15 @@ public static class PlayerProfile
 
     /// <summary>
     /// The branch of skills followed (2026-10-02, at your call: one branch a character): the
-    /// Warrior of the body or of the mind. Empty for the Ninja, whose skills are one branch, and
-    /// for a Warrior saved before the choice existed, who keeps both.
+    /// Warrior of the body or of the mind. Empty for every other class, whose skills are one branch.
     /// </summary>
     public static string Path { get; set; } = "";
 
     /// <summary>
     /// How many hands the weapon of the Warrior played takes (2026-10-02, at your call): the Body
-    /// Warrior fights with a sword, the Mental Warrior with a great sword. Null for every other
-    /// class, and for a Warrior saved before the branches, who keeps both.
+    /// Warrior fights with a sword, the Mental Warrior with a great sword. Null for every other class.
     /// </summary>
-    public static int? WarriorHands => Class != Kiln.Core.Foundation.CharacterClass.Warrior ? null
-        : Path == BodyPath ? 1 : Path == MentalPath ? 2 : null;
+    public static int? WarriorHands => Class != Kiln.Core.Foundation.CharacterClass.Warrior ? null : Path == MentalPath ? 2 : 1;
 
     /// <summary>True when the class and the branch played may hold this: any item but a weapon of the other branch.</summary>
     public static bool Wields(Kiln.Core.Items.ItemSpec? spec) =>
@@ -240,7 +237,7 @@ public static class PlayerProfile
         Kiln.Core.Foundation.CharacterClass.Archer => "Archer",
         Kiln.Core.Foundation.CharacterClass.Sura => "Asura",
         Kiln.Core.Foundation.CharacterClass.Shaman => "Dragonseer",
-        _ => Path == BodyPath ? "Body Warrior" : Path == MentalPath ? "Mental Warrior" : "Warrior",
+        _ => Path == MentalPath ? "Mental Warrior" : "Body Warrior",
     };
 
     public static void Reset()
