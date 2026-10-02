@@ -25,7 +25,7 @@ public partial class CombatFeedback : Node3D
     private const float CritIconPixels = 128f;
 
     /// <summary>How long a number lives.</summary>
-    [Export] public double Lifetime { get; set; } = 1.1;
+    [Export] public double Lifetime { get; set; } = 1.5;
 
     /// <summary>
     /// World size per font pixel. This is the knob that actually controls how big numbers
@@ -47,7 +47,7 @@ public partial class CombatFeedback : Node3D
     /// Hard cap on numbers on screen at once. Beyond this the oldest is recycled: past a
     /// dozen the numbers stop being information and become an obstacle.
     /// </summary>
-    [Export] public int MaxActive { get; set; } = 22;
+    [Export] public int MaxActive { get; set; } = 30;
 
     [Export] public Color NormalColor { get; set; } = new(1f, 1f, 1f);
     [Export] public Color CritColor { get; set; } = new(1f, 0.42f, 0.12f);
