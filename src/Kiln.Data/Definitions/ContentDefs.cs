@@ -35,6 +35,12 @@ public sealed class ItemDef : ContentDefBase
     /// </summary>
     public Dictionary<string, string> Twins { get; init; } = [];
 
+    /// <summary>
+    /// The same weapon for the other number of hands (2026-10-02): every sword has its great sword
+    /// and every great sword its sword, and a drop that names one gives either.
+    /// </summary>
+    public string? Pair { get; init; }
+
     public EquipSlot? Slot { get; init; }
     public string[] ClassRestriction { get; init; } = [];
     public int LevelReq { get; init; }

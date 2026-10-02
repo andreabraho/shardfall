@@ -77,6 +77,10 @@ Outlines are drawn in XY (X across, Y along) and stood up with `stand()`. `blade
 - **The hand holds the grip, not the guard.** `finish` moves the sword so the origin sits
   6/10 up a one-handed grip, 4/10 up a great sword's. The grip part **must be named `grip`**.
 - Sizes: one-handed ≈ 1.4 up, 0.37 down; great sword ≈ 1.95 up, 0.42 across the guard.
+- **Every sword has its pair** (2026-10-02): a great sword of it, or a sword of the great sword. Do not model
+  it twice: a three-line model file calling `k.variant("<source model>", "<name>", great=True|False)` stretches
+  or shrinks the same pieces about the guard. The two items name each other with `"pair"` in weapons.json,
+  and a drop that names one gives either.
 - Each sword is a character: a silhouette you could tell at a glance (a hooked tip, antler
   guard, ribs, horns), a material story (worn steel, grave steel, ember-black), one accent.
 - Skins recolour a sword by **tinting** it (`BladeSkin`, `Wash` = 0.18) — keep a sword's own

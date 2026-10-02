@@ -114,3 +114,50 @@ def finish(name, parts, folder="weapons"):
     # angle is low enough that the bevel down to the edge stays a hard line.
     t.soften(t.join(name, parts), angle=30)
     return {"folder": folder, "name": name}
+
+
+def variant(source, name, great):
+    """Sword `source` (a model's file name) for the other number of hands, as model `name`
+    (2026-10-02: every sword has its great sword and every great sword its sword).
+
+    The same pieces, stretched or shrunk about the guard: the blade to a great sword's reach or
+    back to a sword's, the grip to two hands' length or to one's, everything a little wider or
+    narrower with it — so the pair read as one smith's work at a glance.
+    """
+    import importlib
+
+    import bpy
+
+    caught = {}
+    kit = globals()
+    kept = kit["finish"]
+    kit["finish"] = lambda _name, parts, folder="weapons": caught.update(parts=parts, folder=folder)
+    try:
+        importlib.import_module(source).build()
+    finally:
+        kit["finish"] = kept
+
+    parts = caught["parts"]
+    bpy.context.view_layer.update()
+
+    def heights(part):
+        return [(part.matrix_world @ v.co).z for v in part.data.vertices]
+
+    grip_part = next(p for p in parts if p.name == "grip")
+    grip_length = max(heights(grip_part)) - min(heights(grip_part))
+    reach = max(max(heights(p)) for p in parts)
+
+    up = (1.95 if great else 1.40) / reach
+    down = (0.40 if great else 0.30) / grip_length
+    wide = 1.18 if great else 0.85
+
+    for part in parts:
+        world, back = part.matrix_world.copy(), part.matrix_world.inverted()
+        for v in part.data.vertices:
+            p = world @ v.co
+            p.x *= wide
+            p.y *= wide
+            p.z *= up if p.z > 0 else down
+            v.co = back @ p
+
+    return kept(name, parts, caught["folder"])

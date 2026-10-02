@@ -715,6 +715,13 @@ public static class ContentValidator
                     report.Error("item-twin", item.SourceFile, $"'{item.Id}': its twin '{twin}' is not a piece for the same slot that {cls} may wear.");
                 }
             }
+
+            // A sword and its great sword name each other (2026-10-02).
+            if (item.Pair is { Length: > 0 } pair
+                && (!db.Items.TryGetValue(pair, out var paired) || paired.Pair != item.Id || paired.Hands == item.Hands || paired.Slot != item.Slot))
+            {
+                report.Error("item-pair", item.SourceFile, $"'{item.Id}' names '{pair}' as its pair, which is not a weapon for the other number of hands naming it back.");
+            }
         }
     }
 
