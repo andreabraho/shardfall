@@ -7,10 +7,14 @@
 rig everything else wears, recoloured by their swatch sheets as the Ninja and the Mental Warrior
 were:
 
-- the Archer: the Ranger, quiver and all, in forest green and tan; the woman the lightened Rogue
-  (woman_body.py) in moss and tan, fair-haired, with the Ranger's quiver on her back;
-- the Asura: the Knight's face, white-haired, on the Ranger's body in black and crimson, the
-  left arm dark violet — the mark; the woman the Rogue the same, white-haired, the same arm;
+- the Archer: dressed as the Ninja (ninja_body.py) but for a detail, as the Mental Warrior is the
+  Body Warrior but for one (your call, 2026-10-02: in the original the two are one class) — the
+  hood, the hems and the bands ochre where the Ninja's are green, the leather and her hair
+  chestnut — and the Ranger's quiver on the back;
+- the Asura, dark and arcane (your call, 2026-10-02: "much more arcane and darker"): ashen skin,
+  white hair and violet eyes; black cloth and black leather with deep violet at the neck and the
+  hems; the left arm — the mark — violet and lit from within. The man the Knight's face on the
+  Ranger's body, the woman the Rogue;
 - the Dragonseer: the Mage without his hat, the robe ivory and jade with a gold belt; the woman
   the Rogue's face, dark-haired, on the same robe.
 
@@ -28,6 +32,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 sys.path.insert(0, HERE)
 
+import ninja_body as nb  # noqa: E402
 import woman_body as w  # noqa: E402
 
 KIT = os.path.join(ROOT, "game", "assets", "kaykit", "adventurers2")
@@ -42,8 +47,13 @@ DYES = {
     "O": (0.66, 0.58, 0.38),  # tan
     "M": (0.20, 0.42, 0.24),  # moss
     "B": (0.92, 0.76, 0.42),  # fair hair
-    "K": (0.17, 0.16, 0.20),  # black cloth
+    "K": (0.10, 0.09, 0.13),  # black cloth
     "R": (0.66, 0.10, 0.14),  # crimson
+    "P": (0.36, 0.13, 0.54),  # deep violet
+    "B": (0.13, 0.11, 0.15),  # black leather
+    "D": (0.22, 0.21, 0.27),  # dark linen
+    "A": (0.80, 0.76, 0.84),  # ashen skin
+    "E": (0.80, 0.50, 1.00),  # violet eyes
     "W": (0.95, 0.95, 0.98),  # white hair
     "V": (0.42, 0.26, 0.62),  # the marked arm
     "I": (0.93, 0.92, 0.86),  # ivory
@@ -57,14 +67,16 @@ DYES = {
 SHEETS = {
     # The Ranger: the scarf's blue, the tunic's cream.
     "archer_cloth": [". . . . . O O .", "F . . . . . . .", ". F O . . . . .", ". . . . . . . ."],
-    "asura_cloth": [". . . . . K K .", "R . . . . . . .", ". R K . . . . .", ". . . . . . . ."],
-    "asura_arm": ["V . . . . K K .", "R . . . . . . .", ". R K . . . . .", ". . . . . . . ."],
-    # The Knight's head: its hair.
-    "white_hair_knight": [". W . . . . . .", ". . . . . . . .", ". . . . . . . .", ". . . . . . . ."],
+    # The Asura on the Ranger: the scarf violet, the tunic black, every leather black, the skin ashen.
+    "asura_cloth": ["A B . . . K K B", "P B D . B B B B", "D P K B . . . B", ". . . . . . . ."],
+    "asura_arm": ["V B . . . K K B", "P B D . B B B B", "D P K B . . . B", ". . . . . . . ."],
+    # The Knight's head: its hair white, its skin ashen, its eyes violet.
+    "asura_head_knight": ["A W E . . . . .", ". . . . . . . .", ". . . . . . . .", ". . . . . . . ."],
     # The Rogue: the teal bodice and skirt, the green hems and bands; every brown on her head is hair.
     "archer_woman_cloth": [". . . . . . . .", "M O . . . . . .", ". O . . . . . .", ". . . . . . . ."],
-    "asura_woman_cloth": [". . . . . . . .", "K R . . . . . .", ". R . . . . . .", ". . . . . . . ."],
-    "asura_woman_arm": ["V . . . . . . .", "K R . . . . . .", ". R . . . . . .", ". . . . . . . ."],
+    "asura_woman_cloth": ["A B . . . B B B", "K P . . . B B B", ". P . B B B B B", ". . . . . . . ."],
+    "asura_woman_arm": ["V B . . . B B B", "K P . . . B B B", ". P . B B B B B", ". . . . . . . ."],
+    "asura_woman_head": ["A W E . . W W W", ". . . . . W W W", ". . . W W W W W", ". . . . . . . ."],
     "fair_hair": [". B . . . B B B", ". . . . . B B B", ". . . B B B B B", ". . . . . . . ."],
     "white_hair": [". W . . . W W W", ". . . . . W W W", ". . . W W W W W", ". . . . . . . ."],
     "dark_hair": [". N . . . N N N", ". . . . . N N N", ". . . N N N N N", ". . . . . . . ."],
@@ -99,8 +111,9 @@ def image_of(obj):
     return next(n.image for n in obj.data.materials[0].node_tree.nodes if n.type == "TEX_IMAGE")
 
 
-def wear(names, sheet):
-    """The objects `names` in one material of their own, their texture dyed by `sheet`."""
+def wear(names, sheet, glow=0.0):
+    """The objects `names` in one material of their own, their texture dyed by `sheet`; with
+    `glow`, lit from within in violet (the Asura's marked arm)."""
     first = bpy.data.objects[names[0]]
     material = first.data.materials[0].copy()
     material.name = sheet
@@ -108,6 +121,10 @@ def wear(names, sheet):
     for node in material.node_tree.nodes:
         if node.type == "TEX_IMAGE":
             node.image = image
+    if glow > 0:
+        bsdf = next(n for n in material.node_tree.nodes if n.type == "BSDF_PRINCIPLED")
+        bsdf.inputs["Emission Color"].default_value = (0.55, 0.25, 1.0, 1.0)
+        bsdf.inputs["Emission Strength"].default_value = glow
     for name in names:
         bpy.data.objects[name].data.materials[0] = material
 
@@ -146,13 +163,13 @@ def export(name):
     print(f"[class] -> {os.path.relpath(out, ROOT)}")
 
 
-def archer_man():
-    bpy.ops.wm.read_factory_settings(use_empty=True)
-    take("Ranger.glb", RANGER + ["Ranger_Head", "Ranger_Quiver"])
-    # A name of its own: the Knight's head it replaces is still on the player's model.
-    bpy.data.objects["Ranger_Head"].name = "Archer_Head"
-    wear(RANGER, "archer_cloth")
-    export("archer_man_body")
+# The Ninja's dyes with the Archer's detail: ochre for green, chestnut for dark leather.
+ARCHER = {**nb.DYES, "G": (0.66, 0.44, 0.14), "L": (0.42, 0.25, 0.14)}
+
+
+def quiver(arm):
+    """The Ranger's quiver on the back."""
+    take("Ranger.glb", ["Ranger_Quiver"], arm)
 
 
 def asura_man():
@@ -160,9 +177,9 @@ def asura_man():
     arm = take("Ranger.glb", RANGER)
     take("Knight.glb", ["Knight_Head"], arm)
     bpy.data.objects["Knight_Head"].name = "Asura_Head"
-    wear(["Asura_Head"], "white_hair_knight")
+    wear(["Asura_Head"], "asura_head_knight")
     wear([n for n in RANGER if n != "Ranger_ArmLeft"], "asura_cloth")
-    wear(["Ranger_ArmLeft"], "asura_arm")
+    wear(["Ranger_ArmLeft"], "asura_arm", glow=0.9)
     export("asura_man_body")
 
 
@@ -184,22 +201,15 @@ def seer_woman():
     export("seer_woman_body")
 
 
-def archer_woman_style(arm, image):
-    """Run by woman_body.build once she is cut: moss and tan, fair hair, the Ranger's quiver."""
-    wear([n for n in w.KEEP if n != "Rogue_Head"], "archer_woman_cloth")
-    wear(["Rogue_Head"], "fair_hair")
-    take("Ranger.glb", ["Ranger_Quiver"], arm)
-
-
 def asura_woman_style(arm, image):
     wear([n for n in w.KEEP if n not in ("Rogue_Head", "Rogue_ArmLeft")], "asura_woman_cloth")
-    wear(["Rogue_ArmLeft"], "asura_woman_arm")
-    wear(["Rogue_Head"], "white_hair")
+    wear(["Rogue_ArmLeft"], "asura_woman_arm", glow=0.9)
+    wear(["Rogue_Head"], "asura_woman_head")
 
 
-archer_man()
 asura_man()
 seer_man()
 seer_woman()
-w.build(os.path.join(OUT, "archer_woman_body.glb"), style=archer_woman_style)
+nb.man("archer_man_body", ARCHER, quiver)
+nb.woman("archer_woman_body", ARCHER, quiver)
 w.build(os.path.join(OUT, "asura_woman_body.glb"), style=asura_woman_style)

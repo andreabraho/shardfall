@@ -451,6 +451,12 @@ public partial class SkillCaster : Node
             if (toTarget.LengthSquared() > 0.0001f) aim = toTarget.Normalized();
         }
 
+        // The Dread (CLS-05): while what stands near strikes weaker, the Asura takes less.
+        if (GameContent.Database.Skills.TryGetValue(skill.Id, out var cast) && cast.Guards > 0)
+        {
+            _self.Statuses.Apply(StatusEffectSet.Fortify(cast.Guards, cast.Duration));
+        }
+
         // The Warrior stands still while a skill plays out (REF-01): held for every pulse it
         // fires, turned to where it is aimed, and an area centred on where it was used.
         _motor.Stop();

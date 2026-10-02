@@ -60,8 +60,10 @@ TAIL = [((0, 0.28, 2.02), 0.10), ((0, 0.46, 2.16), 0.13), ((0, 0.66, 2.10), 0.15
         ((0, 0.80, 1.62), 0.11), ((0, 0.76, 1.40), 0.07), ((0, 0.70, 1.26), 0.02)]
 
 
-def dye(image):
-    """A copy of the Rogue's texture in the Ninja's colours."""
+def dye(image, dyes=None):
+    """A copy of the Rogue's texture in the Ninja's colours — or in `dyes`, for a class dressed
+    as the Ninja but for a detail (the Archer, class_bodies.py)."""
+    dyes = dyes or DYES
     width, height = image.size
     pixels = np.array(image.pixels[:], dtype=np.float32).reshape(height, width, 4)
     rows, columns = len(SHEET), len(SHEET[0].split())
@@ -74,7 +76,7 @@ def dye(image):
             x0, x1 = column * width // columns, (column + 1) * width // columns
             block = pixels[y0:y1, x0:x1, :3]
             light = block.max(axis=2, keepdims=True)
-            block[:] = np.array(DYES[key], dtype=np.float32) * (light / light.max())
+            block[:] = np.array(dyes[key], dtype=np.float32) * (light / light.max())
     dyed = bpy.data.images.new("ninja_cloth", width, height, alpha=False)
     dyed.pixels = pixels.ravel()
     dyed.pack()
@@ -215,19 +217,34 @@ def woman_style(arm, image):
     bare_legs(arm, image)
 
 
-def man():
+def man(name="ninja_man_body", dyes=None, extra=None):
+    """The hooded man to `name`.glb; `extra(arm)` adds what another class carries (a quiver)."""
     bpy.ops.wm.read_factory_settings(use_empty=True)
     bpy.ops.import_scene.gltf(filepath=HOODED)
     for obj in list(bpy.data.objects):
         if obj.type == "MESH" and obj.name not in MAN:
             bpy.data.objects.remove(obj, do_unlink=True)
-    legs(next(o for o in bpy.data.objects if o.type == "ARMATURE"), "RogueHooded", bare=False)
-    w.wear(dye(next(i for i in bpy.data.images if i.size[0] > 0)))
-    out = os.path.join(OUT, "ninja_man_body.glb")
+    arm = next(o for o in bpy.data.objects if o.type == "ARMATURE")
+    legs(arm, "RogueHooded", bare=False)
+    w.wear(dye(next(i for i in bpy.data.images if i.size[0] > 0), dyes))
+    if extra is not None:
+        extra(arm)
+    out = os.path.join(OUT, name + ".glb")
     bpy.ops.export_scene.gltf(filepath=out, export_format="GLB", use_selection=False,
                               export_animations=False, export_skins=True, export_yup=True)
     print(f"[ninja] -> {os.path.relpath(out, ROOT)}")
 
 
-man()
-w.build(os.path.join(OUT, "ninja_woman_body.glb"), crop=True, trim=w.SCARF, dye=dye, style=woman_style)
+def woman(name="ninja_woman_body", dyes=None, extra=None):
+    """The woman to `name`.glb, the same way."""
+    def style(arm, image):
+        woman_style(arm, image)
+        if extra is not None:
+            extra(arm)
+
+    w.build(os.path.join(OUT, name + ".glb"), crop=True, trim=w.SCARF, dye=lambda image: dye(image, dyes), style=style)
+
+
+if __name__ == "__main__":
+    man()
+    woman()

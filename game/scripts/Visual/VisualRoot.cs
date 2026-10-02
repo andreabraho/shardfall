@@ -113,7 +113,7 @@ public partial class VisualRoot : Node3D
     /// </summary>
     public void SkillMove(string motion, Vector3 direction, double seconds, Color? trail = null, double landBy = 0)
     {
-        if (trail is { } colour && motion is not ("brace" or "raise" or "roar")) Trail(System.Math.Max(0.04, landBy - 0.2), 0.3, colour with { A = 0.7f });
+        if (trail is { } colour && motion is not ("brace" or "raise" or "roar" or "spell" or "summon" or "invoke" or "dread")) Trail(System.Math.Max(0.04, landBy - 0.2), 0.3, colour with { A = 0.7f });
 
         if (_animator is { Ready: true })
         {

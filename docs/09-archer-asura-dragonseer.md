@@ -65,8 +65,10 @@ of it was downloaded, opened or copied.
 
 ### 2.2 The Archer
 
-**Look.** The Ranger — hood up, cape, quiver — in forest green over brown leather; the woman the
-Rogue in the same colours with the Ranger's quiver. Under armour the quiver stays.
+**Look.** Dressed as the Ninja but for a detail (at your call, 2026-10-02, as the Mental Warrior is
+the Body Warrior but for one — in the original the two are one class): the same dark clothes,
+hood and mask, tail and bare legs, with the hood, hems and bands **ochre** where the Ninja's are
+green, the leather and her hair chestnut, and a **quiver** on the back. Under armour the quiver stays.
 
 **Attribute.** Dexterity: full attack from DEX, a third from STR — the Ninja's rule.
 
@@ -84,9 +86,10 @@ untouched: distance is its defence. Free, 6 s.
 
 ### 2.3 The Asura
 
-**Look.** The Knight's face with **white hair**, the Ranger's body in black cloth with crimson
-trim — and the **left arm dark violet**, the mark. The woman the Rogue, white-haired, the same
-arm. Its suits are dark plate with flared shoulders, crimson and violet.
+**Look.** Dark and arcane (at your call, 2026-10-02): **ashen skin, white hair, violet eyes**; black
+cloth and black leather with deep violet at the neck and hems; the **left arm violet and lit from
+within**, the mark. The man the Knight's face on the Ranger's body, the woman the Rogue. Its suits
+are black plate with flared shoulders, violet-black cloth, and violet stones lit on every one.
 
 **Attribute.** Strength for the sword; **its skills take from intelligence too** (1.2 attack
 power a point, skills only), as the Mental Warrior's take from vitality.
@@ -101,10 +104,10 @@ Asura's place, up to 30% of its maximum health. 10 mana, 12 s.
 |---|---|---|---|
 | **Artiglio d'Ombra** (Shadow Claw) | finger strike | A claw from the ground under a target up to 10 m off: 210%, ignoring its defence. Needs a target. | the off hand thrust forward |
 | **Vortice Oscuro** (Dark Vortex) | dragon swirl | Turning, dark flame on everything within 4.5 m: 4 hits of 75%. | the spin |
-| **Lama Stregata** (Hexed Blade) | enchanted blade | 25 s: blows 20% stronger, and 8% of the damage of every blow comes back as health. | blade raised |
-| **Terrore** (Dread) | fear | Everything within 6 m strikes 25% weaker for 10 s. | a shout |
-| **Corazza Arcana** (Arcane Mail) | enchanted armour | 20 s: 20% less damage taken, and 25% of every blow taken from close by thrown back. | guard raised |
-| **Spezzaincanti** (Spellbreak) | dispel | A bolt at a target up to 12 m off: 160%, strips its rage and its shield, and leaves it taking 20% more for 6 s. Needs a target. | a throw |
+| **Lama Stregata** (Hexed Blade) | enchanted blade | 25 s: blows 20% stronger, and 8% of the damage of every blow comes back as health. | a spell worked over the blade with both hands |
+| **Terrore** (Dread) | fear | Everything within 6 m strikes 25% weaker for 10 s, and the Asura takes 15% less for as long. | a long summoning |
+| **Corazza Arcana** (Arcane Mail) | enchanted armour | 20 s: 20% less damage taken, and 25% of every blow taken from close by thrown back. | power drawn up with both arms |
+| **Spezzaincanti** (Spellbreak) | dispel | A bolt at a target up to 12 m off: 160%, strips its rage and its shield, and leaves it taking 25% more for 8 s. Needs a target. | a throw |
 
 ### 2.4 The Dragonseer
 

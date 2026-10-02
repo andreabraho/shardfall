@@ -379,6 +379,12 @@ public sealed class SkillDef : ContentDefBase
     /// <summary>The element its damage is: physical | fire | ice | lightning | dark.</summary>
     public Kiln.Core.Combat.DamageElement Element { get; init; } = Kiln.Core.Combat.DamageElement.Physical;
 
+    /// <summary>
+    /// A share less damage its caster takes for the skill's duration, besides what it does to what
+    /// it hits (CLS-05, the Dread, at your call): zero for none.
+    /// </summary>
+    public double Guards { get; init; }
+
     /// <summary>Whether it strips the rage and the shield of what it hits (CLS-05, the Spellbreak).</summary>
     public bool Dispels { get; init; }
 

@@ -1,8 +1,11 @@
 """The parts every bow is made of (CLS-04, 2026-10-02), so the Archer's bows read as one family.
 
 A bow lies as KayKit's does, the way the left hand was rigged to hold it: the grip at the
-origin, the limbs along Y — about a metre each way — the string towards -X, flat in Z.
+origin, the limbs along Y — about a metre each way — flat in Z, the string towards +X (drawn towards -X
+below and turned round at the end).
 """
+
+import bmesh
 
 import temins as t
 
@@ -70,7 +73,19 @@ def bow(name, wood, grip, height=0.9, curve=0.36, recurve=0.0, width=0.085, stri
         for y in (-0.2, 0.2):
             parts.append(t.sphere("gem", 0.05, gem, at=(0.02, y, 0), subdivisions=1, squash=(1, 1, 0.9)))
 
-    t.soften(t.join(name, parts), angle=40)
+    whole = t.join(name, parts)
+
+    # Turned round (2026-10-02, at your call: the Archer held it backwards): the string towards +X,
+    # the side the left hand keeps towards the body.
+    mesh = bmesh.new()
+    mesh.from_mesh(whole.data)
+    for v in mesh.verts:
+        v.co.x = -v.co.x
+    bmesh.ops.reverse_faces(mesh, faces=mesh.faces)
+    mesh.to_mesh(whole.data)
+    mesh.free()
+
+    t.soften(whole, angle=40)
     return {"folder": "weapons", "name": name}
 
 

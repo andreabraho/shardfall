@@ -29,7 +29,7 @@
     } },
 
   { "id": "skl_hexed_blade", "name": "$skill.skl_hexed_blade.name", "color": "#d05cff", "sound": "snd_skl_aura", "class": "sura", "tree": "dark", "suggested_level": 5, "mana_cost": 26, "cooldown": 34,
-    "cast_type": "instant", "targeting": "self", "radius": 0, "damage_coef": 0.00, "hits": 0, "motion": "raise", "duration": 25.0, "magnitude": 0.20,
+    "cast_type": "instant", "targeting": "self", "radius": 0, "damage_coef": 0.00, "hits": 0, "motion": "spell", "duration": 25.0, "magnitude": 0.20,
     "applies": { "kind": "hex", "magnitude": 0.08, "duration": 25.0, "chance": 1.0 },
     "mastery": {
       "master":       { "magnitude": 0.24, "note": "$skill.skl_hexed_blade.m" },
@@ -38,7 +38,7 @@
     } },
 
   { "id": "skl_dread", "name": "$skill.skl_dread.name", "color": "#7a4cc0", "sound": "snd_skl_frenzy", "class": "sura", "tree": "dark", "suggested_level": 12, "mana_cost": 22, "cooldown": 18,
-    "cast_type": "instant", "targeting": "self_aoe", "radius": 6.0, "damage_coef": 0.00, "hits": 1, "motion": "roar", "duration": 10.0, "magnitude": 0.25,
+    "cast_type": "instant", "targeting": "self_aoe", "radius": 6.0, "damage_coef": 0.00, "hits": 1, "motion": "dread", "duration": 10.0, "magnitude": 0.25, "guards": 0.15, "windup": 0.45,
     "applies": { "kind": "weaken", "magnitude": 0.25, "duration": 10.0, "chance": 1.0 },
     "mastery": {
       "master":       { "radius": 7.0, "note": "$skill.skl_dread.m" },
@@ -47,7 +47,7 @@
     } },
 
   { "id": "skl_arcane_mail", "name": "$skill.skl_arcane_mail.name", "color": "#9c8cff", "sound": "snd_skl_iron", "class": "sura", "tree": "dark", "suggested_level": 14, "mana_cost": 28, "cooldown": 36,
-    "cast_type": "instant", "targeting": "self", "radius": 0, "damage_coef": 0.00, "hits": 0, "motion": "brace", "duration": 20.0, "magnitude": 0.20,
+    "cast_type": "instant", "targeting": "self", "radius": 0, "damage_coef": 0.00, "hits": 0, "motion": "invoke", "duration": 20.0, "magnitude": 0.20,
     "applies": { "kind": "mail", "magnitude": 0.25, "duration": 20.0, "chance": 1.0 },
     "mastery": {
       "master":       { "magnitude": 0.24, "note": "$skill.skl_arcane_mail.m" },
@@ -57,7 +57,7 @@
 
   { "id": "skl_spellbreak", "name": "$skill.skl_spellbreak.name", "color": "#c8a0ff", "sound": "snd_skl_bash", "class": "sura", "tree": "dark", "suggested_level": 18, "mana_cost": 24, "cooldown": 10,
     "cast_type": "instant", "targeting": "single_target", "radius": 0, "range": 12.0, "damage_coef": 1.60, "hits": 1, "motion": "cast", "needs_target": true, "element": "dark", "dispels": true,
-    "applies": { "kind": "vulnerability", "magnitude": 0.20, "duration": 6.0, "chance": 1.0 },
+    "applies": { "kind": "vulnerability", "magnitude": 0.25, "duration": 8.0, "chance": 1.0 },
     "mastery": {
       "master":       { "damage_coef": 1.85, "note": "$skill.skl_spellbreak.m" },
       "grand_master": { "cooldown": 8.5, "note": "$skill.skl_spellbreak.g" },

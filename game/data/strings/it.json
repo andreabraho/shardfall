@@ -1,4 +1,5 @@
 {
+  "You take {0:P0} less damage for {1:0.#} s.": "Subisci il {0:P0} di danno in meno per {1:0.#} s.",
   "Your class's defence": "La difesa della tua classe",
   "$item.arm_ashen_stalker.name": "Battitore di Cenere",
   "$item.arm_ashen_tyrant.name": "Piastre del Tiranno di Cenere",

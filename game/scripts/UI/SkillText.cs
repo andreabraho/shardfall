@@ -83,6 +83,8 @@ public static class SkillText
 
         if (def.Element == DamageElement.Dark) lines.Add(L10n.T("Dark damage."));
 
+        if (def.Guards > 0) lines.Add(L10n.F("You take {0:P0} less damage for {1:0.#} s.", def.Guards, def.Duration));
+
         if (def.Dispels) lines.Add(L10n.T("Strips the target's rage and any shield held over it."));
 
         if (def.Windup > 0) lines.Add(L10n.F("Lands {0:0.#} s after it is cast.", def.Windup));

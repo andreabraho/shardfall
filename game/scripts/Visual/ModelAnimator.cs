@@ -349,6 +349,10 @@ public partial class ModelAnimator : Node
             // a spell worked with both hands; a long one, for a heal or a rain.
             "cast" or "seals" or "claw" or "breath" => ["Ranged_Magic_Shoot", "Throw"],
             "spell" => ["Ranged_Magic_Spellcasting", "Ranged_Magic_Raise", "Cheering"],
+            // The Asura's own (CLS-05, at your call: not the Warrior's cheer and block): power drawn up
+            // with both arms for the Arcane Mail, a long summoning for the Dread.
+            "invoke" => ["Ranged_Magic_Raise", "Ranged_Magic_Spellcasting", "Cheering"],
+            "dread" => ["Ranged_Magic_Summon", "Ranged_Magic_Spellcasting_Long", "Cheering"],
             "summon" => ["Ranged_Magic_Spellcasting_Long", "Ranged_Magic_Raise", "Cheering"],
             // A leap back (CLS-04): the Backstep.
             "backstep" => ["Dodge_Backward", "Jump_Full_Short"],
@@ -378,11 +382,11 @@ public partial class ModelAnimator : Node
 
         var clip = wanted.Length == 0 ? "" : Pick(_player.GetAnimationList(), [.. dual, .. wanted]);
 
-        if (clip.Length == 0) return motion is "brace" or "raise" or "roar" or "spell" or "summon" ? Flourish() : Attack();
+        if (clip.Length == 0) return motion is "brace" or "raise" or "roar" or "spell" or "summon" or "invoke" or "dread" ? Flourish() : Attack();
 
         // A buff is raised, not struck: it has the whole hold to play out.
         // A slow skill says when it lands; any other lands quickly.
-        var impact = motion is "brace" or "raise" or "roar" or "spell" or "summon" ? seconds * 0.6 : landBy > 0 ? landBy : SkillImpact;
+        var impact = motion is "brace" or "raise" or "roar" or "spell" or "summon" or "invoke" or "dread" ? seconds * 0.6 : landBy > 0 ? landBy : SkillImpact;
 
         return PlayTimed(clip, impact, seconds);
     }

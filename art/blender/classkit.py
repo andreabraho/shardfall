@@ -1,8 +1,9 @@
 """The suits and headpieces of the Archer, the Asura and the Dragonseer (CLS-04, 05, 06 — 2026-10-02).
 
 "Their armour in the style of theirs" (your call; the analysis is docs/09-archer-asura-dragonseer.md):
-light leather and cloth with a cloak and a bow-arm bracer for the Archer; dark plate with flared,
-spiked shoulders, a gorget and a skirt of plates for the Asura; a mantle, a stole down the front,
+light leather and cloth with a cloak and a bow-arm bracer for the Archer; black plate with flared,
+spiked shoulders, a gorget and a skirt of plates for the Asura, violet cloth and violet light on
+every suit ("much more arcane and darker", your call); a mantle, a stole down the front,
 a wide sash and hanging seals for the Dragonseer — never metal on the last, never plate on the first.
 
 All worn over the class's own clothes, as the Ninja's are (visuals.json "own_clothes"), and built
@@ -171,8 +172,16 @@ def asura_suit(name, steel, trim, cloth, spikes=0, pads=2, gorget=False, skirt=1
         tip = (0.50 + 0.22 * math.sin(angle) + 0.10, 0.22 * math.sin(angle * 1.4), 1.50 - 0.06 * abs(i - (spikes - 1) / 2))
         shoulder.append(a.spike(f"pauldron_spike_{i}", base, tip, 0.05, trim, sides=5))
 
+    if gem is not None:
+        shoulder.append(t.sphere("pauldron_rune", 0.04, gem, at=(0.47, -0.12, 1.24), subdivisions=1))
+
     shoulder_l, shoulder_r = both(shoulder)
-    arm_l, arm_r = both(n.bracer(steel, trim, plate=trim if splint else None))
+    arm = n.bracer(steel, trim, plate=trim if splint else None)
+
+    if gem is not None:
+        arm.append(t.sphere("bracer_rune", 0.032, gem, at=(0.63, -0.02, 1.11 + 0.165), subdivisions=1))
+
+    arm_l, arm_r = both(arm)
     leg_l, leg_r = both(n.shin(steel, trim=trim, plate=steel))
 
     by_bone = {
@@ -348,25 +357,27 @@ def build(name):
         "ashen_antlers": lambda: archer_head(name, m("ash_cloth", (0.16, 0.16, 0.18)), antlers=bone, plate=m("ash_iron", (0.30, 0.30, 0.34), metal=0.6, rough=0.4), gem=ember),
     }
 
-    # The Asura: dark plate, crimson cloth, violet light.
-    black = m("asura_steel", (0.13, 0.12, 0.16), metal=0.65, rough=0.38)
-    crimson = m("asura_crimson", (0.46, 0.07, 0.10))
+    # The Asura: black plate, violet-black cloth, violet light on every suit.
+    black = m("asura_steel", (0.08, 0.07, 0.11), metal=0.7, rough=0.34)
+    crimson = m("asura_shroud", (0.22, 0.07, 0.34))
+    rune = m("asura_rune", (0.42, 0.16, 0.62), metal=0.5, rough=0.4)
+    dusk = m("asura_dusk", (0.30, 0.22, 0.12), metal=0.7, rough=0.4)
     pieces.update({
-        "branded_wraps": lambda: asura_suit(name, m("asura_cloth", (0.14, 0.13, 0.16)), crimson, crimson, pads=1, skirt=0, splint=False, pad_size=0.16),
-        "bloodied_leathers": lambda: asura_suit(name, hide, crimson, crimson, pads=2, skirt=1, splint=False, pad_size=0.17),
-        "hexscale_hauberk": lambda: asura_suit(name, black, bronze, crimson, spikes=1, skirt=1, scale=m("asura_scale", (0.22, 0.14, 0.26), metal=0.5, rough=0.45)),
-        "ridge_dreadmail": lambda: asura_suit(name, black, iron, crimson, spikes=1, skirt=2, gorget=True, cape=0.45),
-        "wardenbane_plate": lambda: asura_suit(name, black, m("asura_gilt", (0.70, 0.50, 0.20), metal=0.75, rough=0.35), crimson, spikes=2, skirt=2, gorget=True, gem=violet, cape=0.58, pad_size=0.21),
-        "ashen_tyrant": lambda: asura_suit(name, m("tyrant_steel", (0.10, 0.10, 0.12), metal=0.7, rough=0.34), m("tyrant_red", (0.56, 0.10, 0.10), metal=0.5, rough=0.4), crimson, spikes=3, skirt=2,
-                                           gorget=True, gem=blood, cape=0.68, pad_size=0.22, scale=m("tyrant_scale", (0.18, 0.10, 0.12), metal=0.5, rough=0.45)),
+        "branded_wraps": lambda: asura_suit(name, m("asura_cloth", (0.08, 0.07, 0.10)), rune, crimson, pads=1, skirt=0, splint=False, pad_size=0.16, gem=violet),
+        "bloodied_leathers": lambda: asura_suit(name, m("asura_hide", (0.09, 0.08, 0.10)), rune, crimson, pads=2, skirt=1, splint=False, pad_size=0.17, gem=violet, cape=0.34),
+        "hexscale_hauberk": lambda: asura_suit(name, black, rune, crimson, spikes=1, skirt=1, gem=violet, cape=0.40, scale=m("asura_scale", (0.22, 0.14, 0.26), metal=0.5, rough=0.45)),
+        "ridge_dreadmail": lambda: asura_suit(name, black, m("asura_iron", (0.20, 0.18, 0.26), metal=0.6, rough=0.4), crimson, spikes=2, skirt=2, gorget=True, gem=violet, cape=0.50),
+        "wardenbane_plate": lambda: asura_suit(name, black, dusk, crimson, spikes=2, skirt=2, gorget=True, gem=violet, cape=0.58, pad_size=0.21),
+        "ashen_tyrant": lambda: asura_suit(name, m("tyrant_steel", (0.10, 0.10, 0.12), metal=0.7, rough=0.34), rune, crimson, spikes=3, skirt=2,
+                                           gorget=True, gem=violet, cape=0.68, pad_size=0.22, scale=m("tyrant_scale", (0.18, 0.10, 0.12), metal=0.5, rough=0.45)),
         "kiln_fiend": lambda: asura_suit(name, m("fiend_steel", (0.16, 0.10, 0.20), metal=0.7, rough=0.32), gold, m("fiend_cloth", (0.36, 0.10, 0.46)), spikes=3, skirt=2, gorget=True,
                                          gem=violet, cape=0.76, pad_size=0.23, scale=m("fiend_scale", (0.30, 0.16, 0.40), metal=0.55, rough=0.4)),
-        "brand_band": lambda: asura_head(name, m("asura_cloth", (0.14, 0.13, 0.16)), ends=crimson),
-        "iron_horns": lambda: asura_head(name, black, trim=iron, horn=iron, horn_size=(0.10, 0.22)),
-        "wardenbane_crest": lambda: asura_head(name, black, trim=m("asura_gilt", (0.70, 0.50, 0.20), metal=0.75, rough=0.35), horn=black, horn_size=(0.14, 0.32),
-                                               crest=m("asura_gilt", (0.70, 0.50, 0.20), metal=0.75, rough=0.35), gem=violet),
-        "ashen_crown": lambda: asura_head(name, m("tyrant_steel", (0.10, 0.10, 0.12), metal=0.7, rough=0.34), trim=m("tyrant_red", (0.56, 0.10, 0.10), metal=0.5, rough=0.4),
-                                          horn=m("tyrant_steel", (0.10, 0.10, 0.12), metal=0.7, rough=0.34), horn_size=(0.20, 0.42), crown=5, gem=blood),
+        "brand_band": lambda: asura_head(name, m("asura_cloth", (0.08, 0.07, 0.10)), ends=crimson, gem=violet),
+        "iron_horns": lambda: asura_head(name, black, trim=rune, horn=black, horn_size=(0.10, 0.22), gem=violet),
+        "wardenbane_crest": lambda: asura_head(name, black, trim=dusk, horn=black, horn_size=(0.14, 0.32),
+                                               crest=dusk, gem=violet),
+        "ashen_crown": lambda: asura_head(name, m("tyrant_steel", (0.10, 0.10, 0.12), metal=0.7, rough=0.34), trim=rune,
+                                          horn=m("tyrant_steel", (0.10, 0.10, 0.12), metal=0.7, rough=0.34), horn_size=(0.20, 0.42), crown=5, gem=violet),
     })
 
     # The Dragonseer: robes, a stole, a sash, seals — never metal but for a clasp.
