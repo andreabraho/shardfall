@@ -391,6 +391,137 @@ public static class SkillFx
             emitRadius: 0.2f, bright: bright);
     }
 
+    /// <summary>
+    /// A Flying Seal (CLS-06, at your call: "more mystical"): a sigil that turns as it flies from the
+    /// Dragonseer to its target, a little to one side or the other by turns, shedding points of
+    /// light behind it; where it lands, the same sigil opens on the ground under the target and
+    /// turns, a pillar of light stands over it, and a second ring closes on it.
+    /// </summary>
+    public static void Seal(Node context, Vector3 origin, Vector3 to, bool landed, int index, Color colour, float bright = 1f)
+    {
+        const double flight = 0.26;
+
+        var span = (to - origin) with { Y = 0 };
+        var length = span.Length();
+
+        if (length < 0.05f) return;
+
+        var forward = span / length;
+        var side = forward.Cross(Vector3.Up) * (index % 2 == 0 ? 0.55f : -0.55f);
+        var from = origin + (Vector3.Up * 1.25f) + (forward * 0.5f) + side;
+        var velocity = ((to + (Vector3.Up * 1.0f)) - from) / (float)flight;
+        var pale = colour.Lerp(Colors.White, 0.35f);
+
+        // The seal itself, and the light it carries.
+        var seal = Billboard(context, "magic_03.png", from, 0.95f, pale, flight, bright * 1.5f);
+        seal.Velocity = velocity;
+        seal.Spin = 9f;
+        seal.FadeIn = 0.04f;
+        seal.Hold = 0.9f;
+
+        var halo = Billboard(context, "light_02.png", from, 1.2f, colour, flight, bright);
+        halo.Velocity = velocity;
+        halo.FadeIn = 0.04f;
+        halo.Hold = 0.9f;
+
+        // Points shed along its way, left hanging where they fell.
+        if (Root(context) is { } root)
+        {
+            var carrier = new FxCarrier { Velocity = velocity, Flight = flight, Linger = 0.7 };
+            root.AddChild(carrier);
+            carrier.GlobalPosition = from;
+            carrier.AddChild(Emitter("star_04.png", pale, 60, 0.16f, 0.6, new Vector3(0.18f, 0.18f, 0.18f), bright));
+        }
+
+        // The hand it left: a small sigil opening where it was thrown from.
+        var cast = Billboard(context, "magic_03.png", from, 0.9f, colour, 0.3, bright);
+        cast.From = 0.3f;
+        cast.To = 1.0f;
+        cast.Spin = -5f;
+
+        if (!landed) return;
+
+        var ground = Flat(context, "magic_03.png", to + (Vector3.Up * 0.08f), 3.0f, colour, 0.75, bright * 1.2f);
+        ground.From = 0.35f;
+        ground.To = 1.0f;
+        ground.Spin = 3.5f * (index % 2 == 0 ? 1f : -1f);
+        ground.FadeIn = 0.2f;
+        ground.Hold = 0.45f;
+
+        var ring = Flat(context, "circle_03.png", to + (Vector3.Up * 0.1f), 3.2f, pale, 0.45, bright);
+        ring.From = 1.15f;
+        ring.To = 0.35f;
+        ring.FadeIn = 0.25f;
+
+        var pillar = Billboard(context, "trace_06.png", to + (Vector3.Up * 1.6f), 1f, pale, 0.5, bright * 1.2f);
+        pillar.Shape = new Vector2(0.7f, 3.4f);
+        pillar.FadeIn = 0.3f;
+        pillar.Hold = 0.3f;
+
+        Billboard(context, "star_06.png", to + (Vector3.Up * 1.0f), 2.0f, pale, 0.3, bright * 1.2f).FadeIn = 0.25f;
+
+        Burst(context, to + (Vector3.Up * 0.3f), "star_04.png", pale, 22, 0.14f, 1.2f, 2.6f, 0.8, Vector3.Up, 30f, -0.6f,
+            emitRadius: 0.7f, ring: true, bright: bright);
+    }
+
+    /// <summary>
+    /// The Venom Shaft's wake (CLS-04, at your call: "a little more to see"): a green haze left
+    /// hanging all the way down the line the arrow flew, drops falling out of it, and a second,
+    /// brighter shaft inside the first.
+    /// </summary>
+    public static void Venom(Node context, Vector3 origin, Vector3 forward, float length, Color colour, float bright = 1f)
+    {
+        var flat = (forward with { Y = 0 }).Normalized();
+
+        var core = Flat(context, "trace_06.png", origin + (Vector3.Up * 1.0f) + (flat * length * 0.5f), 1f, colour.Lerp(Colors.White, 0.5f), 0.4, bright * 1.5f);
+        core.Rotation = new Vector3(0, Yaw(flat), 0);
+        core.Shape = new Vector2(0.7f, length);
+        core.FadeIn = 0.02f;
+        core.Hold = 0.3f;
+
+        for (var step = 1; step <= 6; step++)
+        {
+            var at = origin + (flat * (length * step / 6.5f));
+
+            Burst(context, at + (Vector3.Up * 0.8f), "smoke_04.png", colour with { A = 0.55f }, 5, 1.3f, 0.1f, 0.5f, 1.3, Vector3.Up, 60f, 0.2f,
+                emitRadius: 0.5f, bright: bright * 0.8f);
+            Burst(context, at + (Vector3.Up * 1.0f), "circle_05.png", colour, 8, 0.1f, 0.2f, 0.8f, 0.9, Vector3.Down, 30f, -5f,
+                emitRadius: 0.45f, bright: bright);
+        }
+    }
+
+    /// <summary>
+    /// The Thunder Shot landing (CLS-04, at your call): a bolt standing over the target, a flash,
+    /// a ring of force thrown out along the ground, and sparks every way.
+    /// </summary>
+    public static void Thunder(Node context, Vector3 at, Color colour, float bright = 1f)
+    {
+        var pale = colour.Lerp(Colors.White, 0.5f);
+
+        var bolt = Billboard(context, "trace_06.png", at + (Vector3.Up * 2.6f), 1f, pale, 0.28, bright * 1.8f);
+        bolt.Shape = new Vector2(0.9f, 5.2f);
+        bolt.FadeIn = 0.02f;
+        bolt.Hold = 0.35f;
+
+        var fork = Billboard(context, "trace_06.png", at + new Vector3(0.35f, 1.9f, 0), 1f, colour, 0.22, bright * 1.4f);
+        fork.Shape = new Vector2(0.45f, 3.6f);
+        fork.FadeIn = 0.02f;
+
+        var flash = Billboard(context, "star_06.png", at + (Vector3.Up * 1.0f), 3.6f, pale, 0.25, bright * 1.6f);
+        flash.From = 0.4f;
+        flash.To = 1.2f;
+        flash.FadeIn = 0.02f;
+
+        var ring = Flat(context, "circle_03.png", at + (Vector3.Up * 0.1f), 5.0f, colour, 0.4, bright * 1.2f);
+        ring.From = 0.15f;
+        ring.To = 1.0f;
+        ring.FadeIn = 0.02f;
+
+        Burst(context, at + (Vector3.Up * 0.9f), "star_04.png", pale, 34, 0.16f, 3.5f, 7.5f, 0.45, Vector3.Up, 180f, -6f, bright: bright * 1.3f);
+        Scorch(context, at, 1.6f, 1.6, 0.6f);
+        Camera.CameraRig.Kick(Vector3.Zero, 0.35f);
+    }
+
     /// <summary>A blow that lands on one target: Heavy Strike, Shield Bash.</summary>
     public static void Strike(Node context, Vector3 at, Color colour, bool bash, float bright = 1f)
     {
@@ -489,6 +620,8 @@ public static class SkillFx
         Rain(context, at, 2f, faint);
         Claw(context, at, faint);
         Kindle(context, at, faint);
+        Venom(context, at, ahead, 4f, faint);
+        Seal(context, at, at + (ahead * 4f), true, 0, faint);
         Flames(context, at, 1f, faint);
         Orb(context, at, ahead, 0.2, faint);
         Shroud(context, at, 0.6f, faint);

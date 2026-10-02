@@ -12,7 +12,7 @@
       "perfect":      { "cooldown": 9.5, "magnitude": 0.35, "note": "$skill.skl_pure_seal.p" }
     } },
 
-  { "id": "skl_flying_seals", "name": "$skill.skl_flying_seals.name", "color": "#ffd890", "sound": "snd_skl_wave", "class": "shaman", "tree": "dragon", "suggested_level": 1, "mana_cost": 14, "cooldown": 5,
+  { "id": "skl_flying_seals", "name": "$skill.skl_flying_seals.name", "color": "#9fe8ff", "sound": "snd_skl_wave", "class": "shaman", "tree": "dragon", "suggested_level": 1, "mana_cost": 14, "cooldown": 5,
     "cast_type": "instant", "targeting": "single_target", "radius": 0, "range": 13.0, "damage_coef": 0.80, "hits": 3, "hit_interval": 0.42, "motion": "seals", "needs_target": true, "element": "fire",
     "mastery": {
       "master":       { "hits": 4, "note": "$skill.skl_flying_seals.m" },

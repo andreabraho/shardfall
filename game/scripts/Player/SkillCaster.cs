@@ -783,6 +783,10 @@ public partial class SkillCaster : Node
             case SkillTargeting.Line when skill.Motion is "charge" or "dash" or "shoot":
                 targets = AreaQuery.Line(_motor, center, aim, (float)skill.Radius, (float)skill.Width);
                 SkillFx.Pierce(this, center, aim, (float)skill.Radius, colour, bright);
+
+                // The Venom Shaft (CLS-04): what it leaves hanging in the air behind it.
+                if (skill.Motion == "shoot" && skill.Applies is { Kind: "poison" }) SkillFx.Venom(this, center, aim, (float)skill.Radius, colour, bright);
+
                 break;
 
             case SkillTargeting.Cone:
@@ -847,13 +851,22 @@ public partial class SkillCaster : Node
                 {
                     if (marked is not null) SkillFx.Claw(this, lands, colour, bright);
                 }
-                else if (skill.Motion is "seals" or "cast")
+                else if (skill.Motion == "seals")
+                {
+                    SkillFx.Seal(this, center, lands, marked is not null, pulse.Index, colour, bright);
+                }
+                else if (skill.Motion == "cast")
                 {
                     SkillFx.Bolt(this, center, lands, marked is not null, colour, bright, CasterScale);
                 }
                 else
                 {
-                    SkillFx.Arrow(this, center, lands, colour, bright, 0.2f);
+                    // The Thunder Shot (CLS-04): a thicker shaft, and the bolt where it lands.
+                    var thunder = skill.Applies is { Kind: "stun" };
+
+                    SkillFx.Arrow(this, center, lands, colour, thunder ? bright * 1.5f : bright, thunder ? 0.42f : 0.2f);
+
+                    if (thunder && marked is not null) SkillFx.Thunder(this, lands, colour, bright);
                 }
 
                 targets = marked is null ? [] : [marked];
