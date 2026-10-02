@@ -75,7 +75,12 @@ public static class SkillText
             lines.Add(L10n.F("Skills also take {0:0.#} attack power from each point of INT.", Attributes.AsuraSkillPerInt));
         }
 
-        lines.Add(Shape(skill));
+        // The Storm Orb (CLS-06): what its radius is for is the leap, not a burst.
+        lines.Add(def.Bounces > 0
+            ? L10n.F("One target up to {0:0.#} m away; then it leaps to up to {1} more, each within {2:0.#} m of the last.", skill.Range, def.Bounces, skill.Radius)
+            : Shape(skill));
+
+        if (def.Element == DamageElement.Lightning) lines.Add(L10n.T("Lightning damage."));
 
         if (def.Pierces) lines.Add(L10n.T("Ignores the target's defence."));
 

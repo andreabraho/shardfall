@@ -385,6 +385,12 @@ public sealed class SkillDef : ContentDefBase
     /// </summary>
     public double Guards { get; init; }
 
+    /// <summary>
+    /// How many more creatures a shot leaps on to after the one it strikes, each within the skill's
+    /// radius of the last (CLS-06, the Storm Orb, at your call). Zero for none.
+    /// </summary>
+    public int Bounces { get; init; }
+
     /// <summary>Whether it strips the rage and the shield of what it hits (CLS-05, the Spellbreak).</summary>
     public bool Dispels { get; init; }
 

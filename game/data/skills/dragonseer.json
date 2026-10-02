@@ -1,7 +1,7 @@
 [
-  // The Dragonseer's skills (CLS-06, 2026-10-02), after the original's dragon shaman and the heal of its
+  // The Dragonseer's skills (CLS-06, 2026-10-02), after the original's dragon shaman and the lightning of its
   // other branch, under names of our own (docs/09-archer-asura-dragonseer.md): seals thrown, a breath of
-  // fire down a line, a roar of flame, a blessing, a heal and an eye for the weak place — and on Shift a
+  // fire down a line, a roar of flame, a blessing, a ball of lightning that leaps and an eye for the weak place — and on Shift a
   // shell that also cleanses.
 
   { "id": "skl_pure_seal", "name": "$skill.skl_pure_seal.name", "color": "#bff0e0", "sound": "snd_skl_iron", "class": "shaman", "tree": "dragon", "suggested_level": 3, "mana_cost": 12, "cooldown": 12,
@@ -46,13 +46,14 @@
       "perfect":      { "cooldown": 40.0, "magnitude": 0.25, "note": "$skill.skl_dragon_blessing.p" }
     } },
 
-  { "id": "skl_mending_touch", "name": "$skill.skl_mending_touch.name", "color": "#7ee07a", "sound": "snd_skl_aura", "class": "shaman", "tree": "dragon", "suggested_level": 8, "mana_cost": 34, "cooldown": 18,
-    "cast_type": "instant", "targeting": "self", "radius": 0, "damage_coef": 0.00, "hits": 0, "motion": "summon", "duration": 1.0, "magnitude": 0.22,
-    "applies": { "kind": "heal", "magnitude": 0.22, "duration": 1.0, "chance": 1.0 },
+  // A ball of lightning thrown at one target, leaping from it to the nearest three within "radius" (at
+  // your call, 2026-10-02, in place of the heal).
+  { "id": "skl_storm_orb", "name": "$skill.skl_storm_orb.name", "color": "#9fd8ff", "sound": "snd_skl_aura", "class": "shaman", "tree": "dragon", "suggested_level": 8, "mana_cost": 30, "cooldown": 9,
+    "cast_type": "instant", "targeting": "single_target", "radius": 6.0, "range": 13.0, "damage_coef": 1.50, "hits": 1, "motion": "cast", "element": "lightning", "bounces": 3,
     "mastery": {
-      "master":       { "magnitude": 0.26, "note": "$skill.skl_mending_touch.m" },
-      "grand_master": { "cooldown": 15.0, "note": "$skill.skl_mending_touch.g" },
-      "perfect":      { "cooldown": 13.0, "magnitude": 0.32, "note": "$skill.skl_mending_touch.p" }
+      "master":       { "damage_coef": 1.75, "note": "$skill.skl_storm_orb.m" },
+      "grand_master": { "radius": 7.5, "note": "$skill.skl_storm_orb.g" },
+      "perfect":      { "cooldown": 7.0, "damage_coef": 2.05, "note": "$skill.skl_storm_orb.p" }
     } },
 
   { "id": "skl_dragon_eye", "name": "$skill.skl_dragon_eye.name", "color": "#ffcf5a", "sound": "snd_skl_aura", "class": "shaman", "tree": "dragon", "suggested_level": 14, "mana_cost": 24, "cooldown": 40,

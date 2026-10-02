@@ -129,7 +129,7 @@ health, and on raising it every harmful effect falls away. 12 mana, 12 s.
 | **Soffio del Drago** (Dragon's Breath) | shooting dragon | Fire down a 13 m line through everything: 220%. | both hands pushed out, after a breath |
 | **Ruggito di Fiamma** (Flame Roar) | dragon's roar | Fire on everything within 5 m: 170%, and it burns — 15% of the hit each second for 5 s. | arms thrown wide |
 | **Benedizione del Drago** (Dragon's Blessing) | blessing | 40 s: 18% less damage taken. | hands raised |
-| **Tocco Risanatore** (Mending Touch) | cure | Heals 22% of maximum health at once. 18 s. | hands raised, long |
+| **Globo di Folgore** (Storm Orb) | lightning throw | A ball of lightning at a target up to 13 m off, 150%, leaping from it to the nearest three within 6 m of each other. In place of the heal, at your call (2026-10-02). | a throw from the hand |
 | **Occhio del Drago** (Dragon's Eye) | dragon's aid | 30 s: +15% critical chance. | hands raised |
 
 *Reflect* is left with the Asura's mail: one class with it is enough for a game played alone.

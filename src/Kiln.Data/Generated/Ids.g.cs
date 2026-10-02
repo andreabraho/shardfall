@@ -253,7 +253,6 @@ public static class Ids
         public const string SklHexedBlade = "skl_hexed_blade";
         public const string SklIronSkin = "skl_iron_skin";
         public const string SklLightStep = "skl_light_step";
-        public const string SklMendingTouch = "skl_mending_touch";
         public const string SklPiercingBlow = "skl_piercing_blow";
         public const string SklPureSeal = "skl_pure_seal";
         public const string SklShadowClaw = "skl_shadow_claw";
@@ -263,6 +262,7 @@ public static class Ids
         public const string SklShadowWard = "skl_shadow_ward";
         public const string SklShieldBash = "skl_shield_bash";
         public const string SklSpellbreak = "skl_spellbreak";
+        public const string SklStormOrb = "skl_storm_orb";
         public const string SklThunderShot = "skl_thunder_shot";
         public const string SklToxicCloud = "skl_toxic_cloud";
         public const string SklTripleCut = "skl_triple_cut";
@@ -273,7 +273,7 @@ public static class Ids
         public const string SklWhirlingBlades = "skl_whirling_blades";
         public const string SklWhirlwind = "skl_whirlwind";
 
-        public static readonly string[] All = ["skl_arcane_mail", "skl_arrow_rain", "skl_backstep", "skl_battle_frenzy", "skl_blade_aura", "skl_blade_wave", "skl_blazing_arrow", "skl_cleave", "skl_dark_vortex", "skl_dragon_blessing", "skl_dragon_breath", "skl_dragon_eye", "skl_dread", "skl_flame_roar", "skl_flash_step", "skl_flying_seals", "skl_ground_slam", "skl_guard_stance", "skl_heavy_strike", "skl_hexed_blade", "skl_iron_skin", "skl_light_step", "skl_mending_touch", "skl_piercing_blow", "skl_pure_seal", "skl_shadow_claw", "skl_shadow_step", "skl_shadow_strike", "skl_shadow_veil", "skl_shadow_ward", "skl_shield_bash", "skl_spellbreak", "skl_thunder_shot", "skl_toxic_cloud", "skl_triple_cut", "skl_venom_shaft", "skl_viper_fang", "skl_volley", "skl_war_cry", "skl_whirling_blades", "skl_whirlwind"];
+        public static readonly string[] All = ["skl_arcane_mail", "skl_arrow_rain", "skl_backstep", "skl_battle_frenzy", "skl_blade_aura", "skl_blade_wave", "skl_blazing_arrow", "skl_cleave", "skl_dark_vortex", "skl_dragon_blessing", "skl_dragon_breath", "skl_dragon_eye", "skl_dread", "skl_flame_roar", "skl_flash_step", "skl_flying_seals", "skl_ground_slam", "skl_guard_stance", "skl_heavy_strike", "skl_hexed_blade", "skl_iron_skin", "skl_light_step", "skl_piercing_blow", "skl_pure_seal", "skl_shadow_claw", "skl_shadow_step", "skl_shadow_strike", "skl_shadow_veil", "skl_shadow_ward", "skl_shield_bash", "skl_spellbreak", "skl_storm_orb", "skl_thunder_shot", "skl_toxic_cloud", "skl_triple_cut", "skl_venom_shaft", "skl_viper_fang", "skl_volley", "skl_war_cry", "skl_whirling_blades", "skl_whirlwind"];
     }
 
     public static class Quests

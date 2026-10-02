@@ -555,7 +555,7 @@ public partial class SkillCaster : Node
             _ => null,
         };
 
-        // The Mending Touch (CLS-06): health back at once, a share of the whole.
+        // A heal: health back at once, a share of the whole (made for the Dragonseer, CLS-06; no skill uses it since the Storm Orb took its place).
         if (kind == "heal")
         {
             var mended = (int)System.Math.Round(_self.Stats.MaxHp * skill.Magnitude);
@@ -794,7 +794,28 @@ public partial class SkillCaster : Node
 
                 targets = marked is null ? [] : [marked];
 
-                if (marked is not null && skill.Radius > 0)
+                // The Storm Orb (CLS-06): from the one it strikes it leaps to the nearest not yet
+                // struck within its radius, and on from that one, as many times as it has leaps.
+                if (marked is not null && GameContent.Database.Skills.TryGetValue(skill.Id, out var orb) && orb.Bounces > 0)
+                {
+                    var last = marked;
+
+                    for (var leap = 0; leap < orb.Bounces; leap++)
+                    {
+                        var from = last.Body.GlobalPosition;
+                        var next = AreaQuery.Sphere(_motor, from, (float)skill.Radius)
+                            .Where(t => t.IsAlive && !targets.Contains(t))
+                            .OrderBy(t => t.Body.GlobalPosition.DistanceSquaredTo(from))
+                            .FirstOrDefault();
+
+                        if (next is null) break;
+
+                        SkillFx.Bolt(this, from, next.Body.GlobalPosition, true, colour, bright);
+                        targets.Add(next);
+                        last = next;
+                    }
+                }
+                else if (marked is not null && skill.Radius > 0)
                 {
                     SkillFx.Slam(this, lands, (float)skill.Radius, colour, bright, quiet: true);
                     targets = [marked, .. AreaQuery.Sphere(_motor, lands, (float)skill.Radius).Where(t => !ReferenceEquals(t, marked))];

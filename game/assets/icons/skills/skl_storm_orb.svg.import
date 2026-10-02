@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bhwt5b0jggk1m"
-path="res://.godot/imported/skl_mending_touch.svg-ee4b49d7a5c41bccdd9f28fed08518b6.ctex"
+uid="uid://cwt1gtvic8lec"
+path="res://.godot/imported/skl_storm_orb.svg-4c1ad3f8a99a0eda7f1380ac0c3e9f2a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/icons/skills/skl_mending_touch.svg"
-dest_files=["res://.godot/imported/skl_mending_touch.svg-ee4b49d7a5c41bccdd9f28fed08518b6.ctex"]
+source_file="res://assets/icons/skills/skl_storm_orb.svg"
+dest_files=["res://.godot/imported/skl_storm_orb.svg-4c1ad3f8a99a0eda7f1380ac0c3e9f2a.ctex"]
 
 [params]
 
