@@ -698,11 +698,14 @@ public partial class SkillCaster : Node
 
         if (targets.Count == 0) return;
 
-        // A capped skill lands on the nearest few only (REF-21).
+        // A capped skill lands on the nearest few only (REF-21) — the chosen target first, if it is among them.
         if (skill.MaxTargets > 0 && targets.Count > skill.MaxTargets)
         {
+            var chosen = GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat")?.Target;
+
             targets = targets
-                .OrderBy(t => t.Body.GlobalPosition.DistanceSquaredTo(center))
+                .OrderBy(t => ReferenceEquals(t, chosen) ? 0 : 1)
+                .ThenBy(t => t.Body.GlobalPosition.DistanceSquaredTo(center))
                 .Take(skill.MaxTargets)
                 .ToList();
         }

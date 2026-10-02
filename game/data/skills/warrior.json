@@ -62,11 +62,11 @@
       "perfect":      { "cooldown": 11.0, "damage_coef": 2.80, "note": "$skill.skl_ground_slam.p" }
     } },
 
-  { "id": "skl_blade_wave",    "name": "$skill.skl_blade_wave.name", "color": "#8fd0ff", "sound": "snd_skl_wave",    "class": "warrior", "tree": "mental", "suggested_level": 10, "mana_cost": 24, "cooldown": 8.0,  "cast_type": "instant", "targeting": "line",          "radius": 9.0, "width": 2.4, "damage_coef": 1.60, "hits": 1, "motion": "wave",
+  { "id": "skl_blade_wave",    "name": "$skill.skl_blade_wave.name", "color": "#8fd0ff", "sound": "snd_skl_wave",    "class": "warrior", "tree": "mental", "suggested_level": 10, "mana_cost": 24, "cooldown": 8.0,  "cast_type": "instant", "targeting": "line",          "radius": 12.0, "width": 1.4, "damage_coef": 2.00, "hits": 1, "motion": "wave", "max_targets": 1,
     "mastery": {
-      "master":       { "damage_coef": 1.85, "note": "$skill.skl_blade_wave.m" },
-      "grand_master": { "radius": 11.0, "note": "$skill.skl_blade_wave.g" },
-      "perfect":      { "cooldown": 6.0, "damage_coef": 2.20, "note": "$skill.skl_blade_wave.p" }
+      "master":       { "damage_coef": 2.30, "note": "$skill.skl_blade_wave.m" },
+      "grand_master": { "radius": 15.0, "note": "$skill.skl_blade_wave.g" },
+      "perfect":      { "cooldown": 6.0, "damage_coef": 2.70, "note": "$skill.skl_blade_wave.p" }
     } },
 
   { "id": "skl_piercing_blow", "name": "$skill.skl_piercing_blow.name", "color": "#bfe0ff", "sound": "snd_skl_pierce", "class": "warrior", "tree": "mental", "suggested_level": 12, "mana_cost": 30, "cooldown": 12.0, "cast_type": "instant", "targeting": "line",          "radius": 10.0, "width": 2.6, "damage_coef": 4.80, "hits": 1, "motion": "charge",
