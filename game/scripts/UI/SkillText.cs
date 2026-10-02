@@ -63,6 +63,8 @@ public static class SkillText
 
         lines.Add(Shape(skill));
 
+        if (def.NeedsTarget) lines.Add(L10n.T("Needs a target chosen (right click)."));
+
         // The Blade Vortex: it goes forward as it turns (CLS-03).
         if (skill.Motion == "roll")
         {

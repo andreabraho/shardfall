@@ -348,6 +348,12 @@ public sealed class SkillDef : ContentDefBase
     /// <summary>The most creatures one hit can land on, nearest first (REF-21). Zero for no limit.</summary>
     public int MaxTargets { get; init; }
 
+    /// <summary>
+    /// Whether it can only be cast with a target chosen (2026-10-02, the Flash Step and the
+    /// Shadow Strike): without one the key does nothing, and nothing is spent.
+    /// </summary>
+    public bool NeedsTarget { get; init; }
+
     /// <summary>Whether its hits ignore the target's defence (REF-21, the Piercing Blow).</summary>
     public bool Pierces { get; init; }
 

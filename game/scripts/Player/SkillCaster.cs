@@ -319,6 +319,25 @@ public partial class SkillCaster : Node
 
         if (_self.Statuses.IsStunned) return;
 
+        // A skill that wants a target is not cast without one, or — a blow of the hand — at one
+        // out of its reach: said, and nothing spent.
+        if (def.NeedsTarget)
+        {
+            var chosen = GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat")?.Target;
+
+            if (chosen is not { IsAlive: true })
+            {
+                UI.WorldNotice.Show(GetTree(), L10n.T("Choose a target first."));
+                return;
+            }
+
+            if (def.Targeting == SkillTargeting.SingleTarget && chosen.Body.GlobalPosition.DistanceTo(_motor.GlobalPosition) > SingleReach)
+            {
+                UI.WorldNotice.Show(GetTree(), L10n.T("Too far."));
+                return;
+            }
+        }
+
         _self.Mana.TrySpend(skill.ManaCost);
 
         // Its own sound (REF-21); a skill that moves on every hit makes it every hit instead.
