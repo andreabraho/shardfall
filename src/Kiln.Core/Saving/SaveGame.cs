@@ -24,6 +24,18 @@ public sealed class SaveGame
     /// <summary>The character's name (REF-18), for the character list. Empty in older saves.</summary>
     public string CharacterName { get; set; } = "";
 
+    /// <summary><c>man</c> or <c>woman</c> (CLS-00, 2026-09-30). Older saves are men.</summary>
+    public string Body { get; set; } = "man";
+
+    /// <summary><c>warrior</c> or <c>blade</c>, the ninja (CLS-01, 2026-10-01). Older saves are warriors.</summary>
+    public string Class { get; set; } = "warrior";
+
+    /// <summary>
+    /// The one branch of skills the character follows (2026-10-02): "body" or "mental" for a
+    /// Warrior. Empty for a class with one branch only, and in a save from before, which keeps both.
+    /// </summary>
+    public string Path { get; set; } = "";
+
     /// <summary><c>Wanderer</c>, <c>Disciple</c>, <c>Adept</c> or <c>Shardbound</c>.</summary>
     public string Difficulty { get; set; } = "Disciple";
 

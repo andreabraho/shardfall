@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using Kiln.Core.Combat;
@@ -12,7 +13,7 @@ namespace Kiln.Game.UI.Menus;
 /// <remarks>
 /// "Continue" is first and does the obvious thing — the newest save that opens, the same one
 /// F12 loads in a map — and says underneath where that is, so pressing it is never a guess.
-/// A new game asks for a difficulty and nothing else: there is one class and no name to type.
+/// A new game asks for a class (the Warrior or the Ninja), a man or a woman, a name and a difficulty.
 /// </remarks>
 public partial class MainMenu : Control
 {
@@ -92,7 +93,7 @@ public partial class MainMenu : Control
         choices.AddChild(where);
         choices.AddChild(new Control { CustomMinimumSize = new Vector2(0, 4) });
 
-        choices.AddChild(MenuStyle.Big(L10n.T("New game"), () => Page(NewGamePage(), L10n.T("New game  ·  name your character and choose a difficulty"))));
+        choices.AddChild(MenuStyle.Big(L10n.T("New game"), () => Page(NewGamePage(), L10n.T("New game  ·  a class, a man or a woman, a name and a difficulty"))));
         choices.AddChild(MenuStyle.Big(L10n.T("Load game"), () => Page(new CharacterList(page => Page(page)))));
         choices.AddChild(MenuStyle.Big(L10n.T("Settings"), () => Page(new SettingsView(inGame: false))));
         choices.AddChild(new Control { CustomMinimumSize = new Vector2(0, 4) });
@@ -135,10 +136,89 @@ public partial class MainMenu : Control
         var column = new VBoxContainer { CustomMinimumSize = new Vector2(560, 0) };
         column.AddThemeConstantOverride("separation", 10);
 
-        // The character's name (REF-18): what the character list calls it.
+        // The class (CLS-01, 2026-10-01): the Warrior, or the Ninja with a dagger in each hand.
+        var played = CharacterClass.Warrior;
+
+        // And its one branch of skills (2026-10-02): the Warrior is of the body or of the mind.
+        var path = PlayerProfile.BodyPath;
+        // The portraits follow the class: the Ninja's are its own (CLS-03), and the Mental Warrior's.
+        var portraits = new List<(Button Card, string Body)>();
+
+        void Portray()
+        {
+            var prefix = played == CharacterClass.Blade ? "ninja_" : path == PlayerProfile.MentalPath ? "mental_" : "";
+
+            foreach (var (shown, of) in portraits) shown.Icon = GD.Load<Texture2D>($"res://assets/ui/portrait_{prefix}{of}.png");
+        }
+
+        var classes = new HBoxContainer();
+        classes.AddThemeConstantOverride("separation", 12);
+        var classGroup = new ButtonGroup();
+
+        foreach (var (choice, branch, label) in new[]
+        {
+            (CharacterClass.Warrior, PlayerProfile.BodyPath, L10n.T("Body Warrior")),
+            (CharacterClass.Warrior, PlayerProfile.MentalPath, L10n.T("Mental Warrior")),
+            (CharacterClass.Blade, "", L10n.T("Ninja")),
+        })
+        {
+            var card = new Button
+            {
+                ToggleMode = true,
+                ButtonGroup = classGroup,
+                ButtonPressed = choice == played && branch == path,
+                Text = label,
+                CustomMinimumSize = new Vector2(176, 40),
+            };
+
+            card.AddThemeFontSizeOverride("font_size", 16);
+            card.Toggled += on =>
+            {
+                if (!on) return;
+
+                played = choice;
+                path = branch;
+                Portray();
+            };
+            classes.AddChild(card);
+        }
+
+        column.AddChild(classes);
+
+        // A man or a woman (CLS-00, 2026-09-30), each shown as the game will dress them.
+        var body = PlayerProfile.Man;
+        var bodies = new HBoxContainer();
+        bodies.AddThemeConstantOverride("separation", 12);
+        var group = new ButtonGroup();
+
+        foreach (var (choice, label) in new[] { (PlayerProfile.Man, L10n.T("Man")), (PlayerProfile.Woman, L10n.T("Woman")) })
+        {
+            var card = new Button
+            {
+                ToggleMode = true,
+                ButtonGroup = group,
+                ButtonPressed = choice == body,
+                Text = label,
+                Icon = GD.Load<Texture2D>($"res://assets/ui/portrait_{choice}.png"),
+                ExpandIcon = true,
+                IconAlignment = HorizontalAlignment.Center,
+                VerticalIconAlignment = VerticalAlignment.Top,
+                CustomMinimumSize = new Vector2(150, 176),
+            };
+
+            card.AddThemeFontSizeOverride("font_size", 16);
+            card.Toggled += on => { if (on) body = choice; };
+            bodies.AddChild(card);
+            portraits.Add((card, choice));
+        }
+
+        column.AddChild(bodies);
+
+        // The character's name (REF-18): what the character list calls it. It must be given (2026-10-02,
+        // at your call): until it is, the game cannot be begun.
         var name = new LineEdit
         {
-            PlaceholderText = SaveService.DefaultName(),
+            PlaceholderText = L10n.T("Character name"),
             MaxLength = SaveService.NameLength,
             CustomMinimumSize = new Vector2(280, 34),
             SizeFlagsHorizontal = SizeFlags.ShrinkBegin,
@@ -146,40 +226,64 @@ public partial class MainMenu : Control
 
         name.AddThemeFontSizeOverride("font_size", 16);
         column.AddChild(name);
-        column.AddChild(MenuStyle.Label(L10n.T("It can be changed at any time from the pause menu. Loot and experience are the same on every tier."),
-            12, MenuStyle.Dim, wrap: true));
+
+        // The difficulty (2026-10-02, at your call): a row of names, each telling what it is only
+        // when the pointer rests on it — the four cards with their text ran off the screen.
+        column.AddChild(MenuStyle.Label(L10n.T("Difficulty"), 13, MenuStyle.Dim));
+
+        var difficulty = Difficulty.Disciple;
+        var tiers = new HBoxContainer();
+        tiers.AddThemeConstantOverride("separation", 8);
+        var tierGroup = new ButtonGroup();
 
         foreach (var tier in DifficultySettings.All)
         {
+            var chosen = tier.Tier;
             var card = new Button
             {
-                CustomMinimumSize = new Vector2(0, 94),
-                Alignment = HorizontalAlignment.Left,
-                ClipText = false,
+                ToggleMode = true,
+                ButtonGroup = tierGroup,
+                ButtonPressed = chosen == difficulty,
+                Text = Words.Of(chosen),
+                TooltipText = (chosen == Difficulty.Disciple ? L10n.F("{0}  ·  recommended", Words.Of(chosen)) + "\n" : "") + MenuStyle.Describe(tier).Replace(". ", ".\n").Replace("; ", ";\n"),
+                CustomMinimumSize = new Vector2(128, 38),
             };
 
-            var text = new VBoxContainer { MouseFilter = MouseFilterEnum.Ignore };
-            text.SetAnchorsPreset(LayoutPreset.FullRect);
-            text.OffsetLeft = 14;
-            text.OffsetTop = 8;
-            text.OffsetRight = -14;
-
-            var label = tier.Tier == Difficulty.Disciple ? L10n.F("{0}  ·  recommended", Words.Of(tier.Tier)) : Words.Of(tier.Tier);
-            var title = MenuStyle.Label(label, 17, MenuStyle.Gold);
-            title.MouseFilter = MouseFilterEnum.Ignore;
-
-            var about = MenuStyle.Label(MenuStyle.Describe(tier), 12, MenuStyle.Text, wrap: true);
-            about.MouseFilter = MouseFilterEnum.Ignore;
-
-            text.AddChild(title);
-            text.AddChild(about);
-            card.AddChild(text);
-
-            var chosen = tier.Tier;
-            card.Pressed += () => SaveService.Instance?.NewGame(chosen, name.Text);
-
-            column.AddChild(card);
+            card.AddThemeFontSizeOverride("font_size", 15);
+            card.Toggled += on => { if (on) difficulty = chosen; };
+            tiers.AddChild(card);
         }
+
+        column.AddChild(tiers);
+        column.AddChild(MenuStyle.Label(L10n.T("It can be changed at any time from the pause menu. Loot and experience are the same on every tier."),
+            12, MenuStyle.Dim, wrap: true));
+
+        // And the one way in: Begin, once the character has a name.
+        var unnamed = MenuStyle.Label(L10n.T("Give your character a name to begin."), 12, MenuStyle.Gold, wrap: true);
+        column.AddChild(unnamed);
+
+        var begin = new Button
+        {
+            Text = L10n.T("Begin"),
+            Disabled = true,
+            CustomMinimumSize = new Vector2(220, 46),
+            SizeFlagsHorizontal = SizeFlags.ShrinkBegin,
+        };
+
+        begin.AddThemeFontSizeOverride("font_size", 18);
+        begin.Pressed += () =>
+        {
+            if (name.Text.Trim().Length > 0) SaveService.Instance?.NewGame(difficulty, name.Text.Trim(), body, played, path);
+        };
+        column.AddChild(begin);
+
+        name.TextChanged += typed =>
+        {
+            var named = typed.Trim().Length > 0;
+
+            unnamed.Visible = !named;
+            begin.Disabled = !named;
+        };
 
         if (SaveService.AnySave())
         {

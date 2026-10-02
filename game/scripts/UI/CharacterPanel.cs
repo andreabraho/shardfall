@@ -320,8 +320,11 @@ public partial class CharacterPanel : CanvasLayer
     /// <remarks>A property, so the words are read in whatever language is current.</remarks>
     private static (AttributeKind Kind, string Blurb)[] Blurbs =>
     [
-        (AttributeKind.Str, L10n.T("attack power")),
-        (AttributeKind.Dex, L10n.T("crit, pierce, evasion, attack speed")),
+        // The Ninja strikes with dexterity, and takes a little from strength (2026-10-02).
+        (AttributeKind.Str, PlayerProfile.Class == Kiln.Core.Foundation.CharacterClass.Blade ? L10n.T("a little attack power") : L10n.T("attack power")),
+        (AttributeKind.Dex, PlayerProfile.Class == Kiln.Core.Foundation.CharacterClass.Blade
+            ? L10n.T("attack power, crit, pierce, evasion, attack speed")
+            : L10n.T("crit, pierce, evasion, attack speed")),
         (AttributeKind.Int, L10n.T("mana pool and regeneration")),
         (AttributeKind.Vit, L10n.T("health, defence, regeneration")),
     ];
@@ -342,7 +345,9 @@ public partial class CharacterPanel : CanvasLayer
         var points = progression.UnspentAttributePoints;
 
         _name.Text = Saving.SaveService.CharacterName is { Length: > 0 } given ? given : Saving.SaveService.DefaultName();
-        _level.Text = L10n.F("{0}  ·  level {1}", L10n.T("Warrior"), progression.Level);
+        _level.Text = L10n.F("{0}  ·  level {1}", L10n.T(PlayerProfile.Class == Kiln.Core.Foundation.CharacterClass.Blade ? "Ninja"
+                : PlayerProfile.Path == PlayerProfile.BodyPath ? "Body Warrior"
+                : PlayerProfile.Path == PlayerProfile.MentalPath ? "Mental Warrior" : "Warrior"), progression.Level);
 
         _expBar.Value = progression.IsMaxLevel ? 1 : progression.LevelProgress;
         _expText.Text = progression.IsMaxLevel

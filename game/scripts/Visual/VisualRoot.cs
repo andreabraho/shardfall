@@ -111,13 +111,13 @@ public partial class VisualRoot : Node3D
     /// A skill's own move (REF-22), over <paramref name="seconds"/> at most, with a ribbon in
     /// <paramref name="trail"/> behind the blade when it is a blow (REF-21).
     /// </summary>
-    public void SkillMove(string motion, Vector3 direction, double seconds, Color? trail = null)
+    public void SkillMove(string motion, Vector3 direction, double seconds, Color? trail = null, double landBy = 0)
     {
-        if (trail is { } colour && motion is not ("brace" or "raise" or "roar")) Trail(0.04, 0.3, colour with { A = 0.7f });
+        if (trail is { } colour && motion is not ("brace" or "raise" or "roar")) Trail(System.Math.Max(0.04, landBy - 0.2), 0.3, colour with { A = 0.7f });
 
         if (_animator is { Ready: true })
         {
-            _animator.SkillMove(motion, seconds);
+            _animator.SkillMove(motion, seconds, landBy);
             return;
         }
 
@@ -140,7 +140,12 @@ public partial class VisualRoot : Node3D
         _look = look;
         _gear?.Wear(look);
 
-        if (_animator is not null) _animator.TwoHanded = look.Hands == 2;
+        if (_animator is null) return;
+
+        // A body with a blade in each hand fights with both, whatever the weapon worn (CLS-03).
+        _animator.DualWield = _gear?.DualWield == true;
+        _animator.Gear = _gear;
+        _animator.TwoHanded = look.Hands == 2 && !_animator.DualWield;
     }
 
     /// <summary>

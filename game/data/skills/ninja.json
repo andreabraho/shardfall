@@ -1,0 +1,74 @@
+[
+  // The Ninja's six skills (CLS-03, 2026-10-01), after the original's close-combat Ninja at your call —
+  // a blow out of hiding, a rush through the enemy, a spin of both blades, a veil that hides, a cloud
+  // of poison and a poisoned blade thrown — under names of our own. Three of the body, three of the mind.
+
+  // A heavy blow on one target, worth twice as much struck from out of the Shadow Veil ("magnitude").
+  { "id": "skl_shadow_strike",   "name": "$skill.skl_shadow_strike.name", "color": "#c9b6ff", "sound": "snd_skl_heavy",  "class": "blade", "tree": "body",   "suggested_level": 1,  "mana_cost": 14, "cooldown": 5.0,  "cast_type": "instant", "targeting": "single_target", "radius": 0,   "damage_coef": 2.00, "hits": 1, "motion": "pounce", "needs_target": true,
+    "magnitude": 1.00,
+    "mastery": {
+      "master":       { "damage_coef": 2.30, "note": "$skill.skl_shadow_strike.m" },
+      "grand_master": { "magnitude": 1.30, "note": "$skill.skl_shadow_strike.g" },
+      "perfect":      { "cooldown": 4.0, "damage_coef": 2.60, "note": "$skill.skl_shadow_strike.p" }
+    } },
+
+  // A rush along a line, through everything in it: the Ninja ends at its far end ("dash").
+  { "id": "skl_flash_step",      "name": "$skill.skl_flash_step.name", "color": "#e6f4ff", "sound": "snd_skl_pierce", "class": "blade", "tree": "body",   "suggested_level": 4,  "mana_cost": 18, "cooldown": 7.0,  "cast_type": "instant", "targeting": "line",          "radius": 7.0, "width": 2.4, "damage_coef": 1.40, "hits": 1, "motion": "dash", "needs_target": true,
+    "mastery": {
+      "master":       { "damage_coef": 1.60, "note": "$skill.skl_flash_step.m" },
+      "grand_master": { "radius": 8.5, "note": "$skill.skl_flash_step.g" },
+      "perfect":      { "cooldown": 5.5, "damage_coef": 1.85, "note": "$skill.skl_flash_step.p" }
+    } },
+
+  // Both blades turned all the way round, several times, the Ninja going forward "width" metres with each
+  // turn ("roll") and striking whatever it meets on the way.
+  { "id": "skl_whirling_blades", "name": "$skill.skl_whirling_blades.name", "color": "#d6e4ff", "sound": "snd_skl_whirl",  "class": "blade", "tree": "body",   "suggested_level": 10, "mana_cost": 28, "cooldown": 9.0,  "cast_type": "instant", "targeting": "self_aoe",      "radius": 3.6, "width": 1.8, "damage_coef": 0.85, "hits": 4,
+    "hit_interval": 0.30, "motion": "roll",
+    "mastery": {
+      "master":       { "hits": 5, "note": "$skill.skl_whirling_blades.m" },
+      "grand_master": { "radius": 4.3, "note": "$skill.skl_whirling_blades.g" },
+      "perfect":      { "cooldown": 7.0, "hits": 6, "note": "$skill.skl_whirling_blades.p" }
+    } },
+
+  // Unseen: creatures lose the Ninja and do not find it again; the first blow ends it and is worth
+  // "magnitude" more.
+  { "id": "skl_shadow_veil",     "name": "$skill.skl_shadow_veil.name", "color": "#7a6cb0", "sound": "snd_skl_iron",   "class": "blade", "tree": "mental", "suggested_level": 6,  "mana_cost": 22, "cooldown": 24.0, "cast_type": "instant", "targeting": "self",          "radius": 0,   "damage_coef": 0.00, "hits": 0, "motion": "brace",
+    "duration": 8.0, "magnitude": 0.40,
+    "applies": { "kind": "stealth", "magnitude": 0.40, "duration": 8.0, "chance": 1.0 },
+    "mastery": {
+      "master":       { "duration": 10.0, "note": "$skill.skl_shadow_veil.m" },
+      "grand_master": { "magnitude": 0.55, "note": "$skill.skl_shadow_veil.g" },
+      "perfect":      { "cooldown": 18.0, "duration": 12.0, "note": "$skill.skl_shadow_veil.p" }
+    } },
+
+  // A cloud of poison breathed out in front: a light blow, and a poison worth "magnitude" of it a second.
+  { "id": "skl_toxic_cloud",     "name": "$skill.skl_toxic_cloud.name", "color": "#8fe04a", "sound": "snd_skl_wave",   "class": "blade", "tree": "mental", "suggested_level": 12, "mana_cost": 26, "cooldown": 10.0, "cast_type": "instant", "targeting": "cone",          "radius": 5.0, "cone_angle": 120, "damage_coef": 0.80, "hits": 1, "motion": "wave",
+    "magnitude": 0.15,
+    "applies": { "kind": "poison", "magnitude": 1, "duration": 6.0, "chance": 1.0 },
+    "mastery": {
+      "master":       { "magnitude": 0.18, "note": "$skill.skl_toxic_cloud.m" },
+      "grand_master": { "radius": 6.0, "note": "$skill.skl_toxic_cloud.g" },
+      "perfect":      { "cooldown": 8.0, "magnitude": 0.22, "note": "$skill.skl_toxic_cloud.p" }
+    } },
+
+  // A poisoned blade thrown down a long line: a harder blow and a stronger poison, on few.
+  { "id": "skl_viper_fang",      "name": "$skill.skl_viper_fang.name", "color": "#4fd08a", "sound": "snd_skl_pierce", "class": "blade", "tree": "mental", "suggested_level": 18, "mana_cost": 30, "cooldown": 12.0, "cast_type": "instant", "targeting": "line",          "radius": 11.0, "width": 2.0, "damage_coef": 1.70, "hits": 1, "motion": "throw",
+    "magnitude": 0.22, "max_targets": 3,
+    "applies": { "kind": "poison", "magnitude": 1, "duration": 8.0, "chance": 1.0 },
+    "mastery": {
+      "master":       { "damage_coef": 1.95, "note": "$skill.skl_viper_fang.m" },
+      "grand_master": { "magnitude": 0.28, "note": "$skill.skl_viper_fang.g" },
+      "perfect":      { "cooldown": 9.5, "damage_coef": 2.20, "note": "$skill.skl_viper_fang.p" }
+    } }
+,
+
+  // On Shift, in place of the Warrior's Guard (free, and not one of the six): a dash of "radius" metres the
+  // way the Ninja is going, nothing touching it for "duration" seconds.
+  { "id": "skl_shadow_step",     "name": "$skill.skl_shadow_step.name", "color": "#b9a8ff", "sound": "snd_skl_pierce", "class": "blade", "tree": "mental", "suggested_level": 3,  "mana_cost": 8,  "cooldown": 6.0,  "cast_type": "channel", "targeting": "self",          "radius": 4.5, "damage_coef": 0.00, "hits": 0,
+    "duration": 0.45, "magnitude": 1.00,
+    "mastery": {
+      "master":       { "duration": 0.55, "note": "$skill.skl_shadow_step.m" },
+      "grand_master": { "radius": 5.5, "note": "$skill.skl_shadow_step.g" },
+      "perfect":      { "cooldown": 4.5, "duration": 0.65, "note": "$skill.skl_shadow_step.p" }
+    } }
+]

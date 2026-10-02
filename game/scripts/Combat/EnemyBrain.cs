@@ -759,6 +759,16 @@ public partial class EnemyBrain : CharacterBody3D
             return;
         }
 
+        // Whoever goes unseen is lost (CLS-03, the Shadow Veil): the chase stops where it stands,
+        // and nothing sets on them again until the veil ends.
+        if (!_returning && TargetCombatant is { IsAlive: true } seen && seen.Statuses.Has(StatusKind.Stealth))
+        {
+            Target = null;
+            TargetCombatant = null;
+            CancelAbility();
+            return;
+        }
+
         if (_returning || TargetCombatant is { IsAlive: true }) return;
 
         Target = null;
@@ -803,6 +813,9 @@ public partial class EnemyBrain : CharacterBody3D
         if (World.GameWorld.IsSafe(GlobalPosition)) return;
 
         var combatant = player.GetNodeOrNull<Combatant>("Combatant");
+
+        // Unseen, the player is not there to be found — unless they struck first, which ends it.
+        if (combatant is not null && combatant.Statuses.Has(StatusKind.Stealth)) return;
 
         // Every creature attacks, however far the player out-levels it (2026-09-24). Trivially
         // low-level creatures used to ignore the player (FR-2.7) so a cleared zone was quiet to

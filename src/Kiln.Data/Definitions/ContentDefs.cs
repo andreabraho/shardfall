@@ -28,6 +28,13 @@ public abstract class ContentDefBase : IContentDef
 public sealed class ItemDef : ContentDefBase
 {
     public string Name { get; init; } = string.Empty;
+
+    /// <summary>
+    /// The piece another class is given in place of this one, by class name (CLS-03): where a
+    /// drop, a shop, a reward or the starting kit names a sword, the Ninja gets its daggers.
+    /// </summary>
+    public Dictionary<string, string> Twins { get; init; } = [];
+
     public EquipSlot? Slot { get; init; }
     public string[] ClassRestriction { get; init; } = [];
     public int LevelReq { get; init; }
@@ -299,7 +306,7 @@ public sealed class SkillDef : ContentDefBase
 
     /// <summary>
     /// How wide a line-targeted skill is, in metres (REF-21); its radius is how far it reaches.
-    /// Ignored by every other shape.
+    /// For a skill that rolls ("roll"), how far each turn carries the caster. Ignored otherwise.
     /// </summary>
     public double Width { get; init; } = 2.0;
 
@@ -340,6 +347,12 @@ public sealed class SkillDef : ContentDefBase
 
     /// <summary>The most creatures one hit can land on, nearest first (REF-21). Zero for no limit.</summary>
     public int MaxTargets { get; init; }
+
+    /// <summary>
+    /// Whether it can only be cast with a target chosen (2026-10-02, the Flash Step and the
+    /// Shadow Strike): without one the key does nothing, and nothing is spent.
+    /// </summary>
+    public bool NeedsTarget { get; init; }
 
     /// <summary>Whether its hits ignore the target's defence (REF-21, the Piercing Blow).</summary>
     public bool Pierces { get; init; }
@@ -744,6 +757,35 @@ public sealed class GearPartsDef
 
     /// <summary>The torso, hidden under an armour with plates of its own, which covers it.</summary>
     public string Torso { get; init; } = string.Empty;
+
+    /// <summary>
+    /// A blade the body always holds, whatever weapon is worn (the Ninja's dagger, CLS-03): a
+    /// res:// scene. Empty: the weapon's own model.
+    /// </summary>
+    public string Blade { get; init; } = string.Empty;
+
+    /// <summary>The bone a second <see cref="Blade"/> is held on, for a body that fights with two.</summary>
+    public string OffHand { get; init; } = string.Empty;
+
+    /// <summary>
+    /// True for a body whose armours are worn over its clothes (the Ninja): the torso stays
+    /// under the plates instead of being hidden by them.
+    /// </summary>
+    public bool OwnClothes { get; init; }
+
+    /// <summary>
+    /// How the <see cref="Blade"/> is turned in the hand while no blow is being struck, as degrees
+    /// about x, y and z (the Ninja's daggers reversed, lying back along the forearms). Empty: held
+    /// the same way always.
+    /// </summary>
+    public float[] RestGrip { get; init; } = [];
+
+    /// <summary>
+    /// How a modelled helmet is fitted to this body's head: a scale on x, y and z and the point it
+    /// is scaled about, in the model's space (the Ninja man's hood is narrower at the brow than the
+    /// woman's hair the headbands were made round). Empty: worn as made.
+    /// </summary>
+    public float[] HelmetFit { get; init; } = [];
 }
 
 // ---------------------------------------------------------------------------

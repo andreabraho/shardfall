@@ -145,7 +145,7 @@ public partial class PlayerInventory : Node
         // Anything that cannot be worn now goes in the bag instead of nowhere.
         foreach (var id in new[] { "wpn_worn_blade", "arm_padded_coat" })
         {
-            var piece = GameItems.Factory.Create(id, rng);
+            var piece = GameItems.Factory.Create(GameItems.ForClass(id), rng);
 
             if (Equip(piece) != EquipOutcome.Equipped) Bag.TryAdd(piece);
         }
@@ -213,7 +213,7 @@ public partial class PlayerInventory : Node
         var character = GetParent().GetNodeOrNull<Player.PlayerCharacter>("PlayerCharacter");
         var level = character?.Progression.Level ?? 1;
 
-        var outcome = Gear.TryEquip(item, level, CharacterClass.Warrior, out var displaced);
+        var outcome = Gear.TryEquip(item, level, PlayerProfile.Class, out var displaced);
 
         if (outcome != EquipOutcome.Equipped) return outcome;
 
@@ -223,7 +223,7 @@ public partial class PlayerInventory : Node
         // eating it — a full bag must never cost the player their old weapon.
         if (displaced is not null && !Bag.TryAdd(displaced))
         {
-            Gear.TryEquip(displaced, level, CharacterClass.Warrior, out _);
+            Gear.TryEquip(displaced, level, PlayerProfile.Class, out _);
             Bag.TryAdd(item);
 
             return EquipOutcome.NotEquipment;
@@ -240,7 +240,7 @@ public partial class PlayerInventory : Node
     {
         if (!GameItems.IsLoaded) return false;
 
-        var item = GameItems.Factory.Create(defId, GameItems.LootRng.Fork("equip-new"));
+        var item = GameItems.Factory.Create(GameItems.ForClass(defId), GameItems.LootRng.Fork("equip-new"));
 
         return Bag.TryAdd(item) && Equip(item) == EquipOutcome.Equipped;
     }

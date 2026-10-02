@@ -304,7 +304,13 @@ public partial class ShardNode : StaticBody3D
 
         var world = new ShardWorldState(_adds.Count, _anchor is { IsDead: false }, inZone);
 
-        foreach (var evt in _fight.Tick(delta, _self.Health.Fraction, world))
+        // A stone with less than one point of health left is dead, and breaks (2026-10-01). It
+        // used to break only at exactly nothing, while anything under one point already took no
+        // more blows: worn down in small bites — a poison's ticks, blows through the ward — it
+        // could end on a fraction of a point and stand there for good, empty and unbreakable.
+        var health = _self.IsAlive ? _self.Health.Fraction : 0;
+
+        foreach (var evt in _fight.Tick(delta, health, world))
         {
             Handle(evt);
         }

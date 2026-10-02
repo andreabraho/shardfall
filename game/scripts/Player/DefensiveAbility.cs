@@ -5,7 +5,9 @@ using Kiln.Game.Input;
 namespace Kiln.Game.Player;
 
 /// <summary>
-/// Guard Stance — the Warrior's defensive cooldown (CBT-10, decision D4).
+/// The defensive cooldown on its own key: the Warrior's Guard Stance (CBT-10, decision D4), and
+/// the Ninja's Shadow Step (CLS-03, 2026-10-01) — a short dash the way the Ninja is going, and a
+/// moment in which nothing touches it.
 /// <para>
 /// This is the replacement for the dodge roll that click-to-move rules out. It restores the
 /// "did you react in time" moment: a short, high-value window that has to be spent on the
@@ -47,8 +49,16 @@ public partial class DefensiveAbility : Node
 
     private GuardVisual _visual = null!;
 
+    /// <summary>The Ninja's: a dash and a moment untouched, in place of a guard held.</summary>
+    public const string StepId = "skl_shadow_step";
+
+    /// <summary>True for the class that steps aside rather than standing behind a guard.</summary>
+    private static bool Steps => PlayerProfile.Class == Kiln.Core.Foundation.CharacterClass.Blade;
+
     public override void _Ready()
     {
+        if (Steps) SkillId = StepId;
+
         _motor = GetParent<PlayerMotor>();
         _self = GetParent().GetNode<Combatant>("Combatant");
 
@@ -64,7 +74,7 @@ public partial class DefensiveAbility : Node
         // happened, which is the worst possible feedback for a defensive cooldown.
         _self.Damaged += (_, _, evaded) =>
         {
-            if (IsGuarding && !evaded) _visual.Flash();
+            if (IsGuarding && !evaded && !Steps) _visual.Flash();
         };
 
     }
@@ -100,6 +110,12 @@ public partial class DefensiveAbility : Node
     private void TryGuard()
     {
         if (IsGuarding || _cooldown > 0 || !_self.IsAlive || _self.Statuses.IsStunned) return;
+
+        if (Steps)
+        {
+            Step();
+            return;
+        }
 
         var values = Values();
 
@@ -143,6 +159,48 @@ public partial class DefensiveAbility : Node
         EmitSignal(SignalName.GuardChanged, true);
     }
 
+    /// <summary>
+    /// The Shadow Step: the way the Ninja is walking, or the way it faces when standing, as far
+    /// as the skill's radius and no further than a wall; untouched for the skill's duration.
+    /// </summary>
+    private void Step()
+    {
+        if (!GameContent.IsLoaded || !GameContent.Database.Skills.TryGetValue(StepId, out var def)) return;
+
+        var book = GetParent().GetNodeOrNull<PlayerCharacter>("PlayerCharacter")?.Skills;
+        var skill = Kiln.Data.Definitions.ResolvedSkill.For(def, book?.RankOf(StepId) ?? Kiln.Core.Progression.MasteryRank.Normal);
+
+        if (!_self.Mana.TrySpend(skill.ManaCost))
+        {
+            GD.Print($"[step] not enough mana ({_self.Mana})");
+            return;
+        }
+
+        var going = _motor.Velocity with { Y = 0 };
+        var aim = going.LengthSquared() > 0.25f ? going.Normalized() : _motor.Facing;
+
+        Audio.AudioDirector.Play(def.Sound, _motor.GlobalPosition);
+        Combat.SkillFx.Pierce(this, _motor.GlobalPosition, aim, (float)skill.Radius, new Color(def.Color), 0.7f);
+
+        _motor.Stop();
+        _motor.HoldFor(StepSeconds);
+        _motor.FaceTowards(aim);
+        _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove("step", aim, StepSeconds);
+        GetParent().GetNodeOrNull<SkillCaster>("SkillCaster")?.Dash(aim, (float)skill.Radius, StepSeconds);
+
+        _active = skill.Duration;
+        _cooldown = skill.Cooldown;
+        CooldownTotal = System.Math.Max(0.01, skill.Cooldown);
+        book?.RecordUse(StepId);
+
+        _self.Untouchable = true;
+
+        EmitSignal(SignalName.GuardChanged, true);
+    }
+
+    /// <summary>How long the step takes to cross its distance.</summary>
+    private const double StepSeconds = 0.18;
+
     public override void _Process(double delta)
     {
         if (_cooldown > 0) _cooldown -= delta;
@@ -160,6 +218,7 @@ public partial class DefensiveAbility : Node
     private void EndGuard()
     {
         _active = 0;
+        _self.Untouchable = false;
         _self.IncomingDamageMultiplier = 1.0;
         _self.Statuses.Warded = false;
         _motor.MovementLocked = false;

@@ -57,6 +57,21 @@ public partial class ModelAnimator : Node
     /// Holding a great sword (REF-22): it stands, swings and casts two-handed.
     /// </summary>
     public bool TwoHanded { get; set; }
+
+    /// <summary>True while a blade is held in each hand (the Ninja, CLS-03): the blows are the two-weapon ones.</summary>
+    public bool DualWield { get; set; }
+
+    /// <summary>The gear whose blades are carried one way and struck with another (the Ninja's daggers).</summary>
+    public GearRig? Gear { get; set; }
+
+    /// <summary>How far the blades are turned to their carrying grip, 0 to 1.</summary>
+    private float _carry = 1f;
+
+    /// <summary>Seconds a blade takes to turn in the hand.</summary>
+    private const float TurnTime = 0.12f;
+
+    /// <summary>True while the clip holding the body is a flinch, not a blow: the blades stay as carried.</summary>
+    private bool _flinch;
     private int _swing;
     private double _attackFor;
 
@@ -217,6 +232,15 @@ public partial class ModelAnimator : Node
         ["Melee_1H_Attack_Slice_Horizontal", "1H_Melee_Attack_Slice_Horizontal"],
     ];
 
+    // Two blades (CLS-03): a cut with both, a thrust, a chop, and a spin to close.
+    private static readonly string[][] DualChain =
+    [
+        ["Melee_Dualwield_Attack_Slice", "Melee_1H_Attack_Slice_Diagonal"],
+        ["Melee_Dualwield_Attack_Stab", "Melee_1H_Attack_Stab"],
+        ["Melee_Dualwield_Attack_Chop", "Melee_1H_Attack_Chop"],
+        ["Melee_2H_Attack_Spinning", "Melee_Dualwield_Attack_Slice", "Melee_1H_Attack_Slice_Horizontal"],
+    ];
+
     private static readonly string[][] TwoHandChain =
     [
         ["Melee_2H_Attack_Slice", "2H_Melee_Attack_Slice"],
@@ -238,7 +262,7 @@ public partial class ModelAnimator : Node
     {
         if (_player is null) return 0;
 
-        var chain = TwoHanded ? TwoHandChain : OneHandChain;
+        var chain = DualWield ? DualChain : TwoHanded ? TwoHandChain : OneHandChain;
         var clip = Pick(_player.GetAnimationList(), chain[(((blow - 1) % chain.Length) + chain.Length) % chain.Length]);
 
         return clip.Length == 0 ? Attack() : PlayTimed(clip, windup, interval);
@@ -251,15 +275,32 @@ public partial class ModelAnimator : Node
     /// is cast, so its move is played to land quickly and to be over by the time the Warrior
     /// may move again.
     /// </summary>
-    public double SkillMove(string motion, double seconds)
+    public double SkillMove(string motion, double seconds, double landBy = 0)
     {
         if (_player is null) return 0;
 
+        // With a blade in each hand (CLS-03) a blow is struck with both where there is a clip for it.
+        string[] dual = !DualWield ? [] : motion switch
+        {
+            "chop" or "slam" or "leap" => ["Melee_Dualwield_Attack_Chop"],
+            "slice" or "wave" => ["Melee_Dualwield_Attack_Slice"],
+            "charge" => ["Melee_Dualwield_Attack_Stab"],
+            _ => [],
+        };
+
         string[] wanted = motion switch
         {
+            // Something thrown from the hand: the Viper Fang.
+            "throw" => ["Throw"],
+            // A hop aside: the Shadow Step.
+            "step" => ["Jump_Full_Short", "Jump_Start", "Running_B"],
+            // A leap onto the target, the blades coming down with the landing: the Shadow Strike.
+            "pounce" => ["Melee_1H_Attack_Jump_Chop", "Melee_Dualwield_Attack_Chop", "Melee_1H_Attack_Chop"],
             "chop" => TwoHanded ? ["Melee_2H_Attack_Chop", "2H_Melee_Attack_Chop"] : ["Melee_1H_Attack_Chop", "1H_Melee_Attack_Chop"],
             "slice" => TwoHanded ? ["Melee_2H_Attack_Slice", "2H_Melee_Attack_Slice"] : ["Melee_1H_Attack_Slice_Horizontal", "1H_Melee_Attack_Slice_Horizontal"],
             "bash" => ["Melee_Block_Attack", "Block_Attack"],
+            // A leap and the blade brought down on the ground: the Heavy Strike (2026-10-02).
+            "leap" => ["Melee_1H_Attack_Jump_Chop", "Melee_2H_Attack_Chop", "2H_Melee_Attack_Chop", "Melee_1H_Attack_Chop"],
             "slam" => ["Melee_1H_Attack_Jump_Chop", "Melee_2H_Attack_Chop", "2H_Melee_Attack_Chop"],
             "brace" => ["Melee_Block", "Block"],
             "raise" => ["Cheering", "Cheer", "Spellcast_Raise"],
@@ -272,14 +313,15 @@ public partial class ModelAnimator : Node
             _ => [],
         };
 
-        var clip = wanted.Length == 0 ? "" : Pick(_player.GetAnimationList(), wanted);
+        var clip = wanted.Length == 0 ? "" : Pick(_player.GetAnimationList(), [.. dual, .. wanted]);
 
         if (clip.Length == 0) return motion is "brace" or "raise" or "roar" ? Flourish() : Attack();
 
         // A buff is raised, not struck: it has the whole hold to play out.
-        var landBy = motion is "brace" or "raise" or "roar" ? seconds * 0.6 : SkillImpact;
+        // A slow skill says when it lands; any other lands quickly.
+        var impact = motion is "brace" or "raise" or "roar" ? seconds * 0.6 : landBy > 0 ? landBy : SkillImpact;
 
-        return PlayTimed(clip, landBy, seconds);
+        return PlayTimed(clip, impact, seconds);
     }
 
     /// <summary>Seconds into a skill's move its blow should appear to land.</summary>
@@ -298,6 +340,7 @@ public partial class ModelAnimator : Node
 
         speed = System.Math.Clamp(speed, 0.8, 3.0);
 
+        _flinch = false;
         animation.LoopMode = Animation.LoopModeEnum.None;
         _player.Play(clip, customBlend: 0.08, customSpeed: (float)speed);
         _player.Seek(0, update: true);
@@ -397,11 +440,18 @@ public partial class ModelAnimator : Node
 
         _player.Play(clip);
         _attackFor = System.Math.Min(_player.GetAnimation(clip).Length, 0.4);
+        _flinch = true;
     }
 
     public override void _Process(double delta)
     {
         if (_player is null || _dead) return;
+
+        if (DualWield && Gear is not null)
+        {
+            _carry = Mathf.MoveToward(_carry, _attackFor > 0 && !_flinch ? 0f : 1f, (float)delta / TurnTime);
+            Gear.Carry(_carry);
+        }
 
         // An attack owns the body until it finishes. Cutting back to a run mid-swing is what
         // makes an attack read as a twitch rather than a blow.
@@ -411,10 +461,13 @@ public partial class ModelAnimator : Node
             return;
         }
 
+        _flinch = false;
+
         var speed = _body is null ? 0f : (_body.Velocity with { Y = 0 }).Length();
 
-        // With a great sword in hand, standing still is its guard, not an empty-handed rest.
-        var idle = TwoHanded && _idleTwoHand.Length > 0 ? _idleTwoHand : _idle;
+        // With a great sword in hand, standing still is its guard, not an empty-handed rest; with
+        // two blades it is the same guard, the hands together in front.
+        var idle = (TwoHanded || DualWield) && _idleTwoHand.Length > 0 ? _idleTwoHand : _idle;
 
         Play(speed <= MovingAbove ? idle : speed < WalkingBelow ? _walk : _run);
     }

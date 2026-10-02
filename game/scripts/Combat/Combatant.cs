@@ -37,6 +37,12 @@ public partial class Combatant : Node
     public StatusEffectSet Statuses { get; } = new();
 
     /// <summary>
+    /// While set, nothing lands: no blow, no pulse, no tick (CLS-03, the Shadow Step). A
+    /// moment, held by whatever set it.
+    /// </summary>
+    public bool Untouchable { get; set; }
+
+    /// <summary>
     /// Alive while at least one whole hit point is left.
     /// </summary>
     /// <remarks>
@@ -142,6 +148,13 @@ public partial class Combatant : Node
     {
         if (!IsAlive) return DamageResult.Miss;
 
+        // Stepped aside (CLS-03): the blow arrives and finds nothing, and says so.
+        if (Untouchable)
+        {
+            EmitSignal(SignalName.Damaged, 0, false, true);
+            return DamageResult.Miss;
+        }
+
         // Safe ground (WLD-12). Returned as a miss rather than silently dropped so the feedback
         // the player sees matches what happened: the blow arrived and did nothing.
         if (IsPlayer && !attacker.IsPlayer && OnSafeGround) return DamageResult.Miss;
@@ -175,6 +188,7 @@ public partial class Combatant : Node
             result.Amount
             * Statuses.DamageTakenMultiplier
             * attacker.Statuses.DamageDealtMultiplier
+            * (skill ? 1.0 : attacker.Statuses.AverageDamageMultiplier)
             * attacker.OutgoingDamageMultiplier
             * IncomingDamageMultiplier);
 
@@ -193,7 +207,7 @@ public partial class Combatant : Node
     /// <summary>Applies raw damage, bypassing the pipeline. Used by status ticks and scripted effects.</summary>
     public void ApplyDamage(int amount, bool critical = false)
     {
-        if (!IsAlive || amount <= 0 || Downed) return;
+        if (!IsAlive || amount <= 0 || Downed || Untouchable) return;
 
         // The backstop for everything that does not come through the pipeline — a bleed
         // carried in from the field, a shard pulse, a scripted effect. Walking into the

@@ -69,6 +69,57 @@ public partial class PlayerController : Node
             $"speed={(_motor.Velocity with { Y = 0 }).Length():F1}");
     }
 
+    // -- choosing a target with the right button (2026-10-01) ------------------
+
+    /// <summary>A right press held longer than this, or moved further, is looking round, not a click.</summary>
+    private const double ClickSeconds = 0.3;
+
+    private const float ClickPixels = 8f;
+
+    private Vector2 _rightAt;
+    private ulong _rightDownAt;
+    private float _rightMoved;
+    private bool _rightDown;
+
+    /// <summary>
+    /// A right click chooses the creature under the cursor without attacking it, and on nothing
+    /// lets the chosen one go. The right button held and moved still turns the camera: only a
+    /// short press that did not move counts as a click.
+    /// </summary>
+    public override void _Input(InputEvent @event)
+    {
+        if (@event is InputEventMouseMotion motion && _rightDown)
+        {
+            _rightMoved += motion.Relative.Length();
+            return;
+        }
+
+        if (@event is not InputEventMouseButton { ButtonIndex: MouseButton.Right } button) return;
+
+        if (button.Pressed)
+        {
+            // A press on a panel is the panel's: an item used, a skill taken off a key.
+            _rightDown = !UI.UiState.ModalOpen && !UI.UiState.PointerOverPanel(button.Position);
+            _rightAt = button.Position;
+            _rightDownAt = Time.GetTicksMsec();
+            _rightMoved = 0;
+            return;
+        }
+
+        if (!_rightDown) return;
+
+        _rightDown = false;
+
+        if (_combat is null) return;
+
+        if (_rightMoved > ClickPixels) return;
+
+        if ((Time.GetTicksMsec() - _rightDownAt) / 1000.0 > ClickSeconds) return;
+
+        if (Combat.TargetPicker.Under(GetViewport(), _camera, _rightAt, out _) is { } chosen) _combat.Select(chosen);
+        else _combat.ClearTarget();
+    }
+
     public override void _Process(double delta)
     {
         // The camera can be swapped at runtime (debug cameras, cutscenes later).
@@ -104,7 +155,7 @@ public partial class PlayerController : Node
             // frame and the character would fight the hand holding the key.
             if (!_steering)
             {
-                _combat?.ClearTarget();
+                _combat?.Disengage();
                 _goingFor = null;
                 _steering = true;
             }
@@ -162,7 +213,7 @@ public partial class PlayerController : Node
     {
         if (LootDrop.Under(GetViewport(), _camera, GetViewport().GetMousePosition()) is not { } drop) return false;
 
-        _combat?.ClearTarget();
+        _combat?.Disengage();
 
         if (drop.Within(_motor.GlobalPosition, LootDrop.Reach))
         {
@@ -271,7 +322,7 @@ public partial class PlayerController : Node
             }
         }
 
-        if (justPressed) _combat?.ClearTarget();
+        if (justPressed) _combat?.Disengage();
 
         _motor.CommandMoveTo(point);
         _lastOrderPoint = point;

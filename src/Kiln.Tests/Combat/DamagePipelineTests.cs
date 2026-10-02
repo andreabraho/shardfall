@@ -344,4 +344,21 @@ public class DamagePipelineTests
 
         Assert.InRange(sampled, expected * 0.95, expected * 1.05);
     }
+
+    [Fact]
+    public void SkillAttackBonus_AddsToSkillsOnly()
+    {
+        // 2026-10-02: what the Mental Warrior's skills take from vitality never reaches a basic blow.
+        var plain = Attacker();
+        var gifted = Attacker();
+        gifted.SkillAttackBonus = 50;
+
+        var target = Defender();
+
+        double Dealt(StatBlock by, bool skill) =>
+            DamagePipeline.ExpectedDamage(new DamageRequest { Attacker = by, Defender = target, IsSkill = skill });
+
+        Assert.Equal(Dealt(plain, false), Dealt(gifted, false), 6);
+        Assert.True(Dealt(gifted, true) > Dealt(plain, true));
+    }
 }

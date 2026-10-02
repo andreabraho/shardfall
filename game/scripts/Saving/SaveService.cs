@@ -224,7 +224,7 @@ public partial class SaveService : Node
 
         if (tree.GetFirstNodeInGroup("player")?.GetNodeOrNull<Combat.Combatant>("Combatant") is { IsAlive: false })
         {
-            reason = L10n.T("you are dead");
+            reason = L10n.P("you are dead");
             return false;
         }
 
@@ -285,6 +285,9 @@ public partial class SaveService : Node
             CreatedUtc = DateTime.UtcNow.ToString("O"),
             Label = label,
             CharacterName = CharacterName,
+            Body = PlayerProfile.Body,
+            Class = PlayerProfile.Class.ToString().ToLowerInvariant(),
+            Path = PlayerProfile.Path,
             Difficulty = GameSession.Difficulty.Tier.ToString(),
             Seed = GameSession.Seed,
             PlayTime = PlayerProfile.PlayTime,
@@ -418,6 +421,9 @@ public partial class SaveService : Node
     private static void Apply(SaveGame save)
     {
         PlayerProfile.Reset();
+        PlayerProfile.Body = save.Body;
+        PlayerProfile.Class = Enum.TryParse<CharacterClass>(save.Class, ignoreCase: true, out var played) ? played : CharacterClass.Warrior;
+        PlayerProfile.Path = save.Path;
 
         if (Enum.TryParse<Difficulty>(save.Difficulty, out var tier))
         {
@@ -537,25 +543,28 @@ public partial class SaveService : Node
     // ------------------------------------------------------------------ new game and leaving
 
     /// <summary>
-    /// Starts a new character in the village, on the chosen difficulty, with a folder of its
+    /// Starts a new character in the village, a man or a woman of the chosen class, on the chosen difficulty, with a folder of its
     /// own (REF-18). Every other character's saves are left alone.
     /// </summary>
     /// <remarks>
     /// A fresh seed each time, so a second character does not meet the first one's merchant
     /// shelves and loot rolls in the same order.
     /// </remarks>
-    public void NewGame(Difficulty tier, string name = "")
+    public void NewGame(Difficulty tier, string name = "", string body = PlayerProfile.Man, CharacterClass played = CharacterClass.Warrior, string path = "")
     {
         Begin(name);
         _sinceSaved = 0;
         PlayerProfile.Reset();
+        PlayerProfile.Body = body;
+        PlayerProfile.Class = played;
+        PlayerProfile.Path = played == CharacterClass.Warrior ? path : "";
         GameWorld.Travel.Load([], null);
         GameSession.SetDifficulty(DifficultySettings.For(tier));
         GameSession.SetSeed((ulong)DateTime.UtcNow.Ticks ^ 0x9E3779B97F4A7C15UL);
         _pendingPosition = null;
         _loading = false;
 
-        GD.Print($"[save] new game — {CharacterName} ({CharacterId}), {tier}, seed {GameSession.Seed}");
+        GD.Print($"[save] new game — {CharacterName} ({CharacterId}), a {PlayerProfile.Body} {PlayerProfile.Class}, {tier}, seed {GameSession.Seed}");
 
         GetTree().Paused = false;
         GetTree().CallDeferred(SceneTree.MethodName.ChangeSceneToFile, StartScene);

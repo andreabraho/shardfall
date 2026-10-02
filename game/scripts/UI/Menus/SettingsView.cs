@@ -209,7 +209,7 @@ public partial class SettingsView : ScrollContainer
         (L10n.T("Move (click, or hold)"), Key(GameActions.MoveCommand)),
         (L10n.T("Move with the keyboard"), $"{Key(GameActions.MoveForward)} {Key(GameActions.MoveLeft)} {Key(GameActions.MoveBack)} {Key(GameActions.MoveRight)}"),
         (L10n.T("Attack"), Key(GameActions.Attack)),
-        (L10n.T("Guard"), Key(GameActions.DefensiveAbility)),
+        (L10n.T("Guard, or the Ninja's step"), Key(GameActions.DefensiveAbility)),
         (L10n.T("Skills"), $"{Key(GameActions.Skill1)} – {Key(GameActions.Skill6)}"),
         (L10n.T("Health flask"), Key(GameActions.HealthFlask)),
         (L10n.T("Pick up what is near"), Key(GameActions.PickUp)),
@@ -220,6 +220,7 @@ public partial class SettingsView : ScrollContainer
         (L10n.T("Show labels (hold)"), Key(GameActions.RevealLabels)),
         (L10n.T("Turn camera"), $"{Key(GameActions.CameraRotateLeft)} / {Key(GameActions.CameraRotateRight)}"),
         (L10n.T("Look around (hold)"), Key(GameActions.CameraDrag)),
+        (L10n.T("Choose a target (click)"), L10n.T("Right mouse button")),
         (L10n.T("Pause, close a panel"), Key(GameActions.Cancel)),
         (L10n.T("Save  /  load newest"), $"{Key(GameActions.QuickSave)}  /  {Key(GameActions.QuickLoad)}"),
     ];

@@ -21,12 +21,14 @@ namespace Kiln.Game.UI;
 /// </remarks>
 public static class SkillText
 {
-    /// <summary>The Warrior's skills in the order they become available.</summary>
-    public static IEnumerable<SkillDef> WarriorSkills() =>
+    /// <summary>The skills of the class played, in the order they become available.</summary>
+    public static IEnumerable<SkillDef> ClassSkills() =>
         !GameContent.IsLoaded
             ? []
             : GameContent.Database.Skills.Values
-                .Where(s => s.Class == CharacterClass.Warrior)
+                .Where(s => s.Class == PlayerProfile.Class)
+                // Its one branch, and what has a key of its own whatever the branch (the Guard).
+                .Where(s => PlayerProfile.Path.Length == 0 || s.Tree == PlayerProfile.Path || s.CastType == "channel")
                 .OrderBy(s => s.SuggestedLevel)
                 .ThenBy(s => s.Id, System.StringComparer.Ordinal);
 
@@ -57,16 +59,42 @@ public static class SkillText
         if (skill.DamageCoef > 0)
         {
             lines.Add(skill.Hits > 1
-                ? L10n.F("{0:P0} weapon damage, {1} times", skill.DamageCoef, skill.Hits)
-                : L10n.F("{0:P0} weapon damage", skill.DamageCoef));
+                ? L10n.F("{0:P0} of your attack power, {1} times", skill.DamageCoef, skill.Hits)
+                : L10n.F("{0:P0} of your attack power", skill.DamageCoef));
+        }
+
+        // The Mental Warrior: its skills take a little from vitality besides (2026-10-02).
+        if (skill.DamageCoef > 0 && def.Class == CharacterClass.Warrior && PlayerProfile.Path == PlayerProfile.MentalPath)
+        {
+            lines.Add(L10n.F("Skills also take {0:0.#} attack power from each point of VIT.", Attributes.MentalSkillPerVit));
         }
 
         lines.Add(Shape(skill));
 
+        if (def.NeedsTarget) lines.Add(L10n.T("Needs a target chosen (right click)."));
+
+        // The Blade Vortex: it goes forward as it turns (CLS-03).
+        if (skill.Motion == "roll")
+        {
+            lines.Add(L10n.F("You go {0:0.#} m forward as you turn, through whatever stands in the way.", skill.Width * System.Math.Max(1, skill.Hits)));
+        }
+
+        // The Shadow Strike: a blow that is worth more from out of the veil (CLS-03).
+        if (skill.Targeting == SkillTargeting.SingleTarget && skill.Magnitude > 0 && skill.Applies is null)
+        {
+            lines.Add(L10n.F("Struck while unseen, it deals {0:P0} more damage.", skill.Magnitude));
+        }
+
         if (Effect(skill) is { Length: > 0 } effect) lines.Add(effect);
 
-        // The Guard, the one channelled skill, also cleanses as it is raised (2026-09-26).
-        if (def.CastType == "channel")
+        // The Shadow Step (CLS-03): a channelled skill that goes somewhere.
+        if (def.CastType == "channel" && def.Radius > 0)
+        {
+            lines.Add(L10n.F("A dash of {0:0.#} m the way you are going. Nothing touches you for {1:0.##} s.", skill.Radius, skill.Duration));
+        }
+
+        // The Guard, the other channelled skill, also cleanses as it is raised (2026-09-26).
+        if (def.CastType == "channel" && def.Radius <= 0)
         {
             lines.Add(L10n.T("Raising it clears poison, bleeding, slows, weakening and vulnerability."));
             lines.Add(L10n.T("While it is up, no stun, poison, bleeding, slow, weakening or vulnerability takes hold."));
@@ -100,11 +128,19 @@ public static class SkillText
         }
         else if (skill.Applies is { Kind: "empower" })
         {
-            parts.Add(L10n.F("+{0:P0} damage", skill.Magnitude));
+            parts.Add(L10n.F("+{0:P0} average damage", skill.Magnitude));
         }
         else if (skill.Applies is { Kind: "frenzy" })
         {
             parts.Add(L10n.F("+{0:P0} attack speed", skill.Magnitude));
+        }
+        else if (skill.Applies is { Kind: "stealth" })
+        {
+            parts.Add(L10n.F("unseen {0:0.#} s", skill.Duration));
+        }
+        else if (def.CastType == "channel" && def.Radius > 0)
+        {
+            parts.Add(L10n.F("{0:0.#} m, untouched {1:0.##} s", skill.Radius, skill.Duration));
         }
         else if (skill.Magnitude > 0)
         {
@@ -134,19 +170,21 @@ public static class SkillText
 
         // The self-buffs take their strength from the resolved skill, so investment reaches
         // them; everything else applies exactly what the data says.
-        var magnitude = applies.Kind is "fortify" or "empower" or "frenzy" ? skill.Magnitude : applies.Magnitude;
-        var duration = applies.Kind is "fortify" or "empower" or "frenzy" ? skill.Duration : applies.Duration;
+        var magnitude = applies.Kind is "fortify" or "empower" or "frenzy" or "stealth" ? skill.Magnitude : applies.Magnitude;
+        var duration = applies.Kind is "fortify" or "empower" or "frenzy" or "stealth" ? skill.Duration : applies.Duration;
 
         var body = applies.Kind switch
         {
             "fortify" => L10n.F("Take {0:P0} less damage for {1:0.#} s, moving {2:P0} slower.", magnitude, duration, StatusEffectSet.FortifyDrag),
             "frenzy" => L10n.F("Attack {0:P0} faster and move {1:P0} faster for {2:0.#} s, taking {3:P0} more damage.",
                 magnitude, magnitude * 0.5, duration, StatusEffectSet.FrenzyExposure),
-            "empower" => L10n.F("Deal {0:P0} more damage for {1:0.#} s.", magnitude, duration),
+            "empower" => L10n.F("Your blows — not your skills — deal {0:P0} more damage for {1:0.#} s.", magnitude, duration),
+            "stealth" => L10n.F("Unseen for {0:0.#} s: creatures lose you. Your first blow ends it and deals {1:P0} more damage.", duration, magnitude),
             "stun" => L10n.F("Stuns for {0:0.#} s.", duration),
             "vulnerability" => L10n.F("The target takes {0:P0} more damage for {1:0.#} s.", magnitude, duration),
             "slow" => L10n.F("Slows by {0:P0} for {1:0.#} s.", magnitude, duration),
             "weaken" => L10n.F("The target deals {0:P0} less damage for {1:0.#} s.", magnitude, duration),
+            "poison" when skill.Magnitude > 0 => L10n.F("Poisons for {0:0.#} s: {1:P0} of the blow every second, up to five times over.", duration, skill.Magnitude),
             "poison" => L10n.F("Poisons for {0:0.#} s.", duration),
             "bleed" => L10n.F("Makes the target bleed for {0:0.#} s.", duration),
             _ => "",

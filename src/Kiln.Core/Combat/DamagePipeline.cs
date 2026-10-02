@@ -85,7 +85,7 @@ public static class DamagePipeline
         }
 
         // 1-2. Base and flat.
-        var damage = (attacker.AttackPower * request.WeaponCoef * request.SkillCoef) + request.FlatBonus;
+        var damage = ((attacker.AttackPower + (request.IsSkill ? attacker.SkillAttackBonus : 0)) * request.WeaponCoef * request.SkillCoef) + request.FlatBonus;
 
         // 3. Percentage bonuses: average damage on a basic attack, skill damage on a skill
         //    (2026-09-25, as in the original) — never both.
@@ -128,7 +128,7 @@ public static class DamagePipeline
         var attacker = request.Attacker;
         var defender = request.Defender;
 
-        var damage = (attacker.AttackPower * request.WeaponCoef * request.SkillCoef) + request.FlatBonus;
+        var damage = ((attacker.AttackPower + (request.IsSkill ? attacker.SkillAttackBonus : 0)) * request.WeaponCoef * request.SkillCoef) + request.FlatBonus;
 
         damage *= 1 + (request.IsSkill ? attacker.Modifiers.SkillDamagePct : attacker.Modifiers.DamagePct);
 

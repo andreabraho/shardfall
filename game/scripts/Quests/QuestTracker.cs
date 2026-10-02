@@ -88,7 +88,7 @@ public static class QuestTracker
 
         foreach (var id in reward.Items)
         {
-            var item = GameItems.Factory.Create(id, GameItems.EncounterRng);
+            var item = GameItems.Factory.Create(GameItems.ForClass(id), GameItems.EncounterRng);
 
             if (PlayerProfile.Bag?.TryAdd(item) == true || player is null) continue;
 

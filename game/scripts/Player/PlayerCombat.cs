@@ -102,6 +102,28 @@ public partial class PlayerCombat : Node
         _committed = true;
     }
 
+    /// <summary>
+    /// A right click on an enemy (2026-10-01, at your call): chosen, not attacked. Skills go at
+    /// it; the character stays where it is. Choosing the one already being fought changes nothing.
+    /// </summary>
+    public void Select(Combatant enemy)
+    {
+        if (!enemy.IsAlive) return;
+
+        if (ReferenceEquals(enemy, _target)) return;
+
+        Mark(enemy);
+    }
+
+    /// <summary>
+    /// Stops walking to the target and striking it, and keeps it chosen: walking off, picking
+    /// something up or going unseen ends the fight, not the choice.
+    /// </summary>
+    public void Disengage() => _committed = false;
+
+    /// <summary>How far a chosen target can be left behind before the choice is dropped.</summary>
+    private const float ForgetBeyond = 45f;
+
     private void Mark(Combatant enemy)
     {
         SetTargetBarForced(false);
@@ -203,10 +225,16 @@ public partial class PlayerCombat : Node
             return;
         }
 
-        if (!_committed) return;
-
         var body = _target.Body;
         var distance = _motor.GlobalPosition.DistanceTo(body.GlobalPosition);
+
+        // A target only chosen is kept until it is left far behind.
+        if (!_committed)
+        {
+            if (distance > ForgetBeyond) ClearTarget();
+
+            return;
+        }
 
         if (distance > AttackRange)
         {
@@ -313,7 +341,12 @@ public partial class PlayerCombat : Node
             if (!LineOfSight(victim.Body)) continue;
 
             landed++;
-            victim.TakeAttack(_self);
+
+            // Out of the Shadow Veil (CLS-03): the blow that ends it is worth that much more.
+            var veil = _self.Statuses.MagnitudeOf(StatusKind.Stealth);
+
+            _self.Statuses.Remove(StatusKind.Stealth);
+            victim.TakeAttack(_self, weaponCoef: 1 + veil);
 
             // Thrown back, unless it is a boss: the sweep is crowd control, not a way to
             // shove a boss out of its own arena.

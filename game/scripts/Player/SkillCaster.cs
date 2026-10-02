@@ -208,6 +208,7 @@ public partial class SkillCaster : Node
 
         ProcessPulses(delta);
         UpdateAiming();
+        ShowUnseen();
     }
 
     private void UpdateAiming()
@@ -318,10 +319,29 @@ public partial class SkillCaster : Node
 
         if (_self.Statuses.IsStunned) return;
 
+        // A skill that wants a target is not cast without one, or — a blow of the hand — at one
+        // out of its reach: said, and nothing spent.
+        if (def.NeedsTarget)
+        {
+            var chosen = GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat")?.Target;
+
+            if (chosen is not { IsAlive: true })
+            {
+                UI.WorldNotice.Show(GetTree(), L10n.T("Choose a target first."));
+                return;
+            }
+
+            if (def.Targeting == SkillTargeting.SingleTarget && chosen.Body.GlobalPosition.DistanceTo(_motor.GlobalPosition) > SingleReach)
+            {
+                UI.WorldNotice.Show(GetTree(), L10n.T("Too far."));
+                return;
+            }
+        }
+
         _self.Mana.TrySpend(skill.ManaCost);
 
         // Its own sound (REF-21); a skill that moves on every hit makes it every hit instead.
-        if (!PerHit(def.Motion)) Audio.AudioDirector.Play(def.Sound, _motor.GlobalPosition);
+        if (!PerHit(def.Motion) && skill.Windup <= 0) Audio.AudioDirector.Play(def.Sound, _motor.GlobalPosition);
         _cooldowns[skillId] = skill.Cooldown;
         _cooldownTotals[skillId] = System.Math.Max(0.01, skill.Cooldown);
 
@@ -424,7 +444,7 @@ public partial class SkillCaster : Node
         var aim = skill.Targeting == SkillTargeting.GroundAoe ? AimDirection(origin) : _motor.Facing;
 
         if (GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat")?.Target is { IsAlive: true } target
-            && skill.Targeting is SkillTargeting.SingleTarget or SkillTargeting.Cone or SkillTargeting.Line)
+            && (skill.Targeting is SkillTargeting.SingleTarget or SkillTargeting.Cone or SkillTargeting.Line || skill.Motion == "roll"))
         {
             var toTarget = (target.Body.GlobalPosition - origin) with { Y = 0 };
 
@@ -438,11 +458,12 @@ public partial class SkillCaster : Node
         _motor.FaceTowards(aim);
 
         // Its own move (REF-22); a spinning skill turns on each of its hits instead.
-        if (!PerHit(skill.Motion)) _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove(skill.Motion, aim, CastHold(skill), FxColour(skill));
+        // A slow skill's move (2026-10-02) is played to land as its wait ends, not at once.
+        if (!PerHit(skill.Motion) && !Charged(skill)) _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove(skill.Motion, aim, CastHold(skill), FxColour(skill), skill.Windup);
 
         // A charged skill gathers itself first: the Warrior draws back, light gathers at the
         // blade, and the blow goes when the windup is spent (REF-21, the Piercing Blow).
-        if (skill.Windup > 0)
+        if (Charged(skill))
         {
             _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.WindUp(skill.Windup);
             SkillFx.Gather(this, origin, aim, skill.Windup, FxColour(skill), FxBright(skill));
@@ -457,7 +478,7 @@ public partial class SkillCaster : Node
             Skill = skill,
             Center = center,
             Aim = aim,
-            FollowsCaster = false,
+            FollowsCaster = skill.Motion is "roll" or "spin",
             Remaining = System.Math.Max(1, skill.Hits),
             Timer = 0,
         };
@@ -500,8 +521,13 @@ public partial class SkillCaster : Node
             "fortify" => StatusEffectSet.Fortify(skill.Magnitude, skill.Duration),
             "empower" => StatusEffectSet.Empower(skill.Magnitude, skill.Duration),
             "frenzy" => StatusEffectSet.Frenzy(skill.Magnitude, skill.Duration),
+            "stealth" => StatusEffectSet.Stealth(skill.Magnitude, skill.Duration),
             _ => null,
         };
+
+        // Going unseen stops the fight with whatever was being fought: the next blow is chosen,
+        // not owed. The target stays chosen.
+        if (kind == "stealth") GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat")?.Disengage();
 
         // The moment of the cast (REF-21); the aura that follows is the status's own.
         var at = _motor.GlobalPosition;
@@ -511,6 +537,7 @@ public partial class SkillCaster : Node
             case "fortify": SkillFx.Harden(this, at, FxColour(skill), FxBright(skill)); break;
             case "empower": SkillFx.Sharpen(this, at, FxColour(skill), FxBright(skill)); break;
             case "frenzy": SkillFx.Frenzy(this, at, FxColour(skill), FxBright(skill)); break;
+            case "stealth": SkillFx.Harden(this, at, FxColour(skill), FxBright(skill)); break;
         }
 
         if (effect is null)
@@ -534,17 +561,32 @@ public partial class SkillCaster : Node
     /// Whirlwind's turns, the Triple Cut's three cuts, and the Piercing Blow's thrust once its
     /// charge is spent (REF-21).
     /// </summary>
-    private static bool PerHit(string motion) => motion is "spin" or "triple" or "charge";
+    private static bool PerHit(string motion) => motion is "spin" or "roll" or "triple" or "charge" or "dash";
 
     /// <summary>The Triple Cut's three moves, one per hit: across, down on the diagonal, and overhead.</summary>
     private static readonly string[] TripleMoves = ["slice", "wave", "chop"];
+
+    /// <summary>How far the Whirlwind carries the Warrior forward over all its turns, in metres.</summary>
+    private const float WhirlAdvance = 3.0f;
+
+    /// <summary>How far a single-target skill lands on the creature chosen.</summary>
+    private const float SingleReach = 4.5f;
+
+    /// <summary>How far a single-target skill reaches for a creature when none is chosen.</summary>
+    private const float UnaimedReach = 3.5f;
 
     /// <summary>How long a self-buff plants the character. Long enough to read as a cast.</summary>
     private const double SelfCastHold = 0.6;
 
     /// <summary>How long a skill holds the character: every pulse, and a beat after the last.</summary>
     private static double CastHold(ResolvedSkill skill) =>
-        skill.Windup + ((System.Math.Max(1, skill.Hits) - 1) * skill.HitInterval) + 0.35;
+        skill.Windup + ((System.Math.Max(1, skill.Hits) - 1) * skill.HitInterval) + (skill.Windup > 0 && !Charged(skill) ? 0.5 : 0.35);
+
+    /// <summary>
+    /// Whether a skill with a wait gathers itself and is then let go — the Piercing Blow, the Blade
+    /// Wave — rather than playing one slow move through it, as the Heavy Strike and the Ground Slam do.
+    /// </summary>
+    private static bool Charged(ResolvedSkill skill) => skill.Windup > 0 && skill.Motion is "charge" or "wave";
 
     private void FirePulse(Pulse pulse)
     {
@@ -561,18 +603,40 @@ public partial class SkillCaster : Node
 
         // A spinning skill turns the body on every hit and makes its sound each time (REF-21:
         // all the way round, 360°).
-        if (skill.Motion == "spin")
+        if (skill.Motion is "spin" or "roll")
         {
             // No ribbon: a blade turning all the way round draws a disc, and the rings of wind
             // already show the turn.
             _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Spin(skill.HitInterval, pulse.Index);
             Audio.AudioDirector.Play(SoundOf(skill.Id), _motor.GlobalPosition);
+
+            // The Blade Vortex (CLS-03): each turn carries the Ninja on, through whatever is there.
+            if (skill.Motion == "roll") Dash(aim, (float)skill.Width, skill.HitInterval, Tween.TransitionType.Linear);
+
+            // The Whirlwind carries the Warrior three metres on in all (2026-10-02, at the user's call), a
+            // share of it each turn.
+            if (skill.Motion == "spin") Dash(aim, WhirlAdvance / System.Math.Max(1, skill.Hits), skill.HitInterval, Tween.TransitionType.Linear);
+        }
+
+        // The Flash Step (CLS-03): the Ninja goes through what stands in the line, to its end or to
+        // whatever stops the body, striking with both blades on the way.
+        if (skill.Motion == "dash")
+        {
+            _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove("charge", aim, 0.35, colour);
+            Audio.AudioDirector.Play(SoundOf(skill.Id), _motor.GlobalPosition);
+            Dash(aim, (float)skill.Radius);
         }
 
         // The Piercing Blow's thrust, as the charge is let go.
-        if (skill.Motion == "charge")
+        if (skill.Motion == "charge" || Charged(skill))
         {
-            _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove("charge", aim, 0.35, colour);
+            _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove(skill.Motion, aim, 0.35, colour);
+            Audio.AudioDirector.Play(SoundOf(skill.Id), _motor.GlobalPosition);
+        }
+
+        // A slow skill that is not a charge makes its sound as it lands.
+        if (skill.Windup > 0 && !Charged(skill) && !PerHit(skill.Motion) && pulse.Index == 0)
+        {
             Audio.AudioDirector.Play(SoundOf(skill.Id), _motor.GlobalPosition);
         }
 
@@ -588,7 +652,7 @@ public partial class SkillCaster : Node
 
         switch (skill.Targeting)
         {
-            case SkillTargeting.SelfAoe when skill.Motion == "spin":
+            case SkillTargeting.SelfAoe when skill.Motion is "spin" or "roll":
                 targets = AreaQuery.Sphere(_motor, center, (float)skill.Radius);
                 SkillFx.Whirl(this, center, (float)skill.Radius, colour, skill.HitInterval, pulse.Index, bright);
                 break;
@@ -603,7 +667,7 @@ public partial class SkillCaster : Node
                 SkillFx.Cut(this, center, aim, (float)skill.Radius, pulse.Index, colour, bright);
                 break;
 
-            case SkillTargeting.Line when skill.Motion == "charge":
+            case SkillTargeting.Line when skill.Motion is "charge" or "dash":
                 targets = AreaQuery.Line(_motor, center, aim, (float)skill.Radius, (float)skill.Width);
                 SkillFx.Pierce(this, center, aim, (float)skill.Radius, colour, bright);
                 break;
@@ -611,6 +675,20 @@ public partial class SkillCaster : Node
             case SkillTargeting.Cone:
                 targets = AreaQuery.Cone(_motor, center, aim, (float)skill.Radius, (float)skill.ConeAngle);
                 SkillFx.Cleave(this, center, aim, (float)skill.Radius, (float)skill.ConeAngle, colour, bright);
+                break;
+
+            // The Blade Wave strikes one (2026-10-02): the chosen target if it stands in the ray's way,
+            // else the nearest that does — and the ray is drawn to that one, so it reads as one struck.
+            case SkillTargeting.Line when skill.MaxTargets == 1 && skill.Motion == "wave":
+                var picked = GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat")?.Target;
+                var struck = AreaQuery.Line(_motor, center, aim, (float)skill.Radius, (float)skill.Width)
+                    .Where(t => t.IsAlive)
+                    .OrderBy(t => ReferenceEquals(t, picked) ? 0 : 1)
+                    .ThenBy(t => t.Body.GlobalPosition.DistanceSquaredTo(center))
+                    .FirstOrDefault();
+
+                targets = struck is null ? [] : [struck];
+                SkillFx.Bolt(this, center, struck?.Body.GlobalPosition ?? center + (aim * (float)skill.Radius), struck is not null, colour, bright);
                 break;
 
             case SkillTargeting.Line:
@@ -625,6 +703,18 @@ public partial class SkillCaster : Node
 
             case SkillTargeting.SingleTarget:
                 var single = GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat")?.Target;
+
+                // A target can be chosen from afar (the right click, 2026-10-01), but a blow of the
+                // hand lands only on what is within its reach.
+                if (single is not null && single.Body.GlobalPosition.DistanceTo(center) > SingleReach) single = null;
+
+                // With nothing chosen, or the chosen one out of reach, the nearest creature within
+                // reach in front takes it.
+                single ??= AreaQuery.Cone(_motor, center, aim, UnaimedReach, 140f)
+                    .Where(t => t.IsAlive)
+                    .OrderBy(t => t.Body.GlobalPosition.DistanceSquaredTo(center))
+                    .FirstOrDefault();
+
                 targets = single is { IsAlive: true } ? [single] : [];
 
                 // The blow landing on the one target, in the rank's colour (REF-03, REF-21).
@@ -642,14 +732,26 @@ public partial class SkillCaster : Node
 
         if (targets.Count == 0) return;
 
-        // A capped skill lands on the nearest few only (REF-21).
+        // A capped skill lands on the nearest few only (REF-21) — the chosen target first, if it is among them.
         if (skill.MaxTargets > 0 && targets.Count > skill.MaxTargets)
         {
+            var chosen = GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat")?.Target;
+
             targets = targets
-                .OrderBy(t => t.Body.GlobalPosition.DistanceSquaredTo(center))
+                .OrderBy(t => ReferenceEquals(t, chosen) ? 0 : 1)
+                .ThenBy(t => t.Body.GlobalPosition.DistanceSquaredTo(center))
                 .Take(skill.MaxTargets)
                 .ToList();
         }
+
+        // Out of the Shadow Veil (CLS-03): the first blow ends it and is worth more — what the veil
+        // gives, or what the skill itself gives for being struck unseen, whichever is more.
+        var unseen = _self.Statuses.Has(StatusKind.Stealth);
+        var ambush = unseen
+            ? 1 + System.Math.Max(_self.Statuses.MagnitudeOf(StatusKind.Stealth), skill.Applies is null && skill.Targeting == SkillTargeting.SingleTarget ? skill.Magnitude : 0)
+            : 1.0;
+
+        if (unseen) _self.Statuses.Remove(StatusKind.Stealth);
 
         var sparks = 0;
 
@@ -664,12 +766,71 @@ public partial class SkillCaster : Node
                 SkillFx.Impact(this, target.Body.GlobalPosition, colour, 0.8f, bright);
             }
 
-            target.TakeAttack(_self, skillCoef: skill.DamageCoef, skill: true, pierce: skill.Pierces);
+            var dealt = target.TakeAttack(_self, skillCoef: skill.DamageCoef * ambush, skill: true, pierce: skill.Pierces);
 
             // What is not a creature — a shard — cannot be stunned, but can be weakened.
             var resist = (target.Body as EnemyBrain)?.StunResist ?? 1.0;
 
+            // A poison or a bleeding the skill gives a strength of its own is a share of the blow
+            // that put it there, every tick, so it grows with the blade and the points (CLS-03).
+            if (skill.Applies is { Kind: "poison" or "bleed" } dot && skill.Magnitude > 0)
+            {
+                if (target.IsAlive && !dealt.Evaded && GameSession.CombatRng.Chance(dot.Chance))
+                {
+                    var tick = System.Math.Max(1.0, dealt.Amount * skill.Magnitude);
+
+                    target.Statuses.Apply(dot.Kind == "poison" ? StatusEffectSet.Poison(tick, dot.Duration) : StatusEffectSet.Bleed(tick, dot.Duration));
+                }
+
+                continue;
+            }
+
             StatusApplication.Try(skill.Applies, target, resist);
+        }
+    }
+
+    /// <summary>How long the Flash Step takes to cross its line.</summary>
+    private const double DashSeconds = 0.14;
+
+    /// <summary>How far short of a wall the dash stops.</summary>
+    private const float DashMargin = 0.4f;
+
+    /// <summary>
+    /// Carries the body along <paramref name="aim"/>, up to <paramref name="reach"/> metres, through
+    /// creatures but not through the world: as far as a ray at chest height finds clear.
+    /// </summary>
+    public void Dash(Vector3 aim, float reach, double seconds = DashSeconds, Tween.TransitionType ease = Tween.TransitionType.Quad)
+    {
+        var from = _motor.GlobalPosition;
+        var chest = from + (Vector3.Up * 0.9f);
+        var query = PhysicsRayQueryParameters3D.Create(chest, chest + (aim * reach), Layers.World);
+        query.CollideWithAreas = false;
+
+        var hit = _motor.GetWorld3D().DirectSpaceState.IntersectRay(query);
+        var far = hit.Count == 0 ? reach : System.Math.Max(0f, chest.DistanceTo(hit["position"].AsVector3()) - DashMargin);
+
+        if (far < 0.2f) return;
+
+        var tween = _motor.CreateTween();
+        tween.TweenProperty(_motor, "global_position", from + (aim * far), seconds).SetTrans(ease).SetEase(Tween.EaseType.Out);
+    }
+
+    private bool _unseenShown;
+
+    /// <summary>The body drawn faint while the Shadow Veil is on, and whole again when it ends.</summary>
+    private void ShowUnseen()
+    {
+        var unseen = _self.Statuses.Has(StatusKind.Stealth);
+
+        if (unseen == _unseenShown) return;
+
+        _unseenShown = unseen;
+
+        if (_motor.GetNodeOrNull<Node>("VisualRoot") is not { } visual) return;
+
+        foreach (var mesh in visual.FindChildren("*", "GeometryInstance3D", true, false).OfType<GeometryInstance3D>())
+        {
+            mesh.Transparency = unseen ? 0.7f : 0f;
         }
     }
 

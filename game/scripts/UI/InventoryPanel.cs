@@ -575,7 +575,7 @@ public partial class InventoryPanel : CanvasLayer
                 break;
 
             case EquipOutcome.WrongClass:
-                Notify(L10n.T("The Warrior cannot use this."));
+                Notify(L10n.T("Your class cannot use this."));
                 break;
 
             default:

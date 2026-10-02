@@ -33,10 +33,14 @@ public static class RoleTrees
     };
 
     /// <summary>Shared preamble: no target, or dragged too far, means go home.</summary>
+    /// <remarks>
+    /// One action that asks every tick, not a condition followed by an action (2026-10-01). A
+    /// sequence stays on the child that is running and does not ask its condition again — and
+    /// since creatures at peace roam (2026-09-30), going home never finishes: one that had begun
+    /// to roam kept roaming with the player beside it, and never fought.
+    /// </remarks>
     private static BtNode<EnemyBrain> Disengage() =>
-        new BtSequence<EnemyBrain>(
-            new BtCondition<EnemyBrain>(b => b.ShouldDisengage),
-            new BtAction<EnemyBrain>((b, d) => b.ReturnHome(d)));
+        new BtAction<EnemyBrain>((b, d) => b.ShouldDisengage ? b.ReturnHome(d) : BtStatus.Failure);
 
     /// <summary>Attack with the special if it is ready, otherwise the basic swing.</summary>
     private static BtNode<EnemyBrain> Attack() =>

@@ -27,6 +27,30 @@ public readonly record struct Attributes(int Str, int Dex, int Int, int Vit)
         CharacterClass.Shaman => attributes.Int,
         _ => attributes.Str,
     };
+
+    /// <summary>Attack power for each point of the attribute a class strikes with.</summary>
+    public const double AttackPerPoint = 1.8;
+
+    /// <summary>
+    /// Attack power the Ninja takes from each point of strength (2026-10-02, at your call): its
+    /// blows come from dexterity, which already gives it crit, pierce, evasion and speed, and
+    /// strength adds to them, less.
+    /// </summary>
+    public const double BladeAttackPerStr = 0.6;
+
+    /// <summary>
+    /// Attack power the Mental Warrior's skills, and only its skills, take from each point of
+    /// vitality (2026-10-02, at your call): a little, strength staying what it strikes with.
+    /// </summary>
+    public const double MentalSkillPerVit = 0.6;
+
+    /// <summary>
+    /// The attack power a class draws from its attributes: its own attribute at the full rate,
+    /// and for the Ninja a third of that from strength besides.
+    /// </summary>
+    public static double AttackFrom(CharacterClass characterClass, Attributes attributes) =>
+        (PrimaryFor(characterClass, attributes) * AttackPerPoint)
+        + (characterClass == CharacterClass.Blade ? attributes.Str * BladeAttackPerStr : 0);
 }
 
 /// <summary>Damage element, for the resistance step of the pipeline.</summary>

@@ -128,7 +128,7 @@ public partial class PlayerCharacter : Node
         {
             var remaining = Progression.UnspentAttributePoints;
 
-            Progression.SpendAttributePoint(AttributeKind.Str);
+            Progression.SpendAttributePoint(PlayerProfile.Class == Kiln.Core.Foundation.CharacterClass.Blade ? AttributeKind.Dex : AttributeKind.Str);
             if (remaining % 2 == 0) Progression.SpendAttributePoint(AttributeKind.Vit);
         }
     }
@@ -141,7 +141,10 @@ public partial class PlayerCharacter : Node
         var stats = new StatBlock
         {
             Level = Progression.Level,
-            Class = CharacterClass.Warrior,
+            Class = PlayerProfile.Class,
+            // The Mental Warrior's skills take a little from vitality too; strength stays what it strikes with.
+            SkillAttackBonus = PlayerProfile.Class == Kiln.Core.Foundation.CharacterClass.Warrior && PlayerProfile.Path == PlayerProfile.MentalPath
+                ? Progression.TotalAttributes.Vit * Attributes.MentalSkillPerVit : 0,
             Family = MonsterFamily.Human,
             Attributes = Progression.TotalAttributes,
 

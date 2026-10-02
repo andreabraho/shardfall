@@ -18,3 +18,8 @@ skl_battle_frenzy.svg     Delapouite   delapouite/enrage.svg         (REF-21, 20
 skl_blade_wave.svg        Lorc         lorc/energy-sword.svg         (REF-21, 2026-09-26, with your OK)
 skl_triple_cut.svg        Lorc         lorc/claw-slashes.svg         (REF-21, 2026-09-26, with your OK)
 skl_piercing_blow.svg     Lorc         lorc/piercing-sword.svg       (REF-21, 2026-09-26, with your OK)
+
+The six Ninja skill icons (CLS-03, 2026-10-01) are our own, drawn by hand as SVG paths for this
+game and released with it — no outside source:
+skl_shadow_strike.svg, skl_flash_step.svg, skl_whirling_blades.svg, skl_shadow_veil.svg,
+skl_toxic_cloud.svg, skl_viper_fang.svg, skl_shadow_step.svg, skl_war_cry.svg (the Body Warrior, 2026-10-02)

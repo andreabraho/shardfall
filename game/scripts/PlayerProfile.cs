@@ -45,7 +45,7 @@ public static class PlayerProfile
     public static CharacterProgression Progression => _progression ??= new CharacterProgression();
 
     /// <summary>The skills known, six at most; the Guard, on its own key, is not one of the six.</summary>
-    public static SkillBook Skills => _skills ??= new SkillBook(free: [Kiln.Data.Ids.Skills.SklGuardStance]);
+    public static SkillBook Skills => _skills ??= new SkillBook(free: [Kiln.Data.Ids.Skills.SklGuardStance, Kiln.Data.Ids.Skills.SklShadowStep]);
 
     private static Kiln.Core.Cosmetics.Wardrobe? _wardrobe;
 
@@ -165,9 +165,59 @@ public static class PlayerProfile
     public static Equipment AdoptGear(System.Func<Equipment> create) => _gear ??= create();
 
     /// <summary>Drops the character. Used by a new game, and by tests that need a clean slate.</summary>
+    /// <summary>A man's body, and the save's word for it.</summary>
+    public const string Man = "man";
+
+    /// <summary>A woman's body (CLS-00).</summary>
+    public const string Woman = "woman";
+
+    /// <summary>
+    /// Man or woman (CLS-00, 2026-09-30): which head and body the player wears, and how the
+    /// Italian speaks to them.
+    /// </summary>
+    public static string Body
+    {
+        get => _body;
+        set
+        {
+            _body = value == Woman ? Woman : Man;
+            Kiln.Core.Foundation.L10n.Feminine = _body == Woman;
+        }
+    }
+
+    private static string _body = Man;
+
+    /// <summary>
+    /// The class played (CLS-01, 2026-10-01): the Warrior, or the Ninja — <c>Blade</c> in the code,
+    /// as the enum has had it from the start. Chosen at a new game and kept in the save.
+    /// </summary>
+    public static Kiln.Core.Foundation.CharacterClass Class { get; set; } = Kiln.Core.Foundation.CharacterClass.Warrior;
+
+    public const string BodyPath = "body";
+    public const string MentalPath = "mental";
+
+    /// <summary>
+    /// The branch of skills followed (2026-10-02, at your call: one branch a character): the
+    /// Warrior of the body or of the mind. Empty for the Ninja, whose skills are one branch, and
+    /// for a Warrior saved before the choice existed, who keeps both.
+    /// </summary>
+    public static string Path { get; set; } = "";
+
+    /// <summary>
+    /// The player's visual: the Knight's skeleton wearing the head and body of their class and of
+    /// a man or a woman.
+    /// </summary>
+    public static string BodyVisual => Class == Kiln.Core.Foundation.CharacterClass.Blade
+        ? Body == Woman ? Kiln.Data.Ids.Visuals.MeshPlayerNinjaWoman : Kiln.Data.Ids.Visuals.MeshPlayerNinja
+        : Path == MentalPath ? Body == Woman ? Kiln.Data.Ids.Visuals.MeshPlayerMentalWoman : Kiln.Data.Ids.Visuals.MeshPlayerMental
+        : Body == Woman ? Kiln.Data.Ids.Visuals.MeshPlayerWoman : Kiln.Data.Ids.Visuals.MeshPlaceholderPlayer;
+
     public static void Reset()
     {
         Exists = false;
+        Body = Man;
+        Class = Kiln.Core.Foundation.CharacterClass.Warrior;
+        Path = "";
         _progression = null;
         _skills = null;
         _wardrobe = null;

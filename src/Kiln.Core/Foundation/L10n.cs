@@ -75,6 +75,21 @@ public static class L10n
     public static string T(string english) =>
         !string.IsNullOrEmpty(english) && _current.TryGetValue(english, out var text) && text.Length > 0 ? text : english;
 
+    /// <summary>True when the player's character is a woman: text that speaks to her agrees.</summary>
+    public static bool Feminine { get; set; }
+
+    /// <summary>
+    /// Text that speaks to the player (CLS-00): the same as <see cref="T"/>, but for a woman the
+    /// table's "<c>english [f]</c>" entry where it has one — "sei morta" for "you are dead".
+    /// </summary>
+    /// <remarks>
+    /// English says it once for both; Italian agrees adjectives and participles with whoever is
+    /// spoken to. Only the few lines addressed to the player need it, so they opt in here
+    /// rather than every line growing two forms.
+    /// </remarks>
+    public static string P(string english) =>
+        Feminine && _current.TryGetValue(english + " [f]", out var text) && text.Length > 0 ? text : T(english);
+
     /// <summary>Interface text with values in it, formatted for the active language.</summary>
     public static string F(string english, params object?[] args) => string.Format(Culture, T(english), args);
 
