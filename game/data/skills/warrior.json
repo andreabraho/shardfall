@@ -1,5 +1,5 @@
 [
-  { "id": "skl_heavy_strike",  "name": "$skill.skl_heavy_strike.name", "color": "#ffd9a0", "sound": "snd_skl_heavy",  "class": "warrior", "tree": "mental",   "suggested_level": 1,  "mana_cost": 14, "cooldown": 4.0,  "cast_type": "instant", "targeting": "line",          "radius": 5.0, "width": 3.2, "damage_coef": 1.80, "hits": 1, "motion": "chop",
+  { "id": "skl_heavy_strike",  "name": "$skill.skl_heavy_strike.name", "color": "#ffd9a0", "sound": "snd_skl_heavy",  "class": "warrior", "tree": "mental",   "suggested_level": 1,  "mana_cost": 14, "cooldown": 4.0,  "cast_type": "instant", "targeting": "line",          "radius": 8.0, "width": 1.6, "damage_coef": 1.80, "hits": 1, "motion": "chop",
     "mastery": {
       "master":       { "damage_coef": 2.05, "note": "$skill.skl_heavy_strike.m" },
       "grand_master": { "damage_coef": 2.20, "note": "$skill.skl_heavy_strike.g" },
