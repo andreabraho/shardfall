@@ -61,7 +61,7 @@ of it was downloaded, opened or copied.
 | Models | **KayKit Adventurers 2.0** again (CC0, already on disk in your `Downloads` — nothing downloaded): the **Ranger** for the Archer, the **Mage** for the Dragonseer, the Knight's head on the Ranger's body for the Asura; the women the Rogue, as every woman so far. Each recoloured, and changed, by a Blender script of ours. | Same rig as everything else: armour, helmets and animations fit unchanged. |
 | Animations | **KayKit Character Animations 1.1** (CC0, already on disk): `CombatRanged` (bow: idle, draw, release, upward release; magic: shoot, spellcasting, raise, summon) and `MovementAdvanced` (running with a bow, the dodges) — the two files not yet in the game. | The original's motions, as close as a free set gets. |
 | Weapons and armour | Made in Blender by our kits: twelve bows, twelve cursed swords, twelve fans; seven suits and four headpieces a class. Each is the **twin** of a Warrior piece — same level, rarity and worth — so every drop, shop and reward already hands the right one over. | Yours of 2026-09-30: no stand-ins. |
-| Range | The Archer's and the Dragonseer's ordinary blow is **a shot at one target**, not an arc: 13 m and 11 m. It needs line of sight. No sweep on the fourth blow. | The original's ranged classes; an arc at 13 m would be a different game. |
+| Range | The Archer's ordinary blow is **a shot at one target**, not an arc, from 13 m; the Dragonseer strikes hand to hand. It needs line of sight. No sweep on the fourth blow. | The original's ranged classes; an arc at 13 m would be a different game. |
 
 ### 2.2 The Archer
 
@@ -102,8 +102,8 @@ Asura's place, up to 30% of its maximum health. 10 mana, 12 s.
 
 | Skill | After | What it does | Motion |
 |---|---|---|---|
-| **Artiglio d'Ombra** (Shadow Claw) | finger strike | A claw from the ground under a target up to 10 m off: 210%, ignoring its defence. Needs a target. | the off hand thrust forward |
-| **Vortice Oscuro** (Dark Vortex) | dragon swirl | Turning, dark flame on everything within 4.5 m: 4 hits of 75%. | the spin |
+| **Artiglio d'Ombra** (Shadow Claw) | finger strike | A claw from the ground under a target up to 10 m off: 210%, ignoring its defence. Needs a target. Lands 0.45 s in. | a blow of the marked hand, about a second |
+| **Vortice Oscuro** (Dark Vortex) | dragon swirl | One turn, dark flame on everything within 3.2 m: one hit of 240%, half a second in. | one turn of a second |
 | **Lama Stregata** (Hexed Blade) | enchanted blade | 25 s: blows 20% stronger, and 8% of the damage of every blow comes back as health. | a spell worked over the blade with both hands |
 | **Terrore** (Dread) | fear | Everything within 6 m strikes 25% weaker for 10 s, and the Asura takes 15% less for as long. | a long summoning |
 | **Corazza Arcana** (Arcane Mail) | enchanted armour | 20 s: 20% less damage taken, and 25% of every blow taken from close by thrown back. | power drawn up with both arms |
@@ -114,8 +114,8 @@ Asura's place, up to 30% of its maximum health. 10 mana, 12 s.
 **Look.** The Mage's robe in white and jade with gold bands, without the pointed hat (ours are
 headpieces of their own); the man the Mage's face, the woman the Rogue's on the same robe.
 
-**Attribute.** Intelligence: full attack from INT. Its ordinary blow is a bolt of fire from
-the fan.
+**Attribute.** Intelligence: full attack from INT. Its ordinary blow is the fan, hand to hand, as
+the original's (at your call, 2026-10-02): the magic is in its skills.
 
 **Weapon.** Fans — a spread of ribs and leaf on a handle — twelve, from paper and bamboo to
 jade and gold.

@@ -75,22 +75,20 @@ public partial class PlayerCombat : Node
     /// <summary>How far a blade reaches.</summary>
     [Export] public float MeleeRange { get; set; } = 2.4f;
 
-    /// <summary>How far the Archer's arrow and the Dragonseer's bolt go (CLS-04, CLS-06).</summary>
+    /// <summary>How far the Archer's arrow goes (CLS-04).</summary>
     public const float BowRange = 13f;
-
-    public const float BoltRange = 11f;
 
     /// <summary>
     /// True for a class whose ordinary blow is a shot at one target, not an arc of a blade: the
-    /// Archer and the Dragonseer.
+    /// Archer. The Dragonseer strikes with its fan, hand to hand, as the original's does
+    /// (2026-10-02, at your call): its magic is in its skills.
     /// </summary>
-    public static bool Ranged => PlayerProfile.Class is Kiln.Core.Foundation.CharacterClass.Archer or Kiln.Core.Foundation.CharacterClass.Shaman;
+    public static bool Ranged => PlayerProfile.Class is Kiln.Core.Foundation.CharacterClass.Archer;
 
     /// <summary>How far the ordinary blow of the class played reaches.</summary>
     public float AttackRange => PlayerProfile.Class switch
     {
         Kiln.Core.Foundation.CharacterClass.Archer => BowRange,
-        Kiln.Core.Foundation.CharacterClass.Shaman => BoltRange,
         _ => MeleeRange,
     };
 
@@ -393,15 +391,14 @@ public partial class PlayerCombat : Node
     }
 
     /// <summary>
-    /// The shot leaves (CLS-04, CLS-06): at the one it was aimed at, if it is still in range and in
-    /// sight — an arrow, or the Dragonseer's bolt of fire — and at nothing else. Aimed at nothing,
+    /// The shot leaves (CLS-04): at the one it was aimed at, if it is still in range and in
+    /// sight, and at nothing else. Aimed at nothing,
     /// it flies its length and is lost.
     /// </summary>
     private void Loose(Combatant? aimed)
     {
         var origin = _motor.GlobalPosition;
-        var seer = PlayerProfile.Class == Kiln.Core.Foundation.CharacterClass.Shaman;
-        var colour = seer ? new Color("ffb060") : new Color("fff3d6");
+        var colour = new Color("fff3d6");
         var hit = aimed is not null && IsInstanceValid(aimed) && aimed.IsAlive
             && origin.DistanceTo(aimed.Body.GlobalPosition) <= AttackRange + HitTolerance + 1.0f
             && LineOfSight(aimed.Body);
@@ -410,15 +407,14 @@ public partial class PlayerCombat : Node
 
         var to = hit ? aimed!.Body.GlobalPosition : origin + (_motor.Facing * AttackRange);
 
-        if (seer) SkillFx.Bolt(this, origin, to, hit, colour);
-        else SkillFx.Arrow(this, origin, to, colour);
+        SkillFx.Arrow(this, origin, to, colour);
 
         if (!hit) return;
 
         var veil = _self.Statuses.MagnitudeOf(StatusKind.Stealth);
 
         _self.Statuses.Remove(StatusKind.Stealth);
-        aimed!.TakeAttack(_self, weaponCoef: 1 + veil, element: seer ? DamageElement.Fire : DamageElement.Physical);
+        aimed!.TakeAttack(_self, weaponCoef: 1 + veil);
     }
 
     private bool LineOfSight(Node3D target)

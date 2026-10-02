@@ -469,6 +469,13 @@ public partial class SkillCaster : Node
         // A slow skill's move (2026-10-02) is played to land as its wait ends, not at once.
         if (!PerHit(skill.Motion) && !Charged(skill)) _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.SkillMove(skill.Motion, aim, CastHold(skill), FxColour(skill), skill.Windup);
 
+        // One slow turn (CLS-05, the Dark Vortex): the body goes round once through the whole of the
+        // cast, and the blow lands as it comes round.
+        if (skill.Motion == "spin" && skill.Windup > 0)
+        {
+            _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Spin(CastHold(skill), 0, FxColour(skill));
+        }
+
         // A charged skill gathers itself first: the Warrior draws back, light gathers at the
         // blade, and the blow goes when the windup is spent (REF-21, the Piercing Blow).
         if (Charged(skill))
@@ -667,7 +674,8 @@ public partial class SkillCaster : Node
         {
             // No ribbon: a blade turning all the way round draws a disc, and the rings of wind
             // already show the turn.
-            _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Spin(skill.HitInterval, pulse.Index);
+            if (skill.Windup <= 0) _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.Spin(skill.HitInterval, pulse.Index);
+
             Audio.AudioDirector.Play(SoundOf(skill.Id), _motor.GlobalPosition);
 
             // The Blade Vortex (CLS-03): each turn carries the Ninja on, through whatever is there.

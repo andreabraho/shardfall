@@ -13,7 +13,7 @@
     } },
 
   { "id": "skl_shadow_claw", "name": "$skill.skl_shadow_claw.name", "color": "#b06cff", "sound": "snd_skl_cleave", "class": "sura", "tree": "dark", "suggested_level": 1, "mana_cost": 16, "cooldown": 5,
-    "cast_type": "instant", "targeting": "single_target", "radius": 0, "range": 10.0, "damage_coef": 2.10, "hits": 1, "motion": "claw", "needs_target": true, "pierces": true, "element": "dark",
+    "cast_type": "instant", "targeting": "single_target", "radius": 0, "range": 10.0, "damage_coef": 2.10, "hits": 1, "motion": "claw", "windup": 0.45, "needs_target": true, "pierces": true, "element": "dark",
     "mastery": {
       "master":       { "damage_coef": 2.40, "note": "$skill.skl_shadow_claw.m" },
       "grand_master": { "cooldown": 4.2, "note": "$skill.skl_shadow_claw.g" },
@@ -21,11 +21,11 @@
     } },
 
   { "id": "skl_dark_vortex", "name": "$skill.skl_dark_vortex.name", "color": "#8a5cf0", "sound": "snd_skl_whirl", "class": "sura", "tree": "dark", "suggested_level": 8, "mana_cost": 30, "cooldown": 9,
-    "cast_type": "instant", "targeting": "self_aoe", "radius": 4.5, "damage_coef": 0.75, "hits": 4, "hit_interval": 0.30, "motion": "spin", "element": "dark",
+    "cast_type": "instant", "targeting": "self_aoe", "radius": 3.2, "damage_coef": 2.40, "hits": 1, "motion": "spin", "windup": 0.5, "element": "dark",
     "mastery": {
-      "master":       { "hits": 5, "note": "$skill.skl_dark_vortex.m" },
-      "grand_master": { "radius": 5.2, "note": "$skill.skl_dark_vortex.g" },
-      "perfect":      { "cooldown": 7.0, "hits": 6, "note": "$skill.skl_dark_vortex.p" }
+      "master":       { "damage_coef": 2.75, "note": "$skill.skl_dark_vortex.m" },
+      "grand_master": { "radius": 3.8, "note": "$skill.skl_dark_vortex.g" },
+      "perfect":      { "cooldown": 7.0, "damage_coef": 3.20, "note": "$skill.skl_dark_vortex.p" }
     } },
 
   { "id": "skl_hexed_blade", "name": "$skill.skl_hexed_blade.name", "color": "#ff4d8c", "sound": "snd_skl_aura", "class": "sura", "tree": "dark", "suggested_level": 5, "mana_cost": 26, "cooldown": 34,
@@ -56,7 +56,7 @@
     } },
 
   { "id": "skl_spellbreak", "name": "$skill.skl_spellbreak.name", "color": "#c8a0ff", "sound": "snd_skl_bash", "class": "sura", "tree": "dark", "suggested_level": 18, "mana_cost": 24, "cooldown": 10,
-    "cast_type": "instant", "targeting": "single_target", "radius": 0, "range": 12.0, "damage_coef": 1.60, "hits": 1, "motion": "cast", "needs_target": true, "element": "dark", "dispels": true,
+    "cast_type": "instant", "targeting": "single_target", "radius": 0, "range": 12.0, "damage_coef": 1.60, "hits": 1, "motion": "cast", "windup": 0.30, "needs_target": true, "element": "dark", "dispels": true,
     "applies": { "kind": "vulnerability", "magnitude": 0.25, "duration": 8.0, "chance": 1.0 },
     "mastery": {
       "master":       { "damage_coef": 1.85, "note": "$skill.skl_spellbreak.m" },

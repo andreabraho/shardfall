@@ -302,10 +302,8 @@ public partial class ModelAnimator : Node
     {
         if (_player is null) return 0;
 
-        // A shot is a draw through the windup and a release as it lands; a bolt is thrown from the hand.
+        // A shot is a draw through the windup and a release as it lands.
         if (_stance == "bow") return DrawAndLoose("Ranged_Bow_Draw", "Ranged_Bow_Release", windup, interval - windup);
-
-        if (_stance == "caster" && Pick(_player.GetAnimationList(), "Ranged_Magic_Shoot") is { Length: > 0 } bolt) return PlayTimed(bolt, windup, interval);
 
         var chain = DualWield ? DualChain : TwoHanded ? TwoHandChain : OneHandChain;
         var clip = Pick(_player.GetAnimationList(), chain[(((blow - 1) % chain.Length) + chain.Length) % chain.Length]);
@@ -347,7 +345,10 @@ public partial class ModelAnimator : Node
         {
             // Magic from the hand (CLS-05, CLS-06): a bolt thrown, a seal swept forward, a claw called up;
             // a spell worked with both hands; a long one, for a heal or a rain.
-            "cast" or "seals" or "claw" or "breath" => ["Ranged_Magic_Shoot", "Throw"],
+            "cast" or "seals" or "breath" => ["Ranged_Magic_Shoot", "Throw"],
+            // The Shadow Claw (CLS-05, at your call): a blow of the marked hand — the left, which the
+            // shield arm's thrust drives forward; the pack's punch is of the sword hand.
+            "claw" => ["Melee_Block_Attack", "Melee_Unarmed_Attack_Punch_A", "Ranged_Magic_Shoot"],
             "spell" => ["Ranged_Magic_Spellcasting", "Ranged_Magic_Raise", "Cheering"],
             // The Asura's own (CLS-05, at your call: not the Warrior's cheer and block): power drawn up
             // with both arms for the Arcane Mail, a long summoning for the Dread.
