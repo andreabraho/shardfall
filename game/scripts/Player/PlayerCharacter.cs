@@ -142,6 +142,9 @@ public partial class PlayerCharacter : Node
         {
             Level = Progression.Level,
             Class = PlayerProfile.Class,
+            // The Mental Warrior's skills take a little from vitality too; strength stays what it strikes with.
+            SkillAttackBonus = PlayerProfile.Class == Kiln.Core.Foundation.CharacterClass.Warrior && PlayerProfile.Path == PlayerProfile.MentalPath
+                ? Progression.TotalAttributes.Vit * Attributes.MentalSkillPerVit : 0,
             Family = MonsterFamily.Human,
             Attributes = Progression.TotalAttributes,
 

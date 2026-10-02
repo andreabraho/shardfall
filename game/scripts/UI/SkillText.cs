@@ -27,6 +27,8 @@ public static class SkillText
             ? []
             : GameContent.Database.Skills.Values
                 .Where(s => s.Class == PlayerProfile.Class)
+                // Its one branch, and what has a key of its own whatever the branch (the Guard).
+                .Where(s => PlayerProfile.Path.Length == 0 || s.Tree == PlayerProfile.Path || s.CastType == "channel")
                 .OrderBy(s => s.SuggestedLevel)
                 .ThenBy(s => s.Id, System.StringComparer.Ordinal);
 
@@ -59,6 +61,12 @@ public static class SkillText
             lines.Add(skill.Hits > 1
                 ? L10n.F("{0:P0} of your attack power, {1} times", skill.DamageCoef, skill.Hits)
                 : L10n.F("{0:P0} of your attack power", skill.DamageCoef));
+        }
+
+        // The Mental Warrior: its skills take a little from vitality besides (2026-10-02).
+        if (skill.DamageCoef > 0 && def.Class == CharacterClass.Warrior && PlayerProfile.Path == PlayerProfile.MentalPath)
+        {
+            lines.Add(L10n.F("Skills also take {0:0.#} attack power from each point of VIT.", Attributes.MentalSkillPerVit));
         }
 
         lines.Add(Shape(skill));
@@ -120,7 +128,7 @@ public static class SkillText
         }
         else if (skill.Applies is { Kind: "empower" })
         {
-            parts.Add(L10n.F("+{0:P0} damage", skill.Magnitude));
+            parts.Add(L10n.F("+{0:P0} average damage", skill.Magnitude));
         }
         else if (skill.Applies is { Kind: "frenzy" })
         {
@@ -170,7 +178,7 @@ public static class SkillText
             "fortify" => L10n.F("Take {0:P0} less damage for {1:0.#} s, moving {2:P0} slower.", magnitude, duration, StatusEffectSet.FortifyDrag),
             "frenzy" => L10n.F("Attack {0:P0} faster and move {1:P0} faster for {2:0.#} s, taking {3:P0} more damage.",
                 magnitude, magnitude * 0.5, duration, StatusEffectSet.FrenzyExposure),
-            "empower" => L10n.F("Deal {0:P0} more damage for {1:0.#} s.", magnitude, duration),
+            "empower" => L10n.F("Your blows — not your skills — deal {0:P0} more damage for {1:0.#} s.", magnitude, duration),
             "stealth" => L10n.F("Unseen for {0:0.#} s: creatures lose you. Your first blow ends it and deals {1:P0} more damage.", duration, magnitude),
             "stun" => L10n.F("Stuns for {0:0.#} s.", duration),
             "vulnerability" => L10n.F("The target takes {0:P0} more damage for {1:0.#} s.", magnitude, duration),

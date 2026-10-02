@@ -140,10 +140,16 @@ public sealed class StatusEffectSet
     public double AttackSpeedMultiplier =>
         Has(StatusKind.Frenzy) ? 1 + _effects[StatusKind.Frenzy].Magnitude : 1.0;
 
-    /// <summary>Outgoing damage multiplier: weaken down, the aura up.</summary>
+    /// <summary>Outgoing damage multiplier, on blows and skills alike: weaken down.</summary>
     public double DamageDealtMultiplier =>
-        (Has(StatusKind.Weaken) ? Math.Max(0.1, 1 - _effects[StatusKind.Weaken].Magnitude) : 1.0)
-        * (Has(StatusKind.Empower) ? 1 + _effects[StatusKind.Empower].Magnitude : 1.0);
+        Has(StatusKind.Weaken) ? Math.Max(0.1, 1 - _effects[StatusKind.Weaken].Magnitude) : 1.0;
+
+    /// <summary>
+    /// Outgoing damage multiplier on basic blows only — average damage, as the original calls
+    /// it, never a skill's (2026-10-02, at your call): the Blade Aura up.
+    /// </summary>
+    public double AverageDamageMultiplier =>
+        Has(StatusKind.Empower) ? 1 + _effects[StatusKind.Empower].Magnitude : 1.0;
 
     /// <summary>Incoming damage multiplier: vulnerability and a frenzy up, fortify down.</summary>
     public double DamageTakenMultiplier =>

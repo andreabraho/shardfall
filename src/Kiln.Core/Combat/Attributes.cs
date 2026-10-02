@@ -39,6 +39,12 @@ public readonly record struct Attributes(int Str, int Dex, int Int, int Vit)
     public const double BladeAttackPerStr = 0.6;
 
     /// <summary>
+    /// Attack power the Mental Warrior's skills, and only its skills, take from each point of
+    /// vitality (2026-10-02, at your call): a little, strength staying what it strikes with.
+    /// </summary>
+    public const double MentalSkillPerVit = 0.6;
+
+    /// <summary>
     /// The attack power a class draws from its attributes: its own attribute at the full rate,
     /// and for the Ninja a third of that from strength besides.
     /// </summary>

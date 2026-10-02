@@ -188,6 +188,7 @@ public partial class Combatant : Node
             result.Amount
             * Statuses.DamageTakenMultiplier
             * attacker.Statuses.DamageDealtMultiplier
+            * (skill ? 1.0 : attacker.Statuses.AverageDamageMultiplier)
             * attacker.OutgoingDamageMultiplier
             * IncomingDamageMultiplier);
 

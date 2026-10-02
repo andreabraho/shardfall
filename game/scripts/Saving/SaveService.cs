@@ -287,6 +287,7 @@ public partial class SaveService : Node
             CharacterName = CharacterName,
             Body = PlayerProfile.Body,
             Class = PlayerProfile.Class.ToString().ToLowerInvariant(),
+            Path = PlayerProfile.Path,
             Difficulty = GameSession.Difficulty.Tier.ToString(),
             Seed = GameSession.Seed,
             PlayTime = PlayerProfile.PlayTime,
@@ -422,6 +423,7 @@ public partial class SaveService : Node
         PlayerProfile.Reset();
         PlayerProfile.Body = save.Body;
         PlayerProfile.Class = Enum.TryParse<CharacterClass>(save.Class, ignoreCase: true, out var played) ? played : CharacterClass.Warrior;
+        PlayerProfile.Path = save.Path;
 
         if (Enum.TryParse<Difficulty>(save.Difficulty, out var tier))
         {
@@ -548,13 +550,14 @@ public partial class SaveService : Node
     /// A fresh seed each time, so a second character does not meet the first one's merchant
     /// shelves and loot rolls in the same order.
     /// </remarks>
-    public void NewGame(Difficulty tier, string name = "", string body = PlayerProfile.Man, CharacterClass played = CharacterClass.Warrior)
+    public void NewGame(Difficulty tier, string name = "", string body = PlayerProfile.Man, CharacterClass played = CharacterClass.Warrior, string path = "")
     {
         Begin(name);
         _sinceSaved = 0;
         PlayerProfile.Reset();
         PlayerProfile.Body = body;
         PlayerProfile.Class = played;
+        PlayerProfile.Path = played == CharacterClass.Warrior ? path : "";
         GameWorld.Travel.Load([], null);
         GameSession.SetDifficulty(DifficultySettings.For(tier));
         GameSession.SetSeed((ulong)DateTime.UtcNow.Ticks ^ 0x9E3779B97F4A7C15UL);

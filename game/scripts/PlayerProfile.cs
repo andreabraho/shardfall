@@ -193,6 +193,16 @@ public static class PlayerProfile
     /// </summary>
     public static Kiln.Core.Foundation.CharacterClass Class { get; set; } = Kiln.Core.Foundation.CharacterClass.Warrior;
 
+    public const string BodyPath = "body";
+    public const string MentalPath = "mental";
+
+    /// <summary>
+    /// The branch of skills followed (2026-10-02, at your call: one branch a character): the
+    /// Warrior of the body or of the mind. Empty for the Ninja, whose skills are one branch, and
+    /// for a Warrior saved before the choice existed, who keeps both.
+    /// </summary>
+    public static string Path { get; set; } = "";
+
     /// <summary>
     /// The player's visual: the Knight's skeleton wearing the head and body of their class and of
     /// a man or a woman.
@@ -206,6 +216,7 @@ public static class PlayerProfile
         Exists = false;
         Body = Man;
         Class = Kiln.Core.Foundation.CharacterClass.Warrior;
+        Path = "";
         _progression = null;
         _skills = null;
         _wardrobe = null;

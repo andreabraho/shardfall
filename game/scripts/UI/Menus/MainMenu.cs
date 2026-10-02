@@ -138,6 +138,9 @@ public partial class MainMenu : Control
 
         // The class (CLS-01, 2026-10-01): the Warrior, or the Ninja with a dagger in each hand.
         var played = CharacterClass.Warrior;
+
+        // And its one branch of skills (2026-10-02): the Warrior is of the body or of the mind.
+        var path = PlayerProfile.BodyPath;
         // The portraits follow the class: the Ninja's are its own (CLS-03).
         var portraits = new List<(Button Card, string Body)>();
 
@@ -152,15 +155,20 @@ public partial class MainMenu : Control
         classes.AddThemeConstantOverride("separation", 12);
         var classGroup = new ButtonGroup();
 
-        foreach (var (choice, label) in new[] { (CharacterClass.Warrior, L10n.T("Warrior")), (CharacterClass.Blade, L10n.T("Ninja")) })
+        foreach (var (choice, branch, label) in new[]
+        {
+            (CharacterClass.Warrior, PlayerProfile.BodyPath, L10n.T("Body Warrior")),
+            (CharacterClass.Warrior, PlayerProfile.MentalPath, L10n.T("Mental Warrior")),
+            (CharacterClass.Blade, "", L10n.T("Ninja")),
+        })
         {
             var card = new Button
             {
                 ToggleMode = true,
                 ButtonGroup = classGroup,
-                ButtonPressed = choice == played,
+                ButtonPressed = choice == played && branch == path,
                 Text = label,
-                CustomMinimumSize = new Vector2(150, 40),
+                CustomMinimumSize = new Vector2(176, 40),
             };
 
             card.AddThemeFontSizeOverride("font_size", 16);
@@ -169,6 +177,7 @@ public partial class MainMenu : Control
                 if (!on) return;
 
                 played = choice;
+                path = branch;
                 Portray();
             };
             classes.AddChild(card);
@@ -246,7 +255,7 @@ public partial class MainMenu : Control
             card.AddChild(text);
 
             var chosen = tier.Tier;
-            card.Pressed += () => SaveService.Instance?.NewGame(chosen, name.Text, body, played);
+            card.Pressed += () => SaveService.Instance?.NewGame(chosen, name.Text, body, played, path);
 
             column.AddChild(card);
         }

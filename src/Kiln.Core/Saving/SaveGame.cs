@@ -30,6 +30,12 @@ public sealed class SaveGame
     /// <summary><c>warrior</c> or <c>blade</c>, the ninja (CLS-01, 2026-10-01). Older saves are warriors.</summary>
     public string Class { get; set; } = "warrior";
 
+    /// <summary>
+    /// The one branch of skills the character follows (2026-10-02): "body" or "mental" for a
+    /// Warrior. Empty for a class with one branch only, and in a save from before, which keeps both.
+    /// </summary>
+    public string Path { get; set; } = "";
+
     /// <summary><c>Wanderer</c>, <c>Disciple</c>, <c>Adept</c> or <c>Shardbound</c>.</summary>
     public string Difficulty { get; set; } = "Disciple";
 
