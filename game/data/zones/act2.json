@@ -7,7 +7,7 @@
     "music": "mus_wilds",
     "ambience": "amb_haunted",
     "footsteps": "stp_stone",
-    "border": { "height": [26, 44], "rise": 10, "terrace": 5, "rock": "#7c807e", "rock_alt": "#6c706f", "grass_line": 3, "cover": ["kit_st_pine", "kit_st_tree_dead", "kit_st_rock"], "cover_count": 170, "cover_height": 16, "wall": "kit_ruin_wall", "seed": 61 },
+    "border": { "height": [26, 44], "rise": 10, "terrace": 5, "rock": "#646c6e", "rock_alt": "#575e61", "grass": "#56664f", "grass_line": 3, "cover": ["kit_st_pine", "kit_st_tree_dead", "kit_st_rock"], "cover_count": 170, "cover_height": 16, "wall": "kit_ruin_wall", "seed": 61 },
     "ground": { "light": "#9a9d94", "dark": "#5f6660", "patch": "#4d6b46", "patch_amount": 0.12, "speck": "#58e0d0", "speck_amount": 0.012, "grain": 0.14 },
     "name": "$zone.zone_stonewood.name",
     "kind": "wilds",

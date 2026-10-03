@@ -185,6 +185,38 @@ public sealed class Layout
         return this;
     }
 
+    /// <summary>
+    /// A pool (water, lava) in the part being built, and the ground round it kept clear, so nothing scattered
+    /// later stands in it.
+    /// </summary>
+    public Layout Pool(string kit, double x, double z, double radius, double yaw = 0) => Put(kit, x, z, yaw).Clear(x, z, radius + 1.5);
+
+    /// <summary>
+    /// <paramref name="count"/> pools strewn between two distances from the middle, by a seed, none on cleared ground
+    /// (the road, the camps, the fields, each other) — what a scatter would do, but keeping their own ground clear.
+    /// </summary>
+    public Layout Pools(string name, string kit, int count, double inner, double outer, double radius, int seed)
+    {
+        Part(name, "Pools strewn by a seed, the ground round each kept clear");
+
+        var rng = new Random(seed);
+
+        for (var tries = 0; count > 0 && tries < 400; tries++)
+        {
+            var bearing = rng.NextDouble() * Math.PI * 2;
+            var far = inner + (rng.NextDouble() * (outer - inner));
+            var (x, z) = (Math.Round(Math.Cos(bearing) * far, 1), Math.Round(Math.Sin(bearing) * far, 1));
+
+            if (Math.Abs(x) > 72 || Math.Abs(z) > 72) continue;
+            if (_clear.Any(c => ((c.X - x) * (c.X - x)) + ((c.Z - z) * (c.Z - z)) < (c.R + radius) * (c.R + radius))) continue;
+
+            Pool(kit, x, z, radius, rng.Next(0, 12) * 30);
+            count--;
+        }
+
+        return this;
+    }
+
     public Layout Scatter(string name, int count, double inner, double outer, double spacing, int seed, params string[] kits)
     {
         _scatters.Add(new Scattered(Name(name), kits, count, inner, outer, spacing, seed));
