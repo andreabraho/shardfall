@@ -367,6 +367,6 @@
   { "id": "mesh_q_whelp",         "primitive": "model", "height": 1.35, "radius": 0.50, "color": "#ff7a2a", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Dragon.glb",
     "attachments": [ { "bone": "Head", "model_path": "res://assets/temins/creatures/whelp_flame.glb", "scale": 0.3, "up": 0.25 } ] },
 
-  // The LOWPO Rock Golem (CC0), with clips and moss of ours (art/blender/golemkit.py).
-  { "id": "mesh_lowpo_moss_golem", "primitive": "model", "height": 2.70, "radius": 0.80, "color": "#5a6a5a", "model_yaw": 180, "model_path": "res://assets/lowpo/golem/moss_golem.glb" }
+  // A golem of ours: stones on a skeleton, clips keyed in Blender (art/blender/golemkit.py).
+  { "id": "mesh_beast_moss_golem", "primitive": "model", "height": 2.70, "radius": 0.80, "color": "#5a6a5a", "model_yaw": 180, "model_path": "res://assets/temins/creatures/moss_golem.glb" }
 ]
