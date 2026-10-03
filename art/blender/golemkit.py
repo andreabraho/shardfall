@@ -1,36 +1,67 @@
-"""Act 2's golem (2026-10-03): the LOWPO Rock Golem (Standout 7, CC0, with your OK) brought to life here. It comes
-rigged on Blender's human metarig with no clips at all, so its clips are keyed in this file — the same way the beasts'
-are (`creaturekit.clip`), but posed by *aiming* each limb: a bone is told which way to point in the model's space
-(+X its left, -Y its front, +Z up) and the rotation that does it is worked out through its parents. A stone body
-moves stiffly, so a handful of key poses eased into one another is all it needs.
+"""Act 2's golem (2026-10-03): a body of stones of ours, each carried whole by one bone, and the clips that move
+it — keyed here by *aiming* each limb: a bone is told which way to point in the model's space (+X its left, -Y its
+front, +Z up) and the rotation that does it is worked out through its parents. A stone body moves stiffly, so a
+handful of key poses eased into one another is all it needs.
 
-`load()` brings the pack's model in, `animate(arm)` keys the clips the game looks for (Idle, Walk, Run, Attack,
-Spellcasting, HitReact, Death), `grow(arm, ...)` weighs a piece of ours to one of its bones.
+`skeleton()` makes the bones (named as Blender's human metarig names them), `body(arm, ...)` lays the stones on
+them, `animate(arm)` keys the clips the game looks for (Idle, Walk, Run, Attack, Spellcasting, HitReact, Death),
+and `grow(arm, ...)` weighs any further piece to one bone.
 """
 
 import math
-import os
 
 import bpy
 from mathutils import Quaternion, Vector
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-SOURCE = os.path.join(os.path.dirname(HERE), "lowpo", "golem")
+from creaturekit import Rig
+import temins as t
 
 
-def load(name="Rock_Golem"):
-    """The pack's model as it comes, its texture found beside it (the file names a path on its author's disk)."""
-    bpy.ops.import_scene.fbx(filepath=os.path.join(SOURCE, name + ".fbx"))
+def skeleton(name="golem"):
+    """A hunched thing three metres tall: hips at 1.25, a chest that leans over them, the head low and forward
+    between the shoulders, arms long enough that the fists hang by the knees."""
+    rig = Rig()
+    rig.add("spine", (0, 0, 1.25), (0, 0, 1.45))
+    rig.chain(["spine.001", "spine.002", "spine.003", "spine.004", "spine.005", "spine.006"],
+              [(0, 0, 1.45), (0, 0, 1.68), (0, 0.04, 1.95), (0, 0.12, 2.55), (0, -0.04, 2.62), (0, -0.2, 2.6), (0, -0.4, 2.95)], "spine")
 
-    for image in bpy.data.images:
-        image.filepath = os.path.join(SOURCE, "Texture.png")
-        image.reload()
+    for side, s in (("L", 1), ("R", -1)):
+        rig.add(f"shoulder.{side}", (0.1 * s, 0.08, 2.45), (0.85 * s, 0.08, 2.48), "spine.003")
+        rig.chain([f"upper_arm.{side}", f"forearm.{side}", f"hand.{side}"],
+                  [(0.85 * s, 0.08, 2.48), (1.02 * s, -0.02, 1.82), (1.08 * s, -0.16, 1.18), (1.1 * s, -0.24, 0.78)], f"shoulder.{side}")
+        rig.chain([f"thigh.{side}", f"shin.{side}", f"foot.{side}"],
+                  [(0.4 * s, 0.0, 1.25), (0.48 * s, -0.06, 0.68), (0.52 * s, 0.02, 0.14), (0.54 * s, -0.3, 0.05)], "spine")
 
-    return next(o for o in bpy.data.objects if o.type == "ARMATURE")
+    return rig.build(name)
+
+
+def body(arm, stone, dark, eyes):
+    """The stones: a great boulder of a chest and a hump behind it, a small head sunk forward, heavy fists."""
+    rock = t.rock
+
+    def side(s):
+        return "L" if s > 0 else "R"
+
+    grow(arm, rock("pelvis", 0.42, dark, at=(0, 0.02, 1.22), seed=11, squash=(1.5, 1.05, 0.75)), "spine")
+    grow(arm, rock("belly", 0.42, stone, at=(0, -0.02, 1.62), seed=12, squash=(1.25, 1.0, 0.85)), "spine.002")
+    grow(arm, rock("chest", 0.62, stone, at=(0, 0.04, 2.08), seed=13, squash=(1.5, 1.0, 0.92)), "spine.003")
+    grow(arm, rock("hump", 0.5, dark, at=(0, 0.4, 2.55), seed=14, squash=(1.35, 0.9, 0.8)), "spine.003")
+    grow(arm, rock("head", 0.3, stone, at=(0, -0.46, 2.8), seed=15, squash=(1.05, 1.0, 0.9)), "spine.006")
+    grow(arm, rock("brow", 0.2, dark, at=(0, -0.62, 2.9), seed=16, squash=(1.6, 0.7, 0.45)), "spine.006")
+
+    for s in (1, -1):
+        grow(arm, t.sphere(f"eye{s}", 0.065, eyes, at=(0.12 * s, -0.74, 2.8), subdivisions=2, squash=(1.3, 0.6, 0.8)), "spine.006")
+        grow(arm, rock(f"shoulder{s}", 0.46, dark, at=(0.88 * s, 0.06, 2.5), seed=20 + s, squash=(1.1, 1.05, 0.9)), f"upper_arm.{side(s)}")
+        grow(arm, rock(f"upper{s}", 0.3, stone, at=(0.98 * s, 0.02, 2.0), seed=22 + s, squash=(1.0, 1.0, 1.25)), f"upper_arm.{side(s)}")
+        grow(arm, rock(f"fore{s}", 0.36, stone, at=(1.06 * s, -0.1, 1.45), seed=24 + s, squash=(1.0, 1.0, 1.3)), f"forearm.{side(s)}")
+        grow(arm, rock(f"fist{s}", 0.42, dark, at=(1.1 * s, -0.22, 0.88), seed=26 + s, squash=(1.05, 1.1, 1.0)), f"hand.{side(s)}")
+        grow(arm, rock(f"thigh{s}", 0.32, stone, at=(0.45 * s, -0.03, 0.95), seed=28 + s, squash=(1.0, 1.0, 1.2)), f"thigh.{side(s)}")
+        grow(arm, rock(f"shin{s}", 0.3, stone, at=(0.5 * s, -0.02, 0.42), seed=30 + s, squash=(1.0, 1.0, 1.25)), f"shin.{side(s)}")
+        grow(arm, rock(f"foot{s}", 0.28, dark, at=(0.53 * s, -0.16, 0.1), seed=32 + s, squash=(1.05, 1.5, 0.5)), f"foot.{side(s)}")
 
 
 def grow(arm, obj, bone):
-    """A piece of ours carried by one bone: skinned to it whole, as the golem's own stones are."""
+    """A piece carried by one bone: skinned to it whole."""
     group = obj.vertex_groups.new(name=bone)
     group.add([v.index for v in obj.data.vertices], 1.0, "REPLACE")
     obj.parent = arm

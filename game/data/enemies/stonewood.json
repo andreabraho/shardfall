@@ -90,7 +90,7 @@
     "leash_radius": 24,
     "xp": 558,
     "drop_table": "dt_stonewood",
-    "visual": "mesh_lowpo_moss_golem",
+    "visual": "mesh_beast_moss_golem",
     "visual_scale": 1,
     "visual_tint": "#6a8a5a"
   },
