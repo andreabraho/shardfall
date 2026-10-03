@@ -128,13 +128,16 @@ public partial class PlayerCharacter : Node
         {
             var remaining = Progression.UnspentAttributePoints;
 
-            Progression.SpendAttributePoint(PlayerProfile.Class switch
+            var main = Progression.SpendAttributePoint(PlayerProfile.Class switch
             {
                 Kiln.Core.Foundation.CharacterClass.Blade or Kiln.Core.Foundation.CharacterClass.Archer => AttributeKind.Dex,
                 Kiln.Core.Foundation.CharacterClass.Shaman => AttributeKind.Int,
                 _ => AttributeKind.Str,
             });
-            if (remaining % 2 == 0) Progression.SpendAttributePoint(AttributeKind.Vit);
+            var vit = remaining % 2 == 0 && Progression.SpendAttributePoint(AttributeKind.Vit);
+
+            // Both at the cap: whatever is left the player places.
+            if (!main && !vit && !Progression.SpendAttributePoint(AttributeKind.Dex) && !Progression.SpendAttributePoint(AttributeKind.Int)) break;
         }
     }
 

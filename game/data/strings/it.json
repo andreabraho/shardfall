@@ -1181,5 +1181,6 @@
   "Family: {0}": "Famiglia: {0}",
   "Useful bonuses:": "Bonus utili:",
   "damage against {0}": "danni contro {0}",
-  "Yours now: +{0} % against {1}": "Ora hai: +{0} % contro {1}"
+  "Yours now: +{0} % against {1}": "Ora hai: +{0} % contro {1}",
+  "At most {0} from points.": "Al massimo {0} con i punti."
 }

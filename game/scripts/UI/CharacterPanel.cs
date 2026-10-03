@@ -375,8 +375,11 @@ public partial class CharacterPanel : CanvasLayer
             var worn = _combatant is null ? 0 : Value(_combatant.Stats.Attributes, kind) - Value(attributes, kind);
 
             row.Value.Text = worn > 0 ? $"{Value(attributes, kind)} +{worn}" : Value(attributes, kind).ToString();
-            row.Plus.Disabled = points <= 0;
+            // An attribute at the most points can make it (90) takes no more.
+            var capped = progression.IsCapped(kind);
+            row.Plus.Disabled = points <= 0 || capped;
             row.Plus.Visible = points > 0;
+            row.Plus.TooltipText = capped ? L10n.F("At most {0} from points.", Kiln.Core.Progression.CharacterProgression.MaxAttribute) : "";
         }
 
         RefreshDerived();

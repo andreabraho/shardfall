@@ -227,6 +227,21 @@ public class CharacterProgressionTests
     }
 
     [Fact]
+    public void PointsRaiseAnAttributeToNinetyAndNoFurther()
+    {
+        var p = new CharacterProgression();
+        p.GrantPoints(attributePoints: 200);
+
+        while (p.SpendAttributePoint(AttributeKind.Str)) { }
+
+        Assert.Equal(CharacterProgression.MaxAttribute, p.TotalAttributes.Str);
+        Assert.True(p.IsCapped(AttributeKind.Str));
+
+        // The points not spent are kept for the others.
+        Assert.True(p.SpendAttributePoint(AttributeKind.Vit));
+    }
+
+    [Fact]
     public void Respec_ReturnsEveryPoint()
     {
         var p = new CharacterProgression();

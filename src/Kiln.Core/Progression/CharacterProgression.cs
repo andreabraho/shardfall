@@ -55,6 +55,12 @@ public sealed class CharacterProgression
     public const int StartingAttributePoints = 3;
 
     /// <summary>
+    /// The most an attribute can reach from points placed (2026-10-03, at your call, as in the original).
+    /// What gear adds on top is not held to it.
+    /// </summary>
+    public const int MaxAttribute = 90;
+
+    /// <summary>
     /// Grants experience, already adjusted for zone band by the caller. Returns every level
     /// gained, because a single large quest reward can cross more than one.
     /// </summary>
@@ -114,10 +120,10 @@ public sealed class CharacterProgression
         UnspentSkillPoints += Math.Max(0, skillPoints);
     }
 
-    /// <summary>Spends one attribute point. False when there are none left.</summary>
+    /// <summary>Spends one attribute point. False when there are none left, or the attribute is already at <see cref="MaxAttribute"/>.</summary>
     public bool SpendAttributePoint(AttributeKind kind)
     {
-        if (UnspentAttributePoints <= 0) return false;
+        if (UnspentAttributePoints <= 0 || IsCapped(kind)) return false;
 
         UnspentAttributePoints--;
 
@@ -155,6 +161,15 @@ public sealed class CharacterProgression
 
         UnspentSkillPoints += skillPointsInUse;
     }
+
+    /// <summary>Whether points can no longer raise this attribute.</summary>
+    public bool IsCapped(AttributeKind kind) => kind switch
+    {
+        AttributeKind.Str => TotalAttributes.Str,
+        AttributeKind.Dex => TotalAttributes.Dex,
+        AttributeKind.Int => TotalAttributes.Int,
+        _ => TotalAttributes.Vit,
+    } >= MaxAttribute;
 
     /// <summary>Total attributes: the starting values plus everything assigned.</summary>
     public Attributes TotalAttributes => new(
