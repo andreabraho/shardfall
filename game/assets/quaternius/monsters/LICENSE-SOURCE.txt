@@ -29,3 +29,12 @@ Quaternius publishes both packs under CC0 1.0 Universal:
   https://quaternius.com/packs/ultimatemonsters.html
   https://quaternius.itch.io/animated-easy-enemies
   https://creativecommons.org/publicdomain/zero/1.0/
+
+Added 2026-10-03 for act 2 (downloaded with the user's OK), single .glb files from Poly Pizza, each
+model page marked "Public Domain (CC0)" and credited to Quaternius:
+  Mushroom_King     https://poly.pizza/m/grnFTziU8u   (Ultimate Monsters)
+  Glub_Evolved      https://poly.pizza/m/Z9lddNpM1M   (Ultimate Monsters)
+  Dragon_Evolved    https://poly.pizza/m/LlwD0QNUPj   (Ultimate Monsters)
+  Dragon            https://poly.pizza/m/3rUm1cN3yp   (Ultimate Monsters)
+  Frog_Poison       https://poly.pizza/m/37wofOCOzG   (Ultimate Monsters, "Frog")
+  Frog              https://poly.pizza/m/9Z2V8fpazF   (Quaternius animated frog, 2021)

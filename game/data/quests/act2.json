@@ -1,0 +1,51 @@
+[
+  // Act 2 (A2-02, 2026-10-02): as act 1 — a hunt, a shard and the boss for each map, one after the other.
+
+  // -- The Stonewood, band 27
+  { "id": "qst_stone_in_the_wood", "name": "$quest.qst_stone_in_the_wood.name",
+    "act": 2, "type": "story", "level_req": 27, "prerequisites": ["qst_into_the_catacombs"],
+    "objectives": [ { "type": "kill", "target": "mob_slate_wolf", "count": 15 } ],
+    "rewards": { "xp": 18676, "yang": 24300, "items": [] } },
+
+  { "id": "qst_stonewood_heart", "name": "$quest.qst_stonewood_heart.name",
+    "act": 2, "type": "story", "level_req": 28, "prerequisites": ["qst_stone_in_the_wood"],
+    "objectives": [ { "type": "shard", "target": "shd_petrified_heart", "count": 1 } ],
+    "rewards": { "xp": 19975, "yang": 25200, "items": [] } },
+
+  { "id": "qst_stonewood_stag", "name": "$quest.qst_stonewood_stag.name",
+    "act": 2, "type": "story", "level_req": 29, "prerequisites": ["qst_stonewood_heart"],
+    "objectives": [ { "type": "kill", "target": "mob_stone_stag", "count": 1 } ],
+    "rewards": { "xp": 28349, "yang": 34700, "items": [] } },
+
+  // -- The Drowned Mire, band 31
+  { "id": "qst_the_drowned_village", "name": "$quest.qst_the_drowned_village.name",
+    "act": 2, "type": "story", "level_req": 31, "prerequisites": ["qst_stonewood_stag"],
+    "objectives": [ { "type": "kill", "target": "mob_drowned", "count": 15 } ],
+    "rewards": { "xp": 24114, "yang": 27900, "items": [] } },
+
+  { "id": "qst_mire_bell", "name": "$quest.qst_mire_bell.name",
+    "act": 2, "type": "story", "level_req": 32, "prerequisites": ["qst_the_drowned_village"],
+    "objectives": [ { "type": "shard", "target": "shd_drowned_bell", "count": 1 } ],
+    "rewards": { "xp": 25573, "yang": 28800, "items": [] } },
+
+  { "id": "qst_mire_king", "name": "$quest.qst_mire_king.name",
+    "act": 2, "type": "story", "level_req": 33, "prerequisites": ["qst_mire_bell"],
+    "objectives": [ { "type": "kill", "target": "mob_drowned_king", "count": 1 } ],
+    "rewards": { "xp": 36004, "yang": 39500, "items": [] } },
+
+  // -- The Cinderlands, band 35
+  { "id": "qst_clans_of_the_fire", "name": "$quest.qst_clans_of_the_fire.name",
+    "act": 2, "type": "story", "level_req": 35, "prerequisites": ["qst_mire_king"],
+    "objectives": [ { "type": "kill", "target": "mob_ember_orc", "count": 15 } ],
+    "rewards": { "xp": 30184, "yang": 31500, "items": [] } },
+
+  { "id": "qst_cinder_anvil", "name": "$quest.qst_cinder_anvil.name",
+    "act": 2, "type": "story", "level_req": 36, "prerequisites": ["qst_clans_of_the_fire"],
+    "objectives": [ { "type": "shard", "target": "shd_cinder_anvil", "count": 1 } ],
+    "rewards": { "xp": 31799, "yang": 32400, "items": [] } },
+
+  { "id": "qst_cinder_warlord", "name": "$quest.qst_cinder_warlord.name",
+    "act": 2, "type": "story", "level_req": 37, "prerequisites": ["qst_cinder_anvil"],
+    "objectives": [ { "type": "kill", "target": "mob_burning_warlord", "count": 1 } ],
+    "rewards": { "xp": 44491, "yang": 44300, "items": [] } }
+]

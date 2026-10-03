@@ -1439,6 +1439,10 @@ def build(name):
     bene_blue, bene_gold = m("bene_blue", (0.07, 0.14, 0.40)), m("bene_gold", (0.95, 0.68, 0.20), metal=0.8, rough=0.3)
     char, rust = m("vigil_char", (0.09, 0.09, 0.10)), m("vigil_rust", (0.42, 0.14, 0.04))
 
+    mire_teal = m("mire_teal", (0.04, 0.17, 0.19))
+    verdigris = m("mire_verdigris", (0.16, 0.44, 0.36), metal=0.6, rough=0.4)
+    pearl = m("mire_pearl", (0.92, 0.95, 0.90), glow=0.5, rough=0.2)
+
     heads = {
         "trail_band": lambda: archer_head(name, green, feather_mat=m("feather_brown", (0.36, 0.22, 0.10)), feathers=1, ends=green, quill=bone),
         "ironfeather_band": lambda: archer_head(name, hide, feather_mat=m("feather_grey", (0.50, 0.53, 0.58), metal=0.5, rough=0.4), feathers=2, plate=iron, quill=iron),
@@ -1457,5 +1461,12 @@ def build(name):
         "jade_fillet": lambda: seer_head(name, white, trim=jade, ends=jade, gem=jade_stone, pendants=jade_stone),
         "wardens_diadem": lambda: seer_head(name, bene_blue, trim=bene_gold, disc=bene_gold, rays=8, pendants=m("warden_ice", (0.55, 0.85, 1.0), glow=1.0, rough=0.2)),
         "ashen_halo": lambda: seer_head(name, char, trim=rust, gem=ember, pendants=ember, halo=m("vigil_halo", (1.0, 0.36, 0.06), glow=0.9)),
+
+        # Act 2, the Drowned Mire (A2-03): verdigris, deep teal, coral and pearl — what the marsh kept.
+        "drowned_hood": lambda: archer_head(name, mire_teal, plate=verdigris, wings=m("mire_kelp", (0.10, 0.30, 0.16)), quill=verdigris, gem=pearl, ends=mire_teal),
+        "drowned_horns": lambda: asura_head(name, m("mire_deep", (0.03, 0.07, 0.09)), trim=verdigris, horn=m("mire_coral", (0.80, 0.30, 0.26), rough=0.6), horn_size=(0.22, 0.44), crown=7,
+                                            gem=pearl, curl=0.16),
+        "drowned_tiara": lambda: seer_head(name, mire_teal, trim=verdigris, gem=pearl, disc=verdigris, rays=7, pendants=pearl,
+                                           halo=m("mire_halo", (0.25, 0.95, 0.80), glow=0.8)),
     }
     return heads[name]()

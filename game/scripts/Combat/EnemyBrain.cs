@@ -309,6 +309,8 @@ public partial class EnemyBrain : CharacterBody3D
         if (_visual is VisualRoot root && !string.IsNullOrEmpty(def.Visual))
         {
             root.Apply(def.Visual, def.VisualTint, def.VisualScale);
+
+            if (def.VisualRecolour.Length > 0) root.Recolour(new Color(def.VisualRecolour), (float)def.VisualRecolourAmount, (float)def.VisualGlow);
             
             // Over the model, however tall it is. At a fixed height a big creature — a queen, a
             // colossus — stood with its own name inside its body.

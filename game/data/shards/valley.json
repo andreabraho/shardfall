@@ -175,5 +175,77 @@
       { "phase": "two",   "slots": [ { "role": "bruiser", "count": 2 }, { "role": "bomber", "count": 1 } ] },
       { "phase": "three", "slots": [ { "role": "bruiser", "count": 2 }, { "role": "mender", "count": 1, "anchor": true } ] }
     ]
+  },
+
+  // Act 2 (A2-01, 2026-10-02): the heart of a petrified tree, a bell the marsh swallowed, an anvil the orcs
+  // left in the fire. Their health is set against the reference Warrior, as their maps' creatures are.
+  {
+    "id": "shd_petrified_heart",
+    "name": "$shard.shd_petrified_heart.name",
+    "tier": 6,
+    "level": 29,
+    "hp": 140000,
+    "pulse_interval": 8.0,
+    "pulse_windup": 3.7,
+    "pulse_radius": 9.0,
+    "pulse_damage_coef": 2.3,
+    "reclamation_seconds": 11.0,
+    "reclamation_heal": 0.30,
+    "essence": 9,
+    "drop_table": "dt_shard_heart",
+    "boss_chance": 0.05,
+    "visual": "mesh_shard_heart",
+    "modifiers": ["frenzied", "warded", "twin"],
+    "waves": [
+      { "phase": "one",   "slots": [ { "role": "bruiser", "count": 7 }, { "role": "archer", "count": 2 } ] },
+      { "phase": "two",   "slots": [ { "role": "bruiser", "count": 5 }, { "role": "archer", "count": 2 }, { "role": "shielder", "count": 2 }, { "role": "bomber", "count": 1 } ] },
+      { "phase": "three", "slots": [ { "role": "bruiser", "count": 5 }, { "role": "bomber", "count": 2 }, { "role": "archer", "count": 1 }, { "role": "mender", "count": 1, "anchor": true } ] }
+    ]
+  },
+  {
+    "id": "shd_drowned_bell",
+    "name": "$shard.shd_drowned_bell.name",
+    "tier": 7,
+    "level": 33,
+    "hp": 170000,
+    "pulse_interval": 8.0,
+    "pulse_windup": 3.7,
+    "pulse_radius": 9.0,
+    "pulse_damage_coef": 2.3,
+    "reclamation_seconds": 11.0,
+    "reclamation_heal": 0.30,
+    "essence": 10,
+    "drop_table": "dt_shard_bell",
+    "boss_chance": 0.05,
+    "visual": "mesh_shard_bell",
+    "modifiers": ["frenzied", "warded", "venomous", "twin"],
+    "waves": [
+      { "phase": "one",   "slots": [ { "role": "bruiser", "count": 7 }, { "role": "archer", "count": 2 } ] },
+      { "phase": "two",   "slots": [ { "role": "bruiser", "count": 5 }, { "role": "archer", "count": 2 }, { "role": "shielder", "count": 2 }, { "role": "bomber", "count": 1 } ] },
+      { "phase": "three", "slots": [ { "role": "bruiser", "count": 5 }, { "role": "bomber", "count": 2 }, { "role": "archer", "count": 1 }, { "role": "mender", "count": 1, "anchor": true } ] }
+    ]
+  },
+  {
+    "id": "shd_cinder_anvil",
+    "name": "$shard.shd_cinder_anvil.name",
+    "tier": 8,
+    "level": 37,
+    "hp": 200000,
+    "pulse_interval": 8.0,
+    "pulse_windup": 3.7,
+    "pulse_radius": 9.0,
+    "pulse_damage_coef": 2.3,
+    "reclamation_seconds": 11.0,
+    "reclamation_heal": 0.30,
+    "essence": 11,
+    "drop_table": "dt_shard_anvil",
+    "boss_chance": 0.05,
+    "visual": "mesh_shard_anvil",
+    "modifiers": ["frenzied", "warded", "twin"],
+    "waves": [
+      { "phase": "one",   "slots": [ { "role": "bruiser", "count": 7 }, { "role": "archer", "count": 2 } ] },
+      { "phase": "two",   "slots": [ { "role": "bruiser", "count": 5 }, { "role": "archer", "count": 2 }, { "role": "shielder", "count": 2 }, { "role": "bomber", "count": 1 } ] },
+      { "phase": "three", "slots": [ { "role": "bruiser", "count": 5 }, { "role": "bomber", "count": 2 }, { "role": "archer", "count": 1 }, { "role": "mender", "count": 1, "anchor": true } ] }
+    ]
   }
 ]

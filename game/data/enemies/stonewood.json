@@ -1,0 +1,171 @@
+[
+  // The Stonewood (act 2, map one; A2-01, 2026-10-02) — a forest turned to stone, and what lives in it
+  // turned with it. The families are act 1's, so every bonus against them keeps its worth: slate wolves,
+  // shard spiders and basalt adders are animals, the moss golems, lichen caps and geodes are mystics.
+  // The Stone Stag holds the ring of standing stones in the south-west.
+  //
+  // Roles as act 1's rosters, role for role; the numbers are set against a level-28 Warrior in the
+  // tower's gear, upgraded and with its bonuses (`kiln balance --save`, docs/10-act-2.md).
+  {
+    "id": "mob_shard_spider",
+    "name": "$mob.mob_shard_spider.name",
+    "voice": "vox_insect",
+    "family": "animal",
+    "role": "bruiser",
+    "level": 27,
+    "stats": { "hp": 4500, "attack_power": 128, "defense": 110, "move_speed": 6.2 },
+    "abilities": [
+      { "id": "abl_shardling_bite", "cooldown": 1.9, "windup": 0.5, "damage_coef": 0.9 }
+    ],
+    "traits": { "group": 3 },
+    "ai": "bt_melee_chaser",
+    "aggro_radius": 12,
+    "leash_radius": 24,
+    "xp": 222,
+    "drop_table": "dt_stonewood",
+    "visual": "mesh_q_spider",
+    "visual_scale": 0.8,
+    "visual_tint": "#58c8c0",
+    "visual_recolour": "#58c8c0",
+    "visual_glow": 0.15
+  },
+  {
+    "id": "mob_slate_wolf",
+    "name": "$mob.mob_slate_wolf.name",
+    "voice": "vox_canine",
+    "family": "animal",
+    "role": "bruiser",
+    "level": 27,
+    "stats": { "hp": 9000, "attack_power": 170, "defense": 110, "move_speed": 5.7 },
+    "abilities": [
+      { "id": "abl_slatewolf_strike", "cooldown": 2.4, "windup": 0.55, "damage_coef": 1 },
+      { "id": "abl_slatewolf_lunge", "cooldown": 7, "windup": 1.5, "damage_coef": 1.6, "applies": { "kind": "bleed", "magnitude": 19, "duration": 4 }, "telegraph": { "shape": "cone", "radius": 2.6, "angle": 60 } }
+    ],
+    "traits": { "enrage_below": 0.3 },
+    "ai": "bt_melee_chaser",
+    "aggro_radius": 12,
+    "leash_radius": 24,
+    "xp": 445,
+    "drop_table": "dt_stonewood",
+    "visual": "mesh_beast_slate_wolf",
+    "visual_scale": 1,
+    "visual_tint": "#7a8088"
+  },
+  {
+    "id": "mob_basalt_adder",
+    "name": "$mob.mob_basalt_adder.name",
+    "voice": "vox_serpent",
+    "family": "animal",
+    "role": "archer",
+    "level": 28,
+    "stats": { "hp": 6330, "attack_power": 211, "defense": 77, "move_speed": 4.8 },
+    "abilities": [
+      { "id": "abl_basalt_spit", "cooldown": 2, "windup": 0.8, "damage_coef": 1.1, "range": 12, "applies": { "kind": "slow", "magnitude": 0.3, "duration": 2.5 } },
+      { "id": "abl_basalt_rain", "cooldown": 9, "windup": 1.6, "damage_coef": 1.4, "range": 11, "placement": "target", "applies": { "kind": "poison", "magnitude": 23, "duration": 4 }, "telegraph": { "shape": "circle", "radius": 2.8 } }
+    ],
+    "ai": "bt_ranged_kiter",
+    "aggro_radius": 14,
+    "leash_radius": 24,
+    "xp": 476,
+    "drop_table": "dt_stonewood",
+    "visual": "mesh_q_snake",
+    "visual_scale": 1.3,
+    "visual_tint": "#4a4e52",
+    "visual_recolour": "#4a4e52"
+  },
+  {
+    "id": "mob_moss_golem",
+    "name": "$mob.mob_moss_golem.name",
+    "voice": "vox_golem",
+    "family": "mystic",
+    "role": "shielder",
+    "level": 29,
+    "stats": { "hp": 16560, "attack_power": 160, "defense": 218, "move_speed": 3.7 },
+    "abilities": [
+      { "id": "abl_mossgolem_slam", "cooldown": 3.2, "windup": 0.9, "damage_coef": 1.15, "applies": { "kind": "stun", "duration": 0.8, "chance": 0.3 } },
+      { "id": "abl_mossgolem_aegis", "cooldown": 14, "windup": 2, "damage_coef": 0 }
+    ],
+    "ai": "bt_support_shielder",
+    "aggro_radius": 12,
+    "leash_radius": 24,
+    "xp": 558,
+    "drop_table": "dt_stonewood",
+    "visual": "mesh_lowpo_moss_golem",
+    "visual_scale": 1,
+    "visual_tint": "#6a8a5a"
+  },
+  {
+    "id": "mob_lichen_cap",
+    "name": "$mob.mob_lichen_cap.name",
+    "voice": "vox_plant",
+    "family": "mystic",
+    "role": "mender",
+    "level": 29,
+    "stats": { "hp": 8860, "attack_power": 146, "defense": 92, "move_speed": 4.2 },
+    "abilities": [
+      { "id": "abl_lichen_mend", "cooldown": 7, "windup": 1.45, "damage_coef": 0, "range": 10 },
+      { "id": "abl_lichen_bolt", "cooldown": 3, "windup": 0.85, "damage_coef": 0.9, "range": 9.5 }
+    ],
+    "ai": "bt_support_healer",
+    "aggro_radius": 13,
+    "leash_radius": 24,
+    "xp": 558,
+    "drop_table": "dt_stonewood",
+    "visual": "mesh_q_mushroom_king",
+    "visual_scale": 1,
+    "visual_tint": "#8aa890",
+    "visual_recolour": "#8aa890",
+    "visual_recolour_amount": 0.5
+  },
+  {
+    "id": "mob_geode_goleling",
+    "name": "$mob.mob_geode_goleling.name",
+    "voice": "vox_golem",
+    "family": "mystic",
+    "role": "bomber",
+    "level": 30,
+    "stats": { "hp": 7960, "attack_power": 314, "defense": 73, "move_speed": 5.2 },
+    "abilities": [
+      { "id": "abl_geode_burst", "cooldown": 1, "windup": 1.95, "damage_coef": 1.95, "applies": { "kind": "bleed", "magnitude": 35, "duration": 4 }, "telegraph": { "shape": "circle", "radius": 3.8 } }
+    ],
+    "ai": "bt_suicide_charger",
+    "aggro_radius": 13,
+    "leash_radius": 24,
+    "xp": 567,
+    "drop_table": "dt_stonewood",
+    "visual": "mesh_q_goleling",
+    "visual_scale": 1,
+    "visual_tint": "#8a5ac8",
+    "visual_recolour": "#8a5ac8",
+    "visual_glow": 0.2
+  },
+  {
+    "id": "mob_stone_stag",
+    "stun_resist": 0.6,
+    "name": "$mob.mob_stone_stag.name",
+    "voice": "vox_beast",
+    "family": "animal",
+    "role": "bruiser",
+    "level": 31,
+    "stats": { "hp": 430920, "attack_power": 194, "defense": 163, "move_speed": 5.4 },
+    "abilities": [
+      { "id": "abl_stag_gore", "cooldown": 2.3, "windup": 0.7, "damage_coef": 1.15 },
+      { "id": "abl_stag_sweep", "cooldown": 7.5, "windup": 2.35, "damage_coef": 1.6, "applies": { "kind": "bleed", "magnitude": 21, "duration": 4 }, "telegraph": { "shape": "cone", "radius": 5, "angle": 70 } },
+      { "id": "abl_stag_stamp", "cooldown": 12, "windup": 2.6, "damage_coef": 2.1, "applies": { "kind": "stun", "duration": 0.9, "chance": 0.5 }, "telegraph": { "shape": "circle", "radius": 5 } }
+    ],
+    "boss": true,
+    "phases": [
+      { "at": 0.7, "adds": "mob_slate_wolf", "add_count": 4 },
+      { "at": 0.35, "adds": "mob_slate_wolf", "add_count": 4, "cooldown_scale": 0.5 },
+      { "at": 0.15, "enrage": true }
+    ],
+    "ai": "bt_melee_chaser",
+    "aggro_radius": 12,
+    "leash_radius": 24,
+    "xp": 6890,
+    "drop_table": "dt_boss_stag",
+    "visual": "mesh_beast_stone_stag",
+    "visual_scale": 1,
+    "visual_tint": "#8a8f94"
+  }
+]

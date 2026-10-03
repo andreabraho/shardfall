@@ -18,6 +18,9 @@ dotnet run --project src/Kiln.Tools --no-build -- simulate
 echo "== campaign economy =="
 dotnet run --project src/Kiln.Tools --no-build -- economy
 
+echo "== act 2 scenes current? =="
+dotnet run --project src/Kiln.Tools --no-build -- scenes --check
+
 echo "== class balance =="
 dotnet run --project src/Kiln.Tools --no-build -- balance | tail -n 10
 

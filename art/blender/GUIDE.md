@@ -283,3 +283,36 @@ ours, and every item in `trinkets.BUILDERS`.
   wagging tails, anything under the ground (a flier must fly).
 - The other maps' monsters (Quaternius) are liked and **stay** for now; new monsters (act 2)
   are ours.
+
+---
+
+## 8. Act 2 (2026-10-02): a new land from act 1's models
+
+- **A map piece in one colour:** `"recolour": "#rrggbb"` (and `"glow"`) on a kit piece in
+  `world_kit.json` paints the whole model flat — a tree turned to stone, a rock burnt black, a
+  crystal that shines. Leafy trees turn into a pile of cards up close: use pines and dead trees.
+- **A creature in another land's colours:** `"visual_recolour"` (and `"visual_glow"`) on an enemy
+  turns every colour of its model toward one hue, keeping how light or dark each was.
+  `visual_tint` alone does nothing to a model.
+- **Shard stones** are plain `temins` and `armourkit` pieces joined (`models/petrified_heart.py`,
+  `drowned_bell.py`, `cinder_anvil.py`): `band` for anything turned (a bell), `spike` for anything
+  that points (a root, a flame, a crystal).
+- **A new headpiece for a class** is one line in its kit's table of heads (`classkit.build`,
+  `shadowkit.build`) and a three-line model file; the Warrior's is a model file of its own
+  (`models/drowned_crown.py`). Keep helms pointed, not domed.
+- **Scenes** come from `kiln scenes` (docs/10-act-2.md §5), not from Blender.
+- **A beast of another land** is a model file on the wolf's (`models/slate_wolf.py`, `ember_hound.py`,
+  `stone_stag.py`): its own `Proportions` and coat, then what makes it that land's — slabs and crystal
+  (`slate_wolf.stone_parts`), flame — as `beast.tuft`s rooted in the body and weighted to its bones.
+  Antlers are a `loft` for the beam and `tuft`s for the tines, on the head bone.
+- **A two-legged boss** keeps act 1's body and wears pieces of ours (`bosskit.py`): each built round the
+  origin in units of what it sits on (a head of radius 1), and hung on a bone by the visual's
+  `"attachments"` — `scale`, `up` and `forward` are shares of how high that bone stands, so they are
+  tuned by looking, in the game. A recolour leaves hung pieces alone.
+- **A creature from a pack** (Quaternius, CC0) is dressed the same way (`fieldkit.py`): its model as it comes, a
+  `visual_recolour` toward the land, and one piece of ours on a bone — crystal on a cap, weed on a back, a
+  crest, a flame. A pack whose clips have their own names (the frog's `Frog_*`) needs them in `ModelAnimator`.
+- **A rigged model with no clips** (the LOWPO golem) is animated in `golemkit.py`: aim each limb in the model's
+  space (`{"aim": (x, y, z)}`, +X its left, -Y its front), lay `turn`s and a root `move` over, ease between a few
+  key poses, and name the clips as the game looks for them (Idle, Walk, Run, Attack, Spellcasting, HitReact,
+  Death). A pack's model we only animate is written under that pack's folder (`"assets": "lowpo"`), not `temins/`.

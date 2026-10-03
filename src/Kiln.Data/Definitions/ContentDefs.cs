@@ -131,6 +131,18 @@ public sealed class EnemyDef : ContentDefBase
     public string? VisualTint { get; init; }
 
     /// <summary>
+    /// A colour its model is turned toward (A2-01): act 1's creatures in act 2's lands — an orc of the fire, a
+    /// wolf of slate. Every colour of the model keeps how light or dark it was and takes this hue, by
+    /// <see cref="VisualRecolourAmount"/>. Empty leaves the model as it was made.
+    /// </summary>
+    public string VisualRecolour { get; init; } = string.Empty;
+
+    public double VisualRecolourAmount { get; init; } = 0.55;
+
+    /// <summary>How much the recoloured model shines of its own light: embers, crystal.</summary>
+    public double VisualGlow { get; init; }
+
+    /// <summary>
     /// The kind of voice it has (REF-20): <c>vox_canine</c> means the sounds
     /// <c>vox_canine_alert</c>, when it sets on the player, and <c>vox_canine_death</c>.
     /// </summary>
@@ -678,6 +690,11 @@ public sealed class CosmeticDef : ContentDefBase
     /// thing standing on the grass sank into it (2026-09-30).
     /// </summary>
     public double Hover { get; init; }
+
+    /// <summary>Companion: a colour its model is turned toward, as an act 2 creature's is (A2-01), and how much it glows.</summary>
+    public string Recolour { get; init; } = string.Empty;
+
+    public double Glow { get; init; }
 }
 
 // ---------------------------------------------------------------------------
@@ -690,8 +707,33 @@ public sealed class CosmeticDef : ContentDefBase
 /// code ever names a mesh directly, so swapping placeholders for real art is a data edit
 /// and never a code edit.
 /// </summary>
+/// <summary>
+/// A model of ours hung on a creature by one of its bones (A2-01): a crown on a head, plates on shoulders. The
+/// piece is built round its origin in units of what it sits on; sizes here are shares of how high the bone stands
+/// above the creature's feet, so the same piece fits a body of any scale.
+/// </summary>
+public sealed class AttachmentDef
+{
+    public string Bone { get; init; } = string.Empty;
+    public string ModelPath { get; init; } = string.Empty;
+
+    /// <summary>The size of one of the piece's units.</summary>
+    public double Scale { get; init; } = 0.1;
+
+    /// <summary>Above the bone (up), in front of it (forward), as shares of the bone's height.</summary>
+    public double Up { get; init; }
+
+    public double Forward { get; init; }
+
+    /// <summary>Degrees it is tipped forward: a crown worn on a bowed head.</summary>
+    public double Pitch { get; init; }
+}
+
 public sealed class VisualDef : ContentDefBase
 {
+    /// <summary>Pieces of ours hung on the model's bones (A2-01).</summary>
+    public AttachmentDef[] Attachments { get; init; } = [];
+
     /// <summary>"capsule", "box", "cylinder", "sphere", "monolith" — or "model" once art exists.</summary>
     public string Primitive { get; init; } = "capsule";
 
@@ -1186,6 +1228,15 @@ public sealed class KitPieceDef : ContentDefBase
     public double[] Size { get; init; } = [1, 1, 1];
 
     public string Color { get; init; } = "#6b7280";
+
+    /// <summary>
+    /// A model painted over in one flat colour (A2-01): a tree turned to stone, a rock burnt black. Empty
+    /// leaves the model its own colours.
+    /// </summary>
+    public string Recolour { get; init; } = string.Empty;
+
+    /// <summary>How much a recoloured model shines of its own light: 0 for stone, more for a crystal or an ember.</summary>
+    public double Glow { get; init; }
 
     /// <summary>False for decoration the player walks through — grass, banners, decals.</summary>
     public bool Solid { get; init; } = true;

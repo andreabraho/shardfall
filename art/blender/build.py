@@ -35,7 +35,8 @@ def main():
     temins.reset()
     where = importlib.import_module(model).build()
 
-    out_dir = os.path.join(ROOT, "game", "assets", "temins", where["folder"])
+    # Ours go under temins/; a pack's model we only rig or animate stays under the pack's own folder ("assets").
+    out_dir = os.path.join(ROOT, "game", "assets", where.get("assets", "temins"), where["folder"])
     os.makedirs(out_dir, exist_ok=True)
     out = os.path.join(out_dir, where["name"] + ".glb")
     temins.export_glb(out)

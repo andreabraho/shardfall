@@ -6,5 +6,9 @@
   { "id": "stn_ward",        "name": "$item.stn_ward.name",        "level_req": 14, "rarity": "rare", "grid_size": [1, 1], "max_stack": 20, "base_stats": { "defense_flat": 12 },          "sell_value": 1400, "visual": "mesh_armor_a" },
   { "id": "stn_bane_undead", "name": "$item.stn_bane_undead.name", "level_req": 16, "rarity": "rare", "grid_size": [1, 1], "max_stack": 20, "base_stats": { "vs_family.undead": 10 },     "sell_value": 1800, "visual": "mesh_armor_a" },
   { "id": "stn_bane_animal", "name": "$item.stn_bane_animal.name", "level_req": 16, "rarity": "rare", "grid_size": [1, 1], "max_stack": 20, "base_stats": { "vs_family.animal": 10 },     "sell_value": 1800, "visual": "mesh_armor_a" },
-  { "id": "stn_bane_devil",  "name": "$item.stn_bane_devil.name",  "level_req": 16, "rarity": "rare", "grid_size": [1, 1], "max_stack": 20, "base_stats": { "vs_family.devil": 10 },      "sell_value": 1800, "visual": "mesh_armor_a" }
+  { "id": "stn_bane_devil",  "name": "$item.stn_bane_devil.name",  "level_req": 16, "rarity": "rare", "grid_size": [1, 1], "max_stack": 20, "base_stats": { "vs_family.devil": 10 },      "sell_value": 1800, "visual": "mesh_armor_a" },
+
+  // The two families act 1 had no stone against (A2-03, 2026-10-02): they drop where those families live.
+  { "id": "stn_bane_mystic", "name": "$item.stn_bane_mystic.name", "level_req": 16, "rarity": "rare", "grid_size": [1, 1], "max_stack": 20, "base_stats": { "vs_family.mystic": 10 },     "sell_value": 1800, "visual": "mesh_armor_a" },
+  { "id": "stn_bane_orc",    "name": "$item.stn_bane_orc.name",    "level_req": 16, "rarity": "rare", "grid_size": [1, 1], "max_stack": 20, "base_stats": { "vs_family.orc": 10 },        "sell_value": 1800, "visual": "mesh_armor_a" }
 ]

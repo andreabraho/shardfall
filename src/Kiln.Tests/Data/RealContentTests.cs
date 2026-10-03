@@ -123,7 +123,8 @@ public class RealContentTests
 
     /// <summary>
     /// The shape the user asked for (2026-09-27): the training in the first village, every step
-    /// in order; then for each open map a hunt, a stone and its boss; then the catacombs.
+    /// in order; then for each open map a hunt, a stone and its boss; then the catacombs; then act 2's
+    /// three maps, the same three steps each (A2-02).
     /// Written as a test so a content edit that quietly turns the chain into something else
     /// fails the build instead of shipping.
     /// </summary>
@@ -135,7 +136,10 @@ public class RealContentTests
         var steps = Kiln.Core.Quests.TutorialStep.All;
         var maps = new[] { "zone_ember_hollow", "zone_vale_approach", "zone_vale_floor", "zone_ridge", "zone_broken_gate" };
 
-        Assert.Equal(steps.Count + (maps.Length * 3) + 1, chain.Count);
+        var beyond = new[] { "zone_stonewood", "zone_drowned_mire", "zone_cinderlands" };
+        var tower = steps.Count + (maps.Length * 3);
+
+        Assert.Equal(tower + 1 + (beyond.Length * 3), chain.Count);
 
         for (var i = 0; i < steps.Count; i++)
         {
@@ -162,7 +166,23 @@ public class RealContentTests
             Assert.Equal(chain[at + 2].Id, Assert.Single(onward).RequiredQuest);
         }
 
-        Assert.Equal(Kiln.Core.Foundation.ObjectiveType.ClearTower, Assert.Single(chain[^1].Goals).Type);
+        Assert.Equal(Kiln.Core.Foundation.ObjectiveType.ClearTower, Assert.Single(chain[tower].Goals).Type);
+
+        for (var m = 0; m < beyond.Length; m++)
+        {
+            var zone = db.Zones[beyond[m]];
+            var at = tower + 1 + (m * 3);
+            var (hunt, stone, boss) = (Assert.Single(chain[at].Goals), Assert.Single(chain[at + 1].Goals), Assert.Single(chain[at + 2].Goals));
+
+            Assert.Equal(Kiln.Core.Foundation.ObjectiveType.Kill, hunt.Type);
+            Assert.Equal(Kiln.Core.Foundation.ObjectiveType.Shard, stone.Type);
+            Assert.Contains(stone.Target, zone.Shards);
+            Assert.True(db.Enemies[boss.Target].Boss, $"{boss.Target} is not a boss");
+            Assert.Contains(zone.SpawnFields, f => f.Entries.Any(e => e.Enemy == boss.Target));
+
+            // The boss opens the road on, where there is one.
+            if (m + 1 < beyond.Length) Assert.Equal(chain[at + 2].Id, Assert.Single(zone.Exits.Where(e => e.To == beyond[m + 1])).RequiredQuest);
+        }
 
         // The first quest has no prerequisite and each later one follows the one before it.
         Assert.Null(chain[0].Prerequisite);

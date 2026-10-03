@@ -32,6 +32,7 @@ public static class Program
                 "simulate" => SimulateCommand.Run(rest),
                 "economy" => EconomyCommand.Run(rest),
                 "balance" => BalanceCommand.Run(rest),
+                "scenes" => ScenesCommand.Run(rest),
                 "strings" => StringsCommand.Run(rest),
                 _ => Unknown(command),
             };
@@ -73,6 +74,9 @@ public static class Program
           economy  [--verbose]                Walk the campaign yang budget and check the player
                                               is money-constrained early and comfortable late.
                                               Exit code 1 if the economy has drifted.
+
+          scenes   [--check]                  Write act 2's map scenes from their layouts (A2-01);
+                                              --check fails if a scene is older than its layout.
 
           balance  [--verbose] [--upgrade <n>] Fight every class against the packs and bosses of act 1
                                               on averages (CLS-07). Exit code 1 if one stands more

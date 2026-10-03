@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using Kiln.Data.Definitions;
 
@@ -25,6 +26,57 @@ public static class VisualRegistry
     /// Builds the visual for a definition. Returns a plain MeshInstance3D for primitives,
     /// or an instanced scene once <c>primitive: "model"</c> and a model_path are set.
     /// </summary>
+    /// <summary>The name of a node that holds a piece hung on a bone: what recolours the creature leaves it alone.</summary>
+    public const string AttachedPrefix = "Attached";
+
+    /// <summary>Hangs the visual's pieces on its bones (A2-01), each upright over its bone as the creature stands at rest.</summary>
+    private static void Attach(Node3D instance, VisualDef def)
+    {
+        if (def.Attachments.Length == 0) return;
+
+        if (instance.FindChildren("*", "Skeleton3D", true, false).FirstOrDefault() is not Skeleton3D skeleton)
+        {
+            GD.PushWarning($"VisualRegistry: '{def.Id}' has attachments and no skeleton.");
+            return;
+        }
+
+        // From the skeleton's space to the model's own, where up is up whatever the pack's axes were.
+        var toModel = Transform3D.Identity;
+
+        for (Node node = skeleton; node != instance && node is Node3D spatial; node = node.GetParent()) toModel = spatial.Transform * toModel;
+
+        var index = 0;
+
+        foreach (var piece in def.Attachments)
+        {
+            var bone = skeleton.FindBone(piece.Bone);
+            var packed = bone < 0 ? null : ResourceLoader.Load<PackedScene>(piece.ModelPath);
+
+            if (packed is null)
+            {
+                GD.PushWarning($"VisualRegistry: '{def.Id}' cannot hang '{piece.ModelPath}' on '{piece.Bone}'.");
+                continue;
+            }
+
+            var rest = toModel * skeleton.GetBoneGlobalRest(bone);
+            var tall = Mathf.Abs(rest.Origin.Y);
+
+            // Where it should be in the model's space: over the bone, upright, facing the way the model faces (-Z).
+            var wanted = new Transform3D(
+                Basis.Identity.Rotated(Vector3.Right, Mathf.DegToRad((float)piece.Pitch)).Scaled(Vector3.One * (float)(piece.Scale * tall)),
+                rest.Origin + new Vector3(0, (float)(piece.Up * tall), (float)(-piece.Forward * tall)));
+
+            var holder = new BoneAttachment3D { Name = $"{AttachedPrefix}{index++}", BoneName = piece.Bone };
+            var hung = packed.Instantiate<Node3D>();
+
+            skeleton.AddChild(holder);
+            holder.AddChild(hung);
+
+            // The holder follows the bone; the piece keeps the place it had at rest.
+            hung.Transform = rest.AffineInverse() * wanted;
+        }
+    }
+
     public static Node3D Create(VisualDef def, string? tintOverride = null, double scale = 1.0)
     {
         if (def.Primitive == "model" && !string.IsNullOrEmpty(def.ModelPath))
@@ -57,6 +109,9 @@ public static class VisualRegistry
                 {
                     ModelFit.ByHeight(instance, (float)(def.Height * scale));
                 }
+
+                // After the fit: a crown must not count toward how tall the creature is.
+                Attach(instance, def);
 
                 return instance;
             }

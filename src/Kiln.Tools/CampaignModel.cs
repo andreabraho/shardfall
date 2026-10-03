@@ -39,4 +39,21 @@ public static class CampaignModel
         new("Broken Gate",    16,  1,  7, 3, 55, 7, 2, 2, "dt_gate_t4"),
         new("Catacombs",      20,  1,  6, 4, 60, 8, 2, 2, "dt_catacombs_t5"),
     ];
+
+    /// <summary>
+    /// Act 2 (A2-05): three maps past the tower. Walked on their own, from <see cref="Act2EntryLevel"/>: the
+    /// tower's creatures stop paying five levels over them, so whoever arrives has stopped between the gate's
+    /// 24 and 28 — and act 2's creatures are set against that character in upgraded gear, not a fresh one.
+    /// </summary>
+    public static readonly Zone[] Act2 =
+    [
+        new("Stonewood",      28,  1,  5, 6, 60, 9, 2, 2, "dt_stonewood"),
+        new("Drowned Mire",   32,  1,  5, 7, 60, 9, 2, 2, "dt_mire"),
+        new("Cinderlands",    36,  1,  6, 8, 70, 9, 2, 2, "dt_cinder"),
+    ];
+
+    public const int Act2EntryLevel = 26;
+
+    /// <summary>Where act 2 should leave the player: the level of its last boss, give or take one.</summary>
+    public const int Act2EndLevel = 40;
 }

@@ -441,7 +441,8 @@
     "scene": "res://scenes/broken_gate.tscn",
     "exits": [
       { "to": "zone_ridge" },
-      { "to": "zone_catacombs", "required_level": 18, "required_quest": "qst_gate_lich" }
+      { "to": "zone_catacombs", "required_level": 18, "required_quest": "qst_gate_lich" },
+      { "to": "zone_stonewood", "required_level": 24, "required_quest": "qst_into_the_catacombs" }
     ],
     "shrines": [
       { "id": "shr_gate_camp", "name": "$shrine.shr_gate_camp.name", "fast_travel": true },

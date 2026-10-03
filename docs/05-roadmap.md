@@ -455,11 +455,11 @@ new class's **weapons and armour are ours from Blender from the start** (no KayK
 
 | ID | Task | Owner | Notes |
 |---|---|---|---|
-| A2-01 | Three new maps, banded 23–40, perhaps a village as the act's base; themes to decide (the fire land can come back if Blender makes the lava) | **[C↔You]** | Each with its roster, three shards and a boss |
-| A2-02 | Quests: kill, shard and boss per map, as in act 1 | **[C]** | |
-| A2-03 | New gear 24–40 for every class, +0 to +9 | **[C]** | |
-| A2-04 | **Upgrade materials from monsters**: each map's creatures drop parts (spider eyes and the like) that the new gear's higher steps ask for | **[C↔You]** | Replaces the generic scrap on the new tier only |
-| A2-05 | Balance: experience, gold and drops for 23–40 | **[C]** | |
+| A2-01 | Three new maps, banded 27–40: the Stonewood, the Drowned Mire, the Cinderlands (themes chosen by you, 2026-10-02) | **[C↔You]** | 2026-10-02, built, to be tested — docs/10-act-2.md. Act 1's families in new lands; scenes written by `kiln scenes`; creatures act 1's models recoloured but the three beasts, which are ours, and the two-legged bosses, which wear pieces of ours hung on their bones; the shard stones ours. An outpost with a smith and a merchant at the first way in, a pedlar at the other two; a look from each boss |
+| A2-02 | Quests: kill, shard and boss per map, as in act 1 | **[C]** | 2026-10-02, built: nine, after the tower; the elder speaks the first of each map |
+| A2-03 | New gear, +0 to +9 — at your call (2026-10-02) no armours and no weapons until the next dungeon: an earring, a headpiece for each class, a shield and boots | **[C]** | 2026-10-02, built: the five headpieces modelled, all eight icons rendered; stones against mystics and orcs added |
+| A2-04 | **Upgrade materials from monsters**: each map's creatures drop parts (spider eyes and the like) that the new gear's higher steps ask for | **[C↔You]** | 2026-10-02, built: a common part off any creature and a rare one off the boss and the shards, for each map; its new gear takes nothing else |
+| A2-05 | Balance: experience, gold and drops for 23–40 | **[C]** | 2026-10-02, first pass: creatures set against your saved level-28 Warrior (`kiln balance --save`), at half the right family bonus. Experience checked by `kiln simulate` (26 → 39–40); gold estimated only (docs/10-act-2.md §7) |
 
 ### P4 — Mounts
 

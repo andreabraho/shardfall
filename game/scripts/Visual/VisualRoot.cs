@@ -399,6 +399,55 @@ public partial class VisualRoot : Node3D
         Position = _restPosition + (_lungeDirection * _lungeDistance * (float)curve);
     }
 
+    /// <summary>
+    /// Turns every colour of the model toward one hue (A2-01), keeping how light or dark each was: the same
+    /// creature in another land's colours. Its darkest parts — a pupil, a claw — stay as they are.
+    /// </summary>
+    public void Recolour(Color hue, float amount, float glow)
+    {
+        if (_current is null) return;
+
+        var copies = new System.Collections.Generic.Dictionary<Material, Material>();
+
+        foreach (var node in _current.FindChildren("*", "MeshInstance3D", true, false))
+        {
+            if (node is not MeshInstance3D mesh || mesh.Mesh is null) continue;
+
+            // A piece hung on a bone keeps the colours it was made in.
+            if (_current.GetPathTo(mesh).ToString().Contains(VisualRegistry.AttachedPrefix)) continue;
+
+            for (var surface = 0; surface < mesh.Mesh.GetSurfaceCount(); surface++)
+            {
+                if (mesh.GetActiveMaterial(surface) is not BaseMaterial3D made) continue;
+
+                if (!copies.TryGetValue(made, out var copy))
+                {
+                    var painted = (BaseMaterial3D)made.Duplicate();
+                    var was = made.AlbedoColor;
+                    var light = was.Luminance;
+
+                    // A texture carries the colours itself: the hue is laid over all of it, lightened so it does not darken.
+                    var over = made.AlbedoTexture is not null
+                        ? Colors.White.Lerp(hue.Lightened(0.35f), amount)
+                        : light < 0.02f ? was : was.Lerp(hue * (0.35f + (light * 1.7f)), amount);
+
+                    painted.AlbedoColor = new Color(over.R, over.G, over.B, was.A);
+
+                    if (glow > 0 && light >= 0.02f)
+                    {
+                        painted.EmissionEnabled = true;
+                        painted.Emission = hue;
+                        painted.EmissionEnergyMultiplier = glow;
+                    }
+
+                    copies[made] = copy = painted;
+                }
+
+                mesh.SetSurfaceOverrideMaterial(surface, copy);
+            }
+        }
+    }
+
     /// <summary>Replaces the current visual. Safe to call at runtime (used by the debug tools).</summary>
     public void Apply(string visualId, string? tint = null, double scale = 1.0)
     {

@@ -322,5 +322,51 @@
   { "id": "mesh_shield_a",              "primitive": "box",      "height": 0.70, "radius": 0.26, "color": "#7f8c99" },
   { "id": "mesh_boots_a",               "primitive": "box",      "height": 0.30, "radius": 0.16, "color": "#6b533c" },
   { "id": "mesh_trinket_a",             "primitive": "sphere",   "height": 0.16, "radius": 0.08, "color": "#e0c979" },
-  { "id": "mesh_stone_a",               "primitive": "sphere",   "height": 0.18, "radius": 0.09, "color": "#8fa2b5" }
+  { "id": "mesh_stone_a",               "primitive": "sphere",   "height": 0.18, "radius": 0.09, "color": "#8fa2b5" },
+
+  // Act 2's shards (A2-01, 2026-10-02): ours, made in Blender (art/blender/models). Their colour is the colour
+  // they glow (ShardGlow).
+  { "id": "mesh_shard_heart", "primitive": "model", "height": 4.40, "radius": 1.20, "color": "#58e0d0", "model_yaw": 0, "model_path": "res://assets/temins/shards/petrified_heart.glb" },
+  { "id": "mesh_shard_bell",  "primitive": "model", "height": 4.20, "radius": 1.30, "color": "#7ac89a", "model_yaw": 0, "model_path": "res://assets/temins/shards/drowned_bell.glb" },
+  { "id": "mesh_shard_anvil", "primitive": "model", "height": 4.30, "radius": 1.30, "color": "#ff7a2a", "model_yaw": 0, "model_path": "res://assets/temins/shards/cinder_anvil.glb" }
+,
+
+  // Act 2's headpieces (A2-03, 2026-10-02): the Drowned Mire's, one for each class.
+  { "id": "mesh_hlm_drowned_crown", "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#1a5a4a", "model_path": "res://assets/temins/armour/drowned_crown.glb" },
+  { "id": "mesh_hlm_drowned_veil",  "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#1a5a4a", "model_path": "res://assets/temins/armour/drowned_veil.glb" },
+  { "id": "mesh_hlm_drowned_hood",  "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#1a5a4a", "model_path": "res://assets/temins/armour/drowned_hood.glb" },
+  { "id": "mesh_hlm_drowned_horns", "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#1a5a4a", "model_path": "res://assets/temins/armour/drowned_horns.glb" },
+  { "id": "mesh_hlm_drowned_tiara", "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#1a5a4a", "model_path": "res://assets/temins/armour/drowned_tiara.glb" },
+
+  // Act 2's beasts (A2-01, 2026-10-02): ours, from the creature kit (art/blender/models).
+  { "id": "mesh_beast_slate_wolf",  "primitive": "model", "height": 1.15, "radius": 0.50, "color": "#5a6068", "model_yaw": 180, "model_path": "res://assets/temins/creatures/slate_wolf.glb" },
+  { "id": "mesh_beast_ember_hound", "primitive": "model", "height": 1.00, "radius": 0.42, "color": "#2a1a18", "model_yaw": 180, "model_path": "res://assets/temins/creatures/ember_hound.glb" },
+  { "id": "mesh_beast_stone_stag",  "primitive": "model", "height": 3.30, "radius": 0.95, "color": "#6a7078", "model_yaw": 180, "model_path": "res://assets/temins/creatures/stone_stag.glb" },
+
+  // Act 2's two-legged bosses (A2-01, 2026-10-02): act 1's bodies, and pieces of ours hung on their bones.
+  { "id": "mesh_boss_drowned_king", "primitive": "model", "height": 2.10, "radius": 0.60, "color": "#2a5a6a", "model_yaw": 180, "model_path": "res://assets/quaternius/zombies/Zombie_Chubby.gltf",
+    "attachments": [
+      { "bone": "Head", "model_path": "res://assets/temins/creatures/king_crown.glb", "scale": 0.13, "up": 0.16, "forward": 0.02 },
+      { "bone": "Neck", "model_path": "res://assets/temins/creatures/king_mantle.glb", "scale": 0.42, "up": -0.02 }
+    ] },
+  { "id": "mesh_boss_burning_warlord", "primitive": "model", "height": 1.90, "radius": 0.50, "color": "#d0401a", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Orc.glb",
+    "attachments": [
+      { "bone": "Head", "model_path": "res://assets/temins/creatures/warlord_helm.glb", "scale": 0.34, "up": 0.20, "forward": 0.02 },
+      { "bone": "Neck", "model_path": "res://assets/temins/creatures/warlord_pauldrons.glb", "scale": 0.46, "up": -0.14 }
+    ] },
+
+  // Act 2's creatures from Quaternius (CC0, 2026-10-03): animated as they come, recoloured by the enemy, with pieces of ours.
+  { "id": "mesh_q_mushroom_king", "primitive": "model", "height": 1.90, "radius": 0.60, "color": "#8aa890", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Mushroom_King.glb",
+    "attachments": [ { "bone": "Head", "model_path": "res://assets/temins/creatures/lichen_crystals.glb", "scale": 0.7, "up": 0.6 } ] },
+  { "id": "mesh_q_toad",          "primitive": "model", "height": 1.30, "radius": 0.85, "color": "#4a6a34", "model_yaw": 0, "model_path": "res://assets/quaternius/monsters/Frog.glb",
+    "attachments": [ { "bone": "Torso", "model_path": "res://assets/temins/creatures/mire_weed.glb", "scale": 1.0, "up": 0.3 } ] },
+  { "id": "mesh_q_frog_poison",   "primitive": "model", "height": 1.60, "radius": 0.50, "color": "#7a8a3a", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Frog_Poison.glb" },
+  { "id": "mesh_q_glub",          "primitive": "model", "height": 1.60, "radius": 0.55, "color": "#5a7a3a", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Glub_Evolved.glb" },
+  { "id": "mesh_q_drake",         "primitive": "model", "height": 2.00, "radius": 0.75, "color": "#d0441e", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Dragon_Evolved.glb",
+    "attachments": [ { "bone": "Head", "model_path": "res://assets/temins/creatures/drake_crest.glb", "scale": 0.45, "up": 0.25 } ] },
+  { "id": "mesh_q_whelp",         "primitive": "model", "height": 1.35, "radius": 0.50, "color": "#ff7a2a", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Dragon.glb",
+    "attachments": [ { "bone": "Head", "model_path": "res://assets/temins/creatures/whelp_flame.glb", "scale": 0.3, "up": 0.25 } ] },
+
+  // The LOWPO Rock Golem (CC0), with clips and moss of ours (art/blender/golemkit.py).
+  { "id": "mesh_lowpo_moss_golem", "primitive": "model", "height": 2.70, "radius": 0.80, "color": "#5a6a5a", "model_yaw": 180, "model_path": "res://assets/lowpo/golem/moss_golem.glb" }
 ]

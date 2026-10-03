@@ -44,7 +44,7 @@ def load_json(path):
 def items():
     visuals = {v["id"]: v for v in load_json(os.path.join(DATA, "tables", "visuals.json"))}
     found = []
-    for name in ("weapons.json", "armor.json", "accessories.json"):
+    for name in ("weapons.json", "armor.json", "accessories.json", "materials.json"):
         for item in load_json(os.path.join(DATA, "items", name)):
             # Gear never drawn on the character is built for its icon alone.
             if item["id"] in trinkets.BUILDERS:
@@ -137,7 +137,7 @@ def render(item_id, path, cell):
     # little to the right of the front and a little above.
     yaw, pitch = {
         "wpn": (18, 4), "rng": (20, 32), "ear": (20, 10), "nck": (8, 6),
-        "shd": (22, 8), "bts": (35, 16), "brc": (22, 18),
+        "shd": (22, 8), "bts": (35, 16), "brc": (22, 18), "mat": (24, 18),
     }.get(kind, (24, 5))
     direction = Vector((math.sin(math.radians(yaw)), -math.cos(math.radians(yaw)), math.tan(math.radians(pitch)))).normalized()
     cam.location = centre + direction * 10

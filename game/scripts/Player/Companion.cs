@@ -60,6 +60,8 @@ public partial class Companion : CharacterBody3D
     {
         AddToGroup("companions");
         _visual.Apply(_look.Visual, null, _look.Scale);
+
+        if (_look.Recolour.Length > 0) _visual.Recolour(new Color(_look.Recolour), 0.55f, (float)_look.Glow);
         _player = GetTree().GetFirstNodeInGroup("player") as Node3D;
 
         if (_player is not null) GlobalPosition = Beside(_player);

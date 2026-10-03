@@ -457,5 +457,146 @@
       { "item": "stn_bane_undead", "weight": 0, "chance": 0.184, "count_range": [1, 1] },
       { "item": "stn_bane_devil", "weight": 0, "chance": 0.184, "count_range": [1, 1] }
     ]
+  },
+
+  // -- Act 2 (A2-03, A2-04; 2026-10-02): each map its creatures' table, its boss's and its shard's. The map's new
+  // piece and nothing else of gear; the map's parts; the stones against the two families that live there.
+  {
+    "id": "dt_stonewood",
+    "yang_range": [1700, 3740],
+    "entries": [
+      { "item": "mat_slate_fang", "weight": 60, "chance": 0.16, "count_range": [1, 2] },
+      { "item": "mat_steel_core", "weight": 40, "chance": 0.1, "count_range": [1, 2] },
+      { "item": "mat_shard_essence", "weight": 24, "chance": 0.06, "count_range": [1, 2] },
+      { "item": "mat_radiant_core", "weight": 6, "chance": 0.015, "count_range": [1, 1] },
+      { "item": "mat_mutation_ink", "weight": 20, "chance": 0.055, "count_range": [1, 1] },
+      { "item": "mat_boring_stone", "weight": 20, "chance": 0.055, "count_range": [1, 1] },
+      { "item": "stn_bane_animal", "weight": 10, "chance": 0.025, "count_range": [1, 1] },
+      { "item": "stn_bane_mystic", "weight": 10, "chance": 0.025, "count_range": [1, 1] },
+      { "item": "ear_stoneheart", "weight": 4, "chance": 0.006, "count_range": [1, 1] }
+    ]
+  },
+  {
+    "id": "dt_boss_stag",
+    "yang_range": [23800, 34000],
+    "picks": 2,
+    "entries": [
+      { "item": "mat_blessing_scroll", "weight": 0, "chance": 1, "count_range": [1, 1] },
+      { "item": "ear_stoneheart", "weight": 8, "chance": 0.021, "count_range": [1, 1] },
+      { "item": "stn_bane_animal", "weight": 6, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "stn_bane_mystic", "weight": 6, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "mat_stag_crystal", "weight": 0, "chance": 1, "count_range": [2, 3] },
+      { "item": "mat_slate_fang", "weight": 0, "chance": 1, "count_range": [4, 8] },
+      { "item": "mat_shard_essence", "weight": 0, "chance": 0.6, "count_range": [1, 2] },
+      { "item": "mat_radiant_core", "weight": 0, "chance": 0.35, "count_range": [1, 1] }
+    ]
+  },
+  {
+    "id": "dt_shard_heart",
+    "yang_range": [15300, 34000],
+    "picks": 2,
+    "entries": [
+      { "item": "ear_stoneheart", "weight": 8, "chance": 0.021, "count_range": [1, 1] },
+      { "item": "stn_bane_animal", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "stn_bane_mystic", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "mat_stag_crystal", "weight": 0, "chance": 0.5, "count_range": [1, 1] },
+      { "item": "mat_slate_fang", "weight": 0, "chance": 1, "count_range": [2, 5] },
+      { "item": "mat_boring_stone", "weight": 0, "chance": 0.5, "count_range": [1, 1] },
+      { "item": "mat_mutation_ink", "weight": 0, "chance": 0.3, "count_range": [1, 1] },
+      { "item": "mat_shard_essence", "weight": 0, "chance": 0.4, "count_range": [1, 1] }
+    ]
+  },
+  {
+    "id": "dt_mire",
+    "yang_range": [2100, 4620],
+    "entries": [
+      { "item": "mat_bog_marrow", "weight": 60, "chance": 0.16, "count_range": [1, 2] },
+      { "item": "mat_steel_core", "weight": 40, "chance": 0.1, "count_range": [1, 2] },
+      { "item": "mat_shard_essence", "weight": 24, "chance": 0.06, "count_range": [1, 2] },
+      { "item": "mat_radiant_core", "weight": 6, "chance": 0.015, "count_range": [1, 1] },
+      { "item": "mat_mutation_ink", "weight": 20, "chance": 0.055, "count_range": [1, 1] },
+      { "item": "mat_boring_stone", "weight": 20, "chance": 0.055, "count_range": [1, 1] },
+      { "item": "stn_bane_undead", "weight": 10, "chance": 0.025, "count_range": [1, 1] },
+      { "item": "stn_bane_animal", "weight": 10, "chance": 0.025, "count_range": [1, 1] },
+      { "item": "hlm_drowned_crown", "weight": 4, "chance": 0.006, "count_range": [1, 1] }
+    ]
+  },
+  {
+    "id": "dt_boss_king",
+    "yang_range": [29400, 42000],
+    "picks": 2,
+    "entries": [
+      { "item": "mat_blessing_scroll", "weight": 0, "chance": 1, "count_range": [1, 1] },
+      { "item": "hlm_drowned_crown", "weight": 8, "chance": 0.021, "count_range": [1, 1] },
+      { "item": "stn_bane_undead", "weight": 6, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "stn_bane_animal", "weight": 6, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "mat_kings_pearl", "weight": 0, "chance": 1, "count_range": [2, 3] },
+      { "item": "mat_bog_marrow", "weight": 0, "chance": 1, "count_range": [4, 8] },
+      { "item": "mat_shard_essence", "weight": 0, "chance": 0.6, "count_range": [1, 2] },
+      { "item": "mat_radiant_core", "weight": 0, "chance": 0.35, "count_range": [1, 1] }
+    ]
+  },
+  {
+    "id": "dt_shard_bell",
+    "yang_range": [18900, 42000],
+    "picks": 2,
+    "entries": [
+      { "item": "hlm_drowned_crown", "weight": 8, "chance": 0.021, "count_range": [1, 1] },
+      { "item": "stn_bane_undead", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "stn_bane_animal", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "mat_kings_pearl", "weight": 0, "chance": 0.5, "count_range": [1, 1] },
+      { "item": "mat_bog_marrow", "weight": 0, "chance": 1, "count_range": [2, 5] },
+      { "item": "mat_boring_stone", "weight": 0, "chance": 0.5, "count_range": [1, 1] },
+      { "item": "mat_mutation_ink", "weight": 0, "chance": 0.3, "count_range": [1, 1] },
+      { "item": "mat_shard_essence", "weight": 0, "chance": 0.4, "count_range": [1, 1] }
+    ]
+  },
+  {
+    "id": "dt_cinder",
+    "yang_range": [2600, 5720],
+    "entries": [
+      { "item": "mat_ember_gland", "weight": 60, "chance": 0.16, "count_range": [1, 2] },
+      { "item": "mat_steel_core", "weight": 40, "chance": 0.1, "count_range": [1, 2] },
+      { "item": "mat_shard_essence", "weight": 24, "chance": 0.06, "count_range": [1, 2] },
+      { "item": "mat_radiant_core", "weight": 6, "chance": 0.015, "count_range": [1, 1] },
+      { "item": "mat_mutation_ink", "weight": 20, "chance": 0.055, "count_range": [1, 1] },
+      { "item": "mat_boring_stone", "weight": 20, "chance": 0.055, "count_range": [1, 1] },
+      { "item": "stn_bane_orc", "weight": 10, "chance": 0.025, "count_range": [1, 1] },
+      { "item": "stn_bane_animal", "weight": 10, "chance": 0.025, "count_range": [1, 1] },
+      { "item": "shd_cinder_bulwark", "weight": 4, "chance": 0.006, "count_range": [1, 1] },
+      { "item": "bts_ember_treads", "weight": 4, "chance": 0.006, "count_range": [1, 1] }
+    ]
+  },
+  {
+    "id": "dt_boss_burnlord",
+    "yang_range": [36400, 52000],
+    "picks": 2,
+    "entries": [
+      { "item": "mat_blessing_scroll", "weight": 0, "chance": 1, "count_range": [1, 1] },
+      { "item": "shd_cinder_bulwark", "weight": 8, "chance": 0.021, "count_range": [1, 1] },
+      { "item": "bts_ember_treads", "weight": 8, "chance": 0.021, "count_range": [1, 1] },
+      { "item": "stn_bane_orc", "weight": 6, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "stn_bane_animal", "weight": 6, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "mat_warlord_slag", "weight": 0, "chance": 1, "count_range": [2, 3] },
+      { "item": "mat_ember_gland", "weight": 0, "chance": 1, "count_range": [4, 8] },
+      { "item": "mat_shard_essence", "weight": 0, "chance": 0.6, "count_range": [1, 2] },
+      { "item": "mat_radiant_core", "weight": 0, "chance": 0.35, "count_range": [1, 1] }
+    ]
+  },
+  {
+    "id": "dt_shard_anvil",
+    "yang_range": [23400, 52000],
+    "picks": 2,
+    "entries": [
+      { "item": "shd_cinder_bulwark", "weight": 8, "chance": 0.021, "count_range": [1, 1] },
+      { "item": "bts_ember_treads", "weight": 8, "chance": 0.021, "count_range": [1, 1] },
+      { "item": "stn_bane_orc", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "stn_bane_animal", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
+      { "item": "mat_warlord_slag", "weight": 0, "chance": 0.5, "count_range": [1, 1] },
+      { "item": "mat_ember_gland", "weight": 0, "chance": 1, "count_range": [2, 5] },
+      { "item": "mat_boring_stone", "weight": 0, "chance": 0.5, "count_range": [1, 1] },
+      { "item": "mat_mutation_ink", "weight": 0, "chance": 0.3, "count_range": [1, 1] },
+      { "item": "mat_shard_essence", "weight": 0, "chance": 0.4, "count_range": [1, 1] }
+    ]
   }
 ]
