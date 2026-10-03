@@ -90,10 +90,9 @@
     "leash_radius": 24,
     "xp": 558,
     "drop_table": "dt_stonewood",
-    "visual": "mesh_q_goleling_evo",
-    "visual_scale": 1.3,
-    "visual_tint": "#6a8a5a",
-    "visual_recolour": "#6a8a5a"
+    "visual": "mesh_lowpo_moss_golem",
+    "visual_scale": 1,
+    "visual_tint": "#6a8a5a"
   },
   {
     "id": "mob_lichen_cap",

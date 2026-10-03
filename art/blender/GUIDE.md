@@ -312,3 +312,7 @@ ours, and every item in `trinkets.BUILDERS`.
 - **A creature from a pack** (Quaternius, CC0) is dressed the same way (`fieldkit.py`): its model as it comes, a
   `visual_recolour` toward the land, and one piece of ours on a bone — crystal on a cap, weed on a back, a
   crest, a flame. A pack whose clips have their own names (the frog's `Frog_*`) needs them in `ModelAnimator`.
+- **A rigged model with no clips** (the LOWPO golem) is animated in `golemkit.py`: aim each limb in the model's
+  space (`{"aim": (x, y, z)}`, +X its left, -Y its front), lay `turn`s and a root `move` over, ease between a few
+  key poses, and name the clips as the game looks for them (Idle, Walk, Run, Attack, Spellcasting, HitReact,
+  Death). A pack's model we only animate is written under that pack's folder (`"assets": "lowpo"`), not `temins/`.

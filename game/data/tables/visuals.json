@@ -365,5 +365,8 @@
   { "id": "mesh_q_drake",         "primitive": "model", "height": 2.00, "radius": 0.75, "color": "#d0441e", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Dragon_Evolved.glb",
     "attachments": [ { "bone": "Head", "model_path": "res://assets/temins/creatures/drake_crest.glb", "scale": 0.45, "up": 0.25 } ] },
   { "id": "mesh_q_whelp",         "primitive": "model", "height": 1.35, "radius": 0.50, "color": "#ff7a2a", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Dragon.glb",
-    "attachments": [ { "bone": "Head", "model_path": "res://assets/temins/creatures/whelp_flame.glb", "scale": 0.3, "up": 0.25 } ] }
+    "attachments": [ { "bone": "Head", "model_path": "res://assets/temins/creatures/whelp_flame.glb", "scale": 0.3, "up": 0.25 } ] },
+
+  // The LOWPO Rock Golem (CC0), with clips and moss of ours (art/blender/golemkit.py).
+  { "id": "mesh_lowpo_moss_golem", "primitive": "model", "height": 2.70, "radius": 0.80, "color": "#5a6a5a", "model_yaw": 180, "model_path": "res://assets/lowpo/golem/moss_golem.glb" }
 ]
