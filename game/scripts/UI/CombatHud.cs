@@ -19,6 +19,7 @@ public partial class CombatHud : CanvasLayer
     private Label _targetLabel = null!;
 
     private PlayerCombat? _combat;
+    private Combatant? _self;
 
     public override void _Ready()
     {
@@ -30,6 +31,7 @@ public partial class CombatHud : CanvasLayer
     private void Bind()
     {
         _combat = GetTree().GetFirstNodeInGroup("player")?.GetNodeOrNull<PlayerCombat>("PlayerCombat");
+        _self = GetTree().GetFirstNodeInGroup("player")?.GetNodeOrNull<Combatant>("Combatant");
     }
 
     private void BuildTargetFrame()
@@ -42,11 +44,13 @@ public partial class CombatHud : CanvasLayer
             OffsetRight = 160,
             OffsetTop = 24,
             Visible = false,
+            // Hovered, it says what helps against the target: its family and the bonuses against it.
+            MouseFilter = Control.MouseFilterEnum.Stop,
         };
 
-        var box = new VBoxContainer();
-        _targetLabel = new Label { HorizontalAlignment = HorizontalAlignment.Center };
-        _targetBar = new ProgressBar { MinValue = 0, MaxValue = 1, Value = 1, ShowPercentage = false, CustomMinimumSize = new Vector2(300, 18) };
+        var box = new VBoxContainer { MouseFilter = Control.MouseFilterEnum.Ignore };
+        _targetLabel = new Label { HorizontalAlignment = HorizontalAlignment.Center, MouseFilter = Control.MouseFilterEnum.Ignore };
+        _targetBar = new ProgressBar { MinValue = 0, MaxValue = 1, Value = 1, ShowPercentage = false, CustomMinimumSize = new Vector2(300, 18), MouseFilter = Control.MouseFilterEnum.Ignore };
 
         box.AddChild(_targetLabel);
         box.AddChild(_targetBar);
@@ -70,6 +74,10 @@ public partial class CombatHud : CanvasLayer
         _targetBar.Value = target.Health.Fraction;
 
         _targetLabel.Text = $"{Pretty(target.DisplayName)}   {target.Health}";
+
+        var advice = FoeAdvice.For(target, _self);
+
+        if (_targetPanel.TooltipText != advice) _targetPanel.TooltipText = advice;
     }
 
     private static string Pretty(string key) =>

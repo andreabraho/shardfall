@@ -34,7 +34,8 @@ public partial class BossHud : CanvasLayer, ITopBar
             OffsetLeft = -180,
             OffsetRight = 180,
             OffsetTop = TopBars.Top,
-            MouseFilter = Control.MouseFilterEnum.Ignore,
+            // Hovered, it says what helps against the boss (FoeAdvice).
+            MouseFilter = Control.MouseFilterEnum.Stop,
         };
         AddChild(_root);
 
@@ -117,6 +118,10 @@ public partial class BossHud : CanvasLayer, ITopBar
 
         var name = Items.GameItems.Localise(boss.Self.DisplayName);
         _title.Text = $"{L10n.F("Lv. {0}", boss.Self.Stats.Level)}  {name}  ·  {L10n.F("Phase {0}", boss.BossPhase)}";
+
+        var advice = FoeAdvice.For(boss.Self, GetTree().GetFirstNodeInGroup("player")?.GetNodeOrNull<Combatant>("Combatant"));
+
+        if (_root.TooltipText != advice) _root.TooltipText = advice;
         _health.Value = boss.Self.Health.Fraction;
     }
 

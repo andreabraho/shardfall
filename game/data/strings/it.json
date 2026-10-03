@@ -1177,5 +1177,9 @@
   "{0} — rested.  [F] to travel or respec": "{0} — riposato.  [F] per viaggiare o riassegnare",
   "{0} — shrine discovered.  [F] to travel or respec": "{0} — santuario scoperto.  [F] per viaggiare o riassegnare",
   "— compared to {0} —": "— rispetto a {0} —",
-  "−{0:P0} damage taken": "−{0:P0} danni subiti"
+  "−{0:P0} damage taken": "−{0:P0} danni subiti",
+  "Family: {0}": "Famiglia: {0}",
+  "Useful bonuses:": "Bonus utili:",
+  "damage against {0}": "danni contro {0}",
+  "Yours now: +{0} % against {1}": "Ora hai: +{0} % contro {1}"
 }
