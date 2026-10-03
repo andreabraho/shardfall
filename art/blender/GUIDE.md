@@ -309,3 +309,6 @@ ours, and every item in `trinkets.BUILDERS`.
   origin in units of what it sits on (a head of radius 1), and hung on a bone by the visual's
   `"attachments"` — `scale`, `up` and `forward` are shares of how high that bone stands, so they are
   tuned by looking, in the game. A recolour leaves hung pieces alone.
+- **A creature from a pack** (Quaternius, CC0) is dressed the same way (`fieldkit.py`): its model as it comes, a
+  `visual_recolour` toward the land, and one piece of ours on a bone — crystal on a cap, weed on a back, a
+  crest, a flame. A pack whose clips have their own names (the frog's `Frog_*`) needs them in `ModelAnimator`.

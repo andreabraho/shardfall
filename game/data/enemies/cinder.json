@@ -74,7 +74,7 @@
   {
     "id": "mob_salamander",
     "name": "$mob.mob_salamander.name",
-    "voice": "vox_serpent",
+    "voice": "vox_demon",
     "family": "animal",
     "role": "archer",
     "level": 37,
@@ -88,11 +88,12 @@
     "leash_radius": 24,
     "xp": 796,
     "drop_table": "dt_cinder",
-    "visual": "mesh_q_snake",
-    "visual_scale": 1.5,
-    "visual_tint": "#e0602a",
-    "visual_recolour": "#e0602a",
-    "visual_glow": 0.25
+    "visual": "mesh_q_drake",
+    "visual_scale": 1,
+    "visual_tint": "#d0441e",
+    "visual_recolour": "#d0441e",
+    "visual_recolour_amount": 0.5,
+    "visual_glow": 0.15
   },
   {
     "id": "mob_magma_brute",
@@ -142,7 +143,7 @@
   {
     "id": "mob_blaze_wasp",
     "name": "$mob.mob_blaze_wasp.name",
-    "voice": "vox_insect",
+    "voice": "vox_beast",
     "family": "animal",
     "role": "bomber",
     "level": 39,
@@ -155,11 +156,12 @@
     "leash_radius": 24,
     "xp": 922,
     "drop_table": "dt_cinder",
-    "visual": "mesh_q_wasp",
-    "visual_scale": 1.2,
+    "visual": "mesh_q_whelp",
+    "visual_scale": 1,
     "visual_tint": "#ff7a2a",
     "visual_recolour": "#ff7a2a",
-    "visual_glow": 0.35
+    "visual_recolour_amount": 0.5,
+    "visual_glow": 0.2
   },
   {
     "id": "mob_burning_warlord",

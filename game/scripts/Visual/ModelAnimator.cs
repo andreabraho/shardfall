@@ -154,20 +154,20 @@ public partial class ModelAnimator : Node
     // Quaternius "Gallop", "Rat_Run" or "CharacterArmature|Run". The part after the last "|"
     // is compared, and the first list entry any clip matches wins, so the best-looking clip
     // for a role is listed first.
-    private static readonly string[] Idle = ["Idle", "Idle_Loop", "Idle_A", "Rat_Idle", "Spider_Idle", "Snake_Idle", "Flying_Idle", "Idle_2", "Wasp_Flying"];
+    private static readonly string[] Idle = ["Idle", "Idle_Loop", "Idle_A", "Rat_Idle", "Spider_Idle", "Snake_Idle", "Flying_Idle", "Idle_2", "Wasp_Flying", "Frog_Idle"];
 
     private static readonly string[] Move =
         ["Running_A", "Running_B", "Run", "Gallop", "Rat_Run", "Fast_Flying", "Walking_A", "Walk",
-         "Spider_Walk", "Snake_Walk", "Rat_Walk", "Wasp_Flying"];
+         "Spider_Walk", "Snake_Walk", "Rat_Walk", "Wasp_Flying", "Frog_Jump"];
 
     // A creature that flies has no walk: roaming, it drifts on its hover rather than beating
     // along at full tilt in slow motion (the ghosts, imps, golelings and tribal masks).
     private static readonly string[] Walk =
-        ["Walk", "Walking_A", "Walking_B", "Rat_Walk", "Spider_Walk", "Snake_Walk", "Flying_Idle"];
+        ["Walk", "Walking_A", "Walking_B", "Rat_Walk", "Spider_Walk", "Snake_Walk", "Flying_Idle", "Frog_Jump"];
 
     private static readonly string[] Strike =
         ["Attack", "Attack_Headbutt", "Attack_Kick", "Punch", "Bite_Front", "Headbutt",
-         "Rat_Attack", "Spider_Attack", "Snake_Attack", "Wasp_Attack", "Weapon"];
+         "Rat_Attack", "Spider_Attack", "Snake_Attack", "Wasp_Attack", "Frog_Attack", "Weapon"];
 
     // Held while a telegraphed attack winds up. Only the humanoid packs carry one; a creature
     // without it rears back instead (VisualRoot).
@@ -179,7 +179,7 @@ public partial class ModelAnimator : Node
         ["Spellcast_Shoot", "1H_Ranged_Shoot", "Throw", "Weapon", "Punch"];
 
     private static readonly string[] Fall =
-        ["Death_A", "Death", "Death_B", "Spider_Death", "Rat_Death", "Snake_Death", "Wasp_Death"];
+        ["Death_A", "Death", "Death_B", "Spider_Death", "Rat_Death", "Snake_Death", "Wasp_Death", "Frog_Death"];
 
     private bool _dead;
 

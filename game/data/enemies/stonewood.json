@@ -112,10 +112,11 @@
     "leash_radius": 24,
     "xp": 558,
     "drop_table": "dt_stonewood",
-    "visual": "mesh_q_mushnub",
-    "visual_scale": 1.15,
-    "visual_tint": "#9ab88a",
-    "visual_recolour": "#9ab88a"
+    "visual": "mesh_q_mushroom_king",
+    "visual_scale": 1,
+    "visual_tint": "#8aa890",
+    "visual_recolour": "#8aa890",
+    "visual_recolour_amount": 0.5
   },
   {
     "id": "mob_geode_goleling",

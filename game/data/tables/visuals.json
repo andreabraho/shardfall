@@ -353,5 +353,17 @@
     "attachments": [
       { "bone": "Head", "model_path": "res://assets/temins/creatures/warlord_helm.glb", "scale": 0.34, "up": 0.20, "forward": 0.02 },
       { "bone": "Neck", "model_path": "res://assets/temins/creatures/warlord_pauldrons.glb", "scale": 0.46, "up": -0.14 }
-    ] }
+    ] },
+
+  // Act 2's creatures from Quaternius (CC0, 2026-10-03): animated as they come, recoloured by the enemy, with pieces of ours.
+  { "id": "mesh_q_mushroom_king", "primitive": "model", "height": 1.90, "radius": 0.60, "color": "#8aa890", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Mushroom_King.glb",
+    "attachments": [ { "bone": "Head", "model_path": "res://assets/temins/creatures/lichen_crystals.glb", "scale": 0.7, "up": 0.6 } ] },
+  { "id": "mesh_q_toad",          "primitive": "model", "height": 1.30, "radius": 0.85, "color": "#4a6a34", "model_yaw": 0, "model_path": "res://assets/quaternius/monsters/Frog.glb",
+    "attachments": [ { "bone": "Torso", "model_path": "res://assets/temins/creatures/mire_weed.glb", "scale": 1.0, "up": 0.3 } ] },
+  { "id": "mesh_q_frog_poison",   "primitive": "model", "height": 1.60, "radius": 0.50, "color": "#7a8a3a", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Frog_Poison.glb" },
+  { "id": "mesh_q_glub",          "primitive": "model", "height": 1.60, "radius": 0.55, "color": "#5a7a3a", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Glub_Evolved.glb" },
+  { "id": "mesh_q_drake",         "primitive": "model", "height": 2.00, "radius": 0.75, "color": "#d0441e", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Dragon_Evolved.glb",
+    "attachments": [ { "bone": "Head", "model_path": "res://assets/temins/creatures/drake_crest.glb", "scale": 0.45, "up": 0.25 } ] },
+  { "id": "mesh_q_whelp",         "primitive": "model", "height": 1.35, "radius": 0.50, "color": "#ff7a2a", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Dragon.glb",
+    "attachments": [ { "bone": "Head", "model_path": "res://assets/temins/creatures/whelp_flame.glb", "scale": 0.3, "up": 0.25 } ] }
 ]

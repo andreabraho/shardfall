@@ -50,7 +50,7 @@
   {
     "id": "mob_bog_serpent",
     "name": "$mob.mob_bog_serpent.name",
-    "voice": "vox_serpent",
+    "voice": "vox_beast",
     "family": "animal",
     "role": "bruiser",
     "level": 32,
@@ -65,16 +65,17 @@
     "leash_radius": 24,
     "xp": 609,
     "drop_table": "dt_mire",
-    "visual": "mesh_q_snake",
-    "visual_scale": 1.7,
-    "visual_tint": "#3a5a2a",
-    "visual_recolour": "#3a5a2a"
+    "visual": "mesh_q_toad",
+    "visual_scale": 1,
+    "visual_tint": "#4a6a34",
+    "visual_recolour": "#4a6a34",
+    "visual_recolour_amount": 0.55
   },
   {
     "id": "mob_bog_spitter",
     "name": "$mob.mob_bog_spitter.name",
-    "voice": "vox_undead",
-    "family": "undead",
+    "voice": "vox_beast",
+    "family": "animal",
     "role": "archer",
     "level": 32,
     "stats": { "hp": 7390, "attack_power": 230, "defense": 91, "move_speed": 4.8 },
@@ -87,10 +88,11 @@
     "leash_radius": 24,
     "xp": 609,
     "drop_table": "dt_mire",
-    "visual": "mesh_z_ribcage",
-    "visual_scale": 1.05,
-    "visual_tint": "#6a7a4a",
-    "visual_recolour": "#6a7a4a"
+    "visual": "mesh_q_frog_poison",
+    "visual_scale": 1,
+    "visual_tint": "#7a8a3a",
+    "visual_recolour": "#7a8a3a",
+    "visual_recolour_amount": 0.5
   },
   {
     "id": "mob_marsh_brute",
@@ -140,7 +142,7 @@
   {
     "id": "mob_bloat_fly",
     "name": "$mob.mob_bloat_fly.name",
-    "voice": "vox_insect",
+    "voice": "vox_ghost",
     "family": "animal",
     "role": "bomber",
     "level": 34,
@@ -153,10 +155,12 @@
     "leash_radius": 24,
     "xp": 715,
     "drop_table": "dt_mire",
-    "visual": "mesh_q_wasp",
-    "visual_scale": 1.3,
-    "visual_tint": "#6a8a2a",
-    "visual_recolour": "#6a8a2a"
+    "visual": "mesh_q_glub",
+    "visual_scale": 1,
+    "visual_tint": "#8ac050",
+    "visual_recolour": "#8ac050",
+    "visual_recolour_amount": 0.8,
+    "visual_glow": 0.35
   },
   {
     "id": "mob_drowned_king",
