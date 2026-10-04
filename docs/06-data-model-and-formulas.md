@@ -47,7 +47,7 @@ AttackPower  = WeaponDamage + Primary * 1.8 + Level * 1.2
 MagicPower   = WeaponDamage + INT     * 2.1 + Level * 1.2
 Defense      = ArmorValue + VIT * 0.8 + Level * 0.6
 
-CritChance   = 0.03 + DEX * 0.0012         (cap 0.50)
+CritChance   = 0.03 + DEX * 0.0016         (cap 0.75)
 CritDamage   = 1.50 + bonuses              (no cap)
 PierceChance = DEX * 0.0008                (cap 0.35)  — ignores mitigation
 Evasion      = DEX * 0.0006                (cap 0.30)
