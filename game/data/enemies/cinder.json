@@ -171,7 +171,7 @@
     "family": "orc",
     "role": "bruiser",
     "level": 40,
-    "stats": { "hp": 408620, "attack_power": 157, "defense": 229, "move_speed": 5.4 },
+    "stats": { "hp": 347330, "attack_power": 157, "defense": 229, "move_speed": 5.4 },
     "abilities": [
       { "id": "abl_burnlord_cleave", "cooldown": 2.3, "windup": 0.7, "damage_coef": 1.15 },
       { "id": "abl_burnlord_whirl", "cooldown": 7.5, "windup": 2.35, "damage_coef": 1.6, "applies": { "kind": "burn", "magnitude": 17, "duration": 4 }, "telegraph": { "shape": "circle", "radius": 5, "angle": 70 } },
