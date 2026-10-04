@@ -25,12 +25,33 @@
     ]
   },
   {
+    "id": "bonus_helmet",
+    "lines": [
+      { "id": "bon_hp",          "stat": "max_hp_flat",      "range": [40, 220], "weight": 100 },
+      { "id": "bon_defense",     "stat": "defense_flat",     "range": [4, 18],   "weight": 70 },
+      { "id": "bon_hp_regen",    "stat": "hp_regen",         "range": [1, 4],    "weight": 30 },
+      { "id": "bon_mana",        "stat": "max_mana_flat",    "range": [20, 100], "weight": 40 },
+      { "id": "bon_vs_animal",   "stat": "vs_family.animal", "range": [5, 20],   "weight": 30 },
+      { "id": "bon_vs_undead",   "stat": "vs_family.undead", "range": [5, 20],   "weight": 30 },
+      { "id": "bon_vs_devil",    "stat": "vs_family.devil",  "range": [5, 20],   "weight": 30 },
+      { "id": "bon_vs_orc",      "stat": "vs_family.orc",    "range": [5, 20],   "weight": 30 },
+      { "id": "bon_vs_mystic",   "stat": "vs_family.mystic", "range": [5, 20],   "weight": 30 },
+      { "id": "bon_vs_human",    "stat": "vs_family.human",  "range": [5, 20],   "weight": 30 }
+    ]
+  },
+  {
     "id": "bonus_shield",
     "lines": [
       { "id": "bon_defense",     "stat": "defense_flat",     "range": [6, 28],   "weight": 100 },
       { "id": "bon_hp",          "stat": "max_hp_flat",      "range": [40, 220], "weight": 70 },
       { "id": "bon_evasion",     "stat": "evasion",          "range": [1, 5],    "weight": 30 },
-      { "id": "bon_hp_regen",    "stat": "hp_regen",         "range": [1, 4],    "weight": 40 }
+      { "id": "bon_hp_regen",    "stat": "hp_regen",         "range": [1, 4],    "weight": 40 },
+      { "id": "bon_vs_animal",   "stat": "vs_family.animal", "range": [5, 20],   "weight": 30 },
+      { "id": "bon_vs_undead",   "stat": "vs_family.undead", "range": [5, 20],   "weight": 30 },
+      { "id": "bon_vs_devil",    "stat": "vs_family.devil",  "range": [5, 20],   "weight": 30 },
+      { "id": "bon_vs_orc",      "stat": "vs_family.orc",    "range": [5, 20],   "weight": 30 },
+      { "id": "bon_vs_mystic",   "stat": "vs_family.mystic", "range": [5, 20],   "weight": 30 },
+      { "id": "bon_vs_human",    "stat": "vs_family.human",  "range": [5, 20],   "weight": 30 }
     ]
   },
   {
@@ -39,7 +60,8 @@
       { "id": "bon_move_speed",  "stat": "move_speed_pct",   "range": [2, 8],    "weight": 100 },
       { "id": "bon_evasion",     "stat": "evasion",          "range": [1, 5],    "weight": 60 },
       { "id": "bon_hp",          "stat": "max_hp_flat",      "range": [30, 160], "weight": 55 },
-      { "id": "bon_defense",     "stat": "defense_flat",     "range": [3, 14],   "weight": 45 }
+      { "id": "bon_defense",     "stat": "defense_flat",     "range": [3, 14],   "weight": 45 },
+      { "id": "bon_crit",        "stat": "crit_chance",      "range": [1, 5],    "weight": 45 }
     ]
   },
   {
