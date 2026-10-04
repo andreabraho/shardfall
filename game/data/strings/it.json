@@ -1182,5 +1182,10 @@
   "Useful bonuses:": "Bonus utili:",
   "damage against {0}": "danni contro {0}",
   "Yours now: +{0} % against {1}": "Ora hai: +{0} % contro {1}",
-  "At most {0} from points.": "Al massimo {0} con i punti."
+  "At most {0} from points.": "Al massimo {0} con i punti.",
+  "Possible bonuses": "Bonus possibili",
+  "Hide possible bonuses": "Nascondi bonus possibili",
+  "Lines a reroll can give:": "Linee che possono uscire:",
+  "{0}% per line drawn": "{0}% per linea estratta",
+  "locked, will not repeat": "bloccata, non può uscire di nuovo"
 }

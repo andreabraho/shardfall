@@ -34,6 +34,9 @@ public partial class WorkbenchPanel : CanvasLayer
     private ItemInstance? _selected;
     private Tab _tab = Tab.Upgrade;
 
+    // The list of what a reroll can give, opened by its button and kept open while the smith is (2026-10-04).
+    private bool _showPool;
+
     /// <summary>The bench the window was opened at, when it holds the tower smith's free upgrade.</summary>
     private World.BenchNode? _bench;
 
@@ -721,6 +724,44 @@ public partial class WorkbenchPanel : CanvasLayer
         var reroll = new Button { Text = L10n.T("Reroll"), Disabled = !quote.Affordable || item.LockedLineCount >= item.Bonuses.Count };
         reroll.Pressed += () => DoReroll(item, spec);
         _body.AddChild(reroll);
+
+        var possible = PossibleLines(item, spec);
+        var show = new Button { Text = _showPool ? L10n.T("Hide possible bonuses") : L10n.T("Possible bonuses"), TooltipText = possible };
+        show.Pressed += () => { _showPool = !_showPool; Refresh(); };
+        _body.AddChild(show);
+
+        if (_showPool) _body.AddChild(Muted(possible));
+    }
+
+    /// <summary>
+    /// Every line this item can roll, each with its range — "+3–12% average damage" — and how often it comes
+    /// up next to the others. A locked line cannot come up again, so it says so.
+    /// </summary>
+    private static string PossibleLines(ItemInstance item, ItemSpec spec)
+    {
+        var pool = GameItems.Catalogue.Pool(spec.BonusPoolId);
+
+        if (pool is null) return "";
+
+        var total = pool.Lines.Sum(l => l.Weight);
+        var lines = new List<string> { L10n.T("Lines a reroll can give:") };
+
+        foreach (var entry in pool.Lines.OrderByDescending(l => l.Weight))
+        {
+            var max = entry.Max.ToString(entry.Max % 1 == 0 ? "0" : "0.#", L10n.Culture);
+            var min = entry.Min.ToString(entry.Min % 1 == 0 ? "0" : "0.#", L10n.Culture);
+            var text = entry.Stat.Describe(entry.Max);
+            var at = text.IndexOf(max, System.StringComparison.Ordinal);
+
+            if (at >= 0 && min != max) text = text[..at] + min + "–" + text[at..];
+
+            var share = total > 0 ? entry.Weight / total * 100 : 0;
+            var locked = item.Bonuses.Any(b => b.Locked && b.LineId == entry.Id);
+
+            lines.Add($"  • {text}   ({L10n.F("{0}% per line drawn", share.ToString("0", L10n.Culture))})" + (locked ? "  — " + L10n.T("locked, will not repeat") : ""));
+        }
+
+        return string.Join("\n", lines);
     }
 
     private void DoReroll(ItemInstance item, ItemSpec spec)
