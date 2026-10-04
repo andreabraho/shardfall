@@ -7,13 +7,13 @@ namespace Kiln.Core.Combat;
 /// (doc 06 §2).
 /// </summary>
 /// <remarks>
-/// Every cap here exists to stop a stat becoming a win button. Crit at 50%, pierce at 35%,
+/// Every cap here exists to stop a stat becoming a win button. Crit at 75% (2026-10-04, at your call), pierce at 35%,
 /// evasion at 30%, mitigation at 75%: past those points more of the same stat stops paying,
 /// which is what keeps several gear directions viable instead of one dominant one.
 /// </remarks>
 public sealed class StatBlock
 {
-    public const double CritChanceCap = 0.50;
+    public const double CritChanceCap = 0.75;
     public const double PierceChanceCap = 0.35;
     public const double EvasionCap = 0.30;
     public const double ResistCap = 0.70;

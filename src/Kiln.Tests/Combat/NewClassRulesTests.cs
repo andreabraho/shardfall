@@ -97,8 +97,8 @@ public class NewClassRulesTests
             if (result.Critical) crits++;
         }
 
-        // Far more than the attacker's own 3%, and never past the cap of a half.
-        Assert.InRange(crits, 900, 1100);
+        // Far more than the attacker's own 3%, and never past the cap of three in four.
+        Assert.InRange(crits, 1400, 1600);
     }
 
     [Theory]

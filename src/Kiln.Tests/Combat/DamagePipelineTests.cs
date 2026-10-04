@@ -118,7 +118,7 @@ public class DamagePipelineTests
     [Fact]
     public void Crit_MultipliesDamage()
     {
-        // Crit chance is capped at 50%, so this samples rather than forcing a crit.
+        // Crit chance is capped at 75%, so this samples rather than forcing a crit.
         var attacker = Attacker();
         attacker.Modifiers.CritChance = 1.0;
         attacker.Modifiers.PierceChance = -1; // isolate: no pierce branch
@@ -138,7 +138,7 @@ public class DamagePipelineTests
         }
 
         Assert.True(crits > 0 && plains > 0);
-        Assert.InRange(crits / (double)(crits + plains), 0.45, 0.55);
+        Assert.InRange(crits / (double)(crits + plains), 0.70, 0.80);
         Assert.Equal(attacker.CritDamage, (critTotal / crits) / (plainTotal / plains), 1);
     }
 
