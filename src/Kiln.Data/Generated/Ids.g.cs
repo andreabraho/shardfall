@@ -396,10 +396,11 @@ public static class Ids
         public const string BonusAccessory = "bonus_accessory";
         public const string BonusArmor = "bonus_armor";
         public const string BonusBoots = "bonus_boots";
+        public const string BonusHelmet = "bonus_helmet";
         public const string BonusShield = "bonus_shield";
         public const string BonusWeaponMelee = "bonus_weapon_melee";
 
-        public static readonly string[] All = ["bonus_accessory", "bonus_armor", "bonus_boots", "bonus_shield", "bonus_weapon_melee"];
+        public static readonly string[] All = ["bonus_accessory", "bonus_armor", "bonus_boots", "bonus_helmet", "bonus_shield", "bonus_weapon_melee"];
     }
 
     public static class UpgradePaths
