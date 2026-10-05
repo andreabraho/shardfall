@@ -44,8 +44,8 @@ public static class PlayerProfile
 
     public static CharacterProgression Progression => _progression ??= new CharacterProgression();
 
-    /// <summary>The skills known, six at most; the Guard, on its own key, is not one of the six.</summary>
-    public static SkillBook Skills => _skills ??= new SkillBook(free: [Kiln.Data.Ids.Skills.SklGuardStance, Kiln.Data.Ids.Skills.SklShadowStep]);
+    /// <summary>The skills known, six at most; each class's defence on Shift, on its own key, starts at one point and is not one of the six (2026-10-05: all five, not only the Guard and the Step).</summary>
+    public static SkillBook Skills => _skills ??= new SkillBook(free: [Kiln.Data.Ids.Skills.SklGuardStance, Player.DefensiveAbility.StepId, Player.DefensiveAbility.BackstepId, Player.DefensiveAbility.BacklashId, Player.DefensiveAbility.SealId]);
 
     private static Kiln.Core.Cosmetics.Wardrobe? _wardrobe;
 
