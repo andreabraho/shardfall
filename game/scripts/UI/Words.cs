@@ -39,7 +39,7 @@ public static class Words
     public static string Of(StatusKind kind) => kind switch
     {
         StatusKind.Poison => L10n.T("Poisoned"),
-        StatusKind.Bleed => L10n.T("Bleeding"),
+        StatusKind.Bleed => L10n.T("Bleeding, healing halved"),
         StatusKind.Stun => L10n.T("Stunned"),
         StatusKind.Slow => L10n.T("Slowed"),
         StatusKind.Weaken => L10n.T("Weakened"),

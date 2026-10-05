@@ -220,7 +220,7 @@ public partial class ShrineNode : Area3D
     {
         if (player.GetNodeOrNull<Combat.Combatant>("Combatant") is { } combatant)
         {
-            combatant.Heal((int)combatant.Health.Max);
+            combatant.Heal((int)combatant.Health.Max, whole: true);
             combatant.Mana.Fill();
         }
     }

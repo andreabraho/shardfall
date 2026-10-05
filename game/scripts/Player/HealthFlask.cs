@@ -79,10 +79,12 @@ public partial class HealthFlask : Node
 
         PlayerProfile.FlaskCharges = _charges;
 
-        // Taking damage interrupts the drink — the cost of using it at the wrong moment.
+        // Taking damage interrupts the drink — the cost of using it at the wrong moment. A poison, a
+        // bleeding or a burn ticking is not a blow: it neither stops the drink nor holds the refill
+        // (2026-10-05: a bleed made the flask useless; now it only halves what it gives).
         _self.Damaged += (amount, _, evaded) =>
         {
-            if (evaded) return;
+            if (evaded || _self.TakingTickDamage) return;
 
             if (amount > 0) _sinceHit = 0;
 
