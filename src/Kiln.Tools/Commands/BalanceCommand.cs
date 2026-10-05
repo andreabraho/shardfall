@@ -27,6 +27,13 @@ public static class BalanceCommand
     /// <summary>How far a class may stand from the middle of the six before the check fails.</summary>
     private const double Band = 0.15;
 
+    /// <summary>
+    /// Classes made stronger than the rest on purpose, at your call: measured and shown, but left out of the
+    /// middle the others are held to, and not held to the band above it. The Asura since 2026-10-05
+    /// (Shadow Claw twice as hard, the Hexed Blade from +50 attack).
+    /// </summary>
+    private static readonly HashSet<string> AboveTheBand = ["Asura"];
+
     /// <summary>The creatures of a pack.</summary>
     private const int PackSize = 8;
 
@@ -127,10 +134,11 @@ public static class BalanceCommand
             }
 
             // How fast it kills: the pack and the boss, each against the middle of the six.
-            var packMid = Middle(rows.Select(r => r.Pack.Time));
-            var bossMid = Middle(rows.Select(r => r.Boss.Time));
-            var packHurt = Middle(rows.Select(r => r.Pack.Hurt));
-            var bossHurt = Middle(rows.Select(r => r.Boss.Hurt));
+            var held = rows.Where(r => !AboveTheBand.Contains(r.Build.Name)).ToList();
+            var packMid = Middle(held.Select(r => r.Pack.Time));
+            var bossMid = Middle(held.Select(r => r.Boss.Time));
+            var packHurt = Middle(held.Select(r => r.Pack.Hurt));
+            var bossHurt = Middle(held.Select(r => r.Boss.Hurt));
 
             foreach (var (build, pack, duel) in rows)
             {
@@ -152,7 +160,7 @@ public static class BalanceCommand
 
             Console.WriteLine($"  {build.Name,-15} {kills,6:0.00} {Middle(packs[build.Name]),6:0.00} {Middle(bosses[build.Name]),6:0.00} {hurt,8:0.00}   {string.Join(" ", power[build.Name].Select(p => $"{p:0.00}"))}");
 
-            if (Math.Abs(kills - 1) > Band) drift.Add($"{build.Name} kills at {kills:0.00} of the middle (allowed {1 - Band:0.00}–{1 + Band:0.00})");
+            if (kills < 1 - Band || (kills > 1 + Band && !AboveTheBand.Contains(build.Name))) drift.Add($"{build.Name} kills at {kills:0.00} of the middle (allowed {1 - Band:0.00}–{1 + Band:0.00})");
             if (hurt > 1 + (Band * 2)) drift.Add($"{build.Name} is hurt {hurt:0.00} times the middle (allowed {1 + (Band * 2):0.00})");
         }
 
@@ -160,7 +168,7 @@ public static class BalanceCommand
 
         if (drift.Count == 0)
         {
-            Console.WriteLine($"Balance holds: every class within {Band:P0} of the middle.");
+            Console.WriteLine($"Balance holds: every class within {Band:P0} of the middle" + (AboveTheBand.Count > 0 ? $" (above it on purpose: {string.Join(", ", AboveTheBand)})." : "."));
             return 0;
         }
 

@@ -16,11 +16,11 @@
     } },
 
   { "id": "skl_shadow_claw", "name": "$skill.skl_shadow_claw.name", "color": "#b06cff", "sound": "snd_skl_cleave", "class": "sura", "tree": "dark", "suggested_level": 1, "mana_cost": 16, "cooldown": 5,
-    "cast_type": "instant", "targeting": "single_target", "radius": 1.8, "range": 10.0, "damage_coef": 1.85, "hits": 1, "motion": "claw", "windup": 0.45, "needs_target": true, "pierces": true, "element": "dark",
+    "cast_type": "instant", "targeting": "single_target", "radius": 1.8, "range": 10.0, "damage_coef": 3.70, "hits": 1, "motion": "claw", "windup": 0.45, "needs_target": true, "pierces": true, "element": "dark",
     "mastery": {
-      "master":       { "damage_coef": 2.10, "note": "$skill.skl_shadow_claw.m" },
+      "master":       { "damage_coef": 4.20, "note": "$skill.skl_shadow_claw.m" },
       "grand_master": { "cooldown": 4.5, "note": "$skill.skl_shadow_claw.g" },
-      "perfect":      { "cooldown": 4.0, "damage_coef": 2.40, "note": "$skill.skl_shadow_claw.p" }
+      "perfect":      { "cooldown": 4.0, "damage_coef": 4.80, "note": "$skill.skl_shadow_claw.p" }
     } },
 
   { "id": "skl_dark_vortex", "name": "$skill.skl_dark_vortex.name", "color": "#8a5cf0", "sound": "snd_skl_whirl", "class": "sura", "tree": "dark", "suggested_level": 8, "mana_cost": 30, "cooldown": 9,
@@ -32,12 +32,11 @@
     } },
 
   { "id": "skl_hexed_blade", "name": "$skill.skl_hexed_blade.name", "color": "#ff4d8c", "sound": "snd_skl_aura", "class": "sura", "tree": "dark", "suggested_level": 5, "mana_cost": 26, "cooldown": 34,
-    "cast_type": "instant", "targeting": "self", "radius": 0, "damage_coef": 0.00, "hits": 0, "motion": "spell", "duration": 25.0, "magnitude": 5,
-    "applies": { "kind": "hex", "magnitude": 0.06, "duration": 25.0, "chance": 1.0 },
+    "cast_type": "instant", "targeting": "self", "radius": 0, "damage_coef": 0.00, "hits": 0, "motion": "spell", "duration": 25.0, "magnitude": 50,    "applies": { "kind": "hex", "magnitude": 0.06, "duration": 25.0, "chance": 1.0 },
     "mastery": {
-      "master":       { "magnitude": 7, "note": "$skill.skl_hexed_blade.m" },
+      "master":       { "magnitude": 65, "note": "$skill.skl_hexed_blade.m" },
       "grand_master": { "duration": 30.0, "note": "$skill.skl_hexed_blade.g" },
-      "perfect":      { "cooldown": 30.0, "magnitude": 10, "note": "$skill.skl_hexed_blade.p" }
+      "perfect":      { "cooldown": 30.0, "magnitude": 80, "note": "$skill.skl_hexed_blade.p" }
     } },
 
   { "id": "skl_dread", "name": "$skill.skl_dread.name", "color": "#9e33eb", "sound": "snd_skl_frenzy", "class": "sura", "tree": "dark", "suggested_level": 12, "mana_cost": 22, "cooldown": 18,
