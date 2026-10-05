@@ -165,6 +165,7 @@ public static class SkillText
         if (def.CastType == "channel" && def.Motion == "counter")
         {
             lines.Add(L10n.F("For {0:0.##} s the next blow that would land on you does nothing, and dark force bursts round you: {1:P0} of your attack power to everything within {2:0.#} m. You stay free to move and to fight.", skill.Duration, skill.DamageCoef, skill.Radius));
+            lines.Add(L10n.T("Raising it clears poison, bleeding, burning, slows, weakening and vulnerability."));
         }
 
         if (def.CastType == "channel" && def.Radius > 0 && def.Motion != "counter")
