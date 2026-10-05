@@ -564,7 +564,7 @@
       { "item": "stn_bane_orc", "weight": 10, "chance": 0.025, "count_range": [1, 1] },
       { "item": "stn_bane_animal", "weight": 10, "chance": 0.025, "count_range": [1, 1] },
       { "item": "shd_cinder_bulwark", "weight": 4, "chance": 0.006, "count_range": [1, 1] },
-      { "item": "bts_ember_treads", "weight": 4, "chance": 0.006, "count_range": [1, 1] }
+      { "item": "bts_ember_treads", "weight": 2, "chance": 0.0035, "count_range": [1, 1] }
     ]
   },
   {
@@ -574,7 +574,7 @@
     "entries": [
       { "item": "mat_blessing_scroll", "weight": 0, "chance": 1, "count_range": [1, 1] },
       { "item": "shd_cinder_bulwark", "weight": 8, "chance": 0.021, "count_range": [1, 1] },
-      { "item": "bts_ember_treads", "weight": 8, "chance": 0.021, "count_range": [1, 1] },
+      { "item": "bts_ember_treads", "weight": 5, "chance": 0.012, "count_range": [1, 1] },
       { "item": "stn_bane_orc", "weight": 6, "chance": 0.03, "count_range": [1, 1] },
       { "item": "stn_bane_animal", "weight": 6, "chance": 0.03, "count_range": [1, 1] },
       { "item": "mat_warlord_slag", "weight": 0, "chance": 1, "count_range": [2, 3] },
@@ -589,7 +589,7 @@
     "picks": 2,
     "entries": [
       { "item": "shd_cinder_bulwark", "weight": 8, "chance": 0.021, "count_range": [1, 1] },
-      { "item": "bts_ember_treads", "weight": 8, "chance": 0.021, "count_range": [1, 1] },
+      { "item": "bts_ember_treads", "weight": 5, "chance": 0.012, "count_range": [1, 1] },
       { "item": "stn_bane_orc", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
       { "item": "stn_bane_animal", "weight": 7, "chance": 0.03, "count_range": [1, 1] },
       { "item": "mat_warlord_slag", "weight": 0, "chance": 0.5, "count_range": [1, 1] },
