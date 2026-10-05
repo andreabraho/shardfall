@@ -306,6 +306,9 @@ public partial class DefensiveAbility : Node
         Audio.AudioDirector.Play(def.Sound, _motor.GlobalPosition);
         Combat.SkillFx.Shroud(this, _motor.GlobalPosition, 0.6f, new Color(def.Color));
 
+        // Like the other defences, raising it shakes off what was eating at the Asura (2026-10-05, at your call).
+        if (_self.Statuses.CleanseAll() > 0) Combat.SkillFx.Cleanse(this, _motor.GlobalPosition);
+
         _visual.Rank = book?.RankOf(SkillId) ?? Kiln.Core.Progression.MasteryRank.Normal;
         _visual.SetGuarding(true);
 
