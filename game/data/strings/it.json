@@ -1187,5 +1187,6 @@
   "Hide possible bonuses": "Nascondi bonus possibili",
   "Lines a reroll can give:": "Linee che possono uscire:",
   "{0}% per line drawn": "{0}% per linea estratta",
-  "locked, will not repeat": "bloccata, non può uscire di nuovo"
+  "locked, will not repeat": "bloccata, non può uscire di nuovo",
+  "Bleeding, healing halved": "Sanguinante, cure dimezzate"
 }

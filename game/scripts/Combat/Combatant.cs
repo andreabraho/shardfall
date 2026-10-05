@@ -281,9 +281,18 @@ public partial class Combatant : Node
         }
     }
 
-    public void Heal(int amount)
+    /// <summary>Share of any healing that lands while bleeding (2026-10-05, at your call: halved, not stopped).</summary>
+    public const double BleedHealing = 0.5;
+
+    /// <summary>True only while a poison, a bleeding or a burn is ticking: a hurt, but not a blow.</summary>
+    public bool TakingTickDamage { get; private set; }
+
+    /// <summary>Heals, halved while bleeding; <paramref name="whole"/> (a shrine) is never cut.</summary>
+    public void Heal(int amount, bool whole = false)
     {
         if (!IsAlive || amount <= 0) return;
+
+        if (!whole && Statuses.Has(StatusKind.Bleed)) amount = (int)Math.Ceiling(amount * BleedHealing);
 
         Health.Add(amount);
         EmitSignal(SignalName.HealthChanged, (float)Health.Fraction);
@@ -340,7 +349,9 @@ public partial class Combatant : Node
         var tick = Statuses.Tick(step);
         if (tick.Damage > 0)
         {
+            TakingTickDamage = true;
             ApplyDamage((int)Math.Round(tick.Damage));
+            TakingTickDamage = false;
         }
 
         _sinceCombat += step;
@@ -351,6 +362,6 @@ public partial class Combatant : Node
         var inCombat = _sinceCombat < OutOfCombatSeconds;
 
         Mana.Add((inCombat ? Stats.ManaRegenInCombat : Stats.ManaRegenPerSecond) * step);
-        Health.Add((inCombat ? Stats.HpRegenInCombat : Stats.HpRegenPerSecond) * step);
+        Health.Add((inCombat ? Stats.HpRegenInCombat : Stats.HpRegenPerSecond) * step * (Statuses.Has(StatusKind.Bleed) ? BleedHealing : 1));
     }
 }
