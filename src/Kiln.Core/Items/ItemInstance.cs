@@ -57,6 +57,12 @@ public sealed class ItemInstance
     /// <summary>Marked by the player so auto-sort and the junk flow leave it alone.</summary>
     public bool Locked { get; set; }
 
+    /// <summary>
+    /// Whether its born stat is drawn the fair way. Every new copy is; one loaded from a save made
+    /// before 2026-10-06 is not, so it keeps the stat it was found with.
+    /// </summary>
+    public bool FairInnate { get; internal set; } = true;
+
     public IReadOnlyList<BonusLine> Bonuses => _bonuses;
 
     public IReadOnlyList<Socket> Sockets => _sockets;
@@ -133,14 +139,17 @@ public sealed class ItemInstance
     /// <para>
     /// Scrambled in full (2026-10-06): a single multiply read from its middle bits went round in
     /// sixteens, so copies dropped a fixed number of items apart were born with the same stat and a
-    /// player could find twenty earrings and never the intelligence one.
+    /// player could find twenty earrings and never the intelligence one. A copy from an older save
+    /// keeps the old draw (<see cref="FairInnate"/>), so nothing already found changes its stat.
     /// </para>
     /// </remarks>
     public BonusLine? InnateFor(ItemSpec spec)
     {
         if (spec.Innate is not { Stats.Count: > 0 } innate) return null;
 
-        var pick = (int)(Scramble((ulong)Uid) % (ulong)innate.Stats.Count);
+        var pick = FairInnate
+            ? (int)(Scramble((ulong)Uid) % (ulong)innate.Stats.Count)
+            : (int)((unchecked((ulong)Uid * 0x9E3779B97F4A7C15UL) >> 33) % (ulong)innate.Stats.Count);
         var level = Math.Clamp(UpgradeLevel, 0, UpgradeScaling.MaxLevel);
         var worth = innate.Ladder.Count > 0
             ? innate.Ladder[Math.Min(level, innate.Ladder.Count - 1)]

@@ -117,6 +117,12 @@ public sealed class SavedItem
     public int Failures { get; set; }
     public bool Locked { get; set; }
 
+    /// <summary>
+    /// Whether the copy's born stat is drawn the fair way (2026-10-06). False in saves from before,
+    /// so what a copy was born with stays what it was born with.
+    /// </summary>
+    public bool FairInnate { get; set; }
+
     /// <summary>Grid position in the bag, or null when the item is worn.</summary>
     public int[]? At { get; set; }
 
