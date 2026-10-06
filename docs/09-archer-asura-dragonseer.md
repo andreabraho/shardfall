@@ -92,7 +92,7 @@ within**, the mark. The man the Knight's face on the Ranger's body, the woman th
 are black plate with flared shoulders, violet-black cloth, and violet stones lit on every one.
 
 **Attribute.** Strength for the sword; **every skill scales with intelligence** (at your call): 1.2
-attack power a point on what deals damage, 0.6 a point on the Hexed Blade, and every share — the
+attack power a point on what deals damage, 0.3 a point on the Hexed Blade, and every share — the
 mail, its thorns, the dread, the ward, the spellbreak — a little larger a point, up to a cap.
 
 **Weapon.** One-handed cursed swords: each is the Warrior's sword of that tier re-forged — a
@@ -106,7 +106,7 @@ A shell that took blows at first; changed at your call (2026-10-02).
 |---|---|---|---|
 | **Artiglio d'Ombra** (Shadow Claw) | finger strike | A claw from the ground under a target up to 10 m off and everything within 1.8 m of it: 370%, ignoring defence (doubled at your call, 2026-10-05). Needs a target. Lands 0.45 s in. | a blow of the marked hand, about a second |
 | **Vortice Oscuro** (Dark Vortex) | dragon swirl | One turn, dark flame on everything within 3.2 m: one hit of 200%, half a second in. | one turn of a second |
-| **Lama Stregata** (Hexed Blade) | enchanted blade | 25 s: +50 attack power (from +5, at your call, 2026-10-05; +65 at Master, +80 Perfect) and 0.6 more a point of INT — attack, not average damage (at your call) — and 6% of the damage of every blow comes back as health. | a spell worked over the blade with both hands |
+| **Lama Stregata** (Hexed Blade) | enchanted blade | 25 s: +25 attack power (+33 at Master, +40 Perfect) and 0.3 more a point of INT, and average damage on blows, +10% rising to +20% at Master, +30% Grand Master, +40% Perfect (2026-10-06, at your call: the attack halved from 50/65/80, the average damage added) — and 6% of the damage of every blow comes back as health. | a spell worked over the blade with both hands |
 | **Terrore** (Dread) | fear | Everything within 6 m strikes 20% weaker for 10 s, and the Asura gains 10 defence and 0.8 more a point of INT for as long (defence, not a share less damage, at your call). | a long summoning |
 | **Corazza Arcana** (Arcane Mail) | enchanted armour | 20 s: 20% less damage taken, and 25% of every blow taken from close by thrown back. | power drawn up with both arms |
 | **Spezzaincanti** (Spellbreak) | dispel | A bolt at a target up to 12 m off: 50% — it is cast for what it leaves, not for the blow — strips its rage and its shield, and leaves it taking 18% more for 8 s. Needs a target. | a throw |

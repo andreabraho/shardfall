@@ -73,7 +73,7 @@ public readonly record struct Attributes(int Str, int Dex, int Int, int Vit)
     /// 2026-10-02, at your call: "all of the Asura's skills scale with INT"): attack power on the
     /// Hexed Blade, and a share on everything that is a share, each up to a cap.
     /// </summary>
-    public const double AsuraBladePerInt = 0.6;
+    public const double AsuraBladePerInt = 0.3;
 
     public const double AsuraSharePerInt = 0.001;
 

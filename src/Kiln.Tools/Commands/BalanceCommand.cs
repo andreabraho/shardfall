@@ -601,6 +601,7 @@ public static class BalanceCommand
                     case "hex":
                         _on["might"] = (magnitude + (mind * Attributes.AsuraBladePerInt), skill.Duration);
                         _on["leech"] = (skill.Applies!.Magnitude, skill.Duration);
+                        if (skill.AverageDamage > 0) _on["empower"] = (skill.AverageDamage, skill.Duration);
                         break;
 
                     case "mail":

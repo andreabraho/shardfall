@@ -232,6 +232,7 @@ public static class SkillText
         else if (skill.Applies is { Kind: "hex" })
         {
             parts.Add(L10n.F("+{0:0} attack", skill.Magnitude));
+            if (skill.AverageDamage > 0) parts.Add(L10n.F("+{0:P0} average damage", skill.AverageDamage));
         }
         else if (skill.Applies is { Kind: "mail" })
         {
