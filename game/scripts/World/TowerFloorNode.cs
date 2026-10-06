@@ -427,6 +427,9 @@ public partial class TowerFloorNode : Node3D
             enemy.PlaceAt(around + new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) * radius);
             enemy.Hunt();
 
+            // Each one killed shortens a hold (2026-10-06, at your call).
+            enemy.Self.Died += () => _tower?.Slain();
+
             into.Add(enemy);
             if (!ReferenceEquals(into, _sent)) _sent.Add(enemy);
         }

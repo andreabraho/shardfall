@@ -175,6 +175,16 @@ public partial class TowerNode : Node3D
         EmitSignal(SignalName.FloorChanged);
     }
 
+    /// <summary>Reported by a floor when one of its creatures died: a hold clock runs shorter.</summary>
+    public void Slain()
+    {
+        if (_run is null || _run.Phase != FloorPhase.Running) return;
+
+        _run.Slain();
+
+        if (_run.Phase == FloorPhase.Open) Finish();
+    }
+
     /// <summary>Reported by a floor when one of its real targets went down.</summary>
     public void Scored()
     {
@@ -275,7 +285,7 @@ public partial class TowerNode : Node3D
     public static string Brief(TowerFloor floor) => floor.Task switch
     {
         FloorTask.Break => floor.Stone.Length > 0 ? L10n.T("Break the demon stone.") : L10n.T("Break the seal."),
-        FloorTask.Hold => L10n.F("Hold for {0:F0} seconds.", floor.Seconds),
+        FloorTask.Hold => L10n.F("Hold for {0:F0} seconds. Every kill takes {1:0.#} s off.", floor.Seconds, TowerRun.KillShortensHold),
         FloorTask.Find => floor.Burst > 0
             ? L10n.T("One lantern is the true one. Every lantern you break lets out what it holds.")
             : L10n.T("One lantern is not breathing with the others. Break that one."),

@@ -205,6 +205,22 @@ public sealed class TowerRun
     }
 
     /// <summary>
+    /// Seconds a creature killed takes off a hold clock (2026-10-06, at your call): fighting ends
+    /// the floor sooner than running from it does.
+    /// </summary>
+    public const double KillShortensHold = 0.3;
+
+    /// <summary>Reports that a creature of the floor died. Only a hold clock cares.</summary>
+    public void Slain()
+    {
+        if (Phase != FloorPhase.Running || !_ticking || Floor.Task != FloorTask.Hold) return;
+
+        _clock += KillShortensHold;
+
+        if (_clock >= Floor.Seconds) Complete();
+    }
+
+    /// <summary>
     /// Reports that one of the floor's real targets went down.
     /// </summary>
     /// <remarks>
