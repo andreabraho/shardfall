@@ -319,7 +319,7 @@ public static class SkillText
             "bleed" => L10n.F("Makes the target bleed for {0:0.#} s.", duration),
             "burn" when skill.Magnitude > 0 => L10n.F("Burns for {0:0.#} s: {1:P0} of the blow every second, up to three times over.", duration, skill.Magnitude),
             "burn" => L10n.F("Burns for {0:0.#} s.", duration),
-            "hex" => L10n.F("+{0:0} attack power for {1:0.#} s, and {2:0.#} more for each point of INT; {3:P0} of the damage of each blow comes back as health.", magnitude, duration, Attributes.AsuraBladePerInt, applies.Magnitude),
+            "hex" => L10n.F("+{0:0} attack power and +{1:P0} average damage on your blows (not your skills) for {2:0.#} s, and {3:0.#} more attack for each point of INT; {4:P0} of the damage of each blow comes back as health.", magnitude, skill.AverageDamage, duration, Attributes.AsuraBladePerInt, applies.Magnitude),
             "mail" => L10n.F("Take {0:P0} less damage for {1:0.#} s, moving {2:P0} slower; {3:P0} of every blow taken from close by is thrown back.", magnitude, duration, StatusEffectSet.FortifyDrag, applies.Magnitude),
             "haste" => L10n.F("Move {0:P0} faster for {1:0.#} s, and one blow in ten finds nothing.", magnitude, duration),
             "focus" => L10n.F("+{0:P0} critical chance for {1:0.#} s.", magnitude, duration),
