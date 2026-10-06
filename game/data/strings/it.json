@@ -799,7 +799,7 @@
   "Health regen": "Rigenerazione salute",
   "High-contrast warnings": "Avvisi ad alto contrasto",
   "High-contrast warnings draw enemy attacks in bright yellow with a thick edge and stripes, readable without telling red from green. How long a warning lasts is set by the difficulty.": "Gli avvisi ad alto contrasto mostrano gli attacchi nemici in giallo acceso, con un bordo spesso e a righe, leggibili anche senza distinguere il rosso dal verde. La durata degli avvisi dipende dalla difficoltà.",
-  "Hold for {0:F0} seconds.": "Resisti per {0:F0} secondi.",
+  "Hold for {0:F0} seconds. Every kill takes {1:0.#} s off.": "Resisti per {0:F0} secondi. Ogni uccisione toglie {1:0.#} s.",
   "INT": "INT",
   "Interface size": "Dimensione interfaccia",
   "Inventory": "Inventario",

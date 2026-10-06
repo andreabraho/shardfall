@@ -60,6 +60,33 @@ public class TowerRunTests
         Assert.Equal(FloorPhase.Open, run.Phase);
     }
 
+    [Fact]
+    public void EveryKillTakesTimeOffAHoldClock()
+    {
+        var run = Run(Floor(FloorTask.Hold, seconds: 10));
+
+        run.Tick(5.0);
+        for (var i = 0; i < 10; i++) run.Slain();
+
+        Assert.Equal(5.0 - (10 * TowerRun.KillShortensHold), run.Remaining, 6);
+
+        for (var i = 0; i < 20; i++) run.Slain();
+
+        Assert.Equal(FloorPhase.Open, run.Phase);
+    }
+
+    [Fact]
+    public void KillsDoNotTouchARaceClock()
+    {
+        var run = Run(Floor(FloorTask.Race, targets: 3, seconds: 30));
+
+        run.ScoreTarget();
+        run.Tick(5.0);
+        run.Slain();
+
+        Assert.Equal(25.0, run.Remaining, 6);
+    }
+
     /// <summary>
     /// The one that makes the verb work. A race whose clock starts when the player walks in is
     /// a test of how fast they read an unfamiliar room, which is not the skill being asked for.
