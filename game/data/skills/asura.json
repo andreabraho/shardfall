@@ -32,11 +32,11 @@
     } },
 
   { "id": "skl_hexed_blade", "name": "$skill.skl_hexed_blade.name", "color": "#ff4d8c", "sound": "snd_skl_aura", "class": "sura", "tree": "dark", "suggested_level": 5, "mana_cost": 26, "cooldown": 34,
-    "cast_type": "instant", "targeting": "self", "radius": 0, "damage_coef": 0.00, "hits": 0, "motion": "spell", "duration": 25.0, "magnitude": 25, "average_damage": 0.10, "applies": { "kind": "hex", "magnitude": 0.06, "duration": 25.0, "chance": 1.0 },
+    "cast_type": "instant", "targeting": "self", "radius": 0, "damage_coef": 0.00, "hits": 0, "motion": "spell", "duration": 25.0, "magnitude": 25, "average_damage": 0.30, "applies": { "kind": "hex", "magnitude": 0.06, "duration": 25.0, "chance": 1.0 },
     "mastery": {
-      "master":       { "magnitude": 33, "average_damage": 0.20, "note": "$skill.skl_hexed_blade.m" },
-      "grand_master": { "duration": 30.0, "average_damage": 0.30, "note": "$skill.skl_hexed_blade.g" },
-      "perfect":      { "cooldown": 30.0, "magnitude": 40, "average_damage": 0.40, "note": "$skill.skl_hexed_blade.p" }
+      "master":       { "magnitude": 33, "average_damage": 0.55, "note": "$skill.skl_hexed_blade.m" },
+      "grand_master": { "duration": 30.0, "average_damage": 0.75, "note": "$skill.skl_hexed_blade.g" },
+      "perfect":      { "cooldown": 30.0, "magnitude": 40, "average_damage": 1.00, "note": "$skill.skl_hexed_blade.p" }
     } },
 
   { "id": "skl_dread", "name": "$skill.skl_dread.name", "color": "#9e33eb", "sound": "snd_skl_frenzy", "class": "sura", "tree": "dark", "suggested_level": 12, "mana_cost": 22, "cooldown": 18,
