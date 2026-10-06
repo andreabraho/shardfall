@@ -130,18 +130,35 @@ public sealed class ItemInstance
     /// Which of the item's stats it is comes from the copy's own uid, scrambled: random from one
     /// drop to the next, the same for the life of the copy, and nothing more to save — so a ring
     /// from a save made before rings had one has one too.
+    /// <para>
+    /// Scrambled in full (2026-10-06): a single multiply read from its middle bits went round in
+    /// sixteens, so copies dropped a fixed number of items apart were born with the same stat and a
+    /// player could find twenty earrings and never the intelligence one.
+    /// </para>
     /// </remarks>
     public BonusLine? InnateFor(ItemSpec spec)
     {
         if (spec.Innate is not { Stats.Count: > 0 } innate) return null;
 
-        var pick = (int)((unchecked((ulong)Uid * 0x9E3779B97F4A7C15UL) >> 33) % (ulong)innate.Stats.Count);
+        var pick = (int)(Scramble((ulong)Uid) % (ulong)innate.Stats.Count);
         var level = Math.Clamp(UpgradeLevel, 0, UpgradeScaling.MaxLevel);
         var worth = innate.Ladder.Count > 0
             ? innate.Ladder[Math.Min(level, innate.Ladder.Count - 1)]
             : innate.Magnitude * UpgradeScaling.Multiplier(level);
 
         return new BonusLine("innate", innate.Stats[pick], worth);
+    }
+
+    /// <summary>SplitMix64's finish: every bit of the uid reaches every bit of the result.</summary>
+    private static ulong Scramble(ulong x)
+    {
+        unchecked
+        {
+            x += 0x9E3779B97F4A7C15UL;
+            x = (x ^ (x >> 30)) * 0xBF58476D1CE4E5B9UL;
+            x = (x ^ (x >> 27)) * 0x94D049BB133111EBUL;
+            return x ^ (x >> 31);
+        }
     }
 
     /// <summary>

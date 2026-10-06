@@ -51,6 +51,21 @@ public class InnateTests
         Assert.Equal(4, kinds.Count);
     }
 
+    [Fact]
+    public void EveryAttributeTurnsUp_HoweverFarApartTheCopiesAre()
+    {
+        // 2026-10-06: twenty earrings and not one of intelligence — copies a fixed number of uids
+        // apart were all born the same. Forty must show all four, whatever the gap.
+        for (var gap = 1; gap <= 64; gap++)
+        {
+            var kinds = Enumerable.Range(0, 40)
+                .Select(i => new ItemInstance(2000 + (i * gap), Bracelet.Id).InnateFor(Bracelet)!.Value.Stat.Kind)
+                .ToHashSet();
+
+            Assert.True(kinds.Count == 4, $"gap {gap}: only {kinds.Count} kinds");
+        }
+    }
+
     [Theory]
     [InlineData(0, 3)]
     [InlineData(5, 8)]
