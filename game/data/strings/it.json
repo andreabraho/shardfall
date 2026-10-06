@@ -105,7 +105,7 @@
   "The shell": "Il guscio",
   "Your attack power takes {0:0.#} from each point of INT. With yours: +{1:0}.": "La tua potenza d'attacco prende {0:0.#} da ogni punto di INT. Con i tuoi: +{1:0}.",
   "+{0:0} defence for {1:0.#} s, and {2:0.#} more for each point of INT.": "+{0:0} difesa per {1:0.#} s, e {2:0.#} in più per ogni punto di INT.",
-  "+{0:0} attack power for {1:0.#} s, and {2:0.#} more for each point of INT; {3:P0} of the damage of each blow comes back as health.": "+{0:0} potenza d'attacco per {1:0.#} s, e {2:0.#} in più per ogni punto di INT; il {3:P0} del danno di ogni colpo normale torna come salute.",
+  "+{0:0} attack power and +{1:P0} average damage on your blows (not your skills) for {2:0.#} s, and {3:0.#} more attack for each point of INT; {4:P0} of the damage of each blow comes back as health.": "+{0:0} potenza d'attacco e +{1:P0} danni medi sui colpi normali (non sulle abilità) per {2:0.#} s, e {3:0.#} d'attacco in più per ogni punto di INT; il {4:P0} del danno di ogni colpo normale torna come salute.",
   "+{0:0} attack": "+{0:0} attacco",
   "Grows with INT: every share above is a little larger for each point.": "Cresce con INT: ogni percentuale qui sopra è un po' più alta per ogni punto.",
   "Grows with INT: {0:0.##}% more a point, up to {1:P0}. With yours: {2:P1}.": "Cresce con INT: {0:0.##}% in più a punto, fino al {1:P0}. Con i tuoi: {2:P1}.",
