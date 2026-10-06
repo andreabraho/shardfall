@@ -41,6 +41,10 @@ public static class SkillText
         ?? PlayerProfile.Progression?.TotalAttributes.Int
         ?? Attributes.StartingValue;
 
+    /// <summary>The average damage the character's gear gives, as it stands; zero with nobody in the world.</summary>
+    private static double Gear() =>
+        (Engine.GetMainLoop() as SceneTree)?.GetFirstNodeInGroup("player")?.GetNodeOrNull<Combat.Combatant>("Combatant")?.Stats.Modifiers.DamagePct ?? 0;
+
     /// <summary>One line saying what a share takes from intelligence, and what it comes to with the player's.</summary>
     private static string Grown(string what, double strength, double perPoint, double cap) =>
         L10n.F("{0}: {1:0.##}% more for each point of INT, up to {2:P0}. With yours: {3:P1}.", what, perPoint * 100, cap, Attributes.SeerScaled(strength, Mind(), perPoint, cap));
@@ -136,6 +140,7 @@ public static class SkillText
             {
                 case "hex":
                     lines.Add(L10n.F("With your INT: +{0:0} attack power.", skill.Magnitude + (Mind() * Attributes.AsuraBladePerInt)));
+                    lines.Add(L10n.F("With your gear: +{0:P0} average damage.", skill.AverageDamage + Gear()));
                     break;
                 case "mail":
                     lines.Add(Grown(L10n.T("Damage taken"), skill.Magnitude, Attributes.AsuraSharePerInt, Attributes.AsuraMailCap));
@@ -319,7 +324,7 @@ public static class SkillText
             "bleed" => L10n.F("Makes the target bleed for {0:0.#} s.", duration),
             "burn" when skill.Magnitude > 0 => L10n.F("Burns for {0:0.#} s: {1:P0} of the blow every second, up to three times over.", duration, skill.Magnitude),
             "burn" => L10n.F("Burns for {0:0.#} s.", duration),
-            "hex" => L10n.F("+{0:0} attack power and +{1:P0} average damage on your blows (not your skills) for {2:0.#} s, and {3:0.#} more attack for each point of INT; {4:P0} of the damage of each blow comes back as health.", magnitude, skill.AverageDamage, duration, Attributes.AsuraBladePerInt, applies.Magnitude),
+            "hex" => L10n.F("+{0:0} attack power and +{1:P0} average damage on your blows (not your skills) for {2:0.#} s, and as much average damage again as your gear gives; {3:0.#} more attack for each point of INT; {4:P0} of the damage of each blow comes back as health.", magnitude, skill.AverageDamage, duration, Attributes.AsuraBladePerInt, applies.Magnitude),
             "mail" => L10n.F("Take {0:P0} less damage for {1:0.#} s, moving {2:P0} slower; {3:P0} of every blow taken from close by is thrown back.", magnitude, duration, StatusEffectSet.FortifyDrag, applies.Magnitude),
             "haste" => L10n.F("Move {0:P0} faster for {1:0.#} s, and one blow in ten finds nothing.", magnitude, duration),
             "focus" => L10n.F("+{0:P0} critical chance for {1:0.#} s.", magnitude, duration),
