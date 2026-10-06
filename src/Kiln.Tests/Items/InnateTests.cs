@@ -52,6 +52,39 @@ public class InnateTests
     }
 
     [Fact]
+    public void ACopyFromAnOlderSaveKeepsTheStatItWasFoundWith()
+    {
+        // Your intelligence earring, uid 4779, turned to dexterity when the draw was made fair.
+        var saved = Kiln.Core.Saving.ItemSnapshots.Capture(new ItemInstance(4779, Bracelet.Id), null);
+        saved.FairInnate = false;
+
+        var old = Kiln.Core.Saving.ItemSnapshots.Restore(saved, new OneSpec(Bracelet), new OneSpec(Bracelet))!;
+
+        Assert.Equal(BonusStatKind.Intelligence, old.InnateFor(Bracelet)!.Value.Stat.Kind);
+
+        // And a copy saved since keeps its fair draw.
+        var fresh = new ItemInstance(4779, Bracelet.Id);
+        var again = Kiln.Core.Saving.ItemSnapshots.Restore(Kiln.Core.Saving.ItemSnapshots.Capture(fresh, null), new OneSpec(Bracelet), new OneSpec(Bracelet))!;
+
+        Assert.Equal(fresh.InnateFor(Bracelet)!.Value.Stat.Kind, again.InnateFor(Bracelet)!.Value.Stat.Kind);
+    }
+
+    private sealed class OneSpec(ItemSpec spec) : IItemSpecs, IBonusPools
+    {
+        public bool TryGet(string id, out ItemSpec found)
+        {
+            found = spec;
+            return id == spec.Id;
+        }
+
+        public bool TryGet(string id, out BonusPool pool)
+        {
+            pool = null!;
+            return false;
+        }
+    }
+
+    [Fact]
     public void EveryAttributeTurnsUp_HoweverFarApartTheCopiesAre()
     {
         // 2026-10-06: twenty earrings and not one of intelligence — copies a fixed number of uids
