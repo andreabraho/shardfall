@@ -398,6 +398,12 @@ public sealed class SkillDef : ContentDefBase
     public double Guards { get; init; }
 
     /// <summary>
+    /// Average damage — a share more on basic blows, never on a skill — its caster gains for the
+    /// skill's duration (the Hexed Blade, 2026-10-06, at your call): zero for none.
+    /// </summary>
+    public double AverageDamage { get; init; }
+
+    /// <summary>
     /// How many more creatures a shot leaps on to after the one it strikes, each within the skill's
     /// radius of the last (CLS-06, the Storm Orb, at your call). Zero for none.
     /// </summary>
@@ -439,6 +445,7 @@ public sealed class SkillRankDef
     public int? Hits { get; init; }
     public double? Duration { get; init; }
     public double? Magnitude { get; init; }
+    public double? AverageDamage { get; init; }
 
     /// <summary>Localisation key describing the change, for the skill tooltip.</summary>
     public string? Note { get; init; }

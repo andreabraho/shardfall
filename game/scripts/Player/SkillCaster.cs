@@ -641,6 +641,14 @@ public partial class SkillCaster : Node
 
             _self.Statuses.Apply(second);
         }
+
+        // Average damage on the blows, for as long as the rest lasts (the Hexed Blade, 2026-10-06, at your call).
+        if (skill.AverageDamage > 0)
+        {
+            if (_motor.GetNodeOrNull<Combat.AuraVisual>($"Aura{StatusKind.Empower}") is { } edge) edge.Rank = skill.Rank;
+
+            _self.Statuses.Apply(StatusEffectSet.Empower(skill.AverageDamage, skill.Duration));
+        }
     }
 
     /// <summary>

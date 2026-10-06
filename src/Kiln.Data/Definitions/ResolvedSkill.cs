@@ -34,7 +34,8 @@ public readonly record struct ResolvedSkill(
     int MaxTargets = 0,
     bool Pierces = false,
     double Range = 0,
-    DamageElement Element = DamageElement.Physical)
+    DamageElement Element = DamageElement.Physical,
+    double AverageDamage = 0)
 {
     /// <summary>
     /// What each point beyond the first adds, as a fraction (REF-03).
@@ -59,6 +60,7 @@ public readonly record struct ResolvedSkill(
         var hits = Math.Max(1, def.Hits);
         var duration = def.Duration;
         var magnitude = def.Magnitude;
+        var average = def.AverageDamage;
 
         void Apply(SkillRankDef? tier)
         {
@@ -72,6 +74,7 @@ public readonly record struct ResolvedSkill(
             hits = tier.Hits ?? hits;
             duration = tier.Duration ?? duration;
             magnitude = tier.Magnitude ?? magnitude;
+            average = tier.AverageDamage ?? average;
         }
 
         if (def.Mastery is { } mastery)
@@ -92,6 +95,6 @@ public readonly record struct ResolvedSkill(
 
         return new ResolvedSkill(def.Id, def.Targeting, radius, cone, cooldown, mana, damage, hits,
             duration, magnitude, rank, Math.Max(1, points), def.Applies, def.HitInterval, def.Motion, def.Width,
-            def.Windup, def.MaxTargets, def.Pierces, def.Range, def.Element);
+            def.Windup, def.MaxTargets, def.Pierces, def.Range, def.Element, average);
     }
 }
