@@ -647,7 +647,7 @@ public partial class SkillCaster : Node
         {
             if (_motor.GetNodeOrNull<Combat.AuraVisual>($"Aura{StatusKind.Empower}") is { } edge) edge.Rank = skill.Rank;
 
-            _self.Statuses.Apply(StatusEffectSet.Empower(skill.AverageDamage, skill.Duration));
+            _self.Statuses.Apply(StatusEffectSet.Empower(skill.AverageDamage + _self.Stats.Modifiers.DamagePct, skill.Duration));
         }
     }
 
