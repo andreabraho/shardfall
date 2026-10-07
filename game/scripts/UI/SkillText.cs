@@ -176,7 +176,7 @@ public static class SkillText
         if (def.CastType == "channel" && def.Radius > 0 && def.Motion != "counter")
         {
             lines.Add(def.Motion == "backstep"
-                ? L10n.F("A leap of {0:0.#} m away from what you face. Nothing touches you for {1:0.##} s.", skill.Radius, skill.Duration)
+                ? L10n.F("A leap of {0:0.#} m back from where the camera looks. Nothing touches you for {1:0.##} s, and your next skill that deals damage deals double.", skill.Radius, skill.Duration)
                 : L10n.F("A dash of {0:0.#} m the way you are going. Nothing touches you for {1:0.##} s.", skill.Radius, skill.Duration));
         }
 
