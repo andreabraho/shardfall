@@ -293,6 +293,16 @@ def build(name):
                     caps=gold, riser=gold, gem=m("kiln_gem", (1.0, 0.36, 0.06), glow=1.6), knob=m("kiln_gem", (1.0, 0.36, 0.06), glow=1.6),
                     string=m("kiln_string", (1.0, 0.80, 0.45), glow=0.7), branches=flames)
 
-    bows = {"worn_bow": worn, "hunters_bow": hunters, "bronze_bow": bronze_, "iron_bow": iron_, "ridge_bow": ridge, "warden_bow": warden,
+    def abyss():
+        # Arco dell'Abisso (P5, 2026-10-07): black limbs grown with bone — ribs curling back off both limbs like a carcass, thorns
+        # of crimson glass between them, an eye at the grip.
+        black = m("abyss_wood", (0.05, 0.035, 0.07), metal=0.4, rough=0.35)
+        glow = m("abyss_glow", (0.95, 0.10, 0.38), glow=1.5)
+        ribs = [B(0.18 + 0.13 * i, 0.38 - 0.03 * i, 64 - 6 * i, 0.08, bone, style="horn", bend=-95) for i in range(6)]
+        thorns = [B(0.22 + 0.17 * i, 0.16, 30 + 6 * i, 0.06, glow, style="thorn", bend=20) for i in range(4)]
+        return dict(wood=black, grip=m("abyss_wrap", (0.20, 0.03, 0.10)), height=1.18, curve=0.46, recurve=0.24, width=0.17, flare=0.08, inlay=glow,
+                    caps=bone, riser=black, gem=glow, knob=glow, string=m("abyss_string", (0.95, 0.40, 0.70), glow=0.6), branches=ribs + thorns)
+
+    bows = {"abyss_bow": abyss, "worn_bow": worn, "hunters_bow": hunters, "bronze_bow": bronze_, "iron_bow": iron_, "ridge_bow": ridge, "warden_bow": warden,
             "steel_bow": steel_, "grave_bow": grave, "ember_bow": ember, "hollow_bow": hollow, "shard_bow": shard, "kiln_bow": kiln}
     return bow(name, **bows[name]())

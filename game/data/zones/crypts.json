@@ -28,21 +28,21 @@
       // 1. The Ossuary: one in ten of the crypt's creatures carries the Soul Key — never more than fifteen — and
       // the statue in the middle takes it.
       { "id": "flr_crypt_ossuary", "name": "$floor.flr_crypt_ossuary.name", "task": "key", "targets": 1, "key_after": 15,
-        "prop": "mesh_tower_keystone", "prop_name": "$floor.prop.statue", "shrine": "shr_crypt_mouth",
+        "prop": "mesh_soul_statue", "prop_name": "$floor.prop.statue", "shrine": "shr_crypt_mouth",
         "pack": 8, "waves": ["mob_abyss_hound", "mob_crypt_ghoul", "mob_abyss_imp"], "wave_size": 3, "wave_seconds": 18 },
       // 2. The Sealed Doors: the stair stands in a walled court with a door on each side. Each door's guard rises
       // as the player comes near.
       { "id": "flr_crypt_doors", "name": "$floor.flr_crypt_doors.name", "task": "carry", "targets": 4, "guard": 5,
-        "prop": "mesh_tower_keystone", "prop_name": "$floor.prop.door",
+        "prop": "mesh_crypt_door", "prop_name": "$floor.prop.door",
         "pack": 4, "waves": ["mob_crypt_ghoul", "mob_crypt_brute", "mob_infernal_archer"], "wave_size": 2, "wave_seconds": 22 },
       // 3. The Stones of Judgement: seven alike, one true. Every one lets out a crowd.
       { "id": "flr_crypt_judgement", "name": "$floor.flr_crypt_judgement.name", "task": "find", "targets": 1, "decoys": 6, "burst": 5,
-        "prop": "mesh_shard_demon", "prop_name": "$floor.prop.stone",
+        "prop": "mesh_judgement_stone", "prop_name": "$floor.prop.stone",
         "pack": 3, "waves": ["mob_abyss_warrior", "mob_abyss_priest", "mob_infernal_archer", "mob_abyss_imp"], "wave_size": 2, "wave_seconds": 24 },
       // 4. The Portal Maze: four halls, three portals at the end of each; one leads on, the others back to the
       // first. Which one changes every run. A few hounds wander; the pole at the end opens the way down.
       { "id": "flr_crypt_maze", "name": "$floor.flr_crypt_maze.name", "task": "maze", "targets": 1, "halls": 4, "portals": 3,
-        "prop": "mesh_tower_lantern", "prop_name": "$floor.prop.pole",
+        "prop": "mesh_runic_pole", "prop_name": "$floor.prop.pole",
         "pack": 6, "waves": ["mob_abyss_hound", "mob_crypt_ghoul"], "wave_size": 2, "wave_seconds": 30 },
       // 5. The Jailer's Cell.
       { "id": "flr_crypt_cell", "name": "$floor.flr_crypt_cell.name", "task": "fight", "boss": "mob_crypt_jailer",

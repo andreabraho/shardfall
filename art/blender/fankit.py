@@ -334,6 +334,20 @@ def build(name):
         parts += tassel("tassel_a", -0.04, -0.30, cord, red, beads=jade, count=2) + tassel("tassel_b", 0.04, -0.30, cord, red, beads=jade, count=2, length=0.30)
         return parts
 
-    fans = {"worn_fan": worn, "hunters_fan": hunters, "bronze_fan": bronze_, "iron_fan": iron_, "ridge_fan": ridge, "warden_fan": warden,
+    def abyss():
+        # Ventaglio dell'Abisso (P5, 2026-10-07): a bat's wing of black membrane stretched on bone fingers, crimson veins in it,
+        # a claw at every finger and an eye at the pivot.
+        skin = m("abyss_membrane", (0.07, 0.03, 0.08), rough=0.7)
+        glow = m("abyss_glow", (0.95, 0.10, 0.38), glow=1.5)
+        parts = [sector("leaf", 0.82, 0.20, 150, skin, ribs=7, edge=scallop(0.10)),
+                 sector("vein_band", 0.50, 0.47, 150, glow, thickness=0.026, ribs=7), sector("vein_low", 0.32, 0.30, 150, glow, thickness=0.026, ribs=7)]
+        for i, a in enumerate(angles(150, 7)):
+            parts += [stick(f"finger_{i}", a, 0.86, 0.026, bone, thickness=0.04), plume(f"claw_{i}", a, 0.84, 1.02, 0.05, bone, thickness=0.035, sharp=True)]
+        parts += [disc("eye_ring", 0.0, 90, 0.08, bone, depth=0.05), disc("eye", 0.0, 90, 0.05, glow, depth=0.06)]
+        parts += handle(m("abyss_wrap", (0.20, 0.03, 0.10)), bone, gem=glow, length=0.28)
+        parts += tassel("tassel", 0, -0.30, m("abyss_cord", (0.40, 0.05, 0.18)), skin, beads=glow, count=3, length=0.26)
+        return parts
+
+    fans = {"abyss_fan": abyss, "worn_fan": worn, "hunters_fan": hunters, "bronze_fan": bronze_, "iron_fan": iron_, "ridge_fan": ridge, "warden_fan": warden,
             "steel_fan": steel_, "grave_fan": grave, "ember_fan": ember, "hollow_fan": hollow, "shard_fan": shard, "kiln_fan": kiln}
     return finish(name, fans[name]())

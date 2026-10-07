@@ -114,7 +114,10 @@ public partial class FloorPylon : StaticBody3D
             Position = new Vector3(0, 1.3f, 0),
         });
 
-        _visual = new VisualRoot { Name = "VisualRoot", Position = new Vector3(0, 1.3f, 0) };
+        // Stood on the ground whatever its height: the crypts' doors and pole are taller than a keystone.
+        var tall = GameContent.IsLoaded && GameContent.Database.Visuals.TryGetValue(VisualId, out var look) ? (float)look.Height : 2.6f;
+
+        _visual = new VisualRoot { Name = "VisualRoot", Position = new Vector3(0, tall / 2, 0) };
         AddChild(_visual);
         _visual.Apply(VisualId, null, 1.0);
 

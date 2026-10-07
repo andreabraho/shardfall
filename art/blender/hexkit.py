@@ -260,7 +260,20 @@ def build(name):
         parts += hilt(hide, m("hexk_cord", (0.30, 0.10, 0.44)), gold, length=0.32, pommel="cup", gem=glow, size=0.06)
         return parts
 
-    swords = {"worn_hexblade": worn, "hunters_hexblade": hunters, "bronze_hexblade": bronze_, "iron_hexblade": iron_, "ridge_hexblade": ridge,
+    def abyss():
+        # Lama Maledetta dell'Abisso (P5, 2026-10-07): a reaping hook of black glass, a crimson crack running out to its point,
+        # a spine of vertebrae down its back, bone wings for a guard and an eye between them, splinters hanging off the hook.
+        steel = m("hexa_steel", (0.05, 0.03, 0.06), metal=0.8, rough=0.28)
+        glow = m("hexa_glow", (0.95, 0.10, 0.38), glow=1.6)
+        outline = [(-0.08, 0.06), (0.09, 0.06), (0.15, 0.50), (0.17, 0.95), (0.24, 1.20), (0.31, 1.44), (0.12, 1.36), (0.0, 1.30), (-0.07, 1.05), (-0.09, 0.55)]
+        parts = [k.blade(outline, 0.08, steel), crack(glow, [(0.0, 0.12), (0.04, 0.40), (0.07, 0.75), (0.10, 1.05), (0.17, 1.30)], depth=0.088)]
+        parts += [t.sphere(f"vertebra_{i}", 0.038, bone, at=(-0.09 + 0.01 * i, 0, 0.20 + 0.15 * i), subdivisions=2, squash=(1, 0.8, 0.7)) for i in range(6)]
+        parts += [shardlet("drift_a", 0.36, 1.52, 0.05, glow, lean=-24), shardlet("drift_b", 0.42, 1.34, 0.04, steel, lean=-36), shardlet("drift_c", 0.26, 1.62, 0.035, steel, lean=-12)]
+        parts += [wing_guard(bone, reach=0.34, thick=0.07, feathers=4)] + eye(glow, steel, at=0.01, size=0.065, depth=0.12)
+        parts += hilt(hide, m("hexa_cord", (0.30, 0.04, 0.14)), bone, length=0.32, pommel="facet", gem=glow, size=0.06)
+        return parts
+
+    swords = {"abyss_hexblade": abyss, "worn_hexblade": worn, "hunters_hexblade": hunters, "bronze_hexblade": bronze_, "iron_hexblade": iron_, "ridge_hexblade": ridge,
               "warden_hexblade": warden, "steel_hexblade": steel_, "grave_hexblade": grave, "ember_hexblade": ember, "hollow_hexblade": hollow,
               "shard_hexblade": shard, "kiln_hexblade": kiln}
     return k.finish(name, swords[name]())

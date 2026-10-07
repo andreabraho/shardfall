@@ -157,6 +157,15 @@ def build(name):
         parts += [k.crossguard(0.16, 0.05, 0.06, gold, flare=0.5), t.sphere("gem", 0.04, fire, at=(0, 0, 0.0), subdivisions=1, squash=(1, 1.4, 1))]
         return parts + hilt(m("kiln_wrap", (0.42, 0.08, 0.06)), gold, gold, wraps=5, pommel="cup", gem=fire, size=0.045)
 
-    daggers = {"worn_knives": worn, "hunters_fangs": hunters, "bronze_spikes": bronze, "iron_daggers": iron, "ridge_hooks": ridge, "warden_dirks": warden,
+    def abyss():
+        # Zanne dell'Abisso (P5, 2026-10-07): a curved fang of obsidian with a crimson edge, a bone guard bent down over the hand.
+        black = m("abyss_steel", (0.05, 0.035, 0.07), metal=0.75, rough=0.3)
+        glow = m("abyss_glow", (0.95, 0.10, 0.38), glow=1.5)
+        outline = [(-0.06, 0.04), (0.07, 0.04), (0.10, 0.30), (0.105, 0.55), (0.06, 0.78), (-0.05, 0.94), (-0.015, 0.72), (0.0, 0.46), (-0.04, 0.22)]
+        parts = k.glowing_edge(outline, 0.06, black, glow, inset=0.7)
+        parts += [k.crossguard(0.15, 0.05, 0.06, bone, droop=0.04), t.sphere("gem", 0.035, glow, at=(0, 0, 0.0), subdivisions=2, squash=(1, 1.4, 1))]
+        return parts + hilt(m("abyss_wrap", (0.20, 0.03, 0.10)), bone, bone, wraps=5, pommel="facet", gem=glow, size=0.045)
+
+    daggers = {"abyss_fangs": abyss, "worn_knives": worn, "hunters_fangs": hunters, "bronze_spikes": bronze, "iron_daggers": iron, "ridge_hooks": ridge, "warden_dirks": warden,
                "steel_daggers": steel_, "grave_whispers": grave, "ember_fangs": ember, "hollow_talons": hollow, "shard_splinters": shard, "kiln_tongues": kiln}
     return k.finish(name, daggers[name]())

@@ -358,8 +358,41 @@ def kiln_aegis(name):
     return s.done()
 
 
+def abyss_aegis(name):
+    """Corazza dell'Abisso (P5, 2026-10-07): black plate with a ribcage of bone laid over the breast, crimson light in every seam,
+    horned shoulders, bone spikes at elbow and knee, a black cape torn at the hem."""
+    s = suit(name)
+    black = m("abyss_plate", (0.05, 0.04, 0.07), metal=0.75, rough=0.3)
+    dark = m("abyss_dark", (0.10, 0.06, 0.12), metal=0.6, rough=0.4)
+    glow = m("abyss_glow", (0.95, 0.10, 0.38), glow=1.4, rough=0.4)
+    bone = m("bone")
+
+    breastplate(s, black, dark, lames=3, alt=dark, gorget=dark)
+    # The ribs: four a side curving round the breast from the breastbone, and the breastbone down the middle.
+    for side in (-1, 1):
+        for j in range(4):
+            z = 1.18 - 0.07 * j
+            s.add("chest", c.tube(f"rib_{side}_{j}", [kat(side * (4 + 9 * i), z - 0.005 * i * i, 0.008) for i in range(4)], 0.016, bone, sides=6, flat=0.5), "m")
+    s.add("chest", c.tube("breastbone", [kat(0, 0.98 + 0.06 * i, 0.02) for i in range(5)], 0.022, bone, sides=6, flat=0.5), "m")
+    s.add("chest", t.sphere("heart", 0.05, glow, at=(0, kat(0, 1.10, 0.03)[1], 1.10), subdivisions=2, squash=(1, 0.6, 1.2)), "m")
+    s.add("chest", t.sphere("heart_w", 0.035, glow, at=(0, c.breast(0, 0.985, 0.02)[1], 0.985), subdivisions=2, squash=(1, 0.6, 1.2)), "w")
+
+    cape(s, m("abyss_cape", (0.06, 0.04, 0.07), rough=0.95), trim=dark, hem=c.ragged(5, 0.24))
+    belt(s, dark, gem=glow)
+    s.add("hips", c.faulds(black, dark, rows=2, count=7, drop=0.17))
+    s.add("hips", a.band("fauld_seam", 0.43, 0.405, 0.565, 0.58, glow, y=KY0, bevel=0))
+
+    shoulder = pauldron(black, dark, size=0.215, lame=black, gem=glow)
+    shoulder += [a.spike("horn_a", (0.36, -0.06, 1.30), (0.50, -0.14, 1.58), 0.055, bone, sides=8), a.spike("horn_b", (0.36, 0.07, 1.29), (0.47, 0.16, 1.50), 0.045, bone, sides=8)]
+    s.both("upperarm", shoulder)
+    s.both("lowerarm", bracer(black, cuff=dark, band=glow) + [a.spike("elbow", (0.50, 0.0, c.ARM_Z + 0.13), (0.42, 0.0, c.ARM_Z + 0.32), 0.045, bone, sides=6)])
+    s.both("lowerleg", n.shin(black, trim=dark, plate=black) + [a.spike("knee", (n.LEG, -0.13, 0.30), (n.LEG, -0.27, 0.45), 0.05, bone, sides=6),
+                                                                t.cylinder("shin_light", 0.137, 0.016, glow, at=(n.LEG, 0.005, 0.205), sides=18)])
+    return s.done()
+
+
 SUITS = {"padded_coat": padded_coat, "leather_vest": leather_vest, "scale_hauberk": scale_hauberk, "ridge_mail": ridge_mail,
-         "warden_plate": warden_plate, "ashen_carapace": ashen_carapace, "kiln_aegis": kiln_aegis}
+         "warden_plate": warden_plate, "ashen_carapace": ashen_carapace, "kiln_aegis": kiln_aegis, "abyss_aegis": abyss_aegis}
 
 
 def build(name):

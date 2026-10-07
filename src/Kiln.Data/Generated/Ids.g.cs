@@ -458,6 +458,7 @@ public static class Ids
 
     public static class Visuals
     {
+        public const string MeshArmAbyssAegis = "mesh_arm_abyss_aegis";
         public const string MeshArmAshenCarapace = "mesh_arm_ashen_carapace";
         public const string MeshArmAshenShroud = "mesh_arm_ashen_shroud";
         public const string MeshArmAshenStalker = "mesh_arm_ashen_stalker";
@@ -505,6 +506,7 @@ public static class Ids
         public const string MeshBootsA = "mesh_boots_a";
         public const string MeshBossBurningWarlord = "mesh_boss_burning_warlord";
         public const string MeshBossDrownedKing = "mesh_boss_drowned_king";
+        public const string MeshCryptDoor = "mesh_crypt_door";
         public const string MeshGreatswordA = "mesh_greatsword_a";
         public const string MeshHelmetA = "mesh_helmet_a";
         public const string MeshHlmAshenAntlers = "mesh_hlm_ashen_antlers";
@@ -532,6 +534,7 @@ public static class Ids
         public const string MeshHlmWardensCirclet = "mesh_hlm_wardens_circlet";
         public const string MeshHlmWardensDiadem = "mesh_hlm_wardens_diadem";
         public const string MeshHlmWardensPlume = "mesh_hlm_wardens_plume";
+        public const string MeshJudgementStone = "mesh_judgement_stone";
         public const string MeshPlaceholderCaster = "mesh_placeholder_caster";
         public const string MeshPlaceholderHeavy = "mesh_placeholder_heavy";
         public const string MeshPlaceholderHumanoid = "mesh_placeholder_humanoid";
@@ -584,6 +587,7 @@ public static class Ids
         public const string MeshQWizard = "mesh_q_wizard";
         public const string MeshQWolf = "mesh_q_wolf";
         public const string MeshQYeti = "mesh_q_yeti";
+        public const string MeshRunicPole = "mesh_runic_pole";
         public const string MeshShardAnvil = "mesh_shard_anvil";
         public const string MeshShardBanner = "mesh_shard_banner";
         public const string MeshShardBell = "mesh_shard_bell";
@@ -594,6 +598,7 @@ public static class Ids
         public const string MeshShardTotem = "mesh_shard_totem";
         public const string MeshShardWeb = "mesh_shard_web";
         public const string MeshShieldA = "mesh_shield_a";
+        public const string MeshSoulStatue = "mesh_soul_statue";
         public const string MeshStoneA = "mesh_stone_a";
         public const string MeshSwordA = "mesh_sword_a";
         public const string MeshTowerKeystone = "mesh_tower_keystone";
@@ -604,6 +609,12 @@ public static class Ids
         public const string MeshVillagerHesk = "mesh_villager_hesk";
         public const string MeshVillagerIdra = "mesh_villager_idra";
         public const string MeshVillagerTobin = "mesh_villager_tobin";
+        public const string MeshWpnAbyssBow = "mesh_wpn_abyss_bow";
+        public const string MeshWpnAbyssBrand = "mesh_wpn_abyss_brand";
+        public const string MeshWpnAbyssFan = "mesh_wpn_abyss_fan";
+        public const string MeshWpnAbyssFangs = "mesh_wpn_abyss_fangs";
+        public const string MeshWpnAbyssGreatbrand = "mesh_wpn_abyss_greatbrand";
+        public const string MeshWpnAbyssHexblade = "mesh_wpn_abyss_hexblade";
         public const string MeshWpnBronzeBow = "mesh_wpn_bronze_bow";
         public const string MeshWpnBronzeFan = "mesh_wpn_bronze_fan";
         public const string MeshWpnBronzeGreatsword = "mesh_wpn_bronze_greatsword";
@@ -681,7 +692,7 @@ public static class Ids
         public const string MeshZGhoul = "mesh_z_ghoul";
         public const string MeshZRibcage = "mesh_z_ribcage";
 
-        public static readonly string[] All = ["mesh_arm_ashen_carapace", "mesh_arm_ashen_shroud", "mesh_arm_ashen_stalker", "mesh_arm_ashen_tyrant", "mesh_arm_ashen_vigil", "mesh_arm_bloodied_leathers", "mesh_arm_branded_wraps", "mesh_arm_fletchers_scales", "mesh_arm_hexscale_hauberk", "mesh_arm_hunters_hide", "mesh_arm_jadescale_vestment", "mesh_arm_kiln_aegis", "mesh_arm_kiln_dragon", "mesh_arm_kiln_fiend", "mesh_arm_kiln_plume", "mesh_arm_kiln_shade", "mesh_arm_leather_vest", "mesh_arm_night_wraps", "mesh_arm_padded_coat", "mesh_arm_pilgrims_mantle", "mesh_arm_prowler_leathers", "mesh_arm_reed_mantle", "mesh_arm_ridge_dreadmail", "mesh_arm_ridge_mail", "mesh_arm_ridge_oracle", "mesh_arm_ridge_ranger", "mesh_arm_ridge_stalker", "mesh_arm_scale_hauberk", "mesh_arm_trail_jerkin", "mesh_arm_viper_scales", "mesh_arm_warden_plate", "mesh_arm_wardenbane_plate", "mesh_arm_wardens_benediction", "mesh_arm_wardens_mantle", "mesh_arm_wardens_shadow", "mesh_armor_a", "mesh_beast_ember_hound", "mesh_beast_fox", "mesh_beast_greymane", "mesh_beast_moss_golem", "mesh_beast_rat", "mesh_beast_slate_wolf", "mesh_beast_stone_stag", "mesh_beast_wolf", "mesh_boots_a", "mesh_boss_burning_warlord", "mesh_boss_drowned_king", "mesh_greatsword_a", "mesh_helmet_a", "mesh_hlm_ashen_antlers", "mesh_hlm_ashen_crown", "mesh_hlm_ashen_halo", "mesh_hlm_ashen_horns", "mesh_hlm_ashen_visor", "mesh_hlm_brand_band", "mesh_hlm_drowned_crown", "mesh_hlm_drowned_hood", "mesh_hlm_drowned_horns", "mesh_hlm_drowned_tiara", "mesh_hlm_drowned_veil", "mesh_hlm_iron_brow", "mesh_hlm_iron_helm", "mesh_hlm_iron_horns", "mesh_hlm_ironfeather_band", "mesh_hlm_jade_fillet", "mesh_hlm_leather_cap", "mesh_hlm_night_band", "mesh_hlm_pilgrims_fillet", "mesh_hlm_trail_band", "mesh_hlm_warden_crown", "mesh_hlm_wardenbane_crest", "mesh_hlm_wardens_circlet", "mesh_hlm_wardens_diadem", "mesh_hlm_wardens_plume", "mesh_placeholder_caster", "mesh_placeholder_heavy", "mesh_placeholder_humanoid", "mesh_placeholder_monolith", "mesh_placeholder_player", "mesh_placeholder_quadruped", "mesh_placeholder_rogue", "mesh_placeholder_shrine", "mesh_placeholder_villager", "mesh_player_archer", "mesh_player_archer_woman", "mesh_player_asura", "mesh_player_asura_woman", "mesh_player_mental", "mesh_player_mental_woman", "mesh_player_ninja", "mesh_player_ninja_woman", "mesh_player_seer", "mesh_player_seer_woman", "mesh_player_woman", "mesh_q_blue_demon", "mesh_q_bull", "mesh_q_cactoro", "mesh_q_cactoro_b", "mesh_q_deer", "mesh_q_demon", "mesh_q_drake", "mesh_q_fox", "mesh_q_frog_poison", "mesh_q_ghost", "mesh_q_ghost_skull", "mesh_q_glub", "mesh_q_goleling", "mesh_q_goleling_evo", "mesh_q_imp", "mesh_q_mushnub", "mesh_q_mushroom_king", "mesh_q_ninja", "mesh_q_ninja_b", "mesh_q_orc", "mesh_q_orc_enemy", "mesh_q_rat", "mesh_q_snake", "mesh_q_spider", "mesh_q_stag", "mesh_q_toad", "mesh_q_tribal", "mesh_q_wasp", "mesh_q_whelp", "mesh_q_wizard", "mesh_q_wolf", "mesh_q_yeti", "mesh_shard_anvil", "mesh_shard_banner", "mesh_shard_bell", "mesh_shard_demon", "mesh_shard_frost", "mesh_shard_heart", "mesh_shard_moss", "mesh_shard_totem", "mesh_shard_web", "mesh_shield_a", "mesh_stone_a", "mesh_sword_a", "mesh_tower_keystone", "mesh_tower_lantern", "mesh_trinket_a", "mesh_villager_brann", "mesh_villager_corwen", "mesh_villager_hesk", "mesh_villager_idra", "mesh_villager_tobin", "mesh_wpn_bronze_bow", "mesh_wpn_bronze_fan", "mesh_wpn_bronze_greatsword", "mesh_wpn_bronze_hexblade", "mesh_wpn_bronze_spikes", "mesh_wpn_bronze_sword", "mesh_wpn_ember_bow", "mesh_wpn_ember_edge", "mesh_wpn_ember_fan", "mesh_wpn_ember_fangs", "mesh_wpn_ember_greatedge", "mesh_wpn_ember_hexblade", "mesh_wpn_grave_bow", "mesh_wpn_grave_fan", "mesh_wpn_grave_hexblade", "mesh_wpn_grave_whispers", "mesh_wpn_gravecaller", "mesh_wpn_gravecaller_blade", "mesh_wpn_hollow_blade", "mesh_wpn_hollow_bow", "mesh_wpn_hollow_fan", "mesh_wpn_hollow_hexblade", "mesh_wpn_hollow_reaver", "mesh_wpn_hollow_talons", "mesh_wpn_hunters_bow", "mesh_wpn_hunters_fan", "mesh_wpn_hunters_fangs", "mesh_wpn_hunters_greatsword", "mesh_wpn_hunters_hexblade", "mesh_wpn_hunters_sword", "mesh_wpn_iron_bow", "mesh_wpn_iron_daggers", "mesh_wpn_iron_fan", "mesh_wpn_iron_greatsword", "mesh_wpn_iron_hexblade", "mesh_wpn_iron_sword", "mesh_wpn_kiln_bow", "mesh_wpn_kiln_brand", "mesh_wpn_kiln_fan", "mesh_wpn_kiln_greatbrand", "mesh_wpn_kiln_hexblade", "mesh_wpn_kiln_tongues", "mesh_wpn_ridge_blade", "mesh_wpn_ridge_bow", "mesh_wpn_ridge_fan", "mesh_wpn_ridge_greatblade", "mesh_wpn_ridge_hexblade", "mesh_wpn_ridge_hooks", "mesh_wpn_shard_bow", "mesh_wpn_shard_claymore", "mesh_wpn_shard_fan", "mesh_wpn_shard_hexblade", "mesh_wpn_shard_splinters", "mesh_wpn_shard_sword", "mesh_wpn_steel_bow", "mesh_wpn_steel_daggers", "mesh_wpn_steel_fan", "mesh_wpn_steel_greatsword", "mesh_wpn_steel_hexblade", "mesh_wpn_steel_sword", "mesh_wpn_warden_bow", "mesh_wpn_warden_dirks", "mesh_wpn_warden_fan", "mesh_wpn_warden_greatsword", "mesh_wpn_warden_hexblade", "mesh_wpn_warden_sword", "mesh_wpn_worn_blade", "mesh_wpn_worn_bow", "mesh_wpn_worn_fan", "mesh_wpn_worn_greatblade", "mesh_wpn_worn_hexblade", "mesh_wpn_worn_knives", "mesh_z_brute", "mesh_z_crawler", "mesh_z_ghoul", "mesh_z_ribcage"];
+        public static readonly string[] All = ["mesh_arm_abyss_aegis", "mesh_arm_ashen_carapace", "mesh_arm_ashen_shroud", "mesh_arm_ashen_stalker", "mesh_arm_ashen_tyrant", "mesh_arm_ashen_vigil", "mesh_arm_bloodied_leathers", "mesh_arm_branded_wraps", "mesh_arm_fletchers_scales", "mesh_arm_hexscale_hauberk", "mesh_arm_hunters_hide", "mesh_arm_jadescale_vestment", "mesh_arm_kiln_aegis", "mesh_arm_kiln_dragon", "mesh_arm_kiln_fiend", "mesh_arm_kiln_plume", "mesh_arm_kiln_shade", "mesh_arm_leather_vest", "mesh_arm_night_wraps", "mesh_arm_padded_coat", "mesh_arm_pilgrims_mantle", "mesh_arm_prowler_leathers", "mesh_arm_reed_mantle", "mesh_arm_ridge_dreadmail", "mesh_arm_ridge_mail", "mesh_arm_ridge_oracle", "mesh_arm_ridge_ranger", "mesh_arm_ridge_stalker", "mesh_arm_scale_hauberk", "mesh_arm_trail_jerkin", "mesh_arm_viper_scales", "mesh_arm_warden_plate", "mesh_arm_wardenbane_plate", "mesh_arm_wardens_benediction", "mesh_arm_wardens_mantle", "mesh_arm_wardens_shadow", "mesh_armor_a", "mesh_beast_ember_hound", "mesh_beast_fox", "mesh_beast_greymane", "mesh_beast_moss_golem", "mesh_beast_rat", "mesh_beast_slate_wolf", "mesh_beast_stone_stag", "mesh_beast_wolf", "mesh_boots_a", "mesh_boss_burning_warlord", "mesh_boss_drowned_king", "mesh_crypt_door", "mesh_greatsword_a", "mesh_helmet_a", "mesh_hlm_ashen_antlers", "mesh_hlm_ashen_crown", "mesh_hlm_ashen_halo", "mesh_hlm_ashen_horns", "mesh_hlm_ashen_visor", "mesh_hlm_brand_band", "mesh_hlm_drowned_crown", "mesh_hlm_drowned_hood", "mesh_hlm_drowned_horns", "mesh_hlm_drowned_tiara", "mesh_hlm_drowned_veil", "mesh_hlm_iron_brow", "mesh_hlm_iron_helm", "mesh_hlm_iron_horns", "mesh_hlm_ironfeather_band", "mesh_hlm_jade_fillet", "mesh_hlm_leather_cap", "mesh_hlm_night_band", "mesh_hlm_pilgrims_fillet", "mesh_hlm_trail_band", "mesh_hlm_warden_crown", "mesh_hlm_wardenbane_crest", "mesh_hlm_wardens_circlet", "mesh_hlm_wardens_diadem", "mesh_hlm_wardens_plume", "mesh_judgement_stone", "mesh_placeholder_caster", "mesh_placeholder_heavy", "mesh_placeholder_humanoid", "mesh_placeholder_monolith", "mesh_placeholder_player", "mesh_placeholder_quadruped", "mesh_placeholder_rogue", "mesh_placeholder_shrine", "mesh_placeholder_villager", "mesh_player_archer", "mesh_player_archer_woman", "mesh_player_asura", "mesh_player_asura_woman", "mesh_player_mental", "mesh_player_mental_woman", "mesh_player_ninja", "mesh_player_ninja_woman", "mesh_player_seer", "mesh_player_seer_woman", "mesh_player_woman", "mesh_q_blue_demon", "mesh_q_bull", "mesh_q_cactoro", "mesh_q_cactoro_b", "mesh_q_deer", "mesh_q_demon", "mesh_q_drake", "mesh_q_fox", "mesh_q_frog_poison", "mesh_q_ghost", "mesh_q_ghost_skull", "mesh_q_glub", "mesh_q_goleling", "mesh_q_goleling_evo", "mesh_q_imp", "mesh_q_mushnub", "mesh_q_mushroom_king", "mesh_q_ninja", "mesh_q_ninja_b", "mesh_q_orc", "mesh_q_orc_enemy", "mesh_q_rat", "mesh_q_snake", "mesh_q_spider", "mesh_q_stag", "mesh_q_toad", "mesh_q_tribal", "mesh_q_wasp", "mesh_q_whelp", "mesh_q_wizard", "mesh_q_wolf", "mesh_q_yeti", "mesh_runic_pole", "mesh_shard_anvil", "mesh_shard_banner", "mesh_shard_bell", "mesh_shard_demon", "mesh_shard_frost", "mesh_shard_heart", "mesh_shard_moss", "mesh_shard_totem", "mesh_shard_web", "mesh_shield_a", "mesh_soul_statue", "mesh_stone_a", "mesh_sword_a", "mesh_tower_keystone", "mesh_tower_lantern", "mesh_trinket_a", "mesh_villager_brann", "mesh_villager_corwen", "mesh_villager_hesk", "mesh_villager_idra", "mesh_villager_tobin", "mesh_wpn_abyss_bow", "mesh_wpn_abyss_brand", "mesh_wpn_abyss_fan", "mesh_wpn_abyss_fangs", "mesh_wpn_abyss_greatbrand", "mesh_wpn_abyss_hexblade", "mesh_wpn_bronze_bow", "mesh_wpn_bronze_fan", "mesh_wpn_bronze_greatsword", "mesh_wpn_bronze_hexblade", "mesh_wpn_bronze_spikes", "mesh_wpn_bronze_sword", "mesh_wpn_ember_bow", "mesh_wpn_ember_edge", "mesh_wpn_ember_fan", "mesh_wpn_ember_fangs", "mesh_wpn_ember_greatedge", "mesh_wpn_ember_hexblade", "mesh_wpn_grave_bow", "mesh_wpn_grave_fan", "mesh_wpn_grave_hexblade", "mesh_wpn_grave_whispers", "mesh_wpn_gravecaller", "mesh_wpn_gravecaller_blade", "mesh_wpn_hollow_blade", "mesh_wpn_hollow_bow", "mesh_wpn_hollow_fan", "mesh_wpn_hollow_hexblade", "mesh_wpn_hollow_reaver", "mesh_wpn_hollow_talons", "mesh_wpn_hunters_bow", "mesh_wpn_hunters_fan", "mesh_wpn_hunters_fangs", "mesh_wpn_hunters_greatsword", "mesh_wpn_hunters_hexblade", "mesh_wpn_hunters_sword", "mesh_wpn_iron_bow", "mesh_wpn_iron_daggers", "mesh_wpn_iron_fan", "mesh_wpn_iron_greatsword", "mesh_wpn_iron_hexblade", "mesh_wpn_iron_sword", "mesh_wpn_kiln_bow", "mesh_wpn_kiln_brand", "mesh_wpn_kiln_fan", "mesh_wpn_kiln_greatbrand", "mesh_wpn_kiln_hexblade", "mesh_wpn_kiln_tongues", "mesh_wpn_ridge_blade", "mesh_wpn_ridge_bow", "mesh_wpn_ridge_fan", "mesh_wpn_ridge_greatblade", "mesh_wpn_ridge_hexblade", "mesh_wpn_ridge_hooks", "mesh_wpn_shard_bow", "mesh_wpn_shard_claymore", "mesh_wpn_shard_fan", "mesh_wpn_shard_hexblade", "mesh_wpn_shard_splinters", "mesh_wpn_shard_sword", "mesh_wpn_steel_bow", "mesh_wpn_steel_daggers", "mesh_wpn_steel_fan", "mesh_wpn_steel_greatsword", "mesh_wpn_steel_hexblade", "mesh_wpn_steel_sword", "mesh_wpn_warden_bow", "mesh_wpn_warden_dirks", "mesh_wpn_warden_fan", "mesh_wpn_warden_greatsword", "mesh_wpn_warden_hexblade", "mesh_wpn_warden_sword", "mesh_wpn_worn_blade", "mesh_wpn_worn_bow", "mesh_wpn_worn_fan", "mesh_wpn_worn_greatblade", "mesh_wpn_worn_hexblade", "mesh_wpn_worn_knives", "mesh_z_brute", "mesh_z_crawler", "mesh_z_ghoul", "mesh_z_ribcage"];
     }
 
     public static class Shards
@@ -970,21 +981,24 @@ public static class Ids
 
     public static class Cosmetics
     {
+        public const string CosAbyssAura = "cos_abyss_aura";
         public const string CosArcaneAura = "cos_arcane_aura";
         public const string CosBoneArmour = "cos_bone_armour";
         public const string CosCinderAura = "cos_cinder_aura";
+        public const string CosCryptGhoulet = "cos_crypt_ghoulet";
         public const string CosEmberCub = "cos_ember_cub";
         public const string CosFrostBlade = "cos_frost_blade";
         public const string CosHellfireBlade = "cos_hellfire_blade";
         public const string CosImp = "cos_imp";
         public const string CosMireAura = "cos_mire_aura";
         public const string CosRaiderArmour = "cos_raider_armour";
+        public const string CosSoulAura = "cos_soul_aura";
         public const string CosStoneFawn = "cos_stone_fawn";
         public const string CosVenomBlade = "cos_venom_blade";
         public const string CosWarbronzeArmour = "cos_warbronze_armour";
         public const string CosWolfCub = "cos_wolf_cub";
 
-        public static readonly string[] All = ["cos_arcane_aura", "cos_bone_armour", "cos_cinder_aura", "cos_ember_cub", "cos_frost_blade", "cos_hellfire_blade", "cos_imp", "cos_mire_aura", "cos_raider_armour", "cos_stone_fawn", "cos_venom_blade", "cos_warbronze_armour", "cos_wolf_cub"];
+        public static readonly string[] All = ["cos_abyss_aura", "cos_arcane_aura", "cos_bone_armour", "cos_cinder_aura", "cos_crypt_ghoulet", "cos_ember_cub", "cos_frost_blade", "cos_hellfire_blade", "cos_imp", "cos_mire_aura", "cos_raider_armour", "cos_soul_aura", "cos_stone_fawn", "cos_venom_blade", "cos_warbronze_armour", "cos_wolf_cub"];
     }
 
 }
