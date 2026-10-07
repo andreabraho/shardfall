@@ -133,7 +133,7 @@ public partial class ShardHud : CanvasLayer, ITopBar
         _title.Text = $"{Items.GameItems.Localise("$shard." + _shard.ShardId + ".name")}{modifier}";
         _health.Value = _shard.Core.Health.Fraction;
 
-        var advice = FoeAdvice.For(_shard.Core, GetTree().GetFirstNodeInGroup("player")?.GetNodeOrNull<Combat.Combatant>("Combatant"));
+        var advice = FoeAdvice.For(_shard.Core, GetTree().GetFirstNodeInGroup("player")?.GetNodeOrNull<Combat.Combatant>("Combatant"), _shard.DropTableId);
 
         if (_root.TooltipText != advice) _root.TooltipText = advice;
         _info.Advice = advice;

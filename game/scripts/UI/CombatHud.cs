@@ -77,7 +77,7 @@ public partial class CombatHud : CanvasLayer
 
         _targetLabel.Text = $"{Pretty(target.DisplayName)}   {target.Health}";
 
-        var advice = FoeAdvice.For(target, _self);
+        var advice = target.GetParent() is EnemyBrain enemy ? FoeAdvice.For(enemy, _self) : FoeAdvice.For(target, _self);
 
         if (_targetPanel.TooltipText != advice) _targetPanel.TooltipText = advice;
         _info.Advice = advice;
