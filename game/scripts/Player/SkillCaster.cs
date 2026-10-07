@@ -211,6 +211,7 @@ public partial class SkillCaster : Node
             }
         }
 
+        ProcessApproach();
         ProcessPulses(delta);
         UpdateAiming();
         ShowUnseen();
@@ -250,7 +251,8 @@ public partial class SkillCaster : Node
             {
                 // Ground-targeted skills aim while held and fire on release, so the area is
                 // visible before committing. Everything else fires immediately.
-                if (IsGroundTargeted(id) && CanCast(id) && GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat")?.Target is not { IsAlive: true })
+                // The Archer places it on the nearest enemy instead, when there is one (2026-10-07).
+                if (IsGroundTargeted(id) && CanCast(id) && !ArcherFindsTarget() && GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat")?.Target is not { IsAlive: true })
                 {
                     _aiming = id;
                 }
@@ -323,6 +325,8 @@ public partial class SkillCaster : Node
         }
 
         if (_self.Statuses.IsStunned) return;
+
+        if (PlayerCombat.Ranged && def.Targeting != SkillTargeting.Self && !InArcherReach(skillId, skill)) return;
 
         // A skill that wants a target is not cast without one, or — a blow of the hand — at one
         // out of its reach: said, and nothing spent.
@@ -681,6 +685,87 @@ public partial class SkillCaster : Node
 
     /// <summary>How far this skill lands on the creature chosen: its own range, or a blade's reach.</summary>
     private static float ReachOf(ResolvedSkill skill) => skill.Range > 0 ? (float)skill.Range : SingleReach;
+
+    /// <summary>
+    /// The Archer's skills (2026-10-07, at your call): with nothing chosen they go at the nearest
+    /// enemy round it, and one out of reach or out of sight is walked up to and cast from there.
+    /// True when the skill can go now; false when the walk has begun, or nothing is near.
+    /// </summary>
+    private bool InArcherReach(string skillId, ResolvedSkill skill)
+    {
+        var combat = GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat");
+
+        // Nothing round it: the skill goes as it always did, ahead or at the cursor.
+        if (combat?.TargetOrNearest(PlayerCombat.SeekRadius) is not { } chosen) return true;
+
+        if (chosen.Body.GlobalPosition.DistanceTo(_motor.GlobalPosition) <= ArcherReach(skill) && combat.InSight(chosen)) return true;
+
+        _approaching = skillId;
+        _approachTarget = chosen;
+        _motor.CommandMoveTo(chosen.Body.GlobalPosition);
+
+        return false;
+    }
+
+    /// <summary>True for the Archer when it has, or has now chosen, something to shoot.</summary>
+    private bool ArcherFindsTarget() =>
+        PlayerCombat.Ranged
+        && GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat")?.TargetOrNearest(PlayerCombat.SeekRadius) is not null;
+
+    /// <summary>How far from its target an Archer's skill can be cast: its range, or the length of its line.</summary>
+    private static float ArcherReach(ResolvedSkill skill) => skill.Targeting switch
+    {
+        SkillTargeting.GroundAoe => skill.Range > 0 ? (float)skill.Range : (float)skill.Radius * 2f,
+        SkillTargeting.Line => (float)skill.Radius,
+        _ => ReachOf(skill),
+    };
+
+    /// <summary>The skill the Archer is walking into reach to cast, and at what.</summary>
+    private string? _approaching;
+    private Combatant? _approachTarget;
+
+    /// <summary>How far inside its reach the walk stops, so a creature that steps back is still in it.</summary>
+    private const float ApproachMargin = 1.0f;
+
+    /// <summary>Gives up the walk to cast: the player walked off, chose another, or attacked.</summary>
+    public void CancelApproach()
+    {
+        _approaching = null;
+        _approachTarget = null;
+    }
+
+    private void ProcessApproach()
+    {
+        if (_approaching is null) return;
+
+        var combat = GetParent().GetNodeOrNull<PlayerCombat>("PlayerCombat");
+
+        if (_approachTarget is null || !IsInstanceValid(_approachTarget) || !_approachTarget.IsAlive || !_self.IsAlive
+            || combat is null || !ReferenceEquals(combat.Target, _approachTarget)
+            || !GameContent.IsLoaded || !GameContent.Database.Skills.TryGetValue(_approaching, out var def))
+        {
+            CancelApproach();
+            return;
+        }
+
+        // Another skill being cast, or a stun, holds the walk; it goes on after.
+        if (_castingFor > 0 || _self.Statuses.IsStunned) return;
+
+        var at = _approachTarget.Body.GlobalPosition;
+
+        if (at.DistanceTo(_motor.GlobalPosition) <= ArcherReach(Resolve(def)) - ApproachMargin && combat.InSight(_approachTarget))
+        {
+            var id = _approaching;
+
+            CancelApproach();
+            _motor.Stop();
+            TryCast(id);
+            return;
+        }
+
+        // Re-issued every frame, so a creature on the move is followed.
+        _motor.CommandMoveTo(at);
+    }
 
     /// <summary>How far a single-target skill reaches for a creature when none is chosen.</summary>
 
