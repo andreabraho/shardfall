@@ -81,5 +81,8 @@ The last boss's table draws one of the nine slots, the same chance each; the pie
   abyss set — six weapons in the class kits, five armours (`warkit`, `shadowkit`, `classkit`), five headpieces
   (`abyss_visor.py` and the kits), the shield, boots and jewellery and the two parts in `trinkets.py`, with their
   icons. Black plate, bone and a crimson light.
-- **Stand-ins:** the creatures and bosses are act 1's models recoloured toward the abyss, as act 2's were at first.
+- **The bosses wear pieces of ours** on act 1's bodies (`bosskit.py`): the Jailer an iron cage over its head and chains with a ring of
+  bone keys, the Ferryman a deep hood with crimson eyes and a collar of bone with a lantern, the Lord of the Crypt a crown of
+  bone horns and a mantle of plates, spines and skulls.
+- **Stand-ins:** the pack creatures are act 1's models recoloured toward the abyss, as act 2's were at first.
 - The scene is written by `kiln scenes` (`src/Kiln.Tools/Commands/CryptLayout.cs`), as act 2's maps are.

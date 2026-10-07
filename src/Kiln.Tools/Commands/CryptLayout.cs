@@ -242,7 +242,7 @@ public static class CryptLayout
         Line();
         Line("uniform vec3 black : source_color = vec3(0.07, 0.06, 0.09);");
         Line("uniform vec3 violet : source_color = vec3(0.16, 0.08, 0.24);");
-        Line("uniform vec3 seam : source_color = vec3(0.30, 0.10, 0.45);");
+        Line("uniform vec3 seam : source_color = vec3(0.16, 0.06, 0.24);");
         Line();
         Line("varying vec3 wp;");
         Line();
@@ -267,7 +267,7 @@ public static class CryptLayout
         Line("\tfloat edge = min(min(f.x, 1.0 - f.x), min(f.y, 1.0 - f.y));");
         Line("\tfloat g = smoothstep(0.015, 0.045, edge);");
         Line("\tALBEDO = mix(seam, stone, g);");
-        Line("\tEMISSION = seam * (1.0 - g) * 0.6;");
+        Line("\tEMISSION = seam * (1.0 - g) * 0.2;");
         Line("\tROUGHNESS = 0.8 - 0.3 * h;");
         Line("}\"");
         Line();
@@ -356,10 +356,11 @@ public static class CryptLayout
 
                 case "flr_crypt_doors":
                     // The court: twelve metres a side, a four-metre wall either side of a four-metre doorway.
-                    Node(floor, "Entry", -15, 0);
+                    // In the corner, out of reach of the doors' guards: they wake as the player comes to them, not on arrival.
+                    Node(floor, "Entry", -16, -15);
                     Stair(floor, 0, 0);
                     Marks(floor, (0, -6, 0), (6, 0, 90), (0, 6, 180), (-6, 0, -90));
-                    Spawns(floor, (-16, -16), (16, -16), (16, 16), (-16, 16), (0, -16), (0, 16), (16, 0));
+                    Spawns(floor, (16, -16), (16, 16), (-16, 16), (0, -16), (0, 16), (16, 0));
 
                     foreach (var side in new[] { -4.0, 4.0 })
                     {
