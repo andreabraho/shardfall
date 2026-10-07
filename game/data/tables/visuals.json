@@ -317,6 +317,10 @@
   { "id": "mesh_arm_kiln_dragon", "primitive": "model", "height": 1.10, "radius": 0.45, "color": "#2a3a30", "model_path": "res://assets/temins/armour/kiln_dragon.glb" },
   // The abyss set's armours (P5, 2026-10-07).
   { "id": "mesh_arm_abyss_aegis", "primitive": "model", "height": 1.10, "radius": 0.45, "color": "#2a1a30", "model_path": "res://assets/temins/armour/abyss_aegis.glb" },
+  { "id": "mesh_arm_abyss_shade",  "primitive": "model", "height": 1.10, "radius": 0.45, "color": "#2a1a30", "model_path": "res://assets/temins/armour/abyss_shade.glb" },
+  { "id": "mesh_arm_abyss_plume",  "primitive": "model", "height": 1.10, "radius": 0.45, "color": "#2a1a30", "model_path": "res://assets/temins/armour/abyss_plume.glb" },
+  { "id": "mesh_arm_abyss_fiend",  "primitive": "model", "height": 1.10, "radius": 0.45, "color": "#2a1a30", "model_path": "res://assets/temins/armour/abyss_fiend.glb" },
+  { "id": "mesh_arm_abyss_dragon", "primitive": "model", "height": 1.10, "radius": 0.45, "color": "#2a1a30", "model_path": "res://assets/temins/armour/abyss_dragon.glb" },
   { "id": "mesh_hlm_trail_band", "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#2a3a30", "model_path": "res://assets/temins/armour/trail_band.glb" },
   { "id": "mesh_hlm_brand_band", "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#2a3a30", "model_path": "res://assets/temins/armour/brand_band.glb" },
   { "id": "mesh_hlm_pilgrims_fillet", "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#2a3a30", "model_path": "res://assets/temins/armour/pilgrims_fillet.glb" },
@@ -352,6 +356,12 @@
   { "id": "mesh_hlm_drowned_hood",  "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#1a5a4a", "model_path": "res://assets/temins/armour/drowned_hood.glb" },
   { "id": "mesh_hlm_drowned_horns", "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#1a5a4a", "model_path": "res://assets/temins/armour/drowned_horns.glb" },
   { "id": "mesh_hlm_drowned_tiara", "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#1a5a4a", "model_path": "res://assets/temins/armour/drowned_tiara.glb" },
+  // The abyss set's headpieces (P5, 2026-10-07).
+  { "id": "mesh_hlm_abyss_visor",  "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#2a1a30", "model_path": "res://assets/temins/armour/abyss_visor.glb" },
+  { "id": "mesh_hlm_abyss_mask",   "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#2a1a30", "model_path": "res://assets/temins/armour/abyss_mask.glb" },
+  { "id": "mesh_hlm_abyss_cowl",   "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#2a1a30", "model_path": "res://assets/temins/armour/abyss_cowl.glb" },
+  { "id": "mesh_hlm_abyss_horns",  "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#2a1a30", "model_path": "res://assets/temins/armour/abyss_horns.glb" },
+  { "id": "mesh_hlm_abyss_diadem", "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#2a1a30", "model_path": "res://assets/temins/armour/abyss_diadem.glb" },
 
   // Act 2's beasts (A2-01, 2026-10-02): ours, from the creature kit (art/blender/models).
   { "id": "mesh_beast_slate_wolf",  "primitive": "model", "height": 1.15, "radius": 0.50, "color": "#5a6068", "model_yaw": 180, "model_path": "res://assets/temins/creatures/slate_wolf.glb" },

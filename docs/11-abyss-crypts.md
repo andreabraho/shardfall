@@ -74,8 +74,12 @@ Level 40, relic. Upgraded with **Cenere dell'Abisso** (any creature of the crypt
 
 The last boss's table draws one of the nine slots, the same chance each; the piece comes in the player's class.
 
-## 5. What is a stand-in
+## 5. What is ours, and what is a stand-in
 
-- The creatures and bosses are act 1's models recoloured, and the set's pieces wear the tower relics' models
-  and icons, until they are made in Blender (the next step).
+- **Ours, made in Blender:** the four props (a sealed door, the Statue of Souls, a Stone of Judgement, the Runic
+  Pole: `art/blender/models/crypt_door.py`, `soul_statue.py`, `judgement_stone.py`, `runic_pole.py`), and the whole
+  abyss set — six weapons in the class kits, five armours (`warkit`, `shadowkit`, `classkit`), five headpieces
+  (`abyss_visor.py` and the kits), the shield, boots and jewellery and the two parts in `trinkets.py`, with their
+  icons. Black plate, bone and a crimson light.
+- **Stand-ins:** the creatures and bosses are act 1's models recoloured toward the abyss, as act 2's were at first.
 - The scene is written by `kiln scenes` (`src/Kiln.Tools/Commands/CryptLayout.cs`), as act 2's maps are.
