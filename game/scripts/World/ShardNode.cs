@@ -94,6 +94,9 @@ public partial class ShardNode : StaticBody3D
     public bool IsEngaged => _fight?.IsActive == true;
 
     /// <summary>Up and in its place: something that can be clicked and fought.</summary>
+    /// <summary>The drop table its tier pays from, for the foe tooltip.</summary>
+    public string? DropTableId => _tier?.DropTable;
+
     public bool IsStanding => !_broken && !_awaitingPlace && _tier is not null;
 
     public double ReclamationProgress => _fight?.ReclamationProgress ?? 0;
