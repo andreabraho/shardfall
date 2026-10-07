@@ -19,12 +19,17 @@ public partial class InfoBadge : PanelContainer
 
         var round = new StyleBoxFlat
         {
-            BgColor = new Color("2d5f9e"),
-            BorderColor = new Color("a9d0ff"),
+            // The menus' plate: dark, edged in their gold (2026-10-07, at your call: not blue).
+            BgColor = new Color(0.10f, 0.09f, 0.08f),
+            BorderColor = Menus.MenuStyle.Frame,
         };
         round.SetBorderWidthAll(1);
         round.SetCornerRadiusAll((int)(Size / 2));
         AddThemeStyleboxOverride("panel", round);
+
+        // Lit under the mouse, as a menu button is.
+        MouseEntered += () => { round.BgColor = new Color(0.17f, 0.13f, 0.08f); round.BorderColor = Menus.MenuStyle.Gold; };
+        MouseExited += () => { round.BgColor = new Color(0.10f, 0.09f, 0.08f); round.BorderColor = Menus.MenuStyle.Frame; };
 
         var letter = new Label
         {
@@ -34,7 +39,7 @@ public partial class InfoBadge : PanelContainer
             MouseFilter = MouseFilterEnum.Ignore,
         };
         letter.AddThemeFontSizeOverride("font_size", 12);
-        letter.AddThemeColorOverride("font_color", Colors.White);
+        letter.AddThemeColorOverride("font_color", Menus.MenuStyle.Gold);
         AddChild(letter);
     }
 
