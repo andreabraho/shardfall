@@ -249,7 +249,8 @@
     "level_band": [35, 40],
     "scene": "res://scenes/cinderlands.tscn",
     "exits": [
-      { "to": "zone_drowned_mire" }
+      { "to": "zone_drowned_mire" },
+      { "to": "zone_abyss_crypts", "required_level": 40, "required_quest": "qst_cinder_warlord" }
     ],
     "shrines": [
       { "id": "shr_cinder_camp", "name": "$shrine.shr_cinder_camp.name", "fast_travel": true },

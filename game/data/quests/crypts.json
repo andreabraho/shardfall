@@ -1,0 +1,8 @@
+[
+  // The Abyss Crypts (P5, 2026-10-07): the last quest — go down through the seven floors and kill the Lord of the
+  // Crypt. Open after the Burning Warlord, at level 40.
+  { "id": "qst_abyss_crypts", "name": "$quest.qst_abyss_crypts.name",
+    "act": 2, "type": "story", "level_req": 40, "prerequisites": ["qst_cinder_warlord"],
+    "objectives": [ { "type": "clear_tower", "target": "zone_abyss_crypts", "count": 1 } ],
+    "rewards": { "xp": 60000, "yang": 80000, "items": [] } }
+]

@@ -1,0 +1,60 @@
+[
+  // The Abyss Crypts (P5, 2026-10-07, at your call): the last dungeon, under the Cinderlands, open after the Burning
+  // Warlord at level 40. Seven floors after the shape of the original's catacombs — a key carried to a statue,
+  // sealed doors, the true stone among seven, a maze of portals, and three bosses at the bottom — with names and
+  // art of our own (docs/11-abyss-crypts.md). No clock on the whole: the user declined the original's hour.
+  {
+    "id": "zone_abyss_crypts",
+    "music": "mus_catacombs",
+    "ambience": "amb_dungeon",
+    "footsteps": "stp_stone",
+    "name": "$zone.zone_abyss_crypts.name",
+    "kind": "dungeon",
+    "level_band": [40, 42],
+    "scene": "res://scenes/crypts.tscn",
+    // Three bosses one after another: the original's descent, not the tower's pulse.
+    "boss_pulse": false,
+    "exits": [
+      { "to": "zone_cinderlands" }
+    ],
+    "shrines": [
+      { "id": "shr_crypt_mouth", "name": "$shrine.shr_crypt_mouth.name", "fast_travel": true },
+      { "id": "shr_crypt_landing", "name": "$shrine.shr_crypt_landing.name", "fast_travel": false },
+      { "id": "shr_crypt_throne", "name": "$shrine.shr_crypt_throne.name", "fast_travel": false }
+    ],
+    "spawn_fields": [],
+    "shards": [],
+    "floors": [
+      // 1. The Ossuary: one in ten of the crypt's creatures carries the Soul Key — never more than fifteen — and
+      // the statue in the middle takes it.
+      { "id": "flr_crypt_ossuary", "name": "$floor.flr_crypt_ossuary.name", "task": "key", "targets": 1, "key_after": 15,
+        "prop": "mesh_soul_statue", "prop_name": "$floor.prop.statue", "shrine": "shr_crypt_mouth",
+        "pack": 8, "waves": ["mob_abyss_hound", "mob_crypt_ghoul", "mob_abyss_imp"], "wave_size": 3, "wave_seconds": 18 },
+      // 2. The Sealed Doors: the stair stands in a walled court with a door on each side. Each door's guard rises
+      // as the player comes near.
+      { "id": "flr_crypt_doors", "name": "$floor.flr_crypt_doors.name", "task": "carry", "targets": 4, "guard": 5,
+        "prop": "mesh_crypt_door", "prop_name": "$floor.prop.door",
+        "pack": 4, "waves": ["mob_crypt_ghoul", "mob_crypt_brute", "mob_infernal_archer"], "wave_size": 2, "wave_seconds": 22 },
+      // 3. The Stones of Judgement: seven alike, one true. Every one lets out a crowd.
+      { "id": "flr_crypt_judgement", "name": "$floor.flr_crypt_judgement.name", "task": "find", "targets": 1, "decoys": 6, "burst": 5,
+        "prop": "mesh_judgement_stone", "prop_name": "$floor.prop.stone",
+        "pack": 3, "waves": ["mob_abyss_warrior", "mob_abyss_priest", "mob_infernal_archer", "mob_abyss_imp"], "wave_size": 2, "wave_seconds": 24 },
+      // 4. The Portal Maze: four halls, three portals at the end of each; one leads on, the others back to the
+      // first. Which one changes every run. A few hounds wander; the pole at the end opens the way down.
+      { "id": "flr_crypt_maze", "name": "$floor.flr_crypt_maze.name", "task": "maze", "targets": 1, "halls": 4, "portals": 3,
+        "prop": "mesh_runic_pole", "prop_name": "$floor.prop.pole",
+        "pack": 6, "waves": ["mob_abyss_hound", "mob_crypt_ghoul"], "wave_size": 2, "wave_seconds": 30 },
+      // 5. The Jailer's Cell.
+      { "id": "flr_crypt_cell", "name": "$floor.flr_crypt_cell.name", "task": "fight", "boss": "mob_crypt_jailer",
+        "waves": ["mob_crypt_ghoul", "mob_abyss_hound"], "wave_size": 2, "wave_seconds": 26 },
+      // 6. The Landing of Souls: the Ferryman, warded by three wardens until they are dead.
+      { "id": "flr_crypt_landing", "name": "$floor.flr_crypt_landing.name", "task": "fight", "boss": "mob_soul_ferryman",
+        "wardens": "mob_crypt_warden", "warden_count": 3, "wardens_shield": true,
+        "shrine": "shr_crypt_landing", "bench": true },
+      // 7. The Abyss Throne: the Lord of the Crypt and three of its spawn. Its fall drops one piece of the abyss set.
+      { "id": "flr_crypt_throne", "name": "$floor.flr_crypt_throne.name", "task": "fight", "boss": "mob_crypt_lord",
+        "wardens": "mob_crypt_spawn", "warden_count": 3,
+        "shrine": "shr_crypt_throne", "bench": true }
+    ]
+  }
+]

@@ -47,5 +47,16 @@
     "color": "#ff7a2a", "particles": "embers" },
 
   { "id": "cos_ember_cub",      "name": "$cos.cos_ember_cub.name",      "kind": "companion", "boss": "mob_burning_warlord",     "chance": 0.5,  "duplicate_gan": 12000,
-    "visual": "mesh_beast_ember_hound", "scale": 0.45 }
+    "visual": "mesh_beast_ember_hound", "scale": 0.45 },
+
+  // The Abyss Crypts' bosses (P5, 2026-10-07): a little ghoul from the Jailer's cells, the Ferryman's light, and the
+  // Lord of the Crypt's own dark.
+  { "id": "cos_crypt_ghoulet",  "name": "$cos.cos_crypt_ghoulet.name",  "kind": "companion", "boss": "mob_crypt_jailer",        "chance": 0.5,  "duplicate_gan": 14000,
+    "visual": "mesh_z_crawler", "scale": 0.45, "recolour": "#4a3a6a" },
+
+  { "id": "cos_soul_aura",      "name": "$cos.cos_soul_aura.name",      "kind": "aura",      "boss": "mob_soul_ferryman",       "chance": 0.5,  "duplicate_gan": 15000,
+    "color": "#8a6aff", "particles": "arcane" },
+
+  { "id": "cos_abyss_aura",     "name": "$cos.cos_abyss_aura.name",     "kind": "aura",      "boss": "mob_crypt_lord",          "chance": 0.5,  "duplicate_gan": 18000,
+    "color": "#ff3a8a", "particles": "embers" }
 ]

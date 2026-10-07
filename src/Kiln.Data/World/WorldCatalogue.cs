@@ -108,6 +108,14 @@ public sealed class WorldCatalogue
         Guard = def.Guard,
         BossAdds = def.BossAdds,
         Enrage = def.Enrage,
+        Prop = def.Prop,
+        PropName = def.PropName,
+        Wardens = def.Wardens,
+        WardenCount = def.WardenCount,
+        WardensShield = def.WardensShield,
+        KeyAfter = def.KeyAfter,
+        Halls = def.Halls,
+        Portals = def.Portals,
     };
 
     /// <summary>
@@ -125,6 +133,8 @@ public sealed class WorldCatalogue
         "carry" => FloorTask.Carry,
         "race" => FloorTask.Race,
         "fight" => FloorTask.Fight,
+        "key" => FloorTask.Key,
+        "maze" => FloorTask.Maze,
         _ => FloorTask.Break,
     };
 

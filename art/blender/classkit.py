@@ -1405,6 +1405,125 @@ def seer_head(name, band, trim=None, ends=None, gem=None, disc=None, pendants=No
 
 # ------------------------------------------------------------------ the pieces by name
 
+def abyss_plume(name):
+    """Giaco dell'Abisso (P5, 2026-10-07): the carrion bird's — black leather under a collar of black feathers with bone quills,
+    a crimson eye on the breast in a ring of bone, a tail of black plumes with bone shafts, bone talons on the bow arm."""
+    s = Suit(name, "archer")
+    black = m("abyss_leather", (0.05, 0.04, 0.06))
+    plume = m("abyss_plume", (0.09, 0.05, 0.11))
+    bone = m("bone")
+    glow = m("abyss_glow", (0.95, 0.10, 0.38), glow=1.3)
+
+    vest(s, black, hem=bone)
+    quiver_strap(s, m("leather_dark"), buckle=bone)
+    s.add("chest", plastron(plume, black), "m")
+    s.add("chest", plastron(plume, black, z0=0.93, z1=1.055, depth=0.05), "w")
+    s.add("chest", [leaves("collar_low", 0.40, 0.36, 1.15, plume, 14, height=0.18, lean=0.16, point=0.7, thick=0.02, a0=-150, a1=150),
+                    leaves("collar_high", 0.35, 0.32, 1.20, black, 12, height=0.14, lean=0.14, point=0.7, offset=0.5, thick=0.02, a0=-150, a1=150),
+                    t.sphere("eye", 0.05, glow, at=(0.0, Y0 - RY * 0.78 - 0.035, 1.17), subdivisions=2, squash=(1, 0.6, 1.25)),
+                    hoop("eye_ring", (0.0, Y0 - RY * 0.78 - 0.03, 1.17), 0.07, 0.016, bone, right=(1, 0, 0), up=(0, 0, 1), segments=14, sides=6)])
+
+    s.add("hips", n.sash(black, knot=False))
+    s.add("hips", [a.band("belt_bone", 0.412, 0.352, 0.635, 0.67, bone, y=0.0, bevel=0.006)])
+    for i in range(5):
+        ang = 180 + (i - 2) * 26
+        base = Vector(at(0.40, 0.36, ang, 0.62, 0.0))
+        reach = 0.56 - 0.07 * abs(i - 2)
+        tip = Vector(at(0.40 + reach * 0.75, 0.36 + reach * 0.75, 180 + (i - 2) * 34, 0.62 - reach * 0.80, 0.0))
+        face = Vector((-math.sin(math.radians(ang)), math.cos(math.radians(ang)), 0.6))
+        s.add("hips", feather(f"plume_{i}", base, tip, 0.16, plume if i % 2 else black, spine=bone, face=face))
+    for side in (-1, 1):
+        s.add("hips", edged(f"hip_flap_{side}", 0.44, 0.38, 0.40, 0.62, black, bone, a0=side * 62 - 30, a1=side * 62 + 30, hem=ragged(3, 0.10), top=0.94, y=0.0, rows=2, edge=0.2))
+
+    s.both("upperarm", arm_leaves("wing", plume, 3, alt=black, r=0.21, height=0.16))
+    talons = [a.spike(f"talon_{i}", (0.60 + 0.05 * i, -0.10, ARM_Z + 0.10), (0.66 + 0.05 * i, -0.22, ARM_Z + 0.22), 0.02, bone, sides=5) for i in range(3)]
+    s.add("lowerarm.l", n.bracer(black, bone, plate=bone) + talons)
+    s.right("lowerarm", n.bracer(plume, bone))
+    s.both("lowerleg", n.shin(black, trim=bone, plate=plume))
+    return s.done()
+
+
+def abyss_fiend(name):
+    """Armatura Infernale dell'Abisso (P5, 2026-10-07): the Asura's last — black plate cracked with crimson, a ribcage of bone
+    over the breast, and behind each shoulder a wing of bone ribs with the light between them."""
+    s = Suit(name, "asura")
+    steel = m("abyss_plate", (0.05, 0.04, 0.07), metal=0.75, rough=0.3)
+    dark = m("abyss_dark", (0.10, 0.06, 0.12), metal=0.6, rough=0.4)
+    cloth = m("abyss_cloth", (0.22, 0.03, 0.10))
+    glow = m("abyss_glow", (0.95, 0.10, 0.38), glow=1.3)
+    bone = m("bone")
+
+    cuirass(s, steel, dark, keel=False, lames=(steel, dark), grow=0.004)
+    surface = lambda ang, z: breast(ang, z, 0.014, 0.004)
+    heart(s, glow, bone, z=1.10, size=0.055)
+    for side in (-1, 1):
+        for j in range(3):
+            z = 1.16 - 0.06 * j
+            s.add("chest", tube(f"rib_{side}_{j}", [surface(side * (14 + 9 * i), z - 0.004 * i * i) for i in range(5)], 0.013, bone, sides=6, flat=0.5), "m")
+        s.add("chest", tube(f"rib_w_{side}", [surface(side * (14 + 9 * i), 1.0 - 0.004 * i * i) for i in range(4)], 0.011, bone, sides=6, flat=0.5), "w")
+    s.add("chest", high_collar(steel, dark, z1=1.50, open_=1.20))
+
+    # The wing: four ribs of bone behind each shoulder, rising past the head, a thread of light down each.
+    wing = []
+    for i in range(4):
+        root = Vector((0.26 + 0.03 * i, RY + 0.10, 1.15 - 0.08 * i))
+        up = Vector((0.60 + 0.15 * i, 0.22, 0.80 - 0.26 * i)).normalized()
+        length = 0.82 - 0.08 * i
+        across = up.cross(Vector((0, 1, 0))).normalized()
+        wing.append(tube(f"wing_rib_{i}", [root, root + up * length * 0.55 - across * 0.04, root + up * length], (0.035, 0.008), bone, sides=7, ref=(0, 1, 0)))
+        wing.append(tube(f"wing_light_{i}", [root + up * length * 0.25, root + up * length * 0.85 - across * 0.02], (0.016, 0.004), glow, sides=5, ref=(0, 1, 0)))
+    s.add("chest", wing + [mirror(p) for p in wing])
+    s.add("spine", [cloak("cape", cloth, top=(0.99, 0.43, 0.30), bottom=(0.30, 0.58, 0.44), curl=0.10, hem=ragged(4, 0.20), rows=8)])
+
+    s.add("hips", n.sash(cloth, knot=False))
+    s.add("hips", [a.band("belt_bone", 0.412, 0.352, 0.635, 0.67, bone, y=0.0, bevel=0.006)])
+    s.add("hips", faulds(steel, dark, rows=2, count=6, drop=0.17))
+
+    s.both("upperarm", pauldron(steel, dark, size=0.22, lame=True, horn=bone, rune=glow, reach=0.28))
+    s.both("lowerarm", n.bracer(steel, dark, plate=bone) + [rune_band("bracer_light", 0.62, 0.153, glow)])
+    s.both("lowerleg", n.shin(steel, trim=dark, plate=steel) + [a.spike("knee", (n.LEG, -0.13, 0.30), (n.LEG, -0.25, 0.45), 0.05, bone, sides=6),
+                                                               t.cylinder("shin_light", 0.136, 0.016, glow, at=(n.LEG, 0.005, 0.205), sides=18)])
+    return s.done()
+
+
+def abyss_dragon(name):
+    """Veste dell'Abisso (P5, 2026-10-07): the Dragonseer's last — black silk under a mantle of bone dragon scales, a crimson pearl
+    held in claws of bone at the breast, bone horns on the shoulders, a black stole hemmed in crimson."""
+    s = Suit(name, "seer")
+    silk = m("abyss_silk", (0.05, 0.03, 0.06))
+    crimson = m("abyss_cloth", (0.22, 0.03, 0.10))
+    bone = m("bone")
+    bone_dark = m("abyss_bone_dark", (0.40, 0.36, 0.34), rough=0.6)
+    pearl = m("abyss_glow", (0.95, 0.10, 0.38), glow=1.4)
+
+    mantle(s, silk, bone, z0=0.99, edge=0.14)
+    for row in range(4):
+        k = 1.0 - 0.042 * row
+        s.add("chest", leaves(f"scale_{row}", (MX + 0.016) * k, (MY + 0.016) * k, 1.055 + 0.052 * row, bone_dark if row % 2 else bone, 16, height=0.11, offset=row * 0.5, lean=0.06), "m" if row == 0 else None)
+    s.add("chest", n.collar(crimson))
+    for cut, pearl_at in (("m", (0.0, -MY - 0.045, 1.04)), ("w", (0.0, -WY - 0.05, 0.99))):
+        s.add("chest", [t.sphere("pearl", 0.07, pearl, at=pearl_at, subdivisions=2)], cut)
+        for i in range(4):
+            r = math.radians(45 + 90 * i)
+            root = (pearl_at[0] + 0.085 * math.cos(r), pearl_at[1] + 0.04, pearl_at[2] + 0.085 * math.sin(r))
+            tip = (pearl_at[0] + 0.035 * math.cos(r), pearl_at[1] - 0.065, pearl_at[2] + 0.035 * math.sin(r))
+            s.add("chest", tube(f"claw_{i}", curve([root, ((root[0] + tip[0]) / 2 * 1.5, pearl_at[1] - 0.05, pearl_at[2] + (root[2] + tip[2] - 2 * pearl_at[2]) / 2 * 1.5), tip]), (0.018, 0.005), bone, sides=5), cut)
+    stole(s, silk, crimson, length=0.82)
+
+    s.add("hips", n.sash(crimson, tail=bone, z0=0.60, z1=0.76, lengths=(0.38, 0.30)))
+    s.add("hips", a.roll("cord", 0.418, 0.358, 0.665, 0.70, bone, y=0.0))
+    s.add("hips", tabard(silk, crimson, z0=0.24, half=26, hem=ragged(3, 0.09)))
+    for row in range(3):
+        s.add("hips", leaves(f"tabard_scale_{row}", 0.478, 0.428, 0.36 + 0.075 * row, bone if row % 2 else bone_dark, 3, height=0.11, a0=-20, a1=20, y=0.0, lean=0.02, offset=0))
+
+    shoulder = n.pad(silk, rim=bone, size=0.175, flat=0.5)
+    shoulder += [tube("horn", curve([(0.42, 0.0, 1.27), (0.50, 0.02, 1.40), (0.52, 0.10, 1.54), (0.46, 0.16, 1.62)]), (0.05, 0.008), bone, sides=7),
+                 arm_leaves("cap_scale", bone_dark, 1, x0=0.49, r=0.185, count=6, height=0.10)[0]]
+    s.both("upperarm", shoulder)
+    cuffs(s, silk, bone, bell=0.025)
+    return s.done()
+
+
 def build(name):
     silver = m("class_silver", (0.80, 0.82, 0.86), metal=0.7, rough=0.3)
     iron = m("iron", metal=0.5, rough=0.55)
@@ -1422,6 +1541,7 @@ def build(name):
         "wardenbane_plate": wardenbane_plate, "ashen_tyrant": ashen_tyrant, "kiln_fiend": kiln_fiend,
         "pilgrims_mantle": pilgrims_mantle, "reed_mantle": reed_mantle, "jadescale_vestment": jadescale_vestment, "ridge_oracle": ridge_oracle,
         "wardens_benediction": wardens_benediction, "ashen_vigil": ashen_vigil, "kiln_dragon": kiln_dragon,
+        "abyss_plume": abyss_plume, "abyss_fiend": abyss_fiend, "abyss_dragon": abyss_dragon,
     }
     if name in suits:
         return suits[name](name)
@@ -1468,5 +1588,13 @@ def build(name):
                                             gem=pearl, curl=0.16),
         "drowned_tiara": lambda: seer_head(name, mire_teal, trim=verdigris, gem=pearl, disc=verdigris, rays=7, pendants=pearl,
                                            halo=m("mire_halo", (0.25, 0.95, 0.80), glow=0.8)),
+
+        # The abyss set (P5, 2026-10-07): black, bone and crimson light.
+        "abyss_cowl": lambda: archer_head(name, m("abyss_leather", (0.05, 0.04, 0.06)), feather_mat=m("abyss_plume", (0.09, 0.05, 0.11)), feathers=2, plate=bone,
+                                          antlers=bone, quill=bone, gem=m("abyss_glow", (0.95, 0.10, 0.38), glow=1.3)),
+        "abyss_horns": lambda: asura_head(name, m("abyss_plate", (0.05, 0.04, 0.07), metal=0.75, rough=0.3), trim=bone, horn=bone, horn_size=(0.24, 0.48), crown=5,
+                                          gem=m("abyss_glow", (0.95, 0.10, 0.38), glow=1.3), curl=0.20),
+        "abyss_diadem": lambda: seer_head(name, m("abyss_silk", (0.05, 0.03, 0.06)), trim=bone, gem=m("abyss_glow", (0.95, 0.10, 0.38), glow=1.3), disc=bone, rays=9,
+                                          pendants=m("abyss_glow", (0.95, 0.10, 0.38), glow=1.3), horns=bone),
     }
     return heads[name]()

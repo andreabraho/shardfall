@@ -139,7 +139,8 @@ public class RealContentTests
         var beyond = new[] { "zone_stonewood", "zone_drowned_mire", "zone_cinderlands" };
         var tower = steps.Count + (maps.Length * 3);
 
-        Assert.Equal(tower + 1 + (beyond.Length * 3), chain.Count);
+        // And the last: the Abyss Crypts, cleared (P5, 2026-10-07).
+        Assert.Equal(tower + 1 + (beyond.Length * 3) + 1, chain.Count);
 
         for (var i = 0; i < steps.Count; i++)
         {
@@ -183,6 +184,13 @@ public class RealContentTests
             // The boss opens the road on, where there is one.
             if (m + 1 < beyond.Length) Assert.Equal(chain[at + 2].Id, Assert.Single(zone.Exits.Where(e => e.To == beyond[m + 1])).RequiredQuest);
         }
+
+        // The Warlord opens the way down to the crypts, and clearing them is the last quest.
+        var crypts = Assert.Single(chain[^1].Goals);
+
+        Assert.Equal(Kiln.Core.Foundation.ObjectiveType.ClearTower, crypts.Type);
+        Assert.Equal("zone_abyss_crypts", crypts.Target);
+        Assert.Equal(chain[^2].Id, Assert.Single(db.Zones["zone_cinderlands"].Exits.Where(e => e.To == "zone_abyss_crypts")).RequiredQuest);
 
         // The first quest has no prerequisite and each later one follows the one before it.
         Assert.Null(chain[0].Prerequisite);

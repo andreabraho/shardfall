@@ -209,6 +209,11 @@
   // What the Stonewood caught as it ran: act 1's animals, standing, in stone.
   { "id": "kit_st_deer", "shape": "model", "fit": "height", "size": [0.9, 1.5, 1.9], "collision": "cylinder", "collision_size": [1.0, 1.5, 1.0], "navigation": false, "color": "#868a86", "recolour": "#868a86", "model_path": "res://assets/quaternius/animals/Deer.glb" },
   { "id": "kit_st_stag", "shape": "model", "fit": "height", "size": [1.1, 2.0, 2.2], "collision": "cylinder", "collision_size": [1.1, 2.0, 1.1], "navigation": false, "color": "#7e827e", "recolour": "#7e827e", "model_path": "res://assets/quaternius/animals/Stag.glb" },
-  { "id": "kit_st_wolf", "shape": "model", "fit": "height", "size": [0.7, 1.0, 1.7], "collision": "cylinder", "collision_size": [0.9, 1.0, 0.9], "navigation": false, "color": "#767a78", "recolour": "#767a78", "model_path": "res://assets/quaternius/animals/Wolf.glb" }
+  { "id": "kit_st_wolf", "shape": "model", "fit": "height", "size": [0.7, 1.0, 1.7], "collision": "cylinder", "collision_size": [0.9, 1.0, 0.9], "navigation": false, "color": "#767a78", "recolour": "#767a78", "model_path": "res://assets/quaternius/animals/Wolf.glb" },
 
+  // The Abyss Crypts (P5, 2026-10-07): the tower's walls and columns in the crypts' stone, black turned violet.
+  { "id": "kit_cr_wall_4",  "shape": "model", "size": [4.0, 3.00, 0.60], "color": "#3a3048", "recolour": "#3a3048", "model_path": "res://assets/kaykit/dungeon/wall.glb" },
+  { "id": "kit_cr_wall_8",  "shape": "model", "size": [8.0, 3.00, 0.60], "color": "#3a3048", "recolour": "#3a3048", "model_path": "res://assets/kaykit/dungeon/wall.glb" },
+  { "id": "kit_cr_tower",   "shape": "model", "size": [2.4, 5.50, 2.4],  "color": "#40344e", "recolour": "#40344e", "collision": "cylinder", "model_path": "res://assets/kaykit/dungeon/column.glb" },
+  { "id": "kit_cr_pillar",  "shape": "model", "size": [1.2, 4.00, 1.2],  "color": "#463a56", "recolour": "#463a56", "collision": "cylinder", "model_path": "res://assets/kaykit/dungeon/pillar_decorated.glb" }
 ]

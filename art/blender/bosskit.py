@@ -116,7 +116,110 @@ def warlord_pauldrons():
     return parts
 
 
-PIECES = {"king_crown": king_crown, "king_mantle": king_mantle, "warlord_helm": warlord_helm, "warlord_pauldrons": warlord_pauldrons}
+# -- The Abyss Crypts' bosses (P5, 2026-10-07): black iron, bone and a crimson light. --
+
+def _abyss():
+    return (t.material("abyss_plate", (0.05, 0.04, 0.07), metal=0.75, rough=0.3),
+            t.material("abyss_glow", (0.95, 0.10, 0.38), glow=1.8, rough=0.4),
+            t.material("bone", rough=0.7))
+
+
+def jailer_mask():
+    """The Jailer's head: a cage of black iron bars over the skull, a slit of light where the eyes are, a ring on top."""
+    iron, glow, bone = _abyss()
+    parts = [a.band("brow", 1.08, 1.08, 0.0, 0.26, iron, sides=36),
+             a.band("jaw", 1.06, 1.06, -0.75, -0.55, iron, sides=36),
+             t.box("slit", (1.0, 0.12, 0.12), glow, at=(0, -1.06, 0.06), bevel=0.03)]
+    for i, x, y, rad in _ring(10, 1.08, 0.0):
+        parts.append(a.rod(f"bar_{i}", (x, y, -0.7), (x * 0.35, y * 0.35, 1.05), 0.07, iron, sides=8))
+    parts.append(a.band("crown_ring", 0.42, 0.42, 1.0, 1.12, iron, sides=24))
+    return parts
+
+
+def jailer_chains():
+    """Chains across the Jailer's chest and a great ring of keys at its belt-side, the keys of bone."""
+    iron, glow, bone = _abyss()
+    parts = []
+    for side in (-1, 1):
+        for i in range(9):
+            u = i / 8
+            x, z = side * (0.9 - 1.6 * u), 0.3 - 0.9 * u
+            parts.append(t.cylinder(f"link_{side}_{i}", 0.11, 0.05, iron, at=(x, -0.62, z), sides=12, axis="Y", bevel=0.01))
+    parts.append(t.cylinder("key_ring", 0.32, 0.06, iron, at=(0.7, -0.62, -0.75), sides=24, axis="Y", bevel=0.01))
+    for k in range(4):
+        rad = math.radians(200 + k * 40)
+        root = (0.7 + 0.3 * math.cos(rad), -0.62, -0.75 + 0.3 * math.sin(rad))
+        tip = (0.7 + 0.75 * math.cos(rad), -0.62, -0.75 + 0.75 * math.sin(rad))
+        parts.append(a.rod(f"key_{k}", root, tip, 0.05, bone, sides=6))
+    parts.append(t.sphere("lock_light", 0.12, glow, at=(0.7, -0.66, -0.75), subdivisions=2))
+    return parts
+
+
+def ferryman_hood():
+    """A deep hood of black cloth over the Ferryman's head, two crimson eyes inside, a rim of bone coins round its edge."""
+    iron, glow, bone = _abyss()
+    cloth = t.material("abyss_cloth_black", (0.04, 0.02, 0.05), rough=0.95)
+    parts = [t.sphere("hood", 1.25, cloth, at=(0, 0.15, 0.25), subdivisions=3, squash=(1.0, 1.05, 1.15)),
+             a.spike("peak", (0, 0.35, 1.2), (0, 0.95, 2.0), 0.55, cloth, sides=12),
+             t.sphere("void", 0.9, t.material("crypt_void", (0.01, 0.0, 0.02), rough=1.0), at=(0, -0.45, 0.05), subdivisions=2, squash=(0.9, 0.5, 1.0))]
+    for side in (-1, 1):
+        parts.append(t.sphere(f"eye_{side}", 0.13, glow, at=(side * 0.32, -0.9, 0.15), subdivisions=2))
+    for i in range(9):
+        rad = math.radians(-160 + i * 40)
+        parts.append(t.cylinder(f"coin_{i}", 0.16, 0.05, bone, at=(math.cos(rad) * 1.15, math.sin(rad) * 1.15 - 0.2, -0.75), sides=16, axis="Y"))
+    return parts
+
+
+def ferryman_collar():
+    """A collar of bone over the shoulders, ribs reaching down the chest, a crimson lantern hanging at the front."""
+    iron, glow, bone = _abyss()
+    parts = [a.band("collar", 0.62, 0.50, -0.05, 0.18, iron, sides=32, top=0.86)]
+    for i, x, y, rad in _ring(12, 1.0, 0.0, start=0.25):
+        parts.append(a.spike(f"rib_{i}", (x * 0.55, y * 0.45, 0.10), (x * 1.05, y * 0.85, -0.65 - 0.2 * (i % 2)), 0.1, bone, sides=6))
+    parts.append(a.rod("lantern_chain", (0, -0.55, 0.0), (0, -0.62, -0.55), 0.03, iron, sides=6))
+    parts.append(t.cylinder("lantern", 0.18, 0.3, iron, at=(0, -0.62, -0.75), sides=8, bevel=0.02))
+    parts.append(t.sphere("lantern_light", 0.13, glow, at=(0, -0.62, -0.75), subdivisions=2))
+    return parts
+
+
+def crypt_crown():
+    """The Lord of the Crypt's crown: a band of black iron, great horns of bone sweeping up and back, a crimson eye on the brow."""
+    iron, glow, bone = _abyss()
+    parts = [a.band("band", 1.08, 1.08, 0.0, 0.36, iron, sides=36),
+             a.band("rim", 1.12, 1.12, 0.30, 0.40, iron, sides=36),
+             t.sphere("eye", 0.22, glow, at=(0, -1.12, 0.2), subdivisions=2, squash=(1, 0.6, 1.3))]
+    for side in (1, -1):
+        parts.append(a.spike(f"horn_a{side}", (side * 0.9, 0.0, 0.3), (side * 1.7, 0.3, 1.2), 0.3, bone, sides=10))
+        parts.append(a.spike(f"horn_b{side}", (side * 1.6, 0.28, 1.1), (side * 1.5, 1.0, 2.3), 0.2, bone, sides=10))
+    for i, x, y, rad in _ring(7, 1.1, 0.4, start=math.radians(-130)):
+        if abs(math.degrees(rad) + 90) < 20:
+            continue
+        parts.append(a.spike(f"point_{i}", (x, y, 0.38), (x * 1.08, y * 1.08, 1.0), 0.14, iron, sides=6))
+    return parts
+
+
+def crypt_mantle():
+    """Over the Lord's shoulders: two great plates of black iron with bone spines, and a necklace of skulls with crimson eyes."""
+    iron, glow, bone = _abyss()
+    parts = []
+    for side in (1, -1):
+        x = side * 1.05
+        parts.append(t.sphere(f"plate{side}", 0.66, iron, at=(x, 0, 0.1), subdivisions=3, squash=(1.1, 1.0, 0.6)))
+        parts.append(t.sphere(f"rim{side}", 0.7, glow, at=(x, 0, 0.0), subdivisions=2, squash=(1.1, 1.0, 0.18)))
+        for i, (dx, dy, tall) in enumerate(((0.0, 0.0, 1.1), (0.3, 0.24, 0.8), (0.3, -0.24, 0.8), (-0.3, 0.0, 0.6))):
+            base = (x + side * dx, dy, 0.3)
+            parts.append(a.spike(f"spine{side}{i}", base, (base[0] + side * 0.3, dy * 1.4, 0.3 + tall), 0.15, bone, sides=7))
+    for i in range(5):
+        x = -0.6 + i * 0.3
+        z = -0.25 - 0.12 * (1 - abs(i - 2) / 2)
+        parts.append(t.sphere(f"skull_{i}", 0.14, bone, at=(x, -0.62, z), subdivisions=2, squash=(1, 0.9, 1.1)))
+        parts.append(t.sphere(f"socket_{i}", 0.04, glow, at=(x, -0.75, z + 0.02), subdivisions=1))
+    return parts
+
+
+PIECES = {"king_crown": king_crown, "king_mantle": king_mantle, "warlord_helm": warlord_helm, "warlord_pauldrons": warlord_pauldrons,
+          "jailer_mask": jailer_mask, "jailer_chains": jailer_chains, "ferryman_hood": ferryman_hood, "ferryman_collar": ferryman_collar,
+          "crypt_crown": crypt_crown, "crypt_mantle": crypt_mantle}
 
 
 def build(name):
