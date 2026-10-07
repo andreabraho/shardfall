@@ -236,7 +236,8 @@ public partial class ShrinePanel : CanvasLayer
 
         _respec = new Button { Text = L10n.T("Refund status points"), CustomMinimumSize = new Vector2(0, 30), FocusMode = Control.FocusModeEnum.None };
         Plate(_respec);
-        _respec.Pressed += DoRespec;
+        _respec.Pressed += () => Confirm(L10n.T("Refund status points"),
+            L10n.F("Reset your status points for {0:N0} gan?", _character?.Progression.AttributeRespecCost ?? 0), DoRespec);
         column.AddChild(_respec);
 
         // The skills apart (2026-10-07, at your call): a status spread can be redone without the skills going with it.
@@ -247,7 +248,8 @@ public partial class ShrinePanel : CanvasLayer
 
         _skillRespec = new Button { Text = L10n.T("Refund skill points"), CustomMinimumSize = new Vector2(0, 30), FocusMode = Control.FocusModeEnum.None };
         Plate(_skillRespec);
-        _skillRespec.Pressed += DoSkillRespec;
+        _skillRespec.Pressed += () => Confirm(L10n.T("Refund skill points"),
+            L10n.F("Reset your skill points for {0:N0} gan? Your skills are forgotten until you learn them again.", _character?.Progression.SkillRespecCost ?? 0), DoSkillRespec);
         column.AddChild(_skillRespec);
 
         _status = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart };
@@ -549,6 +551,30 @@ public partial class ShrinePanel : CanvasLayer
         TravelRefusal.AlreadyHere => L10n.T("You are already here."),
         _ => L10n.T("You cannot travel there."),
     };
+
+    /// <summary>Asks before a reset is paid for (2026-10-07, at your call), as destroying an item does.</summary>
+    private void Confirm(string title, string text, System.Action then)
+    {
+        var dialog = new ConfirmationDialog
+        {
+            Title = title,
+            DialogText = text,
+            OkButtonText = L10n.T("Confirm"),
+            CancelButtonText = L10n.T("Cancel"),
+            Theme = Menus.MenuStyle.Theme(),
+        };
+
+        dialog.Confirmed += () =>
+        {
+            then();
+            dialog.QueueFree();
+        };
+
+        dialog.Canceled += dialog.QueueFree;
+
+        AddChild(dialog);
+        dialog.PopupCentered();
+    }
 
     /// <summary>
     /// Gives back the status points placed, for 1,000 gan a level (2026-10-07, at your call: the
