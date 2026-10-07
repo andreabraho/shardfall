@@ -263,6 +263,27 @@ public class CharacterProgressionTests
     }
 
     [Fact]
+    public void StatusAndSkillsAreRefundedApart_AtTheirOwnPrice()
+    {
+        var p = new CharacterProgression();
+        p.Load(level: 30, experience: 0, attributePoints: 0, skillPoints: 0, assigned: new Attributes(10, 4, 0, 8));
+
+        // 2026-10-07: 1,000 gan a level for the status, 2,000 for the skills.
+        Assert.Equal(30_000, p.AttributeRespecCost);
+        Assert.Equal(60_000, p.SkillRespecCost);
+
+        p.RespecAttributes();
+
+        Assert.Equal(22, p.UnspentAttributePoints);
+        Assert.Equal(0, p.UnspentSkillPoints);
+
+        p.ReturnSkillPoints(9);
+
+        Assert.Equal(9, p.UnspentSkillPoints);
+        Assert.Equal(22, p.UnspentAttributePoints);
+    }
+
+    [Fact]
     public void Load_RestoresSavedState()
     {
         var p = new CharacterProgression();

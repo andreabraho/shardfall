@@ -29,6 +29,8 @@ public partial class ShrinePanel : CanvasLayer
     private VBoxContainer _destinations = null!;
     private Label _respecCost = null!;
     private Button _respec = null!;
+    private Label _skillRespecCost = null!;
+    private Button _skillRespec = null!;
     private Label _status = null!;
     private Label _toast = null!;
     private double _toastFor;
@@ -232,10 +234,21 @@ public partial class ShrinePanel : CanvasLayer
         _respecCost.AddThemeColorOverride("font_color", Soft);
         column.AddChild(_respecCost);
 
-        _respec = new Button { Text = L10n.T("Refund attribute points"), CustomMinimumSize = new Vector2(0, 30), FocusMode = Control.FocusModeEnum.None };
+        _respec = new Button { Text = L10n.T("Refund status points"), CustomMinimumSize = new Vector2(0, 30), FocusMode = Control.FocusModeEnum.None };
         Plate(_respec);
         _respec.Pressed += DoRespec;
         column.AddChild(_respec);
+
+        // The skills apart (2026-10-07, at your call): a status spread can be redone without the skills going with it.
+        _skillRespecCost = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart };
+        _skillRespecCost.AddThemeFontSizeOverride("font_size", 12);
+        _skillRespecCost.AddThemeColorOverride("font_color", Soft);
+        column.AddChild(_skillRespecCost);
+
+        _skillRespec = new Button { Text = L10n.T("Refund skill points"), CustomMinimumSize = new Vector2(0, 30), FocusMode = Control.FocusModeEnum.None };
+        Plate(_skillRespec);
+        _skillRespec.Pressed += DoSkillRespec;
+        column.AddChild(_skillRespec);
 
         _status = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart };
         _status.AddThemeFontSizeOverride("font_size", 12);
@@ -445,17 +458,26 @@ public partial class ShrinePanel : CanvasLayer
     {
         var progression = _character?.Progression;
 
-        if (progression is null)
+        if (progression is null || _character is null)
         {
             _respec.Disabled = true;
+            _skillRespec.Disabled = true;
             _respecCost.Text = "";
+            _skillRespecCost.Text = "";
             return;
         }
 
-        _respecCost.Text = L10n.F("Free. Returns every status point you have placed. Level {0}, {1} point(s) placed.",
-            progression.Level, progression.Assigned.Total);
+        var gan = _inventory?.Bag.Yang ?? 0;
+        var placed = progression.Assigned.Total;
+        var spent = _character.Skills.Refundable;
 
-        _respec.Disabled = progression.Assigned.Total == 0;
+        _respecCost.Text = L10n.F("Returns every status point you have placed ({0}), and nothing else. Costs {1:N0} gan ({2:N0} a level).",
+            placed, progression.AttributeRespecCost, Kiln.Core.Progression.CharacterProgression.AttributeRespecPerLevel);
+        _respec.Disabled = placed == 0 || gan < progression.AttributeRespecCost;
+
+        _skillRespecCost.Text = L10n.F("Returns every skill point you have spent ({0}); the skills are forgotten until you learn them again. Costs {1:N0} gan ({2:N0} a level).",
+            spent, progression.SkillRespecCost, Kiln.Core.Progression.CharacterProgression.SkillRespecPerLevel);
+        _skillRespec.Disabled = spent == 0 || gan < progression.SkillRespecCost;
     }
 
     private bool InCombat()
@@ -529,35 +551,44 @@ public partial class ShrinePanel : CanvasLayer
     };
 
     /// <summary>
-    /// Refunds every point the player has placed: attributes, and since REF-03 skills too.
+    /// Gives back the status points placed, for 1,000 gan a level (2026-10-07, at your call: the
+    /// status apart from the skills, and priced — it was free, and took the skills with it).
     /// </summary>
-    /// <remarks>
-    /// Free, per FR-2.6 and the reasoning already recorded on
-    /// <see cref="Kiln.Core.Progression.CharacterProgression.Respec"/>: in an MMO a ruined
-    /// build is fixed by rolling another character, but offline it is a ruined save, so a
-    /// price on respec only taxes the experimenting the build system exists to invite.
-    /// <para>
-    /// Skills come back with them now that points buy skills rather than levels handing them
-    /// out: a build that went seven points deep into Whirlwind is exactly the kind of decision
-    /// a player should be able to take back, and it is the same decision as an attribute
-    /// spread. The character walks away from the shrine with no skills at all until the points
-    /// are placed again, which is why it is worded plainly before it happens.
-    /// </para>
-    /// </remarks>
     private void DoRespec()
     {
-        if (_character is null) return;
+        if (_character is null || _inventory is null) return;
 
-        var attributes = _character.Progression.Assigned.Total;
-        var skills = _character.Skills.Refund();
+        var progression = _character.Progression;
+        var placed = progression.Assigned.Total;
 
-        if (attributes == 0 && skills == 0) return;
+        if (placed == 0 || !_inventory.Bag.TrySpendYang(progression.AttributeRespecCost)) return;
 
-        _character.Progression.Respec(skills);
+        progression.RespecAttributes();
         _character.RefreshStats();
 
-        _status.Text = L10n.F("Returned {0} attribute point(s) and {1} skill point(s). Place them from the character sheet (C) and the skill screen (K).",
-            attributes, skills);
+        _status.Text = L10n.F("Returned {0} status point(s). Place them from the character sheet (C).", placed);
+
+        RefreshRespec();
+    }
+
+    /// <summary>
+    /// Gives back the skill points spent, for 2,000 gan a level. The skills are forgotten until
+    /// they are learned again, which is why it is worded plainly before it happens.
+    /// </summary>
+    private void DoSkillRespec()
+    {
+        if (_character is null || _inventory is null) return;
+
+        var progression = _character.Progression;
+
+        if (_character.Skills.Refundable == 0 || !_inventory.Bag.TrySpendYang(progression.SkillRespecCost)) return;
+
+        var skills = _character.Skills.Refund();
+
+        progression.ReturnSkillPoints(skills);
+        _character.RefreshStats();
+
+        _status.Text = L10n.F("Returned {0} skill point(s). Learn your skills again from the skill screen (K).", skills);
 
         RefreshRespec();
     }
