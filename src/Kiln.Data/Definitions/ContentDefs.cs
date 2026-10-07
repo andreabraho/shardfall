@@ -867,6 +867,12 @@ public sealed class GearPartsDef
     public float[] RestGrip { get; init; } = [];
 
     /// <summary>
+    /// How the weapon is turned in its hand, degrees about x, y and z (the Archer's bow, 2026-10-07: turned so its string
+    /// comes clear of the forearm and toward the drawing hand). Empty: as the model is built.
+    /// </summary>
+    public float[] WeaponTurn { get; init; } = [];
+
+    /// <summary>
     /// How a modelled helmet is fitted to this body's head: a scale on x, y and z and the point it
     /// is scaled about, in the model's space (the Ninja man's hood is narrower at the brow than the
     /// woman's hair the headbands were made round). Empty: worn as made.

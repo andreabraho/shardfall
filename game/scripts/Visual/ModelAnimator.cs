@@ -79,6 +79,9 @@ public partial class ModelAnimator : Node
     }
 
     private string _stance = "";
+
+    /// <summary>True while the Archer draws a bow back: the string goes to the drawing hand (BowString).</summary>
+    public bool DrawingBow => _stance == "bow" && _player is { } player && player.CurrentAnimation.ToString().Contains("Ranged_Bow_Draw");
     private string _idleBow = "";
     private string _runBow = "";
 
