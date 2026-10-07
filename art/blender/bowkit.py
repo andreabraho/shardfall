@@ -140,7 +140,9 @@ def bow(name, wood, grip, height=1.0, curve=0.40, recurve=0.0, width=0.14, thick
     if knob is not None:
         parts.append(t.sphere("knob", 0.075, knob, at=(0.06, 0, 0), subdivisions=2, squash=(0.8, 1.2, 0.9)))
 
-    parts.append(t.cylinder("string", 0.015, height * 1.96, string or t.material("bowstring", (0.86, 0.84, 0.74)), at=(tip, 0, 0), sides=6, axis="Y"))
+    # The string is a mesh of its own (2026-10-07): the game hides it and draws it from its two ends, pulled back to the
+    # hand that draws it (BowString). Joined to nothing; turned below as the bow is.
+    strung = t.cylinder("bowstring", 0.015, height * 1.96, string or t.material("bowstring", (0.86, 0.84, 0.74)), at=(tip, 0, 0), sides=6, axis="Y")
 
     if caps is not None:
         for side in (-1, 1):
@@ -165,18 +167,20 @@ def bow(name, wood, grip, height=1.0, curve=0.40, recurve=0.0, width=0.14, thick
 
     # Turned round (2026-10-02, at your call: the Archer held it backwards): the string towards +X,
     # the side the left hand keeps towards the body.
-    mesh = bmesh.new()
-    mesh.from_mesh(whole.data)
-    for v in mesh.verts:
-        v.co.x = -v.co.x
-        # Held below its middle, as the great bows are: the lower limb is the shorter, or a bow this
-        # long would stand in the ground at the Archer's feet.
-        # (In the hand the bow's +Y is the end that points down.)
-        if v.co.y > 0:
-            v.co.y *= LOWER
-    bmesh.ops.reverse_faces(mesh, faces=mesh.faces)
-    mesh.to_mesh(whole.data)
-    mesh.free()
+    # The string is turned with it: it is a mesh of its own (see above).
+    for obj in (whole, strung):
+        mesh = bmesh.new()
+        mesh.from_mesh(obj.data)
+        for v in mesh.verts:
+            v.co.x = -v.co.x
+            # Held below its middle, as the great bows are: the lower limb is the shorter, or a bow this
+            # long would stand in the ground at the Archer's feet.
+            # (In the hand the bow's +Y is the end that points down.)
+            if v.co.y > 0:
+                v.co.y *= LOWER
+        bmesh.ops.reverse_faces(mesh, faces=mesh.faces)
+        mesh.to_mesh(obj.data)
+        mesh.free()
 
     t.soften(whole, angle=40)
     return {"folder": "weapons", "name": name}
