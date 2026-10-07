@@ -438,6 +438,22 @@ public partial class PlayerCombat : Node
         var origin = _motor.GlobalPosition;
         var facing = _motor.Facing;
 
+        // The Archer (2026-10-07, at your call): a shot is not an arc, so Space looses at the target
+        // chosen, or — with none — chooses the nearest it can see within the bow's reach, all round.
+        if (Ranged)
+        {
+            var chosen = _target is not null && IsInstanceValid(_target) && _target.IsAlive ? _target : null;
+
+            if (chosen is null && NearestInSight(origin) is { } nearest) Mark(chosen = nearest);
+
+            var shoots = chosen is not null
+                && origin.DistanceTo(chosen.Body.GlobalPosition) <= AttackRange + HitTolerance
+                && LineOfSight(chosen.Body);
+
+            BeginSwing(shoots ? chosen : null);
+            return;
+        }
+
         var victim = AreaQuery.Cone(_motor, origin, facing, AttackRange + HitTolerance, Ranged ? 50f : ArcDegrees)
             .Where(c => c.IsAlive)
             .OrderBy(c => origin.DistanceTo(c.Body.GlobalPosition))
@@ -445,4 +461,11 @@ public partial class PlayerCombat : Node
 
         BeginSwing(victim);
     }
+
+    /// <summary>The nearest living enemy within the ordinary blow's reach and in sight, if any.</summary>
+    private Combatant? NearestInSight(Vector3 origin) =>
+        AreaQuery.Sphere(_motor, origin, AttackRange + HitTolerance)
+            .Where(c => c.IsAlive && LineOfSight(c.Body))
+            .OrderBy(c => origin.DistanceTo(c.Body.GlobalPosition))
+            .FirstOrDefault();
 }

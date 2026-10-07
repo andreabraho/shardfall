@@ -240,7 +240,7 @@
   "Dark damage.": "Danno oscuro.",
   "Strips the target's rage and any shield held over it.": "Toglie al bersaglio la furia e qualsiasi scudo lo protegga.",
   "Lands {0:0.#} s after it is cast.": "Arriva {0:0.#} s dopo il lancio.",
-  "A leap of {0:0.#} m away from what you face. Nothing touches you for {1:0.##} s.": "Un balzo di {0:0.#} m lontano da ciò che hai davanti. Niente ti tocca per {1:0.##} s.",
+  "A leap of {0:0.#} m back from where the camera looks. Nothing touches you for {1:0.##} s, and your next skill that deals damage deals double.": "Un balzo di {0:0.#} m all'indietro rispetto a dove guarda la visuale. Niente ti tocca per {1:0.##} s, e la tua prossima abilità che infligge danni ne infligge il doppio.",
   "A shell that takes blows in your place, up to {0:P0} of your maximum health, for {1:0.#} s. You stay free to move and to fight.": "Un guscio che prende i colpi al posto tuo, fino al {0:P0} della tua salute massima, per {1:0.#} s. Resti libero di muoverti e combattere.",
   "Raising it clears poison, bleeding, burning, slows, weakening and vulnerability.": "Alzandolo togli veleno, sanguinamento, fiamme, rallentamenti, indebolimento e vulnerabilità.",
   "+{0:P0} speed": "+{0:P0} velocità",
