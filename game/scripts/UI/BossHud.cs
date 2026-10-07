@@ -19,6 +19,7 @@ public partial class BossHud : CanvasLayer, ITopBar
 
     private PanelContainer _root = null!;
     private Label _title = null!;
+    private InfoBadge _info = null!;
     private ProgressBar _health = null!;
     private Label _phase = null!;
 
@@ -53,7 +54,7 @@ public partial class BossHud : CanvasLayer, ITopBar
         _title = new Label { HorizontalAlignment = HorizontalAlignment.Center };
         _title.AddThemeFontSizeOverride("font_size", 13);
         _title.AddThemeColorOverride("font_color", new Color("d9a7ff"));
-        box.AddChild(_title);
+        box.AddChild(FoeAdvice.Titled(_title, out _info));
 
         _health = new ProgressBar
         {
@@ -122,6 +123,7 @@ public partial class BossHud : CanvasLayer, ITopBar
         var advice = FoeAdvice.For(boss.Self, GetTree().GetFirstNodeInGroup("player")?.GetNodeOrNull<Combatant>("Combatant"));
 
         if (_root.TooltipText != advice) _root.TooltipText = advice;
+        _info.Advice = advice;
         _health.Value = boss.Self.Health.Fraction;
     }
 

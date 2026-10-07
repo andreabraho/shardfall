@@ -40,4 +40,26 @@ public static class FoeAdvice
 
         return string.Join("\n", lines);
     }
+
+    /// <summary>
+    /// A name with a round "i" beside it, so the player can see there is something to hover
+    /// (2026-10-07, at your call). The label stays centred: a blank the badge's width balances it.
+    /// </summary>
+    public static Godot.HBoxContainer Titled(Godot.Label title, out InfoBadge badge)
+    {
+        var row = new Godot.HBoxContainer { MouseFilter = Godot.Control.MouseFilterEnum.Ignore };
+        row.AddThemeConstantOverride("separation", 4);
+
+        title.SizeFlagsHorizontal = Godot.Control.SizeFlags.ExpandFill;
+        title.MouseFilter = Godot.Control.MouseFilterEnum.Ignore;
+
+        badge = new InfoBadge();
+
+        row.AddChild(new Godot.Control { CustomMinimumSize = new Godot.Vector2(InfoBadge.Size, 0), MouseFilter = Godot.Control.MouseFilterEnum.Ignore });
+        row.AddChild(title);
+        row.AddChild(badge);
+
+        return row;
+    }
 }
+

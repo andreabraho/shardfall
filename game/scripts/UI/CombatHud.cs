@@ -17,6 +17,7 @@ public partial class CombatHud : CanvasLayer
     private PanelContainer _targetPanel = null!;
     private ProgressBar _targetBar = null!;
     private Label _targetLabel = null!;
+    private InfoBadge _info = null!;
 
     private PlayerCombat? _combat;
     private Combatant? _self;
@@ -52,7 +53,7 @@ public partial class CombatHud : CanvasLayer
         _targetLabel = new Label { HorizontalAlignment = HorizontalAlignment.Center, MouseFilter = Control.MouseFilterEnum.Ignore };
         _targetBar = new ProgressBar { MinValue = 0, MaxValue = 1, Value = 1, ShowPercentage = false, CustomMinimumSize = new Vector2(300, 18), MouseFilter = Control.MouseFilterEnum.Ignore };
 
-        box.AddChild(_targetLabel);
+        box.AddChild(FoeAdvice.Titled(_targetLabel, out _info));
         box.AddChild(_targetBar);
         _targetPanel.AddChild(box);
         AddChild(_targetPanel);
@@ -79,6 +80,7 @@ public partial class CombatHud : CanvasLayer
         var advice = FoeAdvice.For(target, _self);
 
         if (_targetPanel.TooltipText != advice) _targetPanel.TooltipText = advice;
+        _info.Advice = advice;
     }
 
     private static string Pretty(string key) =>
