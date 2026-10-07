@@ -61,7 +61,7 @@ of it was downloaded, opened or copied.
 | Models | **KayKit Adventurers 2.0** again (CC0, already on disk in your `Downloads` — nothing downloaded): the **Ranger** for the Archer, the **Mage** for the Dragonseer, the Knight's head on the Ranger's body for the Asura; the women the Rogue, as every woman so far. Each recoloured, and changed, by a Blender script of ours. | Same rig as everything else: armour, helmets and animations fit unchanged. |
 | Animations | **KayKit Character Animations 1.1** (CC0, already on disk): `CombatRanged` (bow: idle, draw, release, upward release; magic: shoot, spellcasting, raise, summon) and `MovementAdvanced` (running with a bow, the dodges) — the two files not yet in the game. | The original's motions, as close as a free set gets. |
 | Weapons and armour | Made in Blender by our kits: twelve bows, twelve cursed swords, twelve fans; seven suits and four headpieces a class. Each is the **twin** of a Warrior piece — same level, rarity and worth — so every drop, shop and reward already hands the right one over. | Yours of 2026-09-30: no stand-ins. |
-| Range | The Archer's ordinary blow is **a shot at one target**, not an arc, from 13 m; the Dragonseer strikes hand to hand. It needs line of sight. No sweep on the fourth blow. | The original's ranged classes; an arc at 13 m would be a different game. |
+| Range | The Archer's ordinary blow is **a shot at one target**, not an arc, from 13 m; the Dragonseer strikes hand to hand. It needs line of sight. No sweep on the fourth blow. Space with nothing chosen chooses the nearest enemy in sight and in reach, all round (2026-10-07, at your call). | The original's ranged classes; an arc at 13 m would be a different game. |
 
 ### 2.2 The Archer
 
@@ -72,8 +72,10 @@ green, the leather and her hair chestnut, and a **quiver** on the back. Under ar
 
 **Attribute.** Dexterity: full attack from DEX, a third from STR — the Ninja's rule.
 
-**Shift — Balzo Indietro (Backstep).** A leap away from where it faces, 4.5 m, a moment
-untouched: distance is its defence. Free, 6 s.
+**Shift — Balzo Indietro (Backstep).** A leap back from where the camera looks, 4.5 m, a moment
+untouched: distance is its defence. The next skill that deals damage deals double (every hit of it,
+and what it leaves burning or poisoned). Free, 6 s. (2026-10-07, at your call: it went back from the
+way the body faced, and gave nothing after.)
 
 | Skill | After | What it does | Motion |
 |---|---|---|---|

@@ -427,6 +427,12 @@ public partial class SkillCaster : Node
 
     private readonly List<Pulse> _pulses = [];
 
+    /// <summary>
+    /// Set by the Archer's Backstep (2026-10-07, at your call): the next skill that deals damage
+    /// deals it twice over, every hit of it, and what it leaves burning or poisoned with it.
+    /// </summary>
+    public bool NextSkillDoubled { get; set; }
+
     private void Execute(ResolvedSkill skill)
     {
         var origin = _motor.GlobalPosition;
@@ -439,6 +445,12 @@ public partial class SkillCaster : Node
         {
             Empower(skill);
             return;
+        }
+
+        if (NextSkillDoubled && skill.DamageCoef > 0)
+        {
+            NextSkillDoubled = false;
+            skill = skill with { DamageCoef = skill.DamageCoef * 2 };
         }
 
         // Where a skill goes: at the target when there is one, otherwise straight ahead of the
