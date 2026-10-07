@@ -117,6 +117,8 @@ public partial class TowerHud : CanvasLayer
             FloorTask.Race => run.ClockRunning ? L10n.F("{0:F0}s   ·   {1} of {2}", run.Remaining, run.Scored, run.Floor.Targets) : "—",
             FloorTask.Fight => "",
             FloorTask.Find => "",
+            FloorTask.Key => "",
+            FloorTask.Maze => "",
             _ => L10n.F("{0} of {1}", run.Scored, run.Floor.Targets),
         },
     };

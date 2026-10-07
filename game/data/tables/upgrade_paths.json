@@ -74,5 +74,22 @@
       { "to": 8, "yang": 138900, "mats": { "mat_ember_gland": 10, "mat_warlord_slag": 2 }, "chance": 0.35, "pity": 3 },
       { "to": 9, "yang": 235200, "mats": { "mat_ember_gland": 14, "mat_warlord_slag": 2 }, "chance": 0.25, "pity": 4 }
     ]
+  },
+
+  // The abyss set (P5, 2026-10-07): the Cinderlands' ladder a quarter dearer, in the crypts' ash and the bosses' hearts.
+  {
+    "id": "upg_abyss",
+    "on_failure": "consume_materials_only",
+    "steps": [
+      { "to": 1, "yang": 12300, "mats": { "mat_abyss_ash": 2 }, "chance": 1.00, "pity": 0 },
+      { "to": 2, "yang": 22400, "mats": { "mat_abyss_ash": 2 }, "chance": 1.00, "pity": 0 },
+      { "to": 3, "yang": 39300, "mats": { "mat_abyss_ash": 4 }, "chance": 1.00, "pity": 0 },
+      { "to": 4, "yang": 47600, "mats": { "mat_abyss_ash": 6 }, "chance": 0.75, "pity": 2 },
+      { "to": 5, "yang": 61600, "mats": { "mat_abyss_ash": 10 }, "chance": 0.65, "pity": 2 },
+      { "to": 6, "yang": 74300, "mats": { "mat_abyss_ash": 13 }, "chance": 0.55, "pity": 2 },
+      { "to": 7, "yang": 148400, "mats": { "mat_abyss_ash": 6, "mat_abyss_heart": 1 }, "chance": 0.45, "pity": 3 },
+      { "to": 8, "yang": 173600, "mats": { "mat_abyss_ash": 10, "mat_abyss_heart": 2 }, "chance": 0.35, "pity": 3 },
+      { "to": 9, "yang": 294000, "mats": { "mat_abyss_ash": 14, "mat_abyss_heart": 2 }, "chance": 0.25, "pity": 4 }
+    ]
   }
 ]

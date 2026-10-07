@@ -10,6 +10,11 @@ public static class Ids
 {
     public static class Items
     {
+        public const string ArmAbyssAegis = "arm_abyss_aegis";
+        public const string ArmAbyssDragon = "arm_abyss_dragon";
+        public const string ArmAbyssFiend = "arm_abyss_fiend";
+        public const string ArmAbyssPlume = "arm_abyss_plume";
+        public const string ArmAbyssShade = "arm_abyss_shade";
         public const string ArmAshenCarapace = "arm_ashen_carapace";
         public const string ArmAshenShroud = "arm_ashen_shroud";
         public const string ArmAshenStalker = "arm_ashen_stalker";
@@ -45,19 +50,27 @@ public static class Ids
         public const string ArmWardensBenediction = "arm_wardens_benediction";
         public const string ArmWardensMantle = "arm_wardens_mantle";
         public const string ArmWardensShadow = "arm_wardens_shadow";
+        public const string BrcAbyssCoil = "brc_abyss_coil";
         public const string BrcIronBracer = "brc_iron_bracer";
         public const string BrcKilnCoil = "brc_kiln_coil";
         public const string BrcLeatherBand = "brc_leather_band";
         public const string BrcWardenVambrace = "brc_warden_vambrace";
+        public const string BtsAbyssStriders = "bts_abyss_striders";
         public const string BtsAshenStriders = "bts_ashen_striders";
         public const string BtsEmberTreads = "bts_ember_treads";
         public const string BtsRidgeGreaves = "bts_ridge_greaves";
         public const string BtsScoutBoots = "bts_scout_boots";
         public const string BtsWornBoots = "bts_worn_boots";
+        public const string EarAbyssTear = "ear_abyss_tear";
         public const string EarCopperStud = "ear_copper_stud";
         public const string EarJadeDrop = "ear_jade_drop";
         public const string EarStoneheart = "ear_stoneheart";
         public const string EarStormglass = "ear_stormglass";
+        public const string HlmAbyssCowl = "hlm_abyss_cowl";
+        public const string HlmAbyssDiadem = "hlm_abyss_diadem";
+        public const string HlmAbyssHorns = "hlm_abyss_horns";
+        public const string HlmAbyssMask = "hlm_abyss_mask";
+        public const string HlmAbyssVisor = "hlm_abyss_visor";
         public const string HlmAshenAntlers = "hlm_ashen_antlers";
         public const string HlmAshenCrown = "hlm_ashen_crown";
         public const string HlmAshenHalo = "hlm_ashen_halo";
@@ -83,6 +96,8 @@ public static class Ids
         public const string HlmWardensCirclet = "hlm_wardens_circlet";
         public const string HlmWardensDiadem = "hlm_wardens_diadem";
         public const string HlmWardensPlume = "hlm_wardens_plume";
+        public const string MatAbyssAsh = "mat_abyss_ash";
+        public const string MatAbyssHeart = "mat_abyss_heart";
         public const string MatBlessingScroll = "mat_blessing_scroll";
         public const string MatBogMarrow = "mat_bog_marrow";
         public const string MatBoringStone = "mat_boring_stone";
@@ -98,15 +113,18 @@ public static class Ids
         public const string MatSteelCore = "mat_steel_core";
         public const string MatTemperingOil = "mat_tempering_oil";
         public const string MatWarlordSlag = "mat_warlord_slag";
+        public const string NckAbyssHeart = "nck_abyss_heart";
         public const string NckBoneCharm = "nck_bone_charm";
         public const string NckEmberheart = "nck_emberheart";
         public const string NckShardLocket = "nck_shard_locket";
         public const string NckSilverPendant = "nck_silver_pendant";
+        public const string RngAbyssSigil = "rng_abyss_sigil";
         public const string RngAshenCircle = "rng_ashen_circle";
         public const string RngHuntersSignet = "rng_hunters_signet";
         public const string RngKilnSigil = "rng_kiln_sigil";
         public const string RngTinBand = "rng_tin_band";
         public const string RngWardenSeal = "rng_warden_seal";
+        public const string ShdAbyssAegis = "shd_abyss_aegis";
         public const string ShdBandedShield = "shd_banded_shield";
         public const string ShdCinderBulwark = "shd_cinder_bulwark";
         public const string ShdKilnWard = "shd_kiln_ward";
@@ -122,6 +140,12 @@ public static class Ids
         public const string StnGranite = "stn_granite";
         public const string StnThorn = "stn_thorn";
         public const string StnWard = "stn_ward";
+        public const string WpnAbyssBow = "wpn_abyss_bow";
+        public const string WpnAbyssBrand = "wpn_abyss_brand";
+        public const string WpnAbyssFan = "wpn_abyss_fan";
+        public const string WpnAbyssFangs = "wpn_abyss_fangs";
+        public const string WpnAbyssGreatbrand = "wpn_abyss_greatbrand";
+        public const string WpnAbyssHexblade = "wpn_abyss_hexblade";
         public const string WpnBronzeBow = "wpn_bronze_bow";
         public const string WpnBronzeFan = "wpn_bronze_fan";
         public const string WpnBronzeHexblade = "wpn_bronze_hexblade";
@@ -195,11 +219,15 @@ public static class Ids
         public const string WpnWornHexblade = "wpn_worn_hexblade";
         public const string WpnWornKnives = "wpn_worn_knives";
 
-        public static readonly string[] All = ["arm_ashen_carapace", "arm_ashen_shroud", "arm_ashen_stalker", "arm_ashen_tyrant", "arm_ashen_vigil", "arm_bloodied_leathers", "arm_branded_wraps", "arm_fletchers_scales", "arm_hexscale_hauberk", "arm_hunters_hide", "arm_jadescale_vestment", "arm_kiln_aegis", "arm_kiln_dragon", "arm_kiln_fiend", "arm_kiln_plume", "arm_kiln_shade", "arm_leather_vest", "arm_night_wraps", "arm_padded_coat", "arm_pilgrims_mantle", "arm_prowler_leathers", "arm_reed_mantle", "arm_ridge_dreadmail", "arm_ridge_mail", "arm_ridge_oracle", "arm_ridge_ranger", "arm_ridge_stalker", "arm_scale_hauberk", "arm_trail_jerkin", "arm_viper_scales", "arm_warden_plate", "arm_wardenbane_plate", "arm_wardens_benediction", "arm_wardens_mantle", "arm_wardens_shadow", "brc_iron_bracer", "brc_kiln_coil", "brc_leather_band", "brc_warden_vambrace", "bts_ashen_striders", "bts_ember_treads", "bts_ridge_greaves", "bts_scout_boots", "bts_worn_boots", "ear_copper_stud", "ear_jade_drop", "ear_stoneheart", "ear_stormglass", "hlm_ashen_antlers", "hlm_ashen_crown", "hlm_ashen_halo", "hlm_ashen_horns", "hlm_ashen_visor", "hlm_brand_band", "hlm_drowned_crown", "hlm_drowned_hood", "hlm_drowned_horns", "hlm_drowned_tiara", "hlm_drowned_veil", "hlm_iron_brow", "hlm_iron_helm", "hlm_iron_horns", "hlm_ironfeather_band", "hlm_jade_fillet", "hlm_leather_cap", "hlm_night_band", "hlm_pilgrims_fillet", "hlm_trail_band", "hlm_warden_crown", "hlm_wardenbane_crest", "hlm_wardens_circlet", "hlm_wardens_diadem", "hlm_wardens_plume", "mat_blessing_scroll", "mat_bog_marrow", "mat_boring_stone", "mat_ember_gland", "mat_flask_draught", "mat_iron_scrap", "mat_kings_pearl", "mat_mutation_ink", "mat_radiant_core", "mat_shard_essence", "mat_slate_fang", "mat_stag_crystal", "mat_steel_core", "mat_tempering_oil", "mat_warlord_slag", "nck_bone_charm", "nck_emberheart", "nck_shard_locket", "nck_silver_pendant", "rng_ashen_circle", "rng_hunters_signet", "rng_kiln_sigil", "rng_tin_band", "rng_warden_seal", "shd_banded_shield", "shd_cinder_bulwark", "shd_kiln_ward", "shd_ridge_bulwark", "shd_wooden_buckler", "stn_bane_animal", "stn_bane_devil", "stn_bane_mystic", "stn_bane_orc", "stn_bane_undead", "stn_ember", "stn_falcon", "stn_granite", "stn_thorn", "stn_ward", "wpn_bronze_bow", "wpn_bronze_fan", "wpn_bronze_hexblade", "wpn_bronze_spear", "wpn_bronze_spikes", "wpn_bronze_sword", "wpn_ember_bow", "wpn_ember_edge", "wpn_ember_fan", "wpn_ember_fangs", "wpn_ember_greatedge", "wpn_ember_hexblade", "wpn_grave_bow", "wpn_grave_fan", "wpn_grave_hexblade", "wpn_grave_whispers", "wpn_gravecaller", "wpn_gravecaller_blade", "wpn_hollow_blade", "wpn_hollow_bow", "wpn_hollow_fan", "wpn_hollow_hexblade", "wpn_hollow_reaver", "wpn_hollow_talons", "wpn_hunters_axe", "wpn_hunters_bow", "wpn_hunters_fan", "wpn_hunters_fangs", "wpn_hunters_hexblade", "wpn_hunters_sword", "wpn_iron_bow", "wpn_iron_daggers", "wpn_iron_fan", "wpn_iron_greatsword", "wpn_iron_hexblade", "wpn_iron_sword", "wpn_kiln_bow", "wpn_kiln_brand", "wpn_kiln_fan", "wpn_kiln_greatbrand", "wpn_kiln_hexblade", "wpn_kiln_tongues", "wpn_ridge_blade", "wpn_ridge_bow", "wpn_ridge_cleaver", "wpn_ridge_fan", "wpn_ridge_hexblade", "wpn_ridge_hooks", "wpn_shard_bow", "wpn_shard_fan", "wpn_shard_hexblade", "wpn_shard_lance", "wpn_shard_splinters", "wpn_shard_sword", "wpn_steel_bow", "wpn_steel_daggers", "wpn_steel_fan", "wpn_steel_greatsword", "wpn_steel_hexblade", "wpn_steel_sword", "wpn_warden_bow", "wpn_warden_dirks", "wpn_warden_fan", "wpn_warden_hexblade", "wpn_warden_pike", "wpn_warden_sword", "wpn_worn_blade", "wpn_worn_bow", "wpn_worn_fan", "wpn_worn_greatblade", "wpn_worn_hexblade", "wpn_worn_knives"];
+        public static readonly string[] All = ["arm_abyss_aegis", "arm_abyss_dragon", "arm_abyss_fiend", "arm_abyss_plume", "arm_abyss_shade", "arm_ashen_carapace", "arm_ashen_shroud", "arm_ashen_stalker", "arm_ashen_tyrant", "arm_ashen_vigil", "arm_bloodied_leathers", "arm_branded_wraps", "arm_fletchers_scales", "arm_hexscale_hauberk", "arm_hunters_hide", "arm_jadescale_vestment", "arm_kiln_aegis", "arm_kiln_dragon", "arm_kiln_fiend", "arm_kiln_plume", "arm_kiln_shade", "arm_leather_vest", "arm_night_wraps", "arm_padded_coat", "arm_pilgrims_mantle", "arm_prowler_leathers", "arm_reed_mantle", "arm_ridge_dreadmail", "arm_ridge_mail", "arm_ridge_oracle", "arm_ridge_ranger", "arm_ridge_stalker", "arm_scale_hauberk", "arm_trail_jerkin", "arm_viper_scales", "arm_warden_plate", "arm_wardenbane_plate", "arm_wardens_benediction", "arm_wardens_mantle", "arm_wardens_shadow", "brc_abyss_coil", "brc_iron_bracer", "brc_kiln_coil", "brc_leather_band", "brc_warden_vambrace", "bts_abyss_striders", "bts_ashen_striders", "bts_ember_treads", "bts_ridge_greaves", "bts_scout_boots", "bts_worn_boots", "ear_abyss_tear", "ear_copper_stud", "ear_jade_drop", "ear_stoneheart", "ear_stormglass", "hlm_abyss_cowl", "hlm_abyss_diadem", "hlm_abyss_horns", "hlm_abyss_mask", "hlm_abyss_visor", "hlm_ashen_antlers", "hlm_ashen_crown", "hlm_ashen_halo", "hlm_ashen_horns", "hlm_ashen_visor", "hlm_brand_band", "hlm_drowned_crown", "hlm_drowned_hood", "hlm_drowned_horns", "hlm_drowned_tiara", "hlm_drowned_veil", "hlm_iron_brow", "hlm_iron_helm", "hlm_iron_horns", "hlm_ironfeather_band", "hlm_jade_fillet", "hlm_leather_cap", "hlm_night_band", "hlm_pilgrims_fillet", "hlm_trail_band", "hlm_warden_crown", "hlm_wardenbane_crest", "hlm_wardens_circlet", "hlm_wardens_diadem", "hlm_wardens_plume", "mat_abyss_ash", "mat_abyss_heart", "mat_blessing_scroll", "mat_bog_marrow", "mat_boring_stone", "mat_ember_gland", "mat_flask_draught", "mat_iron_scrap", "mat_kings_pearl", "mat_mutation_ink", "mat_radiant_core", "mat_shard_essence", "mat_slate_fang", "mat_stag_crystal", "mat_steel_core", "mat_tempering_oil", "mat_warlord_slag", "nck_abyss_heart", "nck_bone_charm", "nck_emberheart", "nck_shard_locket", "nck_silver_pendant", "rng_abyss_sigil", "rng_ashen_circle", "rng_hunters_signet", "rng_kiln_sigil", "rng_tin_band", "rng_warden_seal", "shd_abyss_aegis", "shd_banded_shield", "shd_cinder_bulwark", "shd_kiln_ward", "shd_ridge_bulwark", "shd_wooden_buckler", "stn_bane_animal", "stn_bane_devil", "stn_bane_mystic", "stn_bane_orc", "stn_bane_undead", "stn_ember", "stn_falcon", "stn_granite", "stn_thorn", "stn_ward", "wpn_abyss_bow", "wpn_abyss_brand", "wpn_abyss_fan", "wpn_abyss_fangs", "wpn_abyss_greatbrand", "wpn_abyss_hexblade", "wpn_bronze_bow", "wpn_bronze_fan", "wpn_bronze_hexblade", "wpn_bronze_spear", "wpn_bronze_spikes", "wpn_bronze_sword", "wpn_ember_bow", "wpn_ember_edge", "wpn_ember_fan", "wpn_ember_fangs", "wpn_ember_greatedge", "wpn_ember_hexblade", "wpn_grave_bow", "wpn_grave_fan", "wpn_grave_hexblade", "wpn_grave_whispers", "wpn_gravecaller", "wpn_gravecaller_blade", "wpn_hollow_blade", "wpn_hollow_bow", "wpn_hollow_fan", "wpn_hollow_hexblade", "wpn_hollow_reaver", "wpn_hollow_talons", "wpn_hunters_axe", "wpn_hunters_bow", "wpn_hunters_fan", "wpn_hunters_fangs", "wpn_hunters_hexblade", "wpn_hunters_sword", "wpn_iron_bow", "wpn_iron_daggers", "wpn_iron_fan", "wpn_iron_greatsword", "wpn_iron_hexblade", "wpn_iron_sword", "wpn_kiln_bow", "wpn_kiln_brand", "wpn_kiln_fan", "wpn_kiln_greatbrand", "wpn_kiln_hexblade", "wpn_kiln_tongues", "wpn_ridge_blade", "wpn_ridge_bow", "wpn_ridge_cleaver", "wpn_ridge_fan", "wpn_ridge_hexblade", "wpn_ridge_hooks", "wpn_shard_bow", "wpn_shard_fan", "wpn_shard_hexblade", "wpn_shard_lance", "wpn_shard_splinters", "wpn_shard_sword", "wpn_steel_bow", "wpn_steel_daggers", "wpn_steel_fan", "wpn_steel_greatsword", "wpn_steel_hexblade", "wpn_steel_sword", "wpn_warden_bow", "wpn_warden_dirks", "wpn_warden_fan", "wpn_warden_hexblade", "wpn_warden_pike", "wpn_warden_sword", "wpn_worn_blade", "wpn_worn_bow", "wpn_worn_fan", "wpn_worn_greatblade", "wpn_worn_hexblade", "wpn_worn_knives"];
     }
 
     public static class Enemies
     {
+        public const string MobAbyssHound = "mob_abyss_hound";
+        public const string MobAbyssImp = "mob_abyss_imp";
+        public const string MobAbyssPriest = "mob_abyss_priest";
+        public const string MobAbyssWarrior = "mob_abyss_warrior";
         public const string MobAshShaman = "mob_ash_shaman";
         public const string MobBanditBulwark = "mob_bandit_bulwark";
         public const string MobBanditChief = "mob_bandit_chief";
@@ -216,6 +244,12 @@ public static class Ids
         public const string MobCactoroBloomcaller = "mob_cactoro_bloomcaller";
         public const string MobCactoroThornguard = "mob_cactoro_thornguard";
         public const string MobCinderThrower = "mob_cinder_thrower";
+        public const string MobCryptBrute = "mob_crypt_brute";
+        public const string MobCryptGhoul = "mob_crypt_ghoul";
+        public const string MobCryptJailer = "mob_crypt_jailer";
+        public const string MobCryptLord = "mob_crypt_lord";
+        public const string MobCryptSpawn = "mob_crypt_spawn";
+        public const string MobCryptWarden = "mob_crypt_warden";
         public const string MobDemonLord = "mob_demon_lord";
         public const string MobDemonWarrior = "mob_demon_warrior";
         public const string MobDrowned = "mob_drowned";
@@ -234,6 +268,7 @@ public static class Ids
         public const string MobGreymane = "mob_greymane";
         public const string MobHedgeWizard = "mob_hedge_wizard";
         public const string MobHellImp = "mob_hell_imp";
+        public const string MobInfernalArcher = "mob_infernal_archer";
         public const string MobLichenCap = "mob_lichen_cap";
         public const string MobMagmaBrute = "mob_magma_brute";
         public const string MobMarshBrute = "mob_marsh_brute";
@@ -255,6 +290,7 @@ public static class Ids
         public const string MobScreamingSkull = "mob_screaming_skull";
         public const string MobShardSpider = "mob_shard_spider";
         public const string MobSlateWolf = "mob_slate_wolf";
+        public const string MobSoulFerryman = "mob_soul_ferryman";
         public const string MobSpiderQueen = "mob_spider_queen";
         public const string MobSpiderling = "mob_spiderling";
         public const string MobSpittingAdder = "mob_spitting_adder";
@@ -265,7 +301,7 @@ public static class Ids
         public const string MobZombieCrawler = "mob_zombie_crawler";
         public const string MobZombieGhoul = "mob_zombie_ghoul";
 
-        public static readonly string[] All = ["mob_ash_shaman", "mob_bandit_bulwark", "mob_bandit_chief", "mob_basalt_adder", "mob_blaze_wasp", "mob_blister_wasp", "mob_bloat_fly", "mob_blue_demon_hexer", "mob_blue_demon_sorcerer", "mob_bog_serpent", "mob_bog_spitter", "mob_bone_minion", "mob_burning_warlord", "mob_cactoro_bloomcaller", "mob_cactoro_thornguard", "mob_cinder_thrower", "mob_demon_lord", "mob_demon_warrior", "mob_drowned", "mob_drowned_king", "mob_ember_hound", "mob_ember_orc", "mob_fen_witch", "mob_field_rat", "mob_firebrand_mask", "mob_frost_caster", "mob_frost_lich", "mob_frostbone_warrior", "mob_geode_goleling", "mob_goleling_bulwark", "mob_grey_wolf", "mob_greymane", "mob_hedge_wizard", "mob_hell_imp", "mob_lichen_cap", "mob_magma_brute", "mob_marsh_brute", "mob_mire_crawler", "mob_moss_golem", "mob_mountain_yeti", "mob_mushnub_mystic", "mob_ninja_cutthroat", "mob_ninja_thrower", "mob_orc_grunt", "mob_orc_skirmisher", "mob_orc_warlord", "mob_red_fox", "mob_ribcage_spitter", "mob_rockburst_goleling", "mob_rotting_colossus", "mob_salamander", "mob_sand_spider", "mob_screaming_skull", "mob_shard_spider", "mob_slate_wolf", "mob_spider_queen", "mob_spiderling", "mob_spitting_adder", "mob_stone_stag", "mob_tribal_raider", "mob_wailing_ghost", "mob_zombie_brute", "mob_zombie_crawler", "mob_zombie_ghoul"];
+        public static readonly string[] All = ["mob_abyss_hound", "mob_abyss_imp", "mob_abyss_priest", "mob_abyss_warrior", "mob_ash_shaman", "mob_bandit_bulwark", "mob_bandit_chief", "mob_basalt_adder", "mob_blaze_wasp", "mob_blister_wasp", "mob_bloat_fly", "mob_blue_demon_hexer", "mob_blue_demon_sorcerer", "mob_bog_serpent", "mob_bog_spitter", "mob_bone_minion", "mob_burning_warlord", "mob_cactoro_bloomcaller", "mob_cactoro_thornguard", "mob_cinder_thrower", "mob_crypt_brute", "mob_crypt_ghoul", "mob_crypt_jailer", "mob_crypt_lord", "mob_crypt_spawn", "mob_crypt_warden", "mob_demon_lord", "mob_demon_warrior", "mob_drowned", "mob_drowned_king", "mob_ember_hound", "mob_ember_orc", "mob_fen_witch", "mob_field_rat", "mob_firebrand_mask", "mob_frost_caster", "mob_frost_lich", "mob_frostbone_warrior", "mob_geode_goleling", "mob_goleling_bulwark", "mob_grey_wolf", "mob_greymane", "mob_hedge_wizard", "mob_hell_imp", "mob_infernal_archer", "mob_lichen_cap", "mob_magma_brute", "mob_marsh_brute", "mob_mire_crawler", "mob_moss_golem", "mob_mountain_yeti", "mob_mushnub_mystic", "mob_ninja_cutthroat", "mob_ninja_thrower", "mob_orc_grunt", "mob_orc_skirmisher", "mob_orc_warlord", "mob_red_fox", "mob_ribcage_spitter", "mob_rockburst_goleling", "mob_rotting_colossus", "mob_salamander", "mob_sand_spider", "mob_screaming_skull", "mob_shard_spider", "mob_slate_wolf", "mob_soul_ferryman", "mob_spider_queen", "mob_spiderling", "mob_spitting_adder", "mob_stone_stag", "mob_tribal_raider", "mob_wailing_ghost", "mob_zombie_brute", "mob_zombie_crawler", "mob_zombie_ghoul"];
     }
 
     public static class Skills
@@ -317,6 +353,7 @@ public static class Ids
 
     public static class Quests
     {
+        public const string QstAbyssCrypts = "qst_abyss_crypts";
         public const string QstApproachChief = "qst_approach_chief";
         public const string QstApproachStandard = "qst_approach_standard";
         public const string QstBreakersAtTheGate = "qst_breakers_at_the_gate";
@@ -352,7 +389,7 @@ public static class Ids
         public const string QstTrainingSmith = "qst_training_smith";
         public const string QstWolvesOfTheRidge = "qst_wolves_of_the_ridge";
 
-        public static readonly string[] All = ["qst_approach_chief", "qst_approach_standard", "qst_breakers_at_the_gate", "qst_cinder_anvil", "qst_cinder_warlord", "qst_clans_of_the_fire", "qst_floor_totem", "qst_floor_warlord", "qst_gate_lich", "qst_gate_rune", "qst_hollow_greymane", "qst_hollow_stone", "qst_into_the_catacombs", "qst_mire_bell", "qst_mire_king", "qst_reeds_in_the_hollow", "qst_ridge_queen", "qst_ridge_stone", "qst_stone_in_the_wood", "qst_stonewood_heart", "qst_stonewood_stag", "qst_the_drowned_village", "qst_the_gnawing_barrows", "qst_thornbacks_on_the_road", "qst_training_bag", "qst_training_cast", "qst_training_draught", "qst_training_flask", "qst_training_points", "qst_training_refill", "qst_training_shrine", "qst_training_skill", "qst_training_smith", "qst_wolves_of_the_ridge"];
+        public static readonly string[] All = ["qst_abyss_crypts", "qst_approach_chief", "qst_approach_standard", "qst_breakers_at_the_gate", "qst_cinder_anvil", "qst_cinder_warlord", "qst_clans_of_the_fire", "qst_floor_totem", "qst_floor_warlord", "qst_gate_lich", "qst_gate_rune", "qst_hollow_greymane", "qst_hollow_stone", "qst_into_the_catacombs", "qst_mire_bell", "qst_mire_king", "qst_reeds_in_the_hollow", "qst_ridge_queen", "qst_ridge_stone", "qst_stone_in_the_wood", "qst_stonewood_heart", "qst_stonewood_stag", "qst_the_drowned_village", "qst_the_gnawing_barrows", "qst_thornbacks_on_the_road", "qst_training_bag", "qst_training_cast", "qst_training_draught", "qst_training_flask", "qst_training_points", "qst_training_refill", "qst_training_shrine", "qst_training_skill", "qst_training_smith", "qst_wolves_of_the_ridge"];
     }
 
     public static class DropTables
@@ -360,7 +397,9 @@ public static class Ids
         public const string DtBossBurnlord = "dt_boss_burnlord";
         public const string DtBossChief = "dt_boss_chief";
         public const string DtBossColossus = "dt_boss_colossus";
+        public const string DtBossFerryman = "dt_boss_ferryman";
         public const string DtBossGreymane = "dt_boss_greymane";
+        public const string DtBossJailer = "dt_boss_jailer";
         public const string DtBossKing = "dt_boss_king";
         public const string DtBossLich = "dt_boss_lich";
         public const string DtBossLord = "dt_boss_lord";
@@ -370,6 +409,8 @@ public static class Ids
         public const string DtBossWarlord = "dt_boss_warlord";
         public const string DtCatacombsT5 = "dt_catacombs_t5";
         public const string DtCinder = "dt_cinder";
+        public const string DtCryptLord = "dt_crypt_lord";
+        public const string DtCrypts = "dt_crypts";
         public const string DtGateT4 = "dt_gate_t4";
         public const string DtMire = "dt_mire";
         public const string DtRidgeT3 = "dt_ridge_t3";
@@ -388,7 +429,7 @@ public static class Ids
         public const string DtValleyAnimalT2 = "dt_valley_animal_t2";
         public const string DtValleyUndeadT2 = "dt_valley_undead_t2";
 
-        public static readonly string[] All = ["dt_boss_burnlord", "dt_boss_chief", "dt_boss_colossus", "dt_boss_greymane", "dt_boss_king", "dt_boss_lich", "dt_boss_lord", "dt_boss_queen", "dt_boss_sorcerer", "dt_boss_stag", "dt_boss_warlord", "dt_catacombs_t5", "dt_cinder", "dt_gate_t4", "dt_mire", "dt_ridge_t3", "dt_shard_anvil", "dt_shard_bell", "dt_shard_demon", "dt_shard_demon_small", "dt_shard_frost", "dt_shard_heart", "dt_shard_moss", "dt_shard_raider", "dt_shard_totem", "dt_shard_web", "dt_stonewood", "dt_valley_animal_t1", "dt_valley_animal_t2", "dt_valley_undead_t2"];
+        public static readonly string[] All = ["dt_boss_burnlord", "dt_boss_chief", "dt_boss_colossus", "dt_boss_ferryman", "dt_boss_greymane", "dt_boss_jailer", "dt_boss_king", "dt_boss_lich", "dt_boss_lord", "dt_boss_queen", "dt_boss_sorcerer", "dt_boss_stag", "dt_boss_warlord", "dt_catacombs_t5", "dt_cinder", "dt_crypt_lord", "dt_crypts", "dt_gate_t4", "dt_mire", "dt_ridge_t3", "dt_shard_anvil", "dt_shard_bell", "dt_shard_demon", "dt_shard_demon_small", "dt_shard_frost", "dt_shard_heart", "dt_shard_moss", "dt_shard_raider", "dt_shard_totem", "dt_shard_web", "dt_stonewood", "dt_valley_animal_t1", "dt_valley_animal_t2", "dt_valley_undead_t2"];
     }
 
     public static class BonusPools
@@ -405,13 +446,14 @@ public static class Ids
 
     public static class UpgradePaths
     {
+        public const string UpgAbyss = "upg_abyss";
         public const string UpgCinder = "upg_cinder";
         public const string UpgMire = "upg_mire";
         public const string UpgStandardArmor = "upg_standard_armor";
         public const string UpgStandardWeapon = "upg_standard_weapon";
         public const string UpgStonewood = "upg_stonewood";
 
-        public static readonly string[] All = ["upg_cinder", "upg_mire", "upg_standard_armor", "upg_standard_weapon", "upg_stonewood"];
+        public static readonly string[] All = ["upg_abyss", "upg_cinder", "upg_mire", "upg_standard_armor", "upg_standard_weapon", "upg_stonewood"];
     }
 
     public static class Visuals
@@ -660,6 +702,7 @@ public static class Ids
 
     public static class Zones
     {
+        public const string ZoneAbyssCrypts = "zone_abyss_crypts";
         public const string ZoneBrokenGate = "zone_broken_gate";
         public const string ZoneCatacombs = "zone_catacombs";
         public const string ZoneCinderlands = "zone_cinderlands";
@@ -670,7 +713,7 @@ public static class Ids
         public const string ZoneValeApproach = "zone_vale_approach";
         public const string ZoneValeFloor = "zone_vale_floor";
 
-        public static readonly string[] All = ["zone_broken_gate", "zone_catacombs", "zone_cinderlands", "zone_drowned_mire", "zone_ember_hollow", "zone_ridge", "zone_stonewood", "zone_vale_approach", "zone_vale_floor"];
+        public static readonly string[] All = ["zone_abyss_crypts", "zone_broken_gate", "zone_catacombs", "zone_cinderlands", "zone_drowned_mire", "zone_ember_hollow", "zone_ridge", "zone_stonewood", "zone_vale_approach", "zone_vale_floor"];
     }
 
     public static class KitPieces
@@ -701,6 +744,10 @@ public static class Ids
         public const string KitCampTorch = "kit_camp_torch";
         public const string KitCampWeapons = "kit_camp_weapons";
         public const string KitCliff8 = "kit_cliff_8";
+        public const string KitCrPillar = "kit_cr_pillar";
+        public const string KitCrTower = "kit_cr_tower";
+        public const string KitCrWall4 = "kit_cr_wall_4";
+        public const string KitCrWall8 = "kit_cr_wall_8";
         public const string KitDemonFire = "kit_demon_fire";
         public const string KitEmCrag = "kit_em_crag";
         public const string KitEmGrass = "kit_em_grass";
@@ -820,7 +867,7 @@ public static class Ids
         public const string KitWallLow4 = "kit_wall_low_4";
         public const string KitWeb = "kit_web";
 
-        public static readonly string[] All = ["kit_banner", "kit_bones", "kit_boulder", "kit_brazier", "kit_camp_anvil", "kit_camp_banner", "kit_camp_barrel", "kit_camp_barrel_rack", "kit_camp_bench", "kit_camp_cage", "kit_camp_cauldron", "kit_camp_chains", "kit_camp_chest", "kit_camp_crate", "kit_camp_crate_iron", "kit_camp_dummy", "kit_camp_fire", "kit_camp_palisade_4", "kit_camp_rope", "kit_camp_shelter", "kit_camp_stall", "kit_camp_stall_cart", "kit_camp_table", "kit_camp_torch", "kit_camp_weapons", "kit_cliff_8", "kit_demon_fire", "kit_em_crag", "kit_em_grass", "kit_em_lava", "kit_em_rock", "kit_em_shard", "kit_em_tree", "kit_floor_4", "kit_floor_8", "kit_gate", "kit_ghost_fire", "kit_hb_arch", "kit_hb_candles", "kit_hb_coffin", "kit_hb_dead_tree", "kit_hb_fence", "kit_hb_grave", "kit_hb_marker", "kit_hb_post_lantern", "kit_kk_boulder", "kit_kk_bush", "kit_kk_cliff", "kit_kk_grass", "kit_kk_pebbles", "kit_kk_tree", "kit_kk_tree_bare", "kit_kn_altar", "kit_kn_cross", "kit_kn_crypt", "kit_kn_crypt_large", "kit_kn_fence", "kit_kn_fence_broken", "kit_kn_gravestone", "kit_kn_lamp", "kit_kn_obelisk", "kit_kn_pine_crooked", "kit_kn_stone_wall", "kit_kn_stone_wall_broken", "kit_marker_post", "kit_nat_bush", "kit_nat_crag", "kit_nat_fern", "kit_nat_flowers", "kit_nat_grass", "kit_nat_pine", "kit_nat_rock", "kit_nat_tree", "kit_oasis", "kit_orc_hut", "kit_orc_spikes", "kit_orc_totem", "kit_path_4", "kit_pillar", "kit_portal_stone", "kit_ramp_4", "kit_ruin_beam", "kit_ruin_fence", "kit_ruin_house_cottage", "kit_ruin_house_long", "kit_ruin_house_small", "kit_ruin_pile", "kit_ruin_rubble", "kit_ruin_vine", "kit_ruin_wall", "kit_shrub", "kit_skull_post", "kit_spider_eggs", "kit_st_bush", "kit_st_crag", "kit_st_crystal", "kit_st_deer", "kit_st_fern", "kit_st_geode", "kit_st_log", "kit_st_pine", "kit_st_rock", "kit_st_stag", "kit_st_stump", "kit_st_tree", "kit_st_tree_dead", "kit_st_wolf", "kit_sw_pool", "kit_sw_reeds", "kit_sw_rock", "kit_sw_tree", "kit_tower", "kit_un_cactus", "kit_un_cactus_small", "kit_un_dead_tree", "kit_un_grass", "kit_un_log", "kit_un_mesa", "kit_un_palm", "kit_un_rock", "kit_un_snow_bush", "kit_un_snow_crag", "kit_un_snow_dead", "kit_un_snow_log", "kit_un_snow_pine", "kit_un_snow_rock", "kit_un_stump", "kit_vil_corner", "kit_vil_crate", "kit_vil_fence_4", "kit_vil_gate", "kit_vil_house_cottage", "kit_vil_house_long", "kit_vil_house_small", "kit_vil_house_stone", "kit_vil_path_4", "kit_vil_square_8", "kit_vil_wagon", "kit_vil_wall_4", "kit_vil_wall_8", "kit_wall_4", "kit_wall_8", "kit_wall_low_4", "kit_web"];
+        public static readonly string[] All = ["kit_banner", "kit_bones", "kit_boulder", "kit_brazier", "kit_camp_anvil", "kit_camp_banner", "kit_camp_barrel", "kit_camp_barrel_rack", "kit_camp_bench", "kit_camp_cage", "kit_camp_cauldron", "kit_camp_chains", "kit_camp_chest", "kit_camp_crate", "kit_camp_crate_iron", "kit_camp_dummy", "kit_camp_fire", "kit_camp_palisade_4", "kit_camp_rope", "kit_camp_shelter", "kit_camp_stall", "kit_camp_stall_cart", "kit_camp_table", "kit_camp_torch", "kit_camp_weapons", "kit_cliff_8", "kit_cr_pillar", "kit_cr_tower", "kit_cr_wall_4", "kit_cr_wall_8", "kit_demon_fire", "kit_em_crag", "kit_em_grass", "kit_em_lava", "kit_em_rock", "kit_em_shard", "kit_em_tree", "kit_floor_4", "kit_floor_8", "kit_gate", "kit_ghost_fire", "kit_hb_arch", "kit_hb_candles", "kit_hb_coffin", "kit_hb_dead_tree", "kit_hb_fence", "kit_hb_grave", "kit_hb_marker", "kit_hb_post_lantern", "kit_kk_boulder", "kit_kk_bush", "kit_kk_cliff", "kit_kk_grass", "kit_kk_pebbles", "kit_kk_tree", "kit_kk_tree_bare", "kit_kn_altar", "kit_kn_cross", "kit_kn_crypt", "kit_kn_crypt_large", "kit_kn_fence", "kit_kn_fence_broken", "kit_kn_gravestone", "kit_kn_lamp", "kit_kn_obelisk", "kit_kn_pine_crooked", "kit_kn_stone_wall", "kit_kn_stone_wall_broken", "kit_marker_post", "kit_nat_bush", "kit_nat_crag", "kit_nat_fern", "kit_nat_flowers", "kit_nat_grass", "kit_nat_pine", "kit_nat_rock", "kit_nat_tree", "kit_oasis", "kit_orc_hut", "kit_orc_spikes", "kit_orc_totem", "kit_path_4", "kit_pillar", "kit_portal_stone", "kit_ramp_4", "kit_ruin_beam", "kit_ruin_fence", "kit_ruin_house_cottage", "kit_ruin_house_long", "kit_ruin_house_small", "kit_ruin_pile", "kit_ruin_rubble", "kit_ruin_vine", "kit_ruin_wall", "kit_shrub", "kit_skull_post", "kit_spider_eggs", "kit_st_bush", "kit_st_crag", "kit_st_crystal", "kit_st_deer", "kit_st_fern", "kit_st_geode", "kit_st_log", "kit_st_pine", "kit_st_rock", "kit_st_stag", "kit_st_stump", "kit_st_tree", "kit_st_tree_dead", "kit_st_wolf", "kit_sw_pool", "kit_sw_reeds", "kit_sw_rock", "kit_sw_tree", "kit_tower", "kit_un_cactus", "kit_un_cactus_small", "kit_un_dead_tree", "kit_un_grass", "kit_un_log", "kit_un_mesa", "kit_un_palm", "kit_un_rock", "kit_un_snow_bush", "kit_un_snow_crag", "kit_un_snow_dead", "kit_un_snow_log", "kit_un_snow_pine", "kit_un_snow_rock", "kit_un_stump", "kit_vil_corner", "kit_vil_crate", "kit_vil_fence_4", "kit_vil_gate", "kit_vil_house_cottage", "kit_vil_house_long", "kit_vil_house_small", "kit_vil_house_stone", "kit_vil_path_4", "kit_vil_square_8", "kit_vil_wagon", "kit_vil_wall_4", "kit_vil_wall_8", "kit_wall_4", "kit_wall_8", "kit_wall_low_4", "kit_web"];
     }
 
     public static class Npcs

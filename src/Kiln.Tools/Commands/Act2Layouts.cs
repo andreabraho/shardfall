@@ -276,7 +276,12 @@ public static class Act2Layouts
             .Spawn("AshFlats", "spf_cinder_flats", -44, 6)
             .Spawn("WarlordGuard", "spf_cinder_guard", -46, -42, 8)
             .Spawn("Warlord", "spf_cinder_warlord", -58, -56, 6)
-            .Way("Mire", "zone_drowned_mire", 74, 74);
+            .Way("Mire", "zone_drowned_mire", 74, 74)
+            // The way down to the Abyss Crypts, behind the Warlord's forge (P5, 2026-10-07): open at 40 once he has fallen.
+            .Way("Crypts", "zone_abyss_crypts", -74, -74);
+
+        map.Part("CryptMouth", "The crypts' mouth behind the forge: two braziers beside the way down, black rock past them")
+            .Put("kit_brazier", -69, -71).Put("kit_brazier", -69, -65).Put("kit_em_crag", -64, -76, 70);
 
         map.Pools("Fire", "kit_em_lava", 12, 16, 72, 3.5, 73);
 

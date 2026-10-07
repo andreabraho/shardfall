@@ -17,5 +17,9 @@
   { "id": "mat_bog_marrow",     "name": "$item.mat_bog_marrow.name",     "level_req": 1, "rarity": "fine", "grid_size": [1, 1], "max_stack": 99, "sell_value": 1100, "visual": "mesh_armor_a" },
   { "id": "mat_kings_pearl",    "name": "$item.mat_kings_pearl.name",    "level_req": 1, "rarity": "epic", "grid_size": [1, 1], "max_stack": 50, "sell_value": 7500, "visual": "mesh_armor_a" },
   { "id": "mat_ember_gland",    "name": "$item.mat_ember_gland.name",    "level_req": 1, "rarity": "fine", "grid_size": [1, 1], "max_stack": 99, "sell_value": 1300, "visual": "mesh_armor_a" },
-  { "id": "mat_warlord_slag",   "name": "$item.mat_warlord_slag.name",   "level_req": 1, "rarity": "epic", "grid_size": [1, 1], "max_stack": 50, "sell_value": 9000, "visual": "mesh_armor_a" }
+  { "id": "mat_warlord_slag",   "name": "$item.mat_warlord_slag.name",   "level_req": 1, "rarity": "epic", "grid_size": [1, 1], "max_stack": 50, "sell_value": 9000, "visual": "mesh_armor_a" },
+
+  // The Abyss Crypts' parts (P5, 2026-10-07): the ash any creature of the crypts drops, and the hearts its bosses do.
+  { "id": "mat_abyss_ash",      "name": "$item.mat_abyss_ash.name",      "level_req": 1, "rarity": "fine", "grid_size": [1, 1], "max_stack": 99, "sell_value": 1600, "visual": "mesh_armor_a" },
+  { "id": "mat_abyss_heart",    "name": "$item.mat_abyss_heart.name",    "level_req": 1, "rarity": "epic", "grid_size": [1, 1], "max_stack": 50, "sell_value": 11000, "visual": "mesh_armor_a" }
 ]

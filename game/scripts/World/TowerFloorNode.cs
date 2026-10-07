@@ -51,6 +51,17 @@ public partial class TowerFloorNode : Node3D
     private bool _foundReal;
     private bool _enraged;
 
+    // The Abyss Crypts (2026-10-07): the key floor's count and statue, the maze's halls, the boss's wardens.
+    private readonly List<EnemyBrain> _wardens = [];
+    private readonly List<Node3D> _halls = [];
+    private int[] _way = [];
+    private int _kills;
+    private bool _keyDropped;
+    private bool _warded;
+    private double _portalCooldown;
+    private Node3D? _key;
+    private FloorPylon? _statue;
+
     /// <summary>Which floor this is. Must be one the zone declares.</summary>
     [Export] public string FloorId { get; set; } = "";
 
@@ -136,6 +147,9 @@ public partial class TowerFloorNode : Node3D
 
         WakeGuards();
         CheckLanterns();
+        WatchWardens();
+
+        if (_portalCooldown > 0) _portalCooldown -= delta;
     }
 
     // ------------------------------------------------------------------ dressing
@@ -154,6 +168,8 @@ public partial class TowerFloorNode : Node3D
 
         // A hold floor has nothing to break. Its task is the clock.
         if (_floor.Task == FloorTask.Hold) return;
+
+        if (_floor.Task == FloorTask.Maze) BuildMaze();
 
         var marks = Marks();
 
@@ -182,14 +198,21 @@ public partial class TowerFloorNode : Node3D
             Name = $"Pylon{_pylons.Count}",
             Real = real,
             Hitpoints = _floor!.Task == FloorTask.Race ? 520 : 820,
-            Label = LabelFor(_floor.Task),
-            VisualId = VisualFor(_floor.Task),
-            Shielded = _floor.Task == FloorTask.Carry && _floor.Guard > 0,
+            Label = _floor.PropName.Length > 0 ? Items.GameItems.Localise(_floor.PropName) : LabelFor(_floor.Task),
+            VisualId = _floor.Prop.Length > 0 ? _floor.Prop : VisualFor(_floor.Task),
+            // A key floor's statue is sealed until the key comes to it (the Abyss Crypts).
+            Shielded = (_floor.Task == FloorTask.Carry && _floor.Guard > 0) || _floor.Task == FloorTask.Key,
+            // The crypts' doors fill their doorways, sealed or not.
+            Blocks = _floor.Task == FloorTask.Carry && _floor.Prop.Length > 0,
+            Girth = _floor.Task == FloorTask.Carry && _floor.Prop.Length > 0 ? 1.8f : 0.9f,
         };
 
         // Every lantern looks the same, the true one included: which one it is, is luck.
         _props!.AddChild(pylon);
         pylon.GlobalPosition = mark.GlobalPosition;
+        pylon.GlobalRotation = mark.GlobalRotation;
+
+        if (_floor.Task == FloorTask.Key) _statue = pylon;
         pylon.Shattered += r => OnShattered(pylon, r);
 
         _pylons.Add(pylon);
@@ -224,6 +247,8 @@ public partial class TowerFloorNode : Node3D
         FloorTask.Carry => L10n.T("Keystone"),
         FloorTask.Find => L10n.T("Lantern"),
         FloorTask.Race => L10n.T("Prop"),
+        FloorTask.Key => L10n.T("Statue"),
+        FloorTask.Maze => L10n.T("Runic pole"),
         _ => L10n.T("Seal"),
     };
 
@@ -321,6 +346,8 @@ public partial class TowerFloorNode : Node3D
 
         _boss = boss;
         _sent.Add(boss);
+
+        SummonWardens(boss);
     }
 
     /// <summary>At three quarters, half and a quarter the boss calls for help; at half it may enrage.</summary>
@@ -335,7 +362,7 @@ public partial class TowerFloorNode : Node3D
             if (_floor.BossAdds > 0)
             {
                 Summon(_floor.BossAdds, _boss.GlobalPosition, 6f, _sent);
-                UI.WorldNotice.Show(GetTree(), L10n.F("{0} calls the tower to its aid!", _boss.Self.DisplayName));
+                UI.WorldNotice.Show(GetTree(), L10n.F("{0} calls for aid!", _boss.Self.DisplayName));
                 Camera.CameraRig.Kick(Vector3.Up, 0.8f);
             }
         }
@@ -358,6 +385,244 @@ public partial class TowerFloorNode : Node3D
         AoeVisual.Circle(_boss.GlobalPosition, 6f, hostile: true);
         Camera.CameraRig.Kick(Vector3.Up, 1.4f);
         UI.WorldNotice.Show(GetTree(), L10n.F("{0} is enraged!", _boss.Self.DisplayName));
+    }
+
+
+    // ------------------------------------------------------------------ the key (the Abyss Crypts)
+
+    /// <summary>
+    /// A creature of a key floor died: one in ten carries the key, and the last one before
+    /// <see cref="TowerFloor.KeyAfter"/> always does, so it never becomes a grind.
+    /// </summary>
+    private void Killed(EnemyBrain enemy)
+    {
+        if (_floor is not { Task: FloorTask.Key } || _keyDropped || !_live) return;
+
+        _kills++;
+
+        if (_kills < _floor.KeyAfter && GD.Randf() >= KeyChance) return;
+
+        DropKey(enemy.GlobalPosition);
+    }
+
+    private const float KeyChance = 0.1f;
+
+    private void DropKey(Vector3 at)
+    {
+        if (_props is null) return;
+
+        _keyDropped = true;
+
+        var key = new Area3D
+        {
+            Name = "SoulKey",
+            CollisionLayer = 0,
+            CollisionMask = Foundation.Layers.Player,
+            Monitoring = true,
+        };
+
+        key.AddChild(new CollisionShape3D { Shape = new SphereShape3D { Radius = 1.3f }, Position = new Vector3(0, 0.8f, 0) });
+        key.AddChild(new MeshInstance3D
+        {
+            Name = "Crystal",
+            Mesh = new PrismMesh { Size = new Vector3(0.45f, 0.8f, 0.45f) },
+            Position = new Vector3(0, 1.0f, 0),
+            MaterialOverride = new StandardMaterial3D
+            {
+                ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
+                AlbedoColor = new Color(0.75f, 0.45f, 1f),
+            },
+        });
+        key.AddChild(new OmniLight3D { LightColor = new Color(0.7f, 0.4f, 1f), LightEnergy = 2.5f, OmniRange = 5f, Position = new Vector3(0, 1.2f, 0) });
+
+        // Never where picking it up would walk the player through the way out: halfway to the middle instead.
+        var spot = new Vector3(at.X, GlobalPosition.Y, at.Z);
+
+        foreach (var node in GetTree().GetNodesInGroup("zone_gates"))
+        {
+            if (node is Node3D gate && gate.GlobalPosition.DistanceTo(spot) < 6f) spot = spot.Lerp(GlobalPosition, 0.6f);
+        }
+
+        _props.AddChild(key);
+        key.GlobalPosition = spot;
+        key.BodyEntered += body =>
+        {
+            if (!body.IsInGroup("player") || !IsInstanceValid(key)) return;
+
+            key.QueueFree();
+            TakeKey();
+        };
+
+        _key = key;
+        UI.WorldNotice.Show(GetTree(), L10n.T("It dropped the Soul Key. Pick it up."));
+    }
+
+    private void TakeKey()
+    {
+        _key = null;
+        _statue?.Lower();
+        Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndRareDrop, GlobalPosition);
+        UI.WorldNotice.Show(GetTree(), L10n.T("You carry the Soul Key. Strike the statue to set it."));
+    }
+
+    // ------------------------------------------------------------------ the maze (the Abyss Crypts)
+
+    /// <summary>
+    /// Puts a portal on every gate of every hall but the last, and chooses, for this run, which one of each
+    /// hall's leads on. The scene lays out the halls (<c>Halls/HallN</c>, each with a <c>Start</c> and its
+    /// <c>Gates</c>); the pole at the end is the floor's one mark.
+    /// </summary>
+    private void BuildMaze()
+    {
+        var halls = Under("Halls");
+
+        _halls.Clear();
+        _halls.AddRange(halls);
+        _way = new int[halls.Count];
+
+        for (var h = 0; h < halls.Count - 1; h++)
+        {
+            var gates = new List<Node3D>();
+
+            if (halls[h].GetNodeOrNull<Node3D>("Gates") is { } parent)
+            {
+                foreach (var child in parent.GetChildren())
+                {
+                    if (child is Node3D gate) gates.Add(gate);
+                }
+            }
+
+            if (gates.Count == 0) continue;
+
+            _way[h] = (int)(GD.Randi() % (uint)gates.Count);
+
+            for (var g = 0; g < gates.Count; g++)
+            {
+                var hall = h;
+                var right = g == _way[h];
+
+                AddPortal(gates[g], () => Through(hall, right));
+            }
+        }
+
+        GD.Print($"[tower] maze ways: {string.Join(", ", _way)}");
+    }
+
+    private void AddPortal(Node3D gate, System.Action through)
+    {
+        var portal = new Area3D
+        {
+            Name = "Portal",
+            CollisionLayer = 0,
+            CollisionMask = Foundation.Layers.Player,
+            Monitoring = true,
+        };
+
+        portal.AddChild(new CollisionShape3D { Shape = new CylinderShape3D { Radius = 1.1f, Height = 2.4f }, Position = new Vector3(0, 1.2f, 0) });
+        portal.AddChild(new MeshInstance3D
+        {
+            Name = "Ring",
+            Mesh = new TorusMesh { InnerRadius = 1.0f, OuterRadius = 1.25f },
+            RotationDegrees = new Vector3(90, 0, 0),
+            Position = new Vector3(0, 1.4f, 0),
+            MaterialOverride = new StandardMaterial3D
+            {
+                ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
+                AlbedoColor = new Color(0.6f, 0.3f, 1f),
+            },
+        });
+        portal.AddChild(new MeshInstance3D
+        {
+            Name = "Veil",
+            Mesh = new CylinderMesh { TopRadius = 1.0f, BottomRadius = 1.0f, Height = 0.05f },
+            RotationDegrees = new Vector3(90, 0, 0),
+            Position = new Vector3(0, 1.4f, 0),
+            MaterialOverride = new StandardMaterial3D
+            {
+                ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
+                Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
+                AlbedoColor = new Color(0.35f, 0.1f, 0.6f, 0.55f),
+            },
+        });
+        portal.AddChild(new OmniLight3D { LightColor = new Color(0.6f, 0.3f, 1f), LightEnergy = 1.6f, OmniRange = 5f, Position = new Vector3(0, 1.4f, 0) });
+
+        _props!.AddChild(portal);
+        portal.GlobalTransform = gate.GlobalTransform;
+        portal.BodyEntered += body =>
+        {
+            if (!body.IsInGroup("player") || _portalCooldown > 0) return;
+
+            _portalCooldown = 0.6;
+            through();
+        };
+    }
+
+    /// <summary>The player stepped through a portal of hall <paramref name="hall"/>: on, or back to the first.</summary>
+    private void Through(int hall, bool right)
+    {
+        if (GetTree().GetFirstNodeInGroup("player") is not Node3D player) return;
+
+        var to = right ? hall + 1 : 0;
+
+        if (to >= _halls.Count || _halls[to].GetNodeOrNull<Node3D>("Start") is not { } start) return;
+
+        player.GlobalPosition = start.GlobalPosition;
+        Audio.AudioDirector.Play(Kiln.Data.Ids.Sounds.SndRareDrop, start.GlobalPosition);
+
+        UI.WorldNotice.Show(GetTree(), right
+            ? L10n.F("Hall {0} of {1}.", to + 1, _halls.Count)
+            : L10n.T("The wrong way: back to the first hall."));
+    }
+
+    // ------------------------------------------------------------------ wardens (the Abyss Crypts)
+
+    /// <summary>The lesser bosses that come with the boss; while they stand, a shielded boss takes no harm.</summary>
+    private void SummonWardens(EnemyBrain boss)
+    {
+        if (_floor is null || _floor.WardenCount <= 0 || _floor.Wardens.Length == 0) return;
+
+        Summon(_floor.WardenCount, boss.GlobalPosition, 5f, _wardens, _floor.Wardens);
+
+        foreach (var warden in _wardens) warden.Self.IsEncounter = true;
+
+        if (!_floor.WardensShield) return;
+
+        boss.Self.Untouchable = true;
+        boss.AddChild(new MeshInstance3D
+        {
+            Name = "Ward",
+            Mesh = new SphereMesh { Radius = 2.6f, Height = 5.2f },
+            Position = new Vector3(0, 2.2f, 0),
+            CastShadow = GeometryInstance3D.ShadowCastingSetting.Off,
+            MaterialOverride = new StandardMaterial3D
+            {
+                ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
+                Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
+                BlendMode = BaseMaterial3D.BlendModeEnum.Add,
+                AlbedoColor = new Color(0.55f, 0.25f, 0.95f, 0.2f),
+                RimEnabled = true,
+            },
+        });
+
+        _warded = true;
+    }
+
+    /// <summary>The last warden down lifts the boss's ward.</summary>
+    private void WatchWardens()
+    {
+        if (!_warded || _boss is null || !IsInstanceValid(_boss)) return;
+
+        _wardens.RemoveAll(e => !IsInstanceValid(e) || e.IsDead);
+
+        if (_wardens.Count > 0) return;
+
+        _warded = false;
+        _boss.Self.Untouchable = false;
+        _boss.GetNodeOrNull<Node>("Ward")?.QueueFree();
+
+        AoeVisual.Circle(_boss.GlobalPosition, 6f, hostile: false);
+        Camera.CameraRig.Kick(Vector3.Up, 1.0f);
+        UI.WorldNotice.Show(GetTree(), L10n.F("Its wardens are dead: {0} can be hurt.", Items.GameItems.Localise(_boss.Self.DisplayName)));
     }
 
     // ------------------------------------------------------------------ waves and the pack
@@ -408,9 +673,9 @@ public partial class TowerFloorNode : Node3D
     /// Puts <paramref name="count"/> of the floor's creatures in a ring about a point, every
     /// one of them hunting the player.
     /// </summary>
-    private void Summon(int count, Vector3 around, float radius, List<EnemyBrain> into)
+    private void Summon(int count, Vector3 around, float radius, List<EnemyBrain> into, string? only = null)
     {
-        if (_floor is null || _floor.Waves.Count == 0 || _enemyScene is null || _props is null) return;
+        if (_floor is null || (only is null && _floor.Waves.Count == 0) || _enemyScene is null || _props is null) return;
 
         count = Mathf.Min(count, GameWorld.Headroom(GetTree()));
 
@@ -418,7 +683,7 @@ public partial class TowerFloorNode : Node3D
         {
             if (_enemyScene.Instantiate() is not EnemyBrain enemy) continue;
 
-            enemy.EnemyId = _floor.Waves[(int)(GD.Randi() % _floor.Waves.Count)];
+            enemy.EnemyId = only ?? _floor.Waves[(int)(GD.Randi() % _floor.Waves.Count)];
             enemy.Name = $"{FloorId}_{enemy.EnemyId}_{Time.GetTicksMsec()}_{i}";
 
             var angle = Mathf.Tau * i / Mathf.Max(1, count) + (float)GD.RandRange(0, 0.6);
@@ -428,7 +693,13 @@ public partial class TowerFloorNode : Node3D
             enemy.Hunt();
 
             // Each one killed shortens a hold (2026-10-06, at your call).
-            enemy.Self.Died += () => _tower?.Slain();
+            // A key floor's creatures may be carrying its key.
+            var slain = enemy;
+            enemy.Self.Died += () =>
+            {
+                _tower?.Slain();
+                Killed(slain);
+            };
 
             into.Add(enemy);
             if (!ReferenceEquals(into, _sent)) _sent.Add(enemy);
@@ -498,6 +769,14 @@ public partial class TowerFloorNode : Node3D
         _boss = null;
         _foundReal = false;
         _enraged = false;
+        _wardens.Clear();
+        _halls.Clear();
+        _way = [];
+        _kills = 0;
+        _keyDropped = false;
+        _warded = false;
+        _key = null;
+        _statue = null;
 
         if (_props is null) return;
 
