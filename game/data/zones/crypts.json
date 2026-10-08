@@ -32,13 +32,13 @@
         "pack": 8, "waves": ["mob_abyss_hound", "mob_crypt_ghoul", "mob_abyss_imp"], "wave_size": 3, "wave_seconds": 18 },
       // 2. The Sealed Doors: the stair stands in a walled court with a door on each side. Each door's guard rises
       // as the player comes near.
-      { "id": "flr_crypt_doors", "name": "$floor.flr_crypt_doors.name", "task": "carry", "targets": 4, "guard": 5,
+      { "id": "flr_crypt_doors", "name": "$floor.flr_crypt_doors.name", "task": "carry", "targets": 4, "guard": 4,
         "prop": "mesh_crypt_door", "prop_name": "$floor.prop.door",
-        "pack": 4, "waves": ["mob_crypt_ghoul", "mob_crypt_brute", "mob_infernal_archer"], "wave_size": 2, "wave_seconds": 22 },
+        "pack": 3, "waves": ["mob_crypt_ghoul", "mob_crypt_brute", "mob_infernal_archer"], "wave_size": 2, "wave_seconds": 26 },
       // 3. The Stones of Judgement: seven alike, one true. Every one lets out a crowd.
-      { "id": "flr_crypt_judgement", "name": "$floor.flr_crypt_judgement.name", "task": "find", "targets": 1, "decoys": 6, "burst": 5,
+      { "id": "flr_crypt_judgement", "name": "$floor.flr_crypt_judgement.name", "task": "find", "targets": 1, "decoys": 6, "burst": 4,
         "prop": "mesh_judgement_stone", "prop_name": "$floor.prop.stone",
-        "pack": 3, "waves": ["mob_abyss_warrior", "mob_abyss_priest", "mob_infernal_archer", "mob_abyss_imp"], "wave_size": 2, "wave_seconds": 24 },
+        "pack": 2, "waves": ["mob_abyss_warrior", "mob_abyss_priest", "mob_infernal_archer", "mob_abyss_imp"], "wave_size": 2, "wave_seconds": 28 },
       // 4. The Portal Maze: four halls, three portals at the end of each; one leads on, the others back to the
       // first. Which one changes every run. A few hounds wander; the pole at the end opens the way down.
       { "id": "flr_crypt_maze", "name": "$floor.flr_crypt_maze.name", "task": "maze", "targets": 1, "halls": 4, "portals": 3,
@@ -47,14 +47,18 @@
       // 5. The Jailer's Cell.
       { "id": "flr_crypt_cell", "name": "$floor.flr_crypt_cell.name", "task": "fight", "boss": "mob_crypt_jailer",
         "waves": ["mob_crypt_ghoul", "mob_abyss_hound"], "wave_size": 2, "wave_seconds": 26 },
-      // 6. The Landing of Souls: the Ferryman, warded by three wardens until they are dead.
+      // 6. The Landing of Souls: the Ferryman, warded by three wardens until they are dead. One time in two it leaves the
+      // abyss chest too, as the Lord of the Crypt does.
       { "id": "flr_crypt_landing", "name": "$floor.flr_crypt_landing.name", "task": "fight", "boss": "mob_soul_ferryman",
         "wardens": "mob_crypt_warden", "warden_count": 3, "wardens_shield": true,
-        "shrine": "shr_crypt_landing", "bench": true },
-      // 7. The Abyss Throne: the Lord of the Crypt and three of its spawn. Its fall drops one piece of the abyss set.
+        "chest": ["wpn_abyss_brand", "arm_abyss_aegis", "hlm_abyss_visor", "shd_abyss_aegis", "bts_abyss_striders", "brc_abyss_coil", "nck_abyss_heart", "ear_abyss_tear", "rng_abyss_sigil"], "chest_chance": 0.5,
+        "shrine": "shr_crypt_landing", "bench": true, "gift": true },
+      // 7. The Abyss Throne: the Lord of the Crypt and three of its spawn. Its fall leaves a chest: the player takes the piece of
+      // the abyss set they choose, and the stat of an earring, bracelet or ring.
       { "id": "flr_crypt_throne", "name": "$floor.flr_crypt_throne.name", "task": "fight", "boss": "mob_crypt_lord",
         "wardens": "mob_crypt_spawn", "warden_count": 3,
-        "shrine": "shr_crypt_throne", "bench": true }
+        "chest": ["wpn_abyss_brand", "arm_abyss_aegis", "hlm_abyss_visor", "shd_abyss_aegis", "bts_abyss_striders", "brc_abyss_coil", "nck_abyss_heart", "ear_abyss_tear", "rng_abyss_sigil"],
+        "shrine": "shr_crypt_throne", "bench": true, "gift": true }
     ]
   }
 ]

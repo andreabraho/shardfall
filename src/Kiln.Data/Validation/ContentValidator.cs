@@ -1331,6 +1331,27 @@ public static class ContentValidator
             }
         }
 
+        if (floor.Chest.Length > 0 && floor.Task != "fight")
+        {
+            report.Error("world-floors", zone.SourceFile,
+                $"{where} leaves a chest on a \"{floor.Task}\" floor, which has no boss to leave it.");
+        }
+
+        if (floor.ChestChance is <= 0 or > 1)
+        {
+            report.Error("world-floors", zone.SourceFile,
+                $"{where} leaves its chest with chance {floor.ChestChance}: it must be above 0 and at most 1.");
+        }
+
+        foreach (var item in floor.Chest)
+        {
+            if (!db.Items.ContainsKey(item))
+            {
+                report.Error("cross-ref", zone.SourceFile,
+                    $"{where} puts '{item}' in its chest, which does not exist.");
+            }
+        }
+
         if (!string.IsNullOrEmpty(floor.Prop) && !db.Visuals.ContainsKey(floor.Prop))
         {
             report.Error("cross-ref", zone.SourceFile,

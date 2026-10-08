@@ -13,7 +13,7 @@
     "family": "animal",
     "role": "bruiser",
     "level": 27,
-    "stats": { "hp": 4500, "attack_power": 128, "defense": 110, "move_speed": 6.2 },
+    "stats": { "hp": 4000, "attack_power": 113, "defense": 110, "move_speed": 6.2 },
     "abilities": [
       { "id": "abl_shardling_bite", "cooldown": 1.9, "windup": 0.5, "damage_coef": 0.9 }
     ],
@@ -36,7 +36,7 @@
     "family": "animal",
     "role": "bruiser",
     "level": 27,
-    "stats": { "hp": 9000, "attack_power": 170, "defense": 110, "move_speed": 5.7 },
+    "stats": { "hp": 7900, "attack_power": 150, "defense": 110, "move_speed": 5.7 },
     "abilities": [
       { "id": "abl_slatewolf_strike", "cooldown": 2.4, "windup": 0.55, "damage_coef": 1 },
       { "id": "abl_slatewolf_lunge", "cooldown": 7, "windup": 1.5, "damage_coef": 1.6, "applies": { "kind": "bleed", "magnitude": 19, "duration": 4 }, "telegraph": { "shape": "cone", "radius": 2.6, "angle": 60 } }
@@ -58,7 +58,7 @@
     "family": "animal",
     "role": "archer",
     "level": 28,
-    "stats": { "hp": 6330, "attack_power": 211, "defense": 77, "move_speed": 4.8 },
+    "stats": { "hp": 5600, "attack_power": 186, "defense": 77, "move_speed": 4.8 },
     "abilities": [
       { "id": "abl_basalt_spit", "cooldown": 2, "windup": 0.8, "damage_coef": 1.1, "range": 12, "applies": { "kind": "slow", "magnitude": 0.3, "duration": 2.5 } },
       { "id": "abl_basalt_rain", "cooldown": 9, "windup": 1.6, "damage_coef": 1.4, "range": 11, "placement": "target", "applies": { "kind": "poison", "magnitude": 23, "duration": 4 }, "telegraph": { "shape": "circle", "radius": 2.8 } }
@@ -80,7 +80,7 @@
     "family": "mystic",
     "role": "shielder",
     "level": 29,
-    "stats": { "hp": 16560, "attack_power": 160, "defense": 218, "move_speed": 3.7 },
+    "stats": { "hp": 14600, "attack_power": 141, "defense": 218, "move_speed": 3.7 },
     "abilities": [
       { "id": "abl_mossgolem_slam", "cooldown": 3.2, "windup": 0.9, "damage_coef": 1.15, "applies": { "kind": "stun", "duration": 0.8, "chance": 0.3 } },
       { "id": "abl_mossgolem_aegis", "cooldown": 14, "windup": 2, "damage_coef": 0 }
@@ -101,7 +101,7 @@
     "family": "mystic",
     "role": "mender",
     "level": 29,
-    "stats": { "hp": 8860, "attack_power": 146, "defense": 92, "move_speed": 4.2 },
+    "stats": { "hp": 7800, "attack_power": 128, "defense": 92, "move_speed": 4.2 },
     "abilities": [
       { "id": "abl_lichen_mend", "cooldown": 7, "windup": 1.45, "damage_coef": 0, "range": 10 },
       { "id": "abl_lichen_bolt", "cooldown": 3, "windup": 0.85, "damage_coef": 0.9, "range": 9.5 }
@@ -124,7 +124,7 @@
     "family": "mystic",
     "role": "bomber",
     "level": 30,
-    "stats": { "hp": 7960, "attack_power": 314, "defense": 73, "move_speed": 5.2 },
+    "stats": { "hp": 7000, "attack_power": 276, "defense": 73, "move_speed": 5.2 },
     "abilities": [
       { "id": "abl_geode_burst", "cooldown": 1, "windup": 1.95, "damage_coef": 1.95, "applies": { "kind": "bleed", "magnitude": 35, "duration": 4 }, "telegraph": { "shape": "circle", "radius": 3.8 } }
     ],
@@ -147,7 +147,7 @@
     "family": "animal",
     "role": "bruiser",
     "level": 31,
-    "stats": { "hp": 240000, "attack_power": 194, "defense": 163, "move_speed": 5.4 },
+    "stats": { "hp": 211200, "attack_power": 171, "defense": 163, "move_speed": 5.4 },
     "abilities": [
       { "id": "abl_stag_gore", "cooldown": 2.3, "windup": 0.7, "damage_coef": 1.15 },
       { "id": "abl_stag_sweep", "cooldown": 7.5, "windup": 2.35, "damage_coef": 1.6, "applies": { "kind": "bleed", "magnitude": 21, "duration": 4 }, "telegraph": { "shape": "cone", "radius": 5, "angle": 70 } },

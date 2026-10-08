@@ -4,7 +4,8 @@
   // under the Cinderlands. Act 1's models turned toward the abyss — black and violet, a red glow — until they have
   // models of their own (docs/11-abyss-crypts.md).
   //
-  // Numbers a step above the Cinderlands' (levels 35–40): a pack creature 9,000–16,000 health.
+  // Numbers a step above the Cinderlands' (levels 35–40): a pack creature 8,000–14,000 health (12% off, 2026-10-08,
+  // at your call: the new maps a little easier, the Disciple's difficulty being hard enough already).
 
   {
     "id": "mob_abyss_hound",
@@ -13,7 +14,7 @@
     "family": "undead",
     "role": "bruiser",
     "level": 40,
-    "stats": { "hp": 9200, "attack_power": 172, "defense": 168, "move_speed": 6.4 },
+    "stats": { "hp": 8100, "attack_power": 151, "defense": 168, "move_speed": 6.4 },
     "abilities": [
       { "id": "abl_abysshound_bite", "cooldown": 1.9, "windup": 0.5, "damage_coef": 0.95, "applies": { "kind": "bleed", "magnitude": 30, "duration": 4 } }
     ],
@@ -36,7 +37,7 @@
     "family": "undead",
     "role": "bruiser",
     "level": 40,
-    "stats": { "hp": 13400, "attack_power": 205, "defense": 172, "move_speed": 5.9 },
+    "stats": { "hp": 11800, "attack_power": 180, "defense": 172, "move_speed": 5.9 },
     "abilities": [
       { "id": "abl_cryptghoul_rend", "cooldown": 2.2, "windup": 0.55, "damage_coef": 1.05, "applies": { "kind": "bleed", "magnitude": 32, "duration": 4 } },
       { "id": "abl_cryptghoul_pounce", "cooldown": 7, "windup": 1.75, "damage_coef": 1.7, "telegraph": { "shape": "cone", "radius": 3.2, "angle": 70 } }
@@ -59,7 +60,7 @@
     "family": "devil",
     "role": "archer",
     "level": 41,
-    "stats": { "hp": 9800, "attack_power": 248, "defense": 120, "move_speed": 4.9 },
+    "stats": { "hp": 8600, "attack_power": 218, "defense": 120, "move_speed": 4.9 },
     "abilities": [
       { "id": "abl_infarcher_bolt", "cooldown": 2, "windup": 0.8, "damage_coef": 1.1, "range": 14 },
       { "id": "abl_infarcher_rain", "cooldown": 9, "windup": 2.0, "damage_coef": 1.5, "range": 13, "placement": "target", "applies": { "kind": "burn", "magnitude": 34, "duration": 4 }, "telegraph": { "shape": "circle", "radius": 4 } }
@@ -82,7 +83,7 @@
     "family": "undead",
     "role": "shielder",
     "level": 41,
-    "stats": { "hp": 16200, "attack_power": 176, "defense": 228, "move_speed": 3.8 },
+    "stats": { "hp": 14300, "attack_power": 155, "defense": 228, "move_speed": 3.8 },
     "abilities": [
       { "id": "abl_cryptbrute_slam", "cooldown": 3.3, "windup": 0.95, "damage_coef": 1.2, "applies": { "kind": "stun", "duration": 1.1, "chance": 0.35 } },
       { "id": "abl_cryptbrute_aegis", "cooldown": 13, "windup": 2, "damage_coef": 0 }
@@ -105,7 +106,7 @@
     "family": "devil",
     "role": "mender",
     "level": 41,
-    "stats": { "hp": 10400, "attack_power": 168, "defense": 132, "move_speed": 4.3 },
+    "stats": { "hp": 9200, "attack_power": 148, "defense": 132, "move_speed": 4.3 },
     "abilities": [
       { "id": "abl_abysspriest_restore", "cooldown": 6, "windup": 1.5, "damage_coef": 0, "range": 12 },
       { "id": "abl_abysspriest_wail", "cooldown": 3, "windup": 0.9, "damage_coef": 1, "range": 10.5, "applies": { "kind": "weaken", "magnitude": 0.15, "duration": 4 } }
@@ -128,7 +129,7 @@
     "family": "devil",
     "role": "bomber",
     "level": 41,
-    "stats": { "hp": 8600, "attack_power": 300, "defense": 104, "move_speed": 5.4 },
+    "stats": { "hp": 7600, "attack_power": 264, "defense": 104, "move_speed": 5.4 },
     "abilities": [
       { "id": "abl_abyssimp_burst", "cooldown": 1, "windup": 2.4, "damage_coef": 2.1, "applies": { "kind": "poison", "magnitude": 42, "duration": 5 }, "telegraph": { "shape": "circle", "radius": 5 } }
     ],
@@ -150,7 +151,7 @@
     "family": "devil",
     "role": "bruiser",
     "level": 42,
-    "stats": { "hp": 14800, "attack_power": 226, "defense": 178, "move_speed": 5.8 },
+    "stats": { "hp": 13000, "attack_power": 199, "defense": 178, "move_speed": 5.8 },
     "abilities": [
       { "id": "abl_abysswarrior_cleave", "cooldown": 2.3, "windup": 0.55, "damage_coef": 1.05, "applies": { "kind": "bleed", "magnitude": 34, "duration": 4 } },
       { "id": "abl_abysswarrior_leap", "cooldown": 7, "windup": 1.75, "damage_coef": 1.7, "telegraph": { "shape": "cone", "radius": 3.2, "angle": 70 } }
@@ -177,7 +178,7 @@
     "family": "undead",
     "role": "bruiser",
     "level": 41,
-    "stats": { "hp": 300000, "attack_power": 168, "defense": 236, "move_speed": 5.4 },
+    "stats": { "hp": 264000, "attack_power": 148, "defense": 236, "move_speed": 5.4 },
     "abilities": [
       { "id": "abl_jailer_chainlash", "cooldown": 2.6, "windup": 0.8, "damage_coef": 1.2, "applies": { "kind": "slow", "magnitude": 0.3, "duration": 2.5 } },
       { "id": "abl_jailer_shackle", "cooldown": 9, "windup": 2.35, "damage_coef": 1.8, "applies": { "kind": "stun", "duration": 1.2, "chance": 0.6 }, "telegraph": { "shape": "line", "radius": 5, "angle": 14 } },
@@ -209,7 +210,7 @@
     "family": "undead",
     "role": "bruiser",
     "level": 41,
-    "stats": { "hp": 62000, "attack_power": 176, "defense": 210, "move_speed": 5.2 },
+    "stats": { "hp": 54600, "attack_power": 155, "defense": 210, "move_speed": 5.2 },
     "abilities": [
       { "id": "abl_warden_chainlash", "cooldown": 2.6, "windup": 0.8, "damage_coef": 1.15, "applies": { "kind": "slow", "magnitude": 0.3, "duration": 2.5 } },
       { "id": "abl_warden_shackle", "cooldown": 10, "windup": 2.35, "damage_coef": 1.6, "applies": { "kind": "stun", "duration": 1.0, "chance": 0.5 }, "telegraph": { "shape": "line", "radius": 5, "angle": 14 } }
@@ -234,7 +235,7 @@
     "family": "devil",
     "role": "archer",
     "level": 42,
-    "stats": { "hp": 340000, "attack_power": 214, "defense": 170, "move_speed": 6 },
+    "stats": { "hp": 299200, "attack_power": 188, "defense": 170, "move_speed": 6 },
     "abilities": [
       { "id": "abl_ferryman_lance", "cooldown": 2.4, "windup": 0.9, "damage_coef": 1.25, "range": 16 },
       { "id": "abl_ferryman_tide", "cooldown": 8, "windup": 2.2, "damage_coef": 1.8, "range": 15, "placement": "target", "applies": { "kind": "poison", "magnitude": 46, "duration": 5 }, "telegraph": { "shape": "circle", "radius": 4.5 } },
@@ -266,7 +267,7 @@
     "family": "devil",
     "role": "bruiser",
     "level": 42,
-    "stats": { "hp": 48000, "attack_power": 210, "defense": 176, "move_speed": 6 },
+    "stats": { "hp": 42200, "attack_power": 185, "defense": 176, "move_speed": 6 },
     "abilities": [
       { "id": "abl_cryptspawn_rend", "cooldown": 2.4, "windup": 0.6, "damage_coef": 1.1, "applies": { "kind": "bleed", "magnitude": 36, "duration": 4 } },
       { "id": "abl_cryptspawn_leap", "cooldown": 8, "windup": 1.8, "damage_coef": 1.7, "telegraph": { "shape": "cone", "radius": 3.4, "angle": 70 } }
@@ -292,7 +293,7 @@
     "family": "devil",
     "role": "bruiser",
     "level": 42,
-    "stats": { "hp": 480000, "attack_power": 236, "defense": 196, "move_speed": 5.9 },
+    "stats": { "hp": 422400, "attack_power": 208, "defense": 196, "move_speed": 5.9 },
     "abilities": [
       { "id": "abl_cryptlord_rend", "cooldown": 3.0, "windup": 1.85, "damage_coef": 1.35, "applies": { "kind": "bleed", "magnitude": 44, "duration": 5 }, "telegraph": { "shape": "cone", "radius": 3.5, "angle": 85 } },
       { "id": "abl_cryptlord_sever", "cooldown": 8, "windup": 2.35, "damage_coef": 2.1, "telegraph": { "shape": "line", "radius": 5, "angle": 12 } },

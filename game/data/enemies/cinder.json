@@ -10,7 +10,7 @@
     "family": "animal",
     "role": "bruiser",
     "level": 35,
-    "stats": { "hp": 5750, "attack_power": 139, "defense": 150, "move_speed": 6.2 },
+    "stats": { "hp": 5100, "attack_power": 122, "defense": 150, "move_speed": 6.2 },
     "abilities": [
       { "id": "abl_emberhound_bite", "cooldown": 1.9, "windup": 0.5, "damage_coef": 0.9 }
     ],
@@ -31,7 +31,7 @@
     "family": "orc",
     "role": "bruiser",
     "level": 36,
-    "stats": { "hp": 11900, "attack_power": 191, "defense": 155, "move_speed": 5.7 },
+    "stats": { "hp": 10500, "attack_power": 168, "defense": 155, "move_speed": 5.7 },
     "abilities": [
       { "id": "abl_emberorc_strike", "cooldown": 2.4, "windup": 0.55, "damage_coef": 1 },
       { "id": "abl_emberorc_lunge", "cooldown": 7, "windup": 1.5, "damage_coef": 1.6, "applies": { "kind": "burn", "magnitude": 21, "duration": 4 }, "telegraph": { "shape": "cone", "radius": 2.6, "angle": 60 } }
@@ -55,7 +55,7 @@
     "family": "orc",
     "role": "archer",
     "level": 37,
-    "stats": { "hp": 8370, "attack_power": 238, "defense": 109, "move_speed": 4.8 },
+    "stats": { "hp": 7400, "attack_power": 209, "defense": 109, "move_speed": 4.8 },
     "abilities": [
       { "id": "abl_cinder_spit", "cooldown": 2, "windup": 0.8, "damage_coef": 1.1, "range": 12, "applies": { "kind": "slow", "magnitude": 0.3, "duration": 2.5 } },
       { "id": "abl_cinder_rain", "cooldown": 9, "windup": 1.6, "damage_coef": 1.4, "range": 11, "placement": "target", "applies": { "kind": "burn", "magnitude": 26, "duration": 4 }, "telegraph": { "shape": "circle", "radius": 2.8 } }
@@ -78,7 +78,7 @@
     "family": "animal",
     "role": "archer",
     "level": 37,
-    "stats": { "hp": 8370, "attack_power": 238, "defense": 109, "move_speed": 4.8 },
+    "stats": { "hp": 7400, "attack_power": 209, "defense": 109, "move_speed": 4.8 },
     "abilities": [
       { "id": "abl_salamander_spit", "cooldown": 2, "windup": 0.8, "damage_coef": 1.1, "range": 12, "applies": { "kind": "slow", "magnitude": 0.3, "duration": 2.5 } },
       { "id": "abl_salamander_rain", "cooldown": 9, "windup": 1.6, "damage_coef": 1.4, "range": 11, "placement": "target", "applies": { "kind": "burn", "magnitude": 26, "duration": 4 }, "telegraph": { "shape": "circle", "radius": 2.8 } }
@@ -102,7 +102,7 @@
     "family": "orc",
     "role": "shielder",
     "level": 38,
-    "stats": { "hp": 21860, "attack_power": 180, "defense": 307, "move_speed": 3.7 },
+    "stats": { "hp": 19200, "attack_power": 158, "defense": 307, "move_speed": 3.7 },
     "abilities": [
       { "id": "abl_magmabrute_slam", "cooldown": 3.2, "windup": 0.9, "damage_coef": 1.15, "applies": { "kind": "stun", "duration": 0.8, "chance": 0.3 } },
       { "id": "abl_magmabrute_aegis", "cooldown": 14, "windup": 2, "damage_coef": 0 }
@@ -125,7 +125,7 @@
     "family": "orc",
     "role": "mender",
     "level": 38,
-    "stats": { "hp": 11690, "attack_power": 164, "defense": 129, "move_speed": 4.2 },
+    "stats": { "hp": 10300, "attack_power": 144, "defense": 129, "move_speed": 4.2 },
     "abilities": [
       { "id": "abl_ashshaman_mend", "cooldown": 7, "windup": 1.45, "damage_coef": 0, "range": 10 },
       { "id": "abl_ashshaman_bolt", "cooldown": 3, "windup": 0.85, "damage_coef": 0.9, "range": 9.5 }
@@ -147,7 +147,7 @@
     "family": "animal",
     "role": "bomber",
     "level": 39,
-    "stats": { "hp": 10490, "attack_power": 352, "defense": 103, "move_speed": 5.2 },
+    "stats": { "hp": 9200, "attack_power": 310, "defense": 103, "move_speed": 5.2 },
     "abilities": [
       { "id": "abl_blazewasp_burst", "cooldown": 1, "windup": 1.95, "damage_coef": 1.95, "applies": { "kind": "burn", "magnitude": 39, "duration": 4 }, "telegraph": { "shape": "circle", "radius": 3.8 } }
     ],
@@ -171,7 +171,7 @@
     "family": "orc",
     "role": "bruiser",
     "level": 40,
-    "stats": { "hp": 347330, "attack_power": 157, "defense": 229, "move_speed": 5.4 },
+    "stats": { "hp": 305700, "attack_power": 138, "defense": 229, "move_speed": 5.4 },
     "abilities": [
       { "id": "abl_burnlord_cleave", "cooldown": 2.3, "windup": 0.7, "damage_coef": 1.15 },
       { "id": "abl_burnlord_whirl", "cooldown": 7.5, "windup": 2.35, "damage_coef": 1.6, "applies": { "kind": "burn", "magnitude": 17, "duration": 4 }, "telegraph": { "shape": "circle", "radius": 5, "angle": 70 } },

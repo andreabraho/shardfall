@@ -21,6 +21,7 @@ public static class ItemSnapshots
         Failures = item.UpgradeFailures,
         Locked = item.Locked,
         FairInnate = item.FairInnate,
+        InnatePick = item.InnatePick,
         At = at,
         Lines = item.Bonuses
             .Select(l => new SavedLine { Id = l.LineId, Magnitude = l.Magnitude, Locked = l.Locked })
@@ -47,6 +48,7 @@ public static class ItemSnapshots
             UpgradeFailures = Math.Max(0, saved.Failures),
             Locked = saved.Locked,
             FairInnate = saved.FairInnate,
+            InnatePick = saved.InnatePick,
         };
 
         var lines = new List<BonusLine>();

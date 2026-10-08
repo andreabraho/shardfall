@@ -652,18 +652,8 @@
   {
     "id": "dt_crypt_lord",
     "yang_range": [60000, 90000],
-    "picks": 1,
     "entries": [
-      { "item": "wpn_abyss_brand", "weight": 1, "chance": 0, "count_range": [1, 1] },
-      { "item": "arm_abyss_aegis", "weight": 1, "chance": 0, "count_range": [1, 1] },
-      { "item": "hlm_abyss_visor", "weight": 1, "chance": 0, "count_range": [1, 1] },
-      { "item": "shd_abyss_aegis", "weight": 1, "chance": 0, "count_range": [1, 1] },
-      { "item": "bts_abyss_striders", "weight": 1, "chance": 0, "count_range": [1, 1] },
-      { "item": "brc_abyss_coil", "weight": 1, "chance": 0, "count_range": [1, 1] },
-      { "item": "nck_abyss_heart", "weight": 1, "chance": 0, "count_range": [1, 1] },
-      { "item": "ear_abyss_tear", "weight": 1, "chance": 0, "count_range": [1, 1] },
-      { "item": "rng_abyss_sigil", "weight": 1, "chance": 0, "count_range": [1, 1] },
-      { "item": "mat_blessing_scroll", "weight": 0, "chance": 1, "count_range": [1, 1] },
+      { "item": "mat_blessing_scroll", "weight": 1, "chance": 1, "count_range": [1, 1] },
       { "item": "mat_abyss_heart", "weight": 0, "chance": 1, "count_range": [2, 3] },
       { "item": "mat_abyss_ash", "weight": 0, "chance": 1, "count_range": [6, 10] }
     ]

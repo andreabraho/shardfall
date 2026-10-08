@@ -308,7 +308,15 @@ public partial class TowerFloorNode : Node3D
 
                 guard = [];
                 _guards[pylon] = guard;
-                Summon(_floor.Guard, pylon.GlobalPosition, 4.5f, guard);
+                // Out in front of it, away from the middle of the floor: a ring about a door in the court's wall
+                // put half the guard behind the wall, out of reach of all but ranged skills; and one put on the
+                // player's side still did, for the door beside the one approached from a corner (2026-10-08, at your call).
+                var outward = (pylon.GlobalPosition - GlobalPosition) with { Y = 0 };
+                var toward = (player.GlobalPosition - pylon.GlobalPosition) with { Y = 0 };
+                var front = outward.LengthSquared() > 1f ? outward.Normalized()
+                    : toward.LengthSquared() > 0.01f ? toward.Normalized() : Vector3.Zero;
+
+                Summon(_floor.Guard, pylon.GlobalPosition + front * 5.5f, 2f, guard);
                 UI.WorldNotice.Show(GetTree(), L10n.T("The keystone's guard wakes. Kill them to break the seal."));
                 continue;
             }
@@ -341,7 +349,20 @@ public partial class TowerFloorNode : Node3D
         boss.Self.IsEncounter = true;
         boss.Hunt();
 
-        boss.Self.Died += () => _tower?.Scored();
+        boss.Self.Died += () =>
+        {
+            _tower?.Scored();
+
+            // A final boss leaves a chest, and the player chooses what is in it (2026-10-08); the Ferryman, one time in two.
+            var roll = GD.Randf();
+
+            if (_floor.Chest.Count > 0) GD.Print($"[tower] {_floor.Id}: chest chance {_floor.ChestChance}, rolled {roll:F2}");
+
+            if (_floor.Chest.Count > 0 && roll < _floor.ChestChance && _props is not null && IsInstanceValid(boss))
+            {
+                ChestNode.Place(_props, _floor.Chest, new Vector3(boss.GlobalPosition.X, GlobalPosition.Y, boss.GlobalPosition.Z));
+            }
+        };
         boss.Self.HealthChanged += OnBossHealth;
 
         _boss = boss;
