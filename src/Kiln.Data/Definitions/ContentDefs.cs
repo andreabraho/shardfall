@@ -1175,6 +1175,9 @@ public sealed class FloorDef
     /// <summary>Whether the boss takes no harm while any warden stands.</summary>
     public bool WardensShield { get; init; }
 
+    /// <summary>The chest a <c>fight</c> floor's boss leaves: item ids, of which the player chooses one.</summary>
+    public string[] Chest { get; init; } = [];
+
     /// <summary>The most kills a <c>key</c> floor asks before its key drops.</summary>
     public int KeyAfter { get; init; } = 15;
 

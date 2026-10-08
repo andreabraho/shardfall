@@ -622,7 +622,7 @@ public partial class ShrinePanel : CanvasLayer
     // ------------------------------------------------------------------ chrome
 
     /// <summary>A section's gold heading with a thin line under it, as the skill window has.</summary>
-    private static Control Heading(string text)
+    internal static Control Heading(string text)
     {
         var box = new VBoxContainer();
         box.AddThemeConstantOverride("separation", 2);
@@ -640,7 +640,7 @@ public partial class ShrinePanel : CanvasLayer
     /// <summary>
     /// A button as one of the window's plates: dark, edged in bronze, lit gold under the mouse.
     /// </summary>
-    private static void Plate(Button button)
+    internal static void Plate(Button button)
     {
         var edge = new Color(0.30f, 0.25f, 0.18f);
 
@@ -654,7 +654,7 @@ public partial class ShrinePanel : CanvasLayer
         button.AddThemeFontSizeOverride("font_size", 13);
     }
 
-    private static StyleBoxFlat Box(Color fill, int width, int margin, int bottom = -1, int top = -1, Color? edge = null) => new()
+    internal static StyleBoxFlat Box(Color fill, int width, int margin, int bottom = -1, int top = -1, Color? edge = null) => new()
     {
         BgColor = fill,
         BorderColor = edge ?? Frame,

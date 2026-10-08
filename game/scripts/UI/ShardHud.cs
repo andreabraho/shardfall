@@ -128,6 +128,15 @@ public partial class ShardHud : CanvasLayer, ITopBar
 
         _root.Visible = true;
 
+        // Under the target's frame, which goes under a tower's floor panel.
+        var top = TopBars.First(GetTree());
+
+        if (!Mathf.IsEqualApprox(_root.OffsetTop, top))
+        {
+            _root.OffsetBottom += top - _root.OffsetTop;
+            _root.OffsetTop = top;
+        }
+
         var modifier = _shard.Modifier == ShardModifier.None ? "" : $"  ·  {Words.Of(_shard.Modifier)}";
 
         _title.Text = $"{Items.GameItems.Localise("$shard." + _shard.ShardId + ".name")}{modifier}";

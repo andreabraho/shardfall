@@ -346,7 +346,16 @@ public partial class TowerFloorNode : Node3D
         boss.Self.IsEncounter = true;
         boss.Hunt();
 
-        boss.Self.Died += () => _tower?.Scored();
+        boss.Self.Died += () =>
+        {
+            _tower?.Scored();
+
+            // A final boss leaves a chest, and the player chooses what is in it (2026-10-08).
+            if (_floor.Chest.Count > 0 && _props is not null && IsInstanceValid(boss))
+            {
+                ChestNode.Place(_props, _floor.Chest, new Vector3(boss.GlobalPosition.X, GlobalPosition.Y, boss.GlobalPosition.Z));
+            }
+        };
         boss.Self.HealthChanged += OnBossHealth;
 
         _boss = boss;

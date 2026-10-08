@@ -109,7 +109,7 @@ public partial class BossHud : CanvasLayer, ITopBar
         _root.Visible = true;
 
         var shard = GetParent()?.GetNodeOrNull<ShardHud>("ShardHud");
-        var top = TopBars.Below(shard?.Panel);
+        var top = TopBars.Below(shard?.Panel, GetTree());
 
         if (!Mathf.IsEqualApprox(_root.OffsetTop, top))
         {

@@ -127,6 +127,12 @@ public sealed record TowerFloor(
     /// <summary>Whether the boss takes no harm while any of its wardens stands.</summary>
     public bool WardensShield { get; init; }
 
+    /// <summary>
+    /// What the chest left by a <c>fight</c> floor's boss offers: item ids, of which the player takes one
+    /// (the Abyss Throne, 2026-10-08). Empty for a floor that leaves no chest.
+    /// </summary>
+    public IReadOnlyList<string> Chest { get; init; } = [];
+
     /// <summary>The most kills a key floor asks before its key drops; one in ten carries it before that.</summary>
     public int KeyAfter { get; init; } = 15;
 

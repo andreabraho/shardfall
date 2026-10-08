@@ -63,6 +63,15 @@ public sealed class ItemInstance
     /// </summary>
     public bool FairInnate { get; internal set; } = true;
 
+    /// <summary>
+    /// Which of the item's born stats this copy has, when the player chose it rather than it being drawn: the
+    /// Abyss Throne's chest lets the player pick the stat of an earring or bracelet (2026-10-08). Null when drawn.
+    /// </summary>
+    public int? InnatePick { get; internal set; }
+
+    /// <summary>Gives this copy the born stat chosen for it: an index into its spec's stats.</summary>
+    public void ChooseInnate(int index) => InnatePick = index;
+
     public IReadOnlyList<BonusLine> Bonuses => _bonuses;
 
     public IReadOnlyList<Socket> Sockets => _sockets;
@@ -147,9 +156,11 @@ public sealed class ItemInstance
     {
         if (spec.Innate is not { Stats.Count: > 0 } innate) return null;
 
-        var pick = FairInnate
-            ? (int)(Scramble((ulong)Uid) % (ulong)innate.Stats.Count)
-            : (int)((unchecked((ulong)Uid * 0x9E3779B97F4A7C15UL) >> 33) % (ulong)innate.Stats.Count);
+        var pick = InnatePick is { } chosen && chosen >= 0 && chosen < innate.Stats.Count
+            ? chosen
+            : FairInnate
+                ? (int)(Scramble((ulong)Uid) % (ulong)innate.Stats.Count)
+                : (int)((unchecked((ulong)Uid * 0x9E3779B97F4A7C15UL) >> 33) % (ulong)innate.Stats.Count);
         var level = Math.Clamp(UpgradeLevel, 0, UpgradeScaling.MaxLevel);
         var worth = innate.Ladder.Count > 0
             ? innate.Ladder[Math.Min(level, innate.Ladder.Count - 1)]

@@ -43,7 +43,7 @@ public partial class CombatHud : CanvasLayer
             AnchorRight = 0.5f,
             OffsetLeft = -160,
             OffsetRight = 160,
-            OffsetTop = 24,
+            OffsetTop = TopBars.TargetTop,
             Visible = false,
             // Hovered, it says what helps against the target: its family and the bonuses against it.
             MouseFilter = Control.MouseFilterEnum.Stop,
@@ -73,6 +73,14 @@ public partial class CombatHud : CanvasLayer
         }
 
         _targetPanel.Visible = true;
+
+        var head = TopBars.Head(GetTree());
+
+        if (!Mathf.IsEqualApprox(_targetPanel.OffsetTop, head))
+        {
+            _targetPanel.OffsetBottom += head - _targetPanel.OffsetTop;
+            _targetPanel.OffsetTop = head;
+        }
         _targetBar.Value = target.Health.Fraction;
 
         _targetLabel.Text = $"{Pretty(target.DisplayName)}   {target.Health}";

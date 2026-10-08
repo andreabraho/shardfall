@@ -1267,5 +1267,17 @@
   "Lines a reroll can give:": "Linee che possono uscire:",
   "{0}% per line drawn": "{0}% per linea estratta",
   "locked, will not repeat": "bloccata, non può uscire di nuovo",
-  "Bleeding, healing halved": "Sanguinante, cure dimezzate"
+  "Bleeding, healing halved": "Sanguinante, cure dimezzate",
+  "Abyss chest": "Forziere dell'Abisso",
+  "Abyss chest — choose your reward": "Forziere dell'Abisso — scegli la ricompensa",
+  "A chest stands where it fell. Open it and choose your reward.": "Dove è caduto è apparso un forziere. Aprilo e scegli la tua ricompensa.",
+  "Choose one piece of the set to take. The chest is empty once you have.": "Scegli un pezzo del set da prendere. Dopo, il forziere sarà vuoto.",
+  "Piece": "Pezzo",
+  "Stat": "Statistica",
+  "Take": "Prendi",
+  "Esc to close — the chest stays until you choose": "Esc per chiudere — il forziere resta finché non scegli",
+  "Click a piece to choose it.": "Clicca un pezzo per sceglierlo.",
+  "Now choose the stat it is born with. It grows as the piece is upgraded.": "Ora scegli la statistica con cui nasce. Cresce con il potenziamento del pezzo.",
+  "You will take: {0}": "Prenderai: {0}",
+  "Take {0}? The other pieces stay in the chest for your next run.": "Prendere {0}? Gli altri pezzi restano nel forziere per la prossima run."
 }
