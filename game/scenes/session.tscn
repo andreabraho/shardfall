@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3]
+[gd_scene load_steps=32 format=3]
 
 ; Everything a zone scene needs and no zone scene decides: the camera, the cursor, the combat
 ; feedback layers, the HUD and the panels.
@@ -41,6 +41,7 @@
 [ext_resource type="Script" path="res://scripts/UI/TaskBar.cs" id="27_taskbar"]
 [ext_resource type="Script" path="res://scripts/UI/Minimap.cs" id="28_minimap"]
 [ext_resource type="Script" path="res://scripts/UI/ChestPanel.cs" id="29_chestui"]
+[ext_resource type="Script" path="res://scripts/Debug/DebugKillAll.cs" id="30_killall"]
 
 [node name="Session" type="Node3D"]
 
@@ -114,6 +115,9 @@ script = ExtResource("15_spawner")
 
 [node name="DebugPassage" type="Node" parent="."]
 script = ExtResource("16_passage")
+
+[node name="DebugKillAll" type="Node" parent="."]
+script = ExtResource("30_killall")
 
 [node name="MapPanel" type="CanvasLayer" parent="."]
 script = ExtResource("17_map")

@@ -68,6 +68,7 @@ public static class GameActions
     public const string DebugGrantLevel = "debug_grant_level";
     public const string DebugGrantSkillPoints = "debug_grant_skill_points";
     public const string DebugCycleMastery = "debug_cycle_mastery";
+    public const string DebugKillAll = "debug_kill_all";
     public const string DebugUnlockCosmetics = "debug_unlock_cosmetics";
 
     // Saving (UIX-01).
@@ -120,7 +121,8 @@ public static class GameActions
         [DebugGrantResources] = [Key(Godot.Key.F8)],
         [DebugCompleteQuests] = [Key(Godot.Key.F9)],
         [DebugGrantLevel] = [Key(Godot.Key.F1)],
-        [DebugGrantSkillPoints] = [Key(Godot.Key.F2)],
+        [DebugGrantSkillPoints] = [Shifted(Godot.Key.F2)],
+        [DebugKillAll] = [Key(Godot.Key.F2)],
         [DebugCycleMastery] = [Key(Godot.Key.F4)],
         [DebugUnlockCosmetics] = [Key(Godot.Key.F10)],
         [QuickSave] = [Key(Godot.Key.F10)],
@@ -128,6 +130,8 @@ public static class GameActions
     };
 
     private static InputEvent Key(Key key) => new InputEventKey { PhysicalKeycode = key };
+
+    private static InputEvent Shifted(Key key) => new InputEventKey { PhysicalKeycode = key, ShiftPressed = true };
 
     private static InputEvent Mouse(MouseButton button) => new InputEventMouseButton { ButtonIndex = button };
 
