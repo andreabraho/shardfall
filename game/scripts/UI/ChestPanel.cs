@@ -88,9 +88,6 @@ public partial class ChestPanel : CanvasLayer
 
     private void Build()
     {
-        _tip = new ItemTip();
-        AddChild(_tip);
-
         var root = new PanelContainer
         {
             AnchorLeft = 0.5f,
@@ -190,6 +187,10 @@ public partial class ChestPanel : CanvasLayer
         var close = Menus.MenuStyle.Small(L10n.T("Close"), Close);
         close.FocusMode = Control.FocusModeEnum.None;
         footRow.AddChild(close);
+
+        // Last, so it is drawn over the window it describes.
+        _tip = new ItemTip();
+        AddChild(_tip);
     }
 
     // ------------------------------------------------------------------ refresh
