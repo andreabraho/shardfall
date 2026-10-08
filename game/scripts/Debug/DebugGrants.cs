@@ -26,7 +26,7 @@ public partial class DebugGrants : Node
             return;
         }
 
-        GD.Print("[debug] F1 grants a level · F8 empties the bag and grants every armour and headpiece of the class played, then its weapons, in turn · F10 unlocks every cosmetic");
+        GD.Print("[debug] F1 grants a level · F8 empties the bag and grants every armour and headpiece of the class played, then its weapons, in turn · Shift+F8 grants the abyss set's upgrade materials and the gan for them · F10 unlocks every cosmetic");
     }
 
     public override void _UnhandledInput(InputEvent @event)
@@ -47,7 +47,16 @@ public partial class DebugGrants : Node
             return;
         }
 
-        if (!@event.IsActionPressed(GameActions.DebugGrantResources)) return;
+        // What the abyss set is upgraded with (Shift+F8, 2026-10-08, at your call: to try the new weapons at +9).
+        if (@event.IsActionPressed(GameActions.DebugGrantUpgrades))
+        {
+            GetViewport().SetInputAsHandled();
+            GrantUpgrades();
+            return;
+        }
+
+        // Shift+F8 is the upgrade materials'.
+        if (!@event.IsActionPressed(GameActions.DebugGrantResources) || @event is InputEventKey { ShiftPressed: true }) return;
 
         GetViewport().SetInputAsHandled();
 
@@ -89,6 +98,44 @@ public partial class DebugGrants : Node
         PlayerProfile.Wardrobe.Wear(kind, string.IsNullOrEmpty(id) ? null : id);
 
         if (GetTree().GetFirstNodeInGroup("player") is Node player) player.GetNodeOrNull<PlayerInventory>("PlayerInventory")?.ShowGear();
+    }
+
+    /// <summary>
+    /// Enough of the abyss set's upgrade materials to take a few pieces to +9 through some failures, blessing
+    /// scrolls, and the gan to pay the smith: into the bag as it is, nothing emptied.
+    /// </summary>
+    private void GrantUpgrades()
+    {
+        if (GetTree().GetFirstNodeInGroup("player") is not Node player) return;
+        if (player.GetNodeOrNull<PlayerInventory>("PlayerInventory") is not { } bag || !GameItems.IsLoaded) return;
+
+        var grants = new (string Id, int Count, int Stacks)[]
+        {
+            (Kiln.Data.Ids.Items.MatAbyssAsh, 99, 4),
+            (Kiln.Data.Ids.Items.MatAbyssHeart, 50, 1),
+            (Kiln.Data.Ids.Items.MatBlessingScroll, 20, 1),
+        };
+
+        var given = 0;
+        var wanted = 0;
+
+        foreach (var (id, count, stacks) in grants)
+        {
+            for (var i = 0; i < stacks; i++)
+            {
+                wanted++;
+                if (bag.Bag.TryAdd(GameItems.Factory.CreatePlain(id, count))) given++;
+            }
+        }
+
+        const long Gan = 10_000_000;
+        bag.Bag.AddYang(Gan);
+
+        var report = $"[debug] abyss upgrade materials: {given}/{wanted} stacks (ash, hearts, blessing scrolls) and {Gan:N0} gan"
+            + (given < wanted ? " — the bag is full" : "");
+
+        GD.Print(report);
+        UI.WorldNotice.Show(GetTree(), report);
     }
 
     /// <summary>True when the next press of F8 gives the weapons, false when the armours.</summary>

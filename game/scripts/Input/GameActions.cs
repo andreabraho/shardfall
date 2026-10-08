@@ -69,6 +69,7 @@ public static class GameActions
     public const string DebugGrantSkillPoints = "debug_grant_skill_points";
     public const string DebugCycleMastery = "debug_cycle_mastery";
     public const string DebugKillAll = "debug_kill_all";
+    public const string DebugGrantUpgrades = "debug_grant_upgrades";
     public const string DebugUnlockCosmetics = "debug_unlock_cosmetics";
 
     // Saving (UIX-01).
@@ -119,6 +120,7 @@ public static class GameActions
         [DebugSpawnOne] = [Key(Godot.Key.F6)],
         [DebugToggleRespawn] = [Key(Godot.Key.F7)],
         [DebugGrantResources] = [Key(Godot.Key.F8)],
+        [DebugGrantUpgrades] = [Shifted(Godot.Key.F8)],
         [DebugCompleteQuests] = [Key(Godot.Key.F9)],
         [DebugGrantLevel] = [Key(Godot.Key.F1)],
         [DebugGrantSkillPoints] = [Shifted(Godot.Key.F2)],
