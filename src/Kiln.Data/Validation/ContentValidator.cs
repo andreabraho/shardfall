@@ -1337,6 +1337,12 @@ public static class ContentValidator
                 $"{where} leaves a chest on a \"{floor.Task}\" floor, which has no boss to leave it.");
         }
 
+        if (floor.ChestChance is <= 0 or > 1)
+        {
+            report.Error("world-floors", zone.SourceFile,
+                $"{where} leaves its chest with chance {floor.ChestChance}: it must be above 0 and at most 1.");
+        }
+
         foreach (var item in floor.Chest)
         {
             if (!db.Items.ContainsKey(item))

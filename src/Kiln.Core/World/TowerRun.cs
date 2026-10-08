@@ -133,6 +133,9 @@ public sealed record TowerFloor(
     /// </summary>
     public IReadOnlyList<string> Chest { get; init; } = [];
 
+    /// <summary>The chance the boss leaves its chest: 1 for the last floor's, a half for the Ferryman's.</summary>
+    public double ChestChance { get; init; } = 1;
+
     /// <summary>The most kills a key floor asks before its key drops; one in ten carries it before that.</summary>
     public int KeyAfter { get; init; } = 15;
 

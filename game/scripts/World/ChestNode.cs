@@ -99,6 +99,7 @@ public partial class ChestNode : Area3D
 
         BodyExited += body => { if (body.IsInGroup("player")) _playerInside = false; };
 
+        GD.Print($"[tower] the abyss chest stands on {GetParent()?.GetParent()?.Name}");
         UI.WorldNotice.Show(GetTree(), L10n.T("A chest stands where it fell. Open it and choose your reward."));
     }
 

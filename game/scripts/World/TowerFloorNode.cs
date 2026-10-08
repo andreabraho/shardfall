@@ -353,8 +353,12 @@ public partial class TowerFloorNode : Node3D
         {
             _tower?.Scored();
 
-            // A final boss leaves a chest, and the player chooses what is in it (2026-10-08).
-            if (_floor.Chest.Count > 0 && _props is not null && IsInstanceValid(boss))
+            // A final boss leaves a chest, and the player chooses what is in it (2026-10-08); the Ferryman, one time in two.
+            var roll = GD.Randf();
+
+            if (_floor.Chest.Count > 0) GD.Print($"[tower] {_floor.Id}: chest chance {_floor.ChestChance}, rolled {roll:F2}");
+
+            if (_floor.Chest.Count > 0 && roll < _floor.ChestChance && _props is not null && IsInstanceValid(boss))
             {
                 ChestNode.Place(_props, _floor.Chest, new Vector3(boss.GlobalPosition.X, GlobalPosition.Y, boss.GlobalPosition.Z));
             }

@@ -1178,6 +1178,9 @@ public sealed class FloorDef
     /// <summary>The chest a <c>fight</c> floor's boss leaves: item ids, of which the player chooses one.</summary>
     public string[] Chest { get; init; } = [];
 
+    /// <summary>The chance the boss leaves the chest, from 0 to 1 (<c>chest_chance</c>).</summary>
+    public double ChestChance { get; init; } = 1;
+
     /// <summary>The most kills a <c>key</c> floor asks before its key drops.</summary>
     public int KeyAfter { get; init; } = 15;
 

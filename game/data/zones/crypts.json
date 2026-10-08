@@ -47,9 +47,11 @@
       // 5. The Jailer's Cell.
       { "id": "flr_crypt_cell", "name": "$floor.flr_crypt_cell.name", "task": "fight", "boss": "mob_crypt_jailer",
         "waves": ["mob_crypt_ghoul", "mob_abyss_hound"], "wave_size": 2, "wave_seconds": 26 },
-      // 6. The Landing of Souls: the Ferryman, warded by three wardens until they are dead.
+      // 6. The Landing of Souls: the Ferryman, warded by three wardens until they are dead. One time in two it leaves the
+      // abyss chest too, as the Lord of the Crypt does.
       { "id": "flr_crypt_landing", "name": "$floor.flr_crypt_landing.name", "task": "fight", "boss": "mob_soul_ferryman",
         "wardens": "mob_crypt_warden", "warden_count": 3, "wardens_shield": true,
+        "chest": ["wpn_abyss_brand", "arm_abyss_aegis", "hlm_abyss_visor", "shd_abyss_aegis", "bts_abyss_striders", "brc_abyss_coil", "nck_abyss_heart", "ear_abyss_tear", "rng_abyss_sigil"], "chest_chance": 0.5,
         "shrine": "shr_crypt_landing", "bench": true, "gift": true },
       // 7. The Abyss Throne: the Lord of the Crypt and three of its spawn. Its fall leaves a chest: the player takes the piece of
       // the abyss set they choose, and the stat of an earring, bracelet or ring.

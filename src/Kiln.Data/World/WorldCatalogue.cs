@@ -114,6 +114,7 @@ public sealed class WorldCatalogue
         WardenCount = def.WardenCount,
         WardensShield = def.WardensShield,
         Chest = def.Chest,
+        ChestChance = def.ChestChance,
         KeyAfter = def.KeyAfter,
         Halls = def.Halls,
         Portals = def.Portals,
