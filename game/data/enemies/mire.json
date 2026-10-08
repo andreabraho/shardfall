@@ -9,7 +9,7 @@
     "family": "undead",
     "role": "bruiser",
     "level": 31,
-    "stats": { "hp": 5250, "attack_power": 139, "defense": 130, "move_speed": 6.2 },
+    "stats": { "hp": 4600, "attack_power": 122, "defense": 130, "move_speed": 6.2 },
     "abilities": [
       { "id": "abl_mirecrawl_bite", "cooldown": 1.9, "windup": 0.5, "damage_coef": 0.9 }
     ],
@@ -31,7 +31,7 @@
     "family": "undead",
     "role": "bruiser",
     "level": 31,
-    "stats": { "hp": 10500, "attack_power": 185, "defense": 130, "move_speed": 5.7 },
+    "stats": { "hp": 9200, "attack_power": 163, "defense": 130, "move_speed": 5.7 },
     "abilities": [
       { "id": "abl_drowned_strike", "cooldown": 2.4, "windup": 0.55, "damage_coef": 1 },
       { "id": "abl_drowned_lunge", "cooldown": 7, "windup": 1.5, "damage_coef": 1.6, "applies": { "kind": "poison", "magnitude": 20, "duration": 4 }, "telegraph": { "shape": "cone", "radius": 2.6, "angle": 60 } }
@@ -54,7 +54,7 @@
     "family": "animal",
     "role": "bruiser",
     "level": 32,
-    "stats": { "hp": 10870, "attack_power": 191, "defense": 135, "move_speed": 5.7 },
+    "stats": { "hp": 9600, "attack_power": 168, "defense": 135, "move_speed": 5.7 },
     "abilities": [
       { "id": "abl_bogserp_strike", "cooldown": 2.4, "windup": 0.55, "damage_coef": 1 },
       { "id": "abl_bogserp_lunge", "cooldown": 7, "windup": 1.5, "damage_coef": 1.6, "applies": { "kind": "poison", "magnitude": 21, "duration": 4 }, "telegraph": { "shape": "cone", "radius": 2.6, "angle": 60 } }
@@ -78,7 +78,7 @@
     "family": "animal",
     "role": "archer",
     "level": 32,
-    "stats": { "hp": 7390, "attack_power": 230, "defense": 91, "move_speed": 4.8 },
+    "stats": { "hp": 6500, "attack_power": 202, "defense": 91, "move_speed": 4.8 },
     "abilities": [
       { "id": "abl_bogspit_spit", "cooldown": 2, "windup": 0.8, "damage_coef": 1.1, "range": 12, "applies": { "kind": "slow", "magnitude": 0.3, "duration": 2.5 } },
       { "id": "abl_bogspit_rain", "cooldown": 9, "windup": 1.6, "damage_coef": 1.4, "range": 11, "placement": "target", "applies": { "kind": "poison", "magnitude": 25, "duration": 4 }, "telegraph": { "shape": "circle", "radius": 2.8 } }
@@ -101,7 +101,7 @@
     "family": "undead",
     "role": "shielder",
     "level": 33,
-    "stats": { "hp": 19320, "attack_power": 174, "defense": 257, "move_speed": 3.7 },
+    "stats": { "hp": 17000, "attack_power": 153, "defense": 257, "move_speed": 3.7 },
     "abilities": [
       { "id": "abl_marshbrute_slam", "cooldown": 3.2, "windup": 0.9, "damage_coef": 1.15, "applies": { "kind": "stun", "duration": 0.8, "chance": 0.3 } },
       { "id": "abl_marshbrute_aegis", "cooldown": 14, "windup": 2, "damage_coef": 0 }
@@ -123,7 +123,7 @@
     "family": "undead",
     "role": "mender",
     "level": 33,
-    "stats": { "hp": 10340, "attack_power": 158, "defense": 108, "move_speed": 4.2 },
+    "stats": { "hp": 9100, "attack_power": 139, "defense": 108, "move_speed": 4.2 },
     "abilities": [
       { "id": "abl_fenwitch_mend", "cooldown": 7, "windup": 1.45, "damage_coef": 0, "range": 10 },
       { "id": "abl_fenwitch_bolt", "cooldown": 3, "windup": 0.85, "damage_coef": 0.9, "range": 9.5 }
@@ -146,7 +146,7 @@
     "family": "animal",
     "role": "bomber",
     "level": 34,
-    "stats": { "hp": 9280, "attack_power": 341, "defense": 86, "move_speed": 5.2 },
+    "stats": { "hp": 8200, "attack_power": 300, "defense": 86, "move_speed": 5.2 },
     "abilities": [
       { "id": "abl_bloatfly_burst", "cooldown": 1, "windup": 1.95, "damage_coef": 1.95, "applies": { "kind": "poison", "magnitude": 38, "duration": 4 }, "telegraph": { "shape": "circle", "radius": 3.8 } }
     ],
@@ -170,7 +170,7 @@
     "family": "undead",
     "role": "bruiser",
     "level": 35,
-    "stats": { "hp": 350410, "attack_power": 173, "defense": 193, "move_speed": 5.4 },
+    "stats": { "hp": 308400, "attack_power": 152, "defense": 193, "move_speed": 5.4 },
     "abilities": [
       { "id": "abl_king_maul", "cooldown": 2.3, "windup": 0.7, "damage_coef": 1.15 },
       { "id": "abl_king_surge", "cooldown": 7.5, "windup": 2.35, "damage_coef": 1.6, "applies": { "kind": "poison", "magnitude": 19, "duration": 4 }, "telegraph": { "shape": "cone", "radius": 5, "angle": 70 } },
