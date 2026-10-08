@@ -26,13 +26,63 @@
       { "id": "saf_stonewood_camp", "name": "$safe.saf_stonewood_camp.name", "radius": 11 }
     ],
     "spawn_fields": [
+      // Added 2026-10-08, at your call: the map was too empty between its camps of creatures.
+      {
+        "id": "spf_stonewood_edge",
+        "entries": [
+          { "enemy": "mob_slate_wolf", "weight": 2 },
+          { "enemy": "mob_shard_spider", "weight": 1 }
+        ],
+        "count": 7,
+        "respawn_seconds": 26,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      // Added 2026-10-08, at your call: the map was too empty between its camps of creatures.
+      {
+        "id": "spf_stonewood_south",
+        "entries": [
+          { "enemy": "mob_slate_wolf", "weight": 2 },
+          { "enemy": "mob_basalt_adder", "weight": 1 }
+        ],
+        "count": 7,
+        "respawn_seconds": 30,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      // Added 2026-10-08, at your call: the map was too empty between its camps of creatures.
+      {
+        "id": "spf_stonewood_east_crags",
+        "entries": [
+          { "enemy": "mob_geode_goleling", "weight": 1 },
+          { "enemy": "mob_moss_golem", "weight": 1 },
+          { "enemy": "mob_basalt_adder", "weight": 1 }
+        ],
+        "count": 7,
+        "respawn_seconds": 34,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      // Added 2026-10-08, at your call: the map was too empty between its camps of creatures.
+      {
+        "id": "spf_stonewood_west_ring",
+        "entries": [
+          { "enemy": "mob_lichen_cap", "weight": 1 },
+          { "enemy": "mob_moss_golem", "weight": 1 },
+          { "enemy": "mob_shard_spider", "weight": 2 }
+        ],
+        "count": 7,
+        "respawn_seconds": 34,
+        "activation_radius": 60,
+        "radius": 9
+      },
       {
         "id": "spf_stonewood_wolves",
         "entries": [
           { "enemy": "mob_slate_wolf", "weight": 2 },
           { "enemy": "mob_shard_spider", "weight": 1 }
         ],
-        "count": 6,
+        "count": 7,
         "respawn_seconds": 30,
         "activation_radius": 60,
         "radius": 9
@@ -42,7 +92,7 @@
         "entries": [
           { "enemy": "mob_shard_spider", "weight": 1 }
         ],
-        "count": 8,
+        "count": 9,
         "respawn_seconds": 28,
         "activation_radius": 60,
         "radius": 9
@@ -53,7 +103,7 @@
           { "enemy": "mob_basalt_adder", "weight": 1 },
           { "enemy": "mob_slate_wolf", "weight": 2 }
         ],
-        "count": 6,
+        "count": 7,
         "respawn_seconds": 32,
         "activation_radius": 60,
         "radius": 9
@@ -65,7 +115,7 @@
           { "enemy": "mob_lichen_cap", "weight": 1 },
           { "enemy": "mob_slate_wolf", "weight": 2 }
         ],
-        "count": 6,
+        "count": 7,
         "respawn_seconds": 34,
         "activation_radius": 60,
         "radius": 9
@@ -77,7 +127,7 @@
           { "enemy": "mob_moss_golem", "weight": 1 },
           { "enemy": "mob_shard_spider", "weight": 2 }
         ],
-        "count": 6,
+        "count": 7,
         "respawn_seconds": 34,
         "activation_radius": 60,
         "radius": 9
@@ -89,7 +139,7 @@
           { "enemy": "mob_basalt_adder", "weight": 1 },
           { "enemy": "mob_slate_wolf", "weight": 2 }
         ],
-        "count": 6,
+        "count": 7,
         "respawn_seconds": 34,
         "activation_radius": 60,
         "radius": 9
@@ -144,12 +194,48 @@
       { "id": "saf_mire_camp", "name": "$safe.saf_mire_camp.name", "radius": 11 }
     ],
     "spawn_fields": [
+      // Added 2026-10-08, at your call: the map was too empty between its camps of creatures.
+      {
+        "id": "spf_mire_camp_banks",
+        "entries": [
+          { "enemy": "mob_mire_crawler", "weight": 1 }
+        ],
+        "count": 8,
+        "respawn_seconds": 28,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      // Added 2026-10-08, at your call: the map was too empty between its camps of creatures.
+      {
+        "id": "spf_mire_middle",
+        "entries": [
+          { "enemy": "mob_drowned", "weight": 2 },
+          { "enemy": "mob_bog_serpent", "weight": 1 }
+        ],
+        "count": 7,
+        "respawn_seconds": 32,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      // Added 2026-10-08, at your call: the map was too empty between its camps of creatures.
+      {
+        "id": "spf_mire_north_fen",
+        "entries": [
+          { "enemy": "mob_bog_spitter", "weight": 1 },
+          { "enemy": "mob_drowned", "weight": 2 },
+          { "enemy": "mob_bloat_fly", "weight": 1 }
+        ],
+        "count": 7,
+        "respawn_seconds": 34,
+        "activation_radius": 60,
+        "radius": 9
+      },
       {
         "id": "spf_mire_shallows",
         "entries": [
           { "enemy": "mob_mire_crawler", "weight": 1 }
         ],
-        "count": 8,
+        "count": 9,
         "respawn_seconds": 28,
         "activation_radius": 60,
         "radius": 9
@@ -160,7 +246,7 @@
           { "enemy": "mob_drowned", "weight": 2 },
           { "enemy": "mob_mire_crawler", "weight": 1 }
         ],
-        "count": 6,
+        "count": 7,
         "respawn_seconds": 30,
         "activation_radius": 60,
         "radius": 9
@@ -171,7 +257,7 @@
           { "enemy": "mob_bog_serpent", "weight": 2 },
           { "enemy": "mob_bloat_fly", "weight": 1 }
         ],
-        "count": 6,
+        "count": 7,
         "respawn_seconds": 32,
         "activation_radius": 60,
         "radius": 9
@@ -182,7 +268,7 @@
           { "enemy": "mob_bog_spitter", "weight": 1 },
           { "enemy": "mob_drowned", "weight": 2 }
         ],
-        "count": 6,
+        "count": 7,
         "respawn_seconds": 34,
         "activation_radius": 60,
         "radius": 9
@@ -194,7 +280,7 @@
           { "enemy": "mob_marsh_brute", "weight": 1 },
           { "enemy": "mob_drowned", "weight": 2 }
         ],
-        "count": 6,
+        "count": 7,
         "respawn_seconds": 34,
         "activation_radius": 60,
         "radius": 9
@@ -206,7 +292,7 @@
           { "enemy": "mob_bog_spitter", "weight": 1 },
           { "enemy": "mob_bog_serpent", "weight": 2 }
         ],
-        "count": 6,
+        "count": 7,
         "respawn_seconds": 34,
         "activation_radius": 60,
         "radius": 9
@@ -261,12 +347,48 @@
       { "id": "saf_cinder_camp", "name": "$safe.saf_cinder_camp.name", "radius": 11 }
     ],
     "spawn_fields": [
+      // Added 2026-10-08, at your call: the map was too empty between its camps of creatures.
+      {
+        "id": "spf_cinder_camp_scorch",
+        "entries": [
+          { "enemy": "mob_ember_hound", "weight": 1 }
+        ],
+        "count": 8,
+        "respawn_seconds": 28,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      // Added 2026-10-08, at your call: the map was too empty between its camps of creatures.
+      {
+        "id": "spf_cinder_middle",
+        "entries": [
+          { "enemy": "mob_ember_orc", "weight": 2 },
+          { "enemy": "mob_cinder_thrower", "weight": 1 }
+        ],
+        "count": 7,
+        "respawn_seconds": 32,
+        "activation_radius": 60,
+        "radius": 9
+      },
+      // Added 2026-10-08, at your call: the map was too empty between its camps of creatures.
+      {
+        "id": "spf_cinder_west_vents",
+        "entries": [
+          { "enemy": "mob_salamander", "weight": 1 },
+          { "enemy": "mob_blaze_wasp", "weight": 1 },
+          { "enemy": "mob_ember_hound", "weight": 2 }
+        ],
+        "count": 7,
+        "respawn_seconds": 34,
+        "activation_radius": 60,
+        "radius": 9
+      },
       {
         "id": "spf_cinder_hounds",
         "entries": [
           { "enemy": "mob_ember_hound", "weight": 1 }
         ],
-        "count": 8,
+        "count": 9,
         "respawn_seconds": 28,
         "activation_radius": 60,
         "radius": 9
@@ -277,7 +399,7 @@
           { "enemy": "mob_ember_orc", "weight": 2 },
           { "enemy": "mob_ember_hound", "weight": 1 }
         ],
-        "count": 6,
+        "count": 7,
         "respawn_seconds": 30,
         "activation_radius": 60,
         "radius": 9
@@ -289,7 +411,7 @@
           { "enemy": "mob_blaze_wasp", "weight": 1 },
           { "enemy": "mob_ember_hound", "weight": 2 }
         ],
-        "count": 6,
+        "count": 7,
         "respawn_seconds": 32,
         "activation_radius": 60,
         "radius": 9
@@ -300,7 +422,7 @@
           { "enemy": "mob_cinder_thrower", "weight": 1 },
           { "enemy": "mob_ember_orc", "weight": 2 }
         ],
-        "count": 6,
+        "count": 7,
         "respawn_seconds": 34,
         "activation_radius": 60,
         "radius": 9
@@ -312,7 +434,7 @@
           { "enemy": "mob_magma_brute", "weight": 1 },
           { "enemy": "mob_ember_orc", "weight": 2 }
         ],
-        "count": 6,
+        "count": 7,
         "respawn_seconds": 34,
         "activation_radius": 60,
         "radius": 9
@@ -324,7 +446,7 @@
           { "enemy": "mob_salamander", "weight": 1 },
           { "enemy": "mob_ember_orc", "weight": 2 }
         ],
-        "count": 6,
+        "count": 7,
         "respawn_seconds": 34,
         "activation_radius": 60,
         "radius": 9

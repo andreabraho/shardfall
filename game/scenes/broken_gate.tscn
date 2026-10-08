@@ -1401,3 +1401,18 @@ ToZone = "zone_stonewood"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -74, 0.1, -62)
 script = ExtResource("11_arrival")
 FromZone = "zone_stonewood"
+
+[node name="SouthGraves" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 56)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_gate_south_graves"
+
+[node name="MidGate" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, 0)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_gate_middle"
+
+[node name="NorthHaunt" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, -48)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_gate_north_haunt"

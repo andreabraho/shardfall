@@ -12,8 +12,8 @@
     "voice": "vox_insect",
     "family": "animal",
     "role": "bruiser",
-    "level": 27,
-    "stats": { "hp": 4000, "attack_power": 113, "defense": 110, "move_speed": 6.2 },
+    "level": 25,
+    "stats": { "hp": 3700, "attack_power": 104, "defense": 110, "move_speed": 6.2 },
     "abilities": [
       { "id": "abl_shardling_bite", "cooldown": 1.9, "windup": 0.5, "damage_coef": 0.9 }
     ],
@@ -35,8 +35,8 @@
     "voice": "vox_canine",
     "family": "animal",
     "role": "bruiser",
-    "level": 27,
-    "stats": { "hp": 7900, "attack_power": 150, "defense": 110, "move_speed": 5.7 },
+    "level": 25,
+    "stats": { "hp": 7300, "attack_power": 138, "defense": 110, "move_speed": 5.7 },
     "abilities": [
       { "id": "abl_slatewolf_strike", "cooldown": 2.4, "windup": 0.55, "damage_coef": 1 },
       { "id": "abl_slatewolf_lunge", "cooldown": 7, "windup": 1.5, "damage_coef": 1.6, "applies": { "kind": "bleed", "magnitude": 19, "duration": 4 }, "telegraph": { "shape": "cone", "radius": 2.6, "angle": 60 } }

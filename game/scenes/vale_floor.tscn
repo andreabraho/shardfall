@@ -1241,3 +1241,18 @@ ToZone = "zone_ridge"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 74, 0.1, -62)
 script = ExtResource("11_arrival")
 FromZone = "zone_ridge"
+
+[node name="CampRoad" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -56, 0, 20)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_floor_camp_road"
+
+[node name="MidFloor" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, -4)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_floor_middle"
+
+[node name="NorthQuarry" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, -56)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_floor_north_quarry"
