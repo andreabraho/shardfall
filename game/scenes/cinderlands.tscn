@@ -101,171 +101,196 @@ shape = SubResource("BoxShape3D_ground")
 [node name="Trail" type="Node3D" parent="NavigationRegion3D"]
 
 [node name="Trail2" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.877896, 0, 0.478852, 0, 1, 0, -0.478852, 0, -0.877896, 74, 0.06, 62)
+transform = Transform3D(-0.536875, 0, 0.843661, 0, 1, 0, -0.843661, 0, -0.536875, 74, 0.06, 62)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail3" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.877896, 0, 0.478852, 0, 1, 0, -0.478852, 0, -0.877896, 70.488, 0.06, 60.085)
+transform = Transform3D(-0.536875, 0, 0.843661, 0, 1, 0, -0.843661, 0, -0.536875, 71.852, 0.06, 58.625)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail4" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.877896, 0, 0.478852, 0, 1, 0, -0.478852, 0, -0.877896, 66.977, 0.06, 58.169)
+transform = Transform3D(-0.536875, 0, 0.843661, 0, 1, 0, -0.843661, 0, -0.536875, 69.705, 0.06, 55.251)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail5" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.877896, 0, 0.478852, 0, 1, 0, -0.478852, 0, -0.877896, 63.465, 0.06, 56.254)
+transform = Transform3D(-0.536875, 0, 0.843661, 0, 1, 0, -0.843661, 0, -0.536875, 67.557, 0.06, 51.876)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail6" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.877896, 0, 0.478852, 0, 1, 0, -0.478852, 0, -0.877896, 56.442, 0.06, 52.423)
+transform = Transform3D(-0.536875, 0, 0.843661, 0, 1, 0, -0.843661, 0, -0.536875, 63.262, 0.06, 45.127)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail7" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.877896, 0, 0.478852, 0, 1, 0, -0.478852, 0, -0.877896, 52.931, 0.06, 50.508)
+transform = Transform3D(-0.536875, 0, 0.843661, 0, 1, 0, -0.843661, 0, -0.536875, 61.115, 0.06, 41.752)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail8" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.880471, 0, 0.4741, 0, 1, 0, -0.4741, 0, -0.880471, 48.478, 0.06, 48.104)
+transform = Transform3D(-0.400819, 0, 0.916157, 0, 1, 0, -0.916157, 0, -0.400819, 58.397, 0.06, 36.335)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail9" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.880471, 0, 0.4741, 0, 1, 0, -0.4741, 0, -0.880471, 44.956, 0.06, 46.207)
+transform = Transform3D(-0.400819, 0, 0.916157, 0, 1, 0, -0.916157, 0, -0.400819, 56.793, 0.06, 32.671)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail10" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.880471, 0, 0.4741, 0, 1, 0, -0.4741, 0, -0.880471, 41.434, 0.06, 44.311)
+transform = Transform3D(-0.400819, 0, 0.916157, 0, 1, 0, -0.916157, 0, -0.400819, 55.19, 0.06, 29.006)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail11" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.880471, 0, 0.4741, 0, 1, 0, -0.4741, 0, -0.880471, 37.912, 0.06, 42.414)
+transform = Transform3D(-0.400819, 0, 0.916157, 0, 1, 0, -0.916157, 0, -0.400819, 53.587, 0.06, 25.341)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail12" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.880471, 0, 0.4741, 0, 1, 0, -0.4741, 0, -0.880471, 34.391, 0.06, 40.518)
+transform = Transform3D(-0.400819, 0, 0.916157, 0, 1, 0, -0.916157, 0, -0.400819, 51.984, 0.06, 21.677)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail13" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.880471, 0, 0.4741, 0, 1, 0, -0.4741, 0, -0.880471, 30.869, 0.06, 38.622)
+transform = Transform3D(-0.400819, 0, 0.916157, 0, 1, 0, -0.916157, 0, -0.400819, 50.38, 0.06, 18.012)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail14" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.880471, 0, 0.4741, 0, 1, 0, -0.4741, 0, -0.880471, 27.347, 0.06, 36.725)
+transform = Transform3D(-0.400819, 0, 0.916157, 0, 1, 0, -0.916157, 0, -0.400819, 48.777, 0.06, 14.348)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail15" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.734803, 0, 0.67828, 0, 1, 0, -0.67828, 0, -0.734803, 26, 0.06, 36)
+transform = Transform3D(-0.400819, 0, 0.916157, 0, 1, 0, -0.916157, 0, -0.400819, 47.174, 0.06, 10.683)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail16" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.734803, 0, 0.67828, 0, 1, 0, -0.67828, 0, -0.734803, 23.061, 0.06, 33.287)
+transform = Transform3D(-0.514496, 0, 0.857493, 0, 1, 0, -0.857493, 0, -0.514496, 46, 0.06, 8)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail17" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.734803, 0, 0.67828, 0, 1, 0, -0.67828, 0, -0.734803, 17.182, 0.06, 27.861)
+transform = Transform3D(-0.514496, 0, 0.857493, 0, 1, 0, -0.857493, 0, -0.514496, 41.884, 0.06, 1.14)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail18" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.734803, 0, 0.67828, 0, 1, 0, -0.67828, 0, -0.734803, 14.243, 0.06, 25.148)
+transform = Transform3D(-0.514496, 0, 0.857493, 0, 1, 0, -0.857493, 0, -0.514496, 39.826, 0.06, -2.29)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail19" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.734803, 0, 0.67828, 0, 1, 0, -0.67828, 0, -0.734803, 5.426, 0.06, 17.008)
+transform = Transform3D(-0.913812, 0, 0.406138, 0, 1, 0, -0.406138, 0, -0.913812, 34, 0.06, -12)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail20" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.734803, 0, 0.67828, 0, 1, 0, -0.67828, 0, -0.734803, 2.486, 0.06, 14.295)
+transform = Transform3D(-0.913812, 0, 0.406138, 0, 1, 0, -0.406138, 0, -0.913812, 30.345, 0.06, -13.625)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail21" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.737154, 0, 0.675725, 0, 1, 0, -0.675725, 0, -0.737154, 0, 0.06, 12)
+transform = Transform3D(-0.913812, 0, 0.406138, 0, 1, 0, -0.406138, 0, -0.913812, 26.69, 0.06, -15.249)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail22" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.737154, 0, 0.675725, 0, 1, 0, -0.675725, 0, -0.737154, -5.897, 0.06, 6.594)
+transform = Transform3D(-0.913812, 0, 0.406138, 0, 1, 0, -0.406138, 0, -0.913812, 19.379, 0.06, -18.498)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail23" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.737154, 0, 0.675725, 0, 1, 0, -0.675725, 0, -0.737154, -8.846, 0.06, 3.891)
+transform = Transform3D(-0.980581, 0, -0.196116, 0, 1, 0, 0.196116, 0, -0.980581, 16, 0.06, -20)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail24" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.737154, 0, 0.675725, 0, 1, 0, -0.675725, 0, -0.737154, -17.692, 0.06, -4.217)
+transform = Transform3D(-0.980581, 0, -0.196116, 0, 1, 0, 0.196116, 0, -0.980581, 4.233, 0.06, -17.647)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail25" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.737154, 0, 0.675725, 0, 1, 0, -0.675725, 0, -0.737154, -23.589, 0.06, -9.623)
+transform = Transform3D(-0.980581, 0, -0.196116, 0, 1, 0, 0.196116, 0, -0.980581, -3.612, 0.06, -16.078)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail26" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.633238, 0, 0.773957, 0, 1, 0, -0.773957, 0, -0.633238, -24, 0.06, -10)
+transform = Transform3D(-0.924678, 0, -0.38075, 0, 1, 0, 0.38075, 0, -0.924678, -4, 0.06, -16)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail27" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.633238, 0, 0.773957, 0, 1, 0, -0.773957, 0, -0.633238, -26.533, 0.06, -13.096)
+transform = Transform3D(-0.924678, 0, -0.38075, 0, 1, 0, 0.38075, 0, -0.924678, -7.699, 0.06, -14.477)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail28" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.633238, 0, 0.773957, 0, 1, 0, -0.773957, 0, -0.633238, -29.066, 0.06, -16.192)
+transform = Transform3D(-0.924678, 0, -0.38075, 0, 1, 0, 0.38075, 0, -0.924678, -11.397, 0.06, -12.954)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail29" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.633238, 0, 0.773957, 0, 1, 0, -0.773957, 0, -0.633238, -31.599, 0.06, -19.287)
+transform = Transform3D(-0.924678, 0, -0.38075, 0, 1, 0, 0.38075, 0, -0.924678, -15.096, 0.06, -11.431)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail30" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.633238, 0, 0.773957, 0, 1, 0, -0.773957, 0, -0.633238, -34.132, 0.06, -22.383)
+transform = Transform3D(-0.924678, 0, -0.38075, 0, 1, 0, 0.38075, 0, -0.924678, -18.795, 0.06, -9.908)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail31" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.633238, 0, 0.773957, 0, 1, 0, -0.773957, 0, -0.633238, -36.665, 0.06, -25.479)
+transform = Transform3D(-0.633238, 0, 0.773957, 0, 1, 0, -0.773957, 0, -0.633238, -21, 0.06, -9)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail32" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.5547, 0, 0.83205, 0, 1, 0, -0.83205, 0, -0.5547, -42, 0.06, -32)
+transform = Transform3D(-0.633238, 0, 0.773957, 0, 1, 0, -0.773957, 0, -0.633238, -28.599, 0.06, -18.287)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail33" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.5547, 0, 0.83205, 0, 1, 0, -0.83205, 0, -0.5547, -44.219, 0.06, -35.328)
+transform = Transform3D(-0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, -0.707107, -30, 0.06, -20)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail34" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
-transform = Transform3D(-0.5547, 0, 0.83205, 0, 1, 0, -0.83205, 0, -0.5547, -46.438, 0.06, -38.656)
+transform = Transform3D(-0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, -0.707107, -32.828, 0.06, -22.828)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
 
 [node name="Trail35" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(-0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, -0.707107, -35.657, 0.06, -25.657)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail36" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(-0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, -0.707107, -38.485, 0.06, -28.485)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail37" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(-0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, -0.707107, -41.314, 0.06, -31.314)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail38" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(-0.5547, 0, 0.83205, 0, 1, 0, -0.83205, 0, -0.5547, -42, 0.06, -32)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail39" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
+transform = Transform3D(-0.5547, 0, 0.83205, 0, 1, 0, -0.83205, 0, -0.5547, -46.438, 0.06, -38.656)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail40" type="StaticBody3D" parent="NavigationRegion3D/Trail"]
 transform = Transform3D(-0.5547, 0, 0.83205, 0, 1, 0, -0.83205, 0, -0.5547, -48.656, 0.06, -41.985)
 script = ExtResource("3_kit")
 PieceId = "kit_path_4"
@@ -540,37 +565,37 @@ PieceId = "kit_skull_post"
 [node name="Flats" type="Node3D" parent="NavigationRegion3D"]
 
 [node name="Lava4" type="StaticBody3D" parent="NavigationRegion3D/Flats"]
-transform = Transform3D(0.939693, 0, 0.34202, 0, 1, 0, -0.34202, 0, 0.939693, -46, 0.045, 10)
+transform = Transform3D(0.939693, 0, 0.34202, 0, 1, 0, -0.34202, 0, 0.939693, -53, 0.045, 3)
 script = ExtResource("3_kit")
 PieceId = "kit_em_lava"
 
 [node name="Rock4" type="StaticBody3D" parent="NavigationRegion3D/Flats"]
-transform = Transform3D(-0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, -0.866025, -52.2, 1.2, 5.8)
+transform = Transform3D(-0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, -0.866025, -59.2, 1.2, -1.2)
 script = ExtResource("3_kit")
 PieceId = "kit_em_rock"
 
 [node name="Rock5" type="StaticBody3D" parent="NavigationRegion3D/Flats"]
-transform = Transform3D(-0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.5, -45.7, 1.2, -4.5)
+transform = Transform3D(-0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.5, -52.7, 1.2, -11.5)
 script = ExtResource("3_kit")
 PieceId = "kit_em_rock"
 
 [node name="Tree4" type="StaticBody3D" parent="NavigationRegion3D/Flats"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48.9, 2.75, 7.7)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -55.9, 2.75, 0.7)
 script = ExtResource("3_kit")
 PieceId = "kit_em_tree"
 
 [node name="Piece5" type="StaticBody3D" parent="NavigationRegion3D/Flats"]
-transform = Transform3D(0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, -45.8, 0.25, 12.4)
+transform = Transform3D(0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, -52.8, 0.25, 5.4)
 script = ExtResource("3_kit")
 PieceId = "kit_bones"
 
 [node name="Piece6" type="StaticBody3D" parent="NavigationRegion3D/Flats"]
-transform = Transform3D(0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.5, -41.7, 0.25, 0.8)
+transform = Transform3D(0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.5, -48.7, 0.25, -6.2)
 script = ExtResource("3_kit")
 PieceId = "kit_bones"
 
 [node name="Shard13" type="StaticBody3D" parent="NavigationRegion3D/Flats"]
-transform = Transform3D(-0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.5, -50.9, 1.3, -1.2)
+transform = Transform3D(-0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.5, -57.9, 1.3, -8.2)
 script = ExtResource("3_kit")
 PieceId = "kit_em_shard"
 
@@ -718,6 +743,593 @@ transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, -63, 0.555
 script = ExtResource("3_kit")
 PieceId = "kit_camp_weapons"
 
+; -- The river between the camp's third and the middle: a bridge in the east and one in the west --
+
+[node name="FirstRiver" type="Node3D" parent="NavigationRegion3D"]
+
+[node name="LavaDeep" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, -65.1, 0.045, 86.9)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="Grass" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, -60.7, 0.4, 91.3)
+script = ExtResource("3_kit")
+PieceId = "kit_em_grass"
+
+[node name="LavaDeep2" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, -61.4, 0.045, 83.6)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="Grass2" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, -57.1, 0.4, 87.8)
+script = ExtResource("3_kit")
+PieceId = "kit_em_grass"
+
+[node name="LavaDeep3" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, -58.1, 0.045, 79.8)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep4" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, -54.2, 0.045, 76.6)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep5" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, -51.1, 0.045, 72.7)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep6" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.5, -47.5, 0.045, 69.1)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep7" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -43.7, 0.045, 65.9)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="Grass3" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.5, -48.6, 0.4, 60.9)
+script = ExtResource("3_kit")
+PieceId = "kit_em_grass"
+
+[node name="LavaDeep8" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, -0.866025, -40.1, 0.045, 62.4)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep9" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, -0.866025, -36.8, 0.045, 58.6)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep10" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.5, -33.2, 0.045, 55.1)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep11" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.5, -29.6, 0.045, 51.7)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep12" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, -26.3, 0.045, 47.9)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep13" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -22.3, 0.045, 44.8)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep14" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0.045, 42)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep15" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, -10.8, 0.045, 33.2)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="Grass4" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, -15.9, 0.4, 28.1)
+script = ExtResource("3_kit")
+PieceId = "kit_em_grass"
+
+[node name="LavaDeep16" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, -0.866025, -7.7, 0.045, 29.3)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="Grass5" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -11.5, 0.4, 25.5)
+script = ExtResource("3_kit")
+PieceId = "kit_em_grass"
+
+[node name="LavaDeep17" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -3.7, 0.045, 26.1)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="Grass6" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.6, 0.4, 21.3)
+script = ExtResource("3_kit")
+PieceId = "kit_em_grass"
+
+[node name="LavaDeep18" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, -0.6, 0.045, 22.2)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="Grass7" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, -5, 0.4, 17.7)
+script = ExtResource("3_kit")
+PieceId = "kit_em_grass"
+
+[node name="LavaDeep19" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.5, 3.3, 0.045, 19)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="Grass8" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 8.4, 0.4, 24.1)
+script = ExtResource("3_kit")
+PieceId = "kit_em_grass"
+
+[node name="LavaDeep20" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.5, 6.5, 0.045, 15.1)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="Grass9" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, 1.7, 0.4, 10.3)
+script = ExtResource("3_kit")
+PieceId = "kit_em_grass"
+
+[node name="LavaDeep21" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.1, 0.045, 11.6)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="Grass10" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 6.1, 0.4, 7.7)
+script = ExtResource("3_kit")
+PieceId = "kit_em_grass"
+
+[node name="LavaDeep22" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.5, 13.9, 0.045, 8.4)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep23" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, -0.866025, 17.5, 0.045, 4.9)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep24" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.5, 20.6, 0.045, 1)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="Grass11" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 16.2, 0.4, -3.4)
+script = ExtResource("3_kit")
+PieceId = "kit_em_grass"
+
+[node name="LavaDeep25" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.5, 24.4, 0.045, -2.3)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="Grass12" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.9, 0.4, 2.2)
+script = ExtResource("3_kit")
+PieceId = "kit_em_grass"
+
+[node name="LavaDeep26" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, -0.866025, 28.1, 0.045, -5.7)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep27" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 29, 0.045, -7)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep28" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, 38.9, 0.045, -17.1)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep29" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 42.5, 0.045, -20.6)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep30" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, 46.1, 0.045, -24)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep31" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, 49.6, 0.045, -27.6)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="Grass13" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54.7, 0.4, -22.5)
+script = ExtResource("3_kit")
+PieceId = "kit_em_grass"
+
+[node name="LavaDeep32" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, 52.9, 0.045, -31.4)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep33" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 56.5, 0.045, -34.9)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="Grass14" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, 61.6, 0.4, -29.8)
+script = ExtResource("3_kit")
+PieceId = "kit_em_grass"
+
+[node name="LavaDeep34" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.5, 60.4, 0.045, -38)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep35" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 63.6, 0.045, -41.9)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep36" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, 67.3, 0.045, -45.3)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep37" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, 70.7, 0.045, -48.9)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep38" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, 74.1, 0.045, -52.6)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="Grass15" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, 79.5, 0.4, -47.2)
+script = ExtResource("3_kit")
+PieceId = "kit_em_grass"
+
+[node name="LavaDeep39" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, 77.8, 0.045, -56)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep40" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, 81.5, 0.045, -59.3)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep41" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, 84.8, 0.045, -63.1)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="Grass16" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, -0.866025, 89.1, 0.4, -58.8)
+script = ExtResource("3_kit")
+PieceId = "kit_em_grass"
+
+[node name="LavaDeep42" type="StaticBody3D" parent="NavigationRegion3D/FirstRiver"]
+transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, 87, 0.045, -65)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+; -- The river between the middle and the forge's third: one bridge, on the road --
+
+[node name="SecondRiver" type="Node3D" parent="NavigationRegion3D"]
+
+[node name="LavaDeep43" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.5, -87.8, 0.045, 58.2)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep44" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, -0.866025, -84.4, 0.045, 54.5)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep45" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, -0.866025, -81.2, 0.045, 50.7)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep46" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, -77.1, 0.045, 47.6)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep47" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.5, -74, 0.045, 43.7)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep48" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.5, -70.2, 0.045, 40.5)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="Grass17" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -75.2, 0.4, 35.4)
+script = ExtResource("3_kit")
+PieceId = "kit_em_grass"
+
+[node name="LavaDeep49" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.5, -66.6, 0.045, 37)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep50" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, -63, 0.045, 33.5)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep51" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, -59.5, 0.045, 30)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep52" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, -56, 0.045, 26.4)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="Grass18" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.5, -60.7, 0.4, 21.6)
+script = ExtResource("3_kit")
+PieceId = "kit_em_grass"
+
+[node name="LavaDeep53" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, -0.866025, -52.4, 0.045, 22.9)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep54" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.5, -49.2, 0.045, 19)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep55" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.5, -45.3, 0.045, 15.8)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep56" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -42, 0.045, 12.1)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep57" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, -0.866025, -38.6, 0.045, 8.4)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="Grass19" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, -0.866025, -43.7, 0.4, 3.3)
+script = ExtResource("3_kit")
+PieceId = "kit_em_grass"
+
+[node name="LavaDeep58" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, -35.2, 0.045, 4.7)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep59" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.5, -31.4, 0.045, 1.5)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep60" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, -27.6, 0.045, -1.8)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="Grass20" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -23.9, 0.4, 1.9)
+script = ExtResource("3_kit")
+PieceId = "kit_em_grass"
+
+[node name="LavaDeep61" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, -25, 0.045, -5)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep62" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.5, -17.1, 0.045, -13.1)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="Grass21" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, -13, 0.4, -9)
+script = ExtResource("3_kit")
+PieceId = "kit_em_grass"
+
+[node name="LavaDeep63" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, -13.5, 0.045, -16.6)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep64" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -10, 0.045, -20.2)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep65" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.5, -6.1, 0.045, -23.4)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep66" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, -2.9, 0.045, -27.2)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep67" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, 0.5, 0.045, -30.8)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep68" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.045, -34.4)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="Grass22" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, -0.866025, -0.6, 0.4, -39)
+script = ExtResource("3_kit")
+PieceId = "kit_em_grass"
+
+[node name="LavaDeep69" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, 7.8, 0.045, -37.7)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep70" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, -0.866025, 11.1, 0.045, -41.4)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep71" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, 14.7, 0.045, -44.9)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep72" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, 18.5, 0.045, -48.2)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep73" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, -0.866025, 22.1, 0.045, -51.7)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="Grass23" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, 18, 0.4, -55.8)
+script = ExtResource("3_kit")
+PieceId = "kit_em_grass"
+
+[node name="LavaDeep74" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, -0.866025, 25.4, 0.045, -55.5)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep75" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, 28.9, 0.045, -59)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep76" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, -0.866025, 32.5, 0.045, -62.5)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep77" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 35.9, 0.045, -66.2)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep78" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, 39.8, 0.045, -69.3)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep79" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, 43.4, 0.045, -72.8)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="Grass24" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, 39.1, 0.4, -77.1)
+script = ExtResource("3_kit")
+PieceId = "kit_em_grass"
+
+[node name="LavaDeep80" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, 46.4, 0.045, -76.8)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="Grass25" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.5, 51.4, 0.4, -71.9)
+script = ExtResource("3_kit")
+PieceId = "kit_em_grass"
+
+[node name="LavaDeep81" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.5, 50.1, 0.045, -80.3)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="LavaDeep82" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.5, 53.6, 0.045, -83.8)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="Grass26" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, 49, 0.4, -88.4)
+script = ExtResource("3_kit")
+PieceId = "kit_em_grass"
+
+[node name="LavaDeep83" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, 57.3, 0.045, -87.2)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+[node name="Grass27" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, 52.3, 0.4, -92.2)
+script = ExtResource("3_kit")
+PieceId = "kit_em_grass"
+
+[node name="LavaDeep84" type="StaticBody3D" parent="NavigationRegion3D/SecondRiver"]
+transform = Transform3D(-0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, -0.866025, 58, 0.045, -88)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava_deep"
+
+; -- The road, worn through in places --
+
+[node name="Trail41" type="Node3D" parent="NavigationRegion3D"]
+
+[node name="Trail42" type="StaticBody3D" parent="NavigationRegion3D/Trail41"]
+transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, -21.5, 0.06, 31.5)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail43" type="StaticBody3D" parent="NavigationRegion3D/Trail41"]
+transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, -18.672, 0.06, 34.328)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail44" type="StaticBody3D" parent="NavigationRegion3D/Trail41"]
+transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, -15.843, 0.06, 37.157)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail45" type="StaticBody3D" parent="NavigationRegion3D/Trail41"]
+transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, -10.186, 0.06, 42.814)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
 ; -- The crypts' mouth behind the forge: two braziers beside the way down, black rock past them --
 
 [node name="CryptMouth" type="Node3D" parent="NavigationRegion3D"]
@@ -742,47 +1354,47 @@ PieceId = "kit_em_crag"
 [node name="Fire4" type="Node3D" parent="NavigationRegion3D"]
 
 [node name="Lava6" type="StaticBody3D" parent="NavigationRegion3D/Fire4"]
-transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, 6.5, 0.045, -22.9)
-script = ExtResource("3_kit")
-PieceId = "kit_em_lava"
-
-[node name="Lava7" type="StaticBody3D" parent="NavigationRegion3D/Fire4"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30.5, 0.045, 40.1)
-script = ExtResource("3_kit")
-PieceId = "kit_em_lava"
-
-[node name="Lava8" type="StaticBody3D" parent="NavigationRegion3D/Fire4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.7, 0.045, 1.5)
 script = ExtResource("3_kit")
 PieceId = "kit_em_lava"
 
-[node name="Lava9" type="StaticBody3D" parent="NavigationRegion3D/Fire4"]
+[node name="Lava7" type="StaticBody3D" parent="NavigationRegion3D/Fire4"]
 transform = Transform3D(-0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, -0.866025, -59.7, 0.045, 15.6)
 script = ExtResource("3_kit")
 PieceId = "kit_em_lava"
 
-[node name="Lava10" type="StaticBody3D" parent="NavigationRegion3D/Fire4"]
+[node name="Lava8" type="StaticBody3D" parent="NavigationRegion3D/Fire4"]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, -27.7, 0.045, -39.8)
 script = ExtResource("3_kit")
 PieceId = "kit_em_lava"
 
-[node name="Lava11" type="StaticBody3D" parent="NavigationRegion3D/Fire4"]
+[node name="Lava9" type="StaticBody3D" parent="NavigationRegion3D/Fire4"]
 transform = Transform3D(-0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, -0.866025, -62.3, 0.045, -13.9)
 script = ExtResource("3_kit")
 PieceId = "kit_em_lava"
 
-[node name="Lava12" type="StaticBody3D" parent="NavigationRegion3D/Fire4"]
+[node name="Lava10" type="StaticBody3D" parent="NavigationRegion3D/Fire4"]
 transform = Transform3D(-0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.5, -22.1, 0.045, -63.7)
 script = ExtResource("3_kit")
 PieceId = "kit_em_lava"
 
+[node name="Lava11" type="StaticBody3D" parent="NavigationRegion3D/Fire4"]
+transform = Transform3D(-0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.5, 43.2, 0.045, 46.3)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava"
+
+[node name="Lava12" type="StaticBody3D" parent="NavigationRegion3D/Fire4"]
+transform = Transform3D(0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.5, -68.7, 0.045, -20.9)
+script = ExtResource("3_kit")
+PieceId = "kit_em_lava"
+
 [node name="Lava13" type="StaticBody3D" parent="NavigationRegion3D/Fire4"]
-transform = Transform3D(0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, -38.9, 0.045, 25.7)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -37.2, 0.045, -8.2)
 script = ExtResource("3_kit")
 PieceId = "kit_em_lava"
 
 [node name="Lava14" type="StaticBody3D" parent="NavigationRegion3D/Fire4"]
-transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, -16.3, 0.045, 12.6)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 23, 0.045, 44)
 script = ExtResource("3_kit")
 PieceId = "kit_em_lava"
 
@@ -792,12 +1404,12 @@ script = ExtResource("3_kit")
 PieceId = "kit_em_lava"
 
 [node name="Lava16" type="StaticBody3D" parent="NavigationRegion3D/Fire4"]
-transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, 35.6, 0.045, 12.9)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.5, 0.045, 18.7)
 script = ExtResource("3_kit")
 PieceId = "kit_em_lava"
 
 [node name="Lava17" type="StaticBody3D" parent="NavigationRegion3D/Fire4"]
-transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, 4.7, 0.045, -32.8)
+transform = Transform3D(-0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, -0.866025, 13, 0.045, 18.7)
 script = ExtResource("3_kit")
 PieceId = "kit_em_lava"
 
@@ -812,7 +1424,7 @@ InnerRadius = 8.0
 OuterRadius = 78.0
 Spacing = 8
 Seed = 71
-Clearings = PackedVector3Array(74, 62, 5, 70.488, 60.085, 5, 66.977, 58.169, 5, 63.465, 56.254, 5, 59.954, 54.338, 5, 56.442, 52.423, 5, 52.931, 50.508, 5, 52, 50, 5, 48.478, 48.104, 5, 44.956, 46.207, 5, 41.434, 44.311, 5, 37.912, 42.414, 5, 34.391, 40.518, 5, 30.869, 38.622, 5, 27.347, 36.725, 5, 26, 36, 5, 23.061, 33.287, 5, 20.122, 30.574, 5, 17.182, 27.861, 5, 14.243, 25.148, 5, 11.304, 22.434, 5, 8.365, 19.721, 5, 5.426, 17.008, 5, 2.486, 14.295, 5, 0, 12, 5, -2.949, 9.297, 5, -5.897, 6.594, 5, -8.846, 3.891, 5, -11.794, 1.188, 5, -14.743, -1.514, 5, -17.692, -4.217, 5, -20.64, -6.92, 5, -23.589, -9.623, 5, -24, -10, 5, -26.533, -13.096, 5, -29.066, -16.192, 5, -31.599, -19.287, 5, -34.132, -22.383, 5, -36.665, -25.479, 5, -39.198, -28.575, 5, -41.731, -31.671, 5, -42, -32, 5, -44.219, -35.328, 5, -46.438, -38.656, 5, -48.656, -41.985, 5, -8, 44, 5, -16, 50, 5, -2, 52, 5, -10, -40, 11, -46, 10, 5, -58, -56, 18, -51, -62, 5, -46, -42, 9, 66, 62, 14, 71.5, 65, 3, 6, 22, 5, -34, -24, 5, 16, 58, 12, 58, 6, 12, -8, 46, 12, 28, -22, 12, -10, -40, 12, -44, 6, 12, -46, -42, 8, -58, -56, 6, 36, 32, 12, -8, -4, 12, -48, 44, 12, 74, 74, 10, 74, 62, 9, -74, -74, 10, -74, -62, 9, 6.5, -22.9, 5, -30.5, 40.1, 5, 26.7, 1.5, 5, -59.7, 15.6, 5, -27.7, -39.8, 5, -62.3, -13.9, 5, -22.1, -63.7, 5, -38.9, 25.7, 5, -16.3, 12.6, 5, 45, -48.1, 5, 35.6, 12.9, 5, 4.7, -32.8, 5)
+Clearings = PackedVector3Array(74, 62, 5, 71.852, 58.625, 5, 69.705, 55.251, 5, 67.557, 51.876, 5, 65.41, 48.501, 5, 63.262, 45.127, 5, 61.115, 41.752, 5, 60, 40, 5, 58.397, 36.335, 5, 56.793, 32.671, 5, 55.19, 29.006, 5, 53.587, 25.341, 5, 51.984, 21.677, 5, 50.38, 18.012, 5, 48.777, 14.348, 5, 47.174, 10.683, 5, 46, 8, 5, 43.942, 4.57, 5, 41.884, 1.14, 5, 39.826, -2.29, 5, 37.768, -5.72, 5, 35.71, -9.15, 5, 34, -12, 5, 30.345, -13.625, 5, 26.69, -15.249, 5, 23.034, -16.874, 5, 19.379, -18.498, 5, 16, -20, 5, 12.078, -19.216, 5, 8.155, -18.431, 5, 4.233, -17.647, 5, 0.311, -16.862, 5, -3.612, -16.078, 5, -4, -16, 5, -7.699, -14.477, 5, -11.397, -12.954, 5, -15.096, -11.431, 5, -18.795, -9.908, 5, -21, -9, 5, -23.533, -12.096, 5, -26.066, -15.192, 5, -28.599, -18.287, 5, -30, -20, 5, -32.828, -22.828, 5, -35.657, -25.657, 5, -38.485, -28.485, 5, -41.314, -31.314, 5, -42, -32, 5, -44.219, -35.328, 5, -46.438, -38.656, 5, -48.656, -41.985, 5, -8, 44, 5, -16, 50, 5, -2, 52, 5, -10, -40, 11, -53, 3, 5, -58, -56, 18, -51, -62, 5, -46, -42, 9, -15.5, 37.5, 8, 34, -12, 8, -21, -9, 8, -21.5, 31.5, 5, -18.672, 34.328, 5, -15.843, 37.157, 5, -13.015, 39.985, 5, -10.186, 42.814, 5, 66, 62, 14, 71.5, 65, 3, 10, 30, 5, -34, -24, 5, 16, 58, 12, 58, 6, 12, -8, 46, 12, 28, -22, 12, -10, -40, 12, -51, -1, 12, -46, -42, 8, -58, -56, 6, 36, 32, 12, -8, -4, 12, -48, 44, 12, 74, 74, 10, 74, 62, 9, -74, -74, 10, -74, -62, 9, 26.7, 1.5, 5, -59.7, 15.6, 5, -27.7, -39.8, 5, -62.3, -13.9, 5, -22.1, -63.7, 5, 43.2, 46.3, 5, -68.7, -20.9, 5, -37.2, -8.2, 5, 23, 44, 5, 45, -48.1, 5, -14.5, 18.7, 5, 13, 18.7, 5)
 
 [node name="BurntTrees" type="Node3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -823,7 +1435,7 @@ InnerRadius = 8.0
 OuterRadius = 78.0
 Spacing = 6
 Seed = 72
-Clearings = PackedVector3Array(74, 62, 5, 70.488, 60.085, 5, 66.977, 58.169, 5, 63.465, 56.254, 5, 59.954, 54.338, 5, 56.442, 52.423, 5, 52.931, 50.508, 5, 52, 50, 5, 48.478, 48.104, 5, 44.956, 46.207, 5, 41.434, 44.311, 5, 37.912, 42.414, 5, 34.391, 40.518, 5, 30.869, 38.622, 5, 27.347, 36.725, 5, 26, 36, 5, 23.061, 33.287, 5, 20.122, 30.574, 5, 17.182, 27.861, 5, 14.243, 25.148, 5, 11.304, 22.434, 5, 8.365, 19.721, 5, 5.426, 17.008, 5, 2.486, 14.295, 5, 0, 12, 5, -2.949, 9.297, 5, -5.897, 6.594, 5, -8.846, 3.891, 5, -11.794, 1.188, 5, -14.743, -1.514, 5, -17.692, -4.217, 5, -20.64, -6.92, 5, -23.589, -9.623, 5, -24, -10, 5, -26.533, -13.096, 5, -29.066, -16.192, 5, -31.599, -19.287, 5, -34.132, -22.383, 5, -36.665, -25.479, 5, -39.198, -28.575, 5, -41.731, -31.671, 5, -42, -32, 5, -44.219, -35.328, 5, -46.438, -38.656, 5, -48.656, -41.985, 5, -8, 44, 5, -16, 50, 5, -2, 52, 5, -10, -40, 11, -46, 10, 5, -58, -56, 18, -51, -62, 5, -46, -42, 9, 66, 62, 14, 71.5, 65, 3, 6, 22, 5, -34, -24, 5, 16, 58, 12, 58, 6, 12, -8, 46, 12, 28, -22, 12, -10, -40, 12, -44, 6, 12, -46, -42, 8, -58, -56, 6, 36, 32, 12, -8, -4, 12, -48, 44, 12, 74, 74, 10, 74, 62, 9, -74, -74, 10, -74, -62, 9, 6.5, -22.9, 5, -30.5, 40.1, 5, 26.7, 1.5, 5, -59.7, 15.6, 5, -27.7, -39.8, 5, -62.3, -13.9, 5, -22.1, -63.7, 5, -38.9, 25.7, 5, -16.3, 12.6, 5, 45, -48.1, 5, 35.6, 12.9, 5, 4.7, -32.8, 5)
+Clearings = PackedVector3Array(74, 62, 5, 71.852, 58.625, 5, 69.705, 55.251, 5, 67.557, 51.876, 5, 65.41, 48.501, 5, 63.262, 45.127, 5, 61.115, 41.752, 5, 60, 40, 5, 58.397, 36.335, 5, 56.793, 32.671, 5, 55.19, 29.006, 5, 53.587, 25.341, 5, 51.984, 21.677, 5, 50.38, 18.012, 5, 48.777, 14.348, 5, 47.174, 10.683, 5, 46, 8, 5, 43.942, 4.57, 5, 41.884, 1.14, 5, 39.826, -2.29, 5, 37.768, -5.72, 5, 35.71, -9.15, 5, 34, -12, 5, 30.345, -13.625, 5, 26.69, -15.249, 5, 23.034, -16.874, 5, 19.379, -18.498, 5, 16, -20, 5, 12.078, -19.216, 5, 8.155, -18.431, 5, 4.233, -17.647, 5, 0.311, -16.862, 5, -3.612, -16.078, 5, -4, -16, 5, -7.699, -14.477, 5, -11.397, -12.954, 5, -15.096, -11.431, 5, -18.795, -9.908, 5, -21, -9, 5, -23.533, -12.096, 5, -26.066, -15.192, 5, -28.599, -18.287, 5, -30, -20, 5, -32.828, -22.828, 5, -35.657, -25.657, 5, -38.485, -28.485, 5, -41.314, -31.314, 5, -42, -32, 5, -44.219, -35.328, 5, -46.438, -38.656, 5, -48.656, -41.985, 5, -8, 44, 5, -16, 50, 5, -2, 52, 5, -10, -40, 11, -53, 3, 5, -58, -56, 18, -51, -62, 5, -46, -42, 9, -15.5, 37.5, 8, 34, -12, 8, -21, -9, 8, -21.5, 31.5, 5, -18.672, 34.328, 5, -15.843, 37.157, 5, -13.015, 39.985, 5, -10.186, 42.814, 5, 66, 62, 14, 71.5, 65, 3, 10, 30, 5, -34, -24, 5, 16, 58, 12, 58, 6, 12, -8, 46, 12, 28, -22, 12, -10, -40, 12, -51, -1, 12, -46, -42, 8, -58, -56, 6, 36, 32, 12, -8, -4, 12, -48, 44, 12, 74, 74, 10, 74, 62, 9, -74, -74, 10, -74, -62, 9, 26.7, 1.5, 5, -59.7, 15.6, 5, -27.7, -39.8, 5, -62.3, -13.9, 5, -22.1, -63.7, 5, 43.2, 46.3, 5, -68.7, -20.9, 5, -37.2, -8.2, 5, 23, 44, 5, 45, -48.1, 5, -14.5, 18.7, 5, 13, 18.7, 5)
 
 [node name="Embers" type="Node3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -834,7 +1446,7 @@ InnerRadius = 10.0
 OuterRadius = 74.0
 Spacing = 11
 Seed = 74
-Clearings = PackedVector3Array(74, 62, 5, 70.488, 60.085, 5, 66.977, 58.169, 5, 63.465, 56.254, 5, 59.954, 54.338, 5, 56.442, 52.423, 5, 52.931, 50.508, 5, 52, 50, 5, 48.478, 48.104, 5, 44.956, 46.207, 5, 41.434, 44.311, 5, 37.912, 42.414, 5, 34.391, 40.518, 5, 30.869, 38.622, 5, 27.347, 36.725, 5, 26, 36, 5, 23.061, 33.287, 5, 20.122, 30.574, 5, 17.182, 27.861, 5, 14.243, 25.148, 5, 11.304, 22.434, 5, 8.365, 19.721, 5, 5.426, 17.008, 5, 2.486, 14.295, 5, 0, 12, 5, -2.949, 9.297, 5, -5.897, 6.594, 5, -8.846, 3.891, 5, -11.794, 1.188, 5, -14.743, -1.514, 5, -17.692, -4.217, 5, -20.64, -6.92, 5, -23.589, -9.623, 5, -24, -10, 5, -26.533, -13.096, 5, -29.066, -16.192, 5, -31.599, -19.287, 5, -34.132, -22.383, 5, -36.665, -25.479, 5, -39.198, -28.575, 5, -41.731, -31.671, 5, -42, -32, 5, -44.219, -35.328, 5, -46.438, -38.656, 5, -48.656, -41.985, 5, -8, 44, 5, -16, 50, 5, -2, 52, 5, -10, -40, 11, -46, 10, 5, -58, -56, 18, -51, -62, 5, -46, -42, 9, 66, 62, 14, 71.5, 65, 3, 6, 22, 5, -34, -24, 5, 16, 58, 12, 58, 6, 12, -8, 46, 12, 28, -22, 12, -10, -40, 12, -44, 6, 12, -46, -42, 8, -58, -56, 6, 36, 32, 12, -8, -4, 12, -48, 44, 12, 74, 74, 10, 74, 62, 9, -74, -74, 10, -74, -62, 9, 6.5, -22.9, 5, -30.5, 40.1, 5, 26.7, 1.5, 5, -59.7, 15.6, 5, -27.7, -39.8, 5, -62.3, -13.9, 5, -22.1, -63.7, 5, -38.9, 25.7, 5, -16.3, 12.6, 5, 45, -48.1, 5, 35.6, 12.9, 5, 4.7, -32.8, 5)
+Clearings = PackedVector3Array(74, 62, 5, 71.852, 58.625, 5, 69.705, 55.251, 5, 67.557, 51.876, 5, 65.41, 48.501, 5, 63.262, 45.127, 5, 61.115, 41.752, 5, 60, 40, 5, 58.397, 36.335, 5, 56.793, 32.671, 5, 55.19, 29.006, 5, 53.587, 25.341, 5, 51.984, 21.677, 5, 50.38, 18.012, 5, 48.777, 14.348, 5, 47.174, 10.683, 5, 46, 8, 5, 43.942, 4.57, 5, 41.884, 1.14, 5, 39.826, -2.29, 5, 37.768, -5.72, 5, 35.71, -9.15, 5, 34, -12, 5, 30.345, -13.625, 5, 26.69, -15.249, 5, 23.034, -16.874, 5, 19.379, -18.498, 5, 16, -20, 5, 12.078, -19.216, 5, 8.155, -18.431, 5, 4.233, -17.647, 5, 0.311, -16.862, 5, -3.612, -16.078, 5, -4, -16, 5, -7.699, -14.477, 5, -11.397, -12.954, 5, -15.096, -11.431, 5, -18.795, -9.908, 5, -21, -9, 5, -23.533, -12.096, 5, -26.066, -15.192, 5, -28.599, -18.287, 5, -30, -20, 5, -32.828, -22.828, 5, -35.657, -25.657, 5, -38.485, -28.485, 5, -41.314, -31.314, 5, -42, -32, 5, -44.219, -35.328, 5, -46.438, -38.656, 5, -48.656, -41.985, 5, -8, 44, 5, -16, 50, 5, -2, 52, 5, -10, -40, 11, -53, 3, 5, -58, -56, 18, -51, -62, 5, -46, -42, 9, -15.5, 37.5, 8, 34, -12, 8, -21, -9, 8, -21.5, 31.5, 5, -18.672, 34.328, 5, -15.843, 37.157, 5, -13.015, 39.985, 5, -10.186, 42.814, 5, 66, 62, 14, 71.5, 65, 3, 10, 30, 5, -34, -24, 5, 16, 58, 12, 58, 6, 12, -8, 46, 12, 28, -22, 12, -10, -40, 12, -51, -1, 12, -46, -42, 8, -58, -56, 6, 36, 32, 12, -8, -4, 12, -48, 44, 12, 74, 74, 10, 74, 62, 9, -74, -74, 10, -74, -62, 9, 26.7, 1.5, 5, -59.7, 15.6, 5, -27.7, -39.8, 5, -62.3, -13.9, 5, -22.1, -63.7, 5, 43.2, 46.3, 5, -68.7, -20.9, 5, -37.2, -8.2, 5, 23, 44, 5, 45, -48.1, 5, -14.5, 18.7, 5, 13, 18.7, 5)
 
 [node name="Ash" type="Node3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -845,7 +1457,7 @@ InnerRadius = 6.0
 OuterRadius = 76.0
 Spacing = 3
 Seed = 75
-Clearings = PackedVector3Array(74, 62, 5, 70.488, 60.085, 5, 66.977, 58.169, 5, 63.465, 56.254, 5, 59.954, 54.338, 5, 56.442, 52.423, 5, 52.931, 50.508, 5, 52, 50, 5, 48.478, 48.104, 5, 44.956, 46.207, 5, 41.434, 44.311, 5, 37.912, 42.414, 5, 34.391, 40.518, 5, 30.869, 38.622, 5, 27.347, 36.725, 5, 26, 36, 5, 23.061, 33.287, 5, 20.122, 30.574, 5, 17.182, 27.861, 5, 14.243, 25.148, 5, 11.304, 22.434, 5, 8.365, 19.721, 5, 5.426, 17.008, 5, 2.486, 14.295, 5, 0, 12, 5, -2.949, 9.297, 5, -5.897, 6.594, 5, -8.846, 3.891, 5, -11.794, 1.188, 5, -14.743, -1.514, 5, -17.692, -4.217, 5, -20.64, -6.92, 5, -23.589, -9.623, 5, -24, -10, 5, -26.533, -13.096, 5, -29.066, -16.192, 5, -31.599, -19.287, 5, -34.132, -22.383, 5, -36.665, -25.479, 5, -39.198, -28.575, 5, -41.731, -31.671, 5, -42, -32, 5, -44.219, -35.328, 5, -46.438, -38.656, 5, -48.656, -41.985, 5, -8, 44, 5, -16, 50, 5, -2, 52, 5, -10, -40, 11, -46, 10, 5, -58, -56, 18, -51, -62, 5, -46, -42, 9, 66, 62, 14, 71.5, 65, 3, 6, 22, 5, -34, -24, 5, 16, 58, 12, 58, 6, 12, -8, 46, 12, 28, -22, 12, -10, -40, 12, -44, 6, 12, -46, -42, 8, -58, -56, 6, 36, 32, 12, -8, -4, 12, -48, 44, 12, 74, 74, 10, 74, 62, 9, -74, -74, 10, -74, -62, 9, 6.5, -22.9, 5, -30.5, 40.1, 5, 26.7, 1.5, 5, -59.7, 15.6, 5, -27.7, -39.8, 5, -62.3, -13.9, 5, -22.1, -63.7, 5, -38.9, 25.7, 5, -16.3, 12.6, 5, 45, -48.1, 5, 35.6, 12.9, 5, 4.7, -32.8, 5)
+Clearings = PackedVector3Array(74, 62, 5, 71.852, 58.625, 5, 69.705, 55.251, 5, 67.557, 51.876, 5, 65.41, 48.501, 5, 63.262, 45.127, 5, 61.115, 41.752, 5, 60, 40, 5, 58.397, 36.335, 5, 56.793, 32.671, 5, 55.19, 29.006, 5, 53.587, 25.341, 5, 51.984, 21.677, 5, 50.38, 18.012, 5, 48.777, 14.348, 5, 47.174, 10.683, 5, 46, 8, 5, 43.942, 4.57, 5, 41.884, 1.14, 5, 39.826, -2.29, 5, 37.768, -5.72, 5, 35.71, -9.15, 5, 34, -12, 5, 30.345, -13.625, 5, 26.69, -15.249, 5, 23.034, -16.874, 5, 19.379, -18.498, 5, 16, -20, 5, 12.078, -19.216, 5, 8.155, -18.431, 5, 4.233, -17.647, 5, 0.311, -16.862, 5, -3.612, -16.078, 5, -4, -16, 5, -7.699, -14.477, 5, -11.397, -12.954, 5, -15.096, -11.431, 5, -18.795, -9.908, 5, -21, -9, 5, -23.533, -12.096, 5, -26.066, -15.192, 5, -28.599, -18.287, 5, -30, -20, 5, -32.828, -22.828, 5, -35.657, -25.657, 5, -38.485, -28.485, 5, -41.314, -31.314, 5, -42, -32, 5, -44.219, -35.328, 5, -46.438, -38.656, 5, -48.656, -41.985, 5, -8, 44, 5, -16, 50, 5, -2, 52, 5, -10, -40, 11, -53, 3, 5, -58, -56, 18, -51, -62, 5, -46, -42, 9, -15.5, 37.5, 8, 34, -12, 8, -21, -9, 8, -21.5, 31.5, 5, -18.672, 34.328, 5, -15.843, 37.157, 5, -13.015, 39.985, 5, -10.186, 42.814, 5, 66, 62, 14, 71.5, 65, 3, 10, 30, 5, -34, -24, 5, 16, 58, 12, 58, 6, 12, -8, 46, 12, 28, -22, 12, -10, -40, 12, -51, -1, 12, -46, -42, 8, -58, -56, 6, 36, 32, 12, -8, -4, 12, -48, 44, 12, 74, 74, 10, 74, 62, 9, -74, -74, 10, -74, -62, 9, 26.7, 1.5, 5, -59.7, 15.6, 5, -27.7, -39.8, 5, -62.3, -13.9, 5, -22.1, -63.7, 5, 43.2, 46.3, 5, -68.7, -20.9, 5, -37.2, -8.2, 5, 23, 44, 5, 45, -48.1, 5, -14.5, 18.7, 5, 13, 18.7, 5)
 
 ; -- Session, player and population --
 
@@ -867,7 +1479,7 @@ script = ExtResource("7_visualroot")
 VisualId = "mesh_placeholder_shrine"
 
 [node name="ShrineRift" type="Area3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.1, 22)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.1, 30)
 script = ExtResource("6_shrine")
 ShrineId = "shr_cinder_rift"
 
@@ -914,7 +1526,7 @@ script = ExtResource("5_spawnfield")
 FieldId = "spf_cinder_shrine"
 
 [node name="AshFlats" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -44, 0, 6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -51, 0, -1)
 script = ExtResource("5_spawnfield")
 FieldId = "spf_cinder_flats"
 
