@@ -89,9 +89,13 @@ public partial class BossHud : CanvasLayer, ITopBar
 
     private bool _bossMusic;
 
+    /// <summary>The boss whose bar is up, if any: the target's frame stays down for it, or it has two bars.</summary>
+    public EnemyBrain? Shown { get; private set; }
+
     public override void _Process(double delta)
     {
         var boss = Engaged();
+        Shown = boss;
 
         // The boss's music plays while its bar is up (REF-20).
         if ((boss is not null) != _bossMusic)

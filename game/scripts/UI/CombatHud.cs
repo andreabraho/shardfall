@@ -66,7 +66,9 @@ public partial class CombatHud : CanvasLayer
         var target = _combat.Target;
 
         // A shard has its own bar at the top, with its phase and its call (2026-10-07, at your call: one bar is enough).
-        if (target is null || !IsInstanceValid(target) || !target.IsAlive || target.GetParent() is World.ShardNode)
+        if (target is null || !IsInstanceValid(target) || !target.IsAlive || target.GetParent() is World.ShardNode
+            // A boss has its own bar at the top too (2026-10-08, at your call: the tower's bosses showed two).
+            || (target.GetParent() is { } owner && GetParent()?.GetNodeOrNull<BossHud>("BossHud")?.Shown == owner))
         {
             _targetPanel.Visible = false;
             return;
