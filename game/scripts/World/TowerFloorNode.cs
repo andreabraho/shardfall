@@ -308,7 +308,12 @@ public partial class TowerFloorNode : Node3D
 
                 guard = [];
                 _guards[pylon] = guard;
-                Summon(_floor.Guard, pylon.GlobalPosition, 4.5f, guard);
+                // On the player's side of it: a ring about a door in a wall put half the guard behind the wall,
+                // out of reach of all but ranged skills (2026-10-08, at your call).
+                var toward = (player.GlobalPosition - pylon.GlobalPosition) with { Y = 0 };
+                var front = toward.LengthSquared() > 0.01f ? toward.Normalized() : Vector3.Zero;
+
+                Summon(_floor.Guard, pylon.GlobalPosition + front * 4.5f, 2.5f, guard);
                 UI.WorldNotice.Show(GetTree(), L10n.T("The keystone's guard wakes. Kill them to break the seal."));
                 continue;
             }
