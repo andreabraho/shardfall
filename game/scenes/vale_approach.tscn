@@ -1671,3 +1671,18 @@ ToZone = "zone_vale_floor"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -74, 0.1, -62)
 script = ExtResource("11_arrival")
 FromZone = "zone_vale_floor"
+
+[node name="CampRoad" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0, 60)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_approach_camp_road"
+
+[node name="WestHuts" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -52, 0, 24)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_approach_west_huts"
+
+[node name="NorthWoods" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, -64)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_approach_north_woods"

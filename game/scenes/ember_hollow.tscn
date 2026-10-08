@@ -800,3 +800,13 @@ PieceId = "kit_vil_path_4"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70, 1.1, -56)
 script = ExtResource("3_kit")
 PieceId = "kit_marker_post"
+
+[node name="FoxCampSouthWest" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 0, 36)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_hollow_foxes_sw"
+
+[node name="WolfCampEast" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 68, 0, -24)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_hollow_wolves_east"

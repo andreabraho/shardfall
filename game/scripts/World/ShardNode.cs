@@ -512,6 +512,7 @@ public partial class ShardNode : StaticBody3D
             if (!ZoneClearOfSafety(point)) continue;
             if (!loose && !FarFromEverything(point)) continue;
             if (loose && !loosest && (Near(point, "zone_gates", 24f) || Near(point, "zone_arrivals", 24f) || Near(point, "shrines", 16f))) continue;
+            if (!loosest && !FarFromFields(point, loose ? FieldGapLoose : FieldGap)) continue;
             if (strict && !Clear(point)) continue;
 
             GlobalPosition = point;
@@ -546,18 +547,33 @@ public partial class ShardNode : StaticBody3D
             if (node is ShardNode { _awaitingPlace: false } other && other != this && other.GlobalPosition.DistanceTo(point) < 30f) return false;
         }
 
+        return GetTree().GetFirstNodeInGroup("player") is not Node3D player
+            || player.GlobalPosition.DistanceTo(point) >= ZoneRadius + 6f;
+    }
+
+    /// <summary>
+    /// How far a stone stands from the edge of a field of creatures (2026-10-08, at your call: a stone
+    /// beside a field had the field coming back while the stone was fought, and the fight grew far too
+    /// hard). The stone's own fight is <see cref="ZoneRadius"/> across; this keeps most of it clear.
+    /// </summary>
+    private const float FieldGap = 14f;
+
+    /// <summary>The same, eased for a map too crowded to give a stone a spot at the full gap.</summary>
+    private const float FieldGapLoose = 8f;
+
+    private bool FarFromFields(Vector3 point, float gap)
+    {
         foreach (var node in GetTree().GetNodesInGroup("spawn_fields"))
         {
             if (node is not SpawnFieldNode field) continue;
 
             var boss = field.Def?.Entries.Any(e => GameContent.Database.Enemies.TryGetValue(e.EnemyId, out var def) && def.Boss) == true;
-            var keep = boss ? 28f : (float)(field.Def?.Radius ?? 7.0) + 6f;
+            var keep = boss ? 28f : (float)(field.Def?.Radius ?? 7.0) + gap;
 
             if (field.GlobalPosition.DistanceTo(point) < keep) return false;
         }
 
-        return GetTree().GetFirstNodeInGroup("player") is not Node3D player
-            || player.GlobalPosition.DistanceTo(point) >= ZoneRadius + 6f;
+        return true;
     }
 
     private bool Near(Vector3 point, string group, float distance)

@@ -110,6 +110,11 @@ public static class Act2Layouts
             .Spawn("GeodeField", "spf_stonewood_geodes", -14, -56)
             .Spawn("StagGuard", "spf_stonewood_guard", -44, 36, 8)
             .Spawn("Stag", "spf_stonewood_stag", -56, 50, 6)
+            // More camps of creatures in the empty ground (2026-10-08, at your call), the first by the camp for a player just come.
+            .Spawn("WoodsEdge", "spf_stonewood_edge", 38, 34)
+            .Spawn("SouthHollow", "spf_stonewood_south", -16, 64)
+            .Spawn("EastCrags", "spf_stonewood_east_crags", 68, -40)
+            .Spawn("WestRing", "spf_stonewood_west_ring", -40, -28)
             .Way("Gate", "zone_broken_gate", 74, 74)
             .Way("Mire", "zone_drowned_mire", -74, -74);
 
@@ -193,6 +198,10 @@ public static class Act2Layouts
             .Spawn("CausewayEnd", "spf_mire_causeway", 30, -54)
             .Spawn("KingsGuard", "spf_mire_guard", 38, 44, 8)
             .Spawn("King", "spf_mire_king", 56, 46, 6)
+            // More camps of creatures in the empty ground (2026-10-08, at your call).
+            .Spawn("CampBanks", "spf_mire_camp_banks", -68, 20)
+            .Spawn("MidMire", "spf_mire_middle", 0, 4)
+            .Spawn("NorthFen", "spf_mire_north_fen", -36, -36)
             .Way("Stonewood", "zone_stonewood", -74, 74)
             .Way("Cinderlands", "zone_cinderlands", 74, -74);
 
@@ -276,6 +285,10 @@ public static class Act2Layouts
             .Spawn("AshFlats", "spf_cinder_flats", -44, 6)
             .Spawn("WarlordGuard", "spf_cinder_guard", -46, -42, 8)
             .Spawn("Warlord", "spf_cinder_warlord", -58, -56, 6)
+            // More camps of creatures in the empty ground (2026-10-08, at your call).
+            .Spawn("CampScorch", "spf_cinder_camp_scorch", 36, 32)
+            .Spawn("MidCinders", "spf_cinder_middle", -8, -4)
+            .Spawn("WestVents", "spf_cinder_west_vents", -48, 44)
             .Way("Mire", "zone_drowned_mire", 74, 74)
             // The way down to the Abyss Crypts, behind the Warlord's forge (P5, 2026-10-07): open at 40 once he has fallen.
             .Way("Crypts", "zone_abyss_crypts", -74, -74);
