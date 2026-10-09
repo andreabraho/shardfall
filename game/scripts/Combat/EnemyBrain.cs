@@ -47,6 +47,9 @@ public partial class EnemyBrain : CharacterBody3D
     public NamePlate Plate => _plate;
 
     private readonly Dictionary<string, double> _abilityCooldowns = new(System.StringComparer.Ordinal);
+
+    /// <summary>The keys of <see cref="_abilityCooldowns"/>, so the per-tick countdown walks them without copying.</summary>
+    private readonly List<string> _cooldownIds = [];
     private readonly List<Combatant> _shielded = [];
 
     private BtNode<EnemyBrain>? _tree;
@@ -210,6 +213,7 @@ public partial class EnemyBrain : CharacterBody3D
         // The spawn fields and the population cap both count this group, so every enemy has
         // to be in it however it arrived — placed in the scene, spawned by a field or by a shard.
         AddToGroup("enemies");
+        World.GameWorld.EnemiesChanged();
 
         // Correct only for an enemy placed in the scene file. Anything spawned is positioned
         // after AddChild, and AddChild is what runs this — so a spawner must call PlaceAt.
@@ -232,6 +236,8 @@ public partial class EnemyBrain : CharacterBody3D
         // still shows in the marker at its feet.
         _plate.Tint = EnemyNameColour;
 
+        BuildCrowdSensor();
+
         // A boss wears the boss plate — larger, violet — and is what the boss bar looks for.
         if (IsBoss)
         {
@@ -249,6 +255,8 @@ public partial class EnemyBrain : CharacterBody3D
         Self.HealthChanged += CheckPhases;
         Self.Collapsed += OnCollapsed;
     }
+
+    public override void _ExitTree() => World.GameWorld.EnemiesChanged();
 
     private string _voice = "";
     private float _voicePitch = 1f;
@@ -523,6 +531,7 @@ public partial class EnemyBrain : CharacterBody3D
     private void OnDied()
     {
         _dead = true;
+        World.GameWorld.EnemiesChanged();
         Velocity = Vector3.Zero;
         _telegraph?.Cancel();
         ReleaseShields();
@@ -627,6 +636,8 @@ public partial class EnemyBrain : CharacterBody3D
 
     public override void _PhysicsProcess(double delta)
     {
+        _navAge += delta;
+
         if (_dead)
         {
             WatchCorpse();
@@ -684,10 +695,19 @@ public partial class EnemyBrain : CharacterBody3D
     {
         if (_abilityCooldowns.Count == 0) return;
 
-        foreach (var id in new List<string>(_abilityCooldowns.Keys))
+        // Over a list of the keys rather than a copy of them: a copy every physics tick for every
+        // creature was garbage the collector then had to stop the game for.
+        foreach (var id in _cooldownIds)
         {
             if (_abilityCooldowns[id] > 0) _abilityCooldowns[id] -= delta;
         }
+    }
+
+    private void StartCooldown(string id, double seconds)
+    {
+        if (!_abilityCooldowns.ContainsKey(id)) _cooldownIds.Add(id);
+
+        _abilityCooldowns[id] = seconds;
     }
 
     /// <summary>
@@ -834,7 +854,7 @@ public partial class EnemyBrain : CharacterBody3D
         // outside its tether and it simply turns round again.
         if (_returning) return;
 
-        if (GetTree().GetFirstNodeInGroup("player") is not Node3D player) return;
+        if (ThePlayer(GetTree()) is not { } player) return;
 
         if (!force && GlobalPosition.DistanceTo(player.GlobalPosition) > AggroRadius) return;
 
@@ -846,10 +866,15 @@ public partial class EnemyBrain : CharacterBody3D
         if (World.GameWorld.IsSafe(player.GlobalPosition)) return;
         if (World.GameWorld.IsSafe(GlobalPosition)) return;
 
-        var combatant = player.GetNodeOrNull<Combatant>("Combatant");
+        var combatant = _playerCombatant;
+
+        // Nobody to fight while the player lies dead (2026-10-09). Every creature that had been
+        // fighting them took the body again every tick of the death screen — a cry and a call for
+        // help each time, forty sounds a frame from a pack — and the frame rate went with it.
+        if (combatant is not { IsAlive: true }) return;
 
         // Unseen, the player is not there to be found — unless they struck first, which ends it.
-        if (combatant is not null && combatant.Statuses.Has(StatusKind.Stealth)) return;
+        if (combatant.Statuses.Has(StatusKind.Stealth)) return;
 
         // Every creature attacks, however far the player out-levels it (2026-09-24). Trivially
         // low-level creatures used to ignore the player (FR-2.7) so a cleared zone was quiet to
@@ -863,6 +888,29 @@ public partial class EnemyBrain : CharacterBody3D
         TargetCombatant = combatant;
 
         if (alert) CallForHelp();
+    }
+
+    private static Node3D? _thePlayer;
+    private static Combatant? _playerCombatant;
+
+    /// <summary>
+    /// The player, looked up once rather than by every creature every tick: an idle creature asks
+    /// on each physics tick whether the player has walked into its aggro radius.
+    /// </summary>
+    private static Node3D? ThePlayer(SceneTree tree)
+    {
+        if (_thePlayer is null || !IsInstanceValid(_thePlayer) || !_thePlayer.IsInsideTree())
+        {
+            _thePlayer = tree.GetFirstNodeInGroup("player") as Node3D;
+            _playerCombatant = null;
+        }
+
+        if (_thePlayer is not null && (_playerCombatant is null || !IsInstanceValid(_playerCombatant)))
+        {
+            _playerCombatant = _thePlayer.GetNodeOrNull<Combatant>("Combatant");
+        }
+
+        return _thePlayer;
     }
 
     /// <summary>
@@ -953,7 +1001,7 @@ public partial class EnemyBrain : CharacterBody3D
     {
         if (Target is null) return BtStatus.Failure;
 
-        _agent.TargetPosition = _traits.Flank ? FlankPoint() : Target.GlobalPosition;
+        NavigateTo(_traits.Flank ? FlankPoint() : Target.GlobalPosition, ChaseSlack());
 
         if (_agent.IsNavigationFinished())
         {
@@ -1028,7 +1076,7 @@ public partial class EnemyBrain : CharacterBody3D
             return BtStatus.Success;
         }
 
-        _agent.TargetPosition = _home;
+        NavigateTo(_home, 0.05f);
 
         // GetNextPathPosition is what makes the agent compute the path, so asking
         // IsNavigationFinished before it reports "arrived" for a path that does not exist
@@ -1098,7 +1146,7 @@ public partial class EnemyBrain : CharacterBody3D
             return BtStatus.Running;
         }
 
-        _agent.TargetPosition = to;
+        NavigateTo(to, 0.05f);
 
         var step = (_agent.GetNextPathPosition() - GlobalPosition) with { Y = 0 };
 
@@ -1217,8 +1265,7 @@ public partial class EnemyBrain : CharacterBody3D
         // which reads as the warning circle chasing the player around.
         if (_activeAbility is not null)
         {
-            _abilityCooldowns[_activeAbility.Id] =
-                System.Math.Min(_activeAbility.Cooldown, CancelLockoutSeconds);
+            StartCooldown(_activeAbility.Id, System.Math.Min(_activeAbility.Cooldown, CancelLockoutSeconds));
         }
 
         _telegraph?.Cancel();
@@ -1281,7 +1328,7 @@ public partial class EnemyBrain : CharacterBody3D
 
         _phase = Phase.Recover;
         _phaseTimer = RecoverSeconds;
-        _abilityCooldowns[ability.Id] = ability.Cooldown * _cooldownScale;
+        StartCooldown(ability.Id, ability.Cooldown * _cooldownScale);
         _telegraph?.Cancel();
         _activeAbility = null;
 
@@ -1357,6 +1404,13 @@ public partial class EnemyBrain : CharacterBody3D
     /// </summary>
     public BtStatus MaintainShield(float radius, double delta)
     {
+        // Who stands in the aura is asked at twenty hertz, as the crowding is, not every tick
+        // (2026-10-09): a nine-metre query a tick for each shielder was a third of the frame on a
+        // map with a few of them. Its end is never late — death and the walk home release it at once.
+        if (--_shieldTick > 0) return _shielded.Count > 0 ? BtStatus.Success : BtStatus.Failure;
+
+        _shieldTick = SeparationInterval;
+
         var nearby = Allies(radius);
 
         for (var i = _shielded.Count - 1; i >= 0; i--)
@@ -1383,6 +1437,8 @@ public partial class EnemyBrain : CharacterBody3D
     }
 
     public const double ShieldMultiplier = 0.55;
+
+    private int _shieldTick;
 
     /// <summary>Covers or uncovers an ally, and shows it: a blue ring at its feet.</summary>
     private static void Shield(Combatant ally, bool on)
@@ -1475,6 +1531,41 @@ public partial class EnemyBrain : CharacterBody3D
 
         return status;
     }
+
+    // -- Pathing --------------------------------------------------------------
+
+    /// <summary>Seconds a path is kept before it is asked for again, even to a goal that has not moved.</summary>
+    private const double RepathSeconds = 1.0;
+
+    private Vector3 _navGoal = new(float.NaN, float.NaN, float.NaN);
+    private double _navAge;
+
+    /// <summary>
+    /// Points the agent at a goal, asking for a new path only when the goal has moved more than
+    /// <paramref name="slack"/> metres from the last one, or that path is a second old.
+    /// </summary>
+    /// <remarks>
+    /// Writing <c>NavigationAgent3D.TargetPosition</c> always queries a whole new path — Godot does
+    /// not compare it with the old one — and every creature wrote it every physics tick: chasing,
+    /// walking home, or strolling to a spot that never moved. With a field's worth of creatures
+    /// that was a third of the frame (2026-10-09). The second's refresh keeps what writing it every
+    /// tick gave for free: a path that notices the world has changed.
+    /// </remarks>
+    private void NavigateTo(Vector3 goal, float slack)
+    {
+        if (_navAge < RepathSeconds && goal.DistanceSquaredTo(_navGoal) <= slack * slack) return;
+
+        _navGoal = goal;
+        _navAge = 0;
+        _agent.TargetPosition = goal;
+    }
+
+    /// <summary>
+    /// How far a chased target may move before the path follows it: a tenth of the distance to it,
+    /// between a quarter of a metre and a metre and a half. Close in, the path stays tight on the
+    /// target; across a field, a metre either way changes nothing about which way to run.
+    /// </summary>
+    private float ChaseSlack() => Mathf.Clamp(DistanceToTarget * 0.1f, 0.25f, 1.5f);
 
     // -- Movement helpers ---------------------------------------------------
 
@@ -1586,6 +1677,45 @@ public partial class EnemyBrain : CharacterBody3D
     private Vector3 _separation;
     private int _separationTick;
 
+    /// <summary>Who stands inside <see cref="SeparationRadius"/>, kept by <see cref="BuildCrowdSensor"/>.</summary>
+    private readonly List<Combatant> _crowd = [];
+
+    /// <summary>
+    /// A sphere of <see cref="SeparationRadius"/> at the creature's feet that keeps
+    /// <see cref="_crowd"/>: the engine notices who comes and goes, rather than every creature
+    /// asking twenty times a second (2026-10-09).
+    /// </summary>
+    /// <remarks>
+    /// The same sphere, the same layers and the same rule — a body counts while it overlaps — as
+    /// the shape query this replaced. The query cost more than anything else a creature did once
+    /// its paths were fixed, nearly all of it in turning the answer into C# objects; the sensor
+    /// only speaks when the answer changes.
+    /// </remarks>
+    private void BuildCrowdSensor()
+    {
+        var sensor = new Area3D
+        {
+            Name = "Crowd",
+            CollisionLayer = 0,
+            CollisionMask = Foundation.Layers.Enemy | Foundation.Layers.Player,
+            Monitorable = false,
+        };
+
+        sensor.AddChild(new CollisionShape3D { Shape = new SphereShape3D { Radius = SeparationRadius } });
+
+        sensor.BodyEntered += body =>
+        {
+            if (body.GetNodeOrNull<Combatant>("Combatant") is { } other && !_crowd.Contains(other)) _crowd.Add(other);
+        };
+
+        sensor.BodyExited += body =>
+        {
+            if (body.GetNodeOrNull<Combatant>("Combatant") is { } other) _crowd.Remove(other);
+        };
+
+        CallDeferred(Node.MethodName.AddChild, sensor);
+    }
+
     /// <summary>
     /// Eases creatures out of each other instead of colliding (CBT-16).
     /// </summary>
@@ -1624,21 +1754,26 @@ public partial class EnemyBrain : CharacterBody3D
         // The player counts as a neighbour, but barely: creatures do not collide with them
         // either, so without this a whole pack stands inside the player's own capsule — and
         // with it at full strength the player shoves the pack around by walking.
-        var crowd = AreaQuery.Sphere(this, GlobalPosition, SeparationRadius,
-            Foundation.Layers.Enemy | Foundation.Layers.Player);
-
         var push = Vector3.Zero;
 
-        foreach (var other in crowd)
+        for (var i = _crowd.Count - 1; i >= 0; i--)
         {
-            if (other == Self) continue;
+            var other = _crowd[i];
+
+            if (!IsInstanceValid(other))
+            {
+                _crowd.RemoveAt(i);
+                continue;
+            }
+
+            if (other == Self || !other.IsAlive) continue;
 
             var away = (GlobalPosition - other.Body.GlobalPosition) with { Y = 0 };
             var distance = away.Length();
 
             if (distance >= SeparationRadius) continue;
 
-            var weight = other.Body.IsInGroup("player") ? PlayerPushShare : 1f;
+            var weight = other.IsPlayer ? PlayerPushShare : 1f;
 
             if (distance < 0.05f)
             {

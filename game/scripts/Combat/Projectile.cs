@@ -117,12 +117,14 @@ public partial class Projectile : Node3D
         }
 
         // Stopped by geometry, so pillars and walls are real cover.
-        var query = PhysicsRayQueryParameters3D.Create(
+        using var query = PhysicsRayQueryParameters3D.Create(
             GlobalPosition - (_velocity.Normalized() * 0.3f),
             GlobalPosition,
             Layers.World);
 
-        if (GetWorld3D().DirectSpaceState.IntersectRay(query).Count > 0)
+        using var wall = GetWorld3D().DirectSpaceState.IntersectRay(query);
+
+        if (wall.Count > 0)
         {
             QueueFree();
         }

@@ -10,6 +10,19 @@ namespace Kiln.Game.Combat;
 /// </summary>
 public static class AreaQuery
 {
+    private static readonly SphereShape3D _shape = new();
+
+    private static readonly PhysicsShapeQueryParameters3D _query = new()
+    {
+        Shape = _shape,
+        CollideWithAreas = false,
+        CollideWithBodies = true,
+    };
+
+    private static readonly Variant ColliderKey = "collider";
+
+    private static readonly NodePath CombatantPath = "Combatant";
+
     /// <summary>
     /// Enemies whose body centre lies within <paramref name="radius"/> of a point.
     /// </summary>
@@ -17,24 +30,28 @@ public static class AreaQuery
     {
         var results = new List<Combatant>();
 
-        var shape = new SphereShape3D { Radius = radius };
-        var query = new PhysicsShapeQueryParameters3D
-        {
-            Shape = shape,
-            Transform = new Transform3D(Basis.Identity, center),
-            CollisionMask = layers,
-            CollideWithAreas = false,
-            CollideWithBodies = true,
-            // A pull can easily overlap more than the default 32 results.
-        };
+        // One shape and one set of parameters for every query, rather than a new pair each time
+        // (2026-10-09). Every creature asks this several times a second to keep out of its
+        // neighbours, and each new shape was a physics-server resource made, used once and left
+        // for the collector. Queries run on the main thread, one at a time, so sharing is safe.
+        _shape.Radius = radius;
+        _query.Transform = new Transform3D(Basis.Identity, center);
+        _query.CollisionMask = layers;
 
-        var hits = context.GetWorld3D().DirectSpaceState.IntersectShape(query, maxResults: 64);
+        // A pull can easily overlap more than the default 32 results.
+        var hits = context.GetWorld3D().DirectSpaceState.IntersectShape(_query, maxResults: 64);
+
+        // The answer is let go of as soon as it is read. Each result is an engine collection with a
+        // finalizer, and left to the collector every one of them outlived the cheap collection.
+        using var answer = (Godot.Collections.Array)hits;
 
         foreach (var hit in hits)
         {
-            if (hit["collider"].AsGodotObject() is not Node3D body) continue;
+            using var result = hit;
 
-            var combatant = body.GetNodeOrNull<Combatant>("Combatant");
+            if (result[ColliderKey].AsGodotObject() is not Node3D body) continue;
+
+            var combatant = body.GetNodeOrNull<Combatant>(CombatantPath);
             if (combatant is { IsAlive: true } && !results.Contains(combatant))
             {
                 results.Add(combatant);

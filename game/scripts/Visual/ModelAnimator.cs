@@ -121,6 +121,7 @@ public partial class ModelAnimator : Node
     {
         _player = model.FindChildren("*", "AnimationPlayer", true, false)
             .OfType<AnimationPlayer>().FirstOrDefault();
+        _looping = "";
 
         if (_player is null) return;
 
@@ -194,7 +195,7 @@ public partial class ModelAnimator : Node
 
         _dead = true;
         _player.GetAnimation(clip).LoopMode = Animation.LoopModeEnum.None;
-        _player.Play(clip);
+        PlayClip(clip);
         return _player.GetAnimation(clip).Length;
     }
 
@@ -250,7 +251,7 @@ public partial class ModelAnimator : Node
 
         if (clip.Length == 0) return 0;
 
-        _player.Play(clip);
+        PlayClip(clip);
         _attackFor = _player.GetAnimation(clip).Length;
 
         return _attackFor;
@@ -410,7 +411,7 @@ public partial class ModelAnimator : Node
         _flinch = false;
         drawing.LoopMode = Animation.LoopModeEnum.None;
         loosing.LoopMode = Animation.LoopModeEnum.None;
-        _player.Play(draw, customBlend: 0.05, customSpeed: speed);
+        PlayClip(draw, customBlend: 0.05, customSpeed: speed);
         _player.Seek(0, update: true);
 
         _attackFor = drawing.Length / speed;
@@ -443,7 +444,7 @@ public partial class ModelAnimator : Node
         _flinch = false;
         _then = null;
         animation.LoopMode = Animation.LoopModeEnum.None;
-        _player.Play(clip, customBlend: 0.08, customSpeed: (float)speed);
+        PlayClip(clip, customBlend: 0.08, customSpeed: (float)speed);
         _player.Seek(0, update: true);
 
         _attackFor = length / speed;
@@ -462,7 +463,7 @@ public partial class ModelAnimator : Node
 
         if (clip.Length == 0) return Attack();
 
-        _player.Play(clip);
+        PlayClip(clip);
         _attackFor = System.Math.Min(_player.GetAnimation(clip).Length, 0.9);
 
         return _attackFor;
@@ -485,7 +486,7 @@ public partial class ModelAnimator : Node
         var length = _player.GetAnimation(clip).Length;
         var speed = seconds > 0.01 ? (float)(length / seconds) : 1f;
 
-        _player.Play(clip, customSpeed: speed);
+        PlayClip(clip, customSpeed: speed);
         _attackFor = seconds;
 
         return true;
@@ -508,7 +509,7 @@ public partial class ModelAnimator : Node
         if (clip.Length == 0) return false;
 
         _player.GetAnimation(clip).LoopMode = Animation.LoopModeEnum.Linear;
-        _player.Play(clip);
+        PlayClip(clip);
         _attackFor = seconds;
         return true;
     }
@@ -522,7 +523,7 @@ public partial class ModelAnimator : Node
 
         if (clip.Length == 0) return Attack();
 
-        _player.Play(clip);
+        PlayClip(clip);
         _attackFor = _player.GetAnimation(clip).Length;
         return _attackFor;
     }
@@ -546,7 +547,7 @@ public partial class ModelAnimator : Node
 
         if (clip.Length == 0) return;
 
-        _player.Play(clip);
+        PlayClip(clip);
         _attackFor = System.Math.Min(_player.GetAnimation(clip).Length, 0.4);
         _flinch = true;
     }
@@ -573,7 +574,7 @@ public partial class ModelAnimator : Node
         if (_then is { } next)
         {
             _then = null;
-            _player.Play(next.Clip, customBlend: 0.03, customSpeed: next.Speed);
+            PlayClip(next.Clip, customBlend: 0.03, customSpeed: next.Speed);
             _attackFor = next.Seconds;
             return;
         }
@@ -591,10 +592,26 @@ public partial class ModelAnimator : Node
         Play(speed <= MovingAbove ? idle : speed < WalkingBelow ? _walk : run);
     }
 
+    /// <summary>The stand, walk or run loop last started by <see cref="Play"/>; empty once anything else plays.</summary>
+    private string _looping = "";
+
+    /// <remarks>
+    /// Remembers which loop it started rather than asking the player which clip is current
+    /// (2026-10-09): the answer comes back as a new engine string every time, and every creature
+    /// asked every frame.
+    /// </remarks>
     private void Play(string name)
     {
-        if (name.Length == 0 || _player is null || _player.CurrentAnimation == name) return;
+        if (name.Length == 0 || _player is null || (name == _looping && _player.IsPlaying())) return;
 
         _player.Play(name);
+        _looping = name;
+    }
+
+    /// <summary>Any clip other than the loops: a blow, a flinch, a cast, a fall.</summary>
+    private void PlayClip(string clip, double customBlend = -1, float customSpeed = 1f)
+    {
+        _looping = "";
+        _player!.Play(clip, customBlend, customSpeed);
     }
 }

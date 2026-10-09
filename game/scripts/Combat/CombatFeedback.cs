@@ -123,6 +123,9 @@ public partial class CombatFeedback : Node3D
 
     private static readonly Color HealColor = new("7ee07a");
 
+    /// <summary>The crit mark under every number, asked for by a path made once rather than once a frame.</summary>
+    private static readonly NodePath CritPath = "Crit";
+
     private static readonly Color YangColor = new("f0c96a");
 
     /// <summary>
@@ -172,7 +175,7 @@ public partial class CombatFeedback : Node3D
 
         // A critical blow (2026-10-02): its own colour, and a burst beside the number. The label
         // faces the camera in its shader, so the burst is set to its left as the camera sees it.
-        var mark = label.GetNode<Sprite3D>("Crit");
+        var mark = label.GetNode<Sprite3D>(CritPath);
 
         mark.Visible = burst;
 
@@ -267,7 +270,7 @@ public partial class CombatFeedback : Node3D
             label.GlobalPosition = origin + (drift * eased);
             label.Modulate = label.Modulate with { A = t < 0.66f ? 1f : 1f - ((t - 0.66f) / 0.34f) };
 
-            if (label.GetNode<Sprite3D>("Crit") is { Visible: true } mark) mark.Modulate = mark.Modulate with { A = label.Modulate.A };
+            if (label.GetNode<Sprite3D>(CritPath) is { Visible: true } mark) mark.Modulate = mark.Modulate with { A = label.Modulate.A };
 
             _active[i] = (label, elapsed, origin, drift);
         }
