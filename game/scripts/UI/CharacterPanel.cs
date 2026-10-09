@@ -46,6 +46,8 @@ public partial class CharacterPanel : CanvasLayer
     private GridContainer _derived = null!;
     private bool _counted;
     private WardrobePanel _wardrobe = null!;
+    private StatsPanel _stats = null!;
+    private Button _arrow = null!;
     private Control _root = null!;
 
     public override void _Ready()
@@ -57,6 +59,23 @@ public partial class CharacterPanel : CanvasLayer
         // The wardrobe (REF-23) opens beside this window, from its button.
         _wardrobe = new WardrobePanel { Name = "WardrobePanel", Left = 24 + Width + 8 };
         AddChild(_wardrobe);
+
+        // Every statistic, by kind (2026-10-09): opened by the arrow on this window's right edge.
+        _stats = new StatsPanel { Name = "StatsPanel", Beside = () => _root.GetGlobalRect() };
+        AddChild(_stats);
+
+        _arrow = new Button { Text = "▶", TooltipText = L10n.T("All statistics"), CustomMinimumSize = new Vector2(22, 64), FocusMode = Control.FocusModeEnum.None };
+        _arrow.AddThemeStyleboxOverride("normal", Box(new Color(0.20f, 0.14f, 0.07f), 1, 0, edge: Frame));
+        _arrow.AddThemeStyleboxOverride("hover", Box(new Color(0.28f, 0.19f, 0.09f), 1, 0, edge: Gold));
+        _arrow.AddThemeStyleboxOverride("pressed", Box(new Color(0.28f, 0.19f, 0.09f), 1, 0, edge: Gold));
+        _arrow.AddThemeStyleboxOverride("focus", new StyleBoxEmpty());
+        _arrow.AddThemeColorOverride("font_color", Gold);
+        _arrow.AddThemeFontSizeOverride("font_size", 12);
+        _arrow.Pressed += ToggleStats;
+        AddChild(_arrow);
+
+        // A press on it is the arrow's, never a walk order; it counts only while it shows.
+        UiState.AddHud(_arrow);
         CallDeferred(nameof(Bind));
     }
 
@@ -86,7 +105,7 @@ public partial class CharacterPanel : CanvasLayer
             return;
         }
 
-        if (Visible && !_wardrobe.IsOpen && @event.IsActionPressed(GameActions.Cancel))
+        if (Visible && !_wardrobe.IsOpen && !_stats.IsOpen && @event.IsActionPressed(GameActions.Cancel))
         {
             SetOpen(false);
             GetViewport().SetInputAsHandled();
@@ -103,8 +122,31 @@ public partial class CharacterPanel : CanvasLayer
 
         // The wardrobe goes with the window it belongs to.
         if (!open && _wardrobe.IsOpen) _wardrobe.SetOpen(false);
+        if (!open && _stats.IsOpen) _stats.SetOpen(false);
 
         if (open) Refresh();
+    }
+
+    /// <summary>The statistics beside the window, or not; they take the wardrobe's place.</summary>
+    private void ToggleStats()
+    {
+        var open = !_stats.IsOpen;
+
+        if (open && _wardrobe.IsOpen) _wardrobe.SetOpen(false);
+
+        _stats.SetOpen(open);
+        _arrow.Text = open ? "◀" : "▶";
+    }
+
+    // The arrow rides the window's right edge, halfway down, wherever it has been dragged.
+    public override void _Process(double delta)
+    {
+        if (!Visible) return;
+
+        var rect = _root.GetGlobalRect();
+
+        _arrow.Position = new Vector2(rect.End.X - 1, rect.Position.Y + ((rect.Size.Y - _arrow.Size.Y) * 0.5f));
+        _arrow.Text = _stats.IsOpen ? "◀" : "▶";
     }
 
     // Freed while open, it lets go of its place on screen.
@@ -172,7 +214,7 @@ public partial class CharacterPanel : CanvasLayer
 
         var note = new Label
         {
-            Text = L10n.T("The caps do the balancing: crit stops at 50%, evasion at 30%, mitigation at 75%. Any shrine refunds your points, free."),
+            Text = L10n.T("The caps do the balancing: crit stops at 75%, evasion at 30%, mitigation at 75%. Any shrine refunds your points, free."),
             AutowrapMode = TextServer.AutowrapMode.WordSmart,
             CustomMinimumSize = new Vector2(Width - 28, 0),
         };
@@ -190,7 +232,11 @@ public partial class CharacterPanel : CanvasLayer
         wardrobe.AddThemeColorOverride("font_color", new Color(0.90f, 0.88f, 0.82f));
         wardrobe.AddThemeColorOverride("font_hover_color", Gold);
         wardrobe.AddThemeFontSizeOverride("font_size", 13);
-        wardrobe.Pressed += () => _wardrobe.SetOpen(!_wardrobe.IsOpen);
+        wardrobe.Pressed += () =>
+        {
+            if (!_wardrobe.IsOpen && _stats.IsOpen) _stats.SetOpen(false);
+            _wardrobe.SetOpen(!_wardrobe.IsOpen);
+        };
         inner.AddChild(wardrobe);
     }
 
