@@ -18,7 +18,7 @@ COMANDI
 -------
 Clic sinistro / WASD   muoversi (clic su un nemico per attaccarlo)
 Spazio                 attacco
-Shift                  guardia (niente effetti negativi mentre e' alzata)
+Shift                  abilita' difensiva della classe (guardia, schivata, sigillo...)
 1 - 6                  abilita'
 Q                      fiaschetta
 Z                      raccogli oggetti
