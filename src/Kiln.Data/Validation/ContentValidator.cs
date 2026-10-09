@@ -182,6 +182,11 @@ public static class ContentValidator
             {
                 Ref(table.SourceFile, table.Id, entry.Item, db.Items, "item");
             }
+
+            foreach (var prize in table.Prize)
+            {
+                Ref(table.SourceFile, table.Id, prize, db.Items, "prize item");
+            }
         }
 
         foreach (var path in db.UpgradePaths.Values)
@@ -1953,6 +1958,11 @@ public static class ContentValidator
         foreach (var shard in db.Shards.Values.Where(s => s.BossChance is < 0 or > 1))
         {
             report.Error("shards", shard.SourceFile, $"'{shard.Id}' has boss_chance {shard.BossChance}.", "A chance from 0 to 1.");
+        }
+
+        foreach (var table in db.DropTables.Values.Where(t => t.Prize.Length > 0 && t.PrizeChance is <= 0 or > 1))
+        {
+            report.Error("picks", table.SourceFile, $"'{table.Id}' gives its prize with chance {table.PrizeChance}.", "A chance above 0 and at most 1.");
         }
 
         foreach (var table in db.DropTables.Values.Where(t => t.Picks != 0))

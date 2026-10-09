@@ -54,6 +54,14 @@ public static class FoeAdvice
             lines.Add($"  • {Items.GameItems.NameOfId(entry.Item)}{count}{mark}  {chance.ToString(chance < 1 ? "0.##" : "0.#", culture)}%");
         }
 
+        if (table.Prize.Length > 0)
+        {
+            var chance = System.Math.Min(1.0, table.PrizeChance * share) * 100;
+            var names = string.Join(", ", table.Prize.Select(Items.GameItems.NameOfId));
+
+            lines.Add(L10n.F("One of {0}  {1}%", names, chance.ToString("0.#", culture)));
+        }
+
         if (table.Picks > 0)
         {
             lines.Add(L10n.F("★ {0} more drawn among these every time.", System.Math.Max(1, (int)System.Math.Round(table.Picks * share))));

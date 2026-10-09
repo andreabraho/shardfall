@@ -172,6 +172,12 @@ public static class LootRoller
             items.Add(Mint(entry.Item, count, rng));
         }
 
+        // The prize: one relic of the few named, or none — never two (2026-10-09).
+        if (table.Prize.Length > 0 && rng.Chance(table.PrizeChance * share))
+        {
+            items.Add(Mint(table.Prize[rng.NextIntInclusive(0, table.Prize.Length - 1)], 1, rng));
+        }
+
         return new LootRoll(yang, items);
     }
 

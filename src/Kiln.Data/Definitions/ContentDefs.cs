@@ -916,6 +916,13 @@ public sealed class DropTableDef : ContentDefBase
     /// (REF-05). Entries with no weight — its materials — are never drawn.
     /// </summary>
     public int Picks { get; init; }
+
+    /// <summary>
+    /// One relic drawn evenly from these with <see cref="PrizeChance"/> (2026-10-09): the tower's bosses
+    /// give one golden piece a third, half and every time — never two, as separate chances could.
+    /// </summary>
+    public string[] Prize { get; init; } = [];
+    public double PrizeChance { get; init; } = 1.0;
     public int[] YangRange { get; init; } = [0, 0];
 }
 

@@ -1310,7 +1310,9 @@ public partial class EnemyBrain : CharacterBody3D
             ? Target.GlobalPosition
             : GlobalPosition;
 
-        if (ability.Telegraph is { } tel && _telegraph is not null)
+        // The telegraph joins the tree a frame late (deferred): a blow begun on the first tick goes unpainted
+        // rather than throwing.
+        if (ability.Telegraph is { } tel && _telegraph is not null && _telegraph.IsNodeReady())
         {
             _telegraph.Begin(
                 tel.Shape,
