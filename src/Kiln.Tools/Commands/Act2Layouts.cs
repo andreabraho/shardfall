@@ -173,7 +173,7 @@ public static class Act2Layouts
             .Spawn("StagGuard", "spf_stonewood_guard", -44, 36, 8)
             .Spawn("Stag", "spf_stonewood_stag", -56, 50, 6)
             // More camps of creatures in the empty ground (2026-10-08, at your call), the first by the camp for a player just come.
-            .Spawn("WoodsEdge", "spf_stonewood_edge", 50, 40)
+            .Spawn("WoodsEdge", "spf_stonewood_edge", 52, -30)
             .Spawn("SouthHollow", "spf_stonewood_south", -12, 28)
             .Spawn("EastCrags", "spf_stonewood_east_crags", 68, -40)
             .Spawn("WestRing", "spf_stonewood_west_ring", -40, -28)
@@ -278,7 +278,7 @@ public static class Act2Layouts
             .Spawn("KingsGuard", "spf_mire_guard", 38, 44, 8)
             .Spawn("King", "spf_mire_king", 56, 46, 6)
             // More camps of creatures in the empty ground (2026-10-08, at your call).
-            .Spawn("CampBanks", "spf_mire_camp_banks", -68, 20)
+            .Spawn("CampBanks", "spf_mire_camp_banks", -70, 12)
             .Spawn("MidMire", "spf_mire_middle", 0, 4)
             .Spawn("NorthFen", "spf_mire_north_fen", -36, -36)
             .Way("Stonewood", "zone_stonewood", -74, 74)
@@ -381,7 +381,7 @@ public static class Act2Layouts
             .Spawn("WarlordGuard", "spf_cinder_guard", -46, -42, 8)
             .Spawn("Warlord", "spf_cinder_warlord", -58, -56, 6)
             // More camps of creatures in the empty ground (2026-10-08, at your call).
-            .Spawn("CampScorch", "spf_cinder_camp_scorch", 36, 32)
+            .Spawn("CampScorch", "spf_cinder_camp_scorch", 30, 26)
             .Spawn("MidCinders", "spf_cinder_middle", -8, -4)
             .Spawn("WestVents", "spf_cinder_west_vents", -48, 44)
             .Way("Mire", "zone_drowned_mire", 74, 74)

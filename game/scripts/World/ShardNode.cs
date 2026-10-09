@@ -483,8 +483,8 @@ public partial class ShardNode : StaticBody3D
     /// <remarks>
     /// Waits for the navigation mesh, which is only ready a frame or two after the map loads.
     /// A map crowded enough to turn every try down loosens the rules rather than leave the
-    /// stone out of the world: first the clearance, then the camps and the other stones — but
-    /// never safe ground. Its whole zone stays off it, or the fight starts in the village
+    /// stone out of the world: first the room round it, then the camps and the other stones — but
+    /// never safe ground, and never inside a wall or a rock. Its whole zone stays off it, or the fight starts in the village
     /// (2026-09-25: the loosest try had let a stone stand 22 m from Ember Hollow's square).
     /// </remarks>
     private bool Roam()
@@ -513,7 +513,9 @@ public partial class ShardNode : StaticBody3D
             if (!loose && !FarFromEverything(point)) continue;
             if (loose && !loosest && (Near(point, "zone_gates", 24f) || Near(point, "zone_arrivals", 24f) || Near(point, "shrines", 16f))) continue;
             if (!loosest && !FarFromFields(point, loose ? FieldGapLoose : FieldGap)) continue;
-            if (strict && !Clear(point)) continue;
+            // Never in a wall, a rock or a house, however crowded the map (2026-10-09, at your call: stones stood inside
+            // walls once the looser tries began, which skipped this): only how much room it is given eases.
+            if (!Clear(point, strict ? 3.5f : 2.2f)) continue;
 
             GlobalPosition = point;
             GD.Print($"[shard] {Name} ({ShardId}) stands at {point.X:F0}, {point.Z:F0}");
@@ -587,12 +589,12 @@ public partial class ShardNode : StaticBody3D
     }
 
     /// <summary>Nothing solid where the stone would stand: no house, rock, tree or wall.</summary>
-    private bool Clear(Vector3 point)
+    private bool Clear(Vector3 point, float room)
     {
         var query = new PhysicsShapeQueryParameters3D
         {
-            Shape = new SphereShape3D { Radius = 2.2f },
-            Transform = new Transform3D(Basis.Identity, point + (Vector3.Up * 2.5f)),
+            Shape = new SphereShape3D { Radius = room },
+            Transform = new Transform3D(Basis.Identity, point + (Vector3.Up * (room + 0.3f))),
             CollisionMask = Foundation.Layers.World,
             Exclude = [GetRid()],
         };

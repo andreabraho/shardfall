@@ -1165,7 +1165,7 @@ script = ExtResource("11_arrival")
 FromZone = "zone_broken_gate"
 
 [node name="CampNest" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 68, 0, 16)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 68, 0, 10)
 script = ExtResource("5_spawnfield")
 FieldId = "spf_ridge_camp_nest"
 

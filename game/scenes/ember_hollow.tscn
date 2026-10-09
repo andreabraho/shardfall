@@ -802,7 +802,7 @@ script = ExtResource("3_kit")
 PieceId = "kit_marker_post"
 
 [node name="FoxCampSouthWest" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 0, 36)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -46, 0, 40)
 script = ExtResource("5_spawnfield")
 FieldId = "spf_hollow_foxes_sw"
 
