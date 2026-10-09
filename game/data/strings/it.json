@@ -1299,5 +1299,6 @@
   "{0:+0.#%;-0.#%}": "{0:+0.#%;-0.#%}",
   "{0:0} s": "{0:0} s",
   "{0:P1}  (no cap)": "{0:P1}  (senza limite)",
-  "×{0:F2}": "×{0:F2}"
+  "×{0:F2}": "×{0:F2}",
+  "Grows with INT: up to {0:P0} more at {1} INT. With yours: {2:P1}.": "Cresce con l'INT: fino a {0:P0} in più con {1} INT. Con la tua: {2:P1}."
 }

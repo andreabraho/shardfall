@@ -164,6 +164,13 @@ public static class SkillText
             lines.Add(L10n.F("Grows with INT: {0:0.##}% more a point, up to {1:P0}. With yours: {2:P1}.", per * 100, cap, Attributes.SeerScaled(skill.Magnitude, Mind(), per, cap)));
         }
 
+        // The Dragon's Eye: its rank's share, and up to a tenth more from intelligence (2026-10-09).
+        if (def.Class == CharacterClass.Shaman && def.Applies?.Kind == "focus")
+        {
+            lines.Add(L10n.F("Grows with INT: up to {0:P0} more at {1} INT. With yours: {2:P1}.",
+                Attributes.SeerEyeIntCap, Kiln.Core.Progression.CharacterProgression.MaxAttribute, Attributes.SeerEye(skill.Magnitude, Mind())));
+        }
+
         // The Shadow Step (CLS-03): a channelled skill that goes somewhere.
         // The Backlash (CLS-05): a blow turned back.
         if (def.CastType == "channel" && def.Motion == "counter")

@@ -129,17 +129,20 @@ public class RealContentTests
     /// fails the build instead of shipping.
     /// </summary>
     [Fact]
-    public void TheDragonsEyeClimbsFromAQuarterToThreeFifths()
+    public void TheDragonsEyeClimbsToAQuarterThenThreeFifthsWithTheMindFull()
     {
-        // 2026-10-09: 25% at its first point, 60% at Perfect, more at every step between.
+        // 2026-10-09: 15% at its first point, 50% at Perfect, more at every step between — and with
+        // the most intelligence points can buy, 25% to 60%.
         var eye = ContentLoader.LoadFromDirectory(DataRoot()).Database.Skills["skl_dragon_eye"];
         var steps = Enumerable.Range(1, 7).Select(p => Kiln.Data.Definitions.ResolvedSkill.For(eye, Kiln.Core.Progression.MasteryRank.Normal, p).Magnitude)
             .Concat(new[] { Kiln.Core.Progression.MasteryRank.Master, Kiln.Core.Progression.MasteryRank.GrandMaster, Kiln.Core.Progression.MasteryRank.Perfect }
                 .Select(r => Kiln.Data.Definitions.ResolvedSkill.For(eye, r, 7).Magnitude))
             .ToList();
 
-        Assert.Equal(0.25, steps[0], 6);
-        Assert.Equal(0.60, steps[^1], 6);
+        Assert.Equal(0.15, steps[0], 6);
+        Assert.Equal(0.50, steps[^1], 6);
+        Assert.Equal(0.25, Attributes.SeerEye(steps[0], Kiln.Core.Progression.CharacterProgression.MaxAttribute), 6);
+        Assert.Equal(0.60, Attributes.SeerEye(steps[^1], Kiln.Core.Progression.CharacterProgression.MaxAttribute), 6);
         for (var i = 1; i < steps.Count; i++) Assert.True(steps[i] > steps[i - 1], $"step {i}: {steps[i]} after {steps[i - 1]}");
     }
 

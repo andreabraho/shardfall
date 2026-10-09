@@ -594,6 +594,7 @@ public static class BalanceCommand
                 var magnitude = skill.Magnitude;
 
                 if (stats.Class == CharacterClass.Shaman && kind == "fortify") magnitude = Attributes.SeerScaled(magnitude, mind, Attributes.SeerBlessingPerInt, Attributes.SeerBlessingCap);
+                if (stats.Class == CharacterClass.Shaman && kind == "focus") magnitude = Attributes.SeerEye(magnitude, mind);
 
                 switch (kind)
                 {
