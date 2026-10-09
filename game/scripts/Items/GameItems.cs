@@ -36,7 +36,7 @@ public static class GameItems
     /// report impossible to reproduce.
     /// </summary>
     public static DeterministicRng LootRng =>
-        _lootRng ??= new DeterministicRng(GameSession.Seed).Fork("loot");
+        _lootRng ??= new DeterministicRng(GameSession.Seed ^ GameSession.Salt).Fork("loot");
 
     /// <summary>
     /// Crafting's stream — the anvil, the socket bench, the reroll table.
@@ -48,7 +48,7 @@ public static class GameItems
     /// </para>
     /// </summary>
     public static DeterministicRng CraftRng =>
-        _craftRng ??= new DeterministicRng(GameSession.Seed).Fork("craft");
+        _craftRng ??= new DeterministicRng(GameSession.Seed ^ GameSession.Salt).Fork("craft");
 
     /// <summary>
     /// Encounters — shard modifier rolls and wave composition. Separate from loot so arming a
@@ -56,7 +56,7 @@ public static class GameItems
     /// reproduce from a seed.
     /// </summary>
     public static DeterministicRng EncounterRng =>
-        _encounterRng ??= new DeterministicRng(GameSession.Seed).Fork("encounter");
+        _encounterRng ??= new DeterministicRng(GameSession.Seed ^ GameSession.Salt).Fork("encounter");
 
     private static DeterministicRng? _craftRng;
     private static DeterministicRng? _encounterRng;
@@ -65,11 +65,17 @@ public static class GameItems
     {
         _catalogue = new ItemCatalogue(GameContent.Database);
         _factory = new ItemFactory(_catalogue, _catalogue);
+        ResetDice();
+
+        GD.Print($"[items] catalogue ready — {_catalogue.Specs.Count} item kinds");
+    }
+
+    /// <summary>Starts loot, the anvil and encounters afresh: a new character, or one loaded.</summary>
+    public static void ResetDice()
+    {
         _lootRng = null;
         _craftRng = null;
         _encounterRng = null;
-
-        GD.Print($"[items] catalogue ready — {_catalogue.Specs.Count} item kinds");
     }
 
     public static ItemSpec? Spec(string id) => _catalogue is not null && _catalogue.TryGet(id, out var spec) ? spec : null;
