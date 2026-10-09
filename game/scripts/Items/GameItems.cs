@@ -138,6 +138,8 @@ public static class LootRoller
     {
         if (table is null) return new LootRoll(0, []);
 
+        if (table.Whole) share = 1.0;
+
         var yang = table.YangRange.Length > 1
             ? (long)System.Math.Round(rng.NextIntInclusive(table.YangRange[0], table.YangRange[1]) * share)
             : 0;
@@ -170,6 +172,12 @@ public static class LootRoller
                 : 1;
 
             items.Add(Mint(entry.Item, count, rng));
+        }
+
+        // The prize: one relic of the few named, or none — never two (2026-10-09).
+        if (table.Prize.Length > 0 && rng.Chance(table.PrizeChance * share))
+        {
+            items.Add(Mint(table.Prize[rng.NextIntInclusive(0, table.Prize.Length - 1)], 1, rng));
         }
 
         return new LootRoll(yang, items);

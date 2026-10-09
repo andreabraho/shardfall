@@ -42,6 +42,8 @@ public static class FoeAdvice
     {
         if (tableId is null || !GameContent.IsLoaded || !GameContent.Database.DropTables.TryGetValue(tableId, out var table)) return "";
 
+        if (table.Whole) share = 1.0;
+
         var lines = new System.Collections.Generic.List<string> { L10n.T("Drops:") };
         var culture = System.Globalization.CultureInfo.InvariantCulture;
 
@@ -52,6 +54,14 @@ public static class FoeAdvice
             var count = entry.CountRange.Length > 1 && entry.CountRange[1] > 1 ? $" ×{entry.CountRange[0]}–{entry.CountRange[1]}" : "";
 
             lines.Add($"  • {Items.GameItems.NameOfId(entry.Item)}{count}{mark}  {chance.ToString(chance < 1 ? "0.##" : "0.#", culture)}%");
+        }
+
+        if (table.Prize.Length > 0)
+        {
+            var chance = System.Math.Min(1.0, table.PrizeChance * share) * 100;
+            var names = string.Join(", ", table.Prize.Select(Items.GameItems.NameOfId));
+
+            lines.Add(L10n.F("One of {0}  {1}%", names, chance.ToString("0.#", culture)));
         }
 
         if (table.Picks > 0)
