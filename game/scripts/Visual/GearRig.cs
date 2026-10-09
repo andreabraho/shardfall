@@ -230,10 +230,13 @@ public sealed class GearRig
 
     /// <summary>
     /// A ribbon behind the blade in hand (REF-21), from <paramref name="delay"/> seconds from
-    /// now for <paramref name="seconds"/>. Nothing with no blade drawn.
+    /// now for <paramref name="seconds"/>. Nothing with no blade drawn, and nothing behind a bow
+    /// (2026-10-09, at your call: a bow does not cut, and the Archer's blows drew a sword's white arc).
     /// </summary>
     public void Trail(double delay, double seconds, Color colour)
     {
+        if (Stance == "bow") return;
+
         var blade = _twoHand is { Visible: true } ? _twoHand : _oneHand is { Visible: true } ? _oneHand : null;
 
         BladeTrail.On(blade)?.Emit(delay, seconds, colour);
