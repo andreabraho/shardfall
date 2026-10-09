@@ -327,7 +327,7 @@ public static class SkillText
             "hex" => L10n.F("+{0:0} attack power and +{1:P0} average damage on your blows (not your skills) for {2:0.#} s, and as much average damage again as your gear gives; {3:0.#} more attack for each point of INT; {4:P0} of the damage of each blow comes back as health.", magnitude, skill.AverageDamage, duration, Attributes.AsuraBladePerInt, applies.Magnitude),
             "mail" => L10n.F("Take {0:P0} less damage for {1:0.#} s, moving {2:P0} slower; {3:P0} of every blow taken from close by is thrown back.", magnitude, duration, StatusEffectSet.FortifyDrag, applies.Magnitude),
             "haste" => L10n.F("Move {0:P0} faster for {1:0.#} s, and one blow in ten finds nothing.", magnitude, duration),
-            "focus" => L10n.F("+{0:P0} critical chance for {1:0.#} s.", magnitude, duration),
+            "focus" => L10n.F("+{0:P0} critical chance for {1:0.#} s, with no 75% ceiling.", magnitude, duration),
             "heal" => L10n.F("Heals {0:P0} of your maximum health at once.", magnitude),
             _ => "",
         };

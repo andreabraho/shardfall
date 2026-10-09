@@ -152,6 +152,28 @@ public class DamagePipelineTests
     }
 
     [Fact]
+    public void TheDragonsEye_LiftsTheCritCap()
+    {
+        // 2026-10-09: while the Eye is open a crit chance past 75% counts in full.
+        var attacker = Attacker();
+        attacker.Modifiers.CritChance = 1.0;
+
+        var request = Request(attacker, Defender()) with { CritUncapped = true, BonusCritChance = 0.15 };
+        int crits = 0, hits = 0;
+
+        for (ulong seed = 0; seed < 500; seed++)
+        {
+            var result = DamagePipeline.Resolve(request, new DeterministicRng(seed));
+            if (result.Evaded) continue;
+
+            hits++;
+            if (result.Critical) crits++;
+        }
+
+        Assert.Equal(hits, crits);
+    }
+
+    [Fact]
     public void CanCritFalse_NeverCrits()
     {
         var attacker = Attacker();

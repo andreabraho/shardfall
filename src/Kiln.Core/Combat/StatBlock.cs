@@ -78,6 +78,9 @@ public sealed class StatBlock
 
     public double CritChance => Math.Clamp(0.03 + (Attributes.Dex * 0.0016) + Modifiers.CritChance, 0, CritChanceCap);
 
+    /// <summary>The crit chance with no ceiling but certainty: what the Dragon's Eye lets through.</summary>
+    public double UncappedCritChance => Math.Clamp(0.03 + (Attributes.Dex * 0.0016) + Modifiers.CritChance, 0, 1);
+
     public double CritDamage => 1.50 + Modifiers.CritDamage;
 
     public double PierceChance => Math.Clamp((Attributes.Dex * 0.0011) + Modifiers.PierceChance, 0, PierceChanceCap);
