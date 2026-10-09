@@ -1178,3 +1178,113 @@ FieldId = "spf_ridge_south_dunes"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -68)
 script = ExtResource("5_spawnfield")
 FieldId = "spf_ridge_north_ruins"
+
+[node name="SouthRidge1" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-1.000000, 0, -0.000000, 0, 1, 0, 0.000000, 0, -1.000000, 17.85, 4, 82.00)
+script = ExtResource("3_kit")
+PieceId = "kit_un_mesa"
+
+[node name="SouthRidge2" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.866025, 0, -0.500000, 0, 1, 0, 0.500000, 0, 0.866025, 19.39, 4, 74.00)
+script = ExtResource("3_kit")
+PieceId = "kit_un_mesa"
+
+[node name="SouthRidge3" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.500000, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.500000, 17.42, 4, 66.00)
+script = ExtResource("3_kit")
+PieceId = "kit_un_mesa"
+
+[node name="SouthRidgeFoot1" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.866025, 0, 0.500000, 0, 1, 0, -0.500000, 0, -0.866025, 11.23, 1.2, 66.00)
+script = ExtResource("3_kit")
+PieceId = "kit_un_rock"
+
+[node name="SouthRidge4" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.000000, 0, -1.000000, 0, 1, 0, 1.000000, 0, 0.000000, 18.99, 4, 58.00)
+script = ExtResource("3_kit")
+PieceId = "kit_un_mesa"
+
+[node name="SouthRidge5" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.866025, 0, 0.500000, 0, 1, 0, -0.500000, 0, 0.866025, 17.59, 4, 50.00)
+script = ExtResource("3_kit")
+PieceId = "kit_un_mesa"
+
+[node name="SouthRidgeFoot2" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.500000, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.500000, 9.75, 1.2, 50.00)
+script = ExtResource("3_kit")
+PieceId = "kit_un_rock"
+
+[node name="SouthRidge6" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.500000, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.500000, 18.92, 4, 42.00)
+script = ExtResource("3_kit")
+PieceId = "kit_un_mesa"
+
+[node name="SouthRidge7" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, -0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 17.13, 4, 34.00)
+script = ExtResource("3_kit")
+PieceId = "kit_un_mesa"
+
+[node name="SouthRidgeFoot3" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.866025, 0, 0.500000, 0, 1, 0, -0.500000, 0, 0.866025, 26.34, 1.2, 34.00)
+script = ExtResource("3_kit")
+PieceId = "kit_un_rock"
+
+[node name="SouthRidge8" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.500000, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.500000, 18.38, 4, 26.00)
+script = ExtResource("3_kit")
+PieceId = "kit_un_mesa"
+
+[node name="SouthRidge9" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.866025, 0, -0.500000, 0, 1, 0, 0.500000, 0, -0.866025, 19.19, 4, 18.00)
+script = ExtResource("3_kit")
+PieceId = "kit_un_mesa"
+
+[node name="NorthRidge1" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.866025, 0, 0.500000, 0, 1, 0, -0.500000, 0, 0.866025, 16.08, 4, -82.00)
+script = ExtResource("3_kit")
+PieceId = "kit_un_mesa"
+
+[node name="NorthRidge2" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.000000, 0, 1.000000, 0, 1, 0, -1.000000, 0, -0.000000, 16.48, 4, -74.00)
+script = ExtResource("3_kit")
+PieceId = "kit_un_mesa"
+
+[node name="NorthRidge3" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-1.000000, 0, -0.000000, 0, 1, 0, 0.000000, 0, -1.000000, 16.09, 4, -66.00)
+script = ExtResource("3_kit")
+PieceId = "kit_un_mesa"
+
+[node name="NorthRidge4" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.866025, 0, -0.500000, 0, 1, 0, 0.500000, 0, 0.866025, 15.20, 4, -58.00)
+script = ExtResource("3_kit")
+PieceId = "kit_un_mesa"
+
+[node name="NorthRidgeFoot1" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-1.000000, 0, -0.000000, 0, 1, 0, 0.000000, 0, -1.000000, 23.36, 1.2, -58.00)
+script = ExtResource("3_kit")
+PieceId = "kit_un_rock"
+
+[node name="NorthRidge5" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.000000, 0, -1.000000, 0, 1, 0, 1.000000, 0, 0.000000, 16.52, 4, -50.00)
+script = ExtResource("3_kit")
+PieceId = "kit_un_mesa"
+
+[node name="NorthRidge6" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.500000, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.500000, 15.33, 4, -42.00)
+script = ExtResource("3_kit")
+PieceId = "kit_un_mesa"
+
+[node name="NorthRidge7" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.000000, 0, 1.000000, 0, 1, 0, -1.000000, 0, -0.000000, 15.95, 4, -34.00)
+script = ExtResource("3_kit")
+PieceId = "kit_un_mesa"
+
+[node name="NorthRidge8" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, -0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 16.61, 4, -26.00)
+script = ExtResource("3_kit")
+PieceId = "kit_un_mesa"
+
+[node name="NorthRidge9" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.500000, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.500000, 16.10, 4, -18.00)
+script = ExtResource("3_kit")
+PieceId = "kit_un_mesa"
