@@ -9,8 +9,8 @@ namespace Kiln.Tools.Commands;
 /// Demon Tower's are, each laid out for its floor's task in <c>game/data/zones/crypts.json</c>.
 /// </summary>
 /// <remarks>
-/// The tower's scene was written by a script that was never kept; this one is kept, beside act 2's maps, and
-/// <c>kiln scenes</c> writes and checks it with them. Change the layout here, never the scene.
+/// Kept beside act 2's maps and the tower (<see cref="TowerLayout"/>), and <c>kiln scenes</c> writes and checks it
+/// with them. Change the layout here, never the scene.
 /// <para>
 /// Every room is the tower's forty-metre hall in the crypts' stone, twenty-four metres under the one above. What
 /// differs is what stands inside it: a statue in the ossuary, a walled court with four doorways, seven marks in a

@@ -68,6 +68,25 @@ public static class ScenesCommand
             }
         }
 
+        // The Demon Tower (moved here 2026-10-09 from a script kept outside the repository): nine floors, one footprint.
+        {
+            var path = Path.Combine(scenes, TowerLayout.File + ".tscn");
+            var text = TowerLayout.Write(loaded.Database);
+
+            if (check)
+            {
+                var same = File.Exists(path) && File.ReadAllText(path).Replace("\r\n", "\n") == text;
+
+                Console.WriteLine($"  {TowerLayout.File}.tscn {(same ? "current" : "STALE")}");
+                if (!same) stale++;
+            }
+            else
+            {
+                File.WriteAllText(path, text);
+                Console.WriteLine($"  wrote {TowerLayout.File}.tscn — nine floors");
+            }
+        }
+
         if (stale > 0) Console.Error.WriteLine("  A scene is older than its layout: run `kiln scenes`.");
 
         return stale > 0 ? 1 : 0;
