@@ -157,10 +157,9 @@ public static class SkillText
         }
 
         // The Dragonseer's blessings grow with intelligence (CLS-06).
-        if (def.Class == CharacterClass.Shaman && (def.Applies?.Kind is "fortify" or "focus" || def.Id == Player.DefensiveAbility.SealId))
+        if (def.Class == CharacterClass.Shaman && (def.Applies?.Kind is "fortify" || def.Id == Player.DefensiveAbility.SealId))
         {
             var (per, cap) = def.Applies?.Kind == "fortify" ? (Attributes.SeerBlessingPerInt, Attributes.SeerBlessingCap)
-                : def.Applies?.Kind == "focus" ? (Attributes.SeerEyePerInt, Attributes.SeerEyeCap)
                 : (Attributes.SeerSealPerInt, Attributes.SeerSealCap);
             lines.Add(L10n.F("Grows with INT: {0:0.##}% more a point, up to {1:P0}. With yours: {2:P1}.", per * 100, cap, Attributes.SeerScaled(skill.Magnitude, Mind(), per, cap)));
         }

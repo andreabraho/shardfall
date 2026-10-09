@@ -57,11 +57,11 @@
     } },
 
   { "id": "skl_dragon_eye", "name": "$skill.skl_dragon_eye.name", "color": "#ffcf5a", "sound": "snd_skl_aura", "class": "shaman", "tree": "dragon", "suggested_level": 14, "mana_cost": 24, "cooldown": 40,
-    "cast_type": "instant", "targeting": "self", "radius": 0, "damage_coef": 0.00, "hits": 0, "motion": "raise", "duration": 30.0, "magnitude": 0.15,
-    "applies": { "kind": "focus", "magnitude": 0.15, "duration": 30.0, "chance": 1.0 },
+    "cast_type": "instant", "targeting": "self", "radius": 0, "damage_coef": 0.00, "hits": 0, "motion": "raise", "duration": 30.0, "magnitude": 0.25, "magnitude_per_point": 0.039,
+    "applies": { "kind": "focus", "magnitude": 0.25, "duration": 30.0, "chance": 1.0 },
     "mastery": {
-      "master":       { "magnitude": 0.18, "note": "$skill.skl_dragon_eye.m" },
-      "grand_master": { "duration": 36.0, "note": "$skill.skl_dragon_eye.g" },
-      "perfect":      { "cooldown": 34.0, "magnitude": 0.22, "note": "$skill.skl_dragon_eye.p" }
+      "master":       { "magnitude": 0.52, "note": "$skill.skl_dragon_eye.m" },
+      "grand_master": { "duration": 36.0, "magnitude": 0.56, "note": "$skill.skl_dragon_eye.g" },
+      "perfect":      { "cooldown": 34.0, "magnitude": 0.60, "note": "$skill.skl_dragon_eye.p" }
     } }
 ]

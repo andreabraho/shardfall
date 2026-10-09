@@ -572,7 +572,6 @@ public partial class SkillCaster : Node
             var mind = _self.Stats.Attributes.Int;
 
             if (kind == "fortify") skill = skill with { Magnitude = Attributes.SeerScaled(skill.Magnitude, mind, Attributes.SeerBlessingPerInt, Attributes.SeerBlessingCap) };
-            if (kind == "focus") skill = skill with { Magnitude = Attributes.SeerScaled(skill.Magnitude, mind, Attributes.SeerEyePerInt, Attributes.SeerEyeCap) };
         }
 
         // And so does everything of the Asura's (CLS-05, at your call).

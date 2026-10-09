@@ -54,15 +54,12 @@ public readonly record struct Attributes(int Str, int Dex, int Int, int Vit)
     /// <summary>
     /// What each point of intelligence adds to the Dragonseer's blessings (CLS-06, 2026-10-02, at
     /// your call: "all of its skills scale with INT, the critical and the damage reduced too") —
-    /// its fire already strikes with intelligence — and where each stops growing.
+    /// its fire already strikes with intelligence — and where each stops growing. The Dragon's Eye
+    /// left this on 2026-10-09: it grows with its own points instead, 25% to 60%.
     /// </summary>
     public const double SeerBlessingPerInt = 0.0012;
 
     public const double SeerBlessingCap = 0.40;
-
-    public const double SeerEyePerInt = 0.0015;
-
-    public const double SeerEyeCap = 0.35;
 
     public const double SeerSealPerInt = 0.002;
 

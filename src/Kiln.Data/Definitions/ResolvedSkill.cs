@@ -59,7 +59,7 @@ public readonly record struct ResolvedSkill(
         var damage = def.DamageCoef;
         var hits = Math.Max(1, def.Hits);
         var duration = def.Duration;
-        var magnitude = def.Magnitude;
+        var magnitude = def.Magnitude + ((Math.Max(1, points) - 1) * def.MagnitudePerPoint);
         var average = def.AverageDamage;
 
         void Apply(SkillRankDef? tier)
@@ -85,9 +85,9 @@ public readonly record struct ResolvedSkill(
         }
 
         // Points scale what the skill is for: its damage, or — when it deals none — how long
-        // its effect lasts. Never its magnitude: a guard that grew from 70% to 95% mitigation
-        // by investment would end the difficulty curve, and a fraction is the one number that
-        // cannot be scaled safely without knowing what it means.
+        // its effect lasts. Never its magnitude, unless the skill names its own growth (above): a
+        // guard that grew from 70% to 95% mitigation by investment would end the difficulty curve,
+        // and a fraction is the one number that cannot be scaled safely without knowing what it means.
         var scale = PointScale(points);
 
         if (damage > 0) damage *= scale;
