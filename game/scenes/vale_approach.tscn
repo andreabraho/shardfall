@@ -1686,3 +1686,188 @@ FieldId = "spf_approach_west_huts"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, -64)
 script = ExtResource("5_spawnfield")
 FieldId = "spf_approach_north_woods"
+
+[node name="SouthRidge1" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.500000, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.500000, 34.87, 2.75, 33.10)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="SouthRidge2" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.866025, 0, -0.500000, 0, 1, 0, 0.500000, 0, -0.866025, 38.88, 2.75, 36.32)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="SouthRidgeFoot1" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.866025, 0, -0.500000, 0, 1, 0, 0.500000, 0, -0.866025, 42.27, 1.1, 33.68)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+[node name="SouthRidge3" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.500000, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.500000, 41.65, 2.75, 40.49)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="SouthRidge4" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.500000, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.500000, 41.29, 2.75, 42.00)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="SouthRidgeFoot2" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.500000, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.500000, 36.83, 1.1, 42.00)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+[node name="SouthRidge5" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.000000, 0, 1.000000, 0, 1, 0, -1.000000, 0, -0.000000, 40.89, 2.75, 47.00)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="SouthRidge6" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.866025, 0, -0.500000, 0, 1, 0, 0.500000, 0, -0.866025, 41.87, 2.75, 52.00)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="SouthRidge7" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.866025, 0, 0.500000, 0, 1, 0, -0.500000, 0, -0.866025, 41.97, 2.75, 57.00)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="SouthRidgeFoot3" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-1.000000, 0, -0.000000, 0, 1, 0, 0.000000, 0, -1.000000, 35.80, 1.1, 57.00)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+[node name="SouthRidge8" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.000000, 0, 1.000000, 0, 1, 0, -1.000000, 0, -0.000000, 41.01, 2.75, 62.00)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="SouthRidge9" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-1.000000, 0, -0.000000, 0, 1, 0, 0.000000, 0, -1.000000, 41.71, 2.75, 67.00)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="SouthRidgeFoot4" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.500000, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.500000, 36.58, 1.1, 67.00)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+[node name="SouthRidge10" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, -0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 40.96, 2.75, 72.00)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="SouthRidge11" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.500000, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.500000, 43.48, 2.75, 77.00)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="SouthRidgeFoot5" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.866025, 0, -0.500000, 0, 1, 0, 0.500000, 0, 0.866025, 48.46, 1.1, 77.00)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+[node name="SouthRidge12" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.500000, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.500000, 40.90, 2.75, 82.00)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="SouthRidge13" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-1.000000, 0, -0.000000, 0, 1, 0, 0.000000, 0, -1.000000, 40.55, 2.75, 87.00)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="SouthRidgeFoot6" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.866025, 0, -0.500000, 0, 1, 0, 0.500000, 0, 0.866025, 37.48, 1.1, 87.00)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+[node name="NorthRidge1" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.500000, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.500000, 35.06, 2.75, -33.00)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="NorthRidgeFoot1" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.866025, 0, 0.500000, 0, 1, 0, -0.500000, 0, -0.866025, 41.20, 1.1, -32.89)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+[node name="NorthRidge2" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.500000, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.500000, 33.78, 2.75, -38.02)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="NorthRidgeFoot2" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.866025, 0, -0.500000, 0, 1, 0, 0.500000, 0, -0.866025, 29.02, 1.1, -38.11)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+[node name="NorthRidge3" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.866025, 0, -0.500000, 0, 1, 0, 0.500000, 0, -0.866025, 35.16, 2.75, -43.00)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="NorthRidge4" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.500000, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.500000, 33.93, 2.75, -48.02)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="NorthRidge5" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.000000, 0, -1.000000, 0, 1, 0, 1.000000, 0, 0.000000, 35.54, 2.75, -52.99)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="NorthRidgeFoot3" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.866025, 0, 0.500000, 0, 1, 0, -0.500000, 0, -0.866025, 40.96, 1.1, -52.90)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+[node name="NorthRidge6" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, -0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 36.45, 2.75, -57.98)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="NorthRidge7" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, -0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 34.71, 2.75, -63.01)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="NorthRidgeFoot4" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.000000, 0, 1.000000, 0, 1, 0, -1.000000, 0, -0.000000, 40.23, 1.1, -62.91)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+[node name="NorthRidge8" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.500000, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.500000, 35.17, 2.75, -68.00)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="NorthRidge9" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.000000, 0, 1.000000, 0, 1, 0, -1.000000, 0, -0.000000, 36.52, 2.75, -72.98)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="NorthRidge10" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.866025, 0, -0.500000, 0, 1, 0, 0.500000, 0, 0.866025, 35.76, 2.75, -77.99)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="NorthRidgeFoot5" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.866025, 0, 0.500000, 0, 1, 0, -0.500000, 0, -0.866025, 31.14, 1.1, -78.07)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+[node name="NorthRidge11" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.866025, 0, -0.500000, 0, 1, 0, 0.500000, 0, 0.866025, 37.21, 2.75, -82.97)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="NorthRidge12" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.500000, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.500000, 36.49, 2.75, -87.98)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="NorthRidgeFoot6" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.866025, 0, -0.500000, 0, 1, 0, 0.500000, 0, 0.866025, 29.71, 1.1, -88.10)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
