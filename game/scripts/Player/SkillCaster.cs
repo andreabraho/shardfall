@@ -28,6 +28,9 @@ public partial class SkillCaster : Node
         ResolvedSkill.For(def, _book?.RankOf(def.Id) ?? MasteryRank.Normal, _book?.PointsIn(def.Id) ?? 1);
 
     private readonly Dictionary<string, double> _cooldowns = new(System.StringComparer.Ordinal);
+
+    /// <summary>The keys of <see cref="_cooldowns"/>, walked every frame without copying them.</summary>
+    private readonly List<string> _cooldownIds = [];
     private readonly Dictionary<string, double> _cooldownTotals = new(System.StringComparer.Ordinal);
 
     private PlayerMotor _motor = null!;
@@ -190,7 +193,7 @@ public partial class SkillCaster : Node
 
     public override void _Process(double delta)
     {
-        foreach (var id in new List<string>(_cooldowns.Keys))
+        foreach (var id in _cooldownIds)
         {
             if (_cooldowns[id] > 0) _cooldowns[id] -= delta;
         }
@@ -351,6 +354,7 @@ public partial class SkillCaster : Node
 
         // Its own sound (REF-21); a skill that moves on every hit makes it every hit instead.
         if (!PerHit(def.Motion) && skill.Windup <= 0) Audio.AudioDirector.Play(def.Sound, _motor.GlobalPosition);
+        if (!_cooldowns.ContainsKey(skillId)) _cooldownIds.Add(skillId);
         _cooldowns[skillId] = skill.Cooldown;
         _cooldownTotals[skillId] = System.Math.Max(0.01, skill.Cooldown);
 

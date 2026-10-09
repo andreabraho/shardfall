@@ -25,6 +25,9 @@ public partial class PortalVisual : Node3D
     private static readonly Color OpenColour = new(0.45f, 0.78f, 1.0f);
     private static readonly Color ShutColour = new(0.85f, 0.32f, 0.26f);
 
+    // The shader's parameters by engine name, made once: each frame turned three strings into names.
+    private static readonly StringName Tint = "tint", Speed = "speed", Strength = "strength";
+
     private static readonly Shader DiscShader = new()
     {
         Code = """
@@ -127,9 +130,9 @@ public partial class PortalVisual : Node3D
         var colour = ShutColour.Lerp(OpenColour, _shown);
         var pulse = 0.85f + (Mathf.Sin(Time.GetTicksMsec() / 1000f * 2.2f) * 0.15f);
 
-        _disc.SetShaderParameter("tint", colour);
-        _disc.SetShaderParameter("speed", Mathf.Lerp(0.25f, 1.0f, _shown));
-        _disc.SetShaderParameter("strength", Mathf.Lerp(0.3f, 0.55f, _shown));
+        _disc.SetShaderParameter(Tint, colour);
+        _disc.SetShaderParameter(Speed, Mathf.Lerp(0.25f, 1.0f, _shown));
+        _disc.SetShaderParameter(Strength, Mathf.Lerp(0.3f, 0.55f, _shown));
 
         _light.LightColor = colour;
         _light.LightEnergy = Mathf.Lerp(0.7f, 1.6f, _shown) * pulse;

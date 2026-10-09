@@ -15,6 +15,7 @@ namespace Kiln.Game.Combat;
 public partial class RoleMarker : Node3D
 {
     private MeshInstance3D? _mesh;
+    private Node3D? _parent;
     private double _spin;
 
     [Export] public Vector3 Offset { get; set; } = new(0, 2.45f, 0);
@@ -64,6 +65,9 @@ public partial class RoleMarker : Node3D
         // The Bruiser is the baseline and deliberately unmarked: marking everything is the
         // same as marking nothing.
         Visible = role != EnemyRole.Bruiser;
+
+        // An unmarked creature's marker has nothing to do each frame, and most creatures are Bruisers.
+        SetProcess(Visible);
     }
 
     private static Mesh MeshFor(EnemyRole role) => role switch
@@ -101,7 +105,7 @@ public partial class RoleMarker : Node3D
     {
         if (!Visible || _mesh is null) return;
 
-        var parent = GetParent<Node3D>();
+        var parent = _parent ??= GetParent<Node3D>();
         var camera = GetViewport().GetCamera3D();
 
         if (parent is null || camera is null) return;

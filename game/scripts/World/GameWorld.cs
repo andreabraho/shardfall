@@ -91,8 +91,23 @@ public static class GameWorld
     public static int Headroom(SceneTree tree) =>
         Mathf.Max(0, PopulationCap - LivingEnemies(tree));
 
+    private static int _living = -1;
+
+    /// <summary>
+    /// A creature joined the world, died or left it: the next count is taken again. Called by
+    /// <see cref="Combat.EnemyBrain"/>, the only thing that changes the answer.
+    /// </summary>
+    public static void EnemiesChanged() => _living = -1;
+
+    /// <remarks>
+    /// Counted once and kept until a creature joins, dies or leaves (2026-10-09). Every spawn
+    /// field asks every frame, and with a map's seven or eight fields that was the whole enemy
+    /// group walked eight times a frame for a number that changes a few times a minute.
+    /// </remarks>
     public static int LivingEnemies(SceneTree tree)
     {
+        if (_living >= 0) return _living;
+
         var count = 0;
 
         foreach (var node in tree.GetNodesInGroup("enemies"))
@@ -100,6 +115,6 @@ public static class GameWorld
             if (node is Combat.EnemyBrain { IsDead: false }) count++;
         }
 
-        return count;
+        return _living = count;
     }
 }

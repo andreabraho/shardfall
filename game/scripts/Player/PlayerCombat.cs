@@ -456,11 +456,13 @@ public partial class PlayerCombat : Node
     {
         var from = _motor.GlobalPosition + (Vector3.Up * 1.2f);
         var to = target.GlobalPosition + (Vector3.Up * 1.0f);
-        var query = PhysicsRayQueryParameters3D.Create(from, to, Layers.World);
+        using var query = PhysicsRayQueryParameters3D.Create(from, to, Layers.World);
 
         query.CollideWithAreas = false;
 
-        return _motor.GetWorld3D().DirectSpaceState.IntersectRay(query).Count == 0;
+        using var hit = _motor.GetWorld3D().DirectSpaceState.IntersectRay(query);
+
+        return hit.Count == 0;
     }
 
     /// <summary>

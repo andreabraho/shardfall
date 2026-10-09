@@ -34,6 +34,13 @@ public partial class NamePlate : Node3D
 {
     private Label3D _label = null!;
     private Label3D _prefix = null!;
+    private Node3D? _parent;
+
+    /// <summary>The widths of the name and the lead-in, in metres; negative until measured.</summary>
+    private float _nameWidth = -1, _leadWidth = -1;
+
+    /// <summary>The alpha last written, so a plate holding still is not rewritten every frame.</summary>
+    private float _alpha = -1;
 
     /// <summary>A short lead-in drawn before the name in its own colour — a creature's level.</summary>
     public string Prefix { get; private set; } = "";
@@ -125,6 +132,10 @@ public partial class NamePlate : Node3D
         _prefix.OutlineSize = outline;
         _prefix.Modulate = PrefixColour;
 
+        // The size changed, so the widths did; and the colours were just written at full alpha.
+        _nameWidth = -1;
+        _alpha = -1;
+
         // Every name draws over what is in front of it (2026-09-24): a name hidden behind a
         // body or a tree is a name the player cannot read, and that was what the plates did.
         _label.NoDepthTest = true;
@@ -143,6 +154,10 @@ public partial class NamePlate : Node3D
 
         _label.Text = text;
         _prefix.Text = prefix;
+
+        // Measured again, and the prefix's visibility asked again with the next alpha.
+        _nameWidth = -1;
+        _alpha = -1;
     }
 
     /// <summary>
@@ -161,9 +176,17 @@ public partial class NamePlate : Node3D
             return;
         }
 
-        var font = _label.Font ?? ThemeDB.FallbackFont;
-        var name = font.GetStringSize(_label.Text, HorizontalAlignment.Left, -1, _label.FontSize).X * _label.PixelSize;
-        var lead = font.GetStringSize(Prefix + " ", HorizontalAlignment.Left, -1, _prefix.FontSize).X * _prefix.PixelSize;
+        // Measured when the text or the size changes, not every frame: shaping two strings per
+        // plate per frame was most of what a field of nameplates cost (2026-10-09).
+        if (_nameWidth < 0)
+        {
+            var font = _label.Font ?? ThemeDB.FallbackFont;
+            _nameWidth = font.GetStringSize(Text, HorizontalAlignment.Left, -1, _label.FontSize).X * _label.PixelSize;
+            _leadWidth = font.GetStringSize(Prefix + " ", HorizontalAlignment.Left, -1, _prefix.FontSize).X * _prefix.PixelSize;
+        }
+
+        var name = _nameWidth;
+        var lead = _leadWidth;
         var total = name + lead;
         var right = camera.GlobalBasis.X.Normalized();
 
@@ -173,24 +196,41 @@ public partial class NamePlate : Node3D
 
     public override void _Process(double delta)
     {
-        var parent = GetParent<Node3D>();
+        var parent = _parent ??= GetParent<Node3D>();
         var camera = GetViewport().GetCamera3D();
 
         if (parent is null || camera is null) return;
 
-        GlobalPosition = parent.GlobalPosition + Offset;
-        Arrange(camera);
+        var at = parent.GlobalPosition + Offset;
 
         // Trash fades with distance; a boss never does. Fading the thing the fight is about
         // would defeat the point of giving it a larger plate in the first place.
-        if (Rank == NameRank.Boss) return;
+        if (Rank == NameRank.Boss)
+        {
+            GlobalPosition = at;
+            Arrange(camera);
+            return;
+        }
 
-        var distance = camera.GlobalPosition.DistanceTo(GlobalPosition);
+        var distance = camera.GlobalPosition.DistanceTo(at);
         var alpha = Mathf.Clamp(1f - ((distance - (FadeDistance * 0.6f)) / (FadeDistance * 0.4f)), 0f, 1f);
+        var shown = alpha > 0.02f;
 
+        // A plate faded out is not drawn, so it need not follow its body or keep its two halves
+        // side by side; it is put in place on the frame it comes back.
+        if (shown)
+        {
+            GlobalPosition = at;
+            Arrange(camera);
+        }
+
+        // Nearly every plate is either fully shown or fully faded, frame after frame.
+        if (alpha == _alpha) return;
+
+        _alpha = alpha;
         _label.Modulate = _label.Modulate with { A = alpha };
-        _label.Visible = alpha > 0.02f;
+        _label.Visible = shown;
         _prefix.Modulate = _prefix.Modulate with { A = alpha };
-        _prefix.Visible = _label.Visible && Prefix.Length > 0;
+        _prefix.Visible = shown && Prefix.Length > 0;
     }
 }

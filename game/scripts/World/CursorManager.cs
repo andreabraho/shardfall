@@ -57,10 +57,10 @@ public partial class CursorManager : Node
         var from = _camera!.ProjectRayOrigin(mouse);
         var to = from + (_camera.ProjectRayNormal(mouse) * 1000f);
 
-        var query = PhysicsRayQueryParameters3D.Create(from, to, Layers.ClickTargets);
+        using var query = PhysicsRayQueryParameters3D.Create(from, to, Layers.ClickTargets);
         query.CollideWithAreas = false;
 
-        var hit = GetViewport().World3D.DirectSpaceState.IntersectRay(query);
+        using var hit = GetViewport().World3D.DirectSpaceState.IntersectRay(query);
 
         // Pointing at the sky: nothing would happen.
         if (hit.Count == 0) return Godot.Input.CursorShape.Forbidden;

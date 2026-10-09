@@ -320,9 +320,7 @@ public partial class MapView : Control
             // plan around, and a map that draws them is a map you have to read past.
             if (!def.Solid || !Known(seen, piece.GlobalPosition)) continue;
 
-            var colour = Color.HtmlIsValid(def.Color.TrimStart('#'))
-                ? new Color(def.Color) with { A = 0.9f }
-                : Faint;
+            var colour = Colour(def.Color);
 
             var size = def.Size.Length == 3
                 ? new Vector3((float)def.Size[0], (float)def.Size[1], (float)def.Size[2])
@@ -353,6 +351,22 @@ public partial class MapView : Control
 
             Footprint(piece, size, Vector3.Zero, colour);
         }
+    }
+
+    private static readonly System.Collections.Generic.Dictionary<string, Color> Colours = new(System.StringComparer.Ordinal);
+
+    /// <summary>
+    /// A piece's colour on the map, parsed once per colour rather than once per piece per redraw:
+    /// a map holds hundreds of pieces and only a handful of colours.
+    /// </summary>
+    private static Color Colour(string html)
+    {
+        if (Colours.TryGetValue(html, out var known)) return known;
+
+        var colour = Color.HtmlIsValid(html.TrimStart('#')) ? new Color(html) with { A = 0.9f } : Faint;
+
+        Colours[html] = colour;
+        return colour;
     }
 
     /// <summary>Draws a box piece as the quadrilateral it actually covers, rotation included.</summary>

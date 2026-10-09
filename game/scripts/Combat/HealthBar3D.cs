@@ -71,9 +71,20 @@ public partial class HealthBar3D : Node3D
         };
     }
 
+    private Node3D? _parent;
+
     public override void _Process(double delta)
     {
-        var parent = GetParent<Node3D>();
+        // A hidden bar has nowhere to be. Most bars are hidden — every creature at full health —
+        // and they all used to follow their bodies anyway.
+        if (!Visible) return;
+
+        Follow();
+    }
+
+    private void Follow()
+    {
+        var parent = _parent ??= GetParent<Node3D>();
         var camera = GetViewport().GetCamera3D();
 
         if (parent is null || camera is null) return;
@@ -96,7 +107,15 @@ public partial class HealthBar3D : Node3D
 
         _fillMaterial.AlbedoColor = LowColor.Lerp(FullColor, _fraction);
 
-        Visible = ForceVisible || !HideWhenFull || (_fraction < 0.999f && _fraction > 0f);
+        var shown = ForceVisible || !HideWhenFull || (_fraction < 0.999f && _fraction > 0f);
+
+        // Put in place before it is first drawn: hidden, it was not following its body.
+        if (shown && !Visible && IsInsideTree()) Follow();
+
+        Visible = shown;
+
+        // Not even called while hidden.
+        SetProcess(shown);
     }
 
     public void Refresh() => SetFraction(_fraction);

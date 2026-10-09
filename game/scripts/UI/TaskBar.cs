@@ -363,6 +363,22 @@ public partial class TaskBar : CanvasLayer
         _flaskCharges.AddThemeColorOverride("font_color", _flask.Charges > 0 ? Text : new Color(0.9f, 0.4f, 0.35f));
     }
 
+    private (double Current, double Max) _healthShown = (-1, -1), _manaShown = (-1, -1);
+    private int _statusesShown = -1;
+    private double _statusesIn;
+
+    /// <summary>True when the pool reads differently from what is on screen, which is then updated.</summary>
+    private static bool Shown(Kiln.Core.Combat.Pool pool, ref (double Current, double Max) shown)
+    {
+        // Rounded the way the "F0" in its text rounds, half to even.
+        var now = (Math.Round(pool.Current), Math.Round(pool.Max));
+
+        if (now == shown) return false;
+
+        shown = now;
+        return true;
+    }
+
     public override void _Process(double delta)
     {
         if (_player is null || !IsInstanceValid(_player)) return;
@@ -370,15 +386,29 @@ public partial class TaskBar : CanvasLayer
         // Both pools move every frame — regeneration, drains — so they are read, not signalled.
         _health.Value = _player.Health.Fraction;
         _mana.Value = _player.Mana.Fraction;
-        _healthText.Text = _player.Health.ToString();
-        _manaText.Text = _player.Mana.ToString();
+
+        // The numbers only when they read differently: formatted and handed to the engine every
+        // frame, two strings a frame were garbage for nothing while the pools sat full.
+        if (Shown(_player.Health, ref _healthShown)) _healthText.Text = _player.Health.ToString();
+        if (Shown(_player.Mana, ref _manaShown)) _manaText.Text = _player.Mana.ToString();
 
         // Status effects must be visible or they read as unexplained damage and sluggishness.
         if (_player.Statuses.Count == 0)
         {
-            _statuses.Text = "";
+            if (_statusesShown != 0) _statuses.Text = "";
+
+            _statusesShown = 0;
             return;
         }
+
+        // Their seconds count down in whole numbers, so ten times a second is as often as the
+        // line can change — sooner when an effect comes or goes.
+        _statusesIn -= delta;
+
+        if (_statusesIn > 0 && _player.Statuses.Count == _statusesShown) return;
+
+        _statusesIn = 0.1;
+        _statusesShown = _player.Statuses.Count;
 
         var names = new List<string>();
 
