@@ -355,6 +355,12 @@ public sealed class SkillDef : ContentDefBase
     /// <summary>Strength of a non-damage effect: a damage reduction, a heal fraction, a shield size.</summary>
     public double Magnitude { get; init; }
 
+    /// <summary>
+    /// Magnitude added by each point past the first (2026-10-09, the Dragon's Eye: 25% at one point, 60% at
+    /// Perfect). Zero for every other skill: points scale damage or duration, not a fraction.
+    /// </summary>
+    public double MagnitudePerPoint { get; init; }
+
     /// <summary>What each mastery rank changes, if anything.</summary>
     public SkillMasteryDef? Mastery { get; init; }
 

@@ -54,15 +54,24 @@ public readonly record struct Attributes(int Str, int Dex, int Int, int Vit)
     /// <summary>
     /// What each point of intelligence adds to the Dragonseer's blessings (CLS-06, 2026-10-02, at
     /// your call: "all of its skills scale with INT, the critical and the damage reduced too") —
-    /// its fire already strikes with intelligence — and where each stops growing.
+    /// its fire already strikes with intelligence — and where each stops growing. The Dragon's Eye
+    /// has its own rule since 2026-10-09 (below).
     /// </summary>
     public const double SeerBlessingPerInt = 0.0012;
 
     public const double SeerBlessingCap = 0.40;
 
-    public const double SeerEyePerInt = 0.0015;
+    /// <summary>
+    /// The Dragon's Eye's share from intelligence (2026-10-09): on top of what its rank gives, up to a tenth
+    /// more at the 90 points can buy — so 25% at its first point and 60% at Perfect, with the mind full.
+    /// </summary>
+    public const double SeerEyeIntCap = 0.10;
 
-    public const double SeerEyeCap = 0.35;
+    public const double SeerEyePerInt = SeerEyeIntCap / Progression.CharacterProgression.MaxAttribute;
+
+    /// <summary>The Eye's chance with this much intelligence: the rank's, plus the mind's share.</summary>
+    public static double SeerEye(double strength, int intelligence) =>
+        strength + Math.Min(SeerEyeIntCap, Math.Max(0, intelligence) * SeerEyePerInt);
 
     public const double SeerSealPerInt = 0.002;
 
