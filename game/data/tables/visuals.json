@@ -61,14 +61,14 @@
   // and the leap back in MovementAdvanced.
   { "id": "mesh_player_archer", "primitive": "model", "height": 1.80, "radius": 0.38, "color": "#4fa3d0", "model_yaw": 180, "model_path": "res://assets/kaykit/adventurers2/Knight.glb",
     "animations": ["res://assets/kaykit/adventurers2/animations/Rig_Medium_General.glb", "res://assets/kaykit/adventurers2/animations/Rig_Medium_MovementBasic.glb", "res://assets/kaykit/adventurers2/animations/Rig_Medium_MovementAdvanced.glb", "res://assets/kaykit/adventurers2/animations/Rig_Medium_CombatMelee.glb", "res://assets/kaykit/adventurers2/animations/Rig_Medium_CombatRanged.glb", "res://assets/kaykit/adventurers2/animations/Rig_Medium_Simulation.glb"],
-    "gear": { "one_hand": "res://assets/temins/weapons/worn_bow.glb", "two_hand": "res://assets/temins/weapons/worn_bow.glb", "weapon_hand": "handslot.l", "stance": "bow",
+    "gear": { "one_hand": "res://assets/temins/weapons/worn_bow.glb", "two_hand": "res://assets/temins/weapons/worn_bow.glb", "weapon_hand": "handslot.l", "weapon_turn": [0, 0, 40], "stance": "bow",
               "helmet": ["Knight_Helmet", "Knight_HelmetVisor"], "cape": "Knight_Cape", "face": "RogueHooded_Head", "own_clothes": true, "helmet_fit": [0.86, 1.0, 0.97, 0, 1.89, 0],
               "body_scene": "res://assets/temins/characters/archer_man_body.glb", "torso": "RogueHooded_Body",
               "body_parts": ["RogueHooded_Body", "RogueHooded_ArmLeft", "RogueHooded_ArmRight", "RogueHooded_LegLeft", "RogueHooded_LegRight", "RogueHooded_Head", "RogueHooded_Mask", "Ranger_Quiver"],
               "replaces": ["Knight_Body", "Knight_ArmLeft", "Knight_ArmRight", "Knight_LegLeft", "Knight_LegRight", "Knight_Head"] } },
   { "id": "mesh_player_archer_woman", "primitive": "model", "height": 1.80, "radius": 0.38, "color": "#4fa3d0", "model_yaw": 180, "model_path": "res://assets/kaykit/adventurers2/Knight.glb",
     "animations": ["res://assets/kaykit/adventurers2/animations/Rig_Medium_General.glb", "res://assets/kaykit/adventurers2/animations/Rig_Medium_MovementBasic.glb", "res://assets/kaykit/adventurers2/animations/Rig_Medium_MovementAdvanced.glb", "res://assets/kaykit/adventurers2/animations/Rig_Medium_CombatMelee.glb", "res://assets/kaykit/adventurers2/animations/Rig_Medium_CombatRanged.glb", "res://assets/kaykit/adventurers2/animations/Rig_Medium_Simulation.glb"],
-    "gear": { "one_hand": "res://assets/temins/weapons/worn_bow.glb", "two_hand": "res://assets/temins/weapons/worn_bow.glb", "weapon_hand": "handslot.l", "stance": "bow",
+    "gear": { "one_hand": "res://assets/temins/weapons/worn_bow.glb", "two_hand": "res://assets/temins/weapons/worn_bow.glb", "weapon_hand": "handslot.l", "weapon_turn": [0, 0, 40], "stance": "bow",
               "helmet": ["Knight_Helmet", "Knight_HelmetVisor"], "cape": "Knight_Cape", "face": "Rogue_Head", "own_clothes": true, "cut": "w",
               "body_scene": "res://assets/temins/characters/archer_woman_body.glb", "torso": "Rogue_Body",
               "body_parts": ["Rogue_Body", "Rogue_ArmLeft", "Rogue_ArmRight", "Rogue_LegLeft", "Rogue_LegRight", "Rogue_Head", "Ranger_Quiver"],
@@ -185,6 +185,12 @@
   { "id": "mesh_tower_lantern",  "primitive": "model", "height": 2.60, "radius": 0.60, "color": "#ff8a3a", "model_yaw": 0, "model_path": "res://assets/prefabs/tower/TowerLantern.tscn" },
   { "id": "mesh_tower_keystone", "primitive": "model", "height": 2.60, "radius": 0.90, "color": "#c05aff", "model_yaw": 0, "model_path": "res://assets/prefabs/tower/TowerKeystone.tscn" },
   { "id": "mesh_shard_demon",    "primitive": "model", "height": 4.30, "radius": 1.30, "color": "#b04aff", "model_yaw": 0, "model_path": "res://assets/prefabs/tower/DemonStone.tscn" },
+  // The Abyss Crypts' props (P5, 2026-10-07): a sealed door, the statue that takes the key, a stone of judgement, the pole
+  // at the end of the maze. Ours, made in Blender (art/blender/models).
+  { "id": "mesh_crypt_door",      "primitive": "model", "height": 3.30, "radius": 1.80, "color": "#3a3048", "model_yaw": 0, "model_path": "res://assets/temins/crypts/crypt_door.glb" },
+  { "id": "mesh_soul_statue",     "primitive": "model", "height": 3.00, "radius": 0.80, "color": "#3a3048", "model_yaw": 180, "model_path": "res://assets/temins/crypts/soul_statue.glb" },
+  { "id": "mesh_judgement_stone", "primitive": "model", "height": 3.00, "radius": 0.90, "color": "#1a1622", "model_yaw": 0, "model_path": "res://assets/temins/crypts/judgement_stone.glb" },
+  { "id": "mesh_runic_pole",      "primitive": "model", "height": 3.80, "radius": 0.50, "color": "#1a1622", "model_yaw": 0, "model_path": "res://assets/temins/crypts/runic_pole.glb" },
 
   { "id": "mesh_sword_a",             "primitive": "box",      "height": 1.10, "radius": 0.06, "color": "#d9dde2" },
   { "id": "mesh_greatsword_a",          "primitive": "box",      "height": 1.50, "radius": 0.08, "color": "#d9dde2" },
@@ -261,6 +267,13 @@
   { "id": "mesh_wpn_hollow_talons", "primitive": "model", "height": 0.95, "radius": 0.08, "color": "#d9dde2", "model_path": "res://assets/temins/weapons/hollow_talons.glb" },
   { "id": "mesh_wpn_shard_splinters", "primitive": "model", "height": 0.95, "radius": 0.08, "color": "#d9dde2", "model_path": "res://assets/temins/weapons/shard_splinters.glb" },
   { "id": "mesh_wpn_kiln_tongues", "primitive": "model", "height": 0.95, "radius": 0.08, "color": "#d9dde2", "model_path": "res://assets/temins/weapons/kiln_tongues.glb" },
+  // The abyss set's weapons (P5, 2026-10-07), one a class: bladekit, daggerkit, bowkit, hexkit, fankit.
+  { "id": "mesh_wpn_abyss_brand",      "primitive": "model", "height": 1.40, "radius": 0.10, "color": "#d9dde2", "model_path": "res://assets/temins/weapons/abyss_brand.glb" },
+  { "id": "mesh_wpn_abyss_greatbrand", "primitive": "model", "height": 1.40, "radius": 0.10, "color": "#d9dde2", "model_path": "res://assets/temins/weapons/abyss_greatbrand.glb" },
+  { "id": "mesh_wpn_abyss_fangs",      "primitive": "model", "height": 0.95, "radius": 0.08, "color": "#d9dde2", "model_path": "res://assets/temins/weapons/abyss_fangs.glb" },
+  { "id": "mesh_wpn_abyss_bow",        "primitive": "model", "height": 1.40, "radius": 0.10, "color": "#d9dde2", "model_path": "res://assets/temins/weapons/abyss_bow.glb" },
+  { "id": "mesh_wpn_abyss_hexblade",   "primitive": "model", "height": 1.40, "radius": 0.10, "color": "#d9dde2", "model_path": "res://assets/temins/weapons/abyss_hexblade.glb" },
+  { "id": "mesh_wpn_abyss_fan",        "primitive": "model", "height": 1.40, "radius": 0.10, "color": "#d9dde2", "model_path": "res://assets/temins/weapons/abyss_fan.glb" },
   // Each armour its own plates, made in Blender (art/blender/models), hung on the bones by GearRig.
   { "id": "mesh_arm_warden_plate",        "primitive": "model",    "height": 1.10, "radius": 0.45, "color": "#9fb2d0", "model_path": "res://assets/temins/armour/warden_plate.glb" },
   { "id": "mesh_arm_padded_coat",         "primitive": "model",    "height": 1.10, "radius": 0.45, "color": "#9fb2d0", "model_path": "res://assets/temins/armour/padded_coat.glb" },
@@ -302,6 +315,12 @@
   { "id": "mesh_arm_kiln_plume", "primitive": "model", "height": 1.10, "radius": 0.45, "color": "#2a3a30", "model_path": "res://assets/temins/armour/kiln_plume.glb" },
   { "id": "mesh_arm_kiln_fiend", "primitive": "model", "height": 1.10, "radius": 0.45, "color": "#2a3a30", "model_path": "res://assets/temins/armour/kiln_fiend.glb" },
   { "id": "mesh_arm_kiln_dragon", "primitive": "model", "height": 1.10, "radius": 0.45, "color": "#2a3a30", "model_path": "res://assets/temins/armour/kiln_dragon.glb" },
+  // The abyss set's armours (P5, 2026-10-07).
+  { "id": "mesh_arm_abyss_aegis", "primitive": "model", "height": 1.10, "radius": 0.45, "color": "#2a1a30", "model_path": "res://assets/temins/armour/abyss_aegis.glb" },
+  { "id": "mesh_arm_abyss_shade",  "primitive": "model", "height": 1.10, "radius": 0.45, "color": "#2a1a30", "model_path": "res://assets/temins/armour/abyss_shade.glb" },
+  { "id": "mesh_arm_abyss_plume",  "primitive": "model", "height": 1.10, "radius": 0.45, "color": "#2a1a30", "model_path": "res://assets/temins/armour/abyss_plume.glb" },
+  { "id": "mesh_arm_abyss_fiend",  "primitive": "model", "height": 1.10, "radius": 0.45, "color": "#2a1a30", "model_path": "res://assets/temins/armour/abyss_fiend.glb" },
+  { "id": "mesh_arm_abyss_dragon", "primitive": "model", "height": 1.10, "radius": 0.45, "color": "#2a1a30", "model_path": "res://assets/temins/armour/abyss_dragon.glb" },
   { "id": "mesh_hlm_trail_band", "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#2a3a30", "model_path": "res://assets/temins/armour/trail_band.glb" },
   { "id": "mesh_hlm_brand_band", "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#2a3a30", "model_path": "res://assets/temins/armour/brand_band.glb" },
   { "id": "mesh_hlm_pilgrims_fillet", "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#2a3a30", "model_path": "res://assets/temins/armour/pilgrims_fillet.glb" },
@@ -337,6 +356,12 @@
   { "id": "mesh_hlm_drowned_hood",  "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#1a5a4a", "model_path": "res://assets/temins/armour/drowned_hood.glb" },
   { "id": "mesh_hlm_drowned_horns", "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#1a5a4a", "model_path": "res://assets/temins/armour/drowned_horns.glb" },
   { "id": "mesh_hlm_drowned_tiara", "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#1a5a4a", "model_path": "res://assets/temins/armour/drowned_tiara.glb" },
+  // The abyss set's headpieces (P5, 2026-10-07).
+  { "id": "mesh_hlm_abyss_visor",  "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#2a1a30", "model_path": "res://assets/temins/armour/abyss_visor.glb" },
+  { "id": "mesh_hlm_abyss_mask",   "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#2a1a30", "model_path": "res://assets/temins/armour/abyss_mask.glb" },
+  { "id": "mesh_hlm_abyss_cowl",   "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#2a1a30", "model_path": "res://assets/temins/armour/abyss_cowl.glb" },
+  { "id": "mesh_hlm_abyss_horns",  "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#2a1a30", "model_path": "res://assets/temins/armour/abyss_horns.glb" },
+  { "id": "mesh_hlm_abyss_diadem", "primitive": "model", "height": 0.50, "radius": 0.45, "color": "#2a1a30", "model_path": "res://assets/temins/armour/abyss_diadem.glb" },
 
   // Act 2's beasts (A2-01, 2026-10-02): ours, from the creature kit (art/blender/models).
   { "id": "mesh_beast_slate_wolf",  "primitive": "model", "height": 1.15, "radius": 0.50, "color": "#5a6068", "model_yaw": 180, "model_path": "res://assets/temins/creatures/slate_wolf.glb" },
@@ -353,6 +378,23 @@
     "attachments": [
       { "bone": "Head", "model_path": "res://assets/temins/creatures/warlord_helm.glb", "scale": 0.34, "up": 0.20, "forward": 0.02 },
       { "bone": "Neck", "model_path": "res://assets/temins/creatures/warlord_pauldrons.glb", "scale": 0.46, "up": -0.14 }
+    ] },
+
+  // The Abyss Crypts' bosses (P5, 2026-10-07): act 1's bodies wearing pieces of ours (bosskit.py).
+  { "id": "mesh_boss_crypt_jailer", "primitive": "model", "height": 2.10, "radius": 0.60, "color": "#3a2a5a", "model_yaw": 180, "model_path": "res://assets/quaternius/zombies/Zombie_Chubby.gltf",
+    "attachments": [
+      { "bone": "Head", "model_path": "res://assets/temins/creatures/jailer_mask.glb", "scale": 0.26, "up": 0.10 },
+      { "bone": "Neck", "model_path": "res://assets/temins/creatures/jailer_chains.glb", "scale": 0.36, "up": -0.18 }
+    ] },
+  { "id": "mesh_boss_soul_ferryman", "primitive": "model", "height": 2.00, "radius": 0.55, "color": "#2a1a5a", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Blue_Demon.glb",
+    "attachments": [
+      { "bone": "Head", "model_path": "res://assets/temins/creatures/ferryman_hood.glb", "scale": 0.32, "up": 0.16 },
+      { "bone": "Neck", "model_path": "res://assets/temins/creatures/ferryman_collar.glb", "scale": 0.44, "up": -0.12 }
+    ] },
+  { "id": "mesh_boss_crypt_lord", "primitive": "model", "height": 2.10, "radius": 0.60, "color": "#2a0820", "model_yaw": 180, "model_path": "res://assets/quaternius/monsters/Demon_b.glb",
+    "attachments": [
+      { "bone": "Head", "model_path": "res://assets/temins/creatures/crypt_crown.glb", "scale": 0.34, "up": 0.22 },
+      { "bone": "Neck", "model_path": "res://assets/temins/creatures/crypt_mantle.glb", "scale": 0.38, "up": -0.14 }
     ] },
 
   // Act 2's creatures from Quaternius (CC0, 2026-10-03): animated as they come, recoloured by the enemy, with pieces of ours.

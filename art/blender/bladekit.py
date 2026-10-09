@@ -275,7 +275,33 @@ def build(name):
             parts.append(flat(f"ray_{i}", [(0.09 * math.cos(r - 0.2), 0.09 * math.sin(r - 0.2)), (0.19 * math.cos(r), 0.19 * math.sin(r)), (0.09 * math.cos(r + 0.2), 0.09 * math.sin(r + 0.2))], 0.07, gold))
         return parts + h.hilt(red, gold, gold, length=0.44, pommel="cup", gem=fire, wraps=6, size=0.065)
 
+    def abyss(great):
+        # Lama / Spadone dell'Abisso (P5, 2026-10-07): obsidian cracked with crimson light, bone teeth along the edge, horns of bone
+        # at the guard; the great one forked at the tip, teeth on both edges, an eye between its horns.
+        black = m("abyss_steel", (0.05, 0.035, 0.07), metal=0.75, rough=0.3)
+        glow = m("abyss_glow", (0.95, 0.10, 0.38), glow=1.5)
+        wrap = m("abyss_wrap", (0.20, 0.03, 0.10))
+        if not great:
+            outline = k.mirrored([(0.095, 0.04), (0.11, 0.70), (0.125, 1.00), (0.08, 1.24), (0.0, 1.46)])
+            parts = [k.blade(outline, 0.075, black), h.crack(glow, [(0.0, 0.12), (0.02, 0.36), (-0.02, 0.62), (0.015, 0.88), (-0.01, 1.12), (0.0, 1.28)], depth=0.083)]
+            for i in range(6):
+                z = 0.24 + 0.14 * i
+                parts.append(flat(f"tooth_{i}", [(0.105, z), (0.17, z + 0.035), (0.11, z + 0.09)], 0.045, bone))
+            parts += [h.horn_guard(bone, reach=0.26, rise=0.18, droop=True, at=0.02), t.sphere("gem", 0.045, glow, at=(0, 0, 0.0), subdivisions=2, squash=(1, 1.4, 1))]
+            return parts + h.hilt(wrap, black, black, length=0.30, pommel="facet", gem=glow, size=0.055)
+        outline = [(0.13, 0.04), (0.15, 0.80), (0.16, 1.40), (0.15, 1.70), (0.11, 2.02), (0.05, 1.80), (0.0, 1.72), (-0.05, 1.80), (-0.11, 2.02),
+                   (-0.15, 1.70), (-0.16, 1.40), (-0.15, 0.80), (-0.13, 0.04)]
+        parts = [k.blade(outline, 0.10, black), h.crack(glow, [(0.0, 0.14), (0.03, 0.46), (-0.03, 0.80), (0.025, 1.14), (-0.02, 1.44), (0.0, 1.64)], width=0.02, depth=0.108)]
+        for i in range(7):
+            for side in (-1, 1):
+                z = 0.30 + 0.17 * i + (0.08 if side > 0 else 0)
+                tooth = [(side * 0.15, z), (side * 0.23, z + 0.04), (side * 0.155, z + 0.11)]
+                parts.append(flat(f"tooth_{i}_{side}", tooth[::side], 0.06, bone))
+        parts += [h.horn_guard(bone, reach=0.42, rise=0.26, thick=0.09)] + h.eye(glow, black, at=0.01, size=0.07, depth=0.13)
+        return parts + h.hilt(wrap, black, black, length=0.44, pommel="facet", gem=glow, wraps=6, size=0.065)
+
     swords = {
+        "abyss_brand": (abyss, False), "abyss_greatbrand": (abyss, True),
         "worn_blade": (worn, False), "worn_greatblade": (worn, True), "hunters_sword": (hunters, False), "hunters_greatsword": (hunters, True),
         "bronze_sword": (bronze, False), "bronze_greatsword": (bronze, True), "iron_sword": (iron, False), "iron_greatsword": (iron, True),
         "ridge_blade": (ridge, False), "ridge_greatblade": (ridge, True), "warden_sword": (warden, False), "warden_greatsword": (warden, True),

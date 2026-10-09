@@ -69,6 +69,22 @@ public class InnateTests
         Assert.Equal(fresh.InnateFor(Bracelet)!.Value.Stat.Kind, again.InnateFor(Bracelet)!.Value.Stat.Kind);
     }
 
+    [Fact]
+    public void AChosenStatIsTheStat_AndIsSaved()
+    {
+        // The Abyss chest lets the player choose the stat (2026-10-08): every one of the four, whatever the uid.
+        for (var pick = 0; pick < Bracelet.Innate!.Stats.Count; pick++)
+        {
+            var item = new ItemInstance(4779, Bracelet.Id);
+            item.ChooseInnate(pick);
+
+            var again = Kiln.Core.Saving.ItemSnapshots.Restore(Kiln.Core.Saving.ItemSnapshots.Capture(item, null), new OneSpec(Bracelet), new OneSpec(Bracelet))!;
+
+            Assert.Equal(Bracelet.Innate.Stats[pick].Kind, item.InnateFor(Bracelet)!.Value.Stat.Kind);
+            Assert.Equal(Bracelet.Innate.Stats[pick].Kind, again.InnateFor(Bracelet)!.Value.Stat.Kind);
+        }
+    }
+
     private sealed class OneSpec(ItemSpec spec) : IItemSpecs, IBonusPools
     {
         public bool TryGet(string id, out ItemSpec found)

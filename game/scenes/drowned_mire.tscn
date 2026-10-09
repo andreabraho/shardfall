@@ -778,6 +778,382 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54, 0.045, 46)
 script = ExtResource("3_kit")
 PieceId = "kit_sw_pool"
 
+; -- The channel between the camp's island and the middle: crossed on the road and in the north --
+
+[node name="WestChannel" type="Node3D" parent="NavigationRegion3D"]
+
+[node name="Deep" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(-0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, -0.866025, -87.7, 0.045, -30.3)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Reeds19" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(-0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.5, -93, 0.85, -25)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Deep2" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -82.9, 0.045, -25.2)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep3" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, -77.9, 0.045, -20.3)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep4" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(-0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, -0.866025, -73, 0.045, -15.3)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep5" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.5, -68.3, 0.045, -10.1)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Reeds20" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, -73, 0.85, -5.4)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Deep6" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(-0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.5, -68, 0.045, -10)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep7" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.5, -60, 0.045, -2)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Reeds21" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, -55.8, 0.85, -6.2)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Deep8" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, -55.1, 0.045, 3)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Reeds22" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(-0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, -0.866025, -59.9, 0.85, 7.8)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Deep9" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, -49.8, 0.045, 7.6)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Reeds23" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.5, -45.7, 0.85, 3.5)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Deep10" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -45.4, 0.045, 13.1)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep11" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.5, -40.5, 0.045, 18.1)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep12" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -35.4, 0.045, 22.9)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep13" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, -30.3, 0.045, 27.7)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Reeds24" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -26.3, 0.85, 23.7)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Deep14" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 0.045, 28)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep15" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, -21.8, 0.045, 35.8)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep16" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(-0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.5, -16.9, 0.045, 40.8)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Reeds25" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, -13, 0.85, 36.9)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Deep17" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(-0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, -0.866025, -12.3, 0.045, 46.1)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Reeds26" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.9, 0.85, 50.7)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Deep18" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, -7.4, 0.045, 51.1)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep19" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(-0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, -0.866025, -2.4, 0.045, 56)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep20" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9, 0.045, 60.6)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Reeds27" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -2.4, 0.85, 65.9)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Deep21" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(-0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, -0.866025, 7.9, 0.045, 65.5)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep22" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 12.5, 0.045, 70.8)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep23" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(-0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, -0.866025, 17.8, 0.045, 75.4)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Reeds28" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, 12.4, 0.85, 80.8)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Deep24" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 22.8, 0.045, 80.3)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep25" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(-0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, -0.866025, 27.4, 0.045, 85.6)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep26" type="StaticBody3D" parent="NavigationRegion3D/WestChannel"]
+transform = Transform3D(0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.5, 30, 0.045, 88)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+; -- The channel between the middle and the far island: crossed on the road and in the east --
+
+[node name="EastChannel" type="Node3D" parent="NavigationRegion3D"]
+
+[node name="Deep27" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(-0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, -0.866025, -22.1, 0.045, -87.9)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep28" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, -17, 0.045, -83.1)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep29" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(-0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, -0.866025, -12.1, 0.045, -78.1)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Reeds29" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.85, -82.2)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Deep30" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, -7.1, 0.045, -73.2)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep31" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, -2.2, 0.045, -68.2)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Reeds30" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, -7.3, 0.85, -63.1)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Deep32" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 2.8, 0.045, -63.3)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Reeds31" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, -1.9, 0.85, -58.6)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Deep33" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(-0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.5, 7.6, 0.045, -58.2)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep34" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, 12.8, 0.045, -53.5)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Reeds32" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(-0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.5, 17.9, 0.85, -58.6)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Deep35" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(-0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, -0.866025, 17.5, 0.045, -48.3)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep36" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, 22.5, 0.045, -43.4)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Reeds33" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 27.5, 0.85, -48.4)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Deep37" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.5, 27.3, 0.045, -38.4)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep38" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(-0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.5, 32, 0.045, -34)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep39" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, 40.2, 0.045, -26.2)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Reeds34" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.5, 35.3, 0.85, -21.3)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_reeds"
+
+[node name="Deep40" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, 44.7, 0.045, -20.8)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep41" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.5, 49.8, 0.045, -16)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep42" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(-0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.5, 55.1, 0.045, -11.4)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep43" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(-0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, -0.866025, 60, 0.045, -6.4)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep44" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, 64, 0.045, -2)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep45" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 71.9, 0.045, 6.1)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep46" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 76.7, 0.045, 11.2)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep47" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(-0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, -0.866025, 81.9, 0.045, 15.9)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep48" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(-0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, -0.866025, 86.6, 0.045, 21.1)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+[node name="Deep49" type="StaticBody3D" parent="NavigationRegion3D/EastChannel"]
+transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, 88, 0.045, 22)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_deep"
+
+; -- The road, worn through in places --
+
+[node name="Trail37" type="Node3D" parent="NavigationRegion3D"]
+
+[node name="Trail38" type="StaticBody3D" parent="NavigationRegion3D/Trail37"]
+transform = Transform3D(-0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, -0.707107, -60.828, 0.06, -9.172)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail39" type="StaticBody3D" parent="NavigationRegion3D/Trail37"]
+transform = Transform3D(-0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, -0.707107, -63.657, 0.06, -6.343)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail40" type="StaticBody3D" parent="NavigationRegion3D/Trail37"]
+transform = Transform3D(-0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, -0.707107, -69.314, 0.06, -0.686)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+; -- The road, worn through in places --
+
+[node name="Trail41" type="Node3D" parent="NavigationRegion3D"]
+
+[node name="Trail42" type="StaticBody3D" parent="NavigationRegion3D/Trail41"]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 62, 0.06, 8)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail43" type="StaticBody3D" parent="NavigationRegion3D/Trail41"]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 64.828, 0.06, 5.172)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail44" type="StaticBody3D" parent="NavigationRegion3D/Trail41"]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 70.485, 0.06, -0.485)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
+[node name="Trail45" type="StaticBody3D" parent="NavigationRegion3D/Trail41"]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 73.314, 0.06, -3.314)
+script = ExtResource("3_kit")
+PieceId = "kit_path_4"
+
 ; -- Pools strewn by a seed, the ground round each kept clear --
 
 [node name="Water" type="Node3D" parent="NavigationRegion3D"]
@@ -793,7 +1169,7 @@ script = ExtResource("3_kit")
 PieceId = "kit_sw_pool"
 
 [node name="Pool12" type="StaticBody3D" parent="NavigationRegion3D/Water"]
-transform = Transform3D(0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.5, -51.1, 0.045, -5.8)
+transform = Transform3D(-0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, -0.866025, -9, 0.045, 34)
 script = ExtResource("3_kit")
 PieceId = "kit_sw_pool"
 
@@ -813,42 +1189,42 @@ script = ExtResource("3_kit")
 PieceId = "kit_sw_pool"
 
 [node name="Pool16" type="StaticBody3D" parent="NavigationRegion3D/Water"]
-transform = Transform3D(-0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.5, -9.7, 0.045, 42.6)
+transform = Transform3D(0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, 34.4, 0.045, 59.9)
 script = ExtResource("3_kit")
 PieceId = "kit_sw_pool"
 
 [node name="Pool17" type="StaticBody3D" parent="NavigationRegion3D/Water"]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, -29.6, 0.045, -37.8)
+transform = Transform3D(0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.5, -23.4, 0.045, -55.1)
 script = ExtResource("3_kit")
 PieceId = "kit_sw_pool"
 
 [node name="Pool18" type="StaticBody3D" parent="NavigationRegion3D/Water"]
-transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, -62.5, 0.045, 16)
-script = ExtResource("3_kit")
-PieceId = "kit_sw_pool"
-
-[node name="Pool19" type="StaticBody3D" parent="NavigationRegion3D/Water"]
-transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 64.9, 0.045, -21.1)
-script = ExtResource("3_kit")
-PieceId = "kit_sw_pool"
-
-[node name="Pool20" type="StaticBody3D" parent="NavigationRegion3D/Water"]
-transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, 52.9, 0.045, 9.7)
-script = ExtResource("3_kit")
-PieceId = "kit_sw_pool"
-
-[node name="Pool21" type="StaticBody3D" parent="NavigationRegion3D/Water"]
-transform = Transform3D(0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, 32.7, 0.045, 30.9)
-script = ExtResource("3_kit")
-PieceId = "kit_sw_pool"
-
-[node name="Pool22" type="StaticBody3D" parent="NavigationRegion3D/Water"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -56.1, 0.045, 28.9)
 script = ExtResource("3_kit")
 PieceId = "kit_sw_pool"
 
-[node name="Pool23" type="StaticBody3D" parent="NavigationRegion3D/Water"]
+[node name="Pool19" type="StaticBody3D" parent="NavigationRegion3D/Water"]
 transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, -39.5, 0.045, 59)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_pool"
+
+[node name="Pool20" type="StaticBody3D" parent="NavigationRegion3D/Water"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.2, 0.045, -59.4)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_pool"
+
+[node name="Pool21" type="StaticBody3D" parent="NavigationRegion3D/Water"]
+transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, -21.9, 0.045, -13.2)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_pool"
+
+[node name="Pool22" type="StaticBody3D" parent="NavigationRegion3D/Water"]
+transform = Transform3D(-0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, -0.866025, 13.1, 0.045, 57.2)
+script = ExtResource("3_kit")
+PieceId = "kit_sw_pool"
+
+[node name="Pool23" type="StaticBody3D" parent="NavigationRegion3D/Water"]
+transform = Transform3D(-0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, -0.866025, 34.9, 0.045, 14)
 script = ExtResource("3_kit")
 PieceId = "kit_sw_pool"
 
@@ -863,7 +1239,7 @@ InnerRadius = 8.0
 OuterRadius = 78.0
 Spacing = 6
 Seed = 67
-Clearings = PackedVector3Array(-74, 62, 5, -70.488, 60.085, 5, -66.977, 58.169, 5, -63.465, 56.254, 5, -59.954, 54.338, 5, -56.442, 52.423, 5, -52.931, 50.508, 5, -52, 50, 5, -48.672, 47.781, 5, -45.344, 45.562, 5, -42.015, 43.344, 5, -38.687, 41.125, 5, -35.359, 38.906, 5, -32.031, 36.687, 5, -28.703, 34.468, 5, -28, 34, 5, -25.172, 31.172, 5, -22.343, 28.343, 5, -19.515, 25.515, 5, -16.686, 22.686, 5, -13.858, 19.858, 5, -11.029, 17.029, 5, -8.201, 14.201, 5, -5.373, 11.373, 5, -4, 10, 5, -0.927, 7.439, 5, 2.146, 4.879, 5, 5.219, 2.318, 5, 8.292, -0.243, 5, 11.364, -2.804, 5, 14.437, -5.364, 5, 17.51, -7.925, 5, 20, -10, 5, 22.603, -13.037, 5, 25.206, -16.074, 5, 27.809, -19.111, 5, 30.413, -22.148, 5, 33.016, -25.185, 5, 35.619, -28.222, 5, 38.222, -31.259, 5, 40.825, -34.296, 5, 43.428, -37.333, 5, 44, -38, 5, 46.703, -40.949, 5, 49.406, -43.897, 5, 52.109, -46.846, 5, 54.812, -49.794, 5, 57.514, -52.743, 5, 60.217, -55.692, 5, 62.92, -58.64, 5, 65.623, -61.589, 5, 66, -62, 5, 70, -62, 5, -22, 64, 6.5, -14, 56, 6.5, 6, 38, 6.5, 14, 32, 6.5, 2, 30, 6.5, 32, -6, 6.5, 24, -58, 6.5, 36, -50, 6.5, 56, 46, 17, 54, 46, 6.5, 38, 44, 9, -66, 62, 14, -60.5, 65, 3, 26, -2, 5, 56, -56, 5, -15, 60, 12, -31, 9, 14, 8, 35, 12, 4, -28, 12, 40, -6, 12, 30, -54, 12, 38, 44, 8, 56, 46, 6, -74, 74, 10, -74, 62, 9, 74, -74, 10, 74, -62, 9, 59.3, -39.2, 6.5, -34.3, -12.8, 6.5, -51.1, -5.8, 6.5, -12.7, -34.2, 6.5, -12.7, -47.6, 6.5, 56.9, -11.4, 6.5, -9.7, 42.6, 6.5, -29.6, -37.8, 6.5, -62.5, 16, 6.5, 64.9, -21.1, 6.5, 52.9, 9.7, 6.5, 32.7, 30.9, 6.5, -56.1, 28.9, 6.5, -39.5, 59, 6.5)
+Clearings = PackedVector3Array(-74, 62, 5, -70.488, 60.085, 5, -66.977, 58.169, 5, -63.465, 56.254, 5, -59.954, 54.338, 5, -56.442, 52.423, 5, -52.931, 50.508, 5, -52, 50, 5, -48.672, 47.781, 5, -45.344, 45.562, 5, -42.015, 43.344, 5, -38.687, 41.125, 5, -35.359, 38.906, 5, -32.031, 36.687, 5, -28.703, 34.468, 5, -28, 34, 5, -25.172, 31.172, 5, -22.343, 28.343, 5, -19.515, 25.515, 5, -16.686, 22.686, 5, -13.858, 19.858, 5, -11.029, 17.029, 5, -8.201, 14.201, 5, -5.373, 11.373, 5, -4, 10, 5, -0.927, 7.439, 5, 2.146, 4.879, 5, 5.219, 2.318, 5, 8.292, -0.243, 5, 11.364, -2.804, 5, 14.437, -5.364, 5, 17.51, -7.925, 5, 20, -10, 5, 22.603, -13.037, 5, 25.206, -16.074, 5, 27.809, -19.111, 5, 30.413, -22.148, 5, 33.016, -25.185, 5, 35.619, -28.222, 5, 38.222, -31.259, 5, 40.825, -34.296, 5, 43.428, -37.333, 5, 44, -38, 5, 46.703, -40.949, 5, 49.406, -43.897, 5, 52.109, -46.846, 5, 54.812, -49.794, 5, 57.514, -52.743, 5, 60.217, -55.692, 5, 62.92, -58.64, 5, 65.623, -61.589, 5, 66, -62, 5, 70, -62, 5, -22, 64, 6.5, -14, 56, 6.5, 6, 38, 6.5, 14, 32, 6.5, 2, 30, 6.5, 32, -6, 6.5, 24, -58, 6.5, 36, -50, 6.5, 56, 46, 17, 54, 46, 6.5, 38, 44, 9, -26, 32, 8, -64, -6, 8, 36, -30, 8, 68, 2, 8, -58, -12, 5, -60.828, -9.172, 5, -63.657, -6.343, 5, -66.485, -3.515, 5, -69.314, -0.686, 5, 62, 8, 5, 64.828, 5.172, 5, 67.657, 2.343, 5, 70.485, -0.485, 5, 73.314, -3.314, 5, -66, 62, 14, -60.5, 65, 3, 26, -2, 5, 56, -56, 5, -15, 60, 12, -31, 9, 14, 8, 35, 12, 4, -28, 12, 40, -6, 12, 30, -54, 12, 38, 44, 8, 56, 46, 6, -70, 12, 12, 0, 4, 12, -36, -36, 12, -74, 74, 10, -74, 62, 9, 74, -74, 10, 74, -62, 9, 59.3, -39.2, 6.5, -34.3, -12.8, 6.5, -9, 34, 6.5, -12.7, -34.2, 6.5, -12.7, -47.6, 6.5, 56.9, -11.4, 6.5, 34.4, 59.9, 6.5, -23.4, -55.1, 6.5, -56.1, 28.9, 6.5, -39.5, 59, 6.5, 5.2, -59.4, 6.5, -21.9, -13.2, 6.5, 13.1, 57.2, 6.5, 34.9, 14, 6.5)
 
 [node name="ReedBeds" type="Node3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -874,7 +1250,7 @@ InnerRadius = 6.0
 OuterRadius = 76.0
 Spacing = 3
 Seed = 69
-Clearings = PackedVector3Array(-74, 62, 5, -70.488, 60.085, 5, -66.977, 58.169, 5, -63.465, 56.254, 5, -59.954, 54.338, 5, -56.442, 52.423, 5, -52.931, 50.508, 5, -52, 50, 5, -48.672, 47.781, 5, -45.344, 45.562, 5, -42.015, 43.344, 5, -38.687, 41.125, 5, -35.359, 38.906, 5, -32.031, 36.687, 5, -28.703, 34.468, 5, -28, 34, 5, -25.172, 31.172, 5, -22.343, 28.343, 5, -19.515, 25.515, 5, -16.686, 22.686, 5, -13.858, 19.858, 5, -11.029, 17.029, 5, -8.201, 14.201, 5, -5.373, 11.373, 5, -4, 10, 5, -0.927, 7.439, 5, 2.146, 4.879, 5, 5.219, 2.318, 5, 8.292, -0.243, 5, 11.364, -2.804, 5, 14.437, -5.364, 5, 17.51, -7.925, 5, 20, -10, 5, 22.603, -13.037, 5, 25.206, -16.074, 5, 27.809, -19.111, 5, 30.413, -22.148, 5, 33.016, -25.185, 5, 35.619, -28.222, 5, 38.222, -31.259, 5, 40.825, -34.296, 5, 43.428, -37.333, 5, 44, -38, 5, 46.703, -40.949, 5, 49.406, -43.897, 5, 52.109, -46.846, 5, 54.812, -49.794, 5, 57.514, -52.743, 5, 60.217, -55.692, 5, 62.92, -58.64, 5, 65.623, -61.589, 5, 66, -62, 5, 70, -62, 5, -22, 64, 6.5, -14, 56, 6.5, 6, 38, 6.5, 14, 32, 6.5, 2, 30, 6.5, 32, -6, 6.5, 24, -58, 6.5, 36, -50, 6.5, 56, 46, 17, 54, 46, 6.5, 38, 44, 9, -66, 62, 14, -60.5, 65, 3, 26, -2, 5, 56, -56, 5, -15, 60, 12, -31, 9, 14, 8, 35, 12, 4, -28, 12, 40, -6, 12, 30, -54, 12, 38, 44, 8, 56, 46, 6, -74, 74, 10, -74, 62, 9, 74, -74, 10, 74, -62, 9, 59.3, -39.2, 6.5, -34.3, -12.8, 6.5, -51.1, -5.8, 6.5, -12.7, -34.2, 6.5, -12.7, -47.6, 6.5, 56.9, -11.4, 6.5, -9.7, 42.6, 6.5, -29.6, -37.8, 6.5, -62.5, 16, 6.5, 64.9, -21.1, 6.5, 52.9, 9.7, 6.5, 32.7, 30.9, 6.5, -56.1, 28.9, 6.5, -39.5, 59, 6.5)
+Clearings = PackedVector3Array(-74, 62, 5, -70.488, 60.085, 5, -66.977, 58.169, 5, -63.465, 56.254, 5, -59.954, 54.338, 5, -56.442, 52.423, 5, -52.931, 50.508, 5, -52, 50, 5, -48.672, 47.781, 5, -45.344, 45.562, 5, -42.015, 43.344, 5, -38.687, 41.125, 5, -35.359, 38.906, 5, -32.031, 36.687, 5, -28.703, 34.468, 5, -28, 34, 5, -25.172, 31.172, 5, -22.343, 28.343, 5, -19.515, 25.515, 5, -16.686, 22.686, 5, -13.858, 19.858, 5, -11.029, 17.029, 5, -8.201, 14.201, 5, -5.373, 11.373, 5, -4, 10, 5, -0.927, 7.439, 5, 2.146, 4.879, 5, 5.219, 2.318, 5, 8.292, -0.243, 5, 11.364, -2.804, 5, 14.437, -5.364, 5, 17.51, -7.925, 5, 20, -10, 5, 22.603, -13.037, 5, 25.206, -16.074, 5, 27.809, -19.111, 5, 30.413, -22.148, 5, 33.016, -25.185, 5, 35.619, -28.222, 5, 38.222, -31.259, 5, 40.825, -34.296, 5, 43.428, -37.333, 5, 44, -38, 5, 46.703, -40.949, 5, 49.406, -43.897, 5, 52.109, -46.846, 5, 54.812, -49.794, 5, 57.514, -52.743, 5, 60.217, -55.692, 5, 62.92, -58.64, 5, 65.623, -61.589, 5, 66, -62, 5, 70, -62, 5, -22, 64, 6.5, -14, 56, 6.5, 6, 38, 6.5, 14, 32, 6.5, 2, 30, 6.5, 32, -6, 6.5, 24, -58, 6.5, 36, -50, 6.5, 56, 46, 17, 54, 46, 6.5, 38, 44, 9, -26, 32, 8, -64, -6, 8, 36, -30, 8, 68, 2, 8, -58, -12, 5, -60.828, -9.172, 5, -63.657, -6.343, 5, -66.485, -3.515, 5, -69.314, -0.686, 5, 62, 8, 5, 64.828, 5.172, 5, 67.657, 2.343, 5, 70.485, -0.485, 5, 73.314, -3.314, 5, -66, 62, 14, -60.5, 65, 3, 26, -2, 5, 56, -56, 5, -15, 60, 12, -31, 9, 14, 8, 35, 12, 4, -28, 12, 40, -6, 12, 30, -54, 12, 38, 44, 8, 56, 46, 6, -70, 12, 12, 0, 4, 12, -36, -36, 12, -74, 74, 10, -74, 62, 9, 74, -74, 10, 74, -62, 9, 59.3, -39.2, 6.5, -34.3, -12.8, 6.5, -9, 34, 6.5, -12.7, -34.2, 6.5, -12.7, -47.6, 6.5, 56.9, -11.4, 6.5, 34.4, 59.9, 6.5, -23.4, -55.1, 6.5, -56.1, 28.9, 6.5, -39.5, 59, 6.5, 5.2, -59.4, 6.5, -21.9, -13.2, 6.5, 13.1, 57.2, 6.5, 34.9, 14, 6.5)
 
 [node name="Wrack" type="Node3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -885,7 +1261,7 @@ InnerRadius = 8.0
 OuterRadius = 76.0
 Spacing = 7
 Seed = 70
-Clearings = PackedVector3Array(-74, 62, 5, -70.488, 60.085, 5, -66.977, 58.169, 5, -63.465, 56.254, 5, -59.954, 54.338, 5, -56.442, 52.423, 5, -52.931, 50.508, 5, -52, 50, 5, -48.672, 47.781, 5, -45.344, 45.562, 5, -42.015, 43.344, 5, -38.687, 41.125, 5, -35.359, 38.906, 5, -32.031, 36.687, 5, -28.703, 34.468, 5, -28, 34, 5, -25.172, 31.172, 5, -22.343, 28.343, 5, -19.515, 25.515, 5, -16.686, 22.686, 5, -13.858, 19.858, 5, -11.029, 17.029, 5, -8.201, 14.201, 5, -5.373, 11.373, 5, -4, 10, 5, -0.927, 7.439, 5, 2.146, 4.879, 5, 5.219, 2.318, 5, 8.292, -0.243, 5, 11.364, -2.804, 5, 14.437, -5.364, 5, 17.51, -7.925, 5, 20, -10, 5, 22.603, -13.037, 5, 25.206, -16.074, 5, 27.809, -19.111, 5, 30.413, -22.148, 5, 33.016, -25.185, 5, 35.619, -28.222, 5, 38.222, -31.259, 5, 40.825, -34.296, 5, 43.428, -37.333, 5, 44, -38, 5, 46.703, -40.949, 5, 49.406, -43.897, 5, 52.109, -46.846, 5, 54.812, -49.794, 5, 57.514, -52.743, 5, 60.217, -55.692, 5, 62.92, -58.64, 5, 65.623, -61.589, 5, 66, -62, 5, 70, -62, 5, -22, 64, 6.5, -14, 56, 6.5, 6, 38, 6.5, 14, 32, 6.5, 2, 30, 6.5, 32, -6, 6.5, 24, -58, 6.5, 36, -50, 6.5, 56, 46, 17, 54, 46, 6.5, 38, 44, 9, -66, 62, 14, -60.5, 65, 3, 26, -2, 5, 56, -56, 5, -15, 60, 12, -31, 9, 14, 8, 35, 12, 4, -28, 12, 40, -6, 12, 30, -54, 12, 38, 44, 8, 56, 46, 6, -74, 74, 10, -74, 62, 9, 74, -74, 10, 74, -62, 9, 59.3, -39.2, 6.5, -34.3, -12.8, 6.5, -51.1, -5.8, 6.5, -12.7, -34.2, 6.5, -12.7, -47.6, 6.5, 56.9, -11.4, 6.5, -9.7, 42.6, 6.5, -29.6, -37.8, 6.5, -62.5, 16, 6.5, 64.9, -21.1, 6.5, 52.9, 9.7, 6.5, 32.7, 30.9, 6.5, -56.1, 28.9, 6.5, -39.5, 59, 6.5)
+Clearings = PackedVector3Array(-74, 62, 5, -70.488, 60.085, 5, -66.977, 58.169, 5, -63.465, 56.254, 5, -59.954, 54.338, 5, -56.442, 52.423, 5, -52.931, 50.508, 5, -52, 50, 5, -48.672, 47.781, 5, -45.344, 45.562, 5, -42.015, 43.344, 5, -38.687, 41.125, 5, -35.359, 38.906, 5, -32.031, 36.687, 5, -28.703, 34.468, 5, -28, 34, 5, -25.172, 31.172, 5, -22.343, 28.343, 5, -19.515, 25.515, 5, -16.686, 22.686, 5, -13.858, 19.858, 5, -11.029, 17.029, 5, -8.201, 14.201, 5, -5.373, 11.373, 5, -4, 10, 5, -0.927, 7.439, 5, 2.146, 4.879, 5, 5.219, 2.318, 5, 8.292, -0.243, 5, 11.364, -2.804, 5, 14.437, -5.364, 5, 17.51, -7.925, 5, 20, -10, 5, 22.603, -13.037, 5, 25.206, -16.074, 5, 27.809, -19.111, 5, 30.413, -22.148, 5, 33.016, -25.185, 5, 35.619, -28.222, 5, 38.222, -31.259, 5, 40.825, -34.296, 5, 43.428, -37.333, 5, 44, -38, 5, 46.703, -40.949, 5, 49.406, -43.897, 5, 52.109, -46.846, 5, 54.812, -49.794, 5, 57.514, -52.743, 5, 60.217, -55.692, 5, 62.92, -58.64, 5, 65.623, -61.589, 5, 66, -62, 5, 70, -62, 5, -22, 64, 6.5, -14, 56, 6.5, 6, 38, 6.5, 14, 32, 6.5, 2, 30, 6.5, 32, -6, 6.5, 24, -58, 6.5, 36, -50, 6.5, 56, 46, 17, 54, 46, 6.5, 38, 44, 9, -26, 32, 8, -64, -6, 8, 36, -30, 8, 68, 2, 8, -58, -12, 5, -60.828, -9.172, 5, -63.657, -6.343, 5, -66.485, -3.515, 5, -69.314, -0.686, 5, 62, 8, 5, 64.828, 5.172, 5, 67.657, 2.343, 5, 70.485, -0.485, 5, 73.314, -3.314, 5, -66, 62, 14, -60.5, 65, 3, 26, -2, 5, 56, -56, 5, -15, 60, 12, -31, 9, 14, 8, 35, 12, 4, -28, 12, 40, -6, 12, 30, -54, 12, 38, 44, 8, 56, 46, 6, -70, 12, 12, 0, 4, 12, -36, -36, 12, -74, 74, 10, -74, 62, 9, 74, -74, 10, 74, -62, 9, 59.3, -39.2, 6.5, -34.3, -12.8, 6.5, -9, 34, 6.5, -12.7, -34.2, 6.5, -12.7, -47.6, 6.5, 56.9, -11.4, 6.5, 34.4, 59.9, 6.5, -23.4, -55.1, 6.5, -56.1, 28.9, 6.5, -39.5, 59, 6.5, 5.2, -59.4, 6.5, -21.9, -13.2, 6.5, 13.1, 57.2, 6.5, 34.9, 14, 6.5)
 
 ; -- Session, player and population --
 
@@ -967,6 +1343,21 @@ FieldId = "spf_mire_guard"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 56, 0, 46)
 script = ExtResource("5_spawnfield")
 FieldId = "spf_mire_king"
+
+[node name="CampBanks" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -70, 0, 12)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_mire_camp_banks"
+
+[node name="MidMire" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_mire_middle"
+
+[node name="NorthFen" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -36, 0, -36)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_mire_north_fen"
 
 ; The shards are not placed here: the zone stands them at random spots.
 

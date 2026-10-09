@@ -28,6 +28,55 @@ public static class Act2Layouts
         return map;
     }
 
+    /// <summary>
+    /// A ridge through the points given: a piece every <paramref name="spacing"/> metres, each pushed either side
+    /// of the line by a seed, so it reads as rock and not as a wall, close enough that nothing walks between them;
+    /// and smaller stones strewn along its foot.
+    /// </summary>
+    private static Layout Ridge(this Layout map, string kit, double spacing, int seed, params (double X, double Z)[] points) =>
+        map.Line(kit, spacing, seed, 3.0, "kit_st_rock", 4.5, points);
+
+    /// <summary>
+    /// A river or a channel through the points given: deep pools a piece every <paramref name="spacing"/> metres,
+    /// close enough to run together, with <paramref name="bank"/> growing along both sides of it. Left open
+    /// where it is to be crossed: each stretch between two crossings is a river of its own.
+    /// </summary>
+    private static Layout River(this Layout map, string kit, double spacing, int seed, string bank, params (double X, double Z)[] points) =>
+        map.Line(kit, spacing, seed, 0.8, bank, 5.5, points);
+
+    private static Layout Line(this Layout map, string kit, double spacing, int seed, double wander, string foot, double footFrom, params (double X, double Z)[] points)
+    {
+        var rng = new Random(seed);
+
+        for (var i = 0; i + 1 < points.Length; i++)
+        {
+            var (from, to) = (points[i], points[i + 1]);
+            var (dx, dz) = (to.X - from.X, to.Z - from.Z);
+            var length = Math.Sqrt((dx * dx) + (dz * dz));
+            var (sx, sz) = (-dz / length, dx / length);
+
+            for (var d = 0.0; d < length; d += spacing)
+            {
+                var aside = (rng.NextDouble() - 0.5) * wander;
+                var (x, z) = (from.X + (dx * d / length), from.Z + (dz * d / length));
+
+                map.Put(kit, Math.Round(x + (sx * aside), 1), Math.Round(z + (sz * aside), 1), rng.Next(0, 12) * 30);
+
+                // Something at its foot now and then, on one side or the other.
+                if (rng.NextDouble() < 0.4)
+                {
+                    var off = (rng.NextDouble() < 0.5 ? -1 : 1) * (footFrom + (rng.NextDouble() * 2));
+
+                    map.Put(foot, Math.Round(x + (sx * off), 1), Math.Round(z + (sz * off), 1), rng.Next(0, 12) * 30);
+                }
+            }
+        }
+
+        var last = points[^1];
+
+        return map.Put(kit, last.X, last.Z, rng.Next(0, 12) * 30);
+    }
+
     // ------------------------------------------------------------------ the Stonewood
 
     private static Layout Stonewood()
@@ -54,32 +103,34 @@ public static class Act2Layouts
             FogDensity = 0.0035,
         };
 
-        map.Road("kit_path_4", 61, (74, 62), (56, 48), (30, 30), (6, 6), (-20, -12), (-44, -40), (-66, -62), (-74, -62));
+        // A road that winds (2026-10-08, at your call: each map a shape of its own): north from the camp to the
+        // east pass, west across the middle to the pass by the Stag's ring, then north to the way out.
+        map.Road("kit_path_4", 61, (74, 62), (60, 48), (62, 20), (68, -12), (40, -14), (10, 4), (-20, 20), (-48, 26), (-50, 0), (-48, -30), (-60, -50), (-74, -62));
 
         map.Part("Outpost", "The outpost at the way in: the smith's anvil and his fire")
             .Put("kit_camp_anvil", 59.6, 66.2, 20).Put("kit_brazier", 60, 68).Put("kit_camp_weapons", 62.5, 68.2, 160).Put("kit_camp_crate", 58.6, 64.4);
 
         map.Part("Wolves", "The wolves' run by the way in: fallen trunks and the deer they were hunting, stone as they are")
-            .Put("kit_st_deer", 26, 61, 40).Put("kit_st_deer", 29, 63, 70).Put("kit_st_stag", 19, 53, 200)
-            .Strew(11, 16, 56, 9, "kit_st_log", "kit_st_log", "kit_st_stump", "kit_st_tree_dead", "kit_st_rock", "kit_bones", "kit_bones");
+            .Put("kit_st_deer", 25, 75, 40).Put("kit_st_deer", 28, 77, 70).Put("kit_st_stag", 18, 67, 200)
+            .Strew(11, 15, 70, 9, "kit_st_log", "kit_st_log", "kit_st_stump", "kit_st_tree_dead", "kit_st_rock", "kit_bones", "kit_bones");
 
         map.Part("Webs", "The spiders' hollow in the east: webs strung between stone trees, eggs, crystal")
-            .Put("kit_web", 50, 4, 20).Put("kit_web", 55, 10, 110).Put("kit_web", 46, 12, 70).Put("kit_web", 53, 15, 160)
-            .Put("kit_spider_eggs", 52, 8).Put("kit_spider_eggs", 48, 5).Put("kit_spider_eggs", 56, 13)
-            .Strew(13, 51, 9, 10, "kit_st_tree_dead", "kit_st_tree_dead", "kit_st_tree_dead", "kit_st_crystal", "kit_st_crystal", "kit_st_rock");
+            .Put("kit_web", 66, 8, 20).Put("kit_web", 71, 14, 110).Put("kit_web", 62, 16, 70).Put("kit_web", 69, 19, 160)
+            .Put("kit_spider_eggs", 68, 12).Put("kit_spider_eggs", 64, 9).Put("kit_spider_eggs", 72, 17)
+            .Strew(13, 67, 13, 10, "kit_st_tree_dead", "kit_st_tree_dead", "kit_st_tree_dead", "kit_st_crystal", "kit_st_crystal", "kit_st_rock");
 
         map.Part("Grove", "The still grove: a herd caught as it ran, and the adders that lie among it")
-            .Put("kit_st_deer", 8, 38, 300).Put("kit_st_deer", 12, 40, 320).Put("kit_st_deer", 14, 35, 280).Put("kit_st_stag", 6, 33, 310)
-            .Put("kit_st_wolf", 18, 42, 300).Put("kit_st_wolf", 20, 38, 290)
-            .Strew(17, 11, 37, 10, "kit_st_tree", "kit_st_tree", "kit_st_pine", "kit_st_fern", "kit_st_fern", "kit_st_bush");
+            .Put("kit_st_deer", 25, -11, 300).Put("kit_st_deer", 29, -9, 320).Put("kit_st_deer", 31, -14, 280).Put("kit_st_stag", 23, -16, 310)
+            .Put("kit_st_wolf", 35, -7, 300).Put("kit_st_wolf", 37, -11, 290)
+            .Strew(17, 28, -12, 10, "kit_st_tree", "kit_st_tree", "kit_st_pine", "kit_st_fern", "kit_st_fern", "kit_st_bush");
 
         map.Part("Circle", "The golems' ring in the middle: twelve crystals standing, an altar among them")
-            .Ring("kit_st_crystal", -4, -28, 9, 12, 20, 70)
-            .Put("kit_kn_altar", -4, -28).Put("kit_pillar", -9, -23).Put("kit_pillar", 1, -33).Put("kit_ruin_rubble", -8, -32).Put("kit_ruin_rubble", 2, -24);
+            .Ring("kit_st_crystal", 15, -65, 9, 12, 20, 70)
+            .Put("kit_kn_altar", 15, -65).Put("kit_pillar", 10, -60).Put("kit_pillar", 20, -70).Put("kit_ruin_rubble", 11, -69).Put("kit_ruin_rubble", 21, -61);
 
         map.Part("Glade", "The glade in the west that never turned: green, wet, and the lichen caps' own")
-            .Put("kit_nat_tree", -44, 6).Put("kit_nat_tree", -36, 15).Put("kit_nat_tree", -46, 16).Put("kit_nat_tree", -35, 4)
-            .Strew(19, -40, 10, 10, "kit_nat_fern", "kit_nat_fern", "kit_nat_fern", "kit_nat_bush", "kit_nat_bush", "kit_nat_flowers", "kit_nat_flowers", "kit_nat_grass", "kit_nat_grass", "kit_nat_rock");
+            .Put("kit_nat_tree", -62, -2).Put("kit_nat_tree", -54, 7).Put("kit_nat_tree", -64, 8).Put("kit_nat_tree", -53, -4)
+            .Strew(19, -58, 2, 10, "kit_nat_fern", "kit_nat_fern", "kit_nat_fern", "kit_nat_bush", "kit_nat_bush", "kit_nat_flowers", "kit_nat_flowers", "kit_nat_grass", "kit_nat_grass", "kit_nat_rock");
 
         map.Part("Geodes", "The geode field in the north: split stones, violet inside")
             .Strew(23, -14, -56, 11, "kit_st_geode", "kit_st_geode", "kit_st_geode", "kit_st_geode", "kit_st_geode", "kit_st_geode", "kit_st_geode", "kit_st_crag", "kit_st_rock", "kit_st_rock", "kit_st_crystal");
@@ -89,6 +140,17 @@ public static class Act2Layouts
             .Put("kit_st_crystal", -62, 55).Put("kit_st_crystal", -60, 58, 40).Put("kit_st_crystal", -64, 51, 80)
             .Put("kit_st_wolf", -50, 47, 120).Put("kit_st_wolf", -53, 56, 60).Put("kit_bones", -57, 46).Put("kit_bones", -52, 52)
             .Clear(-44, 36, 9);
+
+        // Two ridges of crags across the wood, each with one pass (2026-10-08, at your call): the east pass from
+        // the camp's quarter into the middle, the west pass beside the Stag's ring from the middle to the far third.
+        map.Part("EastRidge", "The ridge between the camp's quarter and the middle: open only at its east end")
+            .Ridge("kit_st_crag", 5, 71, (-35, 90), (-5, 62), (22, 40), (40, 10), (63.5, -8.5))
+            .Clear(70, -14, 10);
+
+        map.Part("WestRidge", "The ridge between the middle and the far third: open only beside the Stag's ring")
+            .Ridge("kit_st_crag", 5, 72, (-42.5, 17.5), (-20, -8), (5, -28), (30, -58), (57.5, -82.5))
+            .Ridge("kit_st_crag", 5, 73, (-72.5, 47.5), (-86, 61))
+            .Clear(-49, 24, 9);
 
         map.Scatter("StoneTrees", 170, 8, 78, 6, 61, "kit_st_pine", "kit_st_tree_dead", "kit_st_pine", "kit_st_tree_dead", "kit_st_pine", "kit_st_tree")
             .Scatter("Rocks", 46, 8, 78, 9, 62, "kit_st_rock", "kit_st_rock", "kit_st_crag")
@@ -102,14 +164,19 @@ public static class Act2Layouts
             .Npc("MerchantSella", "npc_sella", 71.5, 65)
             .ShrineAt("ShrineGrove", "shr_stonewood_grove", 2, 12)
             .ShrineAt("ShrinePass", "shr_stonewood_pass", -60, -52)
-            .Spawn("WolfRun", "spf_stonewood_wolves", 16, 56)
-            .Spawn("SpiderHollow", "spf_stonewood_webs", 51, 9)
-            .Spawn("StillGrove", "spf_stonewood_grove", 11, 37)
-            .Spawn("GolemRing", "spf_stonewood_circle", -4, -28)
-            .Spawn("GreenGlade", "spf_stonewood_glade", -40, 10)
+            .Spawn("WolfRun", "spf_stonewood_wolves", 15, 70)
+            .Spawn("SpiderHollow", "spf_stonewood_webs", 67, 13)
+            .Spawn("StillGrove", "spf_stonewood_grove", 28, -12)
+            .Spawn("GolemRing", "spf_stonewood_circle", 15, -65)
+            .Spawn("GreenGlade", "spf_stonewood_glade", -58, 2)
             .Spawn("GeodeField", "spf_stonewood_geodes", -14, -56)
             .Spawn("StagGuard", "spf_stonewood_guard", -44, 36, 8)
             .Spawn("Stag", "spf_stonewood_stag", -56, 50, 6)
+            // More camps of creatures in the empty ground (2026-10-08, at your call), the first by the camp for a player just come.
+            .Spawn("WoodsEdge", "spf_stonewood_edge", 52, -30)
+            .Spawn("SouthHollow", "spf_stonewood_south", -12, 28)
+            .Spawn("EastCrags", "spf_stonewood_east_crags", 68, -40)
+            .Spawn("WestRing", "spf_stonewood_west_ring", -40, -28)
             .Way("Gate", "zone_broken_gate", 74, 74)
             .Way("Mire", "zone_drowned_mire", -74, -74);
 
@@ -177,6 +244,23 @@ public static class Act2Layouts
             .Put("kit_ghost_fire", 58, 42).Put("kit_ghost_fire", 58, 50).Pool("kit_sw_pool", 54, 46, 5)
             .Clear(38, 44, 9);
 
+        // Two channels of deep water across the mire (2026-10-08, at your call: each map a shape of its own), so it
+        // is three islands: each channel crossed where the road runs and once more off to the side.
+        map.Part("WestChannel", "The channel between the camp's island and the middle: crossed on the road and in the north")
+            .River("kit_sw_deep", 7, 81, "kit_sw_reeds", (-88, -30), (-68, -10))
+            .River("kit_sw_deep", 7, 82, "kit_sw_reeds", (-60, -2), (-30, 28))
+            .River("kit_sw_deep", 7, 83, "kit_sw_reeds", (-22, 36), (30, 88))
+            .Clear(-26, 32, 8).Clear(-64, -6, 8);
+
+        map.Part("EastChannel", "The channel between the middle and the far island: crossed on the road and in the east")
+            .River("kit_sw_deep", 7, 84, "kit_sw_reeds", (-22, -88), (32, -34))
+            .River("kit_sw_deep", 7, 85, "kit_sw_reeds", (40, -26), (64, -2))
+            .River("kit_sw_deep", 7, 86, "kit_sw_reeds", (72, 6), (88, 22))
+            .Clear(36, -30, 8).Clear(68, 2, 8);
+
+        map.Road("kit_path_4", 87, (-58, -12), (-70, 0));
+        map.Road("kit_path_4", 88, (62, 8), (74, -4));
+
         map.Scatter("MarshTrees", 190, 8, 78, 6, 67, "kit_sw_tree", "kit_hb_dead_tree", "kit_un_dead_tree", "kit_hb_dead_tree", "kit_sw_tree", "kit_un_dead_tree")
             .Scatter("ReedBeds", 170, 6, 76, 3, 69, "kit_sw_reeds", "kit_sw_reeds", "kit_un_grass")
             .Scatter("Wrack", 60, 8, 76, 7, 70, "kit_sw_rock", "kit_un_log", "kit_un_stump", "kit_bones");
@@ -193,6 +277,10 @@ public static class Act2Layouts
             .Spawn("CausewayEnd", "spf_mire_causeway", 30, -54)
             .Spawn("KingsGuard", "spf_mire_guard", 38, 44, 8)
             .Spawn("King", "spf_mire_king", 56, 46, 6)
+            // More camps of creatures in the empty ground (2026-10-08, at your call).
+            .Spawn("CampBanks", "spf_mire_camp_banks", -70, 12)
+            .Spawn("MidMire", "spf_mire_middle", 0, 4)
+            .Spawn("NorthFen", "spf_mire_north_fen", -36, -36)
             .Way("Stonewood", "zone_stonewood", -74, 74)
             .Way("Cinderlands", "zone_cinderlands", 74, -74);
 
@@ -226,7 +314,9 @@ public static class Act2Layouts
             FogDensity = 0.0055,
         };
 
-        map.Road("kit_path_4", 71, (74, 62), (52, 50), (26, 36), (0, 12), (-24, -10), (-42, -32), (-50, -44));
+        // Over the eastern bridge of the first river, across the middle, over the one bridge of the second
+        // (2026-10-08, at your call: each map a shape of its own).
+        map.Road("kit_path_4", 71, (74, 62), (60, 40), (46, 8), (34, -12), (16, -20), (-4, -16), (-21, -9), (-30, -20), (-42, -32), (-50, -44));
 
         map.Part("Hounds", "The hounds' ground by the way in: bones, burnt trunks")
             .Strew(51, 16, 58, 9, "kit_bones", "kit_bones", "kit_bones", "kit_em_tree", "kit_em_tree", "kit_em_rock", "kit_un_log");
@@ -249,8 +339,8 @@ public static class Act2Layouts
             .Put("kit_camp_fire", -10, -40).Put("kit_orc_totem", -14, -44).Put("kit_orc_totem", -6, -36).Put("kit_skull_post", -16, -38).Put("kit_skull_post", -4, -44);
 
         map.Part("Flats", "The flats west of the road: ash, glass, nothing standing")
-            .Pool("kit_em_lava", -46, 10, 3.5, 20)
-            .Strew(57, -44, 6, 11, "kit_em_rock", "kit_em_rock", "kit_em_tree", "kit_bones", "kit_bones", "kit_em_shard");
+            .Pool("kit_em_lava", -53, 3, 3.5, 20)
+            .Strew(57, -51, -1, 11, "kit_em_rock", "kit_em_rock", "kit_em_tree", "kit_bones", "kit_bones", "kit_em_shard");
 
         map.Part("Forge", "The forge camp: spikes all round, open to the south-east, the anvils and the fire")
             .Ring("kit_orc_spikes", -58, -56, 15, 20, 20, 70)
@@ -259,6 +349,20 @@ public static class Act2Layouts
             .Pool("kit_em_lava", -51, -62, 3.5, 10).Put("kit_camp_weapons", -63, -57, 60)
             .Clear(-46, -42, 9);
 
+        // Two rivers of lava across the land (2026-10-08, at your call): the first crossed by two bridges, the second by one.
+        map.Part("FirstRiver", "The river between the camp's third and the middle: a bridge in the east and one in the west")
+            .River("kit_em_lava_deep", 5, 91, "kit_em_grass", (-65, 87), (-20, 42))
+            .River("kit_em_lava_deep", 5, 92, "kit_em_grass", (-11, 33), (29, -7))
+            .River("kit_em_lava_deep", 5, 93, "kit_em_grass", (39, -17), (87, -65))
+            .Clear(-15.5, 37.5, 8).Clear(34, -12, 8);
+
+        map.Part("SecondRiver", "The river between the middle and the forge's third: one bridge, on the road")
+            .River("kit_em_lava_deep", 5, 94, "kit_em_grass", (-88, 58), (-25, -5))
+            .River("kit_em_lava_deep", 5, 95, "kit_em_grass", (-17, -13), (58, -88))
+            .Clear(-21, -9, 8);
+
+        map.Road("kit_path_4", 96, (-21.5, 31.5), (-9.5, 43.5));
+
         map.Scatter("BlackRock", 70, 8, 78, 8, 71, "kit_em_rock", "kit_em_rock", "kit_em_rock", "kit_em_crag")
             .Scatter("BurntTrees", 130, 8, 78, 6, 72, "kit_em_tree")
             .Scatter("Embers", 26, 10, 74, 11, 74, "kit_em_shard")
@@ -266,17 +370,26 @@ public static class Act2Layouts
 
         map.Camp("saf_cinder_camp", "shr_cinder_camp", 66, 62)
             .Npc("PedlarKetta", "npc_ketta", 71.5, 65)
-            .ShrineAt("ShrineRift", "shr_cinder_rift", 6, 22)
+            .ShrineAt("ShrineRift", "shr_cinder_rift", 10, 30)
             .ShrineAt("ShrineForge", "shr_cinder_forge", -34, -24)
             .Spawn("HoundGround", "spf_cinder_hounds", 16, 58)
             .Spawn("SouthClan", "spf_cinder_camp_south", 58, 6)
             .Spawn("FireRift", "spf_cinder_rift", -8, 46)
             .Spawn("EastClan", "spf_cinder_camp_east", 28, -22)
             .Spawn("ShamanRing", "spf_cinder_shrine", -10, -40)
-            .Spawn("AshFlats", "spf_cinder_flats", -44, 6)
+            .Spawn("AshFlats", "spf_cinder_flats", -51, -1)
             .Spawn("WarlordGuard", "spf_cinder_guard", -46, -42, 8)
             .Spawn("Warlord", "spf_cinder_warlord", -58, -56, 6)
-            .Way("Mire", "zone_drowned_mire", 74, 74);
+            // More camps of creatures in the empty ground (2026-10-08, at your call).
+            .Spawn("CampScorch", "spf_cinder_camp_scorch", 30, 26)
+            .Spawn("MidCinders", "spf_cinder_middle", -8, -4)
+            .Spawn("WestVents", "spf_cinder_west_vents", -48, 44)
+            .Way("Mire", "zone_drowned_mire", 74, 74)
+            // The way down to the Abyss Crypts, behind the Warlord's forge (P5, 2026-10-07): open at 40 once he has fallen.
+            .Way("Crypts", "zone_abyss_crypts", -74, -74);
+
+        map.Part("CryptMouth", "The crypts' mouth behind the forge: two braziers beside the way down, black rock past them")
+            .Put("kit_brazier", -69, -71).Put("kit_brazier", -69, -65).Put("kit_em_crag", -64, -76, 70);
 
         map.Pools("Fire", "kit_em_lava", 12, 16, 72, 3.5, 73);
 

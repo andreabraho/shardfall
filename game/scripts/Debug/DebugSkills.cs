@@ -12,7 +12,7 @@ namespace Kiln.Game.Debug;
 /// Perfect costs seven points and six hundred casts. That is the right price to pay while
 /// playing and an absurd one to pay to check whether the violet reads well against the
 /// catacombs floor — so F4 walks every skill through Normal, Master, Grand Master and Perfect
-/// and back round, while F2 hands over points to spend and credits casts to whatever is
+/// and back round, while Shift+F2 hands over points to spend and credits casts to whatever is
 /// already mastered, so a skill can also be walked up the ranks the way the player will.
 /// <para>
 /// It writes the book through its own save and load, rather than through a back door added to
@@ -30,7 +30,7 @@ public partial class DebugSkills : Node
     [Export] public int Points { get; set; } = 20;
 
     /// <summary>
-    /// Casts credited per press of F2 to every skill that is already mastered.
+    /// Casts credited per press of Shift+F2 to every skill that is already mastered.
     /// </summary>
     /// <remarks>
     /// Sized so the ranks arrive a press at a time rather than all at once: 250 puts a
@@ -52,7 +52,7 @@ public partial class DebugSkills : Node
             return;
         }
 
-        GD.Print($"[debug] F2 grants {Points} skill points and {Casts} casts to mastered skills"
+        GD.Print($"[debug] Shift+F2 grants {Points} skill points and {Casts} casts to mastered skills"
             + " · F4 cycles every skill through the mastery ranks");
     }
 

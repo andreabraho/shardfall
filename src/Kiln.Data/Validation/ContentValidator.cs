@@ -1107,7 +1107,7 @@ public static class ContentValidator
                 "Floors are a dungeon's format. Set \"kind\": \"dungeon\", or drop the floors.");
         }
 
-        var verbs = new[] { "break", "hold", "find", "carry", "race", "fight" };
+        var verbs = new[] { "break", "hold", "find", "carry", "race", "fight", "key", "maze" };
         var ids = new HashSet<string>(StringComparer.Ordinal);
         var shrines = zone.Shrines.Select(s => s.Id).ToHashSet(StringComparer.Ordinal);
         var previous = "";
@@ -1156,7 +1156,8 @@ public static class ContentValidator
 
             // FR-7.12, the half of it that is local. The other half — five distinct verbs
             // across the tower — is counted below.
-            if (floor.Task == previous)
+            // Bosses one after another are the crypts' descent (2026-10-07); anything else twice running is not.
+            if (floor.Task == previous && !(floor.Task == "fight" && !zone.BossPulse))
             {
                 report.Error("world-floors", zone.SourceFile,
                     $"{where} repeats the task of the floor above it (\"{floor.Task}\").",
@@ -1169,7 +1170,11 @@ public static class ContentValidator
             // fourth floor breaks the pulse just as surely as a missing one on the third.
             var shouldFight = depth % 3 == 0;
 
-            if (shouldFight && floor.Task != "fight")
+            if (!zone.BossPulse)
+            {
+                // No pulse to keep.
+            }
+            else if (shouldFight && floor.Task != "fight")
             {
                 report.Error("world-floors", zone.SourceFile,
                     $"{where} is every third floor but its task is \"{floor.Task}\".",
@@ -1310,6 +1315,68 @@ public static class ContentValidator
                 report.Error("cross-ref", zone.SourceFile,
                     $"{where} sends '{enemy}', which does not exist.");
             }
+        }
+
+        if (floor.WardenCount > 0 || !string.IsNullOrEmpty(floor.Wardens) || floor.WardensShield)
+        {
+            if (floor.Task != "fight")
+            {
+                report.Error("world-floors", zone.SourceFile,
+                    $"{where} gives wardens to a \"{floor.Task}\" floor, which has no boss.");
+            }
+            else if (floor.WardenCount <= 0 || !db.Enemies.ContainsKey(floor.Wardens))
+            {
+                report.Error("cross-ref", zone.SourceFile,
+                    $"{where} names wardens '{floor.Wardens}' ×{floor.WardenCount}: the enemy must exist and come at least once.");
+            }
+        }
+
+        if (floor.Chest.Length > 0 && floor.Task != "fight")
+        {
+            report.Error("world-floors", zone.SourceFile,
+                $"{where} leaves a chest on a \"{floor.Task}\" floor, which has no boss to leave it.");
+        }
+
+        if (floor.ChestChance is <= 0 or > 1)
+        {
+            report.Error("world-floors", zone.SourceFile,
+                $"{where} leaves its chest with chance {floor.ChestChance}: it must be above 0 and at most 1.");
+        }
+
+        foreach (var item in floor.Chest)
+        {
+            if (!db.Items.ContainsKey(item))
+            {
+                report.Error("cross-ref", zone.SourceFile,
+                    $"{where} puts '{item}' in its chest, which does not exist.");
+            }
+        }
+
+        if (!string.IsNullOrEmpty(floor.Prop) && !db.Visuals.ContainsKey(floor.Prop))
+        {
+            report.Error("cross-ref", zone.SourceFile,
+                $"{where} dresses its targets as '{floor.Prop}', which is not a visual.");
+        }
+
+        if (!string.IsNullOrEmpty(floor.PropName) && !floor.PropName.StartsWith('$'))
+        {
+            report.Error("localisation", zone.SourceFile,
+                $"{where} names its targets with literal text \"{floor.PropName}\".",
+                "Player-facing text must be a $localisation.key (NFR-L.1).");
+        }
+
+        // The key is carried by a creature: something has to be there to carry it.
+        if (floor.Task == "key" && floor.Pack <= 0)
+        {
+            report.Error("world-floors", zone.SourceFile,
+                $"{where} is a \"key\" floor with no pack to carry its key.");
+        }
+
+        if (floor.Task == "maze" && (floor.Halls < 2 || floor.Portals < 2))
+        {
+            report.Error("world-floors", zone.SourceFile,
+                $"{where} is a maze of {floor.Halls} hall(s) with {floor.Portals} portal(s) each.",
+                "At least two halls, and two portals to choose between.");
         }
 
         if (!string.IsNullOrEmpty(floor.Shrine) && !shrines.Contains(floor.Shrine))

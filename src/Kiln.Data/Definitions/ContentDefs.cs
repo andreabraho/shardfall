@@ -867,6 +867,12 @@ public sealed class GearPartsDef
     public float[] RestGrip { get; init; } = [];
 
     /// <summary>
+    /// How the weapon is turned in its hand, degrees about x, y and z (the Archer's bow, 2026-10-07: turned so its string
+    /// comes clear of the forearm and toward the drawing hand). Empty: as the model is built.
+    /// </summary>
+    public float[] WeaponTurn { get; init; } = [];
+
+    /// <summary>
     /// How a modelled helmet is fitted to this body's head: a scale on x, y and z and the point it
     /// is scaled about, in the model's space (the Ninja man's hood is narrower at the brow than the
     /// woman's hair the headbands were made round). Empty: worn as made.
@@ -951,6 +957,12 @@ public sealed class ZoneDef : ContentDefBase
 
     /// <summary>Shard node ids this zone may host. The scene decides where they stand.</summary>
     public string[] Shards { get; init; } = [];
+
+    /// <summary>
+    /// Whether a dungeon keeps the tower's pulse, a boss every third floor (FR-7.13). The Abyss Crypts do not:
+    /// they are the original's descent, three bosses at the bottom (2026-10-07).
+    /// </summary>
+    public bool BossPulse { get; init; } = true;
 
     /// <summary>
     /// How many shards stand on the map at once (REF-06). Each takes a random spot when it
@@ -1148,6 +1160,34 @@ public sealed class FloorDef
 
     /// <summary>Whether this floor carries a corner nothing walks into (FR-7.18).</summary>
     public bool Refuge { get; init; }
+
+    /// <summary>A visual id for the floor's targets, when not the tower's own (the crypts' doors, statue, stones, pole).</summary>
+    public string Prop { get; init; } = string.Empty;
+
+    /// <summary>What the targets are called, a localisation key; with <see cref="Prop"/>.</summary>
+    public string PropName { get; init; } = string.Empty;
+
+    /// <summary>Lesser bosses that come with a <c>fight</c> floor's boss: an enemy id.</summary>
+    public string Wardens { get; init; } = string.Empty;
+
+    public int WardenCount { get; init; }
+
+    /// <summary>Whether the boss takes no harm while any warden stands.</summary>
+    public bool WardensShield { get; init; }
+
+    /// <summary>The chest a <c>fight</c> floor's boss leaves: item ids, of which the player chooses one.</summary>
+    public string[] Chest { get; init; } = [];
+
+    /// <summary>The chance the boss leaves the chest, from 0 to 1 (<c>chest_chance</c>).</summary>
+    public double ChestChance { get; init; } = 1;
+
+    /// <summary>The most kills a <c>key</c> floor asks before its key drops.</summary>
+    public int KeyAfter { get; init; } = 15;
+
+    /// <summary>A <c>maze</c> floor's halls, and the portals at the end of each.</summary>
+    public int Halls { get; init; } = 4;
+
+    public int Portals { get; init; } = 3;
 }
 
 /// <summary>

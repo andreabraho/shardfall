@@ -30,6 +30,18 @@ public enum FloorTask
 
     /// <summary>A boss, alone, on an otherwise empty floor.</summary>
     Fight,
+
+    /// <summary>
+    /// One of the floor's creatures carries a key; take it to the statue and set it there (the Abyss
+    /// Crypts, 2026-10-07, after the original's soul crystal).
+    /// </summary>
+    Key,
+
+    /// <summary>
+    /// Halls one after another, portals at the end of each: one leads on, the rest send the player back to
+    /// the first. Strike the pole at the end (the Abyss Crypts, after the original's portal labyrinth).
+    /// </summary>
+    Maze,
 }
 
 /// <summary>
@@ -98,6 +110,39 @@ public sealed record TowerFloor(
 
     /// <summary>Whether the boss enrages at half health.</summary>
     public bool Enrage { get; init; }
+
+    /// <summary>
+    /// What the floor's targets look like and are called, when not the tower's own (a visual id and a
+    /// localisation key): the crypts' doors, statue, stones and pole. Empty for the tower's.
+    /// </summary>
+    public string Prop { get; init; } = "";
+
+    public string PropName { get; init; } = "";
+
+    /// <summary>Lesser bosses that come with the boss (the Abyss Crypts): an enemy id, and how many.</summary>
+    public string Wardens { get; init; } = "";
+
+    public int WardenCount { get; init; }
+
+    /// <summary>Whether the boss takes no harm while any of its wardens stands.</summary>
+    public bool WardensShield { get; init; }
+
+    /// <summary>
+    /// What the chest left by a <c>fight</c> floor's boss offers: item ids, of which the player takes one
+    /// (the Abyss Throne, 2026-10-08). Empty for a floor that leaves no chest.
+    /// </summary>
+    public IReadOnlyList<string> Chest { get; init; } = [];
+
+    /// <summary>The chance the boss leaves its chest: 1 for the last floor's, a half for the Ferryman's.</summary>
+    public double ChestChance { get; init; } = 1;
+
+    /// <summary>The most kills a key floor asks before its key drops; one in ten carries it before that.</summary>
+    public int KeyAfter { get; init; } = 15;
+
+    /// <summary>How many halls a maze floor has, and how many portals end each.</summary>
+    public int Halls { get; init; } = 4;
+
+    public int Portals { get; init; } = 3;
 }
 
 /// <summary>Where a floor currently is.</summary>

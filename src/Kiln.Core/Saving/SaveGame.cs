@@ -123,6 +123,9 @@ public sealed class SavedItem
     /// </summary>
     public bool FairInnate { get; set; }
 
+    /// <summary>Which of its born stats the player chose for it (the Abyss chest), or null when it was drawn.</summary>
+    public int? InnatePick { get; set; }
+
     /// <summary>Grid position in the bag, or null when the item is worn.</summary>
     public int[]? At { get; set; }
 

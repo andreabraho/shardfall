@@ -1401,3 +1401,93 @@ ToZone = "zone_stonewood"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -74, 0.1, -62)
 script = ExtResource("11_arrival")
 FromZone = "zone_stonewood"
+
+[node name="SouthGraves" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 56)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_gate_south_graves"
+
+[node name="MidGate" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, 0)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_gate_middle"
+
+[node name="NorthHaunt" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, -48)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_gate_north_haunt"
+
+[node name="WallEndSouth1" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.866025, 0, -0.500000, 0, 1, 0, 0.500000, 0, 0.866025, 9.02, 4, 76.00)
+script = ExtResource("3_kit")
+PieceId = "kit_un_snow_crag"
+
+[node name="WallEndSouth2" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.500000, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.500000, 10.65, 4, 84.00)
+script = ExtResource("3_kit")
+PieceId = "kit_un_snow_crag"
+
+[node name="WallEndSouthFoot1" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.500000, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.500000, 3.23, 1.2, 84.00)
+script = ExtResource("3_kit")
+PieceId = "kit_un_snow_rock"
+
+[node name="WallEndNorth1" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.500000, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.500000, 9.04, 4, -76.00)
+script = ExtResource("3_kit")
+PieceId = "kit_un_snow_crag"
+
+[node name="WallEndNorth2" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.866025, 0, 0.500000, 0, 1, 0, -0.500000, 0, 0.866025, 10.31, 4, -84.00)
+script = ExtResource("3_kit")
+PieceId = "kit_un_snow_crag"
+
+[node name="WestRidge1" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.000000, 0, -1.000000, 0, 1, 0, 1.000000, 0, 0.000000, -82.00, 4, -29.47)
+script = ExtResource("3_kit")
+PieceId = "kit_un_snow_crag"
+
+[node name="WestRidgeFoot1" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.866025, 0, -0.500000, 0, 1, 0, 0.500000, 0, -0.866025, -82.00, 1.2, -36.16)
+script = ExtResource("3_kit")
+PieceId = "kit_un_snow_rock"
+
+[node name="WestRidge2" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.866025, 0, -0.500000, 0, 1, 0, 0.500000, 0, 0.866025, -74.00, 4, -28.32)
+script = ExtResource("3_kit")
+PieceId = "kit_un_snow_crag"
+
+[node name="WestRidge3" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.500000, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.500000, -66.00, 4, -26.71)
+script = ExtResource("3_kit")
+PieceId = "kit_un_snow_crag"
+
+[node name="WestRidgeFoot2" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.500000, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.500000, -66.00, 1.2, -20.43)
+script = ExtResource("3_kit")
+PieceId = "kit_un_snow_rock"
+
+[node name="WestRidge4" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.500000, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.500000, -58.00, 4, -27.11)
+script = ExtResource("3_kit")
+PieceId = "kit_un_snow_crag"
+
+[node name="WestRidge5" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.000000, 0, 1.000000, 0, 1, 0, -1.000000, 0, -0.000000, -50.00, 4, -29.14)
+script = ExtResource("3_kit")
+PieceId = "kit_un_snow_crag"
+
+[node name="WestRidge6" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.000000, 0, -1.000000, 0, 1, 0, 1.000000, 0, 0.000000, -42.00, 4, -26.68)
+script = ExtResource("3_kit")
+PieceId = "kit_un_snow_crag"
+
+[node name="WestRidgeFoot3" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.866025, 0, -0.500000, 0, 1, 0, 0.500000, 0, 0.866025, -42.00, 1.2, -35.01)
+script = ExtResource("3_kit")
+PieceId = "kit_un_snow_rock"
+
+[node name="WestRidge7" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.500000, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.500000, -34.00, 4, -28.91)
+script = ExtResource("3_kit")
+PieceId = "kit_un_snow_crag"

@@ -19,6 +19,9 @@ namespace Kiln.Game.UI;
 /// </remarks>
 public partial class TowerHud : CanvasLayer
 {
+    /// <summary>The floor panel, so the bars at the top of the screen can go under it.</summary>
+    public Control Panel => _panel;
+
     private static readonly Color Calm = new(0.86f, 0.82f, 0.72f);
     private static readonly Color Urgent = new(0.92f, 0.55f, 0.42f);
 
@@ -31,6 +34,7 @@ public partial class TowerHud : CanvasLayer
     public override void _Ready()
     {
         Layer = 18;
+        AddToGroup("tower_hud");
         Build();
 
         _panel.Visible = false;
@@ -117,6 +121,8 @@ public partial class TowerHud : CanvasLayer
             FloorTask.Race => run.ClockRunning ? L10n.F("{0:F0}s   ·   {1} of {2}", run.Remaining, run.Scored, run.Floor.Targets) : "—",
             FloorTask.Fight => "",
             FloorTask.Find => "",
+            FloorTask.Key => "",
+            FloorTask.Maze => "",
             _ => L10n.F("{0} of {1}", run.Scored, run.Floor.Targets),
         },
     };

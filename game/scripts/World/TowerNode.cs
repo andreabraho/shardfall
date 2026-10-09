@@ -32,6 +32,22 @@ public partial class TowerNode : Node3D
     /// <summary>The run in progress, or null before the zone has loaded.</summary>
     public TowerRun? Run => _run;
 
+    /// <summary>
+    /// Where the run stands, in a form a GDScript test run can read (the run itself is not a Godot object):
+    /// depth, floor id, task, phase, finished, boss.
+    /// </summary>
+    public Godot.Collections.Dictionary Probe() => _run is null
+        ? new Godot.Collections.Dictionary()
+        : new Godot.Collections.Dictionary
+        {
+            ["depth"] = _run.Depth,
+            ["floor"] = _run.Floor.Id,
+            ["task"] = (int)_run.Floor.Task,
+            ["phase"] = (int)_run.Phase,
+            ["finished"] = _run.Finished,
+            ["boss"] = _run.Floor.Boss,
+        };
+
     /// <summary>Raised whenever the floor, its progress or its clock changes. The HUD listens.</summary>
     [Signal] public delegate void FloorChangedEventHandler();
 
@@ -286,16 +302,24 @@ public partial class TowerNode : Node3D
     {
         FloorTask.Break => floor.Stone.Length > 0 ? L10n.T("Break the demon stone.") : L10n.T("Break the seal."),
         FloorTask.Hold => L10n.F("Hold for {0:F0} seconds. Every kill takes {1:0.#} s off.", floor.Seconds, TowerRun.KillShortensHold),
-        FloorTask.Find => floor.Burst > 0
+        FloorTask.Find => floor.PropName.Length > 0
+            ? L10n.T("One stone is the true one. Every stone you break lets out what it holds.")
+            : floor.Burst > 0
             ? L10n.T("One lantern is the true one. Every lantern you break lets out what it holds.")
             : L10n.T("One lantern is not breathing with the others. Break that one."),
-        FloorTask.Carry => floor.Guard > 0
+        FloorTask.Carry => floor.Prop.Length > 0
+            ? L10n.F("The stair is behind {0} sealed doors. Kill each door's guard, then break the door.", floor.Targets)
+            : floor.Guard > 0
             ? L10n.F("Kill each keystone's guard, then break all {0}.", floor.Targets)
             : L10n.F("Break all {0} keystones.", floor.Targets),
         FloorTask.Race => floor.Stone.Length > 0
             ? L10n.F("Break {0} demon stones. The clock starts with the first.", floor.Targets)
             : L10n.F("Break {0}. The clock starts with the first.", floor.Targets),
-        FloorTask.Fight => L10n.T("Kill what is waiting."),
+        FloorTask.Fight => floor.WardensShield
+            ? L10n.T("Kill its wardens first: while they stand it cannot be hurt.")
+            : L10n.T("Kill what is waiting."),
+        FloorTask.Key => L10n.T("One of the creatures carries the Soul Key. Take it to the statue and strike the statue to set it."),
+        FloorTask.Maze => L10n.F("{0} halls: one portal at the end of each leads on, the others lead back to the first. Strike the runic pole at the end.", floor.Halls),
         _ => "",
     };
 
@@ -314,7 +338,12 @@ public partial class TowerNode : Node3D
 
         if (_run.Finished)
         {
-            UI.WorldNotice.Show(GetTree(), L10n.T("The tower is finished."));
+            var zone = GameWorld.Graph[GameWorld.CurrentZoneId];
+
+            // The tower says so in its own words; any other dungeon by its name (the Abyss Crypts, 2026-10-07).
+            UI.WorldNotice.Show(GetTree(), zone is null || zone.Id == "zone_catacombs"
+                ? L10n.T("The tower is finished.")
+                : L10n.F("{0}: cleared.", Items.GameItems.Localise(zone.Name)));
             GD.Print("[tower] cleared");
 
             Quests.QuestTracker.Report(GetTree(), ObjectiveType.ClearTower, GameWorld.CurrentZoneId);

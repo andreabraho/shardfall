@@ -1,0 +1,320 @@
+[
+  // The Abyss Crypts (P5, 2026-10-07, at your call) — the last dungeon, after the Burning Warlord, level 40. Devils
+  // and undead, the two families the Demon Tower taught the player to carry stones against, grown in the dark
+  // under the Cinderlands. Act 1's models turned toward the abyss — black and violet, a red glow — until they have
+  // models of their own (docs/11-abyss-crypts.md).
+  //
+  // Numbers a step above the Cinderlands' (levels 35–40): a pack creature 8,000–14,000 health (12% off, 2026-10-08,
+  // at your call: the new maps a little easier, the Disciple's difficulty being hard enough already).
+
+  {
+    "id": "mob_abyss_hound",
+    "name": "$mob.mob_abyss_hound.name",
+    "voice": "vox_canine",
+    "family": "undead",
+    "role": "bruiser",
+    "level": 40,
+    "stats": { "hp": 8100, "attack_power": 151, "defense": 168, "move_speed": 6.4 },
+    "abilities": [
+      { "id": "abl_abysshound_bite", "cooldown": 1.9, "windup": 0.5, "damage_coef": 0.95, "applies": { "kind": "bleed", "magnitude": 30, "duration": 4 } }
+    ],
+    "traits": { "group": 3 },
+    "ai": "bt_melee_chaser",
+    "aggro_radius": 15,
+    "leash_radius": 26,
+    "xp": 820,
+    "drop_table": "dt_crypts",
+    "visual": "mesh_beast_ember_hound",
+    "visual_scale": 1.05,
+    "visual_tint": "#5a2a8a",
+    "visual_recolour": "#5a2a8a",
+    "visual_glow": 0.12
+  },
+  {
+    "id": "mob_crypt_ghoul",
+    "name": "$mob.mob_crypt_ghoul.name",
+    "voice": "vox_undead",
+    "family": "undead",
+    "role": "bruiser",
+    "level": 40,
+    "stats": { "hp": 11800, "attack_power": 180, "defense": 172, "move_speed": 5.9 },
+    "abilities": [
+      { "id": "abl_cryptghoul_rend", "cooldown": 2.2, "windup": 0.55, "damage_coef": 1.05, "applies": { "kind": "bleed", "magnitude": 32, "duration": 4 } },
+      { "id": "abl_cryptghoul_pounce", "cooldown": 7, "windup": 1.75, "damage_coef": 1.7, "telegraph": { "shape": "cone", "radius": 3.2, "angle": 70 } }
+    ],
+    "ai": "bt_melee_chaser",
+    "aggro_radius": 15,
+    "leash_radius": 26,
+    "xp": 960,
+    "drop_table": "dt_crypts",
+    "visual": "mesh_z_ghoul",
+    "visual_scale": 1.1,
+    "visual_tint": "#4a3a6a",
+    "visual_recolour": "#4a3a6a",
+    "visual_glow": 0.06
+  },
+  {
+    "id": "mob_infernal_archer",
+    "name": "$mob.mob_infernal_archer.name",
+    "voice": "vox_demon",
+    "family": "devil",
+    "role": "archer",
+    "level": 41,
+    "stats": { "hp": 8600, "attack_power": 218, "defense": 120, "move_speed": 4.9 },
+    "abilities": [
+      { "id": "abl_infarcher_bolt", "cooldown": 2, "windup": 0.8, "damage_coef": 1.1, "range": 14 },
+      { "id": "abl_infarcher_rain", "cooldown": 9, "windup": 2.0, "damage_coef": 1.5, "range": 13, "placement": "target", "applies": { "kind": "burn", "magnitude": 34, "duration": 4 }, "telegraph": { "shape": "circle", "radius": 4 } }
+    ],
+    "ai": "bt_ranged_kiter",
+    "aggro_radius": 18,
+    "leash_radius": 28,
+    "xp": 990,
+    "drop_table": "dt_crypts",
+    "visual": "mesh_q_blue_demon",
+    "visual_scale": 1.05,
+    "visual_tint": "#7a1a3a",
+    "visual_recolour": "#7a1a3a",
+    "visual_glow": 0.1
+  },
+  {
+    "id": "mob_crypt_brute",
+    "name": "$mob.mob_crypt_brute.name",
+    "voice": "vox_undead",
+    "family": "undead",
+    "role": "shielder",
+    "level": 41,
+    "stats": { "hp": 14300, "attack_power": 155, "defense": 228, "move_speed": 3.8 },
+    "abilities": [
+      { "id": "abl_cryptbrute_slam", "cooldown": 3.3, "windup": 0.95, "damage_coef": 1.2, "applies": { "kind": "stun", "duration": 1.1, "chance": 0.35 } },
+      { "id": "abl_cryptbrute_aegis", "cooldown": 13, "windup": 2, "damage_coef": 0 }
+    ],
+    "ai": "bt_support_shielder",
+    "aggro_radius": 13,
+    "leash_radius": 26,
+    "xp": 1080,
+    "drop_table": "dt_crypts",
+    "visual": "mesh_z_brute",
+    "visual_scale": 1.2,
+    "visual_tint": "#3a2a5a",
+    "visual_recolour": "#3a2a5a",
+    "visual_glow": 0.05
+  },
+  {
+    "id": "mob_abyss_priest",
+    "name": "$mob.mob_abyss_priest.name",
+    "voice": "vox_demon",
+    "family": "devil",
+    "role": "mender",
+    "level": 41,
+    "stats": { "hp": 9200, "attack_power": 148, "defense": 132, "move_speed": 4.3 },
+    "abilities": [
+      { "id": "abl_abysspriest_restore", "cooldown": 6, "windup": 1.5, "damage_coef": 0, "range": 12 },
+      { "id": "abl_abysspriest_wail", "cooldown": 3, "windup": 0.9, "damage_coef": 1, "range": 10.5, "applies": { "kind": "weaken", "magnitude": 0.15, "duration": 4 } }
+    ],
+    "ai": "bt_support_healer",
+    "aggro_radius": 16,
+    "leash_radius": 26,
+    "xp": 1010,
+    "drop_table": "dt_crypts",
+    "visual": "mesh_q_blue_demon",
+    "visual_scale": 1,
+    "visual_tint": "#4a1a7a",
+    "visual_recolour": "#4a1a7a",
+    "visual_glow": 0.15
+  },
+  {
+    "id": "mob_abyss_imp",
+    "name": "$mob.mob_abyss_imp.name",
+    "voice": "vox_demon",
+    "family": "devil",
+    "role": "bomber",
+    "level": 41,
+    "stats": { "hp": 7600, "attack_power": 264, "defense": 104, "move_speed": 5.4 },
+    "abilities": [
+      { "id": "abl_abyssimp_burst", "cooldown": 1, "windup": 2.4, "damage_coef": 2.1, "applies": { "kind": "poison", "magnitude": 42, "duration": 5 }, "telegraph": { "shape": "circle", "radius": 5 } }
+    ],
+    "ai": "bt_suicide_charger",
+    "aggro_radius": 16,
+    "leash_radius": 26,
+    "xp": 1030,
+    "drop_table": "dt_crypts",
+    "visual": "mesh_q_imp",
+    "visual_scale": 0.85,
+    "visual_tint": "#8a1a5a",
+    "visual_recolour": "#8a1a5a",
+    "visual_glow": 0.2
+  },
+  {
+    "id": "mob_abyss_warrior",
+    "name": "$mob.mob_abyss_warrior.name",
+    "voice": "vox_demon",
+    "family": "devil",
+    "role": "bruiser",
+    "level": 42,
+    "stats": { "hp": 13000, "attack_power": 199, "defense": 178, "move_speed": 5.8 },
+    "abilities": [
+      { "id": "abl_abysswarrior_cleave", "cooldown": 2.3, "windup": 0.55, "damage_coef": 1.05, "applies": { "kind": "bleed", "magnitude": 34, "duration": 4 } },
+      { "id": "abl_abysswarrior_leap", "cooldown": 7, "windup": 1.75, "damage_coef": 1.7, "telegraph": { "shape": "cone", "radius": 3.2, "angle": 70 } }
+    ],
+    "traits": { "enrage_below": 0.3 },
+    "ai": "bt_melee_chaser",
+    "aggro_radius": 15,
+    "leash_radius": 26,
+    "xp": 1120,
+    "drop_table": "dt_crypts",
+    "visual": "mesh_q_demon",
+    "visual_scale": 1.1,
+    "visual_tint": "#5a1030",
+    "visual_recolour": "#5a1030",
+    "visual_glow": 0.12
+  },
+
+  // Floor five: the Jailer, an undead turnkey grown huge on the crypts' prisoners. Help at 70 and 35 per cent.
+  {
+    "id": "mob_crypt_jailer",
+    "stun_resist": 1,
+    "name": "$mob.mob_crypt_jailer.name",
+    "voice": "vox_undead",
+    "family": "undead",
+    "role": "bruiser",
+    "level": 41,
+    "stats": { "hp": 264000, "attack_power": 148, "defense": 236, "move_speed": 5.4 },
+    "abilities": [
+      { "id": "abl_jailer_chainlash", "cooldown": 2.6, "windup": 0.8, "damage_coef": 1.2, "applies": { "kind": "slow", "magnitude": 0.3, "duration": 2.5 } },
+      { "id": "abl_jailer_shackle", "cooldown": 9, "windup": 2.35, "damage_coef": 1.8, "applies": { "kind": "stun", "duration": 1.2, "chance": 0.6 }, "telegraph": { "shape": "line", "radius": 5, "angle": 14 } },
+      { "id": "abl_jailer_quake", "cooldown": 14, "windup": 2.5, "damage_coef": 2.0, "applies": { "kind": "weaken", "magnitude": 0.2, "duration": 6 }, "telegraph": { "shape": "circle", "radius": 5.5 } }
+    ],
+    "boss": true,
+    "boss_bar": true,
+    "phases": [
+      { "at": 0.7, "adds": "mob_crypt_ghoul", "add_count": 4 },
+      { "at": 0.35, "adds": "mob_abyss_hound", "add_count": 5, "cooldown_scale": 0.6 }
+    ],
+    "ai": "bt_melee_chaser",
+    "aggro_radius": 28,
+    "leash_radius": 44,
+    "xp": 9000,
+    "drop_table": "dt_boss_jailer",
+    "visual": "mesh_boss_crypt_jailer",
+    "visual_scale": 2.5,
+    "visual_tint": "#3a2a5a",
+    "visual_recolour": "#3a2a5a",
+    "visual_glow": 0.12
+  },
+  // Floor six: the three wardens who stand round the Ferryman. While any of them stands, it cannot be hurt.
+  {
+    "id": "mob_crypt_warden",
+    "stun_resist": 0.6,
+    "name": "$mob.mob_crypt_warden.name",
+    "voice": "vox_undead",
+    "family": "undead",
+    "role": "bruiser",
+    "level": 41,
+    "stats": { "hp": 54600, "attack_power": 155, "defense": 210, "move_speed": 5.2 },
+    "abilities": [
+      { "id": "abl_warden_chainlash", "cooldown": 2.6, "windup": 0.8, "damage_coef": 1.15, "applies": { "kind": "slow", "magnitude": 0.3, "duration": 2.5 } },
+      { "id": "abl_warden_shackle", "cooldown": 10, "windup": 2.35, "damage_coef": 1.6, "applies": { "kind": "stun", "duration": 1.0, "chance": 0.5 }, "telegraph": { "shape": "line", "radius": 5, "angle": 14 } }
+    ],
+    "ai": "bt_melee_chaser",
+    "aggro_radius": 28,
+    "leash_radius": 44,
+    "xp": 2400,
+    "drop_table": "dt_crypts",
+    "visual": "mesh_z_brute",
+    "visual_scale": 1.6,
+    "visual_tint": "#2a2a4a",
+    "visual_recolour": "#2a2a4a",
+    "visual_glow": 0.1
+  },
+  // Floor six's boss: the Ferryman of Souls, who keeps the landing where the dead are brought down.
+  {
+    "id": "mob_soul_ferryman",
+    "stun_resist": 1,
+    "name": "$mob.mob_soul_ferryman.name",
+    "voice": "vox_demon",
+    "family": "devil",
+    "role": "archer",
+    "level": 42,
+    "stats": { "hp": 299200, "attack_power": 188, "defense": 170, "move_speed": 6 },
+    "abilities": [
+      { "id": "abl_ferryman_lance", "cooldown": 2.4, "windup": 0.9, "damage_coef": 1.25, "range": 16 },
+      { "id": "abl_ferryman_tide", "cooldown": 8, "windup": 2.2, "damage_coef": 1.8, "range": 15, "placement": "target", "applies": { "kind": "poison", "magnitude": 46, "duration": 5 }, "telegraph": { "shape": "circle", "radius": 4.5 } },
+      { "id": "abl_ferryman_toll", "cooldown": 16, "windup": 2.35, "damage_coef": 2.6, "range": 14, "telegraph": { "shape": "line", "radius": 5, "angle": 10 } }
+    ],
+    "boss": true,
+    "boss_bar": true,
+    "phases": [
+      { "at": 0.6, "teleport": true, "adds": "mob_abyss_imp", "add_count": 5 },
+      { "at": 0.3, "teleport": true, "adds": "mob_infernal_archer", "add_count": 4, "cooldown_scale": 0.6 }
+    ],
+    "ai": "bt_ranged_kiter",
+    "aggro_radius": 30,
+    "leash_radius": 46,
+    "xp": 10500,
+    "drop_table": "dt_boss_ferryman",
+    "visual": "mesh_boss_soul_ferryman",
+    "visual_scale": 2.2,
+    "visual_tint": "#2a1a5a",
+    "visual_recolour": "#2a1a5a",
+    "visual_glow": 0.2
+  },
+  // Floor seven: the Crypt Lord's spawn, three of them at its side from the start.
+  {
+    "id": "mob_crypt_spawn",
+    "stun_resist": 0.6,
+    "name": "$mob.mob_crypt_spawn.name",
+    "voice": "vox_demon",
+    "family": "devil",
+    "role": "bruiser",
+    "level": 42,
+    "stats": { "hp": 42200, "attack_power": 185, "defense": 176, "move_speed": 6 },
+    "abilities": [
+      { "id": "abl_cryptspawn_rend", "cooldown": 2.4, "windup": 0.6, "damage_coef": 1.1, "applies": { "kind": "bleed", "magnitude": 36, "duration": 4 } },
+      { "id": "abl_cryptspawn_leap", "cooldown": 8, "windup": 1.8, "damage_coef": 1.7, "telegraph": { "shape": "cone", "radius": 3.4, "angle": 70 } }
+    ],
+    "ai": "bt_melee_chaser",
+    "aggro_radius": 30,
+    "leash_radius": 46,
+    "xp": 2400,
+    "drop_table": "dt_crypts",
+    "visual": "mesh_q_demon",
+    "visual_scale": 1.5,
+    "visual_tint": "#4a0a2a",
+    "visual_recolour": "#4a0a2a",
+    "visual_glow": 0.15
+  },
+  // The last of them: the Lord of the Crypt, three and a half metres of the abyss on its throne. Its fall drops
+  // one piece of the abyss set.
+  {
+    "id": "mob_crypt_lord",
+    "stun_resist": 1,
+    "name": "$mob.mob_crypt_lord.name",
+    "voice": "vox_demon",
+    "family": "devil",
+    "role": "bruiser",
+    "level": 42,
+    "stats": { "hp": 422400, "attack_power": 208, "defense": 196, "move_speed": 5.9 },
+    "abilities": [
+      { "id": "abl_cryptlord_rend", "cooldown": 3.0, "windup": 1.85, "damage_coef": 1.35, "applies": { "kind": "bleed", "magnitude": 44, "duration": 5 }, "telegraph": { "shape": "cone", "radius": 3.5, "angle": 85 } },
+      { "id": "abl_cryptlord_sever", "cooldown": 8, "windup": 2.35, "damage_coef": 2.1, "telegraph": { "shape": "line", "radius": 5, "angle": 12 } },
+      { "id": "abl_cryptlord_abyss", "cooldown": 13, "windup": 2.7, "damage_coef": 2.5, "applies": { "kind": "vulnerability", "magnitude": 0.2, "duration": 6 }, "telegraph": { "shape": "circle", "radius": 6 } }
+    ],
+    "boss": true,
+    "boss_bar": true,
+    "phases": [
+      { "at": 0.75, "adds": "mob_abyss_warrior", "add_count": 4 },
+      { "at": 0.5, "enrage": true },
+      { "at": 0.25, "adds": "mob_abyss_imp", "add_count": 6, "cooldown_scale": 0.5 }
+    ],
+    "ai": "bt_melee_chaser",
+    "aggro_radius": 32,
+    "leash_radius": 48,
+    "xp": 16000,
+    "drop_table": "dt_crypt_lord",
+    "visual": "mesh_boss_crypt_lord",
+    "visual_scale": 3.2,
+    "visual_tint": "#2a0820",
+    "visual_recolour": "#2a0820",
+    "visual_glow": 0.25
+  }
+]

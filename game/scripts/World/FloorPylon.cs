@@ -66,6 +66,15 @@ public partial class FloorPylon : StaticBody3D
     /// </remarks>
     [Export] public bool Shielded { get; set; }
 
+    /// <summary>
+    /// Whether it bars the way even while sealed: a door (the Abyss Crypts). A sealed keystone can be walked
+    /// past; a sealed door cannot.
+    /// </summary>
+    [Export] public bool Blocks { get; set; }
+
+    /// <summary>How wide it stands, in metres from its middle: a door fills its doorway.</summary>
+    [Export] public float Girth { get; set; } = 0.9f;
+
     private MeshInstance3D? _barrier;
 
     /// <summary>True once it has been broken.</summary>
@@ -101,11 +110,14 @@ public partial class FloorPylon : StaticBody3D
         AddChild(new CollisionShape3D
         {
             Name = "Collision",
-            Shape = new CylinderShape3D { Radius = 0.9f, Height = 2.6f },
+            Shape = new CylinderShape3D { Radius = Girth, Height = 2.6f },
             Position = new Vector3(0, 1.3f, 0),
         });
 
-        _visual = new VisualRoot { Name = "VisualRoot", Position = new Vector3(0, 1.3f, 0) };
+        // Stood on the ground whatever its height: the crypts' doors and pole are taller than a keystone.
+        var tall = GameContent.IsLoaded && GameContent.Database.Visuals.TryGetValue(VisualId, out var look) ? (float)look.Height : 2.6f;
+
+        _visual = new VisualRoot { Name = "VisualRoot", Position = new Vector3(0, tall / 2, 0) };
         AddChild(_visual);
         _visual.Apply(VisualId, null, 1.0);
 
@@ -119,7 +131,7 @@ public partial class FloorPylon : StaticBody3D
     /// <summary>Puts the barrier up: untargetable, and seen to be.</summary>
     private void Raise()
     {
-        CollisionLayer = 0;
+        CollisionLayer = Blocks ? Foundation.Layers.World : 0;
 
         _barrier = new MeshInstance3D
         {

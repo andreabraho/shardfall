@@ -251,6 +251,45 @@ def kiln_shade(name):
     return s.done()
 
 
+def abyss_shade(name):
+    """Manto dell'Abisso (P5, 2026-10-07): black lacquer bound with bone — a spine of vertebrae down the back, ribs of bone
+    round the waist, crimson light in the seams, a skull on the left shoulder and a crimson scarf flying."""
+    s = c.Suit(name, "ninja")
+    lacquer = m("abyss_lacquer", (0.04, 0.03, 0.05), metal=0.6, rough=0.2)
+    dark = m("abyss_dark", (0.10, 0.06, 0.12), metal=0.6, rough=0.4)
+    glow = m("abyss_glow", (0.95, 0.10, 0.38), glow=1.4, rough=0.4)
+    crimson = m("abyss_scarf", (0.40, 0.03, 0.10))
+    bone = m("bone")
+
+    c.cuirass(s, lacquer, dark, lames=(lacquer, dark), grow=0.004)
+    for cut, z in (("m", 1.10), ("w", 0.99)):
+        p = c.breast(0, z, 0.012, 0.004)
+        s.add("chest", t.sphere("heart", 0.04, glow, at=(0, p[1] - 0.008, z), subdivisions=2, squash=(1, 0.6, 1.3)), cut)
+    # The spine down the back, a vertebra at a time.
+    for i in range(8):
+        z = 0.70 + 0.075 * i
+        s.add("chest" if z > 0.97 else "spine", t.sphere(f"vertebra_{i}", 0.04, bone, at=(0, RY + 0.06, z), subdivisions=2, squash=(1.3, 0.8, 0.7)))
+    scarf(s, crimson, tip=bone, length=0.72, spread=0.26)
+
+    s.add("hips", n.sash(dark, tail=crimson, lengths=(0.36, 0.28)))
+    for i in range(5):
+        ang = -60 + 30 * i
+        s.add("hips", c.tube(f"waist_rib_{i}", [c.at(0.42, 0.37, ang, 0.66 + 0.03 * j, 0.0) for j in range(3)], 0.014, bone, sides=6, flat=0.6))
+    s.add("hips", c.faulds(lacquer, dark, rows=2, count=6, drop=0.16))
+
+    # The skull on the left shoulder: a dome of bone, sockets alight, a jaw under it.
+    skull = c.pauldron(lacquer, dark, size=0.19, lame=True)
+    skull += [t.sphere("skull", 0.11, bone, at=(0.44, -0.10, 1.28), subdivisions=2, squash=(1.0, 0.9, 0.85)),
+              t.box("jaw", (0.12, 0.06, 0.05), bone, at=(0.44, -0.16, 1.19), bevel=0.015, segments=2)]
+    for i in (-1, 1):
+        skull.append(t.sphere(f"socket_{i}", 0.026, glow, at=(0.44 + 0.045 * i, -0.19, 1.29), subdivisions=1))
+    s.add("upperarm.l", skull)
+    s.right("upperarm", c.pauldron(lacquer, dark, size=0.18, lame=True, spikes=2))
+    s.both("lowerarm", n.bracer(lacquer, dark, plate=bone) + [c.rune_band("bracer_light", 0.62, 0.153, glow)])
+    s.both("lowerleg", n.shin(lacquer, trim=dark, plate=bone) + [t.cylinder("shin_light", 0.136, 0.016, glow, at=(n.LEG, 0.005, 0.205), sides=18)])
+    return s.done()
+
+
 def head(name, band, ends=None, plate=None, mark=None, wings=None, horns=None, gem=None, trim=None, lengths=(0.34, 0.26)):
     """A band round the brow; `ends` its tails behind; `plate` a forehead guard with `mark` cut in it;
     `wings` blades swept back at the temples; `horns` curved horns over the brow; `gem` a stone."""
@@ -282,7 +321,7 @@ def head(name, band, ends=None, plate=None, mark=None, wings=None, horns=None, g
 
 
 SUITS = {"night_wraps": night_wraps, "prowler_leathers": prowler_leathers, "viper_scales": viper_scales, "ridge_stalker": ridge_stalker,
-         "wardens_shadow": wardens_shadow, "ashen_shroud": ashen_shroud, "kiln_shade": kiln_shade}
+         "wardens_shadow": wardens_shadow, "ashen_shroud": ashen_shroud, "kiln_shade": kiln_shade, "abyss_shade": abyss_shade}
 
 
 def build(name):
@@ -305,6 +344,9 @@ def build(name):
         # Corna Cineree: a brow of black iron, two horns over it, an ember between them.
         "ashen_horns": lambda: head(name, soot, trim=m("shroud_iron", (0.26, 0.26, 0.29), metal=0.65, rough=0.42), plate=m("shroud_iron", (0.26, 0.26, 0.29), metal=0.65, rough=0.42),
                                     horns=m("ash_horn", (0.34, 0.30, 0.26), rough=0.6), gem=ember, ends=soot),
+        # Maschera dell'Abisso (P5, 2026-10-07): black lacquer and bone, horns of bone over the brow, a crimson eye, crimson tails.
+        "abyss_mask": lambda: head(name, m("abyss_lacquer", (0.04, 0.03, 0.05), metal=0.6, rough=0.2), trim=m("bone"), plate=m("bone"),
+                                   horns=m("bone"), gem=m("abyss_glow", (0.95, 0.10, 0.38), glow=1.4, rough=0.4), ends=m("abyss_scarf", (0.40, 0.03, 0.10)), lengths=(0.50, 0.38)),
         # Velo Annegato (act 2, the Mire): deep teal, a brow of verdigris, a pearl, fins of coral at the temples.
         "drowned_veil": lambda: head(name, m("mire_deep", (0.03, 0.09, 0.11)), trim=m("mire_verdigris", (0.16, 0.44, 0.36), metal=0.6, rough=0.4),
                                      plate=m("mire_verdigris", (0.16, 0.44, 0.36), metal=0.6, rough=0.4), wings=m("mire_coral", (0.80, 0.30, 0.26), rough=0.6),

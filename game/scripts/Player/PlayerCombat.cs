@@ -116,6 +116,8 @@ public partial class PlayerCombat : Node
     {
         if (!enemy.IsAlive) return;
 
+        _skills?.CancelApproach();
+
         Mark(enemy);
         _committed = true;
     }
@@ -137,7 +139,40 @@ public partial class PlayerCombat : Node
     /// Stops walking to the target and striking it, and keeps it chosen: walking off, picking
     /// something up or going unseen ends the fight, not the choice.
     /// </summary>
-    public void Disengage() => _committed = false;
+    public void Disengage()
+    {
+        _committed = false;
+        _skills?.CancelApproach();
+    }
+
+    /// <summary>
+    /// How far the Archer looks for something to shoot when nothing is chosen (2026-10-07, at your
+    /// call): further than the bow reaches, so it walks up to what is near rather than doing nothing.
+    /// </summary>
+    public const float SeekRadius = 25f;
+
+    /// <summary>
+    /// The target chosen, if it still lives; otherwise the nearest enemy within
+    /// <paramref name="within"/>, chosen now. Null when there is nothing.
+    /// </summary>
+    public Combatant? TargetOrNearest(float within)
+    {
+        if (_target is not null && IsInstanceValid(_target) && _target.IsAlive) return _target;
+
+        var origin = _motor.GlobalPosition;
+        var nearest = AreaQuery.Sphere(_motor, origin, within)
+            .Where(c => c.IsAlive)
+            .OrderBy(c => LineOfSight(c.Body) ? 0 : 1)
+            .ThenBy(c => origin.DistanceTo(c.Body.GlobalPosition))
+            .FirstOrDefault();
+
+        if (nearest is not null) Mark(nearest);
+
+        return nearest;
+    }
+
+    /// <summary>True when nothing of the world stands between the character and this one.</summary>
+    public bool InSight(Combatant other) => LineOfSight(other.Body);
 
     /// <summary>How far a chosen target can be left behind before the choice is dropped.</summary>
     private const float ForgetBeyond = 45f;
@@ -215,9 +250,8 @@ public partial class PlayerCombat : Node
             _motor.GetNodeOrNull<Visual.VisualRoot>("VisualRoot")?.CancelSwing();
         }
 
-        if (Godot.Input.IsActionPressed(GameActions.Attack) && !UI.UiState.ModalOpen && _cycle.CanStart)
+        if (Godot.Input.IsActionPressed(GameActions.Attack) && !UI.UiState.ModalOpen && _cycle.CanStart && StrikeInFront())
         {
-            StrikeInFront();
             return;
         }
 
@@ -433,12 +467,35 @@ public partial class PlayerCombat : Node
 
     /// <summary>
     /// Space: one blow in front, without locking on. It turns to the nearest enemy in the arc,
-    /// if there is one, and the arc hits everything else there too.
+    /// if there is one, and the arc hits everything else there too. False when the Archer walks
+    /// to its target instead, and the approach is left to <see cref="FollowTarget"/>.
     /// </summary>
-    private void StrikeInFront()
+    private bool StrikeInFront()
     {
         var origin = _motor.GlobalPosition;
         var facing = _motor.Facing;
+
+        // The Archer (2026-10-07, at your call): a shot is not an arc, so Space looses at the target
+        // chosen, or — with none — chooses the nearest enemy round it. Out of reach or out of sight,
+        // it walks up to it and shoots from there, as a click on it would.
+        if (Ranged)
+        {
+            if (TargetOrNearest(SeekRadius) is not { } chosen)
+            {
+                BeginSwing(null);
+                return true;
+            }
+
+            if (origin.DistanceTo(chosen.Body.GlobalPosition) <= AttackRange + HitTolerance && LineOfSight(chosen.Body))
+            {
+                BeginSwing(chosen);
+                return true;
+            }
+
+            if (!_committed) CommandAttack(chosen);
+
+            return false;
+        }
 
         var victim = AreaQuery.Cone(_motor, origin, facing, AttackRange + HitTolerance, Ranged ? 50f : ArcDegrees)
             .Where(c => c.IsAlive)
@@ -446,5 +503,6 @@ public partial class PlayerCombat : Node
             .FirstOrDefault();
 
         BeginSwing(victim);
+        return true;
     }
 }

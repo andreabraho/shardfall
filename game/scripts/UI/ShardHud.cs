@@ -19,6 +19,7 @@ public partial class ShardHud : CanvasLayer, ITopBar
 
     private PanelContainer _root = null!;
     private Label _title = null!;
+    private InfoBadge _info = null!;
     private ProgressBar _health = null!;
     private Label _phase = null!;
     private ProgressBar _cast = null!;
@@ -43,24 +44,26 @@ public partial class ShardHud : CanvasLayer, ITopBar
             OffsetLeft = -170,
             OffsetRight = 170,
             OffsetTop = TopBars.Top,
+            // Hovered, it says what helps against the stone (FoeAdvice), as the boss bar does.
+            MouseFilter = Control.MouseFilterEnum.Stop,
         };
 
         AddChild(_root);
 
-        var margin = new MarginContainer();
+        var margin = new MarginContainer { MouseFilter = Control.MouseFilterEnum.Ignore };
         margin.AddThemeConstantOverride("margin_left", 8);
         margin.AddThemeConstantOverride("margin_right", 8);
         margin.AddThemeConstantOverride("margin_top", 4);
         margin.AddThemeConstantOverride("margin_bottom", 4);
         _root.AddChild(margin);
 
-        var box = new VBoxContainer();
+        var box = new VBoxContainer { MouseFilter = Control.MouseFilterEnum.Ignore };
         box.AddThemeConstantOverride("separation", 1);
         margin.AddChild(box);
 
         _title = new Label { HorizontalAlignment = HorizontalAlignment.Center };
         _title.AddThemeFontSizeOverride("font_size", 13);
-        box.AddChild(_title);
+        box.AddChild(FoeAdvice.Titled(_title, out _info));
 
         _health = new ProgressBar
         {
@@ -69,6 +72,7 @@ public partial class ShardHud : CanvasLayer, ITopBar
             Value = 1,
             ShowPercentage = false,
             CustomMinimumSize = new Vector2(320, 10),
+            MouseFilter = Control.MouseFilterEnum.Ignore,
         };
 
         Tint(_health, new Color("a05ad0"));
@@ -91,6 +95,7 @@ public partial class ShardHud : CanvasLayer, ITopBar
             Value = 0,
             ShowPercentage = false,
             CustomMinimumSize = new Vector2(320, 6),
+            MouseFilter = Control.MouseFilterEnum.Ignore,
         };
 
         Tint(_cast, new Color("d06a4f"));
@@ -123,10 +128,24 @@ public partial class ShardHud : CanvasLayer, ITopBar
 
         _root.Visible = true;
 
+        // Under the target's frame, which goes under a tower's floor panel.
+        var top = TopBars.First(GetTree());
+
+        if (!Mathf.IsEqualApprox(_root.OffsetTop, top))
+        {
+            _root.OffsetBottom += top - _root.OffsetTop;
+            _root.OffsetTop = top;
+        }
+
         var modifier = _shard.Modifier == ShardModifier.None ? "" : $"  ·  {Words.Of(_shard.Modifier)}";
 
         _title.Text = $"{Items.GameItems.Localise("$shard." + _shard.ShardId + ".name")}{modifier}";
         _health.Value = _shard.Core.Health.Fraction;
+
+        var advice = FoeAdvice.For(_shard.Core, GetTree().GetFirstNodeInGroup("player")?.GetNodeOrNull<Combat.Combatant>("Combatant"), _shard.DropTableId);
+
+        if (_root.TooltipText != advice) _root.TooltipText = advice;
+        _info.Advice = advice;
 
         _phase.Text = _shard.Phase switch
         {

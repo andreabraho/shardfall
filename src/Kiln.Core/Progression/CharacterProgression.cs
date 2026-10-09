@@ -156,10 +156,34 @@ public sealed class CharacterProgression
     /// </summary>
     public void Respec(int skillPointsInUse = 0)
     {
+        RespecAttributes();
+        ReturnSkillPoints(skillPointsInUse);
+    }
+
+    /// <summary>
+    /// What a shrine asks, per level of the character, to give back the status points (2026-10-07, at
+    /// your call: the two refunds apart, and priced — no longer free).
+    /// </summary>
+    public const long AttributeRespecPerLevel = 1000;
+
+    /// <summary>What a shrine asks, per level, to give back the skill points: twice the status points'.</summary>
+    public const long SkillRespecPerLevel = 2000;
+
+    public long AttributeRespecCost => AttributeRespecPerLevel * Level;
+
+    public long SkillRespecCost => SkillRespecPerLevel * Level;
+
+    /// <summary>Returns every status point placed, and nothing else.</summary>
+    public void RespecAttributes()
+    {
         UnspentAttributePoints += Assigned.Total;
         Assigned = default;
+    }
 
-        UnspentSkillPoints += skillPointsInUse;
+    /// <summary>Takes back the skill points a refunded skill book gave up.</summary>
+    public void ReturnSkillPoints(int points)
+    {
+        UnspentSkillPoints += Math.Max(0, points);
     }
 
     /// <summary>Whether points can no longer raise this attribute.</summary>

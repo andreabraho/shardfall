@@ -94,6 +94,9 @@ public partial class ShardNode : StaticBody3D
     public bool IsEngaged => _fight?.IsActive == true;
 
     /// <summary>Up and in its place: something that can be clicked and fought.</summary>
+    /// <summary>The drop table its tier pays from, for the foe tooltip.</summary>
+    public string? DropTableId => _tier?.DropTable;
+
     public bool IsStanding => !_broken && !_awaitingPlace && _tier is not null;
 
     public double ReclamationProgress => _fight?.ReclamationProgress ?? 0;
@@ -480,8 +483,8 @@ public partial class ShardNode : StaticBody3D
     /// <remarks>
     /// Waits for the navigation mesh, which is only ready a frame or two after the map loads.
     /// A map crowded enough to turn every try down loosens the rules rather than leave the
-    /// stone out of the world: first the clearance, then the camps and the other stones — but
-    /// never safe ground. Its whole zone stays off it, or the fight starts in the village
+    /// stone out of the world: first the room round it, then the camps and the other stones — but
+    /// never safe ground, and never inside a wall or a rock. Its whole zone stays off it, or the fight starts in the village
     /// (2026-09-25: the loosest try had let a stone stand 22 m from Ember Hollow's square).
     /// </remarks>
     private bool Roam()
@@ -509,7 +512,10 @@ public partial class ShardNode : StaticBody3D
             if (!ZoneClearOfSafety(point)) continue;
             if (!loose && !FarFromEverything(point)) continue;
             if (loose && !loosest && (Near(point, "zone_gates", 24f) || Near(point, "zone_arrivals", 24f) || Near(point, "shrines", 16f))) continue;
-            if (strict && !Clear(point)) continue;
+            if (!loosest && !FarFromFields(point, loose ? FieldGapLoose : FieldGap)) continue;
+            // Never in a wall, a rock or a house, however crowded the map (2026-10-09, at your call: stones stood inside
+            // walls once the looser tries began, which skipped this): only how much room it is given eases.
+            if (!Clear(point, strict ? 3.5f : 2.2f)) continue;
 
             GlobalPosition = point;
             GD.Print($"[shard] {Name} ({ShardId}) stands at {point.X:F0}, {point.Z:F0}");
@@ -543,18 +549,33 @@ public partial class ShardNode : StaticBody3D
             if (node is ShardNode { _awaitingPlace: false } other && other != this && other.GlobalPosition.DistanceTo(point) < 30f) return false;
         }
 
+        return GetTree().GetFirstNodeInGroup("player") is not Node3D player
+            || player.GlobalPosition.DistanceTo(point) >= ZoneRadius + 6f;
+    }
+
+    /// <summary>
+    /// How far a stone stands from the edge of a field of creatures (2026-10-08, at your call: a stone
+    /// beside a field had the field coming back while the stone was fought, and the fight grew far too
+    /// hard). The stone's own fight is <see cref="ZoneRadius"/> across; this keeps most of it clear.
+    /// </summary>
+    private const float FieldGap = 14f;
+
+    /// <summary>The same, eased for a map too crowded to give a stone a spot at the full gap.</summary>
+    private const float FieldGapLoose = 8f;
+
+    private bool FarFromFields(Vector3 point, float gap)
+    {
         foreach (var node in GetTree().GetNodesInGroup("spawn_fields"))
         {
             if (node is not SpawnFieldNode field) continue;
 
             var boss = field.Def?.Entries.Any(e => GameContent.Database.Enemies.TryGetValue(e.EnemyId, out var def) && def.Boss) == true;
-            var keep = boss ? 28f : (float)(field.Def?.Radius ?? 7.0) + 6f;
+            var keep = boss ? 28f : (float)(field.Def?.Radius ?? 7.0) + gap;
 
             if (field.GlobalPosition.DistanceTo(point) < keep) return false;
         }
 
-        return GetTree().GetFirstNodeInGroup("player") is not Node3D player
-            || player.GlobalPosition.DistanceTo(point) >= ZoneRadius + 6f;
+        return true;
     }
 
     private bool Near(Vector3 point, string group, float distance)
@@ -568,12 +589,12 @@ public partial class ShardNode : StaticBody3D
     }
 
     /// <summary>Nothing solid where the stone would stand: no house, rock, tree or wall.</summary>
-    private bool Clear(Vector3 point)
+    private bool Clear(Vector3 point, float room)
     {
         var query = new PhysicsShapeQueryParameters3D
         {
-            Shape = new SphereShape3D { Radius = 2.2f },
-            Transform = new Transform3D(Basis.Identity, point + (Vector3.Up * 2.5f)),
+            Shape = new SphereShape3D { Radius = room },
+            Transform = new Transform3D(Basis.Identity, point + (Vector3.Up * (room + 0.3f))),
             CollisionMask = Foundation.Layers.World,
             Exclude = [GetRid()],
         };

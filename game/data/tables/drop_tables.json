@@ -605,5 +605,57 @@
       { "item": "mat_shard_essence", "weight": 0, "chance": 0.4, "count_range": [1, 1] },
       { "item": "stn_ember", "weight": 0, "chance": 0.15, "count_range": [1, 1] }
     ]
+  },
+
+
+  // -- The Abyss Crypts (P5, 2026-10-07): the creatures' ash and stones against the two families; the bosses' hearts;
+  // and the Lord of the Crypt's one piece of the abyss set, drawn among the nine slots (it comes in the player's
+  // class), the only place it drops.
+  {
+    "id": "dt_crypts",
+    "yang_range": [3000, 6600],
+    "entries": [
+      { "item": "mat_abyss_ash", "weight": 60, "chance": 0.16, "count_range": [1, 2] },
+      { "item": "mat_steel_core", "weight": 40, "chance": 0.1, "count_range": [1, 2] },
+      { "item": "mat_shard_essence", "weight": 24, "chance": 0.06, "count_range": [1, 2] },
+      { "item": "mat_radiant_core", "weight": 6, "chance": 0.015, "count_range": [1, 1] },
+      { "item": "mat_mutation_ink", "weight": 20, "chance": 0.055, "count_range": [1, 1] },
+      { "item": "mat_boring_stone", "weight": 20, "chance": 0.055, "count_range": [1, 1] },
+      { "item": "stn_bane_devil", "weight": 10, "chance": 0.025, "count_range": [1, 1] },
+      { "item": "stn_bane_undead", "weight": 10, "chance": 0.025, "count_range": [1, 1] }
+    ]
+  },
+  {
+    "id": "dt_boss_jailer",
+    "yang_range": [40000, 58000],
+    "entries": [
+      { "item": "mat_blessing_scroll", "weight": 0, "chance": 1, "count_range": [1, 1] },
+      { "item": "mat_abyss_heart", "weight": 0, "chance": 1, "count_range": [1, 2] },
+      { "item": "mat_abyss_ash", "weight": 0, "chance": 1, "count_range": [4, 8] },
+      { "item": "mat_shard_essence", "weight": 0, "chance": 0.6, "count_range": [1, 2] },
+      { "item": "mat_radiant_core", "weight": 0, "chance": 0.35, "count_range": [1, 1] },
+      { "item": "stn_bane_undead", "weight": 6, "chance": 0.15, "count_range": [1, 1] }
+    ]
+  },
+  {
+    "id": "dt_boss_ferryman",
+    "yang_range": [44000, 64000],
+    "entries": [
+      { "item": "mat_blessing_scroll", "weight": 0, "chance": 1, "count_range": [1, 1] },
+      { "item": "mat_abyss_heart", "weight": 0, "chance": 1, "count_range": [2, 3] },
+      { "item": "mat_abyss_ash", "weight": 0, "chance": 1, "count_range": [4, 8] },
+      { "item": "mat_shard_essence", "weight": 0, "chance": 0.6, "count_range": [1, 2] },
+      { "item": "mat_radiant_core", "weight": 0, "chance": 0.35, "count_range": [1, 1] },
+      { "item": "stn_bane_devil", "weight": 6, "chance": 0.15, "count_range": [1, 1] }
+    ]
+  },
+  {
+    "id": "dt_crypt_lord",
+    "yang_range": [60000, 90000],
+    "entries": [
+      { "item": "mat_blessing_scroll", "weight": 1, "chance": 1, "count_range": [1, 1] },
+      { "item": "mat_abyss_heart", "weight": 0, "chance": 1, "count_range": [2, 3] },
+      { "item": "mat_abyss_ash", "weight": 0, "chance": 1, "count_range": [6, 10] }
+    ]
   }
 ]

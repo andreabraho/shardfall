@@ -117,7 +117,9 @@ two cells tall in the bag.
   `SHAPES`, with `twigs`, a lit `tip`, an `inner` colour). They lie along Y, flat in Z, the grip at the
   origin, as KayKit's bow, the way the left hand (`handslot.l`) holds one — and **the end towards +Y
   points down in the hand**: it is the short limb (`LOWER`), or a bow this long stands in the ground.
-  `icons.py` stands a `_bow` up, long limb at the top.
+  `icons.py` stands a `_bow` up, long limb at the top. The string is a mesh of its own named `bowstring`
+  (2026-10-07): the game hides it and draws it from its ends, pulled back to the right hand while the Archer draws
+  (`BowString.cs`); the bow is turned 40° in the hand (`"weapon_turn"` in visuals.json) so the string clears the forearm.
 - **Fans** (`fankit.py`) — "showy": drawn flat in XY round the pivot (`sector` with a cut edge —
   `scallop`, `petal`, `flame`, `torn` — `plume`, `stick`, `disc`, `crescent`, `rays`, `tassel`), stood
   up, turned a quarter turn so the leaf faces forward, and held as a sword (the part named `grip`).

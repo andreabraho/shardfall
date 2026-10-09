@@ -95,8 +95,8 @@ shape = SubResource("BoxShape3D_ground")
 
 ; -- The village --------------------------------------------------------------
 ; A 36 m square of town wall with two gates, east towards the road to the Vale and north towards
-; the woods. Four houses fill the corners; the square, the shrine and the three villagers keep
-; the middle.
+; the woods. Eight houses line the walls; the plaza, the shrine and the villagers keep the middle
+; (filled out 2026-10-09: market, smithy, armourer and a training yard).
 
 [node name="Village" type="Node3D" parent="NavigationRegion3D"]
 
@@ -222,8 +222,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 1.7, 18)
 script = ExtResource("3_kit")
 PieceId = "kit_vil_corner"
 
-; Houses, one to a corner, doors turned towards the square. Solid, and baked around: the
-; villagers stand between them, not inside them.
+; The four corner houses, doors turned towards the square (four more further down). Solid,
+; and baked around: the villagers stand between them, not inside them.
 
 [node name="HouseNW" type="StaticBody3D" parent="NavigationRegion3D/Village"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.5, 4, -12.5)
@@ -245,7 +245,7 @@ transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 12.5, 4, 12.3)
 script = ExtResource("3_kit")
 PieceId = "kit_vil_house_stone"
 
-; The square, and the roads running out through the two gates.
+; The plaza north of the crossing, and the roads running out through the two gates.
 
 [node name="SquareA" type="StaticBody3D" parent="NavigationRegion3D/Village"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.06, -4)
@@ -254,16 +254,6 @@ PieceId = "kit_vil_square_8"
 
 [node name="SquareB" type="StaticBody3D" parent="NavigationRegion3D/Village"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.06, -4)
-script = ExtResource("3_kit")
-PieceId = "kit_vil_square_8"
-
-[node name="SquareC" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.06, 4)
-script = ExtResource("3_kit")
-PieceId = "kit_vil_square_8"
-
-[node name="SquareD" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.06, 4)
 script = ExtResource("3_kit")
 PieceId = "kit_vil_square_8"
 
@@ -293,39 +283,39 @@ script = ExtResource("3_kit")
 PieceId = "kit_vil_path_4"
 
 [node name="RoadN_A" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0.06, -12)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0.06, -10)
 script = ExtResource("3_kit")
 PieceId = "kit_vil_path_4"
 
 [node name="RoadN_B" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0.06, -16)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0.06, -14)
 script = ExtResource("3_kit")
 PieceId = "kit_vil_path_4"
 
 [node name="RoadN_C" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0.06, -20)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0.06, -18)
 script = ExtResource("3_kit")
 PieceId = "kit_vil_path_4"
 
 [node name="RoadN_D" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0.06, -24)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0.06, -22)
 script = ExtResource("3_kit")
 PieceId = "kit_vil_path_4"
 
-; Village clutter: a wagon by the west wall, crates by the merchant, a garden fence.
+; Village clutter: a wagon outside the east gate, crates by the market, a garden fence.
 
 [node name="Wagon" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.5, 0.78, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.5, 0.78, -5)
 script = ExtResource("3_kit")
 PieceId = "kit_vil_wagon"
 
 [node name="CrateA" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.2, 0.55, -4.2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0.55, -7.4)
 script = ExtResource("3_kit")
 PieceId = "kit_vil_crate"
 
 [node name="CrateB" type="StaticBody3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.4, 0.55, -3.4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.9, 0.55, -6.6)
 script = ExtResource("3_kit")
 PieceId = "kit_vil_crate"
 
@@ -368,19 +358,6 @@ PieceId = "kit_banner"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.5, 2.4, -4)
 script = ExtResource("3_kit")
 PieceId = "kit_banner"
-
-; Green inside the walls: bushes and flowers along them, never on the square.
-
-[node name="VillageGreen" type="Node3D" parent="NavigationRegion3D/Village"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-script = ExtResource("13_scatter")
-Pieces = PackedStringArray("kit_nat_bush", "kit_nat_flowers", "kit_nat_flowers")
-Count = 14
-InnerRadius = 11.0
-OuterRadius = 16.0
-Spacing = 2.5
-Seed = 3
-Clearings = PackedVector3Array(0, 0, 10, 18, 0, 5, 0, -18, 5, -12.5, -12.5, 5.5, -12.5, 12.3, 6, 13, -12.5, 5, 12.5, 12.3, 6, -14.5, 0, 3)
 
 ; The promise itself. The walls are decoration around this circle, not the other way round.
 
@@ -589,27 +566,27 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
 script = ExtResource("7_visualroot")
 VisualId = "mesh_placeholder_shrine"
 
-; The people the village needs (QST-06). The elder is by the shrine; the smith and the
-; merchant take the two corners of the square nearest the gate, one each side of the road;
-; the armourer (REF-16) the corner across from the smith.
+; The people the village needs (QST-06): the elder before the house by the north road, the
+; merchant at the stall and the smith at the anvil either side of the east road, the armourer
+; (REF-16) at the table by the training yard.
 
 [node name="ElderCorwen" type="Area3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0.1, -9)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.1, -9.6)
 script = ExtResource("12_npc")
 NpcId = "npc_corwen"
 
 [node name="SmithHesk" type="Area3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0.1, 7)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.1, 5.4)
 script = ExtResource("12_npc")
 NpcId = "npc_hesk"
 
 [node name="MerchantIdra" type="Area3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0.1, -7)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.5, 0.1, -5.6)
 script = ExtResource("12_npc")
 NpcId = "npc_idra"
 
 [node name="ArmourerBrann" type="Area3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0.1, 7)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.1, 5)
 script = ExtResource("12_npc")
 NpcId = "npc_brann"
 
@@ -800,3 +777,937 @@ PieceId = "kit_vil_path_4"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70, 1.1, -56)
 script = ExtResource("3_kit")
 PieceId = "kit_marker_post"
+
+[node name="FoxCampSouthWest" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -46, 0, 40)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_hollow_foxes_sw"
+
+[node name="WolfCampEast" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 68, 0, -24)
+script = ExtResource("5_spawnfield")
+FieldId = "spf_hollow_wolves_east"
+
+; -- The village, filled (2026-10-09): eight houses along the walls, the elder's by the
+
+; north road, the market north of the east road, the smithy south of it, the armourer and a
+
+; training yard on the south side. Everything solid keeps a lane free between it and the walls.
+
+[node name="RoadN_E" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(0.000000, 0, -1.000000, 0, 1, 0, 1.000000, 0, 0.000000, 0.00, 0.06, -26.00)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="RoadIn" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 6.00, 0.06, 0.00)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="LaneS_A" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(0.000000, 0, -1.000000, 0, 1, 0, 1.000000, 0, 0.000000, 0.00, 0.06, 2.00)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="LaneS_B" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(0.000000, 0, -1.000000, 0, 1, 0, 1.000000, 0, 0.000000, 0.00, 0.06, 6.00)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="HouseElder" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, -6.00, 3.4, -13.60)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_house_cottage"
+
+[node name="HouseNorthE" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 6.00, 3.4, -13.60)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_house_cottage"
+
+[node name="HouseWest" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(0.000000, 0, -1.000000, 0, 1, 0, 1.000000, 0, 0.000000, -13.60, 4, 0.00)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_house_small"
+
+[node name="HouseSouth" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(-1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, -1.000000, 5.60, 3.4, 13.60)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_house_cottage"
+
+[node name="StallMerchant" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 8.50, 1.315, -7.90)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_stall_cart"
+
+[node name="StallSecond" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 12.40, 1.315, -7.90)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_stall"
+
+[node name="MarketBarrelA" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 14.20, 0.45, -3.80)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_barrel"
+
+[node name="MarketBarrelB" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 13.40, 0.45, -3.40)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_barrel"
+
+[node name="MarketRack" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 10.60, 0.63, -3.40)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_barrel_rack"
+
+[node name="SmithAnvil" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(0.939693, 0, -0.342020, 0, 1, 0, 0.342020, 0, 0.939693, 9.80, 0.28, 5.00)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_anvil"
+
+[node name="SmithQuench" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 11.40, 0.41, 6.20)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_cauldron"
+
+[node name="SmithRack" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 12.80, 0.555, 4.20)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_weapons"
+
+[node name="SmithFire" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 10.60, 0.55, 3.40)
+script = ExtResource("3_kit")
+PieceId = "kit_brazier"
+
+[node name="SmithCrate" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(0.965926, 0, -0.258819, 0, 1, 0, 0.258819, 0, 0.965926, 7.00, 0.435, 6.80)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_crate_iron"
+
+[node name="ArmourCrateA" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, -10.40, 0.435, 4.60)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_crate_iron"
+
+[node name="ArmourCrateB" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(0.866025, 0, -0.500000, 0, 1, 0, 0.500000, 0, 0.866025, -10.20, 0.435, 3.60)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_crate_iron"
+
+[node name="ArmourTable" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, -8.00, 0.405, 7.60)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_table"
+
+[node name="ArmourChest" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, -5.60, 0.36, 7.80)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_chest"
+
+[node name="DummyA" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, -4.00, 0.93, 12.00)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_dummy"
+
+[node name="DummyB" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, -1.20, 0.93, 14.60)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_dummy"
+
+[node name="DummyC" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 1.60, 0.93, 12.00)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_dummy"
+
+[node name="YardRack" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, -5.50, 0.555, 15.80)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_weapons"
+
+[node name="PlazaBenchW" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, -6.20, 0.265, -1.60)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_bench"
+
+[node name="ShrineFireW" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, -2.60, 0.55, -7.20)
+script = ExtResource("3_kit")
+PieceId = "kit_brazier"
+
+[node name="ShrineFireE" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 2.60, 0.55, -7.20)
+script = ExtResource("3_kit")
+PieceId = "kit_brazier"
+
+[node name="ElderBarrel" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, -9.20, 0.45, -9.80)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_barrel"
+
+[node name="GardenFenceN" type="StaticBody3D" parent="NavigationRegion3D/Village"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, -14.00, 0.45, -6.40)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_fence_4"
+
+[node name="VillageGreen" type="Node3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+script = ExtResource("13_scatter")
+Pieces = PackedStringArray("kit_nat_bush", "kit_nat_flowers", "kit_nat_flowers")
+Count = 22
+InnerRadius = 13
+OuterRadius = 17
+Spacing = 2.2
+Seed = 3
+Clearings = PackedVector3Array(0, 0, -26, 10, 0, 0, 18, 5, 0, -18, 5, -12.5, -12.5, 5.5, -12.5, 12.3, 6, 13, -12.5, 5, 12.5, 12.3, 6, -6, -13.6, 4.5, 6, -13.6, 4.5, -13.6, 0, 5, 5.6, 13.6, 4.5, 10, -6, 4.5, 10, 5, 4.5, -1, 13, 5, -8, 6, 3.5)
+
+; -- Outside, reshaped (2026-10-09) ---------------------------------------------
+
+; The east road runs unbroken to the border; a ring of stepping stones goes round the walls
+
+; at about 26 m, with a spur to each camp, so every camp is found by following stones.
+
+[node name="RoadMid1" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 30.00, 0.06, 0.00)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="RoadMid2" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 34.00, 0.06, 0.00)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="RoadMid3" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 38.00, 0.06, 0.00)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="RoadMid4" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 42.00, 0.06, 0.00)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="RoadMid5" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 46.00, 0.06, 0.00)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="RoadMid6" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 50.00, 0.06, 0.00)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="RoadMid7" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 54.00, 0.06, 0.00)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring1" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.287348, 0, 0.957826, 0, 1, 0, -0.957826, 0, 0.287348, 22.57, 0.06, 5.92)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring2" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.287348, 0, 0.957826, 0, 1, 0, -0.957826, 0, 0.287348, 24.01, 0.06, 10.70)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring3" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.573462, 0, 0.819232, 0, 1, 0, -0.819232, 0, -0.573462, 25.00, 0.06, 14.00)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring4" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.573462, 0, 0.819232, 0, 1, 0, -0.819232, 0, -0.573462, 22.13, 0.06, 18.10)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring5" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.573462, 0, 0.819232, 0, 1, 0, -0.819232, 0, -0.573462, 19.27, 0.06, 22.19)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring6" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.948683, 0, 0.316228, 0, 1, 0, -0.316228, 0, -0.948683, 18.00, 0.06, 24.00)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring7" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.948683, 0, 0.316228, 0, 1, 0, -0.316228, 0, -0.948683, 13.26, 0.06, 25.58)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring8" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.948683, 0, 0.316228, 0, 1, 0, -0.316228, 0, -0.948683, 8.51, 0.06, 27.16)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring9" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, -1.000000, 6.00, 0.06, 28.00)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring10" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, -1.000000, 1.00, 0.06, 28.00)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring11" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, -1.000000, -4.00, 0.06, 28.00)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring12" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.948683, 0, -0.316228, 0, 1, 0, 0.316228, 0, -0.948683, -8.00, 0.06, 28.00)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring13" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.948683, 0, -0.316228, 0, 1, 0, 0.316228, 0, -0.948683, -12.74, 0.06, 26.42)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring14" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.948683, 0, -0.316228, 0, 1, 0, 0.316228, 0, -0.948683, -17.49, 0.06, 24.84)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring15" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.503871, 0, -0.863779, 0, 1, 0, 0.863779, 0, -0.503871, -20.00, 0.06, 24.00)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring16" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.503871, 0, -0.863779, 0, 1, 0, 0.863779, 0, -0.503871, -22.52, 0.06, 19.68)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring17" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.503871, 0, -0.863779, 0, 1, 0, 0.863779, 0, -0.503871, -25.04, 0.06, 15.36)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring18" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.000000, 0, -1.000000, 0, 1, 0, 1.000000, 0, 0.000000, -27.00, 0.06, 12.00)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring19" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.000000, 0, -1.000000, 0, 1, 0, 1.000000, 0, 0.000000, -27.00, 0.06, 7.00)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring20" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.000000, 0, -1.000000, 0, 1, 0, 1.000000, 0, 0.000000, -27.00, 0.06, 2.00)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring21" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.083045, 0, -0.996546, 0, 1, 0, 0.996546, 0, 0.083045, -27.00, 0.06, 0.00)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring22" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.083045, 0, -0.996546, 0, 1, 0, 0.996546, 0, 0.083045, -26.58, 0.06, -4.98)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring23" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.083045, 0, -0.996546, 0, 1, 0, 0.996546, 0, 0.083045, -26.17, 0.06, -9.97)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring24" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.447214, 0, -0.894427, 0, 1, 0, 0.894427, 0, 0.447214, -26.00, 0.06, -12.00)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring25" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.447214, 0, -0.894427, 0, 1, 0, 0.894427, 0, 0.447214, -23.76, 0.06, -16.47)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring26" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.447214, 0, -0.894427, 0, 1, 0, 0.894427, 0, 0.447214, -21.53, 0.06, -20.94)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring27" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.982872, 0, -0.184289, 0, 1, 0, 0.184289, 0, 0.982872, -20.00, 0.06, -24.00)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring28" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.982872, 0, -0.184289, 0, 1, 0, 0.184289, 0, 0.982872, -15.09, 0.06, -24.92)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="Ring29" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.982872, 0, -0.184289, 0, 1, 0, 0.184289, 0, 0.982872, -10.17, 0.06, -25.84)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="SpurNE1" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.666795, 0, -0.745241, 0, 1, 0, 0.745241, 0, 0.666795, 3.33, 0.06, -29.49)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="SpurNE2" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.666795, 0, -0.745241, 0, 1, 0, 0.745241, 0, 0.666795, 6.67, 0.06, -33.22)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="SpurNE3" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.666795, 0, -0.745241, 0, 1, 0, 0.745241, 0, 0.666795, 10.00, 0.06, -36.94)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="SpurNE4" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.666795, 0, -0.745241, 0, 1, 0, 0.745241, 0, 0.666795, 13.34, 0.06, -40.67)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="SpurNE5" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.666795, 0, -0.745241, 0, 1, 0, 0.745241, 0, 0.666795, 16.67, 0.06, -44.40)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="SpurNW1" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.924678, 0, -0.380750, 0, 1, 0, 0.380750, 0, -0.924678, -21.85, 0.06, -24.76)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="SpurNW2" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.924678, 0, -0.380750, 0, 1, 0, 0.380750, 0, -0.924678, -26.47, 0.06, -26.67)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="SpurNW3" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.924678, 0, -0.380750, 0, 1, 0, 0.380750, 0, -0.924678, -31.10, 0.06, -28.57)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="SpurW1" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.982339, 0, 0.187112, 0, 1, 0, -0.187112, 0, -0.982339, -28.96, 0.06, 1.37)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="SpurW2" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.982339, 0, 0.187112, 0, 1, 0, -0.187112, 0, -0.982339, -33.88, 0.06, 2.31)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="SpurW3" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.982339, 0, 0.187112, 0, 1, 0, -0.187112, 0, -0.982339, -38.79, 0.06, 3.25)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="SpurW4" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.982339, 0, 0.187112, 0, 1, 0, -0.187112, 0, -0.982339, -43.70, 0.06, 4.18)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="SpurSW1" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.853282, 0, 0.521450, 0, 1, 0, -0.521450, 0, -0.853282, -21.71, 0.06, 25.04)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="SpurSW2" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.853282, 0, 0.521450, 0, 1, 0, -0.521450, 0, -0.853282, -25.97, 0.06, 27.65)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="SpurSW3" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.853282, 0, 0.521450, 0, 1, 0, -0.521450, 0, -0.853282, -30.24, 0.06, 30.26)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="SpurSW4" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.853282, 0, 0.521450, 0, 1, 0, -0.521450, 0, -0.853282, -34.51, 0.06, 32.86)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="SpurS1" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.049938, 0, 0.998752, 0, 1, 0, -0.998752, 0, -0.049938, -8.10, 0.06, 30.00)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="SpurS2" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.049938, 0, 0.998752, 0, 1, 0, -0.998752, 0, -0.049938, -8.35, 0.06, 34.99)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="SpurS3" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.049938, 0, 0.998752, 0, 1, 0, -0.998752, 0, -0.049938, -8.60, 0.06, 39.99)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="SpurS4" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.049938, 0, 0.998752, 0, 1, 0, -0.998752, 0, -0.049938, -8.85, 0.06, 44.98)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="SpurSE1" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.780869, 0, 0.624695, 0, 1, 0, -0.624695, 0, 0.780869, 19.56, 0.06, 25.25)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="SpurSE2" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.780869, 0, 0.624695, 0, 1, 0, -0.624695, 0, 0.780869, 23.47, 0.06, 28.37)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="SpurSE3" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.780869, 0, 0.624695, 0, 1, 0, -0.624695, 0, 0.780869, 27.37, 0.06, 31.50)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+[node name="SpurSE4" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.780869, 0, 0.624695, 0, 1, 0, -0.624695, 0, 0.780869, 31.27, 0.06, 34.62)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_path_4"
+
+; The rat camps: stores the rats broke into, crates spilt, a roofless house.
+
+[node name="RatStoreEast" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 60.00, 1.69, -9.00)
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_house_small"
+
+[node name="RatEastCrateA" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.939693, 0, -0.342020, 0, 1, 0, 0.342020, 0, 0.939693, 64.00, 0.465, 10.00)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_crate"
+
+[node name="RatEastCrateB" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.342020, 0, -0.939693, 0, 1, 0, 0.939693, 0, 0.342020, 65.00, 0.465, 11.20)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_crate"
+
+[node name="RatEastBarrel" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 52.00, 0.45, 10.00)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_barrel"
+
+[node name="RatEastPile" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 50.00, 0.4, 9.00)
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_pile"
+
+[node name="RatEastWagon" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.258819, 0, -0.965926, 0, 1, 0, 0.965926, 0, 0.258819, 65.00, 0.78, 14.00)
+script = ExtResource("3_kit")
+PieceId = "kit_vil_wagon"
+
+[node name="RatStoreSouth" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.000000, 0, -1.000000, 0, 1, 0, 1.000000, 0, 0.000000, 3.00, 1.69, 62.00)
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_house_cottage"
+
+[node name="RatSouthCrateA" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.984808, 0, -0.173648, 0, 1, 0, 0.173648, 0, 0.984808, -17.00, 0.465, 52.00)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_crate"
+
+[node name="RatSouthCrateB" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.642788, 0, -0.766044, 0, 1, 0, 0.766044, 0, 0.642788, -18.00, 0.465, 53.20)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_crate"
+
+[node name="RatSouthBarrel" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, -18.50, 0.45, 62.00)
+script = ExtResource("3_kit")
+PieceId = "kit_camp_barrel"
+
+[node name="RatSouthPile" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, -14.00, 0.4, 67.00)
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_pile"
+
+; The fox camps: thickets, a ring of bushes and ferns with the way in towards the village.
+
+[node name="FoxThicketNorth" type="Node3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, -54)
+script = ExtResource("13_scatter")
+Pieces = PackedStringArray("kit_nat_bush", "kit_nat_fern", "kit_kk_bush")
+Count = 16
+InnerRadius = 9
+OuterRadius = 13
+Spacing = 2.6
+Seed = 101
+Clearings = PackedVector3Array(19, 0, -45, 5)
+
+[node name="FoxThicketWest" type="Node3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58, 0, 7)
+script = ExtResource("13_scatter")
+Pieces = PackedStringArray("kit_nat_bush", "kit_nat_fern", "kit_kk_bush")
+Count = 16
+InnerRadius = 9
+OuterRadius = 13
+Spacing = 2.6
+Seed = 102
+Clearings = PackedVector3Array(-47, 0, 5, 5)
+
+[node name="FoxThicketSW" type="Node3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -46, 0, 40)
+script = ExtResource("13_scatter")
+Pieces = PackedStringArray("kit_nat_bush", "kit_nat_fern", "kit_kk_bush")
+Count = 16
+InnerRadius = 9
+OuterRadius = 13
+Spacing = 2.6
+Seed = 103
+Clearings = PackedVector3Array(-37, 0, 35, 5)
+
+; The wolf camps: rocks round a trampled hollow, pebbles, a dead tree.
+
+[node name="WolfNWRockA" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.866025, 0, -0.500000, 0, 1, 0, 0.500000, 0, 0.866025, -55.00, 1.1, -31.00)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+[node name="WolfNWRockB" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.500000, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.500000, -52.00, 1.1, -46.00)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+[node name="WolfNWRockC" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, -40.00, 1.5, -48.00)
+script = ExtResource("3_kit")
+PieceId = "kit_kk_boulder"
+
+[node name="WolfNWTree" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, -56.00, 2.5, -40.00)
+script = ExtResource("3_kit")
+PieceId = "kit_kk_tree_bare"
+
+[node name="WolfNWPebblesA" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, -46.00, 0.45, -35.00)
+script = ExtResource("3_kit")
+PieceId = "kit_kk_pebbles"
+
+[node name="WolfNWPebblesB" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, -43.00, 0.45, -40.00)
+script = ExtResource("3_kit")
+PieceId = "kit_kk_pebbles"
+
+[node name="WolfSERockA" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 50.00, 1.1, 40.00)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+[node name="WolfSERockB" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 46.00, 1.5, 53.00)
+script = ExtResource("3_kit")
+PieceId = "kit_kk_boulder"
+
+[node name="WolfSERockC" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.000000, 0, -1.000000, 0, 1, 0, 1.000000, 0, 0.000000, 34.00, 1.1, 52.00)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+[node name="WolfSETree" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 51.00, 2.5, 48.00)
+script = ExtResource("3_kit")
+PieceId = "kit_kk_tree_bare"
+
+[node name="WolfSEPebblesA" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 41.00, 0.45, 45.00)
+script = ExtResource("3_kit")
+PieceId = "kit_kk_pebbles"
+
+[node name="WolfSEPebblesB" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 37.00, 0.45, 41.00)
+script = ExtResource("3_kit")
+PieceId = "kit_kk_pebbles"
+
+[node name="WolfEastRockA" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 78.00, 1.1, -18.00)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+[node name="WolfEastRockB" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 66.00, 1.5, -35.00)
+script = ExtResource("3_kit")
+PieceId = "kit_kk_boulder"
+
+[node name="WolfEastTree" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 77.00, 2.5, -30.00)
+script = ExtResource("3_kit")
+PieceId = "kit_kk_tree_bare"
+
+[node name="WolfEastPebbles" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 69.00, 0.45, -22.00)
+script = ExtResource("3_kit")
+PieceId = "kit_kk_pebbles"
+
+[node name="DenPebblesA" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, -53.00, 0.45, -52.00)
+script = ExtResource("3_kit")
+PieceId = "kit_kk_pebbles"
+
+[node name="DenPebblesB" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, -56.00, 0.45, -56.00)
+script = ExtResource("3_kit")
+PieceId = "kit_kk_pebbles"
+
+[node name="DenBoulder" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, -62.00, 1.5, -58.00)
+script = ExtResource("3_kit")
+PieceId = "kit_kk_boulder"
+
+; Groves between the camps, so the woods come in bands with meadow between.
+
+[node name="GroveEast" type="Node3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, 0, 18)
+script = ExtResource("13_scatter")
+Pieces = PackedStringArray("kit_nat_tree", "kit_nat_tree", "kit_nat_pine")
+Count = 9
+InnerRadius = 0
+OuterRadius = 6
+Spacing = 4
+Seed = 111
+
+[node name="GroveWest" type="Node3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -44, 0, -14)
+script = ExtResource("13_scatter")
+Pieces = PackedStringArray("kit_nat_pine", "kit_nat_tree")
+Count = 8
+InnerRadius = 0
+OuterRadius = 6
+Spacing = 4
+Seed = 112
+
+[node name="GroveSouth" type="Node3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 42)
+script = ExtResource("13_scatter")
+Pieces = PackedStringArray("kit_nat_tree", "kit_nat_pine")
+Count = 8
+InnerRadius = 0
+OuterRadius = 6
+Spacing = 4
+Seed = 113
+
+; Two places to steer by: an old farm in ruins north-east, standing stones south-west.
+
+[node name="OldFarm" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.000000, 0, -1.000000, 0, 1, 0, 1.000000, 0, 0.000000, 40.00, 1.69, -50.00)
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_house_long"
+
+[node name="OldFarmWall" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.866025, 0, -0.500000, 0, 1, 0, 0.500000, 0, 0.866025, 33.00, 0.9, -45.00)
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_wall"
+
+[node name="OldFarmRubble" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 45.00, 0.35, -44.00)
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_rubble"
+
+[node name="OldFarmVine" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 36.00, 1.3, -55.00)
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_vine"
+
+[node name="OldFarmBeam" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, 46.00, 0.4, -53.00)
+script = ExtResource("3_kit")
+PieceId = "kit_ruin_beam"
+
+[node name="StoneA" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, -26.00, 1.7, 41.00)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_obelisk"
+
+[node name="StoneB" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, -21.00, 1.7, 44.00)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_obelisk"
+
+[node name="StoneC" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, -23.00, 1.7, 50.00)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_obelisk"
+
+[node name="StoneD" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, -30.00, 1.7, 50.00)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_obelisk"
+
+[node name="StoneE" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, 0.000000, 0, 1.000000, -31.00, 1.7, 44.00)
+script = ExtResource("3_kit")
+PieceId = "kit_kn_obelisk"
+
+; Three ridges from the mountains inwards: between the den and the north stones, west between
+; the foxes and the wolves, south-east between the rats and the wolves.
+
+[node name="NorthRidge1" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.866025, 0, -0.500000, 0, 1, 0, 0.500000, 0, -0.866025, -32.86, 2.75, -88.21)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="NorthRidgeFoot1" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.500000, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.500000, -29.95, 1.1, -88.74)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+[node name="NorthRidge2" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.500000, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.500000, -33.27, 2.75, -82.54)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="NorthRidge3" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.000000, 0, -1.000000, 0, 1, 0, 1.000000, 0, 0.000000, -31.61, 2.75, -77.25)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="NorthRidge4" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.000000, 0, 1.000000, 0, 1, 0, -1.000000, 0, -0.000000, -30.89, 2.75, -71.79)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="NorthRidge5" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.866025, 0, -0.500000, 0, 1, 0, 0.500000, 0, 0.866025, -29.74, 2.75, -66.41)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="NorthRidgeFoot2" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.500000, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.500000, -25.51, 1.1, -67.18)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+[node name="NorthRidge6" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.866025, 0, -0.500000, 0, 1, 0, 0.500000, 0, 0.866025, -30.91, 2.75, -65.80)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="NorthRidgeFoot3" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.000000, 0, 1.000000, 0, 1, 0, -1.000000, 0, -0.000000, -34.21, 1.1, -65.06)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+[node name="NorthRidge7" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.500000, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.500000, -29.22, 2.75, -60.54)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="NorthRidge8" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.500000, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.500000, -28.88, 2.75, -54.98)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="NorthRidgeFoot4" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.500000, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.500000, -31.79, 1.1, -54.33)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+[node name="NorthRidge9" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.866025, 0, 0.500000, 0, 1, 0, -0.500000, 0, 0.866025, -27.27, 2.75, -49.70)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="NorthRidgeFoot5" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.866025, 0, -0.500000, 0, 1, 0, 0.500000, 0, -0.866025, -21.61, 1.1, -50.96)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+[node name="WestRidge1" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.000000, 0, 1.000000, 0, 1, 0, -1.000000, 0, -0.000000, -87.99, 2.75, -21.73)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="WestRidgeFoot1" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.500000, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.500000, -87.79, 1.1, -17.74)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+[node name="WestRidge2" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-1.000000, 0, -0.000000, 0, 1, 0, 0.000000, 0, -1.000000, -82.47, 2.75, -21.56)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="WestRidge3" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.866025, 0, -0.500000, 0, 1, 0, 0.500000, 0, -0.866025, -76.95, 2.75, -21.20)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="WestRidge4" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.500000, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.500000, -71.52, 2.75, -22.83)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="WestRidgeFoot2" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-1.000000, 0, -0.000000, 0, 1, 0, 0.000000, 0, -1.000000, -71.77, 1.1, -27.91)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+[node name="WestRidge5" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.866025, 0, -0.500000, 0, 1, 0, 0.500000, 0, -0.866025, -67.95, 2.75, -23.12)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="WestRidge6" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.866025, 0, 0.500000, 0, 1, 0, -0.500000, 0, -0.866025, -63.17, 2.75, -20.27)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="SouthEastRidge1" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-1.000000, 0, -0.000000, 0, 1, 0, 0.000000, 0, -1.000000, 88.04, 2.75, 27.40)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="SouthEastRidgeFoot1" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.866025, 0, 0.500000, 0, 1, 0, -0.500000, 0, -0.866025, 88.49, 1.1, 31.95)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+[node name="SouthEastRidge2" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.500000, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.500000, 82.52, 2.75, 27.52)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="SouthEastRidge3" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.866025, 0, 0.500000, 0, 1, 0, -0.500000, 0, 0.866025, 76.96, 2.75, 27.10)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="SouthEastRidgeFoot2" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.866025, 0, -0.500000, 0, 1, 0, 0.500000, 0, 0.866025, 76.49, 1.1, 22.46)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+[node name="SouthEastRidge4" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.866025, 0, 0.500000, 0, 1, 0, -0.500000, 0, -0.866025, 71.50, 2.75, 27.83)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="SouthEastRidgeFoot3" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.500000, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.500000, 72.05, 1.1, 33.35)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+[node name="SouthEastRidge5" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.000000, 0, 1.000000, 0, 1, 0, -1.000000, 0, -0.000000, 67.97, 2.75, 28.81)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="SouthEastRidgeFoot4" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.866025, 0, 0.500000, 0, 1, 0, -0.500000, 0, 0.866025, 67.28, 1.1, 25.06)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"
+
+[node name="SouthEastRidge6" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.866025, 0, 0.500000, 0, 1, 0, -0.500000, 0, 0.866025, 62.53, 2.75, 29.64)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="SouthEastRidge7" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(-0.500000, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.500000, 56.92, 2.75, 29.54)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_crag"
+
+[node name="SouthEastRidgeFoot5" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.866025, 0, 0.500000, 0, 1, 0, -0.500000, 0, 0.866025, 58.13, 1.1, 36.21)
+script = ExtResource("3_kit")
+PieceId = "kit_nat_rock"

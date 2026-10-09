@@ -49,6 +49,25 @@ public static class ScenesCommand
             Console.WriteLine($"  wrote {layout.File}.tscn — {layout.PieceCount} pieces, {layout.FieldCount} spawn fields");
         }
 
+        // The Abyss Crypts (P5, 2026-10-07): a dungeon, laid out room by room rather than as a map.
+        {
+            var path = Path.Combine(scenes, CryptLayout.File + ".tscn");
+            var text = CryptLayout.Write(loaded.Database);
+
+            if (check)
+            {
+                var same = File.Exists(path) && File.ReadAllText(path).Replace("\r\n", "\n") == text;
+
+                Console.WriteLine($"  {CryptLayout.File}.tscn {(same ? "current" : "STALE")}");
+                if (!same) stale++;
+            }
+            else
+            {
+                File.WriteAllText(path, text);
+                Console.WriteLine($"  wrote {CryptLayout.File}.tscn — seven floors");
+            }
+        }
+
         if (stale > 0) Console.Error.WriteLine("  A scene is older than its layout: run `kiln scenes`.");
 
         return stale > 0 ? 1 : 0;

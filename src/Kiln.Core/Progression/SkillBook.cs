@@ -133,12 +133,17 @@ public sealed class SkillBook
     }
 
     /// <summary>
+    /// The points a refund would give back. The free point on a free skill was never the player's
+    /// to spend, so it stays.
+    /// </summary>
+    public int Refundable => _known.Sum(p => p.Value.Points - (_free.Contains(p.Key) ? 1 : 0));
+
+    /// <summary>
     /// Returns every point spent, for a respec (FR-2.6). The skills are forgotten with them.
     /// </summary>
     public int Refund()
     {
-        // The free point on a free skill was never the player's to spend, so it stays.
-        var points = _known.Sum(p => p.Value.Points - (_free.Contains(p.Key) ? 1 : 0));
+        var points = Refundable;
 
         _known.Clear();
         GrantFree();

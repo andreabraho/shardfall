@@ -103,10 +103,10 @@ public sealed class GearRig
             if (mesh.Name != parts.Face) _body.Add(mesh);
         }
 
-        _oneHand = Named(Part(model, parts.OneHand, WeaponHand));
+        _oneHand = Grip(Named(Part(model, parts.OneHand, WeaponHand)));
         _offHand = parts.OffHand.Length > 0 && parts.Blade.Length > 0 ? Part(model, parts.Blade, parts.OffHand) : null;
         _offHandPath = parts.Blade;
-        _twoHand = Named(Part(model, parts.TwoHand, WeaponHand));
+        _twoHand = Grip(Named(Part(model, parts.TwoHand, WeaponHand)));
         _oneHandPath = parts.OneHand;
         _twoHandPath = parts.TwoHand;
         _cape = Part(model, parts.Cape, WeaponHand);
@@ -230,10 +230,13 @@ public sealed class GearRig
 
     /// <summary>
     /// A ribbon behind the blade in hand (REF-21), from <paramref name="delay"/> seconds from
-    /// now for <paramref name="seconds"/>. Nothing with no blade drawn.
+    /// now for <paramref name="seconds"/>. Nothing with no blade drawn, and nothing behind a bow
+    /// (2026-10-09, at your call: a bow does not cut, and the Archer's blows drew a sword's white arc).
     /// </summary>
     public void Trail(double delay, double seconds, Color colour)
     {
+        if (Stance == "bow") return;
+
         var blade = _twoHand is { Visible: true } ? _twoHand : _oneHand is { Visible: true } ? _oneHand : null;
 
         BladeTrail.On(blade)?.Emit(delay, seconds, colour);
@@ -283,6 +286,8 @@ public sealed class GearRig
         if (wanted.Length == 0 || wanted == held) return false;
 
         if (Named(Part(_model, wanted, bone)) is not { } fresh) return false;
+
+        if (bone == WeaponHand) Grip(fresh);
 
         if (blade is not null && GodotObject.IsInstanceValid(blade))
         {
@@ -494,6 +499,31 @@ public sealed class GearRig
     /// A part by name: a mesh of the model's own, or — for a res:// path — that scene put on
     /// <paramref name="bone"/>, returned as its mesh.
     /// </summary>
+    /// <summary>
+    /// Turns the weapon in its hand as the body says (<see cref="GearPartsDef.WeaponTurn"/>), and gives a bow its
+    /// drawn string (2026-10-07, at your call: the bow turned so its string comes to the other hand, and pulled
+    /// back by it).
+    /// </summary>
+    private MeshInstance3D? Grip(MeshInstance3D? mesh)
+    {
+        if (mesh is null || !GodotObject.IsInstanceValid(mesh)) return mesh;
+
+        Node3D held = mesh;
+        while (held.GetParent() is Node3D parent && parent is not BoneAttachment3D) held = parent;
+
+        if (_parts.WeaponTurn.Length >= 3)
+        {
+            held.RotationDegrees = new Vector3(_parts.WeaponTurn[0], _parts.WeaponTurn[1], _parts.WeaponTurn[2]);
+        }
+
+        if (Stance == "bow" && held.FindChild("bowstring", recursive: true, owned: false) is MeshInstance3D drawn)
+        {
+            BowString.On(held, drawn);
+        }
+
+        return mesh;
+    }
+
     private static MeshInstance3D? Part(Node3D model, string name, string bone)
     {
         if (name.Length == 0) return null;
@@ -531,6 +561,7 @@ public sealed class GearRig
 
         slot.AddChild(held);
 
-        return held as MeshInstance3D ?? held.FindChildren("*", "MeshInstance3D", true, false).OfType<MeshInstance3D>().FirstOrDefault();
+        // A bow's string is a mesh of its own (BowString): the weapon is the other one.
+        return held as MeshInstance3D ?? held.FindChildren("*", "MeshInstance3D", true, false).OfType<MeshInstance3D>().FirstOrDefault(m => m.Name != "bowstring");
     }
 }

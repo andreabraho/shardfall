@@ -79,8 +79,10 @@ public partial class ModelAnimator : Node
     }
 
     private string _stance = "";
+
+    /// <summary>True while the Archer draws a bow back: the string goes to the drawing hand (BowString).</summary>
+    public bool DrawingBow => _stance == "bow" && _player is { } player && player.CurrentAnimation.ToString().Contains("Ranged_Bow_Draw");
     private string _idleBow = "";
-    private string _runBow = "";
 
     /// <summary>A clip played as the one before it ends: the release after the draw.</summary>
     private (string Clip, float Speed, double Seconds)? _then;
@@ -92,9 +94,8 @@ public partial class ModelAnimator : Node
         var names = _player.GetAnimationList();
 
         _idleBow = Pick(names, "Ranged_Bow_Idle");
-        _runBow = Pick(names, "Running_HoldingBow");
 
-        foreach (var name in new[] { _idleBow, _runBow })
+        foreach (var name in new[] { _idleBow })
         {
             if (name.Length > 0) _player.GetAnimation(name).LoopMode = Animation.LoopModeEnum.Linear;
         }
@@ -587,7 +588,9 @@ public partial class ModelAnimator : Node
         // two blades it is the same guard, the hands together in front.
         var idle = _stance == "bow" && _idleBow.Length > 0 ? _idleBow
             : (TwoHanded || DualWield) && _idleTwoHand.Length > 0 ? _idleTwoHand : _idle;
-        var run = _stance == "bow" && _runBow.Length > 0 ? _runBow : _run;
+        // The Archer runs as everyone does (2026-10-09, at your call): KayKit's run holding the bow carried it out
+        // to the side, sticking out from the body all the way.
+        var run = _run;
 
         Play(speed <= MovingAbove ? idle : speed < WalkingBelow ? _walk : run);
     }

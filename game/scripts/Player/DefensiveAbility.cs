@@ -52,7 +52,7 @@ public partial class DefensiveAbility : Node
     /// <summary>The Ninja's: a dash and a moment untouched, in place of a guard held.</summary>
     public const string StepId = "skl_shadow_step";
 
-    /// <summary>The Archer's (CLS-04): a leap away from where it faces, and a moment untouched.</summary>
+    /// <summary>The Archer's (CLS-04): a leap back from where the camera looks, a moment untouched, and the next skill doubled.</summary>
     public const string BackstepId = "skl_backstep";
 
     /// <summary>
@@ -222,8 +222,10 @@ public partial class DefensiveAbility : Node
         var going = _motor.Velocity with { Y = 0 };
         var back = def.Motion == "backstep";
 
-        // The Ninja goes the way it is going; the Archer away from what it faces, still facing it.
-        var aim = back ? -_motor.Facing : going.LengthSquared() > 0.25f ? going.Normalized() : _motor.Facing;
+        // The Ninja goes the way it is going; the Archer straight back from where the camera looks,
+        // turned to look that way itself (2026-10-07, at your call — it went back from the way the body
+        // faced, which after a click to walk was as often sideways to the fight as away from it).
+        var aim = back ? -ViewForward() : going.LengthSquared() > 0.25f ? going.Normalized() : _motor.Facing;
 
         Audio.AudioDirector.Play(def.Sound, _motor.GlobalPosition);
         Combat.SkillFx.Pierce(this, _motor.GlobalPosition, aim, (float)skill.Radius, new Color(def.Color), 0.7f);
@@ -241,7 +243,22 @@ public partial class DefensiveAbility : Node
 
         _self.Untouchable = true;
 
+        // The Backstep sets up a shot (2026-10-07, at your call): the next skill that deals damage deals it twice over.
+        if (back && GetParent().GetNodeOrNull<SkillCaster>("SkillCaster") is { } caster)
+        {
+            caster.NextSkillDoubled = true;
+            Combat.CombatFeedback.Callout(_motor.GlobalPosition + (Vector3.Up * 2.4f), "x2", new Color(def.Color));
+        }
+
         EmitSignal(SignalName.GuardChanged, true);
+    }
+
+    /// <summary>Where the camera looks, flat on the ground; where the body faces if there is no camera.</summary>
+    private Vector3 ViewForward()
+    {
+        var forward = GetViewport().GetCamera3D() is { } camera ? (-camera.GlobalBasis.Z) with { Y = 0 } : Vector3.Zero;
+
+        return forward.LengthSquared() > 0.0001f ? forward.Normalized() : _motor.Facing;
     }
 
     /// <summary>

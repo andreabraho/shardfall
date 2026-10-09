@@ -38,6 +38,9 @@ public partial class VisualRoot : Node3D
     private Vector3 _lungeDirection;
     private double _lunge;
     private ModelAnimator? _animator;
+
+    /// <summary>What plays the model's clips, or null for a model without any.</summary>
+    public ModelAnimator? Animator => _animator;
     private double _lungeDuration;
     private float _lungeDistance;
 

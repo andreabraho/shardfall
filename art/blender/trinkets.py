@@ -51,6 +51,11 @@ def mats():
         "kelp": t.material("mire_kelp", (0.10, 0.30, 0.16), rough=0.8),
         "pearl": t.material("mire_pearl", (0.92, 0.95, 0.90), glow=0.35, rough=0.15),
         "verdigris": t.material("mire_verdigris", (0.16, 0.44, 0.36), metal=0.6, rough=0.4),
+        # The abyss set (P5, 2026-10-07): black plate, its darker trim, crimson light, the crypts' ash.
+        "abyss": t.material("abyss_plate", (0.05, 0.04, 0.07), metal=0.75, rough=0.3),
+        "abyss_dark": t.material("abyss_dark", (0.10, 0.06, 0.12), metal=0.6, rough=0.4),
+        "abyss_glow": t.material("abyss_glow", (0.95, 0.10, 0.38), glow=1.4, rough=0.4),
+        "abyss_ash": t.material("abyss_ash", (0.16, 0.14, 0.17), rough=0.95),
     }
 
 
@@ -475,6 +480,99 @@ def mat_warlord_slag(m):
     for i, (rad, lift) in enumerate(((0.3, 0.7), (1.9, -0.2), (3.4, 0.5), (4.8, 0.1), (5.6, -0.6))):
         x, y = math.cos(rad), math.sin(rad)
         parts.append(a.spike(f"crack_{i}", (x * 0.10, y * 0.08, lift * 0.08), (x * 0.27, y * 0.21, lift * 0.19), 0.045, m["lava"], sides=5))
+    return parts
+
+
+# -- The abyss set (P5, 2026-10-07): black plate, bone and crimson light; and the crypts' two parts. --
+
+def shd_abyss_aegis(m):
+    """A kite of black plate with a ribcage of bone across it and a crimson eye at its heart; horns of bone at the top."""
+    parts = [
+        kite("face", m["abyss"], 0.40, 0.54, -0.66),
+        kite("frame", m["abyss_dark"], 0.44, 0.58, -0.72, depth=0.05),
+        disc("eye_rim", 0.15, 0.05, m["bone"], at=(0, -0.04, 0.10)),
+        disc("eye", 0.09, 0.06, m["abyss_glow"], at=(0, -0.05, 0.10)),
+        t.box("spine", (0.05, 0.05, 0.9), m["bone"], at=(0, -0.045, -0.06), bevel=0.012, segments=2),
+    ]
+    for j in range(4):
+        z = 0.30 - 0.20 * j
+        for side in (-1, 1):
+            parts.append(a.spike(f"rib_{j}_{side}", (side * 0.03, -0.05, z), (side * (0.30 - 0.04 * j), -0.045, z - 0.12), 0.022, m["bone"], sides=6))
+    for side in (-1, 1):
+        parts.append(a.spike(f"horn_{side}", (side * 0.30, -0.02, 0.46), (side * 0.48, -0.06, 0.74), 0.05, m["bone"]))
+    return parts
+
+
+def bts_abyss_striders(m):
+    """Tall boots of black plate, crimson in the seams, bone at the knee and a bone spur at the heel."""
+    parts = []
+    for x in (-0.12, 0.12):
+        parts += boot(f"b{x}", m["abyss"], m["abyss"], x, tall=0.48, sole=m["abyss_dark"])
+        parts.append(t.cylinder(f"seam_a{x}", 0.092, 0.022, m["abyss_glow"], at=(x, 0, 0.26), sides=24))
+        parts.append(t.sphere(f"knee{x}", 0.09, m["bone"], at=(x, -0.06, 0.56), subdivisions=2, squash=(1, 0.8, 1), smooth=True))
+        parts.append(a.spike(f"knee_spike{x}", (x, -0.12, 0.58), (x, -0.26, 0.70), 0.035, m["bone"]))
+        parts.append(a.spike(f"spur{x}", (x, 0.10, 0.08), (x, 0.26, 0.12), 0.03, m["bone"]))
+    return parts
+
+
+def brc_abyss_coil(m):
+    """A coil of vertebrae round the wrist, black between them, three crimson eyes."""
+    parts = [cuff("band", m["abyss"], height=0.32, top=0.9)]
+    for i in range(7):
+        z = 0.04 + 0.045 * i
+        parts.append(t.cylinder(f"vertebra{i}", 0.142, 0.03, m["bone"], at=(0, 0, z), sides=32))
+    for z in (0.09, 0.18, 0.27):
+        parts.append(gem(f"eye{z}", 0.03, m["abyss_glow"], at=(0, -0.155, z)))
+    return parts
+
+
+def nck_abyss_heart(m):
+    """A black heart in a cage of bone ribs, light breaking out between them, on a black chain."""
+    links, tip = pendant_chain(m, m["abyss_dark"])
+    x, z = tip[0], tip[2] - 0.13
+    parts = links + [t.sphere("heart", 0.07, m["abyss_glow"], at=(x, 0, z), subdivisions=2, squash=(1, 0.8, 1.2), smooth=True)]
+    for i in range(5):
+        ang = i * math.pi / 2.5
+        top = (x + 0.02 * math.cos(ang), 0.02 * math.sin(ang), z + 0.09)
+        bottom = (x + 0.02 * math.cos(ang), 0.02 * math.sin(ang), z - 0.09)
+        mid = (x + 0.09 * math.cos(ang), 0.09 * math.sin(ang), z)
+        parts += [a.rod(f"rib_a{i}", top, mid, 0.011, m["bone"], sides=6), a.rod(f"rib_b{i}", mid, bottom, 0.011, m["bone"], sides=6)]
+    return parts
+
+
+def ear_abyss_tear(m):
+    """A tear of crimson light hanging from a hook of bone, a claw holding it."""
+    return hook(m, m["bone"]) + [
+        gem("tear", 0.06, m["abyss_glow"], at=(0, 0, -0.09), squash=(0.8, 0.8, 1.6)),
+        torus("claw", 0.05, 0.01, m["bone"], at=(0, 0, -0.04), segments=16, ring=6),
+        a.spike("tip", (0, 0, -0.16), (0, 0, -0.24), 0.03, m["abyss_glow"], sides=8),
+    ]
+
+
+def rng_abyss_sigil(m):
+    """A band of black plate, a crimson eye held up by four bone fangs."""
+    parts = [ring(m, m["abyss"]), gem("eye", 0.06, m["abyss_glow"], at=(0, -0.05, 0.2))]
+    for i in range(4):
+        a_ = i * math.pi / 2 + math.pi / 4
+        parts.append(a.spike(f"fang{i}", (0.05 * math.cos(a_), -0.05 + 0.05 * math.sin(a_), 0.14),
+                             (0.03 * math.cos(a_), -0.05 + 0.03 * math.sin(a_), 0.26), 0.016, m["bone"], sides=5))
+    return parts
+
+
+def mat_abyss_ash(m):
+    """A pinch of the crypts' ash heaped on a shard of black bone, embers of crimson in it."""
+    parts = [t.rock("heap", 0.17, m["abyss_ash"], at=(0, 0, 0), seed=21, squash=(1.2, 1.1, 0.6), roughness=0.3, subdivisions=1)]
+    for i, (x, y) in enumerate(((0.06, 0.02), (-0.07, 0.04), (0.01, -0.07))):
+        parts.append(t.sphere(f"ember{i}", 0.025, m["abyss_glow"], at=(x, y, 0.07), subdivisions=1))
+    return parts
+
+
+def mat_abyss_heart(m):
+    """A boss's heart turned to black stone, still beating with crimson light in its cracks."""
+    parts = [t.sphere("heart", 0.17, m["abyss"], at=(0, 0, 0), subdivisions=2, squash=(1, 0.85, 1.15), smooth=True)]
+    for i, (rad, lift) in enumerate(((0.4, 0.6), (2.0, -0.3), (3.5, 0.4), (5.0, -0.5))):
+        x, y = math.cos(rad), math.sin(rad)
+        parts.append(a.spike(f"crack_{i}", (x * 0.08, y * 0.07, lift * 0.08), (x * 0.19, y * 0.16, lift * 0.18), 0.03, m["abyss_glow"], sides=5))
     return parts
 
 

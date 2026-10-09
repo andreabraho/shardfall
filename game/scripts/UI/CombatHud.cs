@@ -17,6 +17,7 @@ public partial class CombatHud : CanvasLayer
     private PanelContainer _targetPanel = null!;
     private ProgressBar _targetBar = null!;
     private Label _targetLabel = null!;
+    private InfoBadge _info = null!;
 
     private PlayerCombat? _combat;
     private Combatant? _self;
@@ -42,7 +43,7 @@ public partial class CombatHud : CanvasLayer
             AnchorRight = 0.5f,
             OffsetLeft = -160,
             OffsetRight = 160,
-            OffsetTop = 24,
+            OffsetTop = TopBars.TargetTop,
             Visible = false,
             // Hovered, it says what helps against the target: its family and the bonuses against it.
             MouseFilter = Control.MouseFilterEnum.Stop,
@@ -52,7 +53,7 @@ public partial class CombatHud : CanvasLayer
         _targetLabel = new Label { HorizontalAlignment = HorizontalAlignment.Center, MouseFilter = Control.MouseFilterEnum.Ignore };
         _targetBar = new ProgressBar { MinValue = 0, MaxValue = 1, Value = 1, ShowPercentage = false, CustomMinimumSize = new Vector2(300, 18), MouseFilter = Control.MouseFilterEnum.Ignore };
 
-        box.AddChild(_targetLabel);
+        box.AddChild(FoeAdvice.Titled(_targetLabel, out _info));
         box.AddChild(_targetBar);
         _targetPanel.AddChild(box);
         AddChild(_targetPanel);
@@ -64,20 +65,32 @@ public partial class CombatHud : CanvasLayer
 
         var target = _combat.Target;
 
-        if (target is null || !IsInstanceValid(target) || !target.IsAlive)
+        // A shard has its own bar at the top, with its phase and its call (2026-10-07, at your call: one bar is enough).
+        if (target is null || !IsInstanceValid(target) || !target.IsAlive || target.GetParent() is World.ShardNode
+            // A boss has its own bar at the top too (2026-10-08, at your call: the tower's bosses showed two).
+            || (target.GetParent() is { } owner && GetParent()?.GetNodeOrNull<BossHud>("BossHud")?.Shown == owner))
         {
             _targetPanel.Visible = false;
             return;
         }
 
         _targetPanel.Visible = true;
+
+        var head = TopBars.Head(GetTree());
+
+        if (!Mathf.IsEqualApprox(_targetPanel.OffsetTop, head))
+        {
+            _targetPanel.OffsetBottom += head - _targetPanel.OffsetTop;
+            _targetPanel.OffsetTop = head;
+        }
         _targetBar.Value = target.Health.Fraction;
 
         _targetLabel.Text = $"{Pretty(target.DisplayName)}   {target.Health}";
 
-        var advice = FoeAdvice.For(target, _self);
+        var advice = target.GetParent() is EnemyBrain enemy ? FoeAdvice.For(enemy, _self) : FoeAdvice.For(target, _self);
 
         if (_targetPanel.TooltipText != advice) _targetPanel.TooltipText = advice;
+        _info.Advice = advice;
     }
 
     private static string Pretty(string key) =>

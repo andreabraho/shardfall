@@ -19,6 +19,7 @@ public partial class BossHud : CanvasLayer, ITopBar
 
     private PanelContainer _root = null!;
     private Label _title = null!;
+    private InfoBadge _info = null!;
     private ProgressBar _health = null!;
     private Label _phase = null!;
 
@@ -53,7 +54,7 @@ public partial class BossHud : CanvasLayer, ITopBar
         _title = new Label { HorizontalAlignment = HorizontalAlignment.Center };
         _title.AddThemeFontSizeOverride("font_size", 13);
         _title.AddThemeColorOverride("font_color", new Color("d9a7ff"));
-        box.AddChild(_title);
+        box.AddChild(FoeAdvice.Titled(_title, out _info));
 
         _health = new ProgressBar
         {
@@ -88,9 +89,13 @@ public partial class BossHud : CanvasLayer, ITopBar
 
     private bool _bossMusic;
 
+    /// <summary>The boss whose bar is up, if any: the target's frame stays down for it, or it has two bars.</summary>
+    public EnemyBrain? Shown { get; private set; }
+
     public override void _Process(double delta)
     {
         var boss = Engaged();
+        Shown = boss;
 
         // The boss's music plays while its bar is up (REF-20).
         if ((boss is not null) != _bossMusic)
@@ -108,7 +113,7 @@ public partial class BossHud : CanvasLayer, ITopBar
         _root.Visible = true;
 
         var shard = GetParent()?.GetNodeOrNull<ShardHud>("ShardHud");
-        var top = TopBars.Below(shard?.Panel);
+        var top = TopBars.Below(shard?.Panel, GetTree());
 
         if (!Mathf.IsEqualApprox(_root.OffsetTop, top))
         {
@@ -119,9 +124,10 @@ public partial class BossHud : CanvasLayer, ITopBar
         var name = Items.GameItems.Localise(boss.Self.DisplayName);
         _title.Text = $"{L10n.F("Lv. {0}", boss.Self.Stats.Level)}  {name}  ·  {L10n.F("Phase {0}", boss.BossPhase)}";
 
-        var advice = FoeAdvice.For(boss.Self, GetTree().GetFirstNodeInGroup("player")?.GetNodeOrNull<Combatant>("Combatant"));
+        var advice = FoeAdvice.For(boss, GetTree().GetFirstNodeInGroup("player")?.GetNodeOrNull<Combatant>("Combatant"));
 
         if (_root.TooltipText != advice) _root.TooltipText = advice;
+        _info.Advice = advice;
         _health.Value = boss.Self.Health.Fraction;
     }
 
