@@ -255,7 +255,7 @@
       { "item": "shd_kiln_ward", "weight": 0, "chance": 0.028, "count_range": [1, 1] }
     ],
     // A relic in one kill in three (2026-10-09), one in two from the Sorcerer, every time from the Lord.
-    "prize": ["wpn_kiln_brand", "arm_kiln_aegis", "rng_kiln_sigil"], "prize_chance": 0.33
+    "prize": ["wpn_kiln_brand", "arm_kiln_aegis", "rng_kiln_sigil"], "prize_chance": 0.33, "whole": true
   },
   // The Blue Demon Sorcerer, the tower's sixth floor.
   {
@@ -278,7 +278,7 @@
       { "item": "wpn_shard_lance", "weight": 0, "chance": 0.028, "count_range": [1, 1] }
     ],
     // A relic in half the kills.
-    "prize": ["wpn_kiln_brand", "arm_kiln_aegis", "rng_kiln_sigil"], "prize_chance": 0.5
+    "prize": ["wpn_kiln_brand", "arm_kiln_aegis", "rng_kiln_sigil"], "prize_chance": 0.5, "whole": true
   },
   // The Demon Lord, the top of the tower: three picks, and the best odds of a relic.
   {
@@ -297,8 +297,8 @@
       { "item": "mat_shard_essence", "weight": 0, "chance": 0.6, "count_range": [1, 2] },
       { "item": "mat_radiant_core", "weight": 0, "chance": 0.3, "count_range": [1, 1] }
     ],
-    // A relic every time.
-    "prize": ["wpn_kiln_brand", "arm_kiln_aegis", "rng_kiln_sigil"]
+    // A relic every time. The three tower tables are whole: never halved, whatever the player's level.
+    "prize": ["wpn_kiln_brand", "arm_kiln_aegis", "rng_kiln_sigil"], "whole": true
   },
 
   // -- Shards (REF-06): a table each, picks guaranteed, a gem for the sockets in a third of breaks --

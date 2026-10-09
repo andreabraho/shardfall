@@ -138,6 +138,8 @@ public static class LootRoller
     {
         if (table is null) return new LootRoll(0, []);
 
+        if (table.Whole) share = 1.0;
+
         var yang = table.YangRange.Length > 1
             ? (long)System.Math.Round(rng.NextIntInclusive(table.YangRange[0], table.YangRange[1]) * share)
             : 0;

@@ -42,6 +42,8 @@ public static class FoeAdvice
     {
         if (tableId is null || !GameContent.IsLoaded || !GameContent.Database.DropTables.TryGetValue(tableId, out var table)) return "";
 
+        if (table.Whole) share = 1.0;
+
         var lines = new System.Collections.Generic.List<string> { L10n.T("Drops:") };
         var culture = System.Globalization.CultureInfo.InvariantCulture;
 

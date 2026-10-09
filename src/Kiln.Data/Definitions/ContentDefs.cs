@@ -923,6 +923,9 @@ public sealed class DropTableDef : ContentDefBase
     /// </summary>
     public string[] Prize { get; init; } = [];
     public double PrizeChance { get; init; } = 1.0;
+
+    /// <summary>Never halved for a kill far below the player (2026-10-09): the tower's bosses drop the same at any level.</summary>
+    public bool Whole { get; init; }
     public int[] YangRange { get; init; } = [0, 0];
 }
 
